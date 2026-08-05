@@ -24,6 +24,9 @@
 - Invalid runtime pattern compilation returns an invalid pattern sentinel under no-error policy.
 - `pattern_valid(p)` is available as an explicit probe.
 - High-fit namespace roadmap is locked with explicit MVP and optional cut lines.
+- C++26 usage guidelines are locked for contracts, concepts, functional style, and ARM optimization profiles.
+- Packaging model is locked as header-only with one-function-per-file production headers and automated single-header amalgamation.
+- Quality and verification toolchain is locked: Catch2, generators, sanitizer profiles, linting gates, Doxygen with tested samples, automatic HTML generation, MVP 100% line coverage policy, and layered no-heap verification.
 
 ## Locked namespace scope
 
@@ -104,6 +107,24 @@
 - Finalize pass/fail criteria for each MVP namespace.
 - Define optional-namespace readiness gates by profile.
 - Confirm deterministic behavior requirements for every namespace profile.
+
+12. C++26 guideline execution
+- Define contract portability wrapper behavior across compiler/toolchain profiles.
+- Finalize concept taxonomy and naming for key API constraints.
+- Define ARM profile benchmark set and optimization acceptance thresholds.
+
+13. Packaging pipeline execution
+- Define exact production folder layout for per-function headers.
+- Define deterministic header ordering and include policy for amalgamation.
+- Define CI checks ensuring amalgamated header regeneration stays in sync.
+
+14. Quality toolchain execution
+- Define Catch2 test suite structure and generator coverage requirements.
+- Define sanitizer matrix by host profile and target exceptions.
+- Define linting gate thresholds and failure policy.
+- Define docs-sample test harness and Doxygen HTML publication flow.
+- Define coverage reporting and approved exclusion workflow.
+- Define no-heap gate implementation details across compile or link-time, runtime, and binary symbol checks.
 
 ## Comparison test focus to include
 

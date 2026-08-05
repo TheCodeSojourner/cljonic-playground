@@ -40,6 +40,9 @@ Constraints already decided:
 - `pattern_valid(p)` is available to explicitly check pattern validity.
 - High-fit namespace roadmap is locked with this MVP set: clojure.string, clojure.set, clojure.data, clojure.walk, clojure.zip.
 - Optional namespace set is: clojure.edn, clojure.math, clojure.uuid, clojure.instant, clojure.xml, clojure.core.reducers, clojure.parallel.
+- C++26 usage guidelines are locked: contracts at API/invariant boundaries with deterministic non-throwing violation handling, semantic concepts for compile-time API constraints, functional pipeline style with lazy transforms and explicit sinks, and ARM profile-specific optimization based on measured workloads.
+- Packaging is locked as header-only with separate production and tests directories, one function per production implementation header file, and automatic amalgamation of production headers into one distributable single header.
+- Quality toolchain is locked: Catch2 with generator-based test patterns, host-profile sanitizer usage, CI linting gates, Doxygen with sample code per public API, automatic testing of documented samples, automatic Doxygen HTML generation, MVP-core 100% line coverage policy with documented exclusions, and layered no-heap verification checks.
 
 Important working style:
 - Discussion only unless I explicitly ask for code or file changes.

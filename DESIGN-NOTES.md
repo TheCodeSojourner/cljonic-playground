@@ -117,3 +117,86 @@
 - clojure.xml: bounded subset parse/write behavior is explicit and deterministic.
 - clojure.core.reducers: lazy composition and reduction behavior avoid hidden materialization.
 - clojure.parallel: optional profile preserves deterministic single-thread fallback.
+
+## Locked C++26 usage guidelines
+
+### Contracts
+
+- Use contracts at public API boundaries and critical invariants.
+- Contract violation handling must be deterministic and non-throwing.
+- Route contract failures through one policy hook (for example terminate, trap, or assert), selected by build profile.
+- Use a portability wrapper so native contracts and fallback assertions can share one project API.
+- Use contracts for logic invariants, not for expected user-data variability already handled by sentinel semantics.
+
+### Concepts
+
+- Define semantic concepts for key roles (for example comparable under strict policy, keyword-key, sequence source, sink target).
+- Reject invalid API combinations at compile time.
+- Keep concepts small and composable to improve diagnostics.
+- Keep strict floating-point comparison exclusion encoded in concept constraints for canonical comparison APIs.
+
+### Functional style
+
+- Prefer pure free functions and immutable return style.
+- Keep transforms lazy by default and sinks explicit.
+- Avoid hidden side effects in pipeline operations.
+- Keep eager materialization APIs clearly named.
+
+### ARM optimization guidance
+
+- Optimize by target profile (for example Cortex-M versus Cortex-A), not one generic tuning set.
+- Prefer contiguous storage and predictable iteration.
+- Minimize branch-heavy hot paths in lookups and comparisons.
+- Favor static polymorphism in hot paths and avoid virtual dispatch where possible.
+- Keep frequently moved view/state objects compact and trivially copyable where practical.
+- Tune only after measurement on representative ARM hardware workloads.
+
+## Locked packaging model
+
+- The library is header-only.
+- Source organization separates production and tests directories.
+- Production implementation units are one function per file.
+- Implementation-unit files are headers within the production source tree.
+- A build automation step generates one distributable amalgamated header from all production headers.
+- The amalgamated header is treated as distribution output, while per-function headers remain the development source of truth.
+
+## Locked quality and verification toolchain
+
+### Testing framework
+
+- Catch2 is the primary testing framework.
+- Catch2 generators are required for parameterized and combinational coverage in tests.
+
+### Source layout
+
+- Production and test code are separated into dedicated directories.
+
+### Sanitizers
+
+- Sanitizers are required in host CI profiles.
+- At minimum, AddressSanitizer and UndefinedBehaviorSanitizer are enabled in host test profiles.
+- ThreadSanitizer is enabled for applicable host parallel profiles.
+- Sanitizers are profile-gated and not required for constrained embedded target builds.
+
+### Linting
+
+- Linting is required in CI.
+- clang-tidy and clang-format checks are enforced as quality gates.
+
+### Documentation and docs testing
+
+- Doxygen is required for public API documentation.
+- Every public function and data structure includes at least one sample code snippet.
+- Documented sample code is automatically compiled and tested in CI.
+- Doxygen HTML documentation is generated automatically in CI.
+
+### Coverage policy
+
+- Coverage enforcement is required in host CI profiles.
+- 100% line coverage is required for core MVP modules under the strict host profile.
+- Explicitly documented exclusions are allowed only for generated code, defensive unreachable branches, or platform stubs.
+
+### No-heap verification
+
+- A built-in verification gate ensures heap allocation is never used in strict profiles.
+- Verification uses layered checks: compile or link-time allocation prohibition, runtime allocation-counter assertions, and binary symbol checks for forbidden allocation APIs.
