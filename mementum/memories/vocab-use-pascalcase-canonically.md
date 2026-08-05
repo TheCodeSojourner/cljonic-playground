@@ -1,0 +1,1 @@
+💡 Canonical vocabulary terms should use PascalCase so they can be reused verbatim across gybis layers. Preserve spaced or hyphenated legacy phrasing only as deprecated synonyms in `vocabulary.md`.
