@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstddef>
+#include <type_traits>
 
 #include <concepts.hpp>
 
@@ -46,6 +47,15 @@ namespace cljonic
     public:
         using value_type = element_type;
 
+        template <typename... Args>
+            requires(sizeof...(Args) <= capacity_value) &&
+                        (std::is_convertible_v<Args, element_type> && ...)
+        constexpr Vector(Args... args) noexcept((std::is_nothrow_constructible_v<element_type, Args> && ...))
+            : storage_{static_cast<element_type>(args)...},
+              logical_size_{sizeof...(Args)}
+        {
+        }
+
         [[nodiscard]] static constexpr auto capacity_limit() noexcept -> std::size_t
         {
             return capacity_value;
@@ -78,6 +88,9 @@ namespace cljonic
         std::array<value_type, capacity_value> storage_{};
         std::size_t logical_size_ = 0;
     };
+
+    template <typename First, typename... Rest>
+    Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 
     template <concepts::VectorElement element_type, std::size_t capacity_value>
     [[nodiscard]] constexpr auto count(const Vector<element_type, capacity_value> &collection) noexcept -> std::size_t
