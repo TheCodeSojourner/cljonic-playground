@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.28)
 
 project(cljonic LANGUAGES CXX)
 
+# Architecture language baseline traceability: C++23.
+
 include(CTest)
 
 set(CLJONIC_VECTOR_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/vector.hpp" CACHE FILEPATH "Path to the production vector header used by integration tests.")
