@@ -218,6 +218,29 @@
 	- associative access uses `contains` before `get`
 	- indexed access uses `has_index` before `get`
 
+### Locked text encoding and string semantics
+
+- Supported cljonic text encoding policies are ASCII and UTF-8 only.
+- `String<N>` logical capacity is measured in characters, not raw code units.
+- In ASCII mode, one logical character maps to one code unit.
+- In UTF-8 mode, underlying storage is sized for worst-case UTF-8 code-unit width so `String<N>` still means room for `N` logical characters.
+- In UTF-8 mode, the unit of logical character semantics is the Unicode scalar value.
+- `count` on string returns logical character count, not code-unit count.
+- Canonical indexed string APIs are character-indexed:
+	- `get(string, i)` refers to the `i`th logical character
+	- `assoc(string, i, x)` updates the `i`th logical character
+- String slicing is character-range-based and must preserve UTF-8 sequence boundaries.
+- Regex behavior is text-encoding-policy-aware:
+	- ASCII mode remains ASCII-oriented
+	- UTF-8 mode accepts valid UTF-8 and preserves character boundaries in matching iteration
+	- canonical regex behavior does not imply full Unicode grapheme, collation, or case-folding semantics
+- Canonical string values in UTF-8 mode must be valid UTF-8.
+- Invalid UTF-8 is rejected by canonical string and regex entry points:
+	- compile-time-known invalid UTF-8 is a compile-time error
+	- runtime invalid UTF-8 is not admitted into canonical string semantics; any future raw code-unit APIs are the only place invalid sequences may be accepted
+- `nth` is not part of the canonical MVP collection surface today.
+- If `nth` is adopted later for indexed collections, it follows the same indexing semantics as `get`; for string in UTF-8 mode, `nth` refers to the `n`th Unicode scalar value.
+
 ### Locked core collection API surface and capacity behavior
 
 - Canonical API style is free-function-first; member wrappers are optional and non-canonical.
@@ -245,9 +268,12 @@
 	- if capacity is full, returns unchanged value.
 - `count`
 	- returns logical element count, not capacity.
+- string `count` returns logical character count.
 - `first` and `rest`
 	- empty source returns sentinel (`first`) or empty same-type (`rest`).
 	- lazy sequence overloads must remain non-materializing by default.
+- string `get` and `assoc` are character-indexed, not code-unit-indexed.
+
 
 ### Locked comparator override direction
 
