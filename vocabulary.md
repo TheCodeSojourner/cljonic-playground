@@ -288,6 +288,13 @@ status: draft
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Canonical APIs are free-function-first, transforms remain lazy by default, and eager materialization is explicit.
 
+### CanonicalCollectionOperationFamily
+- **Definition:** The canonical free-operation surface for collection behavior: `count`, `get`, `assoc`, `dissoc`, `conj`, `contains`, `first`, and `rest`. Names and semantics default to Clojure-aligned behavior unless constrained divergence is explicitly documented.
+- **Deprecated Synonyms:** canonical operation set, collection operation family
+- **Related:** ClojureParity, FunctionalStyle, CopyOnModifyCollection, ProbeFirstAccess
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A new collection operation should prefer one of the canonical names before introducing a new name, and any constrained semantic divergence is documented in specs and tests.
+
 ### BuildProfile
 - **Definition:** A named configuration mode that selects capability and verification differences without changing the core API vocabulary.
 - **Deprecated Synonyms:** profile, build profile
