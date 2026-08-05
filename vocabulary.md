@@ -9,7 +9,7 @@ status: draft
 ### CopyOnModifyCollection
 - **Definition:** A fixed-capacity value type backed by static storage that returns a modified copy instead of mutating in place. In this repo, vector, set, map, and string all follow this model.
 - **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection
-- **Related:** SentinelBasedAccess, KeywordCatalog, LazySequence, ThreadingForm
+- **Related:** Vector, Map, Set, String, SentinelBasedAccess, KeywordCatalog, LazySequence, ThreadingForm
 - **Usage:** Specification and implementation
 - **Examples:** `auto xs = vector<4>{1, 2, 3}; auto ys = conj(xs, 4);`
 
@@ -37,14 +37,35 @@ status: draft
 ### Keyword
 - **Definition:** A symbolic key value represented in code by a member of `cljonic::Keyword`. Keywords are global-only in the domain sense: they do not use Clojure-style namespace-qualified keyword identities, even though the C++ type itself may live in a namespace.
 - **Deprecated Synonyms:** global keyword, keyword value, enum keyword
-- **Related:** KeywordCatalog, String, CopyOnModifyCollection
+- **Related:** KeywordCatalog, Map, String, CopyOnModifyCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Map` may use a `Keyword` key such as `kw::name` or `kw::user_id`, with `using kw = cljonic::Keyword;` at the use site.
+
+### Vector
+- **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
+- **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
+- **Related:** CopyOnModifyCollection, String, ProbeFirstAccess, CapacityConstruction
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A `Vector` supports operations such as `get`, `assoc`, `conj`, `count`, `first`, and `rest`, with out-of-bounds indexed access returning a sentinel element.
+
+### Map
+- **Definition:** The cljonic fixed-capacity associative collection type with content-based key lookup, immutable copy-on-modify updates, and intentionally unspecified iteration order.
+- **Deprecated Synonyms:** map collection, bounded map, fixed-capacity map
+- **Related:** CopyOnModifyCollection, Keyword, String, ContentEquality, SwapWithLastCompaction
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A `Map` supports `assoc`, `dissoc`, `contains`, and `get`, with duplicate-key `assoc` replacing an existing value in the returned copy.
+
+### Set
+- **Definition:** The cljonic fixed-capacity uniqueness-preserving collection type with content-based membership semantics and immutable copy-on-modify updates.
+- **Deprecated Synonyms:** set collection, bounded set, fixed-capacity set
+- **Related:** CopyOnModifyCollection, ContentEquality, UnchangedValueReturn, CapacityConstruction
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A `Set` supports `conj`, `dissoc`, `contains`, and `count`, with equality defined by logical content rather than storage order.
 
 ### String
 - **Definition:** The cljonic fixed-capacity string collection type. It is the bounded string value model for the library and is also an allowed key category in strict MVP maps and sets.
 - **Deprecated Synonyms:** StaticString, static string, fixed-capacity string, string collection
-- **Related:** StaticStorage, CopyOnModifyCollection, Keyword, CapacityConstruction
+- **Related:** StaticStorage, CopyOnModifyCollection, Keyword, Vector, Map, Set, CapacityConstruction
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `String` may be used as a bounded collection value or as a valid key type under the locked MVP key model.
 
