@@ -1,0 +1,1 @@
+💡 When reporting Allium verification results to this user, suppress warnings that appear only in isolated single-file checks (for example unresolved relative import scope). Report warnings only if they still appear when checking the full relevant spec set together (dependency-aware check set or full specs analyse).
