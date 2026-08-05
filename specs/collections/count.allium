@@ -1,0 +1,71 @@
+-- allium: 3
+
+entity CountRequest {
+    count_state: pending | resolved | rejected
+    target_kind: vector | map | set | string
+    count_matches_target_cardinality: Boolean
+    empty_target_returns_zero: Boolean
+    count_result_is_non_negative: Boolean
+
+    transitions count_state {
+        pending -> resolved
+        pending -> rejected
+        terminal: resolved, rejected
+    }
+
+    invariant ResolvedCountRequiresCardinalityMatch {
+        this.count_state = resolved implies this.count_matches_target_cardinality = true
+    }
+
+    invariant ResolvedCountRequiresEmptyReturnsZero {
+        this.count_state = resolved implies this.empty_target_returns_zero = true
+    }
+
+    invariant ResolvedCountRequiresNonNegativeResult {
+        this.count_state = resolved implies this.count_result_is_non_negative = true
+    }
+}
+
+rule ResolveCountSemantics {
+    when: Count(request)
+    requires: request.count_state = pending
+    requires: request.target_kind in {vector, map, set, string}
+    requires: request.count_matches_target_cardinality = true
+    requires: request.empty_target_returns_zero = true
+    requires: request.count_result_is_non_negative = true
+    ensures: request.count_state = resolved
+}
+
+rule RejectCountSemanticsOnCardinalityMismatch {
+    when: Count(request)
+    requires: request.count_state = pending
+    requires: request.count_matches_target_cardinality = false
+    ensures: request.count_state = rejected
+}
+
+rule RejectCountSemanticsOnEmptyBehaviorMismatch {
+    when: Count(request)
+    requires: request.count_state = pending
+    requires: request.count_matches_target_cardinality = true
+    requires: request.empty_target_returns_zero = false
+    ensures: request.count_state = rejected
+}
+
+rule RejectCountSemanticsOnInvalidResultRange {
+    when: Count(request)
+    requires: request.count_state = pending
+    requires: request.count_matches_target_cardinality = true
+    requires: request.empty_target_returns_zero = true
+    requires: request.count_result_is_non_negative = false
+    ensures: request.count_state = rejected
+}
+
+actor CountOperator { identified_by: CountRequest where count_request.count_state = pending }
+
+surface CountSurface {
+    facing operator: CountOperator
+    context request: CountRequest where request = operator
+
+    provides:
+        Count(request)
+}
