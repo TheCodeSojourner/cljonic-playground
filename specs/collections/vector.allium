@@ -1,7 +1,7 @@
 -- allium: 3
 
 entity VectorCollection {
-    collection_state: unclassified | empty | populated | at_capacity | invalid
+    collection_state: unclassified | empty | populated | at_capacity
     capacity_limit: Integer
     logical_size: Integer
 
@@ -9,20 +9,18 @@ entity VectorCollection {
         unclassified -> empty
         unclassified -> populated
         unclassified -> at_capacity
-        unclassified -> invalid
-        terminal: invalid
     }
 
     invariant CapacityIsNonNegative {
         this.capacity_limit >= 0
     }
 
-    invariant LogicalSizeIsNonNegativeWhenValid {
-        this.collection_state != invalid implies this.logical_size >= 0
+    invariant LogicalSizeIsNonNegative {
+        this.logical_size >= 0
     }
 
-    invariant LogicalSizeDoesNotExceedCapacityWhenValid {
-        this.collection_state != invalid implies this.logical_size <= this.capacity_limit
+    invariant LogicalSizeDoesNotExceedCapacity {
+        this.logical_size <= this.capacity_limit
     }
 
     invariant EmptyStateMeansZeroSize {
@@ -36,20 +34,6 @@ entity VectorCollection {
     invariant AtCapacityStateMeansSizeEqualsCapacity {
         this.collection_state = at_capacity implies this.logical_size = this.capacity_limit
     }
-}
-
-rule ClassifyVectorAsInvalidOnNegativeSize {
-    when: ObserveVector(vector)
-    requires: vector.collection_state = unclassified
-    requires: vector.logical_size < 0
-    ensures: vector.collection_state = invalid
-}
-
-rule ClassifyVectorAsInvalidOnOverflowSize {
-    when: ObserveVector(vector)
-    requires: vector.collection_state = unclassified
-    requires: vector.logical_size > vector.capacity_limit
-    ensures: vector.collection_state = invalid
 }
 
 rule ClassifyVectorAsEmpty {
