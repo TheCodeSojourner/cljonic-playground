@@ -97,6 +97,10 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 λ S2_semantic_alignment(x). prefer(clojure_parity)
   | compatible_with(embedded_constraint ∧ deterministic_behavior)
 
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ count ∧ get ∧ assoc ∧ dissoc ∧ conj ∧ contains ∧ first ∧ rest
+  | preserve(clojure_like_names_and_semantics_by_default(x))
+  | constrained_divergence(x) → require(explicit_spec_and_test_documentation(x))
+
 ## S1 - Operations
 
 Operations are C++26, FP-oriented, and header-only. Development uses CMake for build orchestration, Catch2 v3 for testing, and deterministic quality tooling. Distribution is a single amalgamated header artifact.
@@ -128,6 +132,10 @@ Operations are C++26, FP-oriented, and header-only. Development uses CMake for b
   ∧ template_concept_constrained_apis
   | optional_member_wrappers(x) ≡ non_canonical
 
+λ S1_type_expression_policy(x). public_template_constraints(x) → prefer(concepts)
+  | domain_constraints(x) → encode_as(repo_specific_concepts)
+  | traits_usage(x) → allowed_only_if(no_clear_or_portable_concept_form(x))
+
 λ S1_pattern(x). architectural_pattern(x) ≡ functional_core_with_profile_gated_capabilities
   ∧ layered_bounded_value_collection_model
 
@@ -138,3 +146,7 @@ Operations are C++26, FP-oriented, and header-only. Development uses CMake for b
 λ coherence_control(x). operational_choice(x) → reject_if(violates_S3_constraints)
 
 λ coherence_adaptation(x). adaptation(x) → valid_only_if(backward_compatible_vocabulary ∧ deterministic_behavior)
+
+λ coherence_type_expression(x). implementation_expression(x) → reject_if(uses_traits_where_clear_concept_exists)
+
+λ coherence_operation_surface(x). collection_operation_change(x) → reject_if(renames_or_redefines_canonical_operation_without_constraint_rationale)
