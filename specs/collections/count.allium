@@ -1,8 +1,11 @@
 -- allium: 3
 
+use "./vector.allium" as vector
+
 entity CountRequest {
     count_state: pending | resolved | rejected
     target_kind: vector | map | set | string
+    vector_subject: vector/VectorCollection?
     count_matches_target_cardinality: Boolean
     empty_target_returns_zero: Boolean
     count_result_is_non_negative: Boolean
@@ -23,6 +26,14 @@ entity CountRequest {
 
     invariant ResolvedCountRequiresNonNegativeResult {
         this.count_state = resolved implies this.count_result_is_non_negative = true
+    }
+
+    invariant VectorTargetRequiresVectorSubject {
+        this.target_kind = vector implies this.vector_subject != null
+    }
+
+    invariant VectorSubjectRequiresValidVectorState {
+        this.vector_subject != null implies this.vector_subject.collection_state in {empty, populated, at_capacity}
     }
 }
 
