@@ -204,10 +204,38 @@ status: draft
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Range precomputes internal fields when inputs are compile-time constants, and some validations are intended to fail during compilation.
 
+### Regex
+- **Definition:** The cljonic regex abstraction for pattern-based text matching, designed to support profile-specific implementations without changing the public vocabulary.
+- **Deprecated Synonyms:** regular expression, regex abstraction
+- **Related:** RegexProfile, StableHandleModel, RegexPattern, RegexMatcher
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** Regex behavior is exposed through stable pattern and matcher abstractions rather than profile-specific public API names.
+
+### RegexPattern
+- **Definition:** The compiled or compile-time-formed regex value used as the reusable pattern handle for matching operations.
+- **Deprecated Synonyms:** regex pattern, pattern handle, compiled pattern
+- **Related:** Regex, PatternValidityProbe, InvalidPatternSentinel, StableHandleModel
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** A `RegexPattern` may come from a compile-time-oriented path or a runtime `re-pattern` path while preserving the same public handle model.
+
+### RegexMatcher
+- **Definition:** The regex matching abstraction that applies a RegexPattern to input text and exposes match behavior without changing public API shape across profiles.
+- **Deprecated Synonyms:** regex matcher, matcher handle
+- **Related:** Regex, RegexPattern, RegexProfile
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** A runtime `re-matcher` operation produces a `RegexMatcher` associated with a `RegexPattern` and an input string.
+
+### RegexLiteral
+- **Definition:** A regex expression provided in source form, especially in compile-time-oriented flows where the pattern text is part of the program and may be validated during compilation.
+- **Deprecated Synonyms:** regex literal, pattern literal
+- **Related:** RegexPattern, CompileTimeEvaluation, RegexProfile
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** Compile-time regex support may accept a `RegexLiteral` and produce a `RegexPattern` during compilation.
+
 ### RegexProfile
 - **Definition:** The capability mode that selects compile-time-oriented regex behavior by default and optionally enables runtime regex support without changing the public regex vocabulary.
 - **Deprecated Synonyms:** regex profile, compile-time regex profile, runtime regex profile
-- **Related:** BuildProfile, StableHandleModel, EmbeddedConstraint
+- **Related:** BuildProfile, StableHandleModel, EmbeddedConstraint, Regex, RegexPattern, RegexMatcher, RegexLiteral
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Strict embedded profiles may disable optional runtime regex support, while host-oriented profiles may permit `re-pattern` and `re-matcher`.
 
