@@ -1,12 +1,12 @@
 ## Session State
 
-- last_session_id: 2026-08-05T12:33:40-06:00
-- current_timestamp: 2026-08-05T12:33:40-06:00
-- recover: Propagate the approved architecture into initial behavioral specs in specs/ using canonical vocabulary terms from vocabulary.md.
+- last_session_id: 2026-08-05T13:02:37-06:00
+- current_timestamp: 2026-08-05T13:02:37-06:00
+- recover: Propagate validated specs in specs/architecture/*.allium into implementation and tests via /gybis-spec-propagate.
 
 ## Task
 
-- Elicit, tighten, validate, and harden the initial VSM architecture for cljonic using DESIGN-NOTES.md and vocabulary.md.
+- Propagate the approved VSM architecture into initial Allium specs, eliminate architecture coherence drift, and validate both architecture and specs to zero diagnostics.
 
 ## Questions
 
@@ -15,16 +15,16 @@
 
 ## Decisions
 
-- A new `architecture.md` was created with complete VSM layers S5 through S1 using symbol-first lambda notation.
-- S1 is locked to C++26, FP-oriented architecture, Catch2 v3, CMake, and header-only distribution via a single amalgamated header artifact.
-- Coherence warning for referenced-but-undefined primitives was resolved by defining `profile_gates(x)`, `stable_handle_model(x)`, and `quality_gates(x)` directly in `architecture.md`.
-- Mandatory guardrails were made concrete with explicit quality thresholds (core MVP host coverage = 100, ASan+UBSan required in host profiles, TSan for host parallel profiles), plus deterministic enforcement (`any_quality_gate_fails(x) → reject_change(x)`).
-- Placeholder S1 operational entries were replaced by explicit choices: `optional_dev_dependency_manager(x) ≡ none` and `remote_ci_pipeline(x) ≡ not_required_for_current_scope`.
+- Created initial architecture specification set in `specs/architecture/`: `identity.allium`, `adaptation.allium`, `control.allium`, `coordination.allium`, and `operations.allium`.
+- Added governance surfaces and actor/context bindings so all rule triggers are reachable and all generated spec diagnostics are cleared.
+- Tightened operations constraints by explicitly binding static analysis (`cppcheck_and_include_what_you_use`) and docs tooling (`doxygen_html_site`) into readiness invariants.
+- Fixed architecture coherence naming drift by replacing `maintain_stable_handle_model(x)` with `stable_handle_model(x)` in `architecture.md`.
 - `gybis-arch-check` now reports PASS with zero errors, zero warnings, and zero infos.
+- `gybis-spec-check` now reports PASS with zero per-file diagnostics and zero set-level issues.
 
 ## Next
 
-- Propagate the approved architecture into initial behavioral specs in specs/ using canonical vocabulary terms from vocabulary.md.
-- Keep architecture/spec alignment tight by preserving explicit primitive definitions and concrete gate thresholds in any downstream spec clauses.
+- Run `/gybis-spec-propagate` to generate implementation and test artifacts from validated `specs/architecture/*.allium`.
+- Preserve architecture/spec synchronization by keeping primitive names and quality-gate thresholds identical across architecture, specs, tests, and code.
 - Revisit optional remote CI adoption only when scope expands beyond local Make-target workflows.
 
