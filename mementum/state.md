@@ -1,8 +1,8 @@
 ## Session State
 
 - last_session_id: 2026-08-05T13:55:46-06:00
-- current_timestamp: 2026-08-05T13:55:46-06:00
-- recover: Extend collections specs with standalone `get` semantics first, then re-run dependency-aware spec checks.
+- current_timestamp: 2026-08-05T14:08:22-06:00
+- recover: Build artifacts are now ignored and bootstrap is documented; continue from tracked source files only when choosing between more spec-first tests and new collection semantics.
 
 ## Task
 
@@ -32,10 +32,17 @@
 - Refined `specs/collections/count.allium` from per-structure operation names to a single `Count(request)` operation model aligned with one standalone API name.
 - Added `specs/collections/vector.allium` as the first foundational collection contract with bounded size/capacity invariants and classification rules that support `count` semantics.
 - Confirmed verification policy: import-scoped single-file warnings are treated as non-actionable noise when they do not reproduce in dependency-aware/full-set checks.
+- Added a minimal CMake-based Catch2 v3 harness at repository root that fetches its own dependency, builds `cljonic_tests`, and discovers tests through `catch_discover_tests`.
+- Added executable vector spec example tests covering invalid, empty, populated, and at-capacity classification behavior, plus a gated integration test that skips by default until a production vector header exists.
+- Verified the harness with `cmake -S . -B build`, `cmake --build build`, and `ctest --test-dir build --output-on-failure` (2 passed, 1 skipped).
+- Verified the missing-implementation error path with `cmake -S . -B build-missing-vector -DCLJONIC_ENABLE_VECTOR_IMPLEMENTATION_TESTS=ON`, which fails at configure time with a targeted message when `src/cljonic/vector.hpp` is absent.
+- Removed the manual integration-test toggle so the default `ctest` path always runs all available tests and automatically skips integration coverage when the production vector header is absent.
+- Ignored generated CMake build directories in `.gitignore`; local `build/` trees and fetched Catch2 content are no longer candidates for Git tracking.
+- Added a root `README.md` documenting clean-repo bootstrap steps (`cmake -S . -B build`, `cmake --build build`, `ctest --test-dir build --output-on-failure`) and clarifying which files belong in Git versus local build output.
 
 ## Next
 
-- Extend collections specs with standalone `get` semantics first, then re-run dependency-aware spec checks.
+- Continue from tracked source files only: either expand spec-first test coverage around current vector behavior or return to standalone `get` semantics before production implementation.
 - Add minimal `assoc` and `conj` collection behavior slices after `get`, preserving one standalone function name per operation family.
 - Continue keeping warning reporting filtered to dependency-aware/full-set checks only.
 - Keep architecture and collection specs synchronized on deterministic, no-heap, no-exception constraints.

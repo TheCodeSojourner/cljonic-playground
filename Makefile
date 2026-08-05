@@ -8,15 +8,15 @@ BUILD_DIR ?= build
 
 help:
 	@printf '%-12s %s\n' 'help' 'Show available targets'
-	@printf '%-12s %s\n' 'all' 'Clean, configure, rebuild, and run tests'
-	@printf '%-12s %s\n' 'test' 'Incrementally rebuild what changed and run tests'
+	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
+	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and parallel test run'
 	@printf '%-12s %s\n' 'clean' 'Remove generated local build output'
 
 all: clean test
 
 test: configure
-	$(CMAKE) --build $(BUILD_DIR)
-	$(CTEST) --test-dir $(BUILD_DIR) --output-on-failure
+	$(CMAKE) --build $(BUILD_DIR) --parallel
+	$(CTEST) --test-dir $(BUILD_DIR) --output-on-failure --parallel
 
 configure: $(BUILD_DIR)/CMakeCache.txt
 

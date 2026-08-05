@@ -39,13 +39,15 @@ make all
 
 This runs the full workflow. It removes local generated build output, configures the project, rebuilds the test suite from a clean state, and runs all discovered tests.
 
+Build and test execution are always parallelized.
+
 ### Incremental Test Run
 
 ```sh
 make test
 ```
 
-This reuses the existing build tree, recompiles only what has changed, and then runs the test suite.
+This reuses the existing build tree, incrementally recompiles only what has changed using parallel build execution, and then runs the test suite in parallel.
 
 ### Clean Local Build Output
 
@@ -57,7 +59,7 @@ This removes generated local build directories so the repository is ready for re
 
 ## Under The Hood
 
-The `make` targets drive the existing CMake test harness. The first configure creates the local `build/` directory and fetches Catch2 automatically through CMake `FetchContent`.
+The `make` targets drive the existing CMake test harness. The first configure creates the local `build/` directory and fetches Catch2 automatically through CMake `FetchContent`. The build path always uses `cmake --build ... --parallel`, and tests always run with `ctest --parallel`.
 
 ## What Belongs In Git
 
