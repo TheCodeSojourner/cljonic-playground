@@ -1,39 +1,30 @@
 ## Session State
 
-- last_session_id: 2026-08-05T11:32:07-06:00
-- current_timestamp: 2026-08-05T11:34:04-06:00
-- recover: Distill a starting architecture from DESIGN-NOTES.md using vocabulary.md as the canonical term set.
+- last_session_id: 2026-08-05T12:33:40-06:00
+- current_timestamp: 2026-08-05T12:33:40-06:00
+- recover: Propagate the approved architecture into initial behavioral specs in specs/ using canonical vocabulary terms from vocabulary.md.
 
 ## Task
 
-- Tend and validate the initial canonical vocabulary for the cljonic C++26 header-only library using README.md as an additional source.
+- Elicit, tighten, validate, and harden the initial VSM architecture for cljonic using DESIGN-NOTES.md and vocabulary.md.
 
 ## Questions
 
-- Whether any further durable vocabulary additions are needed before architecture distillation.
-- Whether future low-level raw code-unit APIs should exist alongside the canonical character-indexed string APIs.
+- Whether and when a remote CI pipeline should replace or complement the current local Make-target workflow.
+- Whether any future optional development dependency manager should be introduced or keep the explicit `none` decision.
 
 ## Decisions
 
-- Canonical vocabulary terms use PascalCase and should propagate verbatim into architecture, specs, tests, code, and docs.
-- Vocabulary includes durable cross-layer concepts and excludes incidental examples or one-off implementation details.
-- Concrete cljonic collection nouns are explicit: Vector, Map, Set, and String.
-- Keyword representation is modeled as `cljonic::Keyword` with ergonomic use-site aliasing such as `kw::name`; keywords are global-only in the domain sense, not Clojure-style namespaced identifiers.
-- Text configuration is modeled as `StringEncoding` with only `AsciiEncoding` and `Utf8Encoding`.
-- String uses the character-capacity worst-case model: `String<N>` means `N` logical characters, with UTF-8 reserving worst-case code-unit storage.
-- In UTF-8 mode, canonical string semantics operate on UnicodeScalarValue units.
-- String `count` is logical character count; canonical `get` and `assoc` are character-indexed; slicing is character-range-based and preserves UTF-8 boundaries.
-- Canonical UTF-8 strings must be valid UTF-8; compile-time-known invalid UTF-8 is a compile-time error, and runtime invalid UTF-8 is rejected from canonical string semantics.
-- Bounded numeric semantics are locked through ClosedNumericDomain, NumericPromotionPolicy, CommonTypeLattice, StaticallyBoundedResult, and DeterministicOverflowPolicy, without bigint support.
-- `DefaultElement` is a canonical vocabulary term because it names a user-visible semantic concept distinct from the broader `SentinelBasedAccess` model.
-- README phrasing such as `deep copy on write` is preserved only as deprecated synonym material under `CopyOnModifyCollection`, not as a new canonical term.
-- `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` and similar README-specific configuration knobs are incidental implementation details and stay out of `vocabulary.md`.
-- `vocabulary.md` currently passes structural, completeness, and relationship validation with zero issues.
+- A new `architecture.md` was created with complete VSM layers S5 through S1 using symbol-first lambda notation.
+- S1 is locked to C++26, FP-oriented architecture, Catch2 v3, CMake, and header-only distribution via a single amalgamated header artifact.
+- Coherence warning for referenced-but-undefined primitives was resolved by defining `profile_gates(x)`, `stable_handle_model(x)`, and `quality_gates(x)` directly in `architecture.md`.
+- Mandatory guardrails were made concrete with explicit quality thresholds (core MVP host coverage = 100, ASan+UBSan required in host profiles, TSan for host parallel profiles), plus deterministic enforcement (`any_quality_gate_fails(x) → reject_change(x)`).
+- Placeholder S1 operational entries were replaced by explicit choices: `optional_dev_dependency_manager(x) ≡ none` and `remote_ci_pipeline(x) ≡ not_required_for_current_scope`.
+- `gybis-arch-check` now reports PASS with zero errors, zero warnings, and zero infos.
 
 ## Next
 
-- Orientation startup gate completed for this session at 2026-08-05T11:34:04-06:00.
-- Distill a starting architecture from DESIGN-NOTES.md constrained by vocabulary.md.
-- Use the architecture pass to organize the durable concerns: embedded constraints, bounded numeric policy, text encoding model, regex profiles, namespace roadmap, and verification gates.
-- Decide later whether to introduce explicit raw code-unit string APIs or keep only canonical character-indexed APIs in the first specification pass.
+- Propagate the approved architecture into initial behavioral specs in specs/ using canonical vocabulary terms from vocabulary.md.
+- Keep architecture/spec alignment tight by preserving explicit primitive definitions and concrete gate thresholds in any downstream spec clauses.
+- Revisit optional remote CI adoption only when scope expands beyond local Make-target workflows.
 

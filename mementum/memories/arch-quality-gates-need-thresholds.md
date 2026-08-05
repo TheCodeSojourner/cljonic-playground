@@ -1,0 +1,1 @@
+💡 A mandatory quality gate is ambiguous until it states measurable criteria and fail behavior. Encode concrete thresholds directly in architecture lambdas (for example core MVP line coverage = 100 in host profiles, ASan+UBSan required, TSan for host parallel profiles) and add explicit enforcement (`any_quality_gate_fails(x) → reject_change(x)`).
