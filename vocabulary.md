@@ -63,9 +63,9 @@ status: draft
 - **Examples:** A `Set` supports `conj`, `dissoc`, `contains`, and `count`, with equality defined by logical content rather than storage order.
 
 ### String
-- **Definition:** The cljonic fixed-capacity string collection type. Its logical capacity is measured in characters, while its physical storage is measured in code units under the active text encoding policy. In UTF-8 mode, storage is sized for the worst-case number of code units needed to hold the declared character capacity.
+- **Definition:** The cljonic fixed-capacity string collection type. Its logical capacity is measured in characters, while its physical storage is measured in code units under the active StringEncoding. In UTF-8 mode, storage is sized for the worst-case number of code units needed to hold the declared character capacity.
 - **Deprecated Synonyms:** StaticString, static string, fixed-capacity string, string collection
-- **Related:** CharType, TextEncodingPolicy, CharacterCapacity, CodeUnitCapacity, StaticStorage, CopyOnModifyCollection, Keyword, Vector, Map, Set, CapacityConstruction
+- **Related:** StringEncoding, CharacterCapacity, CodeUnitCapacity, StaticStorage, CopyOnModifyCollection, Keyword, Vector, Map, Set, CapacityConstruction
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `String<32>` means room for 32 characters; in UTF-8 mode its backing storage may reserve worst-case code-unit capacity to preserve that logical character capacity.
 
@@ -82,6 +82,13 @@ status: draft
 - **Related:** LazySequence, CopyOnModifyCollection
 - **Usage:** Specification and implementation
 - **Examples:** `into_vector<16>(xs)`, reduction endpoints, or other named sink operations.
+
+### StringEncoding
+- **Definition:** The cljonic-global compile-time enum-class setting that selects the supported string and text behavior for string and regex-related APIs. Consumers choose ASCII or UTF-8, and the remaining string semantics follow from that choice.
+- **Deprecated Synonyms:** TextEncodingPolicy, text encoding mode, string encoding policy
+- **Related:** AsciiEncoding, Utf8Encoding, String, RegexProfile
+- **Usage:** Specification and implementation
+- **Examples:** A consumer chooses `cljonic::StringEncoding::Ascii` or `cljonic::StringEncoding::Utf8`, and string-related APIs compile and run under the selected setting.
 
 ### ThreadingForm
 - **Definition:** A composition API that improves readability by passing the prior result through a sequence of steps in a defined argument position. The canonical forms are `thread_first`, `thread_last`, `as_thread`, `cond_thread_first`, and `cond_thread_last`.
@@ -112,9 +119,9 @@ status: draft
 - **Examples:** `equal(1.0, 1.0)` is rejected under canonical APIs, while an explicit comparator-based override may be allowed.
 
 ### CodeUnit
-- **Definition:** The atomic storage unit used by cljonic text representations under the active encoding policy. A code unit is the element type stored in the underlying string buffer.
+- **Definition:** The atomic storage unit used by cljonic text representations under the active StringEncoding. A code unit is the element type stored in the underlying string buffer.
 - **Deprecated Synonyms:** text code unit, storage character unit
-- **Related:** CharType, TextEncodingPolicy, CodeUnitCapacity, UnicodeScalarValue, String
+- **Related:** StringEncoding, CodeUnitCapacity, UnicodeScalarValue, String
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** In ASCII mode one character maps to one code unit, while in UTF-8 mode one character may occupy multiple code units.
 
@@ -125,36 +132,29 @@ status: draft
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** In UTF-8 mode, `count`, `get`, `assoc`, and slicing operate on Unicode scalar values rather than raw code units.
 
-### TextEncodingPolicy
-- **Definition:** The cljonic-global compile-time text setting that selects the supported text encoding behavior for string and regex-related APIs.
-- **Deprecated Synonyms:** text encoding mode, string encoding policy
-- **Related:** AsciiEncoding, Utf8Encoding, CharType, String, RegexProfile
-- **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A consumer chooses between `AsciiEncoding` and `Utf8Encoding`, and string-related APIs compile and run under the selected policy.
-
 ### AsciiEncoding
-- **Definition:** The text encoding policy in which cljonic strings interpret each character as a single ASCII code unit.
+- **Definition:** The StringEncoding mode in which cljonic strings interpret each character as a single ASCII code unit.
 - **Deprecated Synonyms:** ASCII mode, ASCII string mode
-- **Related:** TextEncodingPolicy, CodeUnit, CharacterCapacity, CodeUnitCapacity
+- **Related:** StringEncoding, CodeUnit, CharacterCapacity, CodeUnitCapacity
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** In `AsciiEncoding`, a `String<32>` reserves space for 32 code units because one character always maps to one code unit.
 
 ### Utf8Encoding
-- **Definition:** The text encoding policy in which cljonic strings store UTF-8 code units while preserving a logical character-capacity contract through worst-case storage sizing.
+- **Definition:** The StringEncoding mode in which cljonic strings store UTF-8 code units while preserving a logical character-capacity contract through worst-case storage sizing.
 - **Deprecated Synonyms:** UTF-8 mode, UTF-8 string mode
-- **Related:** TextEncodingPolicy, CodeUnit, UnicodeScalarValue, CharacterCapacity, CodeUnitCapacity
+- **Related:** StringEncoding, CodeUnit, UnicodeScalarValue, CharacterCapacity, CodeUnitCapacity
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** In `Utf8Encoding`, a `String<32>` may reserve up to four code units per declared character capacity slot.
 
 ### CharacterCapacity
-- **Definition:** The logical maximum number of characters a cljonic string promises to hold under the active text encoding policy.
+- **Definition:** The logical maximum number of characters a cljonic string promises to hold under the active StringEncoding.
 - **Deprecated Synonyms:** logical string capacity, character-count capacity
-- **Related:** String, TextEncodingPolicy, UnicodeScalarValue, CodeUnitCapacity
+- **Related:** String, StringEncoding, UnicodeScalarValue, CodeUnitCapacity
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A consumer reading `String<32>` understands the `32` as character capacity rather than raw byte or code-unit capacity.
 
 ### CodeUnitCapacity
-- **Definition:** The physical underlying buffer capacity measured in code units, derived from character capacity and the active text encoding policy.
+- **Definition:** The physical underlying buffer capacity measured in code units, derived from character capacity and the active StringEncoding.
 - **Deprecated Synonyms:** storage capacity, encoded buffer capacity
 - **Related:** String, CodeUnit, CharacterCapacity, Utf8Encoding
 - **Usage:** Architecture, specification, implementation, tests, and documentation
@@ -180,13 +180,6 @@ status: draft
 - **Related:** FloatingPointExclusion, ClosedNumericDomain
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `float` or `double` values may be present in non-canonical or opt-in contexts even when canonical comparison rejects them.
-
-### CharType
-- **Definition:** The cljonic namespace global code-unit type used by `String` and text-oriented APIs. It defaults to ASCII-oriented `char` and participates in the active text encoding policy chosen by the library consumer.
-- **Deprecated Synonyms:** character type, text code-unit type, cljonic char type
-- **Related:** CodeUnit, TextEncodingPolicy, String, Regex, StaticStorage
-- **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A consumer may keep `cljonic::CharType = char` under `AsciiEncoding`, or use the same underlying code-unit type under `Utf8Encoding` while changing the interpretation and storage policy.
 
 ### ClosedNumericDomain
 - **Definition:** The finite, explicitly enumerated set of numeric value categories supported by the library under a given profile, with no implicit escape to unbounded numeric representations.
