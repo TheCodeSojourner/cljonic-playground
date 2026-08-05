@@ -162,6 +162,76 @@ status: draft
 - **Usage:** Implementation, build, tests, and documentation
 - **Examples:** Build automation regenerates the distributable header from the production header tree.
 
+### CompileTimeEvaluation
+- **Definition:** The architectural distinction between behavior or validation performed during compile-time evaluation and behavior that remains available at runtime.
+- **Deprecated Synonyms:** compile-time evaluation, constexpr/consteval boundary
+- **Related:** SemanticConcept, BuildProfile, RegexProfile
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** Range precomputes internal fields when inputs are compile-time constants, and some validations are intended to fail during compilation.
+
+### RegexProfile
+- **Definition:** The capability mode that selects compile-time-oriented regex behavior by default and optionally enables runtime regex support without changing the public regex vocabulary.
+- **Deprecated Synonyms:** regex profile, compile-time regex profile, runtime regex profile
+- **Related:** BuildProfile, StableHandleModel, EmbeddedConstraint
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** Strict embedded profiles may disable optional runtime regex support, while host-oriented profiles may permit `re-pattern` and `re-matcher`.
+
+### StableHandleModel
+- **Definition:** The API design rule that profile changes must not force a public regex API shape change; capabilities vary behind stable handles rather than by renaming the user-facing abstraction.
+- **Deprecated Synonyms:** stable handle model, stable handle API
+- **Related:** RegexProfile, BuildProfile
+- **Usage:** Architecture, specification, implementation, and documentation
+- **Examples:** Compile-time and runtime regex modes share a stable pattern handle interface even when backing behavior differs.
+
+### NamespaceAdoptionRoadmap
+- **Definition:** The staged scope plan that defines which Clojure namespaces are considered high-fit, which belong to MVP, which are optional, and in what order they should be adopted.
+- **Deprecated Synonyms:** namespace roadmap, high-fit namespace roadmap
+- **Related:** MvpNamespaceCutLine, OptionalNamespaceCutLine, NamespacePhaseOrder, ClojureParity
+- **Usage:** Architecture, specification, planning, and documentation
+- **Examples:** `clojure.string` and `clojure.set` are in the MVP cut line, while `clojure.parallel` is optional and later-phase.
+
+### MvpNamespaceCutLine
+- **Definition:** The explicit boundary separating namespaces required for the minimum viable product from namespaces deferred beyond the initial system scope.
+- **Deprecated Synonyms:** MVP namespace cut line, MVP scope boundary
+- **Related:** NamespaceAdoptionRoadmap, OptionalNamespaceCutLine
+- **Usage:** Architecture, specification, planning, and documentation
+- **Examples:** `clojure.string`, `clojure.set`, `clojure.data`, `clojure.walk`, and `clojure.zip` define the current MVP namespace boundary.
+
+### OptionalNamespaceCutLine
+- **Definition:** The explicit boundary identifying namespaces that remain supported conceptually but are intentionally excluded from MVP scope.
+- **Deprecated Synonyms:** optional namespace cut line, deferred namespace scope
+- **Related:** NamespaceAdoptionRoadmap, MvpNamespaceCutLine
+- **Usage:** Architecture, specification, planning, and documentation
+- **Examples:** `clojure.edn`, `clojure.xml`, and `clojure.parallel` remain outside initial MVP scope.
+
+### NamespacePhaseOrder
+- **Definition:** The ordered rollout plan that sequences namespace adoption by foundation, structure, format, and performance concerns.
+- **Deprecated Synonyms:** phase order, namespace phase order
+- **Related:** NamespaceAdoptionRoadmap, MvpNamespaceCutLine, OptionalNamespaceCutLine
+- **Usage:** Architecture, planning, and documentation
+- **Examples:** Phase 1 focuses on foundation namespaces before structural or format-oriented namespaces are added.
+
+### SourceLayout
+- **Definition:** The structural organization rule separating production headers, test code, and generated distribution artifacts into distinct locations with clear source-of-truth boundaries.
+- **Deprecated Synonyms:** source layout, production/test separation
+- **Related:** HeaderOnlyDistribution, AmalgamatedHeader, QualityGate
+- **Usage:** Architecture, implementation, build, tests, and documentation
+- **Examples:** Production headers remain the development source of truth while tests live in a separate tree and generated output is treated as distribution.
+
+### QualityGate
+- **Definition:** A required validation checkpoint in CI or local workflows that enforces a non-optional engineering constraint before changes are accepted.
+- **Deprecated Synonyms:** quality gate, enforcement gate
+- **Related:** NoHeapVerification, BuildProfile, DeterministicBehavior, SourceLayout
+- **Usage:** Architecture, implementation, tests, CI, and documentation
+- **Examples:** Linting, sanitizer runs, coverage thresholds, and docs sample compilation are all quality gates.
+
+### NoHeapVerification
+- **Definition:** The layered verification regime that proves strict profiles do not use heap allocation through compile-time or link-time prohibition, runtime counters, and binary symbol checks.
+- **Deprecated Synonyms:** no-heap verification, heap-allocation verification gate
+- **Related:** NoHeapConstraint, QualityGate, BuildProfile
+- **Usage:** Architecture, implementation, tests, CI, and documentation
+- **Examples:** Host verification profiles can fail the build when forbidden allocation symbols are present or runtime allocation counters are incremented.
+
 ## Relationship Notes
 
 - CopyOnModifyCollection is the foundational value model for the repo.
@@ -174,3 +244,6 @@ status: draft
 - EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, StaticStorage, and DeterministicBehavior define the platform and execution constraints.
 - ContractPolicy, SemanticConcept, and BuildProfile define how correctness and portability constraints are expressed across layers.
 - HeaderOnlyDistribution and AmalgamatedHeader define the packaging vocabulary for build and user documentation.
+- CompileTimeEvaluation, RegexProfile, and StableHandleModel define capability boundaries that architecture must preserve across compile-time and runtime modes.
+- NamespaceAdoptionRoadmap, MvpNamespaceCutLine, OptionalNamespaceCutLine, and NamespacePhaseOrder define architectural scope and rollout boundaries.
+- SourceLayout, QualityGate, and NoHeapVerification define the structural and verification constraints that architecture must treat as first-class.
