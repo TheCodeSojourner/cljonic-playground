@@ -11,7 +11,7 @@ status: draft
 - **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection, deep copy on write, deep copying on write
 - **Related:** Vector, Map, Set, String, SentinelBasedAccess, KeywordCatalog, LazySequence, ThreadingForm
 - **Usage:** Specification and implementation
-- **Examples:** `auto xs = vector<4>{1, 2, 3}; auto ys = conj(xs, 4);`
+- **Examples:** `auto xs = Vector<int, 4>{1, 2, 3}; auto ys = conj(xs, 4);`
 
 ### SentinelBasedAccess
 - **Definition:** The access model where missing or invalid lookup returns a default sentinel value such as `T{}` or `char{}` instead of raising an error or returning an explicit status object.
