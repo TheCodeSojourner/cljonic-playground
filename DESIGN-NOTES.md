@@ -239,7 +239,7 @@
 	- map duplicate key updates value in returned copy.
 - `dissoc`
 	- immutable removal for set and map; missing target returns unchanged value.
-	- removal compacts storage; map preserves insertion order of remaining entries.
+	- removal compacts storage using swap-with-last; map iteration order is intentionally unspecified.
 - `conj`
 	- immutable append or insert for vector, set, map, and string.
 	- if capacity is full, returns unchanged value.
@@ -265,6 +265,34 @@
 - Threading steps must preserve no-heap and no-exception constraints and remain deterministic under current sentinel semantics.
 - Threaded sequence transforms remain lazy by default, and materialization remains explicit at sink operations only.
 - `some`-style threading variants (`some_thread_first`, `some_thread_last`) are deferred until an explicit validity concept is defined for reliable short-circuiting.
+
+### Locked threading step grammar
+
+- Canonical threading forms (`thread_first`, `thread_last`, `as_thread`, `cond_thread_first`, `cond_thread_last`) adopt dual-mode step input.
+- Steps may be provided either as direct callables or as explicit step descriptors.
+- Explicit step descriptors are the canonical documented form for diagnostics and examples.
+- Direct callable steps are supported for ergonomic shorthand.
+- Conditional threading forms accept conditional descriptors that carry both condition and step payload.
+- Step-local arity or concept mismatch remains a compile-time error.
+
+### Locked map internal layout behavior
+
+- Map storage remains array-backed and linear-search for strict MVP profiles.
+- Map key lookup and equality behavior are content-based; map iteration order is intentionally unspecified.
+- `assoc` on an existing key replaces the value in the existing slot of the returned copy.
+- `dissoc` on an existing key removes by swap-with-last compaction and decrements logical count.
+- `dissoc` on a missing key returns unchanged value.
+- For any concrete map value, traversal is deterministic for that value state; no cross-update order guarantee is provided.
+- Behavior is selected to preserve Clojure-feel content semantics while minimizing constexpr work, move count, and diagnostic noise.
+
+### Locked validity concept gate for deferred some-threading
+
+- Sentinel equality (`T{}` checks) is never used as validity for short-circuit threading.
+- A formal probe-based validity contract is required and must be independent of value equality.
+- `some_thread_first` and `some_thread_last` remain non-MVP and are enabled only for values that satisfy the explicit validity concept.
+- If a threaded value type does not satisfy the validity concept, some-thread APIs are compile-time rejected with step-local diagnostics.
+- No implicit fallback validity sources are used (no bool-conversion, no default-value checks, no zero/empty heuristics).
+- Sentinel-based collection access policy remains unchanged for MVP (`contains` and `has_index` probe-first guidance still applies).
 
 ### Locked threading arity and rejection rules
 
