@@ -85,7 +85,7 @@ status: draft
 
 ### StringEncoding
 - **Definition:** The cljonic-global compile-time enum-class setting that selects the supported string and text behavior for string and regex-related APIs. Consumers choose ASCII or UTF-8, and the remaining string semantics follow from that choice.
-- **Deprecated Synonyms:** TextEncodingPolicy, text encoding mode, string encoding policy
+- **Deprecated Synonyms:** text encoding mode, string encoding policy
 - **Related:** AsciiEncoding, Utf8Encoding, String, RegexProfile
 - **Usage:** Specification and implementation
 - **Examples:** A consumer chooses `cljonic::StringEncoding::Ascii` or `cljonic::StringEncoding::Utf8`, and string-related APIs compile and run under the selected setting.
