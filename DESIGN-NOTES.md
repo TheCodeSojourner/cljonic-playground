@@ -253,3 +253,12 @@
 
 - Comparator override remains explicit per call through `_with` APIs (for example `equal_with`).
 - Variadic chained semantics and comparison arity behavior remain aligned with canonical APIs.
+
+### Locked composition mechanism
+
+- Clojure-style threading composition is adopted through `thread_first` and `thread_last`.
+- `thread_first(x, s1, s2, ...)` threads the previous result as the first argument position of each step.
+- `thread_last(x, s1, s2, ...)` threads the previous result as the last argument position of each step.
+- The threading API is canonical for readability-oriented composition; operator-pipe adaptor style is not required.
+- Threading steps must preserve no-heap and no-exception constraints and remain deterministic under current sentinel semantics.
+- Threaded sequence transforms remain lazy by default, and materialization remains explicit at sink operations only.

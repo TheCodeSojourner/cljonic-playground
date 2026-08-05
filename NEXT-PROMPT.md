@@ -51,6 +51,9 @@ Constraints already decided:
 - Full-capacity `assoc` and `conj` semantics are locked: deterministic unchanged return.
 - Comparator override direction is locked as explicit per-call `_with` APIs (for example `equal_with`).
 - Canonical API matrix source of truth is DESIGN-NOTES.md under "Locked MVP API matrix (summary)".
+- Composition mechanism is locked: `thread_first` and `thread_last` are adopted for Clojure-style readable composition.
+- `thread_first` threads prior result into first argument position; `thread_last` threads prior result into last argument position.
+- Threaded sequence transforms remain lazy by default and materialization remains explicit at sink operations.
 
 Important working style:
 - Discussion only unless I explicitly ask for code or file changes.
