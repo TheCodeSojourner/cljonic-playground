@@ -69,3 +69,34 @@ surface VectorClassificationSurface {
     provides:
         ObserveVector(vector)
 }
+
+entity VectorConstruction {
+    outcome: pending | succeeded | rejected_at_compile_time
+    initializer_count: Integer
+    capacity: Integer
+}
+
+rule ConstructVectorWithValidElementCount {
+    when: ConstructVector(construction)
+    requires: construction.outcome = pending
+    requires: construction.initializer_count >= 0
+    requires: construction.initializer_count <= construction.capacity
+    ensures: construction.outcome = succeeded
+}
+
+rule RejectVectorConstructionOnOversizedElementCount {
+    when: ConstructVector(construction)
+    requires: construction.outcome = pending
+    requires: construction.initializer_count > construction.capacity
+    ensures: construction.outcome = rejected_at_compile_time
+}
+
+actor VectorBuilder { identified_by: VectorConstruction where vector_construction.outcome = pending }
+
+surface VectorConstructionSurface {
+    facing builder: VectorBuilder
+    context construction: VectorConstruction where construction = builder
+
+    provides:
+        ConstructVector(construction)
+}
