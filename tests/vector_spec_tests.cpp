@@ -114,3 +114,37 @@ TEST_CASE("Production vector integration reflects implementation availability", 
     SKIP("Production vector implementation is not present yet. Add src/vector.hpp and rerun ctest to activate integration coverage.");
 #endif
 }
+
+TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]")
+{
+#if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
+    using cljonic::count;
+    using cljonic::Vector;
+    using cljonic::vector_state;
+
+    // RejectVectorConstructionOnOversizedElementCount is a static constraint; not runtime-testable.
+
+    SECTION("literal-deduced construction via CTAD deduces capacity from element count")
+    {
+        auto v = Vector{1, 2, 3, 4};
+        CHECK(v.state() == vector_state::at_capacity);
+        CHECK(count(v) == 4U);
+    }
+
+    SECTION("partial initializer fill with explicit capacity yields populated state")
+    {
+        Vector<int, 4> v{1, 2};
+        CHECK(v.state() == vector_state::populated);
+        CHECK(count(v) == 2U);
+    }
+
+    SECTION("explicit capacity with no initializers yields empty state")
+    {
+        Vector<int, 4> v{};
+        CHECK(v.state() == vector_state::empty);
+        CHECK(count(v) == 0U);
+    }
+#else
+    SKIP("Production vector implementation is not present.");
+#endif
+}
