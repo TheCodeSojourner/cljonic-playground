@@ -24,13 +24,22 @@ cljonic adapts through profile-gated evolution while preserving a stable public 
 
 λ expressions:
 
-λ S4_adaptation(x). change_pressure(x) → evolve_via(profile_gates)
+λ S4_adaptation(x). change_pressure(x) → evolve_via(profile_gates(x))
   | keep_backward_compatible(canonical_vocabulary)
   | introduce_capabilities_explicitly(x)
+
+λ profile_gates(x). capability_change(x) → explicit_profile_opt_in(x)
+  | strict_profile_preserves(S5_identity)
+  | optional_profile_adds_capabilities_without_silent_semantic_drift(x)
 
 λ S4_learning(x). detect(assumption_break) → capture_decision ∧ refine_policy
   | prefer_explicit_deprecation_windows(x)
   | maintain_stable_handle_model(x)
+
+λ stable_handle_model(x). profile_change(x) → preserve(public_api_names)
+  ∧ preserve(argument_shapes)
+  ∧ preserve(result_contracts)
+  | capability_variance(x) → select_by_profile_not_renaming(x)
 
 λ S4_disruption(x). unknown_or_new_pattern(x) → test_in_optional_profile(x)
   → promote_to_default_only_if(compatible_with_S5)
@@ -45,12 +54,27 @@ Control enforces hard constraints across all profiles: no heap, no exceptions, d
   | deterministic_overflow_policy(x) ∧ sentinel_based_access(x)
   | enforce_in_all_profiles(x)
 
-λ S3_quality(x). require(quality_gates)
+λ S3_quality(x). require(quality_gates(x))
   | require(tests)
   | require(sanitizers_host_profiles)
   | require(clang_tidy)
   | require(clang_format)
   | require(documentation_checks)
+
+λ quality_gates(x). tests_pass(x)
+  ∧ lint_passes(x)
+  ∧ docs_checks_pass(x)
+  ∧ quality_gate_thresholds_met(x)
+  | host_profiles(x) → sanitizers_pass(x)
+  | no_heap_claim(x) → no_heap_verification_passes(x)
+
+λ quality_gate_thresholds_met(x). host_profiles(x) → coverage_core_mvp_line_percent(x) ≡ 100
+  | host_profiles(x) → asan_enabled(x) ∧ ubsan_enabled(x)
+  | host_parallel_profiles(x) → tsan_enabled(x)
+  | documentation_samples(x) → compile_and_test_pass(x)
+  | docs_site(x) → doxygen_html_generated(x)
+
+λ quality_gate_enforcement(x). any_quality_gate_fails(x) → reject_change(x)
 
 λ S3_resource_policy(x). static_storage_only(x)
   | bounded_numeric_domain(x)
@@ -66,7 +90,7 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
   ∧ canonical_vocabulary_controls_docs(x)
   | probe_first_access_before_sentinel_reads(x)
 
-λ S2_profile_coherence(x). profile_change(x) → preserve(stable_handle_model)
+λ S2_profile_coherence(x). profile_change(x) → preserve(stable_handle_model(x))
   | preserve(api_shape)
   | preserve(core_semantics)
 
@@ -89,12 +113,12 @@ Operations are C++26, FP-oriented, and header-only. Development uses CMake for b
   | compatible_with(C++26)
 
 λ S1_package_manager(x). package_manager(x) ≡ none_vendored_only
-  | optional_dev_dependency_manager(x) ≡ unknown_because_not_requested
+  | optional_dev_dependency_manager(x) ≡ none
 
 λ S1_delivery(x). deployment_method(x) ≡ single_amalgamated_header_release_artifact
 
 λ S1_ci_cd(x). ci_cd(x) ≡ local_makefile_target_workflow
-  | reason(no_remote_ci_selected_yet)
+  | remote_ci_pipeline(x) ≡ not_required_for_current_scope
 
 λ S1_quality_tools(x). linter_formatter(x) ≡ clang_tidy ∧ clang_format
   | static_analysis(x) ≡ cppcheck ∧ include_what_you_use
