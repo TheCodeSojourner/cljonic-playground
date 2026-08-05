@@ -132,6 +132,11 @@ Operations are C++23, FP-oriented, and header-only. Development uses CMake for b
   ∧ template_concept_constrained_apis
   | optional_member_wrappers(x) ≡ non_canonical
 
+λ S1_construction(x). collection_construction(x) ≡ CapacityConstruction
+  | literal_deduced(x) → ctad_deduction_guides(x)
+  | explicit_capacity(x) → empty_default_construction_valid(x)
+  | oversized_initializer(x) → compile_time_failure(x)
+
 λ S1_type_expression_policy(x). public_template_constraints(x) → prefer(concepts)
   | domain_constraints(x) → encode_as(repo_specific_concepts)
   | traits_usage(x) → allowed_only_if(no_clear_or_portable_concept_form(x))
