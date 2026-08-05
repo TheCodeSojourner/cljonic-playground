@@ -34,7 +34,7 @@ cljonic adapts through profile-gated evolution while preserving a stable public 
 
 λ S4_learning(x). detect(assumption_break) → capture_decision ∧ refine_policy
   | prefer_explicit_deprecation_windows(x)
-  | maintain_stable_handle_model(x)
+  | stable_handle_model(x)
 
 λ stable_handle_model(x). profile_change(x) → preserve(public_api_names)
   ∧ preserve(argument_shapes)
