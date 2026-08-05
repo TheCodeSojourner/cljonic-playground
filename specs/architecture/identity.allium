@@ -1,0 +1,92 @@
+-- allium: 3
+
+entity IdentityProfile {
+    identity_state: active | not_cljonic
+    copy_on_modify_collection_enabled: Boolean
+    sentinel_based_access_enabled: Boolean
+    probe_first_access_required: Boolean
+    deterministic_behavior_enabled: Boolean
+    no_heap_constraint_enabled: Boolean
+    no_exception_constraint_enabled: Boolean
+
+    transitions identity_state {
+        active -> not_cljonic
+        terminal: not_cljonic
+    }
+
+    invariant ActiveRequiresCopyOnModifyCollection {
+        this.identity_state = active implies this.copy_on_modify_collection_enabled = true
+    }
+
+    invariant ActiveRequiresSentinelBasedAccess {
+        this.identity_state = active implies this.sentinel_based_access_enabled = true
+    }
+
+    invariant ActiveRequiresProbeFirstAccess {
+        this.identity_state = active implies this.probe_first_access_required = true
+    }
+
+    invariant ActiveRequiresDeterministicBehavior {
+        this.identity_state = active implies this.deterministic_behavior_enabled = true
+    }
+
+    invariant ActiveRequiresNoHeapConstraint {
+        this.identity_state = active implies this.no_heap_constraint_enabled = true
+    }
+
+    invariant ActiveRequiresNoExceptionConstraint {
+        this.identity_state = active implies this.no_exception_constraint_enabled = true
+    }
+}
+
+rule MarkIdentityAsNotCljonicOnCopyOnModifyCollectionViolation {
+    when: EvaluateIdentity(profile)
+    requires: profile.identity_state = active
+    requires: profile.copy_on_modify_collection_enabled = false
+    ensures: profile.identity_state = not_cljonic
+}
+
+rule MarkIdentityAsNotCljonicOnSentinelBasedAccessViolation {
+    when: EvaluateIdentity(profile)
+    requires: profile.identity_state = active
+    requires: profile.sentinel_based_access_enabled = false
+    ensures: profile.identity_state = not_cljonic
+}
+
+rule MarkIdentityAsNotCljonicOnProbeFirstAccessViolation {
+    when: EvaluateIdentity(profile)
+    requires: profile.identity_state = active
+    requires: profile.probe_first_access_required = false
+    ensures: profile.identity_state = not_cljonic
+}
+
+rule MarkIdentityAsNotCljonicOnDeterministicBehaviorViolation {
+    when: EvaluateIdentity(profile)
+    requires: profile.identity_state = active
+    requires: profile.deterministic_behavior_enabled = false
+    ensures: profile.identity_state = not_cljonic
+}
+
+rule MarkIdentityAsNotCljonicOnNoHeapConstraintViolation {
+    when: EvaluateIdentity(profile)
+    requires: profile.identity_state = active
+    requires: profile.no_heap_constraint_enabled = false
+    ensures: profile.identity_state = not_cljonic
+}
+
+rule MarkIdentityAsNotCljonicOnNoExceptionConstraintViolation {
+    when: EvaluateIdentity(profile)
+    requires: profile.identity_state = active
+    requires: profile.no_exception_constraint_enabled = false
+    ensures: profile.identity_state = not_cljonic
+}
+
+actor IdentityOperator { identified_by: IdentityProfile where identity_profile.identity_state = active }
+
+surface IdentityGovernance {
+    facing operator: IdentityOperator
+    context profile: IdentityProfile where profile = operator
+
+    provides:
+        EvaluateIdentity(profile)
+}

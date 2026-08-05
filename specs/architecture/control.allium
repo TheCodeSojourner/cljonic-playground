@@ -1,0 +1,105 @@
+-- allium: 3
+
+entity QualityGateReport {
+    verification_state: pending | passed | failed
+    tests_pass: Boolean
+    lint_passes: Boolean
+    docs_checks_pass: Boolean
+    quality_gate_thresholds_met: Boolean
+    sanitizers_pass: Boolean
+    no_heap_verification_passes: Boolean
+
+    transitions verification_state {
+        pending -> passed
+        pending -> failed
+        terminal: passed, failed
+    }
+
+    invariant PassedRequiresTests {
+        this.verification_state = passed implies this.tests_pass = true
+    }
+
+    invariant PassedRequiresLint {
+        this.verification_state = passed implies this.lint_passes = true
+    }
+
+    invariant PassedRequiresDocsChecks {
+        this.verification_state = passed implies this.docs_checks_pass = true
+    }
+
+    invariant PassedRequiresThresholds {
+        this.verification_state = passed implies this.quality_gate_thresholds_met = true
+    }
+
+    invariant PassedRequiresSanitizers {
+        this.verification_state = passed implies this.sanitizers_pass = true
+    }
+
+    invariant PassedRequiresNoHeapVerification {
+        this.verification_state = passed implies this.no_heap_verification_passes = true
+    }
+}
+
+rule ApproveWhenAllQualityGatesPass {
+    when: EvaluateQualityGates(report)
+    requires: report.verification_state = pending
+    requires: report.tests_pass = true
+    requires: report.lint_passes = true
+    requires: report.docs_checks_pass = true
+    requires: report.quality_gate_thresholds_met = true
+    requires: report.sanitizers_pass = true
+    requires: report.no_heap_verification_passes = true
+    ensures: report.verification_state = passed
+}
+
+rule RejectWhenAnyQualityGateFailsTests {
+    when: EvaluateQualityGates(report)
+    requires: report.verification_state = pending
+    requires: report.tests_pass = false
+    ensures: report.verification_state = failed
+}
+
+rule RejectWhenAnyQualityGateFailsLint {
+    when: EvaluateQualityGates(report)
+    requires: report.verification_state = pending
+    requires: report.lint_passes = false
+    ensures: report.verification_state = failed
+}
+
+rule RejectWhenAnyQualityGateFailsDocsChecks {
+    when: EvaluateQualityGates(report)
+    requires: report.verification_state = pending
+    requires: report.docs_checks_pass = false
+    ensures: report.verification_state = failed
+}
+
+rule RejectWhenAnyQualityGateFailsThresholds {
+    when: EvaluateQualityGates(report)
+    requires: report.verification_state = pending
+    requires: report.quality_gate_thresholds_met = false
+    ensures: report.verification_state = failed
+}
+
+rule RejectWhenAnyQualityGateFailsSanitizers {
+    when: EvaluateQualityGates(report)
+    requires: report.verification_state = pending
+    requires: report.sanitizers_pass = false
+    ensures: report.verification_state = failed
+}
+
+rule RejectWhenAnyQualityGateFailsNoHeapVerification {
+    when: EvaluateQualityGates(report)
+    requires: report.verification_state = pending
+    requires: report.no_heap_verification_passes = false
+    ensures: report.verification_state = failed
+}
+
+actor QualityGateOperator { identified_by: QualityGateReport where quality_gate_report.verification_state = pending }
+
+surface QualityGateGovernance {
+    facing operator: QualityGateOperator
+    context report: QualityGateReport where report = operator
+
+    provides:
+        EvaluateQualityGates(report)
+}

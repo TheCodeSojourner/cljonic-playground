@@ -1,0 +1,76 @@
+-- allium: 3
+
+entity ProfileGateDecision {
+    adaptation_state: proposed | trial | accepted | rejected
+    capability_change_requested: Boolean
+    explicit_profile_opt_in: Boolean
+    strict_profile_preserves_identity: Boolean
+    backward_compatible_vocabulary: Boolean
+    deterministic_behavior_preserved: Boolean
+
+    transitions adaptation_state {
+        proposed -> trial
+        proposed -> rejected
+        trial -> accepted
+        trial -> rejected
+        terminal: accepted, rejected
+    }
+
+    invariant AcceptanceRequiresExplicitProfileOptIn {
+        this.adaptation_state = accepted implies this.explicit_profile_opt_in = true
+    }
+
+    invariant AcceptanceRequiresStrictProfileIdentityPreservation {
+        this.adaptation_state = accepted implies this.strict_profile_preserves_identity = true
+    }
+
+    invariant AcceptanceRequiresBackwardCompatibleVocabulary {
+        this.adaptation_state = accepted implies this.backward_compatible_vocabulary = true
+    }
+
+    invariant AcceptanceRequiresDeterministicBehavior {
+        this.adaptation_state = accepted implies this.deterministic_behavior_preserved = true
+    }
+}
+
+rule StartCapabilityTrialWithProfileGate {
+    when: RequestCapabilityChange(decision)
+    requires: decision.adaptation_state = proposed
+    requires: decision.capability_change_requested = true
+    requires: decision.explicit_profile_opt_in = true
+    ensures: decision.adaptation_state = trial
+}
+
+rule AcceptCapabilityChange {
+    when: FinalizeCapabilityTrial(decision)
+    requires: decision.adaptation_state = trial
+    requires: decision.strict_profile_preserves_identity = true
+    requires: decision.backward_compatible_vocabulary = true
+    requires: decision.deterministic_behavior_preserved = true
+    ensures: decision.adaptation_state = accepted
+}
+
+rule RejectCapabilityChangeWithoutCompatibility {
+    when: FinalizeCapabilityTrial(decision)
+    requires: decision.adaptation_state = trial
+    requires: decision.backward_compatible_vocabulary = false
+    ensures: decision.adaptation_state = rejected
+}
+
+rule RejectCapabilityChangeWithoutDeterminism {
+    when: FinalizeCapabilityTrial(decision)
+    requires: decision.adaptation_state = trial
+    requires: decision.deterministic_behavior_preserved = false
+    ensures: decision.adaptation_state = rejected
+}
+
+actor AdaptationOperator { identified_by: ProfileGateDecision where profile_gate_decision.adaptation_state = proposed }
+
+surface AdaptationGovernance {
+    facing operator: AdaptationOperator
+    context decision: ProfileGateDecision where decision = operator
+
+    provides:
+        RequestCapabilityChange(decision)
+        FinalizeCapabilityTrial(decision)
+}
