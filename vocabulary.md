@@ -65,7 +65,7 @@ status: draft
 ### String
 - **Definition:** The cljonic fixed-capacity string collection type. It is the bounded string value model for the library and is also an allowed key category in strict MVP maps and sets.
 - **Deprecated Synonyms:** StaticString, static string, fixed-capacity string, string collection
-- **Related:** StaticStorage, CopyOnModifyCollection, Keyword, Vector, Map, Set, CapacityConstruction
+- **Related:** CharType, StaticStorage, CopyOnModifyCollection, Keyword, Vector, Map, Set, CapacityConstruction
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `String` may be used as a bounded collection value or as a valid key type under the locked MVP key model.
 
@@ -107,14 +107,42 @@ status: draft
 ### FloatingPointExclusion
 - **Definition:** The default rule that floating-point values are not part of canonical comparison or the dynamic value model; any comparison involving floats requires an explicit override API such as `_with` forms.
 - **Deprecated Synonyms:** Floating-Point Exclusion, strict float policy
-- **Related:** CanonicalComparison
+- **Related:** CanonicalComparison, FloatingPointScalar
 - **Usage:** Specification and implementation
 - **Examples:** `equal(1.0, 1.0)` is rejected under canonical APIs, while an explicit comparator-based override may be allowed.
+
+### FixedWidthIntegralScalar
+- **Definition:** A scalar numeric type with explicitly fixed bit width, intended to be part of the closed numeric domain for embedded-friendly deterministic arithmetic.
+- **Deprecated Synonyms:** fixed-width integer, integral scalar, bounded integral scalar
+- **Related:** SupportedIntegralScalarSet, ClosedNumericDomain, NumericPromotionPolicy
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** Fixed-width integral scalar support is expressed through named widths rather than vague platform-shaped types like `int` or `long`.
+
+### SupportedIntegralScalarSet
+- **Definition:** The explicitly supported set of fixed-width integral scalar categories available to the library under the current numeric policy.
+- **Deprecated Synonyms:** integral type set, supported integral widths
+- **Related:** FixedWidthIntegralScalar, ClosedNumericDomain, CommonTypeLattice
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A strict profile may define the supported integral scalar set as `i8`, `i16`, `i32`, `i64`, `u8`, `u16`, `u32`, and `u64`.
+
+### FloatingPointScalar
+- **Definition:** A floating-point scalar category that may exist in the broader language environment but is restricted or excluded from canonical comparison and other strict-domain operations by project policy.
+- **Deprecated Synonyms:** float scalar, floating numeric scalar
+- **Related:** FloatingPointExclusion, ClosedNumericDomain
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `float` or `double` values may be present in non-canonical or opt-in contexts even when canonical comparison rejects them.
+
+### CharType
+- **Definition:** The cljonic namespace global code-unit type used by `String` and text-oriented APIs. It defaults to ASCII-oriented `char` and may be overridden by the library consumer.
+- **Deprecated Synonyms:** character type, text code-unit type, cljonic char type
+- **Related:** String, Regex, StaticStorage
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A consumer may keep `cljonic::CharType = char` for ASCII-focused builds or override it while preserving the `String` API contract.
 
 ### ClosedNumericDomain
 - **Definition:** The finite, explicitly enumerated set of numeric value categories supported by the library under a given profile, with no implicit escape to unbounded numeric representations.
 - **Deprecated Synonyms:** closed numeric set, bounded numeric domain
-- **Related:** NumericPromotionPolicy, CommonTypeLattice, DeterministicOverflowPolicy, NoHeapConstraint
+- **Related:** FixedWidthIntegralScalar, SupportedIntegralScalarSet, FloatingPointScalar, NumericPromotionPolicy, CommonTypeLattice, DeterministicOverflowPolicy, NoHeapConstraint
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A strict profile may support only fixed-width integral numeric categories and reject any operation that would require an out-of-domain promoted type.
 
