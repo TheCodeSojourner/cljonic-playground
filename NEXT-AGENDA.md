@@ -34,6 +34,9 @@
 - Comparator override direction is locked as explicit per-call `_with` APIs (for example `equal_with`).
 - Composition mechanism is locked: `thread_first` and `thread_last` are adopted for Clojure-style readable composition.
 - `thread_first` threads prior result into first argument position; `thread_last` threads prior result into last argument position.
+- `as_thread` is locked as a Clojure-style rebinding form where each step consumes the current value directly.
+- `cond_thread_first` and `cond_thread_last` are locked as conditional threading forms.
+- `some`-style threading variants are deferred pending explicit validity contracts that avoid sentinel-ambiguity pitfalls.
 - Threaded sequence transforms remain lazy by default and materialization remains explicit at sink operations.
 
 ### Canonical API matrix source
@@ -84,43 +87,48 @@
 - Define infinite-source safety rules and recommended bounded-consumer patterns.
 
 5. Threading API execution details
-- Finalize step descriptor grammar for `thread_first` and `thread_last` (for example direct callables vs explicit call wrappers).
+- Finalize step descriptor grammar for `thread_first`, `thread_last`, and `as_thread` (for example direct callables vs explicit call wrappers).
+- Finalize conditional-step descriptor grammar for `cond_thread_first` and `cond_thread_last`.
 - Define compile-time diagnostics style for invalid step arity or concept mismatch.
 - Define interactions between threading and comparator override APIs (`equal_with` family) in mixed pipelines.
 
-6. Constexpr/consteval boundaries
+6. Validity contract for deferred some-thread variants
+- Define explicit validity concept or probe contract required for `some_thread_first` and `some_thread_last` short-circuit semantics.
+- Define compile-time gating behavior when no validity contract is available for a threaded value type.
+
+7. Constexpr/consteval boundaries
 - List which operations must be constexpr.
 - List which validations must be consteval.
 - Identify any operations intentionally runtime-only.
 
-7. Regex profile details (CTRE)
+8. Regex profile details (CTRE)
 - Define supported regex surface and any deliberate exclusions for embedded targets.
 - Define build/profile toggles for enabling or disabling regex support.
 - Define fallback behavior when regex profile is disabled.
 - Define exact `re-pattern` and `re-matcher` semantics across compile-time and runtime regex profiles.
 - Define invalid-pattern behavior and `pattern_valid(p)` contract details.
 
-8. Testing strategy before implementation
+9. Testing strategy before implementation
 - Define compile-time test cases (static_assert) for behavior contracts.
 - Define runtime tests for edge cases and capacity boundaries.
 - Define minimal acceptance criteria for first implementation milestone.
 
-9. Namespace acceptance criteria execution
+10. Namespace acceptance criteria execution
 - Finalize pass/fail criteria for each MVP namespace.
 - Define optional-namespace readiness gates by profile.
 - Confirm deterministic behavior requirements for every namespace profile.
 
-10. C++26 guideline execution
+11. C++26 guideline execution
 - Define contract portability wrapper behavior across compiler/toolchain profiles.
 - Finalize concept taxonomy and naming for key API constraints.
 - Define ARM profile benchmark set and optimization acceptance thresholds.
 
-11. Packaging pipeline execution
+12. Packaging pipeline execution
 - Define exact production folder layout for per-function headers.
 - Define deterministic header ordering and include policy for amalgamation.
 - Define CI checks ensuring amalgamated header regeneration stays in sync.
 
-12. Quality toolchain execution
+13. Quality toolchain execution
 - Define Catch2 test suite structure and generator coverage requirements.
 - Define sanitizer matrix by host profile and target exceptions.
 - Define linting gate thresholds and failure policy.

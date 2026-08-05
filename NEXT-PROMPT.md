@@ -53,6 +53,9 @@ Constraints already decided:
 - Canonical API matrix source of truth is DESIGN-NOTES.md under "Locked MVP API matrix (summary)".
 - Composition mechanism is locked: `thread_first` and `thread_last` are adopted for Clojure-style readable composition.
 - `thread_first` threads prior result into first argument position; `thread_last` threads prior result into last argument position.
+- `as_thread` is locked as a Clojure-style rebinding form where each step consumes the current value directly.
+- `cond_thread_first` and `cond_thread_last` are locked as conditional threading forms.
+- `some`-style threading variants are deferred pending explicit validity contracts that avoid sentinel-ambiguity pitfalls.
 - Threaded sequence transforms remain lazy by default and materialization remains explicit at sink operations.
 
 Important working style:

@@ -259,6 +259,17 @@
 - Clojure-style threading composition is adopted through `thread_first` and `thread_last`.
 - `thread_first(x, s1, s2, ...)` threads the previous result as the first argument position of each step.
 - `thread_last(x, s1, s2, ...)` threads the previous result as the last argument position of each step.
+- Clojure-style rebinding threading is adopted through `as_thread(x, s1, s2, ...)`, where each step consumes the current value directly.
+- Conditional threading is adopted through `cond_thread_first` and `cond_thread_last`, where each step is applied only when its condition is true.
 - The threading API is canonical for readability-oriented composition; operator-pipe adaptor style is not required.
 - Threading steps must preserve no-heap and no-exception constraints and remain deterministic under current sentinel semantics.
 - Threaded sequence transforms remain lazy by default, and materialization remains explicit at sink operations only.
+- `some`-style threading variants (`some_thread_first`, `some_thread_last`) are deferred until an explicit validity concept is defined for reliable short-circuiting.
+
+### Locked threading arity and rejection rules
+
+- `thread_first`, `thread_last`, and `as_thread` accept one or more steps.
+- `cond_thread_first` and `cond_thread_last` accept one or more conditional steps; a false condition skips its step and threads prior value forward unchanged.
+- Calling any threading form with zero steps is a compile-time error.
+- Step argument mismatch (arity or concept incompatibility) is a compile-time error with step-local diagnostics.
+- `some`-style short-circuiting cannot rely on sentinel `T{}` and is therefore not part of strict MVP until explicit validity contracts are available.
