@@ -23,6 +23,12 @@ if(BUILD_TESTING)
     )
     target_compile_features(cljonic_tests PRIVATE cxx_std_23)
     target_link_libraries(cljonic_tests PRIVATE Catch2::Catch2WithMain)
+
+    option(CLJONIC_COVERAGE "Enable coverage instrumentation (host profiles only)" OFF)
+    if(CLJONIC_COVERAGE)
+        target_compile_options(cljonic_tests PRIVATE --coverage)
+        target_link_options(cljonic_tests PRIVATE --coverage)
+    endif()
     target_include_directories(cljonic_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
     if(EXISTS "${CLJONIC_VECTOR_HEADER}")
