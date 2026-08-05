@@ -77,4 +77,4 @@ Do not check in:
 ## Current Test Harness Behavior
 
 - The default test run always executes the executable spec-model tests.
-- If a production vector header is added later at `src/cljonic/vector.hpp`, integration coverage can be enabled automatically by the existing test harness without changing the bootstrap steps.
+- If a production vector header is added later at `src/vector.hpp`, integration coverage can be enabled automatically by the existing test harness without changing the bootstrap steps.
