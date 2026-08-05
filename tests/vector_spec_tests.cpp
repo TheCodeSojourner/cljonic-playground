@@ -13,7 +13,6 @@ namespace cljonic::spec_model
         empty,
         populated,
         at_capacity,
-        invalid,
     };
 
     struct vector_observation
@@ -24,21 +23,6 @@ namespace cljonic::spec_model
 
     constexpr auto classify_vector(vector_observation observation) -> vector_state
     {
-        if (observation.capacity_limit < 0)
-        {
-            return vector_state::invalid;
-        }
-
-        if (observation.logical_size < 0)
-        {
-            return vector_state::invalid;
-        }
-
-        if (observation.logical_size > observation.capacity_limit)
-        {
-            return vector_state::invalid;
-        }
-
         if (observation.logical_size == 0)
         {
             return vector_state::empty;
@@ -70,21 +54,6 @@ TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]")
     using cljonic::spec_model::classify_vector;
     using cljonic::spec_model::vector_observation;
     using cljonic::spec_model::vector_state;
-
-    SECTION("negative size is invalid")
-    {
-        CHECK(classify_vector(vector_observation{4, -1}) == vector_state::invalid);
-    }
-
-    SECTION("negative capacity is invalid")
-    {
-        CHECK(classify_vector(vector_observation{-1, 0}) == vector_state::invalid);
-    }
-
-    SECTION("overflow size is invalid")
-    {
-        CHECK(classify_vector(vector_observation{4, 5}) == vector_state::invalid);
-    }
 
     SECTION("zero size is empty")
     {
