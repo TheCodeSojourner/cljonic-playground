@@ -111,6 +111,41 @@ status: draft
 - **Usage:** Specification and implementation
 - **Examples:** `equal(1.0, 1.0)` is rejected under canonical APIs, while an explicit comparator-based override may be allowed.
 
+### ClosedNumericDomain
+- **Definition:** The finite, explicitly enumerated set of numeric value categories supported by the library under a given profile, with no implicit escape to unbounded numeric representations.
+- **Deprecated Synonyms:** closed numeric set, bounded numeric domain
+- **Related:** NumericPromotionPolicy, CommonTypeLattice, DeterministicOverflowPolicy, NoHeapConstraint
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A strict profile may support only fixed-width integral numeric categories and reject any operation that would require an out-of-domain promoted type.
+
+### NumericPromotionPolicy
+- **Definition:** The rule set that determines whether and how numeric values are promoted for mixed-type or widened operations within the closed numeric domain.
+- **Deprecated Synonyms:** numeric promotion, promotion policy, bounded numeric promotion
+- **Related:** ClosedNumericDomain, CommonTypeLattice, DeterministicOverflowPolicy
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** Mixed-width integral operations may promote to a larger fixed-width result type only when that promoted type is part of the active closed numeric domain.
+
+### CommonTypeLattice
+- **Definition:** The compile-time promotion lattice that maps supported numeric input type combinations to one statically bounded common result type.
+- **Deprecated Synonyms:** common-type lattice, compile-time promotion lattice, numeric type lattice
+- **Related:** NumericPromotionPolicy, ClosedNumericDomain, CompileTimeEvaluation
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A `uint16` plus `uint32` operation may resolve at compile time to a `uint32` result type if that edge exists in the common-type lattice.
+
+### StaticallyBoundedResult
+- **Definition:** The requirement that every promoted or computed numeric result type has a compile-time-bounded representation and known storage footprint.
+- **Deprecated Synonyms:** statically bounded result, bounded promoted result
+- **Related:** CommonTypeLattice, StaticStorage, NoHeapConstraint
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A promoted numeric operation is valid only if its resolved result type remains fixed-width and statically sized.
+
+### DeterministicOverflowPolicy
+- **Definition:** The explicit, profile-defined rule for numeric overflow behavior, chosen so that overflow outcomes are stable, documented, and never hidden behind undefined or silently heap-backed behavior.
+- **Deprecated Synonyms:** overflow policy, deterministic overflow behavior
+- **Related:** NumericPromotionPolicy, DeterministicBehavior, ClosedNumericDomain
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A profile may choose compile-time rejection for provable overflow cases, or a clearly documented runtime overflow rule such as wraparound or unchanged-result semantics where appropriate.
+
 ## Supporting Vocabulary
 
 ### ClojureParity
@@ -375,6 +410,7 @@ status: draft
 - LazySequence and SinkOperation define the execution boundary between deferred pipelines and concrete results.
 - ThreadingForm and ValidityAdapter define the readable composition model and the boundary for deferred some-thread semantics.
 - CanonicalComparison and FloatingPointExclusion define the canonical comparison contract.
+- ClosedNumericDomain, NumericPromotionPolicy, CommonTypeLattice, StaticallyBoundedResult, and DeterministicOverflowPolicy define the bounded numeric semantics that fit the embedded constraint model.
 - ClojureParity and FunctionalStyle explain where semantics are intentionally borrowed from Clojure.
 - EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, StaticStorage, and DeterministicBehavior define the platform and execution constraints.
 - ContractPolicy, SemanticConcept, and BuildProfile define how correctness and portability constraints are expressed across layers.
