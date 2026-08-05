@@ -1,0 +1,87 @@
+-- allium: 3
+
+entity VectorCollection {
+    collection_state: unclassified | empty | populated | at_capacity | invalid
+    capacity_limit: Integer
+    logical_size: Integer
+
+    transitions collection_state {
+        unclassified -> empty
+        unclassified -> populated
+        unclassified -> at_capacity
+        unclassified -> invalid
+        terminal: invalid
+    }
+
+    invariant CapacityIsNonNegative {
+        this.capacity_limit >= 0
+    }
+
+    invariant LogicalSizeIsNonNegativeWhenValid {
+        this.collection_state != invalid implies this.logical_size >= 0
+    }
+
+    invariant LogicalSizeDoesNotExceedCapacityWhenValid {
+        this.collection_state != invalid implies this.logical_size <= this.capacity_limit
+    }
+
+    invariant EmptyStateMeansZeroSize {
+        this.collection_state = empty implies this.logical_size = 0
+    }
+
+    invariant PopulatedStateMeansPositiveAndNotAtCapacity {
+        this.collection_state = populated implies this.logical_size > 0 and this.logical_size < this.capacity_limit
+    }
+
+    invariant AtCapacityStateMeansSizeEqualsCapacity {
+        this.collection_state = at_capacity implies this.logical_size = this.capacity_limit
+    }
+}
+
+rule ClassifyVectorAsInvalidOnNegativeSize {
+    when: ObserveVector(vector)
+    requires: vector.collection_state = unclassified
+    requires: vector.logical_size < 0
+    ensures: vector.collection_state = invalid
+}
+
+rule ClassifyVectorAsInvalidOnOverflowSize {
+    when: ObserveVector(vector)
+    requires: vector.collection_state = unclassified
+    requires: vector.logical_size > vector.capacity_limit
+    ensures: vector.collection_state = invalid
+}
+
+rule ClassifyVectorAsEmpty {
+    when: ObserveVector(vector)
+    requires: vector.collection_state = unclassified
+    requires: vector.logical_size = 0
+    requires: vector.capacity_limit >= 0
+    ensures: vector.collection_state = empty
+}
+
+rule ClassifyVectorAsPopulated {
+    when: ObserveVector(vector)
+    requires: vector.collection_state = unclassified
+    requires: vector.logical_size > 0
+    requires: vector.logical_size < vector.capacity_limit
+    ensures: vector.collection_state = populated
+}
+
+rule ClassifyVectorAsAtCapacity {
+    when: ObserveVector(vector)
+    requires: vector.collection_state = unclassified
+    requires: vector.logical_size > 0
+    requires: vector.logical_size = vector.capacity_limit
+    ensures: vector.collection_state = at_capacity
+}
+
+actor VectorObserver { identified_by: VectorCollection where vector_collection.collection_state = unclassified }
+
+surface VectorClassificationSurface {
+    facing observer: VectorObserver
+    context vector: VectorCollection where vector = observer
+
+    provides:
+        ObserveVector(vector)
+}
