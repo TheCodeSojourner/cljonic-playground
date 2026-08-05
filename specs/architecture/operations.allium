@@ -22,8 +22,8 @@ entity OperationsProfile {
         terminal: ready, rejected
     }
 
-    invariant ReadyRequiresCpp26 {
-        this.release_state = ready implies this.programming_language_version = "C++26"
+    invariant ReadyRequiresCpp23 {
+        this.release_state = ready implies this.programming_language_version = "C++23"
     }
 
     invariant ReadyRequiresFpOrientation {
@@ -78,7 +78,7 @@ entity OperationsProfile {
 rule MarkOperationsProfileReady {
     when: EvaluateOperationsProfile(profile)
     requires: profile.release_state = draft
-    requires: profile.programming_language_version = "C++26"
+    requires: profile.programming_language_version = "C++23"
     requires: profile.paradigm_preference = "FP_oriented"
     requires: profile.test_framework = "Catch2_v3"
     requires: profile.build_system = "CMake"
@@ -97,7 +97,7 @@ rule MarkOperationsProfileReady {
 rule RejectOperationsProfileOnLanguageDrift {
     when: EvaluateOperationsProfile(profile)
     requires: profile.release_state = draft
-    requires: profile.programming_language_version != "C++26"
+    requires: profile.programming_language_version != "C++23"
     ensures: profile.release_state = rejected
 }
 
