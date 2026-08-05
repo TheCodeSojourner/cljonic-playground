@@ -1,16 +1,16 @@
 ## Session State
 
-- last_session_id: 2026-08-05T11:19:47-06:00
-- current_timestamp: 2026-08-05T11:19:47-06:00
+- last_session_id: 2026-08-05T11:32:07-06:00
+- current_timestamp: 2026-08-05T11:32:07-06:00
 - recover: Distill a starting architecture from DESIGN-NOTES.md using vocabulary.md as the canonical term set.
 
 ## Task
 
-- Establish and refine the initial canonical vocabulary for the cljonic C++26 header-only library.
+- Tend and validate the initial canonical vocabulary for the cljonic C++26 header-only library using README.md as an additional source.
 
 ## Questions
 
-- Whether any further vocabulary additions are needed before architecture distillation.
+- Whether any further durable vocabulary additions are needed before architecture distillation.
 - Whether future low-level raw code-unit APIs should exist alongside the canonical character-indexed string APIs.
 
 ## Decisions
@@ -25,6 +25,10 @@
 - String `count` is logical character count; canonical `get` and `assoc` are character-indexed; slicing is character-range-based and preserves UTF-8 boundaries.
 - Canonical UTF-8 strings must be valid UTF-8; compile-time-known invalid UTF-8 is a compile-time error, and runtime invalid UTF-8 is rejected from canonical string semantics.
 - Bounded numeric semantics are locked through ClosedNumericDomain, NumericPromotionPolicy, CommonTypeLattice, StaticallyBoundedResult, and DeterministicOverflowPolicy, without bigint support.
+- `DefaultElement` is a canonical vocabulary term because it names a user-visible semantic concept distinct from the broader `SentinelBasedAccess` model.
+- README phrasing such as `deep copy on write` is preserved only as deprecated synonym material under `CopyOnModifyCollection`, not as a new canonical term.
+- `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` and similar README-specific configuration knobs are incidental implementation details and stay out of `vocabulary.md`.
+- `vocabulary.md` currently passes structural, completeness, and relationship validation with zero issues.
 
 ## Next
 
