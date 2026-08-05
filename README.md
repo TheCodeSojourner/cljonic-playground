@@ -23,19 +23,21 @@ Generated local build output is intentionally not checked in.
 
 The repository provides a single root `Makefile`.
 
-### Rebuild Everything And Run Tests
+### Show Available Targets
 
 ```sh
 make
 ```
 
-or
+This prints a short list of the supported Make targets and what each one does.
+
+### Rebuild Everything And Run Tests
 
 ```sh
 make all
 ```
 
-Both run the default full workflow. They remove local generated build output, configure the project, rebuild the test suite from a clean state, and run all discovered tests.
+This runs the full workflow. It removes local generated build output, configures the project, rebuilds the test suite from a clean state, and runs all discovered tests.
 
 ### Incremental Test Run
 
