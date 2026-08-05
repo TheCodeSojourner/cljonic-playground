@@ -8,7 +8,7 @@ status: draft
 
 ### CopyOnModifyCollection
 - **Definition:** A fixed-capacity value type backed by static storage that returns a modified copy instead of mutating in place. In this repo, vector, set, map, and string all follow this model.
-- **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection
+- **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection, deep copy on write, deep copying on write
 - **Related:** Vector, Map, Set, String, SentinelBasedAccess, KeywordCatalog, LazySequence, ThreadingForm
 - **Usage:** Specification and implementation
 - **Examples:** `auto xs = vector<4>{1, 2, 3}; auto ys = conj(xs, 4);`
@@ -16,14 +16,21 @@ status: draft
 ### SentinelBasedAccess
 - **Definition:** The access model where missing or invalid lookup returns a default sentinel value such as `T{}` or `char{}` instead of raising an error or returning an explicit status object.
 - **Deprecated Synonyms:** Sentinel-Based Access, sentinel access, sentinel return, default-value access
-- **Related:** CopyOnModifyCollection, ProbeFirstAccess
+- **Related:** CopyOnModifyCollection, DefaultElement, ProbeFirstAccess
 - **Usage:** Specification and implementation
 - **Examples:** `auto value = get(m, key);` and callers use `contains(m, key)` or `has_index(xs, i)` before relying on the result.
+
+### DefaultElement
+- **Definition:** The default-initialized element value returned when a collection access cannot produce a valid logical element. `DefaultElement` names the returned value itself, while `SentinelBasedAccess` names the broader access model.
+- **Deprecated Synonyms:** default element, collection default element
+- **Related:** SentinelBasedAccess, ProbeFirstAccess, CopyOnModifyCollection
+- **Usage:** Architecture, specification, implementation, tests, documentation, and user guidance
+- **Examples:** `get(xs, 99)` returns the collection's `DefaultElement` when index `99` is invalid, and `first(xs)` returns the `DefaultElement` when `xs` is empty.
 
 ### ProbeFirstAccess
 - **Definition:** The required calling discipline for ambiguous domains: first ask a presence or index-validity question, then perform sentinel-based access only when the probe succeeds.
 - **Deprecated Synonyms:** Probe-First Access, guard-before-get, presence check
-- **Related:** SentinelBasedAccess, CopyOnModifyCollection
+- **Related:** SentinelBasedAccess, DefaultElement, CopyOnModifyCollection
 - **Usage:** Specification and implementation
 - **Examples:** `if (contains(m, key)) { auto value = get(m, key); }`
 
