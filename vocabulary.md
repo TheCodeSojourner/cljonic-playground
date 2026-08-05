@@ -232,6 +232,78 @@ status: draft
 - **Usage:** Architecture, implementation, tests, CI, and documentation
 - **Examples:** Host verification profiles can fail the build when forbidden allocation symbols are present or runtime allocation counters are incremented.
 
+## Behavioral Specification Vocabulary
+
+### ComparisonArity
+- **Definition:** The observable rule governing how comparison APIs behave at zero, one, and many arguments.
+- **Deprecated Synonyms:** comparison arity, multi-arity comparison, variadic chained semantics
+- **Related:** CanonicalComparison, ClojureParity
+- **Usage:** Specification, tests, and documentation
+- **Examples:** Zero-arity and one-arity comparison calls return `true`, while multi-argument calls evaluate chained comparison semantics.
+
+### ContentEquality
+- **Definition:** The equality model in which values compare by logical content rather than insertion order or storage position.
+- **Deprecated Synonyms:** deep value comparison, order-independent equality, content-based equality
+- **Related:** CanonicalComparison, CopyOnModifyCollection
+- **Usage:** Specification, tests, and documentation
+- **Examples:** Map and set equality ignore ordering and compare by contained logical values.
+
+### CapacityConstruction
+- **Definition:** The construction contract that supports both literal-deduced and explicit-capacity creation while rejecting oversized initializers at compile time.
+- **Deprecated Synonyms:** collection construction pattern, explicit-capacity construction, literal-deduced construction
+- **Related:** CopyOnModifyCollection, CompileTimeEvaluation, StaticStorage
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** Explicit-capacity empty construction is valid, but an initializer count that exceeds capacity is a compile-time failure.
+
+### CardinalityModel
+- **Definition:** The explicit representation of whether a sequence is finite or infinite and what size information is valid to expose for that sequence.
+- **Deprecated Synonyms:** finite/infinite cardinality, cardinality representation
+- **Related:** LazySequence, CompileTimeEvaluation
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** Infinite ranges do not report `max size_t` as a fake size, while finite ranges may report exact size when computable.
+
+### InvalidPatternSentinel
+- **Definition:** The stable invalid value returned when runtime regex compilation fails under the no-error policy.
+- **Deprecated Synonyms:** invalid regex sentinel, invalid pattern value
+- **Related:** RegexProfile, SentinelBasedAccess, DeterministicBehavior
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** An invalid runtime `re-pattern` result can be distinguished from a valid non-match through an explicit validity probe.
+
+### PatternValidityProbe
+- **Definition:** The explicit probe API used to distinguish an invalid pattern sentinel from a valid pattern that simply does not match.
+- **Deprecated Synonyms:** pattern validity probe, `pattern_valid`
+- **Related:** InvalidPatternSentinel, RegexProfile, ProbeFirstAccess
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** `pattern_valid(p)` is checked before treating a pattern handle as usable.
+
+### StepDescriptor
+- **Definition:** The canonical documented representation of a threading step, used to express step payload and diagnostics more explicitly than a bare callable.
+- **Deprecated Synonyms:** explicit step descriptor, conditional descriptor
+- **Related:** ThreadingForm, SemanticConcept
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** Threading documentation and diagnostics prefer descriptor-style steps even though direct callable shorthand remains supported.
+
+### UnchangedValueReturn
+- **Definition:** The contract that certain operations preserve and return the original logical value when the requested modification cannot be applied.
+- **Deprecated Synonyms:** unchanged return, deterministic unchanged return
+- **Related:** DeterministicBehavior, CopyOnModifyCollection, SentinelBasedAccess
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** Full-capacity `conj`, full-capacity `assoc`, and missing-key `dissoc` all return the unchanged value.
+
+### SwapWithLastCompaction
+- **Definition:** The removal strategy that deletes an existing element by replacing it with the last logical element and decrementing count, without preserving iteration order.
+- **Deprecated Synonyms:** swap-with-last, swap-with-last erase, compaction removal
+- **Related:** UnchangedValueReturn, CopyOnModifyCollection, DeterministicBehavior
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** `dissoc` on an existing map key compacts storage by moving the last entry into the removed slot.
+
+### ProbeValidityConcept
+- **Definition:** The explicit concept gate requiring a bool-convertible `probe_valid(x)` so deferred some-thread forms can short-circuit without relying on sentinel equality.
+- **Deprecated Synonyms:** `probe_validatable`, validity concept gate
+- **Related:** ValidityAdapter, SemanticConcept, ThreadingForm
+- **Usage:** Specification, implementation, tests, and documentation
+- **Examples:** Some-thread forms reject intermediate values that do not satisfy the `probe_validatable` concept.
+
 ## Relationship Notes
 
 - CopyOnModifyCollection is the foundational value model for the repo.
@@ -247,3 +319,5 @@ status: draft
 - CompileTimeEvaluation, RegexProfile, and StableHandleModel define capability boundaries that architecture must preserve across compile-time and runtime modes.
 - NamespaceAdoptionRoadmap, MvpNamespaceCutLine, OptionalNamespaceCutLine, and NamespacePhaseOrder define architectural scope and rollout boundaries.
 - SourceLayout, QualityGate, and NoHeapVerification define the structural and verification constraints that architecture must treat as first-class.
+- ComparisonArity, ContentEquality, CapacityConstruction, and CardinalityModel define observable behavior contracts that should map directly into Allium specs.
+- InvalidPatternSentinel, PatternValidityProbe, StepDescriptor, UnchangedValueReturn, SwapWithLastCompaction, and ProbeValidityConcept capture edge-case and rejection semantics that behavioral specs must name explicitly.
