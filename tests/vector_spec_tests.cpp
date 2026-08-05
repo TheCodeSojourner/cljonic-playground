@@ -1,5 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
+#if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
+#include <vector.hpp>
+#endif
+
 namespace cljonic::spec_model
 {
 
@@ -95,8 +99,43 @@ TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]")
 TEST_CASE("Production vector integration reflects implementation availability", "[vector][integration]")
 {
 #if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
-    SUCCEED("Production vector implementation is present; add concrete integration assertions in this test case.");
+    using cljonic::count;
+    using cljonic::Vector;
+    using cljonic::vector_state;
+
+    SECTION("default vector is empty and has zero count")
+    {
+        const Vector<int, 4> collection{};
+
+        CHECK(collection.state() == vector_state::empty);
+        CHECK(count(collection) == 0U);
+    }
+
+    SECTION("partially filled vector is populated and count tracks cardinality")
+    {
+        Vector<int, 4> collection{};
+
+        REQUIRE(collection.try_push_back(10));
+        REQUIRE(collection.try_push_back(20));
+
+        CHECK(collection.state() == vector_state::populated);
+        CHECK(count(collection) == 2U);
+    }
+
+    SECTION("full vector is at capacity and rejects additional insert")
+    {
+        Vector<int, 2> collection{};
+
+        REQUIRE(collection.try_push_back(10));
+        REQUIRE(collection.try_push_back(20));
+        CHECK(collection.state() == vector_state::at_capacity);
+        CHECK(count(collection) == 2U);
+
+        CHECK_FALSE(collection.try_push_back(30));
+        CHECK(collection.state() == vector_state::at_capacity);
+        CHECK(count(collection) == 2U);
+    }
 #else
-    SKIP("Production vector implementation is not present yet. Add src/cljonic/vector.hpp and rerun ctest to activate integration coverage.");
+    SKIP("Production vector implementation is not present yet. Add src/vector.hpp and rerun ctest to activate integration coverage.");
 #endif
 }
