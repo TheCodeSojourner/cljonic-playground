@@ -12,6 +12,9 @@ entity OperationsProfile {
     linter_formatter: String
     static_analysis: String
     docs_toolchain: String
+    public_template_constraints_prefer_concepts: Boolean
+    domain_constraints_encoded_as_repo_specific_concepts: Boolean
+    traits_usage_only_when_no_clear_or_portable_concept_form: Boolean
 
     transitions release_state {
         draft -> ready
@@ -58,6 +61,18 @@ entity OperationsProfile {
     invariant ReadyRequiresDocsToolchain {
         this.release_state = ready implies this.docs_toolchain = "doxygen_html_site"
     }
+
+    invariant ReadyRequiresConceptFirstPublicConstraints {
+        this.release_state = ready implies this.public_template_constraints_prefer_concepts = true
+    }
+
+    invariant ReadyRequiresRepoSpecificDomainConcepts {
+        this.release_state = ready implies this.domain_constraints_encoded_as_repo_specific_concepts = true
+    }
+
+    invariant ReadyRestrictsTraitsToFallbackCases {
+        this.release_state = ready implies this.traits_usage_only_when_no_clear_or_portable_concept_form = true
+    }
 }
 
 rule MarkOperationsProfileReady {
@@ -73,6 +88,9 @@ rule MarkOperationsProfileReady {
     requires: profile.linter_formatter = "clang_tidy_and_clang_format"
     requires: profile.static_analysis = "cppcheck_and_include_what_you_use"
     requires: profile.docs_toolchain = "doxygen_html_site"
+    requires: profile.public_template_constraints_prefer_concepts = true
+    requires: profile.domain_constraints_encoded_as_repo_specific_concepts = true
+    requires: profile.traits_usage_only_when_no_clear_or_portable_concept_form = true
     ensures: profile.release_state = ready
 }
 
@@ -94,6 +112,27 @@ rule RejectOperationsProfileOnToolchainDrift {
     when: EvaluateOperationsProfile(profile)
     requires: profile.release_state = draft
     requires: profile.build_system != "CMake"
+    ensures: profile.release_state = rejected
+}
+
+rule RejectOperationsProfileOnTypeExpressionPolicyDrift {
+    when: EvaluateOperationsProfile(profile)
+    requires: profile.release_state = draft
+    requires: profile.public_template_constraints_prefer_concepts = false
+    ensures: profile.release_state = rejected
+}
+
+rule RejectOperationsProfileOnRepoSpecificDomainConceptDrift {
+    when: EvaluateOperationsProfile(profile)
+    requires: profile.release_state = draft
+    requires: profile.domain_constraints_encoded_as_repo_specific_concepts = false
+    ensures: profile.release_state = rejected
+}
+
+rule RejectOperationsProfileOnTraitsFallbackPolicyDrift {
+    when: EvaluateOperationsProfile(profile)
+    requires: profile.release_state = draft
+    requires: profile.traits_usage_only_when_no_clear_or_portable_concept_form = false
     ensures: profile.release_state = rejected
 }
 

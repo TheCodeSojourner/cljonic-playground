@@ -7,6 +7,9 @@ entity CoordinationProtocol {
     probe_first_access_before_sentinel_reads: Boolean
     stable_handle_model_preserved: Boolean
     core_semantics_preserved: Boolean
+    canonical_collection_operation_vocabulary_preserved: Boolean
+    clojure_like_operation_semantics_default: Boolean
+    constrained_divergence_documented_in_specs_and_tests: Boolean
 
     transitions protocol_state {
         draft -> validated
@@ -34,6 +37,18 @@ entity CoordinationProtocol {
     invariant ValidatedRequiresCoreSemantics {
         this.protocol_state = validated implies this.core_semantics_preserved = true
     }
+
+    invariant ValidatedRequiresCanonicalCollectionOperationVocabulary {
+        this.protocol_state = validated implies this.canonical_collection_operation_vocabulary_preserved = true
+    }
+
+    invariant ValidatedRequiresClojureLikeDefaultOperationSemantics {
+        this.protocol_state = validated implies this.clojure_like_operation_semantics_default = true
+    }
+
+    invariant ValidatedRequiresConstrainedDivergenceDocumentation {
+        this.protocol_state = validated implies this.constrained_divergence_documented_in_specs_and_tests = true
+    }
 }
 
 rule ValidateCoordinationProtocol {
@@ -44,6 +59,9 @@ rule ValidateCoordinationProtocol {
     requires: protocol.probe_first_access_before_sentinel_reads = true
     requires: protocol.stable_handle_model_preserved = true
     requires: protocol.core_semantics_preserved = true
+    requires: protocol.canonical_collection_operation_vocabulary_preserved = true
+    requires: protocol.clojure_like_operation_semantics_default = true
+    requires: protocol.constrained_divergence_documented_in_specs_and_tests = true
     ensures: protocol.protocol_state = validated
 }
 
@@ -65,6 +83,27 @@ rule MarkCoordinationProtocolViolatedOnProbeFirstAccessDrift {
     when: ReviewCoordinationProtocol(protocol)
     requires: protocol.protocol_state in {draft, validated}
     requires: protocol.probe_first_access_before_sentinel_reads = false
+    ensures: protocol.protocol_state = violated
+}
+
+rule MarkCoordinationProtocolViolatedOnCanonicalOperationVocabularyDrift {
+    when: ReviewCoordinationProtocol(protocol)
+    requires: protocol.protocol_state in {draft, validated}
+    requires: protocol.canonical_collection_operation_vocabulary_preserved = false
+    ensures: protocol.protocol_state = violated
+}
+
+rule MarkCoordinationProtocolViolatedOnClojureSemanticDefaultDrift {
+    when: ReviewCoordinationProtocol(protocol)
+    requires: protocol.protocol_state in {draft, validated}
+    requires: protocol.clojure_like_operation_semantics_default = false
+    ensures: protocol.protocol_state = violated
+}
+
+rule MarkCoordinationProtocolViolatedOnConstrainedDivergenceDocumentationDrift {
+    when: ReviewCoordinationProtocol(protocol)
+    requires: protocol.protocol_state in {draft, validated}
+    requires: protocol.constrained_divergence_documented_in_specs_and_tests = false
     ensures: protocol.protocol_state = violated
 }
 
