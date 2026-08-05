@@ -1,8 +1,8 @@
 ## Session State
 
-- last_session_id: 2026-08-05T13:55:46-06:00
-- current_timestamp: 2026-08-05T14:08:22-06:00
-- recover: Build artifacts are now ignored and bootstrap is documented; continue from tracked source files only when choosing between more spec-first tests and new collection semantics.
+- last_session_id: 2026-08-05T14:08:22-06:00
+- current_timestamp: 2026-08-05T14:27:56-06:00
+- recover: Makefile workflow is now explicit and parallelized; use `make` for target discovery, `make all` for full clean rebuild+test, and `make test` for incremental parallel rebuild+test before returning to spec-first collection work.
 
 ## Task
 
@@ -39,10 +39,15 @@
 - Removed the manual integration-test toggle so the default `ctest` path always runs all available tests and automatically skips integration coverage when the production vector header is absent.
 - Ignored generated CMake build directories in `.gitignore`; local `build/` trees and fetched Catch2 content are no longer candidates for Git tracking.
 - Added a root `README.md` documenting clean-repo bootstrap steps (`cmake -S . -B build`, `cmake --build build`, `ctest --test-dir build --output-on-failure`) and clarifying which files belong in Git versus local build output.
+- Added a root `Makefile` as the single command entrypoint with `all`, `test`, and `clean` targets mapped to the CMake/Catch2 workflow.
+- Added a `help` target and set it as the default Make target so plain `make` prints target descriptions.
+- Switched build and test execution in `Makefile` to enforced parallel mode (`cmake --build ... --parallel` and `ctest --parallel`) and verified with successful `make test` and `make all` runs.
+- Updated `README.md` to document the help-first default target and explicit `make all` full-workflow execution.
+- Stored memory `generated-build-artifacts-belong-in-gitignore.md` to preserve the rule that generated build output and fetched dependencies are not tracked.
 
 ## Next
 
-- Continue from tracked source files only: either expand spec-first test coverage around current vector behavior or return to standalone `get` semantics before production implementation.
+- Continue from tracked source files only: return to standalone `get` semantics in specs/collections, then run dependency-aware/full-set spec checks.
 - Add minimal `assoc` and `conj` collection behavior slices after `get`, preserving one standalone function name per operation family.
 - Continue keeping warning reporting filtered to dependency-aware/full-set checks only.
 - Keep architecture and collection specs synchronized on deterministic, no-heap, no-exception constraints.
