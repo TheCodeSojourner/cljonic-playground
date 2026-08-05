@@ -4,7 +4,7 @@ project(cljonic LANGUAGES CXX)
 
 include(CTest)
 
-set(CLJONIC_VECTOR_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/cljonic/vector.hpp" CACHE FILEPATH "Path to the production vector header used by integration tests.")
+set(CLJONIC_VECTOR_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/vector.hpp" CACHE FILEPATH "Path to the production vector header used by integration tests.")
 
 if(BUILD_TESTING)
     include(FetchContent)
