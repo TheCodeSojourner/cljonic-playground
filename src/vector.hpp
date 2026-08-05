@@ -14,7 +14,6 @@ namespace cljonic
         empty,
         populated,
         at_capacity,
-        invalid,
     };
 
     namespace detail::vector
@@ -27,21 +26,6 @@ namespace cljonic
 
         [[nodiscard]] constexpr auto classify_vector(vector_observation observation) noexcept -> vector_state
         {
-            if (observation.capacity_limit < 0)
-            {
-                return vector_state::invalid;
-            }
-
-            if (observation.logical_size < 0)
-            {
-                return vector_state::invalid;
-            }
-
-            if (observation.logical_size > observation.capacity_limit)
-            {
-                return vector_state::invalid;
-            }
-
             if (observation.logical_size == 0)
             {
                 return vector_state::empty;
