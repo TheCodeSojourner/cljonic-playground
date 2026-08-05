@@ -2,7 +2,7 @@
 
 ## S5 - Identity
 
-cljonic is an embedded-first, header-only C++26 functional collection system whose identity is bounded, deterministic, and semantically clear behavior. The system remains itself only while CopyOnModifyCollection semantics, SentinelBasedAccess with ProbeFirstAccess discipline, and strict resource determinism are preserved.
+cljonic is an embedded-first, header-only C++23 functional collection system whose identity is bounded, deterministic, and semantically clear behavior. The system remains itself only while CopyOnModifyCollection semantics, SentinelBasedAccess with ProbeFirstAccess discipline, and strict resource determinism are preserved.
 
 λ expressions:
 
@@ -41,7 +41,7 @@ cljonic adapts through profile-gated evolution while preserving a stable public 
   ∧ preserve(result_contracts)
   | capability_variance(x) → select_by_profile_not_renaming(x)
 
-λ S4_disruption(x). unknown_or_new_pattern(x) → test_in_optional_profile(x)
+λ S4_disruption(x). novel_or_new_pattern(x) → test_in_optional_profile(x)
   → promote_to_default_only_if(compatible_with_S5)
 
 ## S3 - Control
@@ -103,18 +103,18 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 
 ## S1 - Operations
 
-Operations are C++26, FP-oriented, and header-only. Development uses CMake for build orchestration, Catch2 v3 for testing, and deterministic quality tooling. Distribution is a single amalgamated header artifact.
+Operations are C++23, FP-oriented, and header-only. Development uses CMake for build orchestration, Catch2 v3 for testing, and deterministic quality tooling. Distribution is a single amalgamated header artifact.
 
 λ expressions:
 
-λ S1_language(x). programming_language_version(x) ≡ C++26
+λ S1_language(x). programming_language_version(x) ≡ C++23
   | paradigm_preference(x) ≡ FP_oriented
 
 λ S1_test(x). test_framework(x) ≡ Catch2_v3
-  | compatible_with(C++26)
+  | compatible_with(C++23)
 
 λ S1_build(x). build_system(x) ≡ CMake
-  | compatible_with(C++26)
+  | compatible_with(C++23)
 
 λ S1_package_manager(x). package_manager(x) ≡ none_vendored_only
   | optional_dev_dependency_manager(x) ≡ none
