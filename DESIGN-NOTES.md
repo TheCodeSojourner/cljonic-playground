@@ -200,3 +200,56 @@
 
 - A built-in verification gate ensures heap allocation is never used in strict profiles.
 - Verification uses layered checks: compile or link-time allocation prohibition, runtime allocation-counter assertions, and binary symbol checks for forbidden allocation APIs.
+
+## Locked session decisions (2026-08-05)
+
+### Locked key and value type model for map and set (MVP)
+
+- MVP map and set key categories are: keyword enum values, integral types, enum types, and fixed-capacity static string.
+- User-defined key types are not part of strict MVP by default; they are allowed only through an explicit non-MVP concept gate.
+- MVP value categories are non-floating scalar types and nested collection types that satisfy deep equality semantics.
+- Canonical comparison paths preserve compile-time floating-point exclusion.
+
+### Locked sentinel ambiguity policy
+
+- Missing or invalid access continues to return default sentinel `T{}`.
+- No explicit error or status return channel is added.
+- Probe-first usage is required guidance for ambiguous domains:
+	- associative access uses `contains` before `get`
+	- indexed access uses `has_index` before `get`
+
+### Locked core collection API surface and capacity behavior
+
+- Canonical API style is free-function-first; member wrappers are optional and non-canonical.
+- Canonical MVP collection operations are: `get`, `assoc`, `dissoc`, `conj`, `contains`, `count`, `first`, `rest`.
+- Full-capacity `assoc` or `conj` returns unchanged value deterministically.
+- Invalid index or key keeps mutation-style operations unchanged and keeps accessors sentinel-based.
+
+### Locked MVP API matrix (summary)
+
+- `get`
+	- vector and string index out of bounds returns sentinel element (`T{}` or `char{}`).
+	- set and map missing lookup returns sentinel value `T{}`.
+- `contains`
+	- presence probe API for vector, set, map, and string.
+- `has_index`
+	- index validity probe for vector and string.
+- `assoc`
+	- immutable copy-on-modify update for vector, map, and string.
+	- map duplicate key updates value in returned copy.
+- `dissoc`
+	- immutable removal for set and map; missing target returns unchanged value.
+	- removal compacts storage; map preserves insertion order of remaining entries.
+- `conj`
+	- immutable append or insert for vector, set, map, and string.
+	- if capacity is full, returns unchanged value.
+- `count`
+	- returns logical element count, not capacity.
+- `first` and `rest`
+	- empty source returns sentinel (`first`) or empty same-type (`rest`).
+	- lazy sequence overloads must remain non-materializing by default.
+
+### Locked comparator override direction
+
+- Comparator override remains explicit per call through `_with` APIs (for example `equal_with`).
+- Variadic chained semantics and comparison arity behavior remain aligned with canonical APIs.

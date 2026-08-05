@@ -43,9 +43,17 @@ Constraints already decided:
 - C++26 usage guidelines are locked: contracts at API/invariant boundaries with deterministic non-throwing violation handling, semantic concepts for compile-time API constraints, functional pipeline style with lazy transforms and explicit sinks, and ARM profile-specific optimization based on measured workloads.
 - Packaging is locked as header-only with separate production and tests directories, one function per production implementation header file, and automatic amalgamation of production headers into one distributable single header.
 - Quality toolchain is locked: Catch2 with generator-based test patterns, host-profile sanitizer usage, CI linting gates, Doxygen with sample code per public API, automatic testing of documented samples, automatic Doxygen HTML generation, MVP-core 100% line coverage policy with documented exclusions, and layered no-heap verification checks.
+- Map/set MVP key model is locked: keyword enum, integral, enum, and fixed-capacity static string keys.
+- User-defined key types are optional via explicit non-MVP concept gates.
+- Sentinel policy is locked: missing or invalid access returns `T{}` and no explicit error/status channel is added.
+- Probe-first guidance is locked for ambiguous domains: `contains` plus `get`, and `has_index` plus indexed `get`.
+- Core collection API style is locked as free-function-first.
+- Canonical MVP collection operations are locked: `get`, `assoc`, `dissoc`, `conj`, `contains`, `count`, `first`, `rest`.
+- Full-capacity `assoc` and `conj` semantics are locked: deterministic unchanged return.
+- Comparator override direction is locked as explicit per-call `_with` APIs (for example `equal_with`).
 
 Important working style:
 - Discussion only unless I explicitly ask for code or file changes.
 - Do not scaffold files or run builds unless asked.
 
-Please start by proposing the top 3 design decisions to finalize next, with tradeoffs for each.
+Please start by proposing the next top 3 design decisions to finalize after the newly locked API and policy decisions above, with tradeoffs for each.

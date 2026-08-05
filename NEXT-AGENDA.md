@@ -27,6 +27,11 @@
 - C++26 usage guidelines are locked for contracts, concepts, functional style, and ARM optimization profiles.
 - Packaging model is locked as header-only with one-function-per-file production headers and automated single-header amalgamation.
 - Quality and verification toolchain is locked: Catch2, generators, sanitizer profiles, linting gates, Doxygen with tested samples, automatic HTML generation, MVP 100% line coverage policy, and layered no-heap verification.
+- Key and value type model for map and set is locked for MVP: keyword enum, integral, enum, and fixed-capacity static string keys; user-defined key types are optional via explicit non-MVP concept gates.
+- Sentinel ambiguity policy is locked: `get`-style access remains sentinel-only (`T{}`), and probe-first usage (`contains`/`has_index`) is required guidance for ambiguous domains.
+- Core collection API style is locked as free-function-first with canonical MVP operations: `get`, `assoc`, `dissoc`, `conj`, `contains`, `count`, `first`, `rest`.
+- Full-capacity `assoc` and `conj` behavior is locked as deterministic unchanged return.
+- Comparator override direction is locked as explicit per-call `_with` APIs (for example `equal_with`).
 
 ## Locked namespace scope
 
@@ -50,75 +55,59 @@
 
 ## Priority order
 
-1. Key/value type system for map and set
-- Decide allowed key categories (keyword enum, integral, enum, static string type, user-defined key types).
-- Define required concepts for keys and values.
-- Confirm final scalar equality rules for non-floating types.
-
-2. Sentinel default ambiguity policy
-- Missing access returns `T{}` by design.
-- Decide library guidance for domains where `T{}` is a valid value.
-- Decide whether optional probe APIs (for example contains/has_index helpers only) are sufficient.
-
-3. Collection API surface (Clojure-inspired)
-- Finalize names and overload strategy for get, assoc, dissoc, conj, contains, count, first, rest.
-- Choose member functions vs free functions vs both.
-- Define behavior for full-capacity assoc/conj (currently return unchanged value).
-- Finalize `equal_with` and optional ordering override API shape for explicit per-call comparator injection.
-
-4. Map internal layout details
+1. Map internal layout details
 - Confirm linear search and insertion-order storage for small N.
 - Decide duplicate-key update semantics (replace in place in returned copy).
 - Decide removal compaction behavior and ordering guarantees.
 
-5. Keyword enum catalog details
+2. Keyword enum catalog details
 - Establish keyword naming conventions (global-only, no namespace separators).
 - Decide compile-time literal mapping API and diagnostics style.
 - Define runtime text-to-keyword fallback behavior, if any.
 
-6. Static string design
+3. Static string design
 - Define capacity semantics and null termination rules.
 - Decide normalization and comparison behavior.
 - Confirm how static string interacts with keyword and map keys.
 
-7. Lazy sequence execution model
+4. Lazy sequence execution model
 - Define exact semantics for lazy repeat, cycle, take, drop, map, filter, reduce, and interpose.
 - Define explicit materialization sink APIs and guarantees.
 - Define infinite-source safety rules and recommended bounded-consumer patterns.
 
-8. Constexpr/consteval boundaries
+5. Constexpr/consteval boundaries
 - List which operations must be constexpr.
 - List which validations must be consteval.
 - Identify any operations intentionally runtime-only.
 
-9. Regex profile details (CTRE)
+6. Regex profile details (CTRE)
 - Define supported regex surface and any deliberate exclusions for embedded targets.
 - Define build/profile toggles for enabling or disabling regex support.
 - Define fallback behavior when regex profile is disabled.
 - Define exact `re-pattern` and `re-matcher` semantics across compile-time and runtime regex profiles.
 - Define invalid-pattern behavior and `pattern_valid(p)` contract details.
 
-10. Testing strategy before implementation
+7. Testing strategy before implementation
 - Define compile-time test cases (static_assert) for behavior contracts.
 - Define runtime tests for edge cases and capacity boundaries.
 - Define minimal acceptance criteria for first implementation milestone.
 
-11. Namespace acceptance criteria execution
+8. Namespace acceptance criteria execution
 - Finalize pass/fail criteria for each MVP namespace.
 - Define optional-namespace readiness gates by profile.
 - Confirm deterministic behavior requirements for every namespace profile.
 
-12. C++26 guideline execution
+9. C++26 guideline execution
 - Define contract portability wrapper behavior across compiler/toolchain profiles.
 - Finalize concept taxonomy and naming for key API constraints.
 - Define ARM profile benchmark set and optimization acceptance thresholds.
 
-13. Packaging pipeline execution
+10. Packaging pipeline execution
 - Define exact production folder layout for per-function headers.
 - Define deterministic header ordering and include policy for amalgamation.
 - Define CI checks ensuring amalgamated header regeneration stays in sync.
 
-14. Quality toolchain execution
+11. Quality toolchain execution
 - Define Catch2 test suite structure and generator coverage requirements.
 - Define sanitizer matrix by host profile and target exceptions.
 - Define linting gate thresholds and failure policy.
