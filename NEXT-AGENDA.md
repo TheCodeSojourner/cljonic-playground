@@ -42,6 +42,9 @@
 - Map duplicate-key `assoc` replacement is locked to existing-slot replacement in returned copies.
 - Map `dissoc` compaction is locked to swap-with-last erase with deterministic unchanged return for missing keys.
 - `some`-style threading variants remain deferred and are gated by an explicit validity concept independent of sentinel equality.
+- Validity probe naming is locked: `probe_valid(x)` with concept gate `probe_validatable`.
+- Sentinel-flow adapter naming is locked: `with_validity(x, pred)` for explicit bridging into validity-aware some-thread pipelines.
+- Validity gate diagnostics anchors are locked for some-thread constraints and probe-shape failures.
 - Threaded sequence transforms remain lazy by default and materialization remains explicit at sink operations.
 
 ### Canonical API matrix source
@@ -90,9 +93,9 @@
 - Define exact compile-time diagnostics wording style for invalid threaded steps.
 - Define interactions between threading forms and comparator override APIs (`equal_with` family) in mixed pipelines.
 
-5. Validity contract execution details for deferred some-thread variants
-- Define the project-level validity customization point name and concept naming.
-- Define minimal adapter patterns for bringing sentinel-based flows into validity-aware short-circuit pipelines.
+5. Validity adoption scope for deferred some-thread variants
+- Define first-wave types and wrappers that should satisfy `probe_validatable` in non-MVP profiles.
+- Define sample guidance for when to use sentinel probe-first access versus explicit `with_validity` adaptation.
 
 6. Constexpr/consteval boundaries
 - List which operations must be constexpr.

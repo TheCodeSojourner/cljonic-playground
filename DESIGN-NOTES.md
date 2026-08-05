@@ -288,11 +288,27 @@
 ### Locked validity concept gate for deferred some-threading
 
 - Sentinel equality (`T{}` checks) is never used as validity for short-circuit threading.
-- A formal probe-based validity contract is required and must be independent of value equality.
-- `some_thread_first` and `some_thread_last` remain non-MVP and are enabled only for values that satisfy the explicit validity concept.
-- If a threaded value type does not satisfy the validity concept, some-thread APIs are compile-time rejected with step-local diagnostics.
-- No implicit fallback validity sources are used (no bool-conversion, no default-value checks, no zero/empty heuristics).
+- Validity is defined by explicit probe API `probe_valid(x)` returning a bool-convertible result.
+- Concept gate name is `probe_validatable`.
+- `some_thread_first` and `some_thread_last` remain non-MVP and are enabled only for values that satisfy `probe_validatable`.
+- If a threaded value type does not satisfy `probe_validatable`, some-thread APIs are compile-time rejected with step-local diagnostics.
+- No implicit fallback validity sources are used (no bool-conversion fallback, no default-value checks, no zero or empty heuristics).
 - Sentinel-based collection access policy remains unchanged for MVP (`contains` and `has_index` probe-first guidance still applies).
+
+### Locked validity adapter contract for sentinel-based flows
+
+- Adapter form `with_validity(x, pred)` is adopted for bridging sentinel-based values into validity-aware pipelines.
+- Adapter stores value and predicate without heap allocation and preserves no-exception semantics.
+- Adapter must be usable in constexpr evaluation when `x` and `pred` satisfy constexpr requirements.
+- Adapter exposes validity only through `probe_valid` and does not alter underlying value-equality semantics.
+- Adapter use is explicit at call sites; no implicit wrapping is performed by threading forms.
+- Adapter is intended for deferred some-thread variants and does not change canonical MVP access or sentinel behavior.
+
+### Locked validity diagnostics style for some-thread gate
+
+- Concept gate failure anchor: "some_thread_* requires probe_validatable intermediate value type".
+- Missing customization anchor: "no probe_valid customization found for threaded value type".
+- Invalid probe return anchor: "probe_valid must return a bool-convertible result".
 
 ### Locked threading arity and rejection rules
 
@@ -300,4 +316,4 @@
 - `cond_thread_first` and `cond_thread_last` accept one or more conditional steps; a false condition skips its step and threads prior value forward unchanged.
 - Calling any threading form with zero steps is a compile-time error.
 - Step argument mismatch (arity or concept incompatibility) is a compile-time error with step-local diagnostics.
-- `some`-style short-circuiting cannot rely on sentinel `T{}` and is therefore not part of strict MVP until explicit validity contracts are available.
+- `some`-style short-circuiting cannot rely on sentinel `T{}` and remains non-MVP even with explicit validity contracts.
