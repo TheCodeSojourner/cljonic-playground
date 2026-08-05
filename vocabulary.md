@@ -30,23 +30,23 @@ status: draft
 ### KeywordCatalog
 - **Definition:** The canonical finite set of global keyword identities represented by the `cljonic::Keyword` enum class. The catalog defines which keyword values exist; it does not imply Clojure-style namespaced keywords.
 - **Deprecated Synonyms:** Keyword Catalog, keyword enum, keyword registry, global keyword catalog
-- **Related:** Keyword, StaticString, CopyOnModifyCollection
+- **Related:** Keyword, String, CopyOnModifyCollection
 - **Usage:** Specification and implementation
 - **Examples:** `assoc(m, kw::name, value)` where `using kw = cljonic::Keyword;` provides ergonomic access to catalog members.
 
 ### Keyword
 - **Definition:** A symbolic key value represented in code by a member of `cljonic::Keyword`. Keywords are global-only in the domain sense: they do not use Clojure-style namespace-qualified keyword identities, even though the C++ type itself may live in a namespace.
 - **Deprecated Synonyms:** global keyword, keyword value, enum keyword
-- **Related:** KeywordCatalog, StaticString, CopyOnModifyCollection
+- **Related:** KeywordCatalog, String, CopyOnModifyCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Map` may use a `Keyword` key such as `kw::name` or `kw::user_id`, with `using kw = cljonic::Keyword;` at the use site.
 
-### StaticString
-- **Definition:** A fixed-capacity string value type suitable for static storage, bounded embedded control, and use as an allowed key category in strict MVP maps and sets.
-- **Deprecated Synonyms:** static string, fixed-capacity string
+### String
+- **Definition:** The cljonic fixed-capacity string collection type. It is the bounded string value model for the library and is also an allowed key category in strict MVP maps and sets.
+- **Deprecated Synonyms:** StaticString, static string, fixed-capacity string, string collection
 - **Related:** StaticStorage, CopyOnModifyCollection, Keyword, CapacityConstruction
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A `StaticString` may be used as a bounded string collection value or as a valid key type under the locked MVP key model.
+- **Examples:** A `String` may be used as a bounded collection value or as a valid key type under the locked MVP key model.
 
 ### LazySequence
 - **Definition:** A value-owning sequence view that defers element production and transformation until consumption, avoids hidden materialization, and may represent finite or infinite sources.
