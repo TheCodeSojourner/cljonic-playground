@@ -48,9 +48,9 @@ Constraints already decided:
 - Sentinel policy is locked: missing or invalid access returns `T{}` and no explicit error/status channel is added.
 - Probe-first guidance is locked for ambiguous domains: `contains` plus `get`, and `has_index` plus indexed `get`.
 - Core collection API style is locked as free-function-first.
-- Canonical MVP collection operations are locked: `get`, `assoc`, `dissoc`, `conj`, `contains`, `count`, `first`, `rest`.
 - Full-capacity `assoc` and `conj` semantics are locked: deterministic unchanged return.
 - Comparator override direction is locked as explicit per-call `_with` APIs (for example `equal_with`).
+- Canonical API matrix source of truth is DESIGN-NOTES.md under "Locked MVP API matrix (summary)".
 
 Important working style:
 - Discussion only unless I explicitly ask for code or file changes.

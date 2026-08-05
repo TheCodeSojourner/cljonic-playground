@@ -29,9 +29,14 @@
 - Quality and verification toolchain is locked: Catch2, generators, sanitizer profiles, linting gates, Doxygen with tested samples, automatic HTML generation, MVP 100% line coverage policy, and layered no-heap verification.
 - Key and value type model for map and set is locked for MVP: keyword enum, integral, enum, and fixed-capacity static string keys; user-defined key types are optional via explicit non-MVP concept gates.
 - Sentinel ambiguity policy is locked: `get`-style access remains sentinel-only (`T{}`), and probe-first usage (`contains`/`has_index`) is required guidance for ambiguous domains.
-- Core collection API style is locked as free-function-first with canonical MVP operations: `get`, `assoc`, `dissoc`, `conj`, `contains`, `count`, `first`, `rest`.
+- Core collection API style is locked as free-function-first.
 - Full-capacity `assoc` and `conj` behavior is locked as deterministic unchanged return.
 - Comparator override direction is locked as explicit per-call `_with` APIs (for example `equal_with`).
+
+### Canonical API matrix source
+
+- The single canonical MVP API matrix source of truth is in DESIGN-NOTES.md under "Locked MVP API matrix (summary)".
+- NEXT-AGENDA.md tracks lock status and remaining decisions, and intentionally avoids duplicating matrix-level semantics.
 
 ## Locked namespace scope
 
