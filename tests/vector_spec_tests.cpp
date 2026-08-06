@@ -5,50 +5,42 @@
 #include <vector.hpp>
 #endif
 
-namespace cljonic::spec_model
-{
+namespace cljonic::spec_model {
 
-  enum class vector_state
-  {
-    empty,
-    populated,
-    at_capacity,
-  };
+enum class vector_state {
+  empty,
+  populated,
+  at_capacity,
+};
 
-  struct vector_observation
-  {
-    int capacity_limit;
-    int logical_size;
-  };
+struct vector_observation {
+  int capacity_limit;
+  int logical_size;
+};
 
-  constexpr auto classify_vector(vector_observation observation) -> vector_state
-  {
-    if (observation.logical_size == 0)
-    {
-      return vector_state::empty;
-    }
-
-    if (observation.logical_size == observation.capacity_limit)
-    {
-      return vector_state::at_capacity;
-    }
-
-    return vector_state::populated;
+constexpr auto classify_vector(vector_observation observation) -> vector_state {
+  if (observation.logical_size == 0) {
+    return vector_state::empty;
   }
+
+  if (observation.logical_size == observation.capacity_limit) {
+    return vector_state::at_capacity;
+  }
+
+  return vector_state::populated;
+}
 
 } // namespace cljonic::spec_model
 
 TEST_CASE("Catch2 infrastructure is active", "[smoke]") { SUCCEED(); }
 
 TEST_CASE("Traceability for CoordinationProtocol field obligation",
-          "[traceability][coordination]")
-{
+          "[traceability][coordination]") {
   INFO("traceable_id: entity-fields.CoordinationProtocol");
   SUCCEED();
 }
 
-TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]")
-{
+TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]") {
   using cljonic::spec_model::classify_vector;
   using cljonic::spec_model::vector_observation;
   using cljonic::spec_model::vector_state;
@@ -70,23 +62,20 @@ TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]")
 }
 
 TEST_CASE("Production vector integration reflects implementation availability",
-          "[vector][integration]")
-{
+          "[vector][integration]") {
 #if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
   using cljonic::count;
   using cljonic::Vector;
   using cljonic::vector_state;
 
-  SECTION("default vector is empty and has zero count")
-  {
+  SECTION("default vector is empty and has zero count") {
     const Vector<int, 4> collection{};
 
     CHECK(collection.state() == vector_state::empty);
     CHECK(count(collection) == 0U);
   }
 
-  SECTION("partially filled vector is populated and count tracks cardinality")
-  {
+  SECTION("partially filled vector is populated and count tracks cardinality") {
     Vector<int, 4> collection{};
 
     REQUIRE(collection.try_push_back(10));
@@ -96,8 +85,7 @@ TEST_CASE("Production vector integration reflects implementation availability",
     CHECK(count(collection) == 2U);
   }
 
-  SECTION("full vector is at capacity and rejects additional insert")
-  {
+  SECTION("full vector is at capacity and rejects additional insert") {
     Vector<int, 2> collection{};
 
     REQUIRE(collection.try_push_back(10));
@@ -115,8 +103,7 @@ TEST_CASE("Production vector integration reflects implementation availability",
 #endif
 }
 
-TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]")
-{
+TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
 #if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
   using cljonic::count;
   using cljonic::Vector;
@@ -126,8 +113,7 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]")
   // runtime-testable.
 
   SECTION("literal-deduced construction via CTAD deduces capacity from element "
-          "count")
-  {
+          "count") {
     // CTAD produces Vector<T, N> where N = initializer size, so each has a
     // different type; cannot parametrize with generators. Test a few cases.
     auto [vec, expected_count] = std::pair{Vector{1}, 1U};
@@ -144,33 +130,26 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]")
   }
 
   SECTION("partial initializer fill with explicit capacity yields populated "
-          "state")
-  {
+          "state") {
     auto [fill_count] =
         GENERATE(std::make_tuple(1), std::make_tuple(2), std::make_tuple(3));
 
-    if (fill_count == 1)
-    {
+    if (fill_count == 1) {
       Vector<int, 4> v{1};
       CHECK(v.state() == vector_state::populated);
       CHECK(count(v) == 1U);
-    }
-    else if (fill_count == 2)
-    {
+    } else if (fill_count == 2) {
       Vector<int, 4> v{1, 2};
       CHECK(v.state() == vector_state::populated);
       CHECK(count(v) == 2U);
-    }
-    else if (fill_count == 3)
-    {
+    } else if (fill_count == 3) {
       Vector<int, 4> v{1, 2, 3};
       CHECK(v.state() == vector_state::populated);
       CHECK(count(v) == 3U);
     }
   }
 
-  SECTION("explicit capacity with no initializers yields empty state")
-  {
+  SECTION("explicit capacity with no initializers yields empty state") {
     Vector<int, 4> v{};
     CHECK(v.state() == vector_state::empty);
     CHECK(count(v) == 0U);
