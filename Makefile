@@ -12,7 +12,7 @@ _COVERAGE_SRC = $(if $(COVERAGE_FILE),$(CURDIR)/src/$(COVERAGE_FILE),$(CURDIR)/s
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli format lint upsert-gate
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli format lint no-heap-src no-heap upsert-gate upsert-gate-strict
 
 help:
 	@printf '%-12s %s\n' 'help' 'Show available targets'
@@ -25,7 +25,10 @@ help:
 	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
 	@printf '%-12s %s\n' 'format' 'Format all source and test C/C++ files in place with clang-format'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
+	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
+	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source poison check plus dedicated no-heap harness build'
 	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
+	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict source no-heap verification'
 
 all: clean test
 
@@ -117,10 +120,38 @@ lint: configure
 	fi
 	@echo "lint:ok"
 
+no-heap-src:
+	@command -v rg > /dev/null 2>&1 || (echo "missing required tool: rg" >&2; exit 1)
+	@# Source-level no-heap gate for strict profiles: block common dynamic allocation paths.
+	@if rg -n --color never -S -g 'src/**' \
+		-e '(^|[^[:alnum:]_])new[[:space:]]' \
+		-e '(^|[^[:alnum:]_])delete([[:space:]]|$$)' \
+		-e '(^|[^[:alnum:]_])(malloc|calloc|realloc|free|aligned_alloc|posix_memalign)\s*\(' \
+		-e 'std::make_unique\s*\(' \
+		-e 'std::make_shared\s*\(' \
+		-e 'std::allocator\b' \
+		-e 'std::pmr::' \
+		-e 'std::(vector|deque|list|forward_list|map|multimap|set|multiset|unordered_map|unordered_set|string|basic_string)\b' src; then \
+		echo "no-heap-src:fail" >&2; \
+		echo "no-heap-src: forbidden heap-allocation pattern found in src" >&2; \
+		exit 1; \
+	fi
+	@echo "no-heap-src:ok"
+
+no-heap:
+	@$(MAKE) no-heap-src
+	@$(CMAKE) -S . -B $(BUILD_DIR) > /dev/null
+	@$(CMAKE) --build $(BUILD_DIR) --target cljonic_no_heap_probe --parallel > /dev/null
+	@echo "no-heap:ok"
+
 upsert-gate:
 	@$(MAKE) lint
 	@$(MAKE) sanitizer-cli
 	@$(MAKE) coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
+
+upsert-gate-strict:
+	@$(MAKE) upsert-gate
+	@$(MAKE) no-heap
 
 clean:
 	rm -rf $(BUILD_DIR) $(COVERAGE_BUILD_DIR) $(SANITIZER_BUILD_DIR) build-missing-vector
