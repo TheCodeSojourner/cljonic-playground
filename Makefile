@@ -2,15 +2,17 @@ CMAKE ?= cmake
 CTEST ?= ctest
 BUILD_DIR ?= build
 COVERAGE_BUILD_DIR ?= build-coverage
+SANITIZER_BUILD_DIR ?= build-sanitizers
 COVERAGE_THRESHOLD ?= 100
 BROWSER ?= brave-browser
 COVERAGE_FILE ?=
 LINT_FILE ?=
+UPSERT_COVERAGE_FILE ?= vector.hpp
 _COVERAGE_SRC = $(if $(COVERAGE_FILE),$(CURDIR)/src/$(COVERAGE_FILE),$(CURDIR)/src/*)
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli format lint
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli format lint upsert-gate
 
 help:
 	@printf '%-12s %s\n' 'help' 'Show available targets'
@@ -19,8 +21,11 @@ help:
 	@printf '%-12s %s\n' 'clean' 'Remove generated local build output'
 	@printf '%-12s %s\n' 'coverage' 'Build with instrumentation, run tests, enforce $(COVERAGE_THRESHOLD)% line coverage'
 	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
+	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
+	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
 	@printf '%-12s %s\n' 'format' 'Format all source and test C/C++ files in place with clang-format'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
+	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
 
 all: clean test
 
@@ -64,6 +69,19 @@ coverage-cli:
 	@lcov --summary $(COVERAGE_BUILD_DIR)/coverage-src.info \
 	     --fail-under-lines $(COVERAGE_THRESHOLD) > /dev/null 2>&1
 
+sanitizer:
+	$(CMAKE) -S . -B $(SANITIZER_BUILD_DIR) -DCLJONIC_SANITIZERS=asan-ubsan
+	$(CMAKE) --build $(SANITIZER_BUILD_DIR) --parallel
+	$(CTEST) --test-dir $(SANITIZER_BUILD_DIR) --output-on-failure --parallel
+
+sanitizer-cli:
+	@$(CMAKE) -S . -B $(SANITIZER_BUILD_DIR) -DCLJONIC_SANITIZERS=asan-ubsan > /dev/null
+	@$(CMAKE) --build $(SANITIZER_BUILD_DIR) --parallel > /dev/null
+	@$(CTEST) --test-dir $(SANITIZER_BUILD_DIR) --output-on-failure \
+	     > $(SANITIZER_BUILD_DIR)/.ctest-out.tmp 2>&1 || \
+	     (cat $(SANITIZER_BUILD_DIR)/.ctest-out.tmp; exit 1)
+	@echo "sanitizer:ok"
+
 format:
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
 	@find src tests -type f \( -name '*.hpp' -o -name '*.h' -o -name '*.cpp' -o -name '*.cc' \) -print0 | \
@@ -99,5 +117,10 @@ lint: configure
 	fi
 	@echo "lint:ok"
 
+upsert-gate:
+	@$(MAKE) lint
+	@$(MAKE) sanitizer-cli
+	@$(MAKE) coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
+
 clean:
-	rm -rf $(BUILD_DIR) $(COVERAGE_BUILD_DIR) build-missing-vector
+	rm -rf $(BUILD_DIR) $(COVERAGE_BUILD_DIR) $(SANITIZER_BUILD_DIR) build-missing-vector
