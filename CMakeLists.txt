@@ -58,4 +58,14 @@ if(BUILD_TESTING)
 
     include(Catch)
     catch_discover_tests(cljonic_tests)
+
+    add_executable(cljonic_no_heap_probe EXCLUDE_FROM_ALL
+        tests/no_heap/harness_main.cpp
+        tests/no_heap/probes_vector.cpp
+    )
+    target_compile_features(cljonic_no_heap_probe PRIVATE cxx_std_23)
+    target_include_directories(cljonic_no_heap_probe PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
 endif()
