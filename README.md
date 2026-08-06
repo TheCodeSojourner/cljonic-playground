@@ -89,25 +89,52 @@ Additionally, this approach helps to detect **undefined behavior** at compile ti
 
 ## Desired cljonic Maintainer Experience
 
-**cljonic** has a **Makefile** in the root directory. For **help** on the available development processes simply execute
-`make` from a command-line while in the root directory to generate a list of the available options.
+This repository is developed primarily using the **[gybis](GYBIS-README.md)** stack — a developer-command-driven,
+AI-assisted Spec-Driven Development (SDD) methodology where vocabulary and specifications are durable and
+implementation is replaceable. Direct manual editing of source and specification files is the exception, not the norm.
 
-**After cloning the repository**, the developer should first execute `make all`. Next, assuming no files are added to the
-repository, only modified, the developer should execute `make test`. Assuming all tests pass, executing `make cljonic`
-*(coming soon)* will generate the **cljonic** single header file. Finally, executing `make git` *(coming soon)* will
-prepare the repository for a **git** commit.
+### Durable Artifacts
+
+The key artifacts that define what this system is and does, in order of authority:
+
+| Artifact          | Role                                                                  |
+| ----------------- | --------------------------------------------------------------------- |
+| `vocabulary.md`   | Shared domain vocabulary; the foundation all other artifacts build on |
+| `architecture.md` | Structural constraints and decisions derived from vocabulary          |
+| `specs/`          | Behavioral specifications derived from architecture                   |
+| `src/`, `tests/`  | Implementation and tests that must align to the specs                 |
+
+### Primary Workflow (gybis)
+
+Development follows a vocabulary-first discipline driven by gybis commands in GitHub Copilot agent mode:
+
+1. **Vocabulary first** — establish or evolve shared terms in `vocabulary.md`
+2. **Architecture second** — express structural constraints in `architecture.md`
+3. **Specs third** — capture behavioral truth in `specs/`
+4. **Implementation last** — code and tests must converge to the specs above
+
+For full workflow guidance, see [GYBIS-README.md](GYBIS-README.md) or run `/gybis-help` in GitHub Copilot agent mode.
+
+### Build Tooling
+
+**cljonic** has a **Makefile** in the root directory that backs gybis workflows and supports direct invocation for
+validation and build tasks. For **help** on the available targets execute `make` from the root directory.
+
+**After cloning the repository**, run `make all` before anything else. For incremental work, run `make test` after
+changes. Assuming all tests pass, executing `make cljonic` *(coming soon)* will generate the **cljonic** single header
+file. Finally, executing `make git` *(coming soon)* will prepare the repository for a **git** commit.
 
 > **Note**
 > Whenever new files are added to the `src/` or `tests/` directories the developer must run `make all` again.
 
-### Prerequisites
+#### Prerequisites
 
 - GNU Make
 - CMake 3.28 or newer
 - A C++ compiler with C++23 support or better
 - Network access during the first configure so CMake can fetch Catch2
 
-### Available Targets
+#### Available Targets
 
 | Target                    | Description                                                                                                            |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -129,7 +156,7 @@ prepare the repository for a **git** commit.
 | `make upsert-gate`        | Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for `UPSERT_COVERAGE_FILE`                         |
 | `make upsert-gate-strict` | upsert-gate plus strict no-heap verification (source, symbols, harness)                                                |
 
-### Under The Hood
+#### Under The Hood
 
 The `make` targets drive the existing CMake test harness. The first configure creates the local `build/` directory and
 fetches Catch2 automatically through CMake `FetchContent`. The build path always uses `cmake --build ... --parallel`,
