@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 #if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
 #include <vector.hpp>
@@ -44,18 +45,20 @@ TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]") {
   using cljonic::spec_model::vector_observation;
   using cljonic::spec_model::vector_state;
 
-  SECTION("zero size is empty") {
-    CHECK(classify_vector(vector_observation{4, 0}) == vector_state::empty);
-  }
+  auto [capacity, size, expected_state] =
+      GENERATE(std::make_tuple(1, 0, vector_state::empty),
+               std::make_tuple(1, 1, vector_state::at_capacity),
+               std::make_tuple(2, 0, vector_state::empty),
+               std::make_tuple(2, 1, vector_state::populated),
+               std::make_tuple(2, 2, vector_state::at_capacity),
+               std::make_tuple(4, 0, vector_state::empty),
+               std::make_tuple(4, 2, vector_state::populated),
+               std::make_tuple(4, 4, vector_state::at_capacity),
+               std::make_tuple(8, 0, vector_state::empty),
+               std::make_tuple(8, 4, vector_state::populated),
+               std::make_tuple(8, 8, vector_state::at_capacity));
 
-  SECTION("interior size is populated") {
-    CHECK(classify_vector(vector_observation{4, 2}) == vector_state::populated);
-  }
-
-  SECTION("full size is at capacity") {
-    CHECK(classify_vector(vector_observation{4, 4}) ==
-          vector_state::at_capacity);
-  }
+  CHECK(classify_vector(vector_observation{capacity, size}) == expected_state);
 }
 
 TEST_CASE("Production vector integration reflects implementation availability",
