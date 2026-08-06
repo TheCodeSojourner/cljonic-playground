@@ -114,7 +114,7 @@ status: draft
 ### CanonicalComparison
 - **Definition:** The canonical comparison model in which `equal`, `less`, `less_equal`, `greater`, and `greater_equal` are variadic, deep where appropriate, and reject floating-point comparison under the default policy.
 - **Deprecated Synonyms:** Canonical Comparison, strict comparison
-- **Related:** FloatingPointExclusion
+- **Related:** FloatingPointExclusion, ComparisonArity, ClojureParity
 - **Usage:** Specification and implementation
 - **Examples:** `equal(a, b, c)` and `less(x, y, z)` return chained boolean results with zero-arity and one-arity calls evaluating to `true`.
 
@@ -312,7 +312,7 @@ status: draft
 ### AmalgamatedHeader
 - **Definition:** The generated single-header distribution artifact assembled from the per-function production headers that remain the source of truth during development.
 - **Deprecated Synonyms:** amalgamated header, single-header distribution
-- **Related:** HeaderOnlyDistribution
+- **Related:** HeaderOnlyDistribution, SourceLayout
 - **Usage:** Implementation, build, tests, and documentation
 - **Examples:** Build automation regenerates the distributable header from the production header tree.
 
@@ -434,7 +434,7 @@ status: draft
 - **Definition:** The construction contract that supports both literal-deduced and explicit-capacity creation while rejecting oversized initializers at compile time.
 - **Deprecated Synonyms:** collection construction pattern, explicit-capacity construction, literal-deduced construction
 - **Related:** CopyOnModifyCollection, CompileTimeEvaluation, StaticStorage
-- **Usage:** Specification, implementation, tests, and documentation
+- **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Explicit-capacity empty construction is valid, but an initializer count that exceeds capacity is a compile-time failure.
 
 ### CardinalityModel

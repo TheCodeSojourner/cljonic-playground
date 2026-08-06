@@ -40,7 +40,6 @@ rule ClassifyVectorAsEmpty {
     when: ObserveVector(vector)
     requires: vector.collection_state = unclassified
     requires: vector.logical_size = 0
-    requires: vector.capacity_limit >= 0
     ensures: vector.collection_state = empty
 }
 
@@ -74,6 +73,12 @@ entity VectorConstruction {
     outcome: pending | succeeded | rejected_at_compile_time
     initializer_count: Integer
     capacity: Integer
+
+    transitions outcome {
+        pending -> succeeded
+        pending -> rejected_at_compile_time
+        terminal: succeeded, rejected_at_compile_time
+    }
 }
 
 rule ConstructVectorWithValidElementCount {
