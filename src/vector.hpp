@@ -11,7 +11,6 @@ namespace cljonic
 
     enum class vector_state
     {
-        unclassified,
         empty,
         populated,
         at_capacity,
