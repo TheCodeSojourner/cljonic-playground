@@ -5,6 +5,7 @@ COVERAGE_BUILD_DIR ?= build-coverage
 SANITIZER_BUILD_DIR ?= build-sanitizers
 CYCLOMATIC_COMPLEXITY_THRESHOLD ?= 4
 FUNCTION_LENGTH_THRESHOLD ?= 25
+COMPLEXITY_PATH ?= src
 COVERAGE_THRESHOLD ?= 100
 BROWSER ?= brave-browser
 COVERAGE_FILE ?=
@@ -25,14 +26,14 @@ help:
 	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
 	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
 	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
-	@printf '%-12s %s\n' 'complexity' 'Run lizard on src; set CYCLOMATIC_COMPLEXITY_THRESHOLD=N and FUNCTION_LENGTH_THRESHOLD=N'
-	@printf '%-12s %s\n' 'complexity-cli' 'Quiet lizard warning-only check on src; fails if thresholds are exceeded'
+	@printf '%-12s %s\n' 'complexity' 'Run lizard on COMPLEXITY_PATH (default src); set CYCLOMATIC_COMPLEXITY_THRESHOLD and FUNCTION_LENGTH_THRESHOLD'
+	@printf '%-12s %s\n' 'complexity-cli' 'Quiet lizard warning-only check on COMPLEXITY_PATH; fails if thresholds are exceeded'
 	@printf '%-12s %s\n' 'format' 'Format all source and test C/C++ files in place with clang-format'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
 	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
 	@printf '%-12s %s\n' 'no-heap-symbols' 'Fail if compiled artifact contains forbidden allocator symbols'
 	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source check, harness build, and binary symbol scan'
-	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
+	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
 	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict no-heap verification (source, symbols, harness)'
 
 all: clean test
@@ -92,11 +93,11 @@ sanitizer-cli:
 
 complexity:
 	@command -v lizard > /dev/null 2>&1 || (echo "missing required tool: lizard" >&2; exit 1)
-	@lizard -C $(CYCLOMATIC_COMPLEXITY_THRESHOLD) -L $(FUNCTION_LENGTH_THRESHOLD) src
+	@lizard -C $(CYCLOMATIC_COMPLEXITY_THRESHOLD) -L $(FUNCTION_LENGTH_THRESHOLD) $(COMPLEXITY_PATH)
 
 complexity-cli:
 	@command -v lizard > /dev/null 2>&1 || (echo "missing required tool: lizard" >&2; exit 1)
-	@lizard -C $(CYCLOMATIC_COMPLEXITY_THRESHOLD) -L $(FUNCTION_LENGTH_THRESHOLD) -w src
+	@lizard -C $(CYCLOMATIC_COMPLEXITY_THRESHOLD) -L $(FUNCTION_LENGTH_THRESHOLD) -w $(COMPLEXITY_PATH)
 	@echo "complexity:ok"
 
 format:
@@ -172,6 +173,7 @@ no-heap:
 
 upsert-gate:
 	@$(MAKE) lint
+	@$(MAKE) complexity-cli
 	@$(MAKE) sanitizer-cli
 	@$(MAKE) coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
 
