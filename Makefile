@@ -3,6 +3,8 @@ CTEST ?= ctest
 BUILD_DIR ?= build
 COVERAGE_BUILD_DIR ?= build-coverage
 SANITIZER_BUILD_DIR ?= build-sanitizers
+CYCLOMATIC_COMPLEXITY_THRESHOLD ?= 4
+FUNCTION_LENGTH_THRESHOLD ?= 25
 COVERAGE_THRESHOLD ?= 100
 BROWSER ?= brave-browser
 COVERAGE_FILE ?=
@@ -12,7 +14,7 @@ _COVERAGE_SRC = $(if $(COVERAGE_FILE),$(CURDIR)/src/$(COVERAGE_FILE),$(CURDIR)/s
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli format lint no-heap-src no-heap-symbols no-heap upsert-gate upsert-gate-strict
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format lint no-heap-src no-heap-symbols no-heap upsert-gate upsert-gate-strict
 
 help:
 	@printf '%-12s %s\n' 'help' 'Show available targets'
@@ -23,6 +25,8 @@ help:
 	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
 	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
 	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
+	@printf '%-12s %s\n' 'complexity' 'Run lizard on src; set CYCLOMATIC_COMPLEXITY_THRESHOLD=N and FUNCTION_LENGTH_THRESHOLD=N'
+	@printf '%-12s %s\n' 'complexity-cli' 'Quiet lizard warning-only check on src; fails if thresholds are exceeded'
 	@printf '%-12s %s\n' 'format' 'Format all source and test C/C++ files in place with clang-format'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
 	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
@@ -85,6 +89,15 @@ sanitizer-cli:
 	     > $(SANITIZER_BUILD_DIR)/.ctest-out.tmp 2>&1 || \
 	     (cat $(SANITIZER_BUILD_DIR)/.ctest-out.tmp; exit 1)
 	@echo "sanitizer:ok"
+
+complexity:
+	@command -v lizard > /dev/null 2>&1 || (echo "missing required tool: lizard" >&2; exit 1)
+	@lizard -C $(CYCLOMATIC_COMPLEXITY_THRESHOLD) -L $(FUNCTION_LENGTH_THRESHOLD) src
+
+complexity-cli:
+	@command -v lizard > /dev/null 2>&1 || (echo "missing required tool: lizard" >&2; exit 1)
+	@lizard -C $(CYCLOMATIC_COMPLEXITY_THRESHOLD) -L $(FUNCTION_LENGTH_THRESHOLD) -w src
+	@echo "complexity:ok"
 
 format:
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
