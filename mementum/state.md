@@ -1,13 +1,15 @@
 ## Session State
 
-- last_session_id: e1ea3d51-f7d2-451d-9716-d87f86c557d0
-- current_timestamp: 2026-08-06T19:59:15Z
-- recover: Run `make upsert-gate` after each source/test upsert, then continue standalone `get` semantics work in specs/collections.
+- last_session_id: 30b5af54-203a-440f-a00b-da438a754404
+- current_timestamp: 2026-08-06T20:49:06Z
+- recover: Run `make upsert-gate` after each source/test upsert, then run `make upsert-gate-strict` as the session-end checkpoint.
 
 ## Task
 
-- Session initialized with gybis-init orientation gate; context and open question acknowledged.
-- Synthesized the AI upsert quality workflow into knowledge and pruned redundant loop-specific memories.
+- Finalized strict no-heap verification workflow with dedicated `make no-heap` and session-end `make upsert-gate-strict` usage.
+- Organized no-heap harness code under `tests/no_heap/` with orchestrator plus feature-family probe structure.
+- Verified no-heap enforcement by injecting temporary heap usage in `src/vector.hpp`, observing strict gate failure, then reverting and confirming pass.
+- Updated durable knowledge so future sessions recover strict gate sequencing and no-heap harness layout quickly.
 
 ## Questions
 
@@ -15,14 +17,13 @@
 
 ## Decisions
 
-- Promoted the canonical loop contract into knowledge at `mementum/knowledge/ai-upsert-quality-loop.md`.
-- Kept `coverage-measures-during-ai-upsert-loop.md` and `arch-quality-gates-need-thresholds.md` as useful low-level breadcrumbs.
-- Pruned redundant untracked loop-memory drafts once the knowledge page and state carried the durable workflow guidance.
+- Keep iterative loop gate as `make upsert-gate` and reserve `make upsert-gate-strict` for session-end checkpoints.
+- Keep strict no-heap harness excluded from default `make all`/`make test`; invoke it through `make no-heap` and strict gate only.
+- Maintain no-heap probe code by feature family under `tests/no_heap/` to scale with upcoming set/map/range/cycle and closure-core probes.
 
 ## Next
 
-- Run `make upsert-gate` after each source/test upsert, then continue standalone `get` semantics work in specs/collections.
-- Add minimal `assoc` and `conj` collection behavior slices after `get`, preserving one standalone function name per operation family.
+- Run `make upsert-gate` after each source/test upsert, then run `make upsert-gate-strict` once before closing each implementation session.
+- Continue standalone `get` semantics work in specs/collections, then add minimal `assoc` and `conj` slices with one standalone function name per operation family.
 - Run dependency-aware/full-set spec checks before broader code propagation.
-- Consider adding 4 arch spec traceability placeholder tests (IdentityProfile, QualityGateReport, ProfileGateDecision, OperationsProfile) for convention parity.
 

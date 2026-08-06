@@ -9,6 +9,13 @@ depends-on: []
 
 The canonical AI upsert workflow for this repo is `make upsert-gate`.
 
+Strict checkpoint workflow:
+- Use `make upsert-gate-strict` as the session-end verification step after iterative upserts.
+- `upsert-gate-strict` runs `upsert-gate` first, then `no-heap`.
+- `no-heap` runs the fast source scan (`no-heap-src`) and builds the dedicated no-heap harness target (`cljonic_no_heap_probe`).
+- No-heap harness files live under `tests/no_heap/` and are organized by feature-family probes (for example vector, then future set/map/range/cycle and closure-core probes).
+- The no-heap harness target is excluded from default test runs (`make all` and `make test`) and only runs through strict policy targets.
+
 Loop contract:
 - Run it after each source or test change.
 - It fails fast in this order: `lint` -> `sanitizer-cli` -> `coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)`.
