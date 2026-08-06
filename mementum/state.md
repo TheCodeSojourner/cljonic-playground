@@ -1,12 +1,12 @@
 ## Session State
 
-- last_session_id: 2694df7e-4919-487d-b509-3a61b6aa161e
+- last_session_id: 01133ab1-8800-4aca-af67-9e802610d720
 - current_timestamp: 2026-08-06T00:00:00Z
 - recover: Continue from tracked source files only: return to standalone `get` semantics in specs/collections, then run dependency-aware/full-set spec checks before broader code propagation.
 
 ## Task
 
-- Full gybis check/weed pass (vocab-check, arch-check, spec-check, vocab-weed, arch-weed, spec-weed).
+- Added `coverage-cli` make target for AI-driven upsert coverage loops.
 
 ## Questions
 
@@ -15,12 +15,9 @@
 
 ## Decisions
 
-- gybis-vocab-check: PASS 0/0/7 info (status:draft, 5 incoming-link orphans — CanonicalCollectionOperationFamily/StaticallyBoundedResult/StepDescriptor/ProbeValidityConcept/CardinalityModel — namespace cluster isolated from main graph).
-- gybis-arch-check: PASS 0/0/5 info (same aspirational quality tool gaps as prior session; no change).
-- gybis-spec-check: PASS 7/7 files clean; count.allium module-alias/enum-name collision (vector) is benign under full-set analysis.
-- gybis-vocab-weed: `bounded_numeric_domain` (deprecated synonym) → `closed_numeric_domain` in architecture S3_resource_policy lambda; committed. `try_push_back` kept as staging method; 43 unused aspirational terms kept.
-- gybis-arch-weed: canonical operation spec gap (get/assoc/dissoc/conj/contains/first/rest) skipped as in-progress per recover directive; S3 resource policy gap skipped as acceptable abstraction level.
-- gybis-spec-weed: 4 arch spec traceability placeholders (IdentityProfile, QualityGateReport, ProfileGateDecision, OperationsProfile) skipped; traceable_id formalization deferred; arch aspirational gaps skipped. Tests: 5/5 pass.
+- Added `COVERAGE_FILE ?=` and `_COVERAGE_SRC` variables to Makefile; `COVERAGE_FILE=foo.hpp` narrows lcov extraction to `$(CURDIR)/src/foo.hpp`.
+- Added `coverage-cli` target: cmake/lcov output fully suppressed; ctest output captured and shown only on failure; final output is exactly `100.0%` (bare percentage, no label).
+- AI upsert loop protocol established: after each code/test change run `make coverage-cli COVERAGE_FILE=<header>`; loop until output is `100.0%`.
 
 ## Next
 
