@@ -1,15 +1,9 @@
 -- allium: 3
 
 entity VectorCollection {
-    collection_state: unclassified | empty | populated | at_capacity
+    collection_state: empty | populated | at_capacity
     capacity_limit: Integer
     logical_size: Integer
-
-    transitions collection_state {
-        unclassified -> empty
-        unclassified -> populated
-        unclassified -> at_capacity
-    }
 
     invariant CapacityIsNonNegative {
         this.capacity_limit >= 0
@@ -38,14 +32,12 @@ entity VectorCollection {
 
 rule ClassifyVectorAsEmpty {
     when: ObserveVector(vector)
-    requires: vector.collection_state = unclassified
     requires: vector.logical_size = 0
     ensures: vector.collection_state = empty
 }
 
 rule ClassifyVectorAsPopulated {
     when: ObserveVector(vector)
-    requires: vector.collection_state = unclassified
     requires: vector.logical_size > 0
     requires: vector.logical_size < vector.capacity_limit
     ensures: vector.collection_state = populated
@@ -53,13 +45,12 @@ rule ClassifyVectorAsPopulated {
 
 rule ClassifyVectorAsAtCapacity {
     when: ObserveVector(vector)
-    requires: vector.collection_state = unclassified
     requires: vector.logical_size > 0
     requires: vector.logical_size = vector.capacity_limit
     ensures: vector.collection_state = at_capacity
 }
 
-actor VectorObserver { identified_by: VectorCollection where vector_collection.collection_state = unclassified }
+actor VectorObserver { identified_by: VectorCollection where vector_collection.collection_state in {empty, populated, at_capacity} }
 
 surface VectorClassificationSurface {
     facing observer: VectorObserver
