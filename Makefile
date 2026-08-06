@@ -5,11 +5,12 @@ COVERAGE_BUILD_DIR ?= build-coverage
 COVERAGE_THRESHOLD ?= 100
 BROWSER ?= brave-browser
 COVERAGE_FILE ?=
+LINT_FILE ?=
 _COVERAGE_SRC = $(if $(COVERAGE_FILE),$(CURDIR)/src/$(COVERAGE_FILE),$(CURDIR)/src/*)
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli
+.PHONY: help all test clean configure coverage coverage-cli format lint
 
 help:
 	@printf '%-12s %s\n' 'help' 'Show available targets'
@@ -18,6 +19,8 @@ help:
 	@printf '%-12s %s\n' 'clean' 'Remove generated local build output'
 	@printf '%-12s %s\n' 'coverage' 'Build with instrumentation, run tests, enforce $(COVERAGE_THRESHOLD)% line coverage'
 	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
+	@printf '%-12s %s\n' 'format' 'Format all source and test C/C++ files in place with clang-format'
+	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
 
 all: clean test
 
@@ -60,6 +63,41 @@ coverage-cli:
 	     awk '/lines\.\.\./{print $$2}'
 	@lcov --summary $(COVERAGE_BUILD_DIR)/coverage-src.info \
 	     --fail-under-lines $(COVERAGE_THRESHOLD) > /dev/null 2>&1
+
+format:
+	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
+	@find src tests -type f \( -name '*.hpp' -o -name '*.h' -o -name '*.cpp' -o -name '*.cc' \) -print0 | \
+		xargs -0 -r clang-format -i
+	@echo "format:ok"
+
+lint: configure
+	@$(MAKE) format > /dev/null
+	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
+	@command -v clang-tidy > /dev/null 2>&1 || (echo "missing required tool: clang-tidy" >&2; exit 1)
+	@$(CMAKE) -S . -B $(BUILD_DIR) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON > /dev/null
+	@if [ -n "$(LINT_FILE)" ]; then \
+		clang-format --dry-run --Werror "$(LINT_FILE)"; \
+	else \
+		find src tests -type f \( -name '*.hpp' -o -name '*.h' -o -name '*.cpp' -o -name '*.cc' \) -print0 | \
+		xargs -0 -r clang-format --dry-run --Werror; \
+	fi
+	@if [ -n "$(LINT_FILE)" ]; then \
+		case "$(LINT_FILE)" in \
+			src/*.hpp|src/*.h) clang-tidy tests/vector_spec_tests.cpp -p $(BUILD_DIR) --quiet --header-filter="^$(CURDIR)/(src|tests)/.*" > $(BUILD_DIR)/.clang-tidy-out.tmp 2>&1 ;; \
+			*) clang-tidy "$(LINT_FILE)" -p $(BUILD_DIR) --quiet --header-filter="^$(CURDIR)/(src|tests)/.*" > $(BUILD_DIR)/.clang-tidy-out.tmp 2>&1 ;; \
+		esac; \
+		status=$$?; \
+		grep -E "^$(CURDIR)/(src|tests)/|^src/|^tests/" $(BUILD_DIR)/.clang-tidy-out.tmp | grep -Ev ': note:' || true; \
+		rm -f $(BUILD_DIR)/.clang-tidy-out.tmp; \
+		exit $$status; \
+	else \
+		clang-tidy tests/vector_spec_tests.cpp -p $(BUILD_DIR) --quiet --header-filter="^$(CURDIR)/(src|tests)/.*" > $(BUILD_DIR)/.clang-tidy-out.tmp 2>&1; \
+		status=$$?; \
+		grep -E "^$(CURDIR)/(src|tests)/|^src/|^tests/" $(BUILD_DIR)/.clang-tidy-out.tmp | grep -Ev ': note:' || true; \
+		rm -f $(BUILD_DIR)/.clang-tidy-out.tmp; \
+		exit $$status; \
+	fi
+	@echo "lint:ok"
 
 clean:
 	rm -rf $(BUILD_DIR) $(COVERAGE_BUILD_DIR) build-missing-vector
