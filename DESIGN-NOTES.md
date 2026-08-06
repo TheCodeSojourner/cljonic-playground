@@ -175,7 +175,6 @@
 
 - Sanitizers are required in host CI profiles.
 - At minimum, AddressSanitizer and UndefinedBehaviorSanitizer are enabled in host test profiles.
-- ThreadSanitizer is enabled for applicable host parallel profiles.
 - Sanitizers are profile-gated and not required for constrained embedded target builds.
 
 ### Linting
