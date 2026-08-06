@@ -1,29 +1,28 @@
 ## Session State
 
-- last_session_id: 01133ab1-8800-4aca-af67-9e802610d720
-- current_timestamp: 2026-08-06T00:00:00Z
-- recover: Continue from tracked source files only: return to standalone `get` semantics in specs/collections, then run dependency-aware/full-set spec checks before broader code propagation.
+- last_session_id: eb774162-ddb4-46f3-bc3b-f72ab264dac6
+- current_timestamp: 2026-08-06T19:31:47Z
+- recover: Run `make lint` and `make coverage-cli COVERAGE_FILE=vector.hpp` after each source/test upsert, then continue standalone `get` semantics work in specs/collections.
 
 ## Task
 
-- Added `coverage-cli` make target for AI-driven upsert coverage loops.
+- Added `format` and loop-friendly `lint` targets to support deterministic AI upsert quality loops.
 
 ## Questions
 
-- Should strict traceability in gybis-spec-weed treat architecture/build equivalence (`C++23` vs `cxx_std_23`) as semantic match by rule, or require explicit literal token presence?
-- Should traceable obligation IDs be standardized as explicit test tags/macros rather than INFO-string markers to avoid matcher fragility?
+- Should analyzer-style `clang-tidy` checks remain enabled in default `make lint`, or move behind an opt-in profile to minimize noise for routine loops?
 
 ## Decisions
 
-- Added `COVERAGE_FILE ?=` and `_COVERAGE_SRC` variables to Makefile; `COVERAGE_FILE=foo.hpp` narrows lcov extraction to `$(CURDIR)/src/foo.hpp`.
-- Added `coverage-cli` target: cmake/lcov output fully suppressed; ctest output captured and shown only on failure; final output is exactly `100.0%` (bare percentage, no label).
-- AI upsert loop protocol established: after each code/test change run `make coverage-cli COVERAGE_FILE=<header>`; loop until output is `100.0%`.
+- Added `format` target to apply in-place `clang-format` on `src/**` and `tests/**`.
+- Updated `lint` to execute formatting first, then lint checks.
+- Constrained lint reporting to project paths (`src/**`, `tests/**`) and suppressed `: note:` lines to keep output loop-friendly.
+- Preserved lint gate behavior with deterministic success marker `lint:ok` and non-zero exit on real check failures.
 
 ## Next
 
-- Continue from tracked source files only: return to standalone `get` semantics in specs/collections, then run dependency-aware/full-set spec checks before broader code propagation.
+- Run `make lint` and `make coverage-cli COVERAGE_FILE=vector.hpp` after each source/test upsert, then continue standalone `get` semantics work in specs/collections.
 - Add minimal `assoc` and `conj` collection behavior slices after `get`, preserving one standalone function name per operation family.
-- Consider adding 4 arch spec traceability placeholder tests (IdentityProfile, QualityGateReport, ProfileGateDecision, OperationsProfile) to bring full parity with CoordinationProtocol convention.
-- Keep strict traceability checks grounded on `allium plan` obligation IDs with deterministic test matching.
-- Keep architecture, specs, and code synchronized on deterministic, no-heap, no-exception constraints.
+- Run dependency-aware/full-set spec checks before broader code propagation.
+- Consider adding 4 arch spec traceability placeholder tests (IdentityProfile, QualityGateReport, ProfileGateDecision, OperationsProfile) for convention parity.
 

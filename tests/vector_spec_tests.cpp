@@ -4,146 +4,131 @@
 #include <vector.hpp>
 #endif
 
-namespace cljonic::spec_model
-{
+namespace cljonic::spec_model {
 
-    enum class vector_state
-    {
-        empty,
-        populated,
-        at_capacity,
-    };
+enum class vector_state {
+  empty,
+  populated,
+  at_capacity,
+};
 
-    struct vector_observation
-    {
-        int capacity_limit;
-        int logical_size;
-    };
+struct vector_observation {
+  int capacity_limit;
+  int logical_size;
+};
 
-    constexpr auto classify_vector(vector_observation observation) -> vector_state
-    {
-        if (observation.logical_size == 0)
-        {
-            return vector_state::empty;
-        }
+constexpr auto classify_vector(vector_observation observation) -> vector_state {
+  if (observation.logical_size == 0) {
+    return vector_state::empty;
+  }
 
-        if (observation.logical_size == observation.capacity_limit)
-        {
-            return vector_state::at_capacity;
-        }
+  if (observation.logical_size == observation.capacity_limit) {
+    return vector_state::at_capacity;
+  }
 
-        return vector_state::populated;
-    }
+  return vector_state::populated;
+}
 
 } // namespace cljonic::spec_model
 
-TEST_CASE("Catch2 infrastructure is active", "[smoke]")
-{
-    SUCCEED();
+TEST_CASE("Catch2 infrastructure is active", "[smoke]") { SUCCEED(); }
+
+TEST_CASE("Traceability for CoordinationProtocol field obligation",
+          "[traceability][coordination]") {
+  INFO("traceable_id: entity-fields.CoordinationProtocol");
+  SUCCEED();
 }
 
-TEST_CASE("Traceability for CoordinationProtocol field obligation", "[traceability][coordination]")
-{
-    INFO("traceable_id: entity-fields.CoordinationProtocol");
-    SUCCEED();
+TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]") {
+  using cljonic::spec_model::classify_vector;
+  using cljonic::spec_model::vector_observation;
+  using cljonic::spec_model::vector_state;
+
+  SECTION("zero size is empty") {
+    CHECK(classify_vector(vector_observation{4, 0}) == vector_state::empty);
+  }
+
+  SECTION("interior size is populated") {
+    CHECK(classify_vector(vector_observation{4, 2}) == vector_state::populated);
+  }
+
+  SECTION("full size is at capacity") {
+    CHECK(classify_vector(vector_observation{4, 4}) ==
+          vector_state::at_capacity);
+  }
 }
 
-TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]")
-{
-    using cljonic::spec_model::classify_vector;
-    using cljonic::spec_model::vector_observation;
-    using cljonic::spec_model::vector_state;
-
-    SECTION("zero size is empty")
-    {
-        CHECK(classify_vector(vector_observation{4, 0}) == vector_state::empty);
-    }
-
-    SECTION("interior size is populated")
-    {
-        CHECK(classify_vector(vector_observation{4, 2}) == vector_state::populated);
-    }
-
-    SECTION("full size is at capacity")
-    {
-        CHECK(classify_vector(vector_observation{4, 4}) == vector_state::at_capacity);
-    }
-}
-
-TEST_CASE("Production vector integration reflects implementation availability", "[vector][integration]")
-{
+TEST_CASE("Production vector integration reflects implementation availability",
+          "[vector][integration]") {
 #if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
-    using cljonic::count;
-    using cljonic::Vector;
-    using cljonic::vector_state;
+  using cljonic::count;
+  using cljonic::Vector;
+  using cljonic::vector_state;
 
-    SECTION("default vector is empty and has zero count")
-    {
-        const Vector<int, 4> collection{};
+  SECTION("default vector is empty and has zero count") {
+    const Vector<int, 4> collection{};
 
-        CHECK(collection.state() == vector_state::empty);
-        CHECK(count(collection) == 0U);
-    }
+    CHECK(collection.state() == vector_state::empty);
+    CHECK(count(collection) == 0U);
+  }
 
-    SECTION("partially filled vector is populated and count tracks cardinality")
-    {
-        Vector<int, 4> collection{};
+  SECTION("partially filled vector is populated and count tracks cardinality") {
+    Vector<int, 4> collection{};
 
-        REQUIRE(collection.try_push_back(10));
-        REQUIRE(collection.try_push_back(20));
+    REQUIRE(collection.try_push_back(10));
+    REQUIRE(collection.try_push_back(20));
 
-        CHECK(collection.state() == vector_state::populated);
-        CHECK(count(collection) == 2U);
-    }
+    CHECK(collection.state() == vector_state::populated);
+    CHECK(count(collection) == 2U);
+  }
 
-    SECTION("full vector is at capacity and rejects additional insert")
-    {
-        Vector<int, 2> collection{};
+  SECTION("full vector is at capacity and rejects additional insert") {
+    Vector<int, 2> collection{};
 
-        REQUIRE(collection.try_push_back(10));
-        REQUIRE(collection.try_push_back(20));
-        CHECK(collection.state() == vector_state::at_capacity);
-        CHECK(count(collection) == 2U);
+    REQUIRE(collection.try_push_back(10));
+    REQUIRE(collection.try_push_back(20));
+    CHECK(collection.state() == vector_state::at_capacity);
+    CHECK(count(collection) == 2U);
 
-        CHECK_FALSE(collection.try_push_back(30));
-        CHECK(collection.state() == vector_state::at_capacity);
-        CHECK(count(collection) == 2U);
-    }
+    CHECK_FALSE(collection.try_push_back(30));
+    CHECK(collection.state() == vector_state::at_capacity);
+    CHECK(count(collection) == 2U);
+  }
 #else
-    SKIP("Production vector implementation is not present yet. Add src/vector.hpp and rerun ctest to activate integration coverage.");
+  SKIP("Production vector implementation is not present yet. Add "
+       "src/vector.hpp and rerun ctest to activate integration coverage.");
 #endif
 }
 
-TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]")
-{
+TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
 #if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
-    using cljonic::count;
-    using cljonic::Vector;
-    using cljonic::vector_state;
+  using cljonic::count;
+  using cljonic::Vector;
+  using cljonic::vector_state;
 
-    // RejectVectorConstructionOnOversizedElementCount is a static constraint; not runtime-testable.
+  // RejectVectorConstructionOnOversizedElementCount is a static constraint; not
+  // runtime-testable.
 
-    SECTION("literal-deduced construction via CTAD deduces capacity from element count")
-    {
-        auto v = Vector{1, 2, 3, 4};
-        CHECK(v.state() == vector_state::at_capacity);
-        CHECK(count(v) == 4U);
-    }
+  SECTION("literal-deduced construction via CTAD deduces capacity from element "
+          "count") {
+    auto v = Vector{1, 2, 3, 4};
+    CHECK(v.state() == vector_state::at_capacity);
+    CHECK(count(v) == 4U);
+  }
 
-    SECTION("partial initializer fill with explicit capacity yields populated state")
-    {
-        Vector<int, 4> v{1, 2};
-        CHECK(v.state() == vector_state::populated);
-        CHECK(count(v) == 2U);
-    }
+  SECTION("partial initializer fill with explicit capacity yields populated "
+          "state") {
+    Vector<int, 4> v{1, 2};
+    CHECK(v.state() == vector_state::populated);
+    CHECK(count(v) == 2U);
+  }
 
-    SECTION("explicit capacity with no initializers yields empty state")
-    {
-        Vector<int, 4> v{};
-        CHECK(v.state() == vector_state::empty);
-        CHECK(count(v) == 0U);
-    }
+  SECTION("explicit capacity with no initializers yields empty state") {
+    Vector<int, 4> v{};
+    CHECK(v.state() == vector_state::empty);
+    CHECK(count(v) == 0U);
+  }
 #else
-    SKIP("Production vector implementation is not present.");
+  SKIP("Production vector implementation is not present.");
 #endif
 }
