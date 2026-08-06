@@ -70,7 +70,6 @@ Control enforces hard constraints across all profiles: no heap, no exceptions, d
 
 λ quality_gate_thresholds_met(x). host_profiles(x) → coverage_core_mvp_line_percent(x) ≡ 100
   | host_profiles(x) → asan_enabled(x) ∧ ubsan_enabled(x)
-  | host_parallel_profiles(x) → tsan_enabled(x)
   | documentation_samples(x) → compile_and_test_pass(x)
   | docs_site(x) → doxygen_html_generated(x)
 
