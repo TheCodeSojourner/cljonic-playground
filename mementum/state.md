@@ -1,28 +1,31 @@
 ## Session State
 
-- last_session_id: 2026-08-06T21:00:00Z
-- current_timestamp: 2026-08-06T21:00:00Z
+- last_session_id: 2026-08-06T22:04:15Z
+- current_timestamp: 2026-08-06T22:04:15Z
 - recover: Run `make upsert-gate` after each source/test upsert, then run `make upsert-gate-strict` as the session-end checkpoint.
 
 ## Task
 
-- Implemented binary symbol-scan gate to complete DESIGN-NOTES.md three-layer no-heap verification strategy (source check → harness build → binary symbol scan).
-- Refactored vector_spec_tests.cpp to use Catch2 generators: eliminated repetitive SECTION blocks (state classification 3→11 cases; construction contract 1→3 cases).
-- Documented Catch2 generator parametrization pattern in mementum for future test design across set/map/range suites.
+- Added source complexity gates to `Makefile`: `complexity` and `complexity-cli` backed by lizard with configurable thresholds.
+- Added function-length threshold support (`FUNCTION_LENGTH_THRESHOLD`) and configurable scope (`COMPLEXITY_PATH`) for complexity checks.
+- Codified complexity enforcement in the mandatory AI quality loop by adding `complexity-cli` to `upsert-gate`.
+- Updated mementum knowledge to reflect the new upsert-gate ordering and complexity policy intent.
 
 ## Questions
 
-- None at this time.
+- Should complexity checks live only in strict checkpoints or in the mandatory loop? Resolved in favor of mandatory loop (`upsert-gate`).
+- Can cyclomatic threshold be fractional (for example `1.5`)? No; lizard requires an integer `-C` value.
+- Should `classify_vector` be rewritten to reduce CCN=3? No; current structure is already a readable minimal branch shape for a 3-state classifier.
 
 ## Decisions
 
-- Binary symbol-scan gate is part of strict no-heap workflow; no forbidden allocator symbols allowed in compiled artifacts.
-- Catch2 generators are implementation pattern, not architecture constraint; document in mementum, not S1 architecture.
-- Test refactoring uses generators for parameter matrices; inline cases or if-chains when types are incompatible (e.g., Vector<int, 1> vs Vector<int, 2>).
+- Default complexity policy for AI-authored code: `CYCLOMATIC_COMPLEXITY_THRESHOLD=4`, `FUNCTION_LENGTH_THRESHOLD=25`.
+- Mandatory loop order is now: `lint` -> `complexity-cli` -> `sanitizer-cli` -> `coverage-cli`.
+- `COMPLEXITY_PATH` defaults to `src` for enforcement and can be narrowed per command for focused diagnostics.
 
 ## Next
 
-- Continue standalone `get` semantics work in specs/collections, then add minimal `assoc` and `conj` slices with one standalone function name per operation family.
+- Continue standalone `get` semantics work in `specs/collections`, then add minimal `assoc` and `conj` slices.
 - Run dependency-aware/full-set spec checks before broader code propagation.
-- When adding set/map/range test suites, reference catch2-generator-parametrization-pattern.md for boundary/state testing guidance.
+- Keep default mandatory complexity scope at `src`; use file-scoped `COMPLEXITY_PATH` only for local investigation.
 
