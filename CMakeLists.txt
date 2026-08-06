@@ -29,6 +29,23 @@ if(BUILD_TESTING)
         target_compile_options(cljonic_tests PRIVATE --coverage)
         target_link_options(cljonic_tests PRIVATE --coverage)
     endif()
+
+    set(CLJONIC_SANITIZERS "off" CACHE STRING "Sanitizer profile: off or asan-ubsan")
+    set_property(CACHE CLJONIC_SANITIZERS PROPERTY STRINGS off asan-ubsan)
+    if(NOT CLJONIC_SANITIZERS STREQUAL "off")
+        if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+            message(FATAL_ERROR "CLJONIC_SANITIZERS requires a Clang or GCC toolchain")
+        endif()
+
+        if(CLJONIC_SANITIZERS STREQUAL "asan-ubsan")
+            set(_cljonic_sanitizer_flags -fsanitize=address,undefined -fno-omit-frame-pointer)
+        else()
+            message(FATAL_ERROR "Unsupported CLJONIC_SANITIZERS value: ${CLJONIC_SANITIZERS}")
+        endif()
+
+        target_compile_options(cljonic_tests PRIVATE ${_cljonic_sanitizer_flags})
+        target_link_options(cljonic_tests PRIVATE ${_cljonic_sanitizer_flags})
+    endif()
     target_include_directories(cljonic_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
     if(EXISTS "${CLJONIC_VECTOR_HEADER}")
