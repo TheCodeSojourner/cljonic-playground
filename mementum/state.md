@@ -1,12 +1,12 @@
 ## Session State
 
-- last_session_id: 579085a2-2364-44b6-ae7a-408e4de65313
-- current_timestamp: 2026-08-06T15:17:10Z
+- last_session_id: 2694df7e-4919-487d-b509-3a61b6aa161e
+- current_timestamp: 2026-08-06T00:00:00Z
 - recover: Continue from tracked source files only: return to standalone `get` semantics in specs/collections, then run dependency-aware/full-set spec checks before broader code propagation.
 
 ## Task
 
-- Full gybis check/weed pass across vocab/arch/specs; add coverage analysis; propagate CapacityConstruction through all layers.
+- Full gybis check/weed pass (vocab-check, arch-check, spec-check, vocab-weed, arch-weed, spec-weed).
 
 ## Questions
 
@@ -15,19 +15,18 @@
 
 ## Decisions
 
-- Added `make coverage` target using lcov; anchored path to `$(CURDIR)/src/*` to exclude Catch2; threshold enforced at 100% line coverage; HTML report opens in browser via `brave-browser file://...`.
-- Removed `vector_state::invalid` and all related guards, spec rules, and test sections; strengthened VectorCollection invariants to unconditional form.
-- Propagated `CapacityConstruction` fully: vocabulary (usage field updated) → architecture (λ S1_construction) → specs (VectorConstruction entity + transitions + rules) → code (variadic constructor + CTAD guide) → tests (construction TEST_CASE).
-- Left arch quality tool gaps (sanitizers, clang-tidy/format, cppcheck, iwyu, doxygen) as aspirational — no Makefile stubs added.
-- gybis-vocab-check: PASS 0/0/0. Enriched CanonicalComparison.related and AmalgamatedHeader.related with reciprocal links.
-- gybis-arch-check: PASS 0/0/5 info (all aspirational quality tool gaps).
-- gybis-spec-check: PASS after adding transitions block to VectorConstruction entity.
-- gybis-vocab-weed: `try_push_back` skipped (staging method); 35 unused aspirational terms kept.
+- gybis-vocab-check: PASS 0/0/7 info (status:draft, 5 incoming-link orphans — CanonicalCollectionOperationFamily/StaticallyBoundedResult/StepDescriptor/ProbeValidityConcept/CardinalityModel — namespace cluster isolated from main graph).
+- gybis-arch-check: PASS 0/0/5 info (same aspirational quality tool gaps as prior session; no change).
+- gybis-spec-check: PASS 7/7 files clean; count.allium module-alias/enum-name collision (vector) is benign under full-set analysis.
+- gybis-vocab-weed: `bounded_numeric_domain` (deprecated synonym) → `closed_numeric_domain` in architecture S3_resource_policy lambda; committed. `try_push_back` kept as staging method; 43 unused aspirational terms kept.
+- gybis-arch-weed: canonical operation spec gap (get/assoc/dissoc/conj/contains/first/rest) skipped as in-progress per recover directive; S3 resource policy gap skipped as acceptable abstraction level.
+- gybis-spec-weed: 4 arch spec traceability placeholders (IdentityProfile, QualityGateReport, ProfileGateDecision, OperationsProfile) skipped; traceable_id formalization deferred; arch aspirational gaps skipped. Tests: 5/5 pass.
 
 ## Next
 
 - Continue from tracked source files only: return to standalone `get` semantics in specs/collections, then run dependency-aware/full-set spec checks before broader code propagation.
 - Add minimal `assoc` and `conj` collection behavior slices after `get`, preserving one standalone function name per operation family.
+- Consider adding 4 arch spec traceability placeholder tests (IdentityProfile, QualityGateReport, ProfileGateDecision, OperationsProfile) to bring full parity with CoordinationProtocol convention.
 - Keep strict traceability checks grounded on `allium plan` obligation IDs with deterministic test matching.
 - Keep architecture, specs, and code synchronized on deterministic, no-heap, no-exception constraints.
 
