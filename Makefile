@@ -12,7 +12,7 @@ _COVERAGE_SRC = $(if $(COVERAGE_FILE),$(CURDIR)/src/$(COVERAGE_FILE),$(CURDIR)/s
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli format lint no-heap-src no-heap upsert-gate upsert-gate-strict
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli format lint no-heap-src no-heap-symbols no-heap upsert-gate upsert-gate-strict
 
 help:
 	@printf '%-12s %s\n' 'help' 'Show available targets'
@@ -26,9 +26,10 @@ help:
 	@printf '%-12s %s\n' 'format' 'Format all source and test C/C++ files in place with clang-format'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
 	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
-	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source poison check plus dedicated no-heap harness build'
+	@printf '%-12s %s\n' 'no-heap-symbols' 'Fail if compiled artifact contains forbidden allocator symbols'
+	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source check, harness build, and binary symbol scan'
 	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
-	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict source no-heap verification'
+	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict no-heap verification (source, symbols, harness)'
 
 all: clean test
 
@@ -138,10 +139,22 @@ no-heap-src:
 	fi
 	@echo "no-heap-src:ok"
 
+no-heap-symbols:
+	@command -v nm > /dev/null 2>&1 || (echo "missing required tool: nm" >&2; exit 1)
+	@# Binary-level no-heap gate: verify no allocator symbols in compiled artifact.
+	@BINARY=$(BUILD_DIR)/cljonic_no_heap_probe; \
+	if nm "$$BINARY" 2>/dev/null | grep -E '^[0-9a-f]+ [UT] (malloc|free|calloc|realloc|aligned_alloc|posix_memalign|_Znwm|_Znam|_ZdlPv|_ZdaPv)' > /dev/null; then \
+		echo "no-heap-symbols:fail" >&2; \
+		echo "no-heap-symbols: forbidden allocator symbol found in binary" >&2; \
+		exit 1; \
+	fi
+	@echo "no-heap-symbols:ok"
+
 no-heap:
 	@$(MAKE) no-heap-src
 	@$(CMAKE) -S . -B $(BUILD_DIR) > /dev/null
 	@$(CMAKE) --build $(BUILD_DIR) --target cljonic_no_heap_probe --parallel > /dev/null
+	@$(MAKE) no-heap-symbols
 	@echo "no-heap:ok"
 
 upsert-gate:
