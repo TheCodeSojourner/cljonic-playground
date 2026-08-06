@@ -114,16 +114,39 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
 
   SECTION("literal-deduced construction via CTAD deduces capacity from element "
           "count") {
-    auto v = Vector{1, 2, 3, 4};
-    CHECK(v.state() == vector_state::at_capacity);
-    CHECK(count(v) == 4U);
+    // CTAD produces Vector<T, N> where N = initializer size, so each has a
+    // different type; cannot parametrize with generators. Test a few cases.
+    auto [vec, expected_count] = std::pair{Vector{1}, 1U};
+    CHECK(vec.state() == vector_state::at_capacity);
+    CHECK(count(vec) == expected_count);
+
+    auto [vec2, expected_count2] = std::pair{Vector{1, 2}, 2U};
+    CHECK(vec2.state() == vector_state::at_capacity);
+    CHECK(count(vec2) == expected_count2);
+
+    auto [vec3, expected_count3] = std::pair{Vector{1, 2, 3, 4}, 4U};
+    CHECK(vec3.state() == vector_state::at_capacity);
+    CHECK(count(vec3) == expected_count3);
   }
 
   SECTION("partial initializer fill with explicit capacity yields populated "
           "state") {
-    Vector<int, 4> v{1, 2};
-    CHECK(v.state() == vector_state::populated);
-    CHECK(count(v) == 2U);
+    auto [fill_count] =
+        GENERATE(std::make_tuple(1), std::make_tuple(2), std::make_tuple(3));
+
+    if (fill_count == 1) {
+      Vector<int, 4> v{1};
+      CHECK(v.state() == vector_state::populated);
+      CHECK(count(v) == 1U);
+    } else if (fill_count == 2) {
+      Vector<int, 4> v{1, 2};
+      CHECK(v.state() == vector_state::populated);
+      CHECK(count(v) == 2U);
+    } else if (fill_count == 3) {
+      Vector<int, 4> v{1, 2, 3};
+      CHECK(v.state() == vector_state::populated);
+      CHECK(count(v) == 3U);
+    }
   }
 
   SECTION("explicit capacity with no initializers yields empty state") {
