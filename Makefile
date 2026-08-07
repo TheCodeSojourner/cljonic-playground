@@ -21,27 +21,28 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs
 
 help:
-	@printf '%-12s %s\n' 'help' 'Show available targets'
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
 	@printf '%-12s %s\n' 'clean' 'Remove generated local build output'
-	@printf '%-12s %s\n' 'coverage' 'Build with instrumentation, run tests, enforce $(COVERAGE_THRESHOLD)% line coverage'
-	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
-	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
-	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
 	@printf '%-12s %s\n' 'complexity' 'Run lizard on COMPLEXITY_PATH (default src); set CYCLOMATIC_COMPLEXITY_THRESHOLD and FUNCTION_LENGTH_THRESHOLD'
 	@printf '%-12s %s\n' 'complexity-cli' 'Quiet lizard warning-only check on COMPLEXITY_PATH; fails if thresholds are exceeded'
+	@printf '%-12s %s\n' 'coverage' 'Build with instrumentation, run tests, enforce $(COVERAGE_THRESHOLD)% line coverage'
+	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
+	@printf '%-12s %s\n' 'docs' 'Generate Doxygen HTML documentation to docs/'
 	@printf '%-12s %s\n' 'format' 'Format all source and test C/C++ files in place with clang-format'
+	@printf '%-12s %s\n' 'help' 'Show available targets'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
+	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source check, harness build, and binary symbol scan'
 	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
 	@printf '%-12s %s\n' 'no-heap-symbols' 'Fail if compiled artifact contains forbidden allocator symbols'
-	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source check, harness build, and binary symbol scan'
+	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
+	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
 	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and parallel test run'
+	@printf '%-12s %s\n' 'traceability-category-report' 'Non-blocking obligation-family diagnostics from snapshot vs test TRACE_ID coverage'
 	@printf '%-12s %s\n' 'traceability-spec-to-code' 'Strict spec-to-code traceability gate (set-scoped allium, snapshot sync, test macro trace coverage)'
 	@printf '%-12s %s\n' 'traceability-spec-to-code-update-snapshot' 'Regenerate committed spec-to-code obligation snapshot from current specs'
-	@printf '%-12s %s\n' 'traceability-category-report' 'Non-blocking obligation-family diagnostics from snapshot vs test TRACE_ID coverage'
 	@printf '%-12s %s\n' 'upsert-fast' 'Fast scoped loop: lint and complexity-cli for UPSERT_FAST_FILE'
 	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
 	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict spec-to-code traceability and no-heap verification'
@@ -271,6 +272,12 @@ upsert-gate-strict:
 	@$(MAKE) --no-print-directory -s upsert-gate
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
 	@$(MAKE) --no-print-directory -s no-heap
+
+docs:
+	@command -v doxygen > /dev/null 2>&1 || (echo "missing required tool: doxygen" >&2; exit 1)
+	@rm -rf docs/
+	@cd doc && doxygen Doxyfile > /dev/null
+	@echo "docs:ok"
 
 clean:
 	rm -rf $(BUILD_DIR) $(COVERAGE_BUILD_DIR) $(SANITIZER_BUILD_DIR) build-missing-vector
