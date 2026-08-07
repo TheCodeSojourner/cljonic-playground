@@ -6,7 +6,7 @@ project(cljonic LANGUAGES CXX)
 
 include(CTest)
 
-set(CLJONIC_VECTOR_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/vector.hpp" CACHE FILEPATH "Path to the production vector header used by integration tests.")
+set(CLJONIC_VECTOR_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/cljonic-vector.hpp" CACHE FILEPATH "Path to the production vector header used by integration tests.")
 
 if(BUILD_TESTING)
     include(FetchContent)
@@ -19,7 +19,8 @@ if(BUILD_TESTING)
     FetchContent_MakeAvailable(Catch2)
 
     add_executable(cljonic_tests
-        tests/vector_spec_tests.cpp
+        tests/cljonic-vector-spec-tests.cpp
+        tests/cljonic-core-count-spec-tests.cpp
     )
     target_compile_features(cljonic_tests PRIVATE cxx_std_23)
     target_link_libraries(cljonic_tests PRIVATE Catch2::Catch2WithMain)
@@ -61,7 +62,8 @@ if(BUILD_TESTING)
 
     add_executable(cljonic_no_heap_probe EXCLUDE_FROM_ALL
         tests/no_heap/harness_main.cpp
-        tests/no_heap/probes_vector.cpp
+        tests/no_heap/cljonic-vector-probes.cpp
+        tests/no_heap/cljonic-core-count-probes.cpp
     )
     target_compile_features(cljonic_no_heap_probe PRIVATE cxx_std_23)
     target_include_directories(cljonic_no_heap_probe PRIVATE

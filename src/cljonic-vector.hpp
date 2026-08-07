@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <type_traits>
 
-#include <concepts.hpp>
+#include <cljonic-concepts.hpp>
 
 #if !defined(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT)
 #define CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT 1000
@@ -15,6 +15,10 @@
 
 namespace cljonic {
 
+/** \anchor vector_state
+ * Observable classification of a \ref Vector instance's fill relative to its
+ * fixed capacity.
+ */
 enum class vector_state {
   empty,
   populated,
@@ -41,6 +45,46 @@ classify_vector(vector_observation observation) noexcept -> vector_state {
 }
 } // namespace detail::vector
 
+/** \anchor Vector
+ * \b Vector is a fixed-capacity sequential \b CopyOnModifyCollection backed by
+ \c std::array.
+ * No heap allocation occurs; construction with more initializers than \p
+ capacity_value is a
+ * compile-time error.  State is observable via \ref vector_state.
+ *
+ * Out-of-bounds access via \c get is not yet implemented; \c try_push_back
+ returns \c false
+ * (\b UnchangedValueReturn) when the collection is at capacity.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic-vector.hpp"
+ using namespace cljonic;
+
+ int main()
+ {
+     // CTAD: capacity deduced from initializer count
+     const auto v0{Vector{1, 2, 3}};       // Vector<int, 3>, at_capacity
+     const auto v1{Vector<int, 4>{1, 2}};  // explicit capacity 4, populated
+     const auto v2{Vector<int, 4>{}};      // explicit capacity 4, empty
+
+     // count() returns current logical size
+     const auto n = count(v0);  // n == 3
+
+     // try_push_back returns false at capacity; collection unchanged
+     Vector<int, 2> v3{1, 2};
+     const bool ok = v3.try_push_back(3);  // ok == false
+
+     // Compiler error: initializer count exceeds capacity
+     // const auto bad{Vector<int, 2>{1, 2, 3}};
+
+     // Compiler error: capacity exceeds
+ CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT
+     // const auto big{Vector<int, 1001>{}};
+
+     return 0;
+ }
+ ~~~~~
+ */
 template <concepts::VectorElement element_type, std::size_t capacity_value>
 class Vector {
 public:
@@ -96,12 +140,5 @@ private:
 
 template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
-
-template <concepts::VectorElement element_type, std::size_t capacity_value>
-[[nodiscard]] constexpr auto
-count(const Vector<element_type, capacity_value> &collection) noexcept
-    -> std::size_t {
-  return collection.logical_size();
-}
 
 } // namespace cljonic

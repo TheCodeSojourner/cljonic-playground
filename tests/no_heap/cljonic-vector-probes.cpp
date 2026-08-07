@@ -1,14 +1,8 @@
 #include "poison.hpp"
 #include "probes.hpp"
-#include "vector.hpp"
+#include <cljonic-core.hpp>
 
 namespace cljonic::no_heap::probes {
-
-[[nodiscard]] auto vector_construction_and_count() noexcept -> bool {
-  Vector<int, 4> values{1, 2, 3};
-  return count(values) == 3;
-}
-
 [[nodiscard]] auto vector_state_classification() noexcept -> bool {
   Vector<int, 4> values{1, 2, 3};
   return values.state() == vector_state::populated;

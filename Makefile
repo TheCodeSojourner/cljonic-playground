@@ -10,7 +10,7 @@ COVERAGE_THRESHOLD ?= 100
 BROWSER ?= brave-browser
 COVERAGE_FILE ?=
 LINT_FILE ?=
-UPSERT_COVERAGE_FILE ?= vector.hpp
+UPSERT_COVERAGE_FILE ?= cljonic-vector.hpp
 UPSERT_FAST_FILE ?= src/$(UPSERT_COVERAGE_FILE)
 UPSERT_FAST_COMPLEXITY_PATH ?= $(UPSERT_FAST_FILE)
 _COVERAGE_SRC = $(if $(COVERAGE_FILE),$(CURDIR)/src/$(COVERAGE_FILE),$(CURDIR)/src/*)
@@ -129,7 +129,7 @@ lint: configure
 	fi
 	@if [ -n "$(LINT_FILE)" ]; then \
 		case "$(LINT_FILE)" in \
-			src/*.hpp|src/*.h) clang-tidy tests/vector_spec_tests.cpp -p $(BUILD_DIR) --quiet --header-filter="^$(CURDIR)/(src|tests)/.*" > $(BUILD_DIR)/.clang-tidy-out.tmp 2>&1 ;; \
+			src/*.hpp|src/*.h) clang-tidy tests/cljonic-vector-spec-tests.cpp -p $(BUILD_DIR) --quiet --header-filter="^$(CURDIR)/(src|tests)/.*" > $(BUILD_DIR)/.clang-tidy-out.tmp 2>&1 ;; \
 			*) clang-tidy "$(LINT_FILE)" -p $(BUILD_DIR) --quiet --header-filter="^$(CURDIR)/(src|tests)/.*" > $(BUILD_DIR)/.clang-tidy-out.tmp 2>&1 ;; \
 		esac; \
 		status=$$?; \
@@ -137,7 +137,7 @@ lint: configure
 		rm -f $(BUILD_DIR)/.clang-tidy-out.tmp; \
 		exit $$status; \
 	else \
-		clang-tidy tests/vector_spec_tests.cpp -p $(BUILD_DIR) --quiet --header-filter="^$(CURDIR)/(src|tests)/.*" > $(BUILD_DIR)/.clang-tidy-out.tmp 2>&1; \
+		clang-tidy tests/cljonic-vector-spec-tests.cpp -p $(BUILD_DIR) --quiet --header-filter="^$(CURDIR)/(src|tests)/.*" > $(BUILD_DIR)/.clang-tidy-out.tmp 2>&1; \
 		status=$$?; \
 		grep -E "^$(CURDIR)/(src|tests)/|^src/|^tests/" $(BUILD_DIR)/.clang-tidy-out.tmp | grep -Ev ': note:' || true; \
 		rm -f $(BUILD_DIR)/.clang-tidy-out.tmp; \
