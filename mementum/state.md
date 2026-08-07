@@ -1,38 +1,32 @@
 ## Session State
 
-- last_session_id: 2026-08-07T23:30:00Z
-- current_timestamp: 2026-08-07T23:30:00Z
+- last_session_id: 2026-08-07T23:59:00Z
+- current_timestamp: 2026-08-07T23:59:00Z
 - recover: none
 
 ## Task
 
-- Cross-layer alignment check: vocab/arch/specs/tests/code all green.
-- Applied `cljonic-` naming convention to all src and test files; extracted `count()` into `cljonic-core-count.hpp`; created `cljonic-core.hpp` umbrella header.
-- Added doxygen comments (`\mainpage`, `\anchor Vector`, `\anchor Core_Count`, concept docs).
-- Split count spec tests into `cljonic-core-count-spec-tests.cpp`; split count no-heap probe into `cljonic-core-count-probes.cpp`.
-- Added Doxygen infrastructure: `doc/Doxyfile`, `doc/doc-logo.png`, `make docs` target; committed generated HTML to `docs/` for GitHub Pages.
-- Alphabetized Makefile `help` entries; fixed stale `docs/html/` description.
+- Migrated all misplaced Copilot `/memories/repo/` entries to `mementum/memories/` and `mementum/knowledge/`.
+- Moved 2 general (non-repo-specific) items to Copilot user memory (`/memories/`).
+- Deleted all `/memories/repo/` entries — mementum is now the single source of truth.
+- Updated `.agents/skills/gybis-init/SKILL.md` to enforce mementum-only storage and explicitly forbid AI harness client memory stores.
+- Confirmed: mementum is AI-agnostic and repo-portable; the storage rule is now encoded in the skill protocol itself.
 
 ## Questions
 
-- Should amalgamated header be implemented now? No — deferred until core collection set (Vector, Set, Map, String) is complete.
-- Should `make format` be added to the gate? No — already runs inside `make lint` which is the first gate step.
-- Should `make docs` be wired into `upsert-gate-strict`? No — standalone only; doxygen is too slow for the tight loop.
-- GitHub Pages placement finalized? No — `docs/` folder approach is set up; `gh-pages` branch CI remains an option.
+- Can gybis-init enforce mementum-only storage for all future repos? Yes — SKILL.md updated; rule is protocol-level, not memory-level.
+- Are general (non-repo-specific) insights still allowed in Copilot user memory? Yes — the rule is repo_insight → mementum/, general_insight → user_memory(AI_harness).
 
 ## Decisions
 
-- `cljonic-` prefix naming convention for all src and test files (dashes, not underscores).
-- `count()` belongs in `cljonic-core-count.hpp`; core functions are not collection implementation details.
-- `cljonic-core.hpp` is the umbrella include and mainpage home.
-- `doc/` = source (committed), `docs/` = generated HTML (committed for GitHub Pages).
-- `make docs` clears `docs/` before regenerating to prevent stale pages.
-- Makefile `help` entries must be alphabetized when adding new targets.
+- mementum/ is the ONLY store for repo-specific memories and knowledge; AI harness client memory (Copilot /memories/repo/, Cursor, etc.) is forbidden for repo insights.
+- The storage rule is encoded in gybis-init SKILL.md so it is portable to any future gybis repo.
 
 ## Next
 
-- Begin next collection: Set, Range, or Cycle (see cljonic-next-agenda.md).
+- Begin next collection: Set, Range, or Cycle (see mementum/knowledge/cljonic-next-agenda.md).
 - Run `make upsert-gate-strict` as first checkpoint after any new source upsert.
-- When next collection lands, extract its `count()` overload into `cljonic-core-count.hpp`.
+- When next collection lands, add its `count()` overload to `src/cljonic-core-count.hpp`.
+
 
 
