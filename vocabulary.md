@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-08-05
+last_updated: 2026-08-07
 status: draft
 ---
 
@@ -259,6 +259,13 @@ status: draft
 - **Related:** CopyOnModifyCollection, NoHeapConstraint, EmbeddedConstraint
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Vector, set, map, and string values use fixed-capacity array-backed storage.
+
+### CollectionMaximumElementCount
+- **Definition:** The compile-time configuration boundary that sets the maximum element count allowed for cljonic collections. In current documentation this boundary is exposed via the preprocessor macro CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.
+- **Deprecated Synonyms:** collection max element count, maximum collection element count, CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro
+- **Related:** CapacityConstruction, EmbeddedConstraint, StaticStorage, DeterministicBehavior
+- **Usage:** Architecture, specification, implementation, build, and documentation
+- **Examples:** A project can raise the boundary by defining CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT before including cljonic headers or by setting it from compiler/build flags.
 
 ### DeterministicBehavior
 - **Definition:** The requirement that behavior, failure modes, and profile-selected semantics remain predictable and stable for the same inputs and configuration.
