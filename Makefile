@@ -21,7 +21,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict gate-log
 
 help:
 	@printf '%-12s %s\n' 'help' 'Show available targets'
@@ -45,6 +45,7 @@ help:
 	@printf '%-12s %s\n' 'upsert-fast' 'Fast scoped loop: lint and complexity-cli for UPSERT_FAST_FILE'
 	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
 	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict spec-to-code traceability and no-heap verification'
+	@printf '%-12s %s\n' 'gate-log' 'Run upsert-gate-strict and emit all key-prefixed signals as JSON; exits with gate exit code'
 
 all: clean test
 
@@ -271,6 +272,17 @@ upsert-gate-strict:
 	@$(MAKE) --no-print-directory -s upsert-gate
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
 	@$(MAKE) --no-print-directory -s no-heap
+
+gate-log:
+	@out=$$(mktemp); \
+	$(MAKE) --no-print-directory upsert-gate-strict > "$$out" 2>&1; \
+	ec=$$?; \
+	awk -v ec="$$ec" \
+	    'BEGIN{printf "{\"exit_code\":%s,\"signals\":[",ec;n=0} \
+	     /^[a-z][a-z0-9_-]+:/{key=$$0;sub(/:.*$$/,"",key);rest=substr($$0,length(key)+2);gsub(/"/,"\\\"",rest);if(n>0)printf",";printf"{\"key\":\"%s\",\"value\":\"%s\"}",key,rest;n++} \
+	     END{print"]}"}' "$$out"; \
+	rm -f "$$out"; \
+	exit "$$ec"
 
 clean:
 	rm -rf $(BUILD_DIR) $(COVERAGE_BUILD_DIR) $(SANITIZER_BUILD_DIR) build-missing-vector
