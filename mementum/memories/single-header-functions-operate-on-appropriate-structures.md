@@ -1,1 +1,0 @@
-💡 In this repository, standalone functions shipped in the single amalgamated header must operate only on appropriate data structures. A function name may be shared across structures, but each accepted structure must have explicit, valid semantics and out-of-scope structures must be rejected by contract.

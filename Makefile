@@ -11,14 +11,17 @@ BROWSER ?= brave-browser
 COVERAGE_FILE ?=
 LINT_FILE ?=
 UPSERT_COVERAGE_FILE ?= vector.hpp
+UPSERT_FAST_FILE ?= src/$(UPSERT_COVERAGE_FILE)
+UPSERT_FAST_COMPLEXITY_PATH ?= $(UPSERT_FAST_FILE)
 _COVERAGE_SRC = $(if $(COVERAGE_FILE),$(CURDIR)/src/$(COVERAGE_FILE),$(CURDIR)/src/*)
 TRACEABILITY_DIR ?= spec-to-code-traceability
 TRACEABILITY_SNAPSHOT ?= $(TRACEABILITY_DIR)/spec-to-code-obligation-ids.snapshot.txt
 TRACEABILITY_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-obligation-ids.current.tmp
+TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format lint no-heap-src no-heap-symbols no-heap traceability-spec-to-code traceability-spec-to-code-update-snapshot upsert-gate upsert-gate-strict
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict
 
 help:
 	@printf '%-12s %s\n' 'help' 'Show available targets'
@@ -38,6 +41,8 @@ help:
 	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and parallel test run'
 	@printf '%-12s %s\n' 'traceability-spec-to-code' 'Strict spec-to-code traceability gate (set-scoped allium, snapshot sync, test macro trace coverage)'
 	@printf '%-12s %s\n' 'traceability-spec-to-code-update-snapshot' 'Regenerate committed spec-to-code obligation snapshot from current specs'
+	@printf '%-12s %s\n' 'traceability-category-report' 'Non-blocking obligation-family diagnostics from snapshot vs test TRACE_ID coverage'
+	@printf '%-12s %s\n' 'upsert-fast' 'Fast scoped loop: lint and complexity-cli for UPSERT_FAST_FILE'
 	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
 	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict spec-to-code traceability and no-heap verification'
 
@@ -79,7 +84,7 @@ coverage-cli:
 	@lcov --extract $(COVERAGE_BUILD_DIR)/coverage.info '$(_COVERAGE_SRC)' \
 	     --output-file $(COVERAGE_BUILD_DIR)/coverage-src.info > /dev/null 2>&1
 	@lcov --summary $(COVERAGE_BUILD_DIR)/coverage-src.info 2>&1 | \
-	     awk '/lines\.\.\./{print $$2}'
+	     awk '/lines\.\.\./{printf "coverage:lines=%s\n", $$2}'
 	@lcov --summary $(COVERAGE_BUILD_DIR)/coverage-src.info \
 	     --fail-under-lines $(COVERAGE_THRESHOLD) > /dev/null 2>&1
 
@@ -170,55 +175,56 @@ no-heap-symbols:
 	@echo "no-heap-symbols:ok"
 
 no-heap:
-	@$(MAKE) no-heap-src
+	@$(MAKE) --no-print-directory -s no-heap-src
 	@$(CMAKE) -S . -B $(BUILD_DIR) > /dev/null
 	@$(CMAKE) --build $(BUILD_DIR) --target cljonic_no_heap_probe --parallel > /dev/null
-	@$(MAKE) no-heap-symbols
+	@$(MAKE) --no-print-directory -s no-heap-symbols
 	@echo "no-heap:ok"
 
 traceability-spec-to-code-update-snapshot:
-	@command -v allium > /dev/null 2>&1 || (echo "missing required tool: allium" >&2; exit 1)
-	@command -v rg > /dev/null 2>&1 || (echo "missing required tool: rg" >&2; exit 1)
 	@mkdir -p $(TRACEABILITY_DIR)
-	@spec_files=$$(find specs -type f -name '*.allium' | sort); \
-	if [ -z "$$spec_files" ]; then \
-		echo "traceability-spec-to-code-update-snapshot: no .allium files under specs/" >&2; \
-		exit 1; \
-	fi; \
-	for f in $$spec_files; do allium plan "$$f"; done | \
-		rg -No '"id":\s*"([^"]+)"' | \
-		sed -E 's/.*"id":\s*"([^"]+)"/\1/' | \
-		sort -u > $(TRACEABILITY_SNAPSHOT)
+	@$(MAKE) --no-print-directory -s _traceability-obligation-ids-current
+	@cp $(TRACEABILITY_IDS_CURRENT) $(TRACEABILITY_SNAPSHOT)
 	@echo "traceability-spec-to-code-update-snapshot:ok"
 
-traceability-spec-to-code:
+_traceability-obligation-ids-current:
 	@command -v allium > /dev/null 2>&1 || (echo "missing required tool: allium" >&2; exit 1)
 	@command -v rg > /dev/null 2>&1 || (echo "missing required tool: rg" >&2; exit 1)
-	@command -v perl > /dev/null 2>&1 || (echo "missing required tool: perl" >&2; exit 1)
-	@test -f $(TRACEABILITY_SNAPSHOT) || (echo "missing snapshot: $(TRACEABILITY_SNAPSHOT). Run 'make traceability-spec-to-code-update-snapshot'." >&2; exit 1)
-	@allium check specs > /dev/null
-	@allium analyse specs > /dev/null
 	@mkdir -p $(BUILD_DIR)
 	@spec_files=$$(find specs -type f -name '*.allium' | sort); \
 	if [ -z "$$spec_files" ]; then \
-		echo "traceability-spec-to-code: no .allium files under specs/" >&2; \
+		echo "traceability: no .allium files under specs/" >&2; \
 		exit 1; \
 	fi; \
 	for f in $$spec_files; do allium plan "$$f"; done | \
 		rg -No '"id":\s*"([^"]+)"' | \
 		sed -E 's/.*"id":\s*"([^"]+)"/\1/' | \
 		sort -u > $(TRACEABILITY_IDS_CURRENT)
+
+_traceability-test-ids-current:
+	@command -v perl > /dev/null 2>&1 || (echo "missing required tool: perl" >&2; exit 1)
+	@mkdir -p $(BUILD_DIR)
+	@find tests -type f \( -name '*.cpp' -o -name '*.cc' \) -print0 | \
+		xargs -0 -r cat | \
+		sed -E '/^[[:space:]]*#define[[:space:]]+TRACE_ID\(/d' | \
+		perl -0777 -ne 'while(/TRACE_ID\((.*?)\);/sg){@s=($$1 =~ /"([^"]*)"/g); print join("", @s), "\n" if @s;}' | \
+		sort -u > $(TRACEABILITY_TEST_IDS_CURRENT)
+
+traceability-spec-to-code:
+	@test -f $(TRACEABILITY_SNAPSHOT) || (echo "missing snapshot: $(TRACEABILITY_SNAPSHOT). Run 'make traceability-spec-to-code-update-snapshot'." >&2; exit 1)
+	@allium check specs > /dev/null
+	@allium analyse specs > /dev/null
+	@$(MAKE) --no-print-directory -s _traceability-obligation-ids-current
 	@diff -u $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_IDS_CURRENT) > /dev/null || \
 		(echo "traceability-spec-to-code: snapshot drift detected. Run 'make traceability-spec-to-code-update-snapshot'." >&2; diff -u $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_IDS_CURRENT) >&2; exit 1)
-	@trace_ids_in_tests=$$(find tests -type f \( -name '*.cpp' -o -name '*.cc' \) -print0 | xargs -0 cat | sed -E '/^[[:space:]]*#define[[:space:]]+TRACE_ID\(/d' | perl -0777 -ne 'while(/TRACE_ID\((.*?)\);/sg){@s=($$1 =~ /"([^"]*)"/g); print join("", @s), "\n" if @s;}' | sort -u); \
-	if [ -z "$$trace_ids_in_tests" ]; then \
+	@$(MAKE) --no-print-directory -s _traceability-test-ids-current
+	@if [ ! -s $(TRACEABILITY_TEST_IDS_CURRENT) ]; then \
 		echo "traceability-spec-to-code: no TRACE_ID references found in tests" >&2; \
 		exit 1; \
-	fi; \
-	printf '%s\n' "$$trace_ids_in_tests" > $(BUILD_DIR)/.traceability-ids-in-tests.tmp; \
-	if ! diff -u $(TRACEABILITY_SNAPSHOT) $(BUILD_DIR)/.traceability-ids-in-tests.tmp > /dev/null; then \
+	fi
+	@if ! diff -u $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_TEST_IDS_CURRENT) > /dev/null; then \
 		echo "traceability-spec-to-code: test TRACE_ID coverage does not match snapshot obligations" >&2; \
-		diff -u $(TRACEABILITY_SNAPSHOT) $(BUILD_DIR)/.traceability-ids-in-tests.tmp >&2; \
+		diff -u $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_TEST_IDS_CURRENT) >&2; \
 		exit 1; \
 	fi
 	@for f in $$(find tests -type f \( -name '*.cpp' -o -name '*.cc' \) | sort); do \
@@ -234,16 +240,37 @@ traceability-spec-to-code:
 	done
 	@echo "traceability-spec-to-code:ok"
 
+traceability-category-report:
+	@command -v perl > /dev/null 2>&1 || { echo "traceability-category-report:status=skip:reason=missing_perl"; exit 0; }
+	@test -f $(TRACEABILITY_SNAPSHOT) || { echo "traceability-category-report:status=skip:reason=missing_snapshot:path=$(TRACEABILITY_SNAPSHOT)"; exit 0; }
+	@$(MAKE) --no-print-directory -s _traceability-test-ids-current
+	@if [ ! -s $(TRACEABILITY_TEST_IDS_CURRENT) ]; then \
+		echo "traceability-category-report:status=warn:reason=no_trace_ids_in_tests"; \
+		exit 0; \
+	fi
+	@awk -F'.' '{print $$1}' $(TRACEABILITY_SNAPSHOT) | sort | uniq -c | awk '{printf "traceability-category-report:category=%s:snapshot=%s\n", $$2, $$1}'
+	@awk -F'.' '{print $$1}' $(TRACEABILITY_TEST_IDS_CURRENT) | sort | uniq -c | awk '{printf "traceability-category-report:category=%s:tests=%s\n", $$2, $$1}'
+	@comm -23 $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_TEST_IDS_CURRENT) | \
+		awk -F'.' '{c[$$1]++} END {for (k in c) printf "traceability-category-report:category=%s:missing=%s\n", k, c[k]}' | sort
+	@comm -13 $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_TEST_IDS_CURRENT) | \
+		awk -F'.' '{c[$$1]++} END {for (k in c) printf "traceability-category-report:category=%s:extra=%s\n", k, c[k]}' | sort
+	@echo "traceability-category-report:status=ok"
+
+upsert-fast:
+	@$(MAKE) --no-print-directory -s lint LINT_FILE=$(UPSERT_FAST_FILE)
+	@$(MAKE) --no-print-directory -s complexity-cli COMPLEXITY_PATH=$(UPSERT_FAST_COMPLEXITY_PATH)
+	@echo "upsert-fast:ok:file=$(UPSERT_FAST_FILE)"
+
 upsert-gate:
-	@$(MAKE) lint
-	@$(MAKE) complexity-cli
-	@$(MAKE) sanitizer-cli
-	@$(MAKE) coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
+	@$(MAKE) --no-print-directory -s lint
+	@$(MAKE) --no-print-directory -s complexity-cli
+	@$(MAKE) --no-print-directory -s sanitizer-cli
+	@$(MAKE) --no-print-directory -s coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
 
 upsert-gate-strict:
-	@$(MAKE) upsert-gate
-	@$(MAKE) traceability-spec-to-code
-	@$(MAKE) no-heap
+	@$(MAKE) --no-print-directory -s upsert-gate
+	@$(MAKE) --no-print-directory -s traceability-spec-to-code
+	@$(MAKE) --no-print-directory -s no-heap
 
 clean:
 	rm -rf $(BUILD_DIR) $(COVERAGE_BUILD_DIR) $(SANITIZER_BUILD_DIR) build-missing-vector

@@ -1,1 +1,0 @@
-💡 Internal allium skill names are aliases in skill contracts, not shell executable names. Use CLI subcommands through the allium binary (for example: allium check, allium analyse) and avoid executable probes like command -v allium-check.
