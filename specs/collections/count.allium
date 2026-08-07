@@ -6,6 +6,7 @@ entity CountRequest {
     count_state: pending | resolved | rejected
     target_kind: vector | map | set | string
     vector_subject: vector/VectorCollection?
+    collection_maximum_element_count_policy_respected: Boolean
     count_matches_target_cardinality: Boolean
     empty_target_returns_zero: Boolean
     count_result_is_non_negative: Boolean
@@ -28,6 +29,10 @@ entity CountRequest {
         this.count_state = resolved implies this.count_result_is_non_negative = true
     }
 
+    invariant ResolvedCountRequiresCollectionMaximumElementCountPolicyRespect {
+        this.count_state = resolved implies this.collection_maximum_element_count_policy_respected = true
+    }
+
     invariant VectorTargetRequiresVectorSubject {
         this.target_kind = vector implies this.vector_subject != null
     }
@@ -41,10 +46,18 @@ rule ResolveCountSemantics {
     when: Count(request)
     requires: request.count_state = pending
     requires: request.target_kind in {vector, map, set, string}
+    requires: request.collection_maximum_element_count_policy_respected = true
     requires: request.count_matches_target_cardinality = true
     requires: request.empty_target_returns_zero = true
     requires: request.count_result_is_non_negative = true
     ensures: request.count_state = resolved
+}
+
+rule RejectCountSemanticsOnCollectionMaximumElementCountPolicyViolation {
+    when: Count(request)
+    requires: request.count_state = pending
+    requires: request.collection_maximum_element_count_policy_respected = false
+    ensures: request.count_state = rejected
 }
 
 rule RejectCountSemanticsOnCardinalityMismatch {
