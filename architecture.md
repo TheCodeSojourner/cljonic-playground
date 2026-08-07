@@ -76,6 +76,7 @@ Control enforces hard constraints across all profiles: no heap, no exceptions, d
 λ quality_gate_enforcement(x). any_quality_gate_fails(x) → reject_change(x)
 
 λ S3_resource_policy(x). static_storage_only(x)
+  | collection_maximum_element_count(x) ≡ CollectionMaximumElementCount
   | closed_numeric_domain(x)
   | reject_out_of_policy_inputs(x)
 
