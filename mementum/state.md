@@ -1,29 +1,31 @@
 ## Session State
 
-- last_session_id: 2026-08-07T00:00:00Z
-- current_timestamp: 2026-08-07T00:00:00Z
-- recover: Run `make upsert-gate` after each source/test upsert, then run `make upsert-gate-strict` as the session-end checkpoint. The strict target now includes spec-to-code traceability checks.
+- last_session_id: 2026-08-07T19:27:37Z
+- current_timestamp: 2026-08-07T19:27:37Z
+- recover: Run `make traceability-spec-to-code` first, then run `make upsert-gate-strict` as the authoritative session-end checkpoint.
 
 ## Task
 
-- Removed `specs/architecture/` category (5 allium files) and the `CoordinationProtocol` traceability stub from `tests/vector_spec_tests.cpp`.
-- Identified that `specs/architecture/` was a design antipattern: architecture constrains specs; expressing architecture as allium specs breaks the authority chain and produces zombie traceability stubs with no behavioral content.
-- Architecture now lives authoritatively in `architecture.md` only.
-- Implemented strict spec-to-code traceability enforcement in the build loop (`make traceability-spec-to-code`, integrated into `make upsert-gate-strict`).
-- Added committed obligation snapshot at `spec-to-code-traceability/spec-to-code-obligation-ids.snapshot.txt` and contributor policy docs in `README.md`.
+- Established a strict spec-to-code traceability baseline with committed obligation snapshot enforcement and test-sourced TRACE_ID mapping.
+- Refactored traceability from comment parsing to distributed TRACE_ID annotations in executable test cases.
+- Removed obsolete manifest dependency and simplified the strict gate to use tests as the execution-side source of obligation coverage.
+- Aligned build docs and traceability policy text with actual gate behavior and added explicit perl dependency notes/checks.
+- Captured a clean baseline commit after successful strict gate validation.
 
 ## Questions
 
-- Does having `specs/architecture/*.allium` as a tooling target buy anything that `architecture.md` alone wouldn't provide? No — no skill does meaningful spec-vs-code conformance checking against architecture entities, and the traceability chain has no production-code leg.
+- Should the strict traceability baseline be committed before introducing workflow optimizations (fast loop and category-aware diagnostics)? Yes.
+- Is `spec-to-code-traceability/test-trace-ids.manifest.inc` still valuable after switching to test-only TRACE_ID coverage? No, it became redundant and was removed.
 
 ## Decisions
 
-- Delete `specs/architecture/` permanently; do not recreate via `gybis-arch-propagate` or any other means.
-- `gybis-arch-propagate` output target is `specs/collections/` (and future feature domains), not an architecture category.
+- Keep `make upsert-gate-strict` as the authoritative quality gate and include strict traceability as a hard requirement.
+- Use tests as the sole execution-side source of TRACE_ID coverage and keep snapshot drift checks as the canonical obligation baseline.
+- Commit the strict-traceability baseline first, then start optimization work in a follow-on change set.
 
 ## Next
 
-- Continue standalone `get` semantics work in `specs/collections`, then add minimal `assoc` and `conj` slices.
-- Run dependency-aware/full-set spec checks before broader code propagation.
-- Keep default mandatory complexity scope at `src`; use file-scoped `COMPLEXITY_PATH` only for local investigation.
+- Add one fast-loop make target for local iteration that preserves strict baseline guarantees.
+- Add one non-blocking category-aware diagnostic report target driven by Allium obligation families.
+- Keep one authoritative strict target unchanged and tune new tooling based on observed developer friction.
 
