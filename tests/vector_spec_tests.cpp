@@ -34,12 +34,6 @@ constexpr auto classify_vector(vector_observation observation) -> vector_state {
 
 TEST_CASE("Catch2 infrastructure is active", "[smoke]") { SUCCEED(); }
 
-TEST_CASE("Traceability for CoordinationProtocol field obligation",
-          "[traceability][coordination]") {
-  INFO("traceable_id: entity-fields.CoordinationProtocol");
-  SUCCEED();
-}
-
 TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]") {
   using cljonic::spec_model::classify_vector;
   using cljonic::spec_model::vector_observation;
