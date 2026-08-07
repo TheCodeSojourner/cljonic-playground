@@ -26,7 +26,7 @@ Quality gate intent:
 - `lint` auto-runs formatting first, then checks project-path diagnostics only (`src/**`, `tests/**`). Analyzer `note:` output is suppressed to keep loop output high-signal.
 - `complexity-cli` enforces source-level complexity boundaries via lizard (`CYCLOMATIC_COMPLEXITY_THRESHOLD` and `FUNCTION_LENGTH_THRESHOLD`) to keep AI-authored functions easy to read and upsert safely.
 - `sanitizer-cli` is ASan+UBSan only. TSan was removed because the repo currently exposes no meaningful threading surface, so TSan was low-signal and added environment/tooling noise.
-- `coverage-cli` reports bare line coverage percentage and fails below threshold. `COVERAGE_FILE` narrows measurement to a single production header.
+- `coverage-cli` emits `coverage:lines=<pct>` on stdout and fails below threshold. `COVERAGE_FILE` narrows measurement to a single production header.
 
 Operational guidance:
 - Prefer `make upsert-gate` over manually chaining `lint`, `complexity-cli`, `sanitizer-cli`, and `coverage-cli`.
