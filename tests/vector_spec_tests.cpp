@@ -152,3 +152,41 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
   SKIP("Production vector implementation is not present.");
 #endif
 }
+
+TEST_CASE("Trace policy: "
+          "invariant.VectorConstruction."
+          "CapacityRespectsCollectionMaximumElementCount",
+          "[vector][construction][trace]") {
+#if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
+  using cljonic::Vector;
+
+  // obligation id:
+  // invariant.VectorConstruction.CapacityRespectsCollectionMaximumElementCount
+  CHECK(Vector<int, 4>::capacity_limit() <=
+        Vector<int, 4>::collection_maximum_element_count());
+#else
+  SKIP("Production vector implementation is not present.");
+#endif
+}
+
+TEST_CASE(
+    "Trace policy: rule-success.ConstructVectorWithValidElementCount and count"
+    " invariants",
+    "[vector][count][trace]") {
+#if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
+  using cljonic::count;
+  using cljonic::Vector;
+
+  // obligation ids:
+  // - rule-success.ConstructVectorWithValidElementCount
+  // -
+  // invariant.CountRequest.ResolvedCountRequiresCollectionMaximumElementCountPolicyRespect
+  // - invariant.CountRequest.ResolvedCountRequiresNonNegativeResult
+  const Vector<int, 4> v{1, 2};
+  CHECK(Vector<int, 4>::capacity_limit() <=
+        Vector<int, 4>::collection_maximum_element_count());
+  CHECK(count(v) >= 0U);
+#else
+  SKIP("Production vector implementation is not present.");
+#endif
+}
