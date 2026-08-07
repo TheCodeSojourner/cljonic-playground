@@ -2,13 +2,15 @@
 
 - last_session_id: 2026-08-07T00:00:00Z
 - current_timestamp: 2026-08-07T00:00:00Z
-- recover: Run `make upsert-gate` after each source/test upsert, then run `make upsert-gate-strict` as the session-end checkpoint.
+- recover: Run `make upsert-gate` after each source/test upsert, then run `make upsert-gate-strict` as the session-end checkpoint. The strict target now includes spec-to-code traceability checks.
 
 ## Task
 
 - Removed `specs/architecture/` category (5 allium files) and the `CoordinationProtocol` traceability stub from `tests/vector_spec_tests.cpp`.
 - Identified that `specs/architecture/` was a design antipattern: architecture constrains specs; expressing architecture as allium specs breaks the authority chain and produces zombie traceability stubs with no behavioral content.
 - Architecture now lives authoritatively in `architecture.md` only.
+- Implemented strict spec-to-code traceability enforcement in the build loop (`make traceability-spec-to-code`, integrated into `make upsert-gate-strict`).
+- Added committed obligation snapshot at `spec-to-code-traceability/spec-to-code-obligation-ids.snapshot.txt` and contributor policy docs in `README.md`.
 
 ## Questions
 

@@ -1,9 +1,12 @@
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
 #if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
 #include <vector.hpp>
 #endif
+
+#define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
 namespace cljonic::spec_model {
 
@@ -39,6 +42,25 @@ TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]") {
   using cljonic::spec_model::vector_observation;
   using cljonic::spec_model::vector_state;
 
+  TRACE_ID("entity-fields.VectorCollection");
+  TRACE_ID("invariant.VectorCollection.AtCapacityStateMeansSizeEqualsCapacity");
+  TRACE_ID("invariant.VectorCollection.CapacityIsNonNegative");
+  TRACE_ID("invariant.VectorCollection.EmptyStateMeansZeroSize");
+  TRACE_ID("invariant.VectorCollection.LogicalSizeDoesNotExceedCapacity");
+  TRACE_ID("invariant.VectorCollection.LogicalSizeIsNonNegative");
+  TRACE_ID(
+      "invariant.VectorCollection.PopulatedStateMeansPositiveAndNotAtCapacity");
+  TRACE_ID("rule-success.ClassifyVectorAsAtCapacity");
+  TRACE_ID("rule-success.ClassifyVectorAsEmpty");
+  TRACE_ID("rule-success.ClassifyVectorAsPopulated");
+  TRACE_ID("rule-failure.ClassifyVectorAsAtCapacity.1");
+  TRACE_ID("rule-failure.ClassifyVectorAsAtCapacity.2");
+  TRACE_ID("rule-failure.ClassifyVectorAsEmpty.1");
+  TRACE_ID("rule-failure.ClassifyVectorAsPopulated.1");
+  TRACE_ID("rule-failure.ClassifyVectorAsPopulated.2");
+  TRACE_ID("surface-actor.VectorClassificationSurface");
+  TRACE_ID("surface-provides.VectorClassificationSurface");
+
   auto [capacity, size, expected_state] =
       GENERATE(std::make_tuple(1, 0, vector_state::empty),
                std::make_tuple(1, 1, vector_state::at_capacity),
@@ -61,6 +83,29 @@ TEST_CASE("Production vector integration reflects implementation availability",
   using cljonic::count;
   using cljonic::Vector;
   using cljonic::vector_state;
+
+  TRACE_ID("entity-fields.CountRequest");
+  TRACE_ID("entity-optional.CountRequest.vector_subject");
+  TRACE_ID("invariant.CountRequest.ResolvedCountRequiresCardinalityMatch");
+  TRACE_ID("invariant.CountRequest.ResolvedCountRequiresEmptyReturnsZero");
+  TRACE_ID("invariant.CountRequest."
+           "ResolvedCountRequiresCollectionMaximumElementCountPolicyRespect");
+  TRACE_ID("invariant.CountRequest.ResolvedCountRequiresNonNegativeResult");
+  TRACE_ID("invariant.CountRequest.VectorSubjectRequiresValidVectorState");
+  TRACE_ID("invariant.CountRequest.VectorTargetRequiresVectorSubject");
+  TRACE_ID("rule-success.ResolveCountSemantics");
+  TRACE_ID("rule-failure.ResolveCountSemantics.1");
+  TRACE_ID("rule-failure.ResolveCountSemantics.2");
+  TRACE_ID("rule-failure.ResolveCountSemantics.3");
+  TRACE_ID("rule-failure.ResolveCountSemantics.4");
+  TRACE_ID("rule-failure.ResolveCountSemantics.5");
+  TRACE_ID("rule-failure.ResolveCountSemantics.6");
+  TRACE_ID("transition-edge.CountRequest.pending.rejected");
+  TRACE_ID("transition-edge.CountRequest.pending.resolved");
+  TRACE_ID("transition-rejected.CountRequest.count_state");
+  TRACE_ID("transition-terminal.CountRequest.count_state");
+  TRACE_ID("surface-actor.CountSurface");
+  TRACE_ID("surface-provides.CountSurface");
 
   SECTION("default vector is empty and has zero count") {
     const Vector<int, 4> collection{};
@@ -102,6 +147,32 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
   using cljonic::count;
   using cljonic::Vector;
   using cljonic::vector_state;
+
+  TRACE_ID("entity-fields.VectorConstruction");
+  TRACE_ID("rule-success.ConstructVectorWithValidElementCount");
+  TRACE_ID("rule-failure.ConstructVectorWithValidElementCount.1");
+  TRACE_ID("rule-failure.ConstructVectorWithValidElementCount.2");
+  TRACE_ID("rule-failure.ConstructVectorWithValidElementCount.3");
+  TRACE_ID("rule-failure.ConstructVectorWithValidElementCount.4");
+  TRACE_ID("rule-success.RejectVectorConstructionOnOversizedElementCount");
+  TRACE_ID("rule-failure.RejectVectorConstructionOnOversizedElementCount.1");
+  TRACE_ID("rule-failure.RejectVectorConstructionOnOversizedElementCount.2");
+  TRACE_ID("rule-success."
+           "RejectVectorConstructionWhenCapacityExceedsCollectionMaximumElement"
+           "Count");
+  TRACE_ID("rule-failure."
+           "RejectVectorConstructionWhenCapacityExceedsCollectionMaximumElement"
+           "Count.1");
+  TRACE_ID("rule-failure."
+           "RejectVectorConstructionWhenCapacityExceedsCollectionMaximumElement"
+           "Count.2");
+  TRACE_ID(
+      "transition-edge.VectorConstruction.pending.rejected_at_compile_time");
+  TRACE_ID("transition-edge.VectorConstruction.pending.succeeded");
+  TRACE_ID("transition-rejected.VectorConstruction.outcome");
+  TRACE_ID("transition-terminal.VectorConstruction.outcome");
+  TRACE_ID("surface-actor.VectorConstructionSurface");
+  TRACE_ID("surface-provides.VectorConstructionSurface");
 
   // RejectVectorConstructionOnOversizedElementCount is a static constraint; not
   // runtime-testable.
@@ -160,8 +231,8 @@ TEST_CASE("Trace policy: "
 #if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
   using cljonic::Vector;
 
-  // obligation id:
-  // invariant.VectorConstruction.CapacityRespectsCollectionMaximumElementCount
+  TRACE_ID("invariant.VectorConstruction."
+           "CapacityRespectsCollectionMaximumElementCount");
   CHECK(Vector<int, 4>::capacity_limit() <=
         Vector<int, 4>::collection_maximum_element_count());
 #else
@@ -177,11 +248,31 @@ TEST_CASE(
   using cljonic::count;
   using cljonic::Vector;
 
-  // obligation ids:
-  // - rule-success.ConstructVectorWithValidElementCount
-  // -
-  // invariant.CountRequest.ResolvedCountRequiresCollectionMaximumElementCountPolicyRespect
-  // - invariant.CountRequest.ResolvedCountRequiresNonNegativeResult
+  TRACE_ID("rule-success.ConstructVectorWithValidElementCount");
+  TRACE_ID("invariant.CountRequest."
+           "ResolvedCountRequiresCollectionMaximumElementCountPolicyRespect");
+  TRACE_ID("invariant.CountRequest.ResolvedCountRequiresNonNegativeResult");
+  TRACE_ID("rule-success.RejectCountSemanticsOnCardinalityMismatch");
+  TRACE_ID(
+      "rule-success."
+      "RejectCountSemanticsOnCollectionMaximumElementCountPolicyViolation");
+  TRACE_ID("rule-success.RejectCountSemanticsOnEmptyBehaviorMismatch");
+  TRACE_ID("rule-success.RejectCountSemanticsOnInvalidResultRange");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnCardinalityMismatch.1");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnCardinalityMismatch.2");
+  TRACE_ID(
+      "rule-failure."
+      "RejectCountSemanticsOnCollectionMaximumElementCountPolicyViolation.1");
+  TRACE_ID(
+      "rule-failure."
+      "RejectCountSemanticsOnCollectionMaximumElementCountPolicyViolation.2");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnEmptyBehaviorMismatch.1");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnEmptyBehaviorMismatch.2");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnEmptyBehaviorMismatch.3");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnInvalidResultRange.1");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnInvalidResultRange.2");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnInvalidResultRange.3");
+  TRACE_ID("rule-failure.RejectCountSemanticsOnInvalidResultRange.4");
   const Vector<int, 4> v{1, 2};
   CHECK(Vector<int, 4>::capacity_limit() <=
         Vector<int, 4>::collection_maximum_element_count());

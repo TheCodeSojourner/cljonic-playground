@@ -115,6 +115,24 @@ Development follows a vocabulary-first discipline driven by gybis commands in Gi
 
 For full workflow guidance, see [GYBIS-README.md](GYBIS-README.md) or run `/gybis-help` in GitHub Copilot agent mode.
 
+### Spec-to-Code Traceability (Strict Fail)
+
+This repository enforces strict spec-to-code traceability in developer validation loops.
+
+- Validation must be set-scoped: use `allium check specs` and `allium analyse specs`.
+- Obligation IDs must match Allium-generated IDs verbatim when referenced in tests.
+- The committed snapshot of current obligation IDs is:
+  `spec-to-code-traceability/spec-to-code-obligation-ids.snapshot.txt`
+- Tests must declare obligation coverage with `TRACE_ID("...")` in test source.
+- The union of `TRACE_ID` values in tests must exactly match the committed snapshot.
+- JSON output may be generated ephemerally during gates, but only the text snapshot is committed.
+- Strict gate behavior fails when:
+  - set-scoped allium validation fails,
+  - snapshot drift is detected,
+  - no `TRACE_ID` references exist in tests,
+  - test `TRACE_ID` coverage does not exactly match the committed snapshot,
+  - a traced test block has no assertion (`CHECK*` or `REQUIRE*`).
+
 ### Build Tooling
 
 **cljonic** has a **Makefile** in the root directory that backs gybis workflows and supports direct invocation for
@@ -136,25 +154,27 @@ file. Finally, executing `make git` *(coming soon)* will prepare the repository 
 
 #### Available Targets
 
-| Target                    | Description                                                                                                            |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `make`                    | Show available targets                                                                                                 |
-| `make all`                | Clean, configure, parallel rebuild, and parallel test run                                                              |
-| `make test`               | Incremental parallel rebuild and parallel test run                                                                     |
-| `make clean`              | Remove generated local build output                                                                                    |
-| `make coverage`           | Build with instrumentation, run tests, enforce 100% line coverage                                                      |
-| `make coverage-cli`       | Same as coverage but print lines % to stdout; set `COVERAGE_FILE=foo.hpp` to narrow scope                              |
-| `make sanitizer`          | Build with ASan+UBSan and run tests                                                                                    |
-| `make sanitizer-cli`      | Quiet ASan+UBSan run for loops; prints `sanitizer:ok` on pass                                                          |
-| `make complexity`         | Run lizard on `COMPLEXITY_PATH` (default `src`); set `CYCLOMATIC_COMPLEXITY_THRESHOLD` and `FUNCTION_LENGTH_THRESHOLD` |
-| `make complexity-cli`     | Quiet lizard warning-only check on `COMPLEXITY_PATH`; fails if thresholds are exceeded                                 |
-| `make format`             | Format all source and test C/C++ files in place with clang-format                                                      |
-| `make lint`               | Run clang-format and clang-tidy checks; set `LINT_FILE=src/foo.hpp` or `tests/bar.cpp` to narrow scope                 |
-| `make no-heap-src`        | Fail if `src` contains common heap-allocation APIs or heap-backed STL containers                                       |
-| `make no-heap-symbols`    | Fail if compiled artifact contains forbidden allocator symbols                                                         |
-| `make no-heap`            | Strict no-heap gate: source check, harness build, and binary symbol scan                                               |
-| `make upsert-gate`        | Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for `UPSERT_COVERAGE_FILE`                         |
-| `make upsert-gate-strict` | upsert-gate plus strict no-heap verification (source, symbols, harness)                                                |
+| Target                                           | Description                                                                                                                  |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `make`                                           | Show available targets                                                                                                       |
+| `make all`                                       | Clean, configure, parallel rebuild, and parallel test run                                                                    |
+| `make test`                                      | Incremental parallel rebuild and parallel test run                                                                           |
+| `make clean`                                     | Remove generated local build output                                                                                          |
+| `make coverage`                                  | Build with instrumentation, run tests, enforce 100% line coverage                                                            |
+| `make coverage-cli`                              | Same as coverage but print lines % to stdout; set `COVERAGE_FILE=foo.hpp` to narrow scope                                    |
+| `make sanitizer`                                 | Build with ASan+UBSan and run tests                                                                                          |
+| `make sanitizer-cli`                             | Quiet ASan+UBSan run for loops; prints `sanitizer:ok` on pass                                                                |
+| `make complexity`                                | Run lizard on `COMPLEXITY_PATH` (default `src`); set `CYCLOMATIC_COMPLEXITY_THRESHOLD` and `FUNCTION_LENGTH_THRESHOLD`       |
+| `make complexity-cli`                            | Quiet lizard warning-only check on `COMPLEXITY_PATH`; fails if thresholds are exceeded                                       |
+| `make format`                                    | Format all source and test C/C++ files in place with clang-format                                                            |
+| `make lint`                                      | Run clang-format and clang-tidy checks; set `LINT_FILE=src/foo.hpp` or `tests/bar.cpp` to narrow scope                       |
+| `make no-heap-src`                               | Fail if `src` contains common heap-allocation APIs or heap-backed STL containers                                             |
+| `make no-heap-symbols`                           | Fail if compiled artifact contains forbidden allocator symbols                                                               |
+| `make no-heap`                                   | Strict no-heap gate: source check, harness build, and binary symbol scan                                                     |
+| `make traceability-spec-to-code`                 | Strict spec-to-code traceability gate: set-scoped allium validation, snapshot drift check, and test traceability enforcement |
+| `make traceability-spec-to-code-update-snapshot` | Regenerate committed obligation snapshot from current specs                                                                  |
+| `make upsert-gate`                               | Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for `UPSERT_COVERAGE_FILE`                               |
+| `make upsert-gate-strict`                        | upsert-gate plus strict spec-to-code traceability and no-heap verification                                                   |
 
 #### Under The Hood
 
@@ -210,5 +230,6 @@ Do not check in:
 - **genhtml** for code coverage analysis
 - **lcov** for code coverage analysis
 - **lizard** for code analysis
+- **perl** for multiline `TRACE_ID(...)` extraction in strict traceability checks
   - https://github.com/terryyin/lizard
   - According to the lizard documentation, it only supports C++14. Another tool that supports **Cyclomatic Complexity** and **Function LoC** would be better.
