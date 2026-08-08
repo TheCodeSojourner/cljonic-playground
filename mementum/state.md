@@ -1,11 +1,12 @@
 ## Session State
 
 - last_session_id: 2026-08-07T23:59:00Z
-- current_timestamp: 2026-08-07T23:59:00Z
+- current_timestamp: 2026-08-08T23:27:42Z
 - recover: none
 
 ## Task
 
+- Oriented this session against `mementum/state.md`, `mementum/memories/`, and `mementum/knowledge/`.
 - Migrated all misplaced Copilot `/memories/repo/` entries to `mementum/memories/` and `mementum/knowledge/`.
 - Moved 2 general (non-repo-specific) items to Copilot user memory (`/memories/`).
 - Deleted all `/memories/repo/` entries — mementum is now the single source of truth.
