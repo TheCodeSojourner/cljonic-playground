@@ -21,7 +21,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -31,7 +31,8 @@ help:
 	@printf '%-12s %s\n' 'coverage' 'Build with instrumentation, run tests, enforce $(COVERAGE_THRESHOLD)% line coverage'
 	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
 	@printf '%-12s %s\n' 'docs' 'Generate Doxygen HTML documentation to docs/'
-	@printf '%-12s %s\n' 'format' 'Format all source and test C/C++ files in place with clang-format'
+	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
+	@printf '%-12s %s\n' 'format-doc-samples' 'Format Doxygen C++ sample blocks in src/* headers with clang-format'
 	@printf '%-12s %s\n' 'help' 'Show available targets'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
 	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source check, harness build, and binary symbol scan'
@@ -115,7 +116,14 @@ format:
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
 	@find src tests -type f \( -name '*.hpp' -o -name '*.h' -o -name '*.cpp' -o -name '*.cc' \) -print0 | \
 		xargs -0 -r clang-format -i
+	@$(MAKE) --no-print-directory -s format-doc-samples > /dev/null
 	@echo "format:ok"
+
+format-doc-samples:
+	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
+	@find src -type f \( -name '*.hpp' -o -name '*.h' \) -print0 | \
+		xargs -0 -r scripts/format-doc-samples.pl
+	@echo "format-doc-samples:ok"
 
 lint: configure
 	@$(MAKE) format > /dev/null
