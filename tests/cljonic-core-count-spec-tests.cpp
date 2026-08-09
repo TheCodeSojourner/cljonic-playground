@@ -104,7 +104,7 @@ TEST_CASE("Trace policy: count invariants with valid Vector subject",
   TRACE_ID("rule-failure.RejectCountSemanticsOnInvalidResultRange.3");
   TRACE_ID("rule-failure.RejectCountSemanticsOnInvalidResultRange.4");
   const Vector<int, 4> v{1, 2};
-  CHECK(Vector<int, 4>::capacity_limit() <=
+  CHECK(Vector<int, 4>::capacity() <=
         Vector<int, 4>::collection_maximum_element_count());
   CHECK(count(v) >= 0U);
 #else
