@@ -141,6 +141,13 @@ Operations are C++23, FP-oriented, and header-only. Development uses CMake for b
   | domain_constraints(x) → encode_as(repo_specific_concepts)
   | traits_usage(x) → allowed_only_if(no_clear_or_portable_concept_form(x))
 
+λ S1_user_clarity_policy(x). public_api_constraints(x) → prefer(named_cljonic_concepts)
+  | trait_mechanics(x) → hide_inside(cljonic_concepts_namespace)
+  | likely_user_error_paths(x) → require(explicit_compile_time_messages)
+  | collection_header_examples(x) → focus_on(collection_construction)
+  | user_facing_names(x) → prefer(stl_familiar_terms_like_size_and_capacity)
+  | cross_cutting_free_operations(x) → document_in(operation_specific_headers)
+
 λ S1_pattern(x). architectural_pattern(x) ≡ functional_core_with_profile_gated_capabilities
   ∧ layered_bounded_value_collection_model
 
