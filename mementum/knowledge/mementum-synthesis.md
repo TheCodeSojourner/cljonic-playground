@@ -36,6 +36,7 @@ This synthesis distills the current durable operating model across mementum memo
 - Public API boundaries should be concept-first, with trait mechanics hidden in cljonic::concepts.
 - Core operations belong in cljonic-core-function headers and are exposed via cljonic-core.hpp umbrella include.
 - Header and test naming follows cljonic- prefixed dash-separated conventions.
+- Constructor contracts should keep explicit compile-time diagnostics while remaining compliant with enforced complexity thresholds.
 
 7. Documentation and examples
 - Doxygen examples should be complete runnable programs with main().
