@@ -2,7 +2,7 @@
 
 #include <array>
 #include <cstddef>
-#include <type_traits>
+#include <utility>
 
 #include <cljonic-concepts.hpp>
 
@@ -46,42 +46,38 @@ classify_vector(vector_observation observation) noexcept -> vector_state {
 } // namespace detail::vector
 
 /** \anchor Vector
- * \b Vector is a fixed-capacity sequential \b CopyOnModifyCollection backed by
- \c std::array.
- * No heap allocation occurs; construction with more initializers than \p
- capacity_value is a
- * compile-time error.  State is observable via \ref vector_state.
+ * \b Vector is a fixed-capacity collection with copy-on-modify behavior.
+  * Construction with more initializers than capacity is a compile-time
+  * error.
  *
- * Out-of-bounds access via \c get is not yet implemented; \c try_push_back
- returns \c false
- * (\b UnchangedValueReturn) when the collection is at capacity.
+ * This example focuses on collection construction. Free functions that operate
+ * on collections are documented with their own headers.
  *
  ~~~~~{.cpp}
- #include "cljonic-vector.hpp"
+ #include "cljonic-core.hpp"
  using namespace cljonic;
 
- int main()
- {
-     // CTAD: capacity deduced from initializer count
-     const auto v0{Vector{1, 2, 3}};       // Vector<int, 3>, at_capacity
-     const auto v1{Vector<int, 4>{1, 2}};  // explicit capacity 4, populated
-     const auto v2{Vector<int, 4>{}};      // explicit capacity 4, empty
+ struct Pixel {
+   int x;
+   int y;
+ };
 
-     // count() returns current logical size
-     const auto n = count(v0);  // n == 3
+ using Inner = Vector<int, 2>;
 
-     // try_push_back returns false at capacity; collection unchanged
-     Vector<int, 2> v3{1, 2};
-     const bool ok = v3.try_push_back(3);  // ok == false
+ int main() {
+   [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
+   [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
+   [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
+   [[maybe_unused]] constexpr auto doubles_populated =
+       Vector<double, 3>{1.5, 2.5};
+   [[maybe_unused]] constexpr auto pixels_populated =
+       Vector{Pixel{1, 2}, Pixel{3, 4}};
+   [[maybe_unused]] constexpr auto nested_int_vectors =
+       Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
+   [[maybe_unused]] constexpr auto nested_alias_vectors =
+       Vector{Inner{4, 5}, Inner{6}};
 
-     // Compiler error: initializer count exceeds capacity
-     // const auto bad{Vector<int, 2>{1, 2, 3}};
-
-     // Compiler error: capacity exceeds
- CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT
-     // const auto big{Vector<int, 1001>{}};
-
-     return 0;
+   return 0;
  }
  ~~~~~
  */
@@ -96,14 +92,28 @@ public:
                     CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
   template <typename... Args>
-    requires(sizeof...(Args) <= capacity_value) &&
-                (std::is_convertible_v<Args, element_type> && ...)
   constexpr Vector(Args... args) noexcept(
-      (std::is_nothrow_constructible_v<element_type, Args> && ...))
-      : storage_{static_cast<element_type>(args)...},
-        logical_size_{sizeof...(Args)} {}
+      (concepts::NothrowConstructible<element_type, Args> && ...))
+      : storage_{}, logical_size_{0} {
+    static_assert(sizeof...(Args) <= capacity_value,
+                  "Vector constructor requires initializer count to be less "
+                  "than or equal to capacity");
+    static_assert((concepts::ConvertibleToElement<element_type, Args> && ...),
+                  "Vector constructor requires all arguments to be "
+                  "convertible to element_type");
+    static_assert((concepts::NothrowConstructible<element_type, Args> && ...),
+                  "Vector constructor requires all arguments to construct "
+                  "element_type without throwing");
 
-  [[nodiscard]] static constexpr auto capacity_limit() noexcept -> std::size_t {
+    if constexpr ((sizeof...(Args) <= capacity_value) &&
+                  (concepts::ConvertibleToElement<element_type, Args> && ...) &&
+                  (concepts::NothrowConstructible<element_type, Args> && ...)) {
+      initialize_storage(std::index_sequence_for<Args...>{}, args...);
+      logical_size_ = sizeof...(Args);
+    }
+  }
+
+  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
     return capacity_value;
   }
 
@@ -112,7 +122,7 @@ public:
     return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
   }
 
-  [[nodiscard]] constexpr auto logical_size() const noexcept -> std::size_t {
+  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
     return logical_size_;
   }
 
@@ -134,6 +144,12 @@ public:
   }
 
 private:
+  template <std::size_t... Indices, typename... Args>
+  constexpr void initialize_storage(std::index_sequence<Indices...>,
+                                    Args... args) noexcept {
+    ((storage_[Indices] = static_cast<element_type>(args)), ...);
+  }
+
   std::array<value_type, capacity_value> storage_{};
   std::size_t logical_size_ = 0;
 };
