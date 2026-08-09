@@ -82,6 +82,21 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
   using cljonic::count;
   using cljonic::Vector;
   using cljonic::vector_state;
+  using cljonic::concepts::NothrowConstructible;
+
+  struct NothrowElement {
+    NothrowElement() = default;
+    NothrowElement(const NothrowElement &) = default;
+    NothrowElement(int value) noexcept : value(value) {}
+    int value = 0;
+  };
+
+  struct ThrowingElement {
+    ThrowingElement() = default;
+    ThrowingElement(const ThrowingElement &) = default;
+    ThrowingElement(int value) noexcept(false) : value(value) {}
+    int value = 0;
+  };
 
   TRACE_ID("entity-fields.VectorConstruction");
   TRACE_ID("rule-success.ConstructVectorWithValidElementCount");
@@ -89,9 +104,16 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
   TRACE_ID("rule-failure.ConstructVectorWithValidElementCount.2");
   TRACE_ID("rule-failure.ConstructVectorWithValidElementCount.3");
   TRACE_ID("rule-failure.ConstructVectorWithValidElementCount.4");
+  TRACE_ID("rule-failure.ConstructVectorWithValidElementCount.5");
   TRACE_ID("rule-success.RejectVectorConstructionOnOversizedElementCount");
   TRACE_ID("rule-failure.RejectVectorConstructionOnOversizedElementCount.1");
   TRACE_ID("rule-failure.RejectVectorConstructionOnOversizedElementCount.2");
+  TRACE_ID(
+      "rule-success.RejectVectorConstructionOnThrowingElementConstruction");
+  TRACE_ID(
+      "rule-failure.RejectVectorConstructionOnThrowingElementConstruction.1");
+  TRACE_ID(
+      "rule-failure.RejectVectorConstructionOnThrowingElementConstruction.2");
   TRACE_ID("rule-success."
            "RejectVectorConstructionWhenCapacityExceedsCollectionMaximumElement"
            "Count");
@@ -154,6 +176,12 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
     CHECK(v.state() == vector_state::empty);
     CHECK(count(v) == 0U);
   }
+
+  SECTION("constructor no-throw contract is modeled by concepts") {
+    static_assert(NothrowConstructible<NothrowElement, int>);
+    static_assert(!NothrowConstructible<ThrowingElement, int>);
+    CHECK(true);
+  }
 #else
   SKIP("Production vector implementation is not present.");
 #endif
@@ -168,7 +196,7 @@ TEST_CASE("Trace policy: "
 
   TRACE_ID("invariant.VectorConstruction."
            "CapacityRespectsCollectionMaximumElementCount");
-  CHECK(Vector<int, 4>::capacity_limit() <=
+  CHECK(Vector<int, 4>::capacity() <=
         Vector<int, 4>::collection_maximum_element_count());
 #else
   SKIP("Production vector implementation is not present.");
