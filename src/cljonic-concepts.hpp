@@ -1,11 +1,12 @@
 #pragma once
 
 #include <concepts>
+#include <utility>
 
 namespace cljonic::concepts {
 
-/** Requires that \p value_type is default-initializable and copyable — the
- * minimum contract for \ref Vector element storage and \b SentinelBasedAccess
+/** Requires that \p value_type is default-initializable and copyable - the
+ * minimum contract for Vector element storage and SentinelBasedAccess
  * default-element return.
  */
 template <typename value_type>
@@ -19,6 +20,20 @@ template <typename value_type>
 concept NothrowCopyAssignable =
     requires(value_type &target, const value_type &source) {
       { target = source } noexcept -> std::same_as<value_type &>;
+    };
+
+/** Requires that \\p argument_type is convertible to \\p value_type.
+ */
+template <typename value_type, typename argument_type>
+concept ConvertibleToElement = std::convertible_to<argument_type, value_type>;
+
+/** Requires that \p value_type can be constructed from \p argument_type
+ * without throwing.
+ */
+template <typename value_type, typename argument_type>
+concept NothrowConstructible =
+    std::constructible_from<value_type, argument_type> && requires {
+      { value_type(std::declval<argument_type>()) } noexcept;
     };
 
 } // namespace cljonic::concepts
