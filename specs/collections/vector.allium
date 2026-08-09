@@ -65,6 +65,7 @@ entity VectorConstruction {
     initializer_count: Integer
     capacity: Integer
     collection_maximum_element_count: Integer
+    arguments_construct_without_throw: Boolean
 
     transitions outcome {
         pending -> succeeded
@@ -83,6 +84,7 @@ rule ConstructVectorWithValidElementCount {
     requires: construction.initializer_count >= 0
     requires: construction.capacity <= construction.collection_maximum_element_count
     requires: construction.initializer_count <= construction.capacity
+    requires: construction.arguments_construct_without_throw = true
     ensures: construction.outcome = succeeded
 }
 
@@ -97,6 +99,13 @@ rule RejectVectorConstructionWhenCapacityExceedsCollectionMaximumElementCount {
     when: ConstructVector(construction)
     requires: construction.outcome = pending
     requires: construction.capacity > construction.collection_maximum_element_count
+    ensures: construction.outcome = rejected_at_compile_time
+}
+
+rule RejectVectorConstructionOnThrowingElementConstruction {
+    when: ConstructVector(construction)
+    requires: construction.outcome = pending
+    requires: construction.arguments_construct_without_throw = false
     ensures: construction.outcome = rejected_at_compile_time
 }
 
