@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cljonic-vector.hpp>
+#include <cljonic-concepts.hpp>
 
 namespace cljonic {
 
@@ -22,10 +22,9 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::VectorElement element_type, std::size_t capacity_value>
+template <concepts::Collection collection_type>
 [[nodiscard]] constexpr auto
-count(const Vector<element_type, capacity_value> &collection) noexcept
-    -> std::size_t {
+count(const collection_type &collection) noexcept -> std::size_t {
   return collection.size();
 }
 
