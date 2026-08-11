@@ -284,14 +284,14 @@ status: draft
 ### EmbeddedConstraint
 - **Definition:** The platform constraint set that assumes embedded targets with bounded resources and therefore prioritizes fixed capacity, predictable execution, and explicit profiles.
 - **Deprecated Synonyms:** embedded constraint, embedded systems constraint
-- **Related:** NoHeapConstraint, NoExceptionConstraint, DeterministicBehavior, BuildProfile
+- **Related:** NoHeapConstraint, NoExceptionConstraint, DeterministicBehavior, StaticStorage
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Collection APIs use fixed-capacity storage and avoid runtime allocation on strict profiles.
 
 ### NoHeapConstraint
 - **Definition:** The rule that strict profiles must not perform heap allocation anywhere in the library's behavior or infrastructure.
 - **Deprecated Synonyms:** no heap allocation, no-heap rule
-- **Related:** EmbeddedConstraint, StaticStorage, DeterministicBehavior, BuildProfile
+- **Related:** EmbeddedConstraint, StaticStorage, DeterministicBehavior, NoHeapConstraint
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Verification gates prohibit forbidden allocation APIs and bounded collections store data without dynamic allocation.
 
@@ -319,21 +319,21 @@ status: draft
 ### DeterministicBehavior
 - **Definition:** The requirement that behavior, failure modes, and profile-selected semantics remain predictable and stable for the same inputs and configuration.
 - **Deprecated Synonyms:** deterministic semantics, deterministic execution
-- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, ContractPolicy, BuildProfile
+- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, ContractPolicy, DeterministicBehavior
 - **Usage:** Architecture, specification, tests, and documentation
 - **Examples:** Full-capacity `conj` returns the unchanged value deterministically, and invalid runtime regex compilation returns a stable invalid-pattern sentinel.
 
 ### ContractPolicy
 - **Definition:** The project-wide contract model governing public API boundaries, invariant checks, and the deterministic policy hook used when contract violations occur.
 - **Deprecated Synonyms:** contract, contract boundary, contract handling
-- **Related:** NoExceptionConstraint, DeterministicBehavior, BuildProfile
+- **Related:** NoExceptionConstraint, DeterministicBehavior, ContractPolicy
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Public API preconditions are expressed as contracts and violations route through a selected terminate, trap, or assert policy.
 
 ### SemanticConcept
 - **Definition:** A small, composable compile-time concept used to encode semantic API constraints and reject invalid combinations with clear diagnostics.
 - **Deprecated Synonyms:** concept, semantic constraint
-- **Related:** CanonicalComparison, ThreadingForm, BuildProfile
+- **Related:** CanonicalComparison, ThreadingForm, StableHandleModel
 - **Usage:** Specification, implementation, tests, and documentation
 - **Examples:** Strict comparison excludes floating-point types through concept constraints, and deferred some-threading uses `probe_validatable` as a concept gate.
 
@@ -350,13 +350,6 @@ status: draft
 - **Related:** ClojureParity, FunctionalStyle, CopyOnModifyCollection, ProbeFirstAccess
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A new collection operation should prefer one of the canonical names before introducing a new name, and any constrained semantic divergence is documented in specs and tests.
-
-### BuildProfile
-- **Definition:** A named configuration mode that selects capability and verification differences without changing the core API vocabulary.
-- **Deprecated Synonyms:** profile, build profile
-- **Related:** EmbeddedConstraint, DeterministicBehavior, ContractPolicy, HeaderOnlyDistribution
-- **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** Strict host profiles enable sanitizers and coverage gates, while constrained embedded profiles may disable optional regex support.
 
 ### HeaderOnlyDistribution
 - **Definition:** The packaging model in which the library is delivered as headers only, with development sources organized separately from the generated distribution artifact.
@@ -375,7 +368,7 @@ status: draft
 ### CompileTimeEvaluation
 - **Definition:** The architectural distinction between behavior or validation performed during compile-time evaluation and behavior that remains available at runtime.
 - **Deprecated Synonyms:** compile-time evaluation, constexpr/consteval boundary
-- **Related:** SemanticConcept, BuildProfile, RegexProfile
+- **Related:** SemanticConcept, RegexProfile, RuntimeBehavior
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Range precomputes internal fields when inputs are compile-time constants, and some validations are intended to fail during compilation.
 
@@ -410,14 +403,14 @@ status: draft
 ### RegexProfile
 - **Definition:** The capability mode that selects compile-time-oriented regex behavior by default and optionally enables runtime regex support without changing the public regex vocabulary.
 - **Deprecated Synonyms:** regex profile, compile-time regex profile, runtime regex profile
-- **Related:** BuildProfile, StableHandleModel, EmbeddedConstraint, Regex, RegexPattern, RegexMatcher, RegexLiteral
+- **Related:** StableHandleModel, EmbeddedConstraint, Regex, RegexPattern, RegexMatcher, RegexLiteral
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Strict embedded profiles may disable optional runtime regex support, while host-oriented profiles may permit `re-pattern` and `re-matcher`.
 
 ### StableHandleModel
 - **Definition:** The API design rule that profile changes must not force a public regex API shape change; capabilities vary behind stable handles rather than by renaming the user-facing abstraction.
 - **Deprecated Synonyms:** stable handle model, stable handle API
-- **Related:** RegexProfile, BuildProfile
+- **Related:** StableHandleModel, EmbeddedConstraint
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Compile-time and runtime regex modes share a stable pattern handle interface even when backing behavior differs.
 
@@ -459,14 +452,14 @@ status: draft
 ### QualityGate
 - **Definition:** A required validation checkpoint in CI or local workflows that enforces a non-optional engineering constraint before changes are accepted.
 - **Deprecated Synonyms:** quality gate, enforcement gate
-- **Related:** NoHeapVerification, BuildProfile, DeterministicBehavior, SourceLayout
+- **Related:** NoHeapVerification, DeterministicBehavior, SourceLayout
 - **Usage:** Architecture, implementation, tests, CI, and documentation
 - **Examples:** Linting, sanitizer runs, coverage thresholds, and docs sample compilation are all quality gates.
 
 ### NoHeapVerification
 - **Definition:** The layered verification regime that proves strict profiles do not use heap allocation through compile-time or link-time prohibition, runtime counters, and binary symbol checks.
 - **Deprecated Synonyms:** no-heap verification, heap-allocation verification gate
-- **Related:** NoHeapConstraint, QualityGate, BuildProfile
+- **Related:** NoHeapConstraint, QualityGate, EmbeddedConstraint
 - **Usage:** Architecture, implementation, tests, CI, and documentation
 - **Examples:** Host verification profiles can fail the build when forbidden allocation symbols are present or runtime allocation counters are incremented.
 
@@ -553,7 +546,7 @@ status: draft
 - ClosedNumericDomain, NumericPromotionPolicy, CommonTypeLattice, StaticallyBoundedResult, and DeterministicOverflowPolicy define the bounded numeric semantics that fit the embedded constraint model.
 - ClojureParity and FunctionalStyle explain where semantics are intentionally borrowed from Clojure.
 - EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, StaticStorage, and DeterministicBehavior define the platform and execution constraints.
-- ContractPolicy, SemanticConcept, and BuildProfile define how correctness and portability constraints are expressed across layers.
+- ContractPolicy and SemanticConcept define how correctness constraints are expressed across layers.
 - HeaderOnlyDistribution and AmalgamatedHeader define the packaging vocabulary for build and user documentation.
 - CompileTimeEvaluation, RegexProfile, and StableHandleModel define capability boundaries that architecture must preserve across compile-time and runtime modes.
 - NamespaceAdoptionRoadmap, MvpNamespaceCutLine, OptionalNamespaceCutLine, and NamespacePhaseOrder define architectural scope and rollout boundaries.

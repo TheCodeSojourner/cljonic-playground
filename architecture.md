@@ -24,14 +24,6 @@ cljonic adapts through profile-gated evolution while preserving a stable public 
 
 λ expressions:
 
-λ S4_adaptation(x). change_pressure(x) → evolve_via(profile_gates(x))
-  | keep_backward_compatible(canonical_vocabulary)
-  | introduce_capabilities_explicitly(x)
-
-λ profile_gates(x). capability_change(x) → explicit_profile_opt_in(x)
-  | strict_profile_preserves(S5_identity)
-  | optional_profile_adds_capabilities_without_silent_semantic_drift(x)
-
 λ S4_learning(x). detect(assumption_break) → capture_decision ∧ refine_policy
   | prefer_explicit_deprecation_windows(x)
   | stable_handle_model(x)
@@ -41,12 +33,9 @@ cljonic adapts through profile-gated evolution while preserving a stable public 
   ∧ preserve(result_contracts)
   | capability_variance(x) → select_by_profile_not_renaming(x)
 
-λ S4_disruption(x). novel_or_new_pattern(x) → test_in_optional_profile(x)
-  → promote_to_default_only_if(compatible_with_S5)
-
 ## S3 - Control
 
-Control enforces hard constraints across all profiles: no heap, no exceptions, deterministic sentinel and overflow behavior, and strict quality gates. Resource usage and policy outcomes are bounded and auditable.
+Control enforces hard constraints: no heap, no exceptions, deterministic sentinel and overflow behavior, and strict quality gates. Resource usage and policy outcomes are bounded and auditable.
 
 λ expressions:
 
