@@ -291,7 +291,7 @@ status: draft
 ### NoHeapConstraint
 - **Definition:** The rule that strict profiles must not perform heap allocation anywhere in the library's behavior or infrastructure.
 - **Deprecated Synonyms:** no heap allocation, no-heap rule
-- **Related:** EmbeddedConstraint, StaticStorage, DeterministicBehavior, NoHeapConstraint
+- **Related:** EmbeddedConstraint, StaticStorage, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Verification gates prohibit forbidden allocation APIs and bounded collections store data without dynamic allocation.
 
@@ -319,14 +319,14 @@ status: draft
 ### DeterministicBehavior
 - **Definition:** The requirement that behavior, failure modes, and profile-selected semantics remain predictable and stable for the same inputs and configuration.
 - **Deprecated Synonyms:** deterministic semantics, deterministic execution
-- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, ContractPolicy, DeterministicBehavior
+- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, ContractPolicy
 - **Usage:** Architecture, specification, tests, and documentation
 - **Examples:** Full-capacity `conj` returns the unchanged value deterministically, and invalid runtime regex compilation returns a stable invalid-pattern sentinel.
 
 ### ContractPolicy
 - **Definition:** The project-wide contract model governing public API boundaries, invariant checks, and the deterministic policy hook used when contract violations occur.
 - **Deprecated Synonyms:** contract, contract boundary, contract handling
-- **Related:** NoExceptionConstraint, DeterministicBehavior, ContractPolicy
+- **Related:** NoExceptionConstraint, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Public API preconditions are expressed as contracts and violations route through a selected terminate, trap, or assert policy.
 
@@ -368,7 +368,7 @@ status: draft
 ### CompileTimeEvaluation
 - **Definition:** The architectural distinction between behavior or validation performed during compile-time evaluation and behavior that remains available at runtime.
 - **Deprecated Synonyms:** compile-time evaluation, constexpr/consteval boundary
-- **Related:** SemanticConcept, RegexProfile, RuntimeBehavior
+- **Related:** SemanticConcept, RegexProfile
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Range precomputes internal fields when inputs are compile-time constants, and some validations are intended to fail during compilation.
 
