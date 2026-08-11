@@ -73,13 +73,12 @@
  *
  * ## Aliases
  *
- * Namespace                      | "using" C++ Statement
- * ------------------------------ |
- * --------------------------------------------- \ref Namespace_Core "core" |
- * using **core** = cljonic::core; \ref Namespace_Regex "regex"   | using
- * **regex** = cljonic::regex; \ref Namespace_Set "set"       | using **set** =
- * cljonic::set; \ref Namespace_String "string" | using **string** =
- * cljonic::string;
+ * | Namespace | "using" C++ Statement |
+ * |-----------|-------------------------|
+ * | \ref Namespace_Core "core" | using **core** = cljonic::core; |
+ * | \ref Namespace_Regex "regex" | using **regex** = cljonic::regex; |
+ * | \ref Namespace_Set "set" | using **set** = cljonic::set; |
+ * | \ref Namespace_String "string" | using **string** = cljonic::string; |
  *
  * ## Collection Types
  *
@@ -223,12 +222,9 @@
 #include <cljonic-core-count.hpp>
 #include <cljonic-vector.hpp>
 
-namespace cljonic
-{
+namespace cljonic {
 
-    namespace core
-    {
-    } // namespace core
+namespace core {} // namespace core
 
 } // namespace cljonic
 
