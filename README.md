@@ -24,8 +24,7 @@
 
 ## Detailed Documentation
 
-> **Note**
-> Detailed documentation is coming soon.
+Detailed documentation is available [here](https://thecodesojourner.github.io/cljonic-playground/).
 
 ## Motivation
 
@@ -230,6 +229,6 @@ Do not check in:
 - **genhtml** for code coverage analysis
 - **lcov** for code coverage analysis
 - **lizard** for code analysis
-- **perl** for multiline `TRACE_ID(...)` extraction in strict traceability checks
   - https://github.com/terryyin/lizard
   - According to the lizard documentation, it only supports C++14. Another tool that supports **Cyclomatic Complexity** and **Function LoC** would be better.
+- **perl** for multiline `TRACE_ID(...)` extraction in strict traceability checks
