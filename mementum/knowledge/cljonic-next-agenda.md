@@ -51,3 +51,18 @@ depends-on: []
 - Implement keyword enum catalog API.
 - Implement array-backed map with linear search and sentinel-return get.
 - Add compile-time and runtime tests for the agreed behavior contracts.
+
+## Current state (updated 2026-08-11)
+
+Vector and count are implemented and passing all quality gates (lint, complexity, sanitizers, coverage, traceability, no-heap, docs).
+
+Before implementing new collections, answer the Open Questions in DESIGN-NOTES.md:
+- Collection C++ concept definition
+- Meaning of the `_M` suffix
+- Mixed-collection return type and capacity policy
+- `Into` semantics
+- Float element types in stored collections
+- `count` for unbound generated collections
+- String transform return types
+
+Next collection to implement after Open Questions are resolved: Range.

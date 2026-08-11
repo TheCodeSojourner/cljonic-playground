@@ -1,42 +1,40 @@
 ## Session State
 
-- last_session_id: e473841d-7eed-4587-a2e2-adbd3fca7c08
-- current_timestamp: 2026-08-09T02:01:38Z
+- last_session_id: 36d347d2-ca3f-4440-aded-59300c082e49
+- current_timestamp: 2026-08-11T00:00:00Z
 - recover: 1
 
 ## Task
 
-- Refined user-facing Doxygen examples for Vector and count toward contract-first, construction-focused wording and runnable sample programs.
-- Standardized docs include guidance to use the umbrella header in examples where project guidance recommends it.
-- Reworked example style decisions: prefer named variables, preferred auto initialization style, and [[maybe_unused]] for intentionally unused sample values.
-- Removed user-facing implementation-detail terminology from docs and avoided speculative future-type statements in public comments.
-- Added and validated doc sample formatting automation in normal workflows and repeatedly verified clean formatting.
-- Performed end-to-end alignment checks across vocabulary, architecture, specs, tests, and code using strict gates.
-- Refactored Vector constructor initialization to preserve explicit compile-time diagnostics while satisfying complexity thresholds.
-- Completed strict verification after refactor: lint, complexity, sanitizers, coverage, spec-to-code traceability, and no-heap all passing.
-- Corrected memory routing by moving repo-specific insights into mementum and pruning migrated duplicates from Copilot memory.
-- Ran mementum synthesis and stored a durable consolidated knowledge artifact in mementum/knowledge.
+- Fixed build errors by adding missing includes to cljonic-core.hpp.
+- Added make git pre-commit gate covering format, lint, complexity, sanitizers, coverage, traceability, no-heap, and docs.
+- Fixed Aliases table rendering in cljonic-core.hpp and no-heap false positive from documentation comment.
+- Conducted collection API design elicitation; produced major DESIGN-NOTES.md updates: collection taxonomy, bounded sequence policy, Range semantics, *By rule, function applicability by collection type, String null-termination, and Open Questions section.
 
 ## Questions
 
-- Should user-facing docs mention internal terms like CTAD or constructor mechanics? No, keep public docs focused on user contracts and outcomes.
-- Should vector construction examples surface size/capacity/state methods? Not in construction-focused samples when those capabilities are planned for standalone function documentation.
-- Can we force a line break after '=' everywhere in sample declarations with current formatter rules? Not reliably; formatter-native wrapping should be accepted unless policy changes.
+- Should make git regenerate docs for non-source changes? Yes, unconditional by design; make git-fast could be added if needed.
+- Are Cycle, Iterate, Repeatedly collection types or free functions? Collection types, given referentially transparent element access.
+- Should step=0 in Range be a compile-time error? No — produces MAX copies of start, consistent with Clojure.
+- Should float element types be allowed in stored collections (Vector, Set, Map)? Undecided — recorded in Open Questions.
 
 ## Decisions
 
-- Keep user-facing docs contract-first, concise, and free of implementation-detail terminology unless explicitly teaching internals.
-- Prefer example declaration style const auto name = Type{...}; and named variables for readability.
-- Prefer [[maybe_unused]] for intentionally unused example variables in runnable snippets.
-- Keep Vector header examples construction-focused; defer cross-cutting operation exposure to operation-specific headers.
-- Preserve constructor diagnostic clarity with explicit static_assert messages plus guarded initialization semantics.
-- Repo-specific memories must live in mementum; migrated duplicates must be pruned from Copilot memory.
+- All cljonic collections are finite; CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT serves as system-wide infinity for unbound forms.
+- Complete collection type set: Vector, Range, Repeat, Cycle, Iterate, Repeatedly, Set, String, Map.
+- Range: integer types only; Clojure-compatible 4-form overloads; step=0 produces MAX copies of start.
+- Cycle and Iterate are collection types (referentially transparent element access).
+- Repeatedly is a collection type; purity of the supplied function is a caller precondition.
+- *By rule: every free function using element equality or ordering internally gets a *By variant; predicate-taking functions do not.
+- Generated collections do not support mutation; transforms applied to generated collections return Vector.
+- String<N> always allocates N+1 code units and maintains a null terminator at all times.
 
 ## Next
 
-- Start Set/Range/Cycle collection work from the roadmap and keep operation semantics aligned with canonical vocabulary.
-- Apply the same docs style policy to future user-facing headers and sample programs.
-- Keep strict gate runs as the first checkpoint after each source upsert and before session close.
+- Answer Open Questions in DESIGN-NOTES.md before implementing new collections (Collection concept, _M suffix, mixed-collection return types, Into semantics, float in stored collections, count for unbound collections, String transform return types).
+- Implement Range as the first new collection after Open Questions are resolved.
+- Apply consistent patterns (specs, tests, docs, gates) across all new collection implementations.
+- Keep strict gate runs (make git) as the first checkpoint after each source upsert.
 
 
 
