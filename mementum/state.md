@@ -1,40 +1,48 @@
 ## Session State
 
-- last_session_id: 2026-08-11-gate-policy-memory-synthesis-session
-- current_timestamp: 2026-08-11T21:28:45Z
-- recover: 1
+- last_session_id: 2026-08-11-collection-concept-bootstrap-and-propagation
+- current_timestamp: 2026-08-11T22:15:00Z
+- recover: 2
 
 ## Task
 
-**Session focus: Gate policy finalization, gybis verification checks, and mementum consolidation**
+**Session focus: Bootstrap Collection concept with YAGNI policy and propagate through architecture, vocabulary, specs, code, and documentation**
 
 **This session results:**
-- Completed gybis-vocab-check with semantic cleanup, ending at PASS.
-- Completed gybis-arch-check and gybis-spec-check with PASS outcomes.
-- Completed gybis-spec-weed convergence checks: strict traceability passed, tests passed, no divergences found.
-- Validated repository gate policy in practice: `make upsert-gate-strict` is the default full validation path when docs are not required; `make git` is docs-inclusive final gate.
-- Stored this policy as memory and synthesized it into knowledge.
-- Cleaned mementum duplication by removing redundant coverage memory and updating synthesis wording.
+- ✅ Defined `concept Collection` in cljonic-concepts.hpp with minimal bootstrap requirement: `c.size() → std::size_t`
+- ✅ Migrated `count()` template from Vector-specific to generic, constrained on Collection concept
+- ✅ Removed `#include <cljonic-vector.hpp>` dependency from cljonic-core-count.hpp
+- ✅ Updated architecture.md with S2_concept_bootstrap decision (S2 Coordination layer)
+- ✅ Added Collection entry to vocabulary.md with YAGNI evolution semantics
+- ✅ Created specs/collections/collection-concept.allium formal behavioral specification
+- ✅ Locked session decision in DESIGN-NOTES.md; removed Collection from Open Questions
+- ✅ Fixed C++26 → C++23 version references (DESIGN-NOTES.md, vocabulary.md)
+- ✅ Updated README.md concepts section to document Collection concept and YAGNI policy
+- ✅ Ran `make upsert-gate-strict`: ALL GATES PASS (lint, complexity, sanitizer, coverage, traceability, no-heap)
+- ✅ Created git commits for each phase: Collection concept bootstrap, C++26→C++23 fix, README documentation
 
 ## Questions
 
-- ✅ **RESOLVED:** Is there a full-check target without docs generation? **Yes.** Use `make upsert-gate-strict`.
-- ✅ **RESOLVED:** Should session default full validation use `make upsert-gate-strict`? **Yes.** Reserve `make git` for docs-inclusive final checks.
-- ✅ **RESOLVED:** Do mementum memories need cleanup? **Yes.** Removed one duplicate and aligned synthesis language.
+- ✅ **RESOLVED:** How should Collection concept be defined? **Minimal bootstrap with YAGNI.** Only `c.size() → std::size_t` required initially.
+- ✅ **RESOLVED:** Should count() require operator[] and value_type? **No.** count() only needs size(). Defer other requirements until needed.
+- ✅ **RESOLVED:** When to add more concept requirements? **Only when first free function that needs them is implemented.**
+- ✅ **RESOLVED:** Should Collection concept work be propagated through entire stack? **Yes.** Complete propagation chain: architecture → vocabulary → specs → code → documentation.
 
 ## Decisions
 
-- Default full validation gate during iterative development is `make upsert-gate-strict`.
-- Docs-inclusive final gate is `make git` and should be used only when docs generation is explicitly required.
-- Traceability, no-heap, sanitizer, lint, complexity, and coverage checks remain non-negotiable strict gates.
-- Repository memory hygiene: keep one durable memory per insight and remove superseded duplicates.
+- **concept Collection bootstrap strategy:** Define with ONLY immediate requirements (c.size()). Apply YAGNI policy strictly. Future requirements (operator[], value_type, begin/end, etc.) added when first free function needs them.
+- **count() implementation:** Single generic template constrained on concepts::Collection. No per-type overloads needed.
+- **Concept evolution policy:** Concepts remain minimal and focused. Additional requirements are not speculative; they are driven by actual function implementations.
+- **Version accuracy:** Project targets C++23, not C++26. All references updated.
+- **README documentation:** User-facing concepts section now explains bootstrapped concept strategy and YAGNI policy.
 
 ## Next
 
-1. Resolve the open questions in DESIGN-NOTES.md to unblock the next implementation phase.
-2. Implement Range first (specs, tests, code, docs alignment) using established strict gate workflow.
-3. During development use `make upsert-gate-strict`; run `make git` only when docs-inclusive final verification is required.
-4. Keep mementum state and knowledge synchronized as new collection work begins.
+1. Implement Range collection generator (specs first, then code and tests).
+2. If Range implementation requires operator[] or value_type, add those to Collection concept at that time.
+3. Continue using `make upsert-gate-strict` for iterative validation.
+4. Track decision history in DESIGN-NOTES.md locked decisions section.
+5. Keep vocabulary.md synchronized with concept evolution.
 
 
 
