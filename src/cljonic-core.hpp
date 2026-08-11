@@ -35,12 +35,12 @@
  *
  * Changes to C++ have provided valuable capabilities that are time consuming to
  * master, hence it is both <b> valuable to development organizations</b> for
- * their developers to use new C++ capabilities, and <b> too expensive to
+ * their developers to use modern C++ capabilities, and <b> too expensive to
  * train</b> all of their developers to be experts in their use.  This, too,
  * begs a question:
  *
  * <b>Can one or two embedded systems software developers cost-effectively
- * introduce new C++ capabilities to the entire team?</b>
+ * introduce modern C++ capabilities to the entire team?</b>
  *
  * In this post:
  *
@@ -223,9 +223,12 @@
 #include <cljonic-core-count.hpp>
 #include <cljonic-vector.hpp>
 
-namespace cljonic {
+namespace cljonic
+{
 
-namespace core {} // namespace core
+    namespace core
+    {
+    } // namespace core
 
 } // namespace cljonic
 
