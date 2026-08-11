@@ -410,7 +410,7 @@ status: draft
 ### StableHandleModel
 - **Definition:** The API design rule that profile changes must not force a public regex API shape change; capabilities vary behind stable handles rather than by renaming the user-facing abstraction.
 - **Deprecated Synonyms:** stable handle model, stable handle API
-- **Related:** StableHandleModel, EmbeddedConstraint
+- **Related:** EmbeddedConstraint
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Compile-time and runtime regex modes share a stable pattern handle interface even when backing behavior differs.
 
