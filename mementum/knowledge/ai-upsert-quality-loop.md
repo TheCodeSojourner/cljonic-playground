@@ -7,11 +7,15 @@ related: [Makefile, mementum/state.md]
 depends-on: []
 ---
 
-The canonical AI upsert workflow for this repo is `make upsert-gate`.
+The canonical AI upsert workflow for this repo is:
+- Inner loop: `make upsert-gate`
+- Default full validation (no docs): `make upsert-gate-strict`
+- Full validation with docs: `make git`
 
 Strict checkpoint workflow:
-- Use `make upsert-gate-strict` as the session-end verification step after iterative upserts.
+- Use `make upsert-gate-strict` as the default session-end verification step after iterative upserts.
 - `upsert-gate-strict` runs `upsert-gate` first, then `no-heap`.
+- `upsert-gate-strict` also enforces strict spec-to-code traceability via `traceability-spec-to-code`.
 - `no-heap` runs the fast source scan (`no-heap-src`) and builds the dedicated no-heap harness target (`cljonic_no_heap_probe`).
 - No-heap harness files live under `tests/no_heap/` and are organized by feature-family probes (for example vector, then future set/map/range/cycle and closure-core probes).
 - The no-heap harness target is excluded from default test runs (`make all` and `make test`) and only runs through strict policy targets.
@@ -30,5 +34,7 @@ Quality gate intent:
 
 Operational guidance:
 - Prefer `make upsert-gate` over manually chaining `lint`, `complexity-cli`, `sanitizer-cli`, and `coverage-cli`.
+- Prefer `make upsert-gate-strict` over `make git` for routine full checks when docs regeneration is not required.
+- Escalate to `make git` only when the session explicitly requires docs generation as part of the final gate.
 - If a gate fails, repair that failure before rerunning later gates.
 - Full-set or dependency-aware spec checks still belong at checkpoint moments outside the tight inner loop.
