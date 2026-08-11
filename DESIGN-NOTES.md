@@ -1,6 +1,6 @@
 # cljonic design notes
 
-- Target: C++26 using concepts, constexpr, consteval.
+- Target: C++23 using concepts, constexpr, consteval.
 - Platform constraints: embedded, no heap allocation, no exceptions.
 - Storage direction: std::array-based data structures (vector/set/map/string), no pools.
 - Immutability approach: value-style copy-on-modify semantics (not Clojure persistent internals).
@@ -114,7 +114,7 @@
 
 ## Locked regex strategy
 
-- C++26 standard library does not provide standardized compile-time regex.
+- C++23 standard library does not provide standardized compile-time regex.
 - CTRE is the selected compile-time regex library for this project.
 - Regex support is optional by profile and should remain aligned with embedded constraints.
 - Runtime regex support is allowed as an opt-in profile to support Clojure-style `re-pattern` and `re-matcher`.
@@ -167,7 +167,7 @@
 - clojure.core.reducers: lazy composition and reduction behavior avoid hidden materialization.
 - clojure.parallel: optional profile preserves deterministic single-thread fallback.
 
-## Locked C++26 usage guidelines
+## Locked C++23 usage guidelines
 
 ### Contracts
 

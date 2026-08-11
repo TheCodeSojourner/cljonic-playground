@@ -77,7 +77,7 @@ status: draft
 - **Examples:** A `String<32>` means room for 32 characters; in UTF-8 mode its backing storage may reserve worst-case code-unit capacity to preserve that logical character capacity.
 
 ### Collection
-- **Definition:** A C++26 concept that gates generic free functions by requiring `c.size() → std::size_t`. Additional requirements (such as indexed element access or `value_type`) are added only when the first free function that needs them is implemented, following a YAGNI bootstrap policy.
+- **Definition:** A C++23 concept that gates generic free functions by requiring `c.size() → std::size_t`. Additional requirements (such as indexed element access or `value_type`) are added only when the first free function that needs them is implemented, following a YAGNI bootstrap policy.
 - **Deprecated Synonyms:** none (first use in 2026-08-11)
 - **Related:** StoredCollection, GeneratedCollection, Concept, FreeFunction
 - **Usage:** Architecture, specification, implementation, and templates
