@@ -20,7 +20,8 @@ This synthesis distills the current durable operating model across mementum memo
 - Re-run checks until architecture findings are fully closed.
 
 3. Verification and quality discipline
-- Canonical upsert loop is make upsert-gate; session-end strict checkpoint is make upsert-gate-strict.
+- Canonical inner loop is make upsert-gate; default full validation without docs is make upsert-gate-strict.
+- Use make git only when docs generation is explicitly required in the final gate.
 - Strict mode includes no-heap verification and spec-to-code traceability gates.
 - Verification output should maximize durable signal and suppress low-value noise.
 

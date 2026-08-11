@@ -1,1 +1,0 @@
-💡 `coverage-cli` outputs `coverage:lines=<pct>` to stdout (key-prefixed format). AI upsert loop: run `make coverage-cli COVERAGE_FILE=<header>` after each code/test change; loop until output is `coverage:lines=100.0%`. cmake/lcov noise suppressed; ctest output shown only on failure. `COVERAGE_FILE` narrows lcov scope to a single production header.
