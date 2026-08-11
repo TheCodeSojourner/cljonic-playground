@@ -407,7 +407,9 @@
 
 - **`_M` suffix meaning**: `Conj_M`, `Count_M`, `Empty_M`, `Nth_M` appear in the cheatsheet but are never defined. Does `_M` mean mutable in-place? If so, which collections support it and what is the return type?
 
-- **Mixed-collection return types**: When two collections of different types are combined, what is the result type and capacity? For example, `Concat(Vector{1,2}, Range(3,5))` must produce some `Vector<int, ?>` — the capacity policy is not locked. Same question applies to `Interleave` and other multi-collection operations.
+- **Mixed-collection return types (collection type and capacity)**: When two collections of different types are combined, what is the result collection type and capacity? For example, `Concat(Vector{1,2}, Range(3,5))` must produce some `Vector<int, ?>` — should stored collections always be the result type? Should capacity be sum of counts, maximum, or explicit parameter? Same question applies to `Interleave` and other multi-collection operations.
+
+- **Mixed-collection element type resolution**: When combining collections with different element types (e.g., `Vector<int8_t>` and `Vector<int32_t>`), what is the result element type? Must all inputs be homogeneous (same element type), or does the implementation deduce a common type? How does the strict floating-point policy interact with mixed-type operations?
 
 - **`Into` semantics**: How does explicit materialization work? Does `Into(vec, range)` append range elements into vec? Or does `Into` always create a new collection from any source? The API shape and return type are not locked.
 
