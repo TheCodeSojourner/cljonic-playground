@@ -86,6 +86,10 @@ Additionally, this approach helps to detect **undefined behavior** at compile ti
 
 **cljonic** uses **concepts** to specify template requirements, improving code readability and providing better compiler diagnostics.
 
+Generic free functions are constrained by **concepts** that define minimal, bootstrapped requirements. For example, the **Collection** concept currently requires only `c.size() → std::size_t`, following a YAGNI (You Aren't Gonna Need It) policy: additional requirements (such as indexed element access or `value_type`) are added only when the first free function that needs them is implemented. This approach keeps concepts minimal, composable, and focused on actual usage patterns.
+
+Concept definitions and their evolution are documented in [vocabulary.md](vocabulary.md).
+
 ## Desired cljonic Maintainer Experience
 
 This repository is developed primarily using the **[gybis](GYBIS-README.md)** stack — a developer-command-driven,
