@@ -6,13 +6,13 @@ cljonic is an embedded-first, header-only C++23 functional collection system who
 
 λ expressions:
 
-λ S5_identity(x). embedded_first(x) ∧ deterministic_behavior(x) ∧ fixed_capacity_value_semantics(x)
+λ S5_identity(x). embedded_first(x) ∧ DeterministicBehavior(x) ∧ fixed_capacity_value_semantics(x)
   | no_hidden_allocation(x) ∧ no_exceptions(x)
   | canonical_vocabulary_governs(x)
 
-λ S5_failure(x). violate(no_heap_constraint) ∨ violate(no_exception_constraint)
-  | violate(deterministic_behavior)
-  | violate(copy_on_modify_collection)
+λ S5_failure(x). violate(NoHeapConstraint) ∨ violate(NoExceptionConstraint)
+  | violate(DeterministicBehavior)
+  | violate(CopyOnModifyCollection)
   → not_cljonic_identity(x)
 
 λ S5_values(x). clarity(x) ∧ predictability(x) ∧ safety(x)
@@ -50,8 +50,8 @@ Control enforces hard constraints across all profiles: no heap, no exceptions, d
 
 λ expressions:
 
-λ S3_constraints(x). no_heap_constraint(x) ∧ no_exception_constraint(x)
-  | deterministic_overflow_policy(x) ∧ sentinel_based_access(x)
+λ S3_constraints(x). NoHeapConstraint(x) ∧ NoExceptionConstraint(x)
+  | DeterministicOverflowPolicy(x) ∧ SentinelBasedAccess(x)
   | enforce_in_all_profiles(x)
 
 λ S3_quality(x). require(quality_gates(x))
@@ -95,7 +95,7 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
   | preserve(core_semantics)
 
 λ S2_semantic_alignment(x). prefer(clojure_parity)
-  | compatible_with(embedded_constraint ∧ deterministic_behavior)
+  | compatible_with(EmbeddedConstraint ∧ DeterministicBehavior)
 
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ count ∧ get ∧ assoc ∧ dissoc ∧ conj ∧ contains ∧ first ∧ rest
   | preserve(clojure_like_names_and_semantics_by_default(x))
@@ -157,7 +157,7 @@ Operations are C++23, FP-oriented, and header-only. Development uses CMake for b
 
 λ coherence_control(x). operational_choice(x) → reject_if(violates_S3_constraints)
 
-λ coherence_adaptation(x). adaptation(x) → valid_only_if(backward_compatible_vocabulary ∧ deterministic_behavior)
+λ coherence_adaptation(x). adaptation(x) → valid_only_if(backward_compatible_vocabulary ∧ DeterministicBehavior)
 
 λ coherence_type_expression(x). implementation_expression(x) → reject_if(uses_traits_where_clear_concept_exists)
 

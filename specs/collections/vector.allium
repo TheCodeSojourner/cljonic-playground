@@ -64,7 +64,7 @@ entity VectorConstruction {
     outcome: pending | succeeded | rejected_at_compile_time
     initializer_count: Integer
     capacity: Integer
-    collection_maximum_element_count: Integer
+    CollectionMaximumElementCount: Integer
     arguments_construct_without_throw: Boolean
 
     transitions outcome {
@@ -74,7 +74,7 @@ entity VectorConstruction {
     }
 
     invariant CapacityRespectsCollectionMaximumElementCount {
-        this.capacity <= this.collection_maximum_element_count
+        this.capacity <= this.CollectionMaximumElementCount
     }
 }
 
@@ -82,7 +82,7 @@ rule ConstructVectorWithValidElementCount {
     when: ConstructVector(construction)
     requires: construction.outcome = pending
     requires: construction.initializer_count >= 0
-    requires: construction.capacity <= construction.collection_maximum_element_count
+    requires: construction.capacity <= construction.CollectionMaximumElementCount
     requires: construction.initializer_count <= construction.capacity
     requires: construction.arguments_construct_without_throw = true
     ensures: construction.outcome = succeeded
@@ -98,7 +98,7 @@ rule RejectVectorConstructionOnOversizedElementCount {
 rule RejectVectorConstructionWhenCapacityExceedsCollectionMaximumElementCount {
     when: ConstructVector(construction)
     requires: construction.outcome = pending
-    requires: construction.capacity > construction.collection_maximum_element_count
+    requires: construction.capacity > construction.CollectionMaximumElementCount
     ensures: construction.outcome = rejected_at_compile_time
 }
 
