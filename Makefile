@@ -21,7 +21,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -33,6 +33,7 @@ help:
 	@printf '%-12s %s\n' 'docs' 'Generate Doxygen HTML documentation to docs/'
 	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
 	@printf '%-12s %s\n' 'format-doc-samples' 'Format Doxygen C++ sample blocks in src/* headers with clang-format'
+	@printf '%-12s %s\n' 'git' 'Pre-commit gate: format, lint, complexity, sanitizers, coverage, traceability, no-heap, and docs'
 	@printf '%-12s %s\n' 'help' 'Show available targets'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
 	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source check, harness build, and binary symbol scan'
@@ -280,6 +281,17 @@ upsert-gate-strict:
 	@$(MAKE) --no-print-directory -s upsert-gate
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
 	@$(MAKE) --no-print-directory -s no-heap
+
+git:
+	@$(MAKE) --no-print-directory -s format
+	@$(MAKE) --no-print-directory -s lint
+	@$(MAKE) --no-print-directory -s complexity-cli
+	@$(MAKE) --no-print-directory -s sanitizer-cli
+	@$(MAKE) --no-print-directory -s coverage-cli
+	@$(MAKE) --no-print-directory -s traceability-spec-to-code
+	@$(MAKE) --no-print-directory -s no-heap
+	@$(MAKE) --no-print-directory -s docs
+	@echo "git:ok"
 
 docs:
 	@command -v doxygen > /dev/null 2>&1 || (echo "missing required tool: doxygen" >&2; exit 1)
