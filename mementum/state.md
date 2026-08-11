@@ -1,48 +1,44 @@
 ## Session State
 
-- last_session_id: 2026-08-11-collection-concept-bootstrap-and-propagation
-- current_timestamp: 2026-08-11T22:15:00Z
-- recover: 2
+- last_session_id: 2026-08-11-mixed-collection-return-types-clarification
+- current_timestamp: 2026-08-11T23:45:00Z
+- recover: 3
 
 ## Task
 
-**Session focus: Bootstrap Collection concept with YAGNI policy and propagate through architecture, vocabulary, specs, code, and documentation**
+**Session focus: Clarify and refine the "mixed-collection return types" open question by identifying missing dimensions and splitting into focused sub-questions**
 
 **This session results:**
-- ✅ Defined `concept Collection` in cljonic-concepts.hpp with minimal bootstrap requirement: `c.size() → std::size_t`
-- ✅ Migrated `count()` template from Vector-specific to generic, constrained on Collection concept
-- ✅ Removed `#include <cljonic-vector.hpp>` dependency from cljonic-core-count.hpp
-- ✅ Updated architecture.md with S2_concept_bootstrap decision (S2 Coordination layer)
-- ✅ Added Collection entry to vocabulary.md with YAGNI evolution semantics
-- ✅ Created specs/collections/collection-concept.allium formal behavioral specification
-- ✅ Locked session decision in DESIGN-NOTES.md; removed Collection from Open Questions
-- ✅ Fixed C++26 → C++23 version references (DESIGN-NOTES.md, vocabulary.md)
-- ✅ Updated README.md concepts section to document Collection concept and YAGNI policy
-- ✅ Ran `make upsert-gate-strict`: ALL GATES PASS (lint, complexity, sanitizer, coverage, traceability, no-heap)
-- ✅ Created git commits for each phase: Collection concept bootstrap, C++26→C++23 fix, README documentation
+- ✅ Identified critical gap in mixed-collection question: element type resolution was not explicitly addressed
+- ✅ Recognized three independent decision axes: result collection type, result capacity, result element type
+- ✅ Proposed splitting monolithic question into two focused critical questions:
+  1. Mixed-collection return types (collection type and capacity) — what collection type? what capacity policy?
+  2. Mixed-collection element type resolution (NEW) — homogeneous only or common type deduction? float policy interaction?
+- ✅ Updated DESIGN-NOTES.md to split and clarify both questions
+- ✅ Explicitly surfaced float policy constraint in element type question to prevent oversight
 
 ## Questions
 
-- ✅ **RESOLVED:** How should Collection concept be defined? **Minimal bootstrap with YAGNI.** Only `c.size() → std::size_t` required initially.
-- ✅ **RESOLVED:** Should count() require operator[] and value_type? **No.** count() only needs size(). Defer other requirements until needed.
-- ✅ **RESOLVED:** When to add more concept requirements? **Only when first free function that needs them is implemented.**
-- ✅ **RESOLVED:** Should Collection concept work be propagated through entire stack? **Yes.** Complete propagation chain: architecture → vocabulary → specs → code → documentation.
+This session's work:
+- ❓ **NOT YET LOCKED:** What should be the result collection type when combining stored+generated (e.g., Vector + Range)?
+- ❓ **NOT YET LOCKED:** Should capacity be sum of counts, maximum, or explicit parameter?
+- ❓ **NOT YET LOCKED:** How should mixed element types be resolved (homogeneous-only vs. common type deduction)?
+- ❓ **NOT YET LOCKED:** How does strict float policy constrain mixed-collection element type resolution?
 
 ## Decisions
 
-- **concept Collection bootstrap strategy:** Define with ONLY immediate requirements (c.size()). Apply YAGNI policy strictly. Future requirements (operator[], value_type, begin/end, etc.) added when first free function needs them.
-- **count() implementation:** Single generic template constrained on concepts::Collection. No per-type overloads needed.
-- **Concept evolution policy:** Concepts remain minimal and focused. Additional requirements are not speculative; they are driven by actual function implementations.
-- **Version accuracy:** Project targets C++23, not C++26. All references updated.
-- **README documentation:** User-facing concepts section now explains bootstrapped concept strategy and YAGNI policy.
+- **Open question refinement strategy:** Split monolithic design questions into focused axes to clarify decision dependencies and prevent overlooked constraints.
+- **Question clarity pattern:** Call out implicit requirements (like float policy) explicitly in related questions.
+- **Design notes maintenance:** Regularly audit open questions for hidden multi-dimensional decisions that should be separated.
 
 ## Next
 
-1. Implement Range collection generator (specs first, then code and tests).
-2. If Range implementation requires operator[] or value_type, add those to Collection concept at that time.
-3. Continue using `make upsert-gate-strict` for iterative validation.
-4. Track decision history in DESIGN-NOTES.md locked decisions section.
-5. Keep vocabulary.md synchronized with concept evolution.
+1. **Immediate:** Lock mixed-collection return type policy (collection type and capacity rules)
+2. **Immediate:** Lock mixed-collection element type resolution policy (homogeneity and float interaction)
+3. Design and implement Concat free function as first multi-collection operation to validate policies
+4. Test Concat against Collection concept to validate YAGNI bootstrap approach
+5. If Concat requires operator[] or value_type on Collection, update concept at that time
+6. Track Concat implementation in locked decisions section of DESIGN-NOTES.md
 
 
 
