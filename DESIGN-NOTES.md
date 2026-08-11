@@ -393,11 +393,17 @@
 - Step argument mismatch (arity or concept incompatibility) is a compile-time error with step-local diagnostics.
 - `some`-style short-circuiting cannot rely on sentinel `T{}` and remains non-MVP even with explicit validity contracts.
 
+## Locked session decisions (2026-08-11)
+
+### Locked Collection concept bootstrap policy
+
+- `concept Collection` is defined in `cljonic-concepts.hpp` and currently requires only `c.size() → std::size_t`.
+- YAGNI policy applies: additional requirements (such as `operator[]` and `value_type`) are added to the concept only when the first free function that needs them is implemented.
+- `count` is now a single generic template constrained on `concepts::Collection`; per-type overloads are no longer needed.
+
 ## Open Questions
 
 ### Critical — blocks free function implementation
-
-- **Collection C++ concept**: The `concept Collection` is not yet defined. Every free function needs this gate. Minimum requirements are `count(c)`, indexed element access `c[i]`, and element type. Without it, functions like `count` require a separate overload per collection type indefinitely.
 
 - **`_M` suffix meaning**: `Conj_M`, `Count_M`, `Empty_M`, `Nth_M` appear in the cheatsheet but are never defined. Does `_M` mean mutable in-place? If so, which collections support it and what is the return type?
 
