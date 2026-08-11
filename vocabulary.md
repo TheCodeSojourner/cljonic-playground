@@ -51,21 +51,21 @@ status: draft
 ### Vector
 - **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
-- **Related:** CopyOnModifyCollection, String, ProbeFirstAccess, CapacityConstruction
+- **Related:** StoredCollection, CopyOnModifyCollection, String, ProbeFirstAccess, CapacityConstruction
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Vector` supports operations such as `get`, `assoc`, `conj`, `count`, `first`, and `rest`, with out-of-bounds indexed access returning a sentinel element.
 
 ### Map
 - **Definition:** The cljonic fixed-capacity associative collection type with content-based key lookup, immutable copy-on-modify updates, and intentionally unspecified iteration order.
 - **Deprecated Synonyms:** map collection, bounded map, fixed-capacity map
-- **Related:** CopyOnModifyCollection, Keyword, String, ContentEquality, SwapWithLastCompaction
+- **Related:** StoredCollection, CopyOnModifyCollection, Keyword, String, ContentEquality, SwapWithLastCompaction
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Map` supports `assoc`, `dissoc`, `contains`, and `get`, with duplicate-key `assoc` replacing an existing value in the returned copy.
 
 ### Set
 - **Definition:** The cljonic fixed-capacity uniqueness-preserving collection type with content-based membership semantics and immutable copy-on-modify updates.
 - **Deprecated Synonyms:** set collection, bounded set, fixed-capacity set
-- **Related:** CopyOnModifyCollection, ContentEquality, UnchangedValueReturn, CapacityConstruction
+- **Related:** StoredCollection, CopyOnModifyCollection, ContentEquality, UnchangedValueReturn, CapacityConstruction
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Set` supports `conj`, `dissoc`, `contains`, and `count`, with equality defined by logical content rather than storage order.
 
@@ -76,10 +76,59 @@ status: draft
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `String<32>` means room for 32 characters; in UTF-8 mode its backing storage may reserve worst-case code-unit capacity to preserve that logical character capacity.
 
+### StoredCollection
+- **Definition:** A collection type that retains all elements in static array-backed memory and supports immutable copy-on-modify updates. The canonical stored collections are `Vector`, `Set`, `String`, and `Map`.
+- **Deprecated Synonyms:** Stored Collection, array-backed collection, retained collection
+- **Related:** Vector, Set, String, Map, CopyOnModifyCollection, GeneratedCollection, StaticStorage
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector`, `Set`, `String`, and `Map` are all stored collections; `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` are not.
+
+### GeneratedCollection
+- **Definition:** A collection type that computes elements on demand without retaining them in storage. Generated collections are finite by construction, referentially transparent in element access, and produce `Vector` or other concrete results when transformed. The canonical generated collections are `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly`.
+- **Deprecated Synonyms:** Generated Collection, computed collection, on-demand collection
+- **Related:** Range, Repeat, Cycle, Iterate, Repeatedly, LazySequence, StoredCollection, SinkOperation
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `Range(0, 10)` computes elements via arithmetic; `Repeat(val, n)` produces `n` copies of `val`; transforms like `map(f, range)` return `Vector` when materialized.
+
+### Range
+- **Definition:** A generated collection type that represents an integer sequence defined by start, end, and step parameters with Clojure-compatible four-form overloads. Range elements are computed as `start + i * step` and support compile-time precomputation when construction inputs are constants.
+- **Deprecated Synonyms:** Range collection, integer range, generated sequence
+- **Related:** GeneratedCollection, FixedWidthIntegralScalar, LazySequence, CollectionMaximumElementCount
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `Range(0, 10)` produces integers 0–9; `Range(10, 0, -1)` descends; `Range()` defaults to `Range(0, MAX, 1)` where `MAX` is `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
+
+### Repeat
+- **Definition:** A generated collection type that produces a specified number of identical copies of a given element value. Repeat is referentially transparent: every index access returns the same element value.
+- **Deprecated Synonyms:** Repeat collection, repetition sequence
+- **Related:** GeneratedCollection, LazySequence, CollectionMaximumElementCount
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `Repeat(42, 5)` produces five copies of `42`; `Repeat(val)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` copies; `Take(n, Repeat(val))` implements the Clojure idiom `(take n (repeat val))`.
+
+### Cycle
+- **Definition:** A generated collection type that repeatedly cycles through elements of a source collection for a specified cycle count. Element at index `i` is computed as `source[i % count(source)]`. Cycle is referentially transparent and finite by construction.
+- **Deprecated Synonyms:** Cycle collection, cycling sequence
+- **Related:** GeneratedCollection, LazySequence, StoredCollection, CollectionMaximumElementCount
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `Cycle(Vector{1, 2}, 3)` produces `1, 2, 1, 2, 1, 2` (six elements total); `Cycle(source)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` cycles.
+
+### Iterate
+- **Definition:** A generated collection type that repeatedly applies a function to produce a sequence. Element at index `i` is computed by applying the function `i` times to a seed value. Iterate is referentially transparent and finite by construction.
+- **Deprecated Synonyms:** Iterate collection, iterated sequence
+- **Related:** GeneratedCollection, LazySequence, CollectionMaximumElementCount
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `Iterate(inc, 0, 5)` produces `0, 1, 2, 3, 4` by repeatedly incrementing from `0`; `Iterate(f, seed)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` iterations.
+
+### Repeatedly
+- **Definition:** A generated collection type that calls a supplied function repeatedly to produce elements. Unlike `Iterate`, `Repeatedly` does not compose function results; each element is produced by an independent function call. The caller is responsible for ensuring the function is pure; non-pure functions violate referential transparency and produce non-deterministic access.
+- **Deprecated Synonyms:** Repeatedly collection, repeated call sequence
+- **Related:** GeneratedCollection, LazySequence, CollectionMaximumElementCount
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `Repeatedly(rand, 10)` produces 10 random values; `Repeatedly(f)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` calls; purity is a precondition enforced only by caller discipline, not by the library.
+
 ### LazySequence
 - **Definition:** A value-owning sequence view that defers element production and transformation until consumption, avoids hidden materialization, and may represent finite or infinite sources.
 - **Deprecated Synonyms:** Lazy Sequence, lazy view, deferred sequence
-- **Related:** SinkOperation, ThreadingForm, CopyOnModifyCollection
+- **Related:** GeneratedCollection, SinkOperation, ThreadingForm, StoredCollection
 - **Usage:** Specification and implementation
 - **Examples:** `auto xs = range(0, 10); auto ys = map(f, xs); auto out = into_vector<10>(ys);`
 
