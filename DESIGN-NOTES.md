@@ -39,13 +39,11 @@
 
 ## Locked lazy sequence policy
 
-- Sequence-producing APIs use lazy behavior by default where practical.
-- Priority lazy sources include range, repeat, and cycle.
-- Lazy transforms should compose without hidden materialization.
-- Materialization is explicit at sink operations (for example into vector/map/set/string, or reduction endpoints).
-- Infinite lazy sources are allowed, and are intended to be consumed with bounded or short-circuit consumers.
-- Lazy views use value-owning view objects rather than borrowing-only views.
-- Clojure parity is a priority for lazy sequence semantics where feasible.
+- All cljonic collections are finite by construction; no true lazy evaluation is used.
+- `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` serves as the system-wide "infinity" for unbound construction forms.
+- Unbound construction forms (`Range()`, `Repeat(val)`, `Cycle(coll)`, etc.) default to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` elements.
+- The Clojure idiom `(take n (repeat val))` maps directly to `Take(n, Repeat(val))` where `Repeat(val)` is bounded by MAX.
+- Clojure parity for named sequence operations is a priority within the bounded model.
 
 ## Locked interleave semantics
 
@@ -56,12 +54,63 @@
 
 ## Locked range semantics
 
-- Range is lazy by default.
-- Infinite logical views do not report size as max size_t.
-- Infinite and finite cardinality are represented explicitly; finite ranges may provide exact size when computable.
-- Compile-time precomputation is performed whenever construction inputs are compile-time constants.
-- The same range logic is valid at runtime when inputs are runtime values.
-- Step equal to zero normalizes to an empty finite range.
+- `Range` element type is restricted to integer types; floating-point ranges are a compile-time error.
+- Clojure-compatible four-form overload set: `Range()`, `Range(end)`, `Range(start, end)`, `Range(start, end, step)`.
+- In `Range(end)`, the single argument is the exclusive upper bound; start defaults to 0, step defaults to 1.
+- In `Range()`, start=0, step=1, count=`CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
+- `step = 0` produces `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` copies of `start`; `end` is ignored (consistent with Clojure's infinite-sequence-of-start behavior).
+- `step > 0` and `start >= end` → empty range (count = 0).
+- `step < 0` and `start <= end` → empty range (count = 0).
+- `start = end` → empty range regardless of step.
+- Count for a non-empty range: `ceil((end - start) / step)`; `(end - start)` and `step` always share the same sign for non-empty ranges, yielding a positive count.
+- Negative start, end, and step are fully supported; the empty-range rules are sign-agnostic.
+- Examples: `Range(-5, 5)` → 10 elements; `Range(10, -10, -1)` → 20 elements; `Range(-10, -5)` → 5 elements; `Range(5, -10, 1)` → empty; `Range(-10, 5, -1)` → empty.
+- Compile-time precomputation is performed when construction inputs are compile-time constants.
+
+## Locked collection type taxonomy
+
+- Collection types are classified as stored or generated.
+- Stored collections retain elements in memory: `Vector`, `Set`, `String`, `Map`.
+- Generated collections compute elements on demand: `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`.
+- All collection types must satisfy two invariants: a known finite count at construction time, and referentially transparent element access — the same index always yields the same element.
+- `Repeatedly` requires the caller-supplied function to be pure; non-pure functions produce non-deterministic access and are the caller's responsibility.
+- Complete collection type set: `Vector`, `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, `Set`, `String`, `Map`.
+
+### Generated collection element access
+
+| Type                      | Element at index `i`            |
+| ------------------------- | ------------------------------- |
+| `Range(start, end, step)` | `start + i * step`              |
+| `Repeat(val, n)`          | `val`                           |
+| `Cycle(coll, n)`          | `coll[i % count(coll)]`         |
+| `Iterate(f, seed, n)`     | apply `f` `i` times from `seed` |
+| `Repeatedly(f, n)`        | `f()` — caller ensures purity   |
+
+### Unbound construction defaults
+
+- `Range()` → `Range(0, MAX, 1)`
+- `Range(end)` → `Range(0, end, 1)`
+- `Repeat(val)` → `Repeat(val, MAX)`
+- `Cycle(coll)` → `Cycle(coll, MAX)`
+- `Iterate(f, seed)` → `Iterate(f, seed, MAX)`
+- `Repeatedly(f)` → `Repeatedly(f, MAX)`
+- `MAX` is `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`
+
+## Locked "By" variant rule
+
+- Every free function that uses element equality or ordering internally has a corresponding `*By` variant accepting a key function.
+- The key function extracts a comparison value from each element; the base function uses the element directly.
+- Functions accepting a caller-supplied predicate do not require a `*By` variant; `Compose(pred, key_fn)` achieves the same effect.
+- The `*By` rule applies uniformly across all collection types where the base function applies.
+- Functions subject to the `*By` rule: `Sort`, `Distinct`, `Dedupe`, `Equal`, `Frequencies`, `IndexOf`, `LastIndexOf`, `Max`, `Min`, and set-namespace operations that use equality for membership (`Conj`, `Contains`, `Difference`, `Disj`, `Intersection`, `ToSet`, `Union`).
+
+## Locked function applicability by collection type
+
+- Generated collections (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`) do not support mutation operations: `Conj`, `Conj_M`, `Assoc`, `Dissoc`.
+- `Sort`, `Shuffle`, and `Replace` apply to stored collections only and are not defined for generated collections.
+- Free functions that transform a generated collection (`Filter`, `Map`, `Take`, `Drop`, etc.) return a `Vector` sized to the source count as worst-case capacity.
+- Set-namespace functions (`Disj`, `Union`, `Intersection`, `Difference`, etc.) apply to `Set` only.
+- `GroupBy`, `Frequencies`, and `Zipmap` produce `Map` as output; they do not require `Map` as input.
 
 ## Locked regex strategy
 
@@ -221,6 +270,8 @@
 
 - Supported cljonic text encoding policies are ASCII and UTF-8 only.
 - `String<N>` logical capacity is measured in characters, not raw code units.
+- `String<N>` internal storage always allocates N+1 code units; the extra slot holds a null terminator that is always maintained.
+- `String<N>` can therefore always be passed safely to APIs expecting a null-terminated C string without a separate copy or conversion step.
 - In ASCII mode, one logical character maps to one code unit.
 - In UTF-8 mode, underlying storage is sized for worst-case UTF-8 code-unit width so `String<N>` still means room for `N` logical characters.
 - In UTF-8 mode, the unit of logical character semantics is the Unicode scalar value.
@@ -270,7 +321,6 @@
 - string `count` returns logical character count.
 - `first` and `rest`
 	- empty source returns sentinel (`first`) or empty same-type (`rest`).
-	- lazy sequence overloads must remain non-materializing by default.
 - string `get` and `assoc` are character-indexed, not code-unit-indexed.
 
 
@@ -288,7 +338,7 @@
 - Conditional threading is adopted through `cond_thread_first` and `cond_thread_last`, where each step is applied only when its condition is true.
 - The threading API is canonical for readability-oriented composition; operator-pipe adaptor style is not required.
 - Threading steps must preserve no-heap and no-exception constraints and remain deterministic under current sentinel semantics.
-- Threaded sequence transforms remain lazy by default, and materialization remains explicit at sink operations only.
+- Threaded sequence transforms operate over bounded finite collections; no lazy evaluation is used.
 - `some`-style threading variants (`some_thread_first`, `some_thread_last`) are deferred until an explicit validity concept is defined for reliable short-circuiting.
 
 ### Locked threading step grammar
@@ -342,3 +392,29 @@
 - Calling any threading form with zero steps is a compile-time error.
 - Step argument mismatch (arity or concept incompatibility) is a compile-time error with step-local diagnostics.
 - `some`-style short-circuiting cannot rely on sentinel `T{}` and remains non-MVP even with explicit validity contracts.
+
+## Open Questions
+
+### Critical — blocks free function implementation
+
+- **Collection C++ concept**: The `concept Collection` is not yet defined. Every free function needs this gate. Minimum requirements are `count(c)`, indexed element access `c[i]`, and element type. Without it, functions like `count` require a separate overload per collection type indefinitely.
+
+- **`_M` suffix meaning**: `Conj_M`, `Count_M`, `Empty_M`, `Nth_M` appear in the cheatsheet but are never defined. Does `_M` mean mutable in-place? If so, which collections support it and what is the return type?
+
+- **Mixed-collection return types**: When two collections of different types are combined, what is the result type and capacity? For example, `Concat(Vector{1,2}, Range(3,5))` must produce some `Vector<int, ?>` — the capacity policy is not locked. Same question applies to `Interleave` and other multi-collection operations.
+
+- **`Into` semantics**: How does explicit materialization work? Does `Into(vec, range)` append range elements into vec? Or does `Into` always create a new collection from any source? The API shape and return type are not locked.
+
+### Important — blocks specific collections
+
+- **Float element types in stored collections**: Floating-point ranges are banned, but it is not decided whether `Vector<float, N>`, `Set<float, N>`, or `Map<float, int, N>` are allowed. The `Set` case is the most problematic since set membership is equality-based and float equality is unreliable.
+
+- **`count` for unbound generated collections**: Does `count(Range())` return `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`? This must be explicit in the spec, not inferred.
+
+- **String transform return types**: Does `Filter(is_upper, string)` return `String<N>` or `Vector<char, N>`? Does `Map(to_upper, string)` return a `String<N>`? The return type policy for transforms over `String` is not locked.
+
+### Deferrable
+
+- **Stack depth guidance for nested collections**: `Vector<Vector<int, 1000>, 1000>` consumes approximately 1MB of stack. No mechanism prevents this. Documentation guidance is the only mitigation; whether a concept gate or static_assert should warn on excessive nesting depth is undecided.
+
+- **`CLJONIC_HAVE_*` feature flag pattern**: Only `CLJONIC_HAVE_VECTOR_IMPLEMENTATION` exists today. It is undecided whether all collections should follow this pattern to support incremental build and test progression.
