@@ -74,23 +74,128 @@ $(function() {
   <div class="headertitle"><div class="title">cljonic </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><b>cljonic</b> is an <b>embedded-first</b>, <b>header-only</b> C++23 functional collection library. It provides <b>CopyOnModifyCollection</b> semantics, <b>SentinelBasedAccess</b> with <b>ProbeFirstAccess</b> discipline, and strict resource determinism: <b>no heap allocation, no exceptions</b>.</p>
-<p>Element access that cannot produce a valid result returns a <b>DefaultElement</b> (i.e., <code>T{}</code>) rather than throwing. Callers use <b>ProbeFirstAccess</b> (<code>contains</code>, <code>has_index</code>) before relying on the returned value in ambiguous domains.</p>
-<h2><a class="anchor" id="autotoc_md0"></a>
-Collections</h2>
+<div class="textblock"><p><b>cljonic</b> is a <b>header-only</b> C++ library designed to allow an <b>embedded</b> <b>systems</b> C++ developer to program in a <b>Functional</b> <b>Programming</b> <b>Style</b> using a set of functions <b>similar</b> in <b>name</b> and <b>function</b> to <b>Clojure</b>. To address the embedded systems focus, <b>cljonic</b> <b>DOES</b> <b>NOT</b> use the heap or exceptions, and uses <b>Modern</b> <b>C++</b> features to <b>protect</b> , <b>guide</b> , and <b>teach</b> C++ developers. Finally, <b>cljonic</b> is a library that includes unit tests with nearly <b>100% coverage</b>, and is designed to be efficiently maintained.</p>
+<p>The motivation for <b>cljonic</b> comes from observations made about the pragmatic use of C++ for embedded systems software development, the progression of the C++ language (e.g., C++11, C++14, C++17, C++20, C++23), and the counsel of software development "experts", in many different programming languages, that <b>a functional programming style should be eagerly embraced by all developers</b>.</p>
+<p>Many embedded systems C++ developers are <b>not academic programming language experts</b> with in-depth knowledge of every C++ feature, and many <b>may not have time</b> to follow the progression of the language. Rather, many embedded systems C++ developers have <b>strong hardware backgrounds</b>, and <b>know a pragmatic specific subset of C++</b> that is often sufficient to deliver reasonably good software in a predictable amount of time, though this is often <b>not optimized for minimal long term cost of ownership</b>. Generally speaking, many C++ developers use a subset of the <b>C</b> programming language with some of C++'s <b>Object Oriented</b> capabilities. This begs a question:</p>
+<p><b>Is there a pragmatic subset of Modern C++ that enables embedded systems developers to produce higher-quality, more efficient, and more maintainable code?</b></p>
+<p>Changes to C++ have provided valuable capabilities that are time consuming to master, hence it is both <b> valuable to development organizations</b> for their developers to use new C++ capabilities, and <b> too expensive to train</b> all of their developers to be experts in their use. This, too, begs a question:</p>
+<p><b>Can one or two embedded systems software developers cost-effectively introduce new C++ capabilities to the entire team?</b></p>
+<p>In this post: </p><pre class="fragment">https://www.gamedeveloper.com/programming/in-depth-functional-programming-in-c-
+</pre><p> the author makes the following statements:</p>
+<p><b>"A large fraction of the flaws in software development are due to
+programmers not fully understanding all the possible states their code may
+execute in. In a multithreaded environment, the lack of understanding and the
+ resulting problems are greatly amplified, almost to the point of panic if
+you are paying attention. Programming in a functional style makes the state
+presented to your code explicit, which makes it much easier to reason about
+ [(i.e., Fewer mistakes, and less debugging)], and, in a completely pure
+system, makes thread race conditions impossible."</b></p>
+<p><b>"No matter what language you work in, programming in a functional style
+provides benefits. You should do it whenever it is convenient, and you should
+think hard about the decision when it isn't convenient."</b></p>
+<p><b>cljonic</b> is a <b>header-only</b> library that utilizes <b>Modern</b> <b>C++</b> capabilities to provide a functional style C++ <b>Clojure</b> subset to <b>embedded</b> <b>systems</b> developers, promotes the <b>predictable</b> <b>development</b> of <b>higher</b> <b>quality</b> code <b>faster</b>, and can be <b>cost-effectively</b> <b>maintained</b> over time.</p>
+<p><a class="anchor" id="Core_Cheatsheet"></a></p><hr  />
+ <h1><a class="anchor" id="autotoc_md0"></a>
+Cheatsheet</h1>
+<h2><a class="anchor" id="autotoc_md1"></a>
+Aliases</h2>
+<p>Namespace | "using" C++ Statement ---------------------------&mdash; | ------------------------------------------&mdash; <a class="el" href="namespacecljonic.html#Namespace_Core">core</a> | using <b>core</b> = <a class="el" href="namespacecljonic_1_1core.html">cljonic::core</a>; regex | using <b>regex</b> = cljonic::regex; set | using <b>set</b> = cljonic::set; string | using <b>string</b> = cljonic::string;</p>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Collection Types</h2>
 <ul>
 <li><a class="el" href="classcljonic_1_1_vector.html#Vector">cljonic::Vector</a></li>
+<li>cljonic::Range</li>
+<li>cljonic::Repeat</li>
+<li>cljonic::Set</li>
+<li>cljonic::String</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md1"></a>
+<h2><a class="anchor" id="autotoc_md3"></a>
 Core Functions</h2>
+<h3><a class="anchor" id="autotoc_md4"></a>
+Composition</h3>
 <ul>
-<li><a class="el" href="namespacecljonic.html#Core_Count">count</a> </li>
+<li>Partial</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md5"></a>
+Control</h3>
+<ul>
+<li>DoSeq, DoTimes, If, Unless, When, WhenNot</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md6"></a>
+Predicate</h3>
+<ul>
+<li>Compare</li>
+<li>EQ</li>
+<li>GE, GT</li>
+<li>IsAlpha, IsAlphanumeric, IsBlank, IsControl, IsDigit, IsEven, IsGraphical, IsHexDigit, IsLowercase, IsNatural, IsNegative, IsOdd, IsPositive, IsPrintable, IsPunctuation, IsSpace, IsUppercase, IsZero</li>
+<li>LE, LT</li>
+<li>NE</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md7"></a>
+Primitive</h3>
+<ul>
+<li>Abs, Add</li>
+<li>Char, Combinations, CString</li>
+<li>Dec, Div</li>
+<li>Factorial</li>
+<li>Inc</li>
+<li>Lowercase</li>
+<li>Max, Min, Mod, Mul</li>
+<li>Ord</li>
+<li>Permutations</li>
+<li>Sub,</li>
+<li>Uppercase</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md8"></a>
+Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)</h3>
+<ul>
+<li>Compose, Concat, Conj, Conj_M, <a class="el" href="namespacecljonic.html#Core_Count">Count</a>, Count_M, Cycle</li>
+<li>Dedupe, DedupeBy, DefaultElement, DefaultElement_M, Different, Distinct, DistinctBy, Drop, DropLast, DropWhile</li>
+<li>Empty_M, Equal, EqualBy, Every</li>
+<li>Filter, First, Flatten, FlattenSize, Frequencies, FrequenciesBy</li>
+<li>Identical, Identity, IndexOf, IndexOfBy, Interleave, Interpose, IsDistinct, IsDistinctBy, IsEmpty, IsFull, Iterate</li>
+<li>Juxt</li>
+<li>Last, LastIndexOf, LastIndexOfBy</li>
+<li>Map, Max, MaxBy, Min, MinBy</li>
+<li>NotAny, NotEvery, Nth, Nth_M</li>
+<li>Partition, PartitionAll, PartitionBy</li>
+<li>Reduce, Reductions, Remove, Replace, Reverse</li>
+<li>Second, Seq, Size, Some, Sort, SortBy, SplitAt, SplitWith, Subs</li>
+<li>Take, TakeLast, TakeNth, TakeWhile</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md9"></a>
+Regex Functions</h2>
+<ul>
+<li>ReFind, ReSeq</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md10"></a>
+Set Functions</h2>
+<ul>
+<li>Conj, ConjBy, Contains, ContainsBy</li>
+<li>Difference, DifferenceBy, Disj, DisjBy</li>
+<li>IndexOf, IndexOfBy, Intersection, IntersectionBy</li>
+<li>ToSet, ToSetBy</li>
+<li>Union, UnionBy</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md11"></a>
+String Functions</h2>
+<ul>
+<li>Capitalize, Compare, Concat</li>
+<li>EndsWith</li>
+<li>FloatToString, Format</li>
+<li>Includes, IndexOf, Interpose, IntToString, IntToStringHex, IsBlank</li>
+<li>LastIndexOf, Lowercase</li>
+<li>Partition, PartitionAll, PartitionBy</li>
+<li>Replace, ReplaceFirst</li>
+<li>Split, SplitCount, SplitLine, StartsWith, StrLen, StrOfChar, StrToFloat, StrToIntDecimal, StrToIntHex, Subs</li>
+<li>Trim, TrimLeft, TrimNewLine, TrimRight</li>
+<li>Uppercase </li>
 </ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Aug 8 2026 20:00:34 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Tue Aug 11 2026 09:25:27 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
