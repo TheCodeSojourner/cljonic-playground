@@ -21,6 +21,13 @@
 - ✅ Discovered process error: gates must run BEFORE git commit, not after
 - ✅ Corrected gybis-fini protocol understanding for future sessions
 
+## Current Session Status
+
+- Orientation complete: repo state, design notes, and memory files were reviewed in order.
+- The mixed-collection design work is already captured and split into the correct sub-questions; no implementation patch is justified yet because the policy itself remains open.
+- The remaining blocking work is not code modification but a decision lock: choose the result collection type/capacity policy and the mixed-element-type policy before adding `Concat` or similar free functions.
+- The required gate discipline remains: run `make upsert-gate-strict` before any git commit, with commit only after successful verification.
+
 ## Questions
 
 This session's work (NOT YET LOCKED):
