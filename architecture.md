@@ -70,9 +70,15 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | reject_out_of_policy_inputs(x)
 
 λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
-  | may_fail_complete_result(x) → require(PreflightPredicate)
+  | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
   | producer_materialization(x) → require(ProducerMaterialization)
+
+λ S3_domain_boundary(x). first_class_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
+  | producer_domain(x) ≡ explicit_producers
+  | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
+  | symbolic_key_domain(x) ≡ supported_scoped_enumerations
+  | domain_expansion(x) → require(explicit_approved_requirement)
 
 ## S2 - Coordination
 
@@ -88,8 +94,9 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 
 λ S2_api_lifecycle_gate(x). public_function(x) → classify_as(RequirementsBacked ∨ CandidateStatus ∨ DeferredStatus ∨ ExcludedStatus)
   | classify_as(RequirementsBacked) → requires(approved_behavioral_contracts)
-  | classify_as(CandidateStatus ∨ DeferredStatus) → not_supported_behavior(x)
+  | classify_as(CandidateStatus ∨ DeferredStatus ∨ ExcludedStatus) → not_supported_behavior(x)
   | relational_ops(index ∨ project ∨ rename ∨ join) → require(RelationModel) before RequirementsBacked
+  | relation_model_minimum(x) → require(row_representation ∧ key_value_capabilities ∧ duplicate_row_key_semantics ∧ nested_result_representation ∧ traversal_order_semantics ∧ capacity_arithmetic ∧ complete_result_preflight ∧ bounded_failure_behavior)
 
 λ S2_profile_coherence(x). profile_change(x) → preserve(stable_handle_model(x))
   | preserve(api_shape)
@@ -107,6 +114,7 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ count ∧ get ∧ assoc ∧ dissoc ∧ conj ∧ contains ∧ first ∧ rest
   | preserve(clojure_like_names_and_semantics_by_default(x))
   | constrained_divergence(x) → require(explicit_spec_and_test_documentation(x))
+  | treat_as(core_nucleus_not_full_surface(x))
 
 ## S1 - Operations
 
@@ -144,7 +152,8 @@ Operations are C++23, FP-oriented, and header-only. Development uses CMake for b
   | view_lifetime(x) → source_lifetime_bounded(x)
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer)
-  | bounded_collection_results(x) → require(explicit_ProducerMaterialization)
+  | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → classify_as(ProducerOnlyResult) ∧ before_materialization(x)
+  | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
 
 λ S1_construction(x). collection_construction(x) ≡ CapacityConstruction
