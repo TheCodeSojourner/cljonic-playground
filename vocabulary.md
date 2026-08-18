@@ -379,6 +379,118 @@ status: draft
 - **Usage:** Requirements, architecture, specification governance, and documentation
 - **Examples:** Runtime macro or reflection features can be excluded by boundary requirements.
 
+### Queue
+- **Definition:** The cljonic bounded first-class collection type for queue semantics within the closed value and data-structure domain.
+- **Deprecated Synonyms:** queue collection, bounded queue
+- **Related:** Vector, Map, Set, String, Collection
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Queue` is part of the required first-class bounded domain alongside `Vector`, `Map`, `Set`, and `String`.
+
+### Sequenceable
+- **Definition:** A capability term describing values that can participate in cljonic sequence operations under documented traversal and result contracts.
+- **Deprecated Synonyms:** sequence-capable
+- **Related:** GeneratedCollection, StoredCollection, Collection
+- **Usage:** Requirements, architecture, specification, and documentation
+- **Examples:** Sequence operations accept sequenceable inputs while preserving bounded-result and producer rules.
+
+### PersistentValue
+- **Definition:** Observable value persistence semantics where updates return a new independently valid value while leaving the prior value unchanged, without requiring a specific storage algorithm.
+- **Deprecated Synonyms:** persistent value semantics, persistent collection value
+- **Related:** CopyOnModifyCollection, OwningValue, DeterministicBehavior
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** Updating a collection preserves the original value and returns a separate valid updated value.
+
+### StandardViewType
+- **Definition:** A read-only non-owning view type aligned with standard C++ view conventions and cljonic lifetime rules.
+- **Deprecated Synonyms:** standard view, standard span-style view
+- **Related:** NonOwningView, Collection, String
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `view(collection)` exposes a standard view type that cannot outlive its source.
+
+### UnboundedProducer
+- **Definition:** An explicit producer value with no finite caller-independent complete-result bound, requiring bounded materialization semantics.
+- **Deprecated Synonyms:** infinite producer, open-ended producer
+- **Related:** ProducerOnlyResult, ProducerMaterialization, PreflightPredicate
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** Unbound forms of `range`, `repeat`, `cycle`, `iterate`, and `repeatedly` are unbounded producers until bounded by destination materialization.
+
+### ProducerMaterialization
+- **Definition:** The explicit process of turning a producer into an owning bounded result in a selected destination under complete-result preflight rules.
+- **Deprecated Synonyms:** producer realization, producer into-materialization
+- **Related:** UnboundedProducer, BoundedResult, PreflightPredicate, SinkOperation
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** `into(destination, producer)` plus `fits_into(destination, producer)` defines producer materialization completeness.
+
+### RelationModel
+- **Definition:** The explicit model that must define row representation, capabilities, duplicate semantics, nested-result representation, traversal order, capacity arithmetic, preflight, and bounded failure behavior before relational operations are supported.
+- **Deprecated Synonyms:** relational model, map/set relation contract
+- **Related:** LifecycleClassification, DeferredStatus, BoundedResult
+- **Usage:** Requirements, architecture, specification, tests, and documentation
+- **Examples:** `index`, `project`, `rename`, and `join` remain deferred until a relation model is approved.
+
+### GeneralEquality
+- **Definition:** Equality semantics over non-numeric domains as defined by stable identity and value contracts.
+- **Deprecated Synonyms:** non-numeric equality
+- **Related:** ContentEquality, StableHandleModel, SemanticConcept
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** Collection element identity in maps and sets uses general equality constraints.
+
+### NumericEquality
+- **Definition:** Equality semantics for numeric domains constrained by representability, stability, and explicit numeric policy.
+- **Deprecated Synonyms:** numeric comparison equality
+- **Related:** ClosedNumericDomain, FloatingPointExclusion, DeterministicOverflowPolicy
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** Raw floating-point values are excluded from default stable numeric equality unless explicitly approved by numeric policy.
+
+### FiniteObservation
+- **Definition:** A bounded observation contract that exposes finite, inspectable behavior without requiring hidden unbounded traversal.
+- **Deprecated Synonyms:** bounded observation
+- **Related:** BoundedInspection, UnboundedProducer, ProducerMaterialization
+- **Usage:** Requirements, specification, tests, and documentation
+- **Examples:** Public observation APIs must remain finite and auditable for embedded constraints.
+
+### FiniteDeepEquality
+- **Definition:** Deep equality over nested values constrained to finite, boundedly inspectable structures and traversal.
+- **Deprecated Synonyms:** bounded deep equality, finite nested equality
+- **Related:** ContentEquality, FiniteObservation, BoundedInspection
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** Deep comparison over nested collections is valid only when traversal remains finite and contract-defined.
+
+### BoundedInspection
+- **Definition:** Inspection behavior with explicit finite bounds on traversal, cardinality, and resource use.
+- **Deprecated Synonyms:** bounded traversal inspection
+- **Related:** FiniteObservation, FiniteDeepEquality, NoHeapConstraint
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** Nested producer handling requires explicit caller-selected bounds for each materialized level.
+
+### SemanticPredicateName
+- **Definition:** A predicate naming rule where names state semantic intent and tested condition, not implementation detail.
+- **Deprecated Synonyms:** semantic predicate naming
+- **Related:** StatePredicate, VerbPredicate, CapabilityPredicate, PreflightPredicate
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** Predicate names reflect whether they test state, capability, or completion semantics.
+
+### StatePredicate
+- **Definition:** A predicate whose canonical naming uses `is_` to express a state or adjectival condition.
+- **Deprecated Synonyms:** `is_` predicate
+- **Related:** SemanticPredicateName, VerbPredicate, CapabilityPredicate
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** `is_empty`, `is_zero`, and `is_subset` are state predicates.
+
+### VerbPredicate
+- **Definition:** A readable direct-verb predicate name used when the predicate naturally expresses an action-like test.
+- **Deprecated Synonyms:** direct-verb predicate
+- **Related:** SemanticPredicateName, StatePredicate, CapabilityPredicate
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** `contains`, `starts_with`, `ends_with`, and `includes` are verb predicates.
+
+### CapabilityPredicate
+- **Definition:** A predicate naming class that expresses operation capability or validity checks via `can_`, `has_`, or `valid_` prefixes.
+- **Deprecated Synonyms:** capability check predicate
+- **Related:** SemanticPredicateName, PreflightPredicate, StatePredicate
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** `can_add`, `has_re_find`, and `valid_index` are capability predicates.
+
 ## Supporting Vocabulary
 
 ### ClojureParity
