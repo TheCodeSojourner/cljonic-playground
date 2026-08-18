@@ -104,9 +104,9 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a69d7c44087c5264f0daa25c80cdcf2ed" id="r_a69d7c44087c5264f0daa25c80cdcf2ed"><td class="memTemplParams" colspan="2">template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt; </td></tr>
-<tr class="memitem:a69d7c44087c5264f0daa25c80cdcf2ed"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a69d7c44087c5264f0daa25c80cdcf2ed">count</a> (const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;collection) noexcept -&gt; std::size_t</td></tr>
-<tr class="separator:a69d7c44087c5264f0daa25c80cdcf2ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbdaef8bdea2d7e22e36c8914ac52751" id="r_acbdaef8bdea2d7e22e36c8914ac52751"><td class="memTemplParams" colspan="2">template&lt;concepts::Collection collection_type&gt; </td></tr>
+<tr class="memitem:acbdaef8bdea2d7e22e36c8914ac52751"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751">count</a> (const collection_type &amp;collection) noexcept -&gt; std::size_t</td></tr>
+<tr class="separator:acbdaef8bdea2d7e22e36c8914ac52751"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac" id="r_a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplParams" colspan="2">template&lt;typename First , typename... Rest&gt; </td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">Vector</a> (First, Rest...) -&gt; <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
 <tr class="separator:a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,13 +145,13 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a69d7c44087c5264f0daa25c80cdcf2ed" name="a69d7c44087c5264f0daa25c80cdcf2ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69d7c44087c5264f0daa25c80cdcf2ed">&#9670;&#160;</a></span>count()</h2>
+<a id="acbdaef8bdea2d7e22e36c8914ac52751" name="acbdaef8bdea2d7e22e36c8914ac52751"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbdaef8bdea2d7e22e36c8914ac52751">&#9670;&#160;</a></span>count()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt; </div>
+template&lt;concepts::Collection collection_type&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -159,7 +159,7 @@ template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt;
         <tr>
           <td class="memname">constexpr auto cljonic::count </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;&#160;</td>
+          <td class="paramtype">const collection_type &amp;&#160;</td>
           <td class="paramname"><em>collection</em></td><td>)</td>
           <td> -&gt; std::size_t </td>
         </tr>
@@ -178,8 +178,8 @@ template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt;
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> <a class="code hl_enumvalue" href="namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334aa2e4822a98337283e39f7b60acf85ec9">empty</a> = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> <a class="code hl_enumvalue" href="namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334adc89f87e58fcbb1ad5959f756dbed9e5">populated</a> = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{1, 2};</div>
 <div class="line"> </div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> n0 = <a class="code hl_function" href="namespacecljonic.html#a69d7c44087c5264f0daa25c80cdcf2ed">count</a>(<a class="code hl_enumvalue" href="namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334aa2e4822a98337283e39f7b60acf85ec9">empty</a>);     <span class="comment">// 0</span></div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> n1 = <a class="code hl_function" href="namespacecljonic.html#a69d7c44087c5264f0daa25c80cdcf2ed">count</a>(<a class="code hl_enumvalue" href="namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334adc89f87e58fcbb1ad5959f756dbed9e5">populated</a>); <span class="comment">// 2</span></div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> n0 = <a class="code hl_function" href="namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751">count</a>(<a class="code hl_enumvalue" href="namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334aa2e4822a98337283e39f7b60acf85ec9">empty</a>);     <span class="comment">// 0</span></div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> n1 = <a class="code hl_function" href="namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751">count</a>(<a class="code hl_enumvalue" href="namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334adc89f87e58fcbb1ad5959f756dbed9e5">populated</a>); <span class="comment">// 2</span></div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (n0 == 0 &amp;&amp; n1 == 2) ? 0 : 1;</div>
 <div class="line">}</div>
@@ -188,7 +188,7 @@ template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt;
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00006">cljonic-concepts.hpp:6</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a3dc5a51730fa4fa87c00af14447f5334aa2e4822a98337283e39f7b60acf85ec9"><div class="ttname"><a href="namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334aa2e4822a98337283e39f7b60acf85ec9">cljonic::vector_state::empty</a></div><div class="ttdeci">@ empty</div></div>
 <div class="ttc" id="anamespacecljonic_html_a3dc5a51730fa4fa87c00af14447f5334adc89f87e58fcbb1ad5959f756dbed9e5"><div class="ttname"><a href="namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334adc89f87e58fcbb1ad5959f756dbed9e5">cljonic::vector_state::populated</a></div><div class="ttdeci">@ populated</div></div>
-<div class="ttc" id="anamespacecljonic_html_a69d7c44087c5264f0daa25c80cdcf2ed"><div class="ttname"><a href="namespacecljonic.html#a69d7c44087c5264f0daa25c80cdcf2ed">cljonic::count</a></div><div class="ttdeci">constexpr auto count(const Vector&lt; element_type, capacity_value &gt; &amp;collection) noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-count_8hpp_source.html#l00027">cljonic-core-count.hpp:27</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_acbdaef8bdea2d7e22e36c8914ac52751"><div class="ttname"><a href="namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751">cljonic::count</a></div><div class="ttdeci">constexpr auto count(const collection_type &amp;collection) noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-count_8hpp_source.html#l00027">cljonic-core-count.hpp:27</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-core-count_8hpp_source.html#l00027">27</a> of file <a class="el" href="cljonic-core-count_8hpp_source.html">cljonic-core-count.hpp</a>.</p>
 
@@ -227,7 +227,7 @@ template&lt;typename First , typename... Rest&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 11 2026 09:44:03 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Tue Aug 18 2026 16:28:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

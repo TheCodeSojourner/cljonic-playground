@@ -3,5 +3,5 @@ var searchData=
   ['capacity_0',['capacity',['../classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463',1,'cljonic::Vector']]],
   ['classify_5fvector_1',['classify_vector',['../namespacecljonic_1_1detail_1_1vector.html#a09d3dcc273d8bc38a6ef248c8b4b3dcc',1,'cljonic::detail::vector']]],
   ['collection_5fmaximum_5felement_5fcount_2',['collection_maximum_element_count',['../classcljonic_1_1_vector.html#a006a8bb787c9ae7b3d1328b43f1d38d6',1,'cljonic::Vector']]],
-  ['count_3',['count',['../namespacecljonic.html#a69d7c44087c5264f0daa25c80cdcf2ed',1,'cljonic']]]
+  ['count_3',['count',['../namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751',1,'cljonic']]]
 ];
