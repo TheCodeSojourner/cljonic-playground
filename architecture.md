@@ -69,6 +69,11 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | closed_numeric_domain(x)
   | reject_out_of_policy_inputs(x)
 
+λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
+  | may_fail_complete_result(x) → require(PreflightPredicate)
+  | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
+  | producer_materialization(x) → require(ProducerMaterialization)
+
 ## S2 - Coordination
 
 Coordination is driven by a shared canonical vocabulary and explicit interaction protocols. Components remain consistent through probe-first access discipline, stable handle contracts across profiles, and preference for Clojure-semantic consistency when embedded constraints permit.
@@ -78,6 +83,13 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 λ S2_protocol(x). canonical_vocabulary_controls_interfaces(x)
   ∧ canonical_vocabulary_controls_docs(x)
   | probe_first_access_before_sentinel_reads(x)
+  | semantic_predicate_names(x) → enforce(StatePredicate ∧ VerbPredicate ∧ CapabilityPredicate)
+  | api_surface_status(x) → enforce(LifecycleClassification)
+
+λ S2_api_lifecycle_gate(x). public_function(x) → classify_as(RequirementsBacked ∨ CandidateStatus ∨ DeferredStatus ∨ ExcludedStatus)
+  | classify_as(RequirementsBacked) → requires(approved_behavioral_contracts)
+  | classify_as(CandidateStatus ∨ DeferredStatus) → not_supported_behavior(x)
+  | relational_ops(index ∨ project ∨ rename ∨ join) → require(RelationModel) before RequirementsBacked
 
 λ S2_profile_coherence(x). profile_change(x) → preserve(stable_handle_model(x))
   | preserve(api_shape)
@@ -127,6 +139,14 @@ Operations are C++23, FP-oriented, and header-only. Development uses CMake for b
   ∧ template_concept_constrained_apis
   | optional_member_wrappers(x) ≡ non_canonical
 
+λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
+  | read_only_observation(x) → use(NonOwningView ∧ StandardViewType)
+  | view_lifetime(x) → source_lifetime_bounded(x)
+
+λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer)
+  | bounded_collection_results(x) → require(explicit_ProducerMaterialization)
+  | implicit_unbounded_nested_materialization(x) → reject(x)
+
 λ S1_construction(x). collection_construction(x) ≡ CapacityConstruction
   | literal_deduced(x) → ctad_deduction_guides(x)
   | explicit_capacity(x) → empty_default_construction_valid(x)
@@ -157,3 +177,7 @@ Operations are C++23, FP-oriented, and header-only. Development uses CMake for b
 λ coherence_type_expression(x). implementation_expression(x) → reject_if(uses_traits_where_clear_concept_exists)
 
 λ coherence_operation_surface(x). collection_operation_change(x) → reject_if(renames_or_redefines_canonical_operation_without_constraint_rationale)
+
+λ coherence_result_semantics(x). architecture_change(x) → reject_if(omits_result_status_classification_or_preflight_alignment)
+
+λ coherence_lifecycle_governance(x). api_scope_change(x) → reject_if(missing_LifecycleClassification_or_missing_RelationModel_gate)
