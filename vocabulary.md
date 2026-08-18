@@ -266,9 +266,9 @@ status: draft
 - **Examples:** A `uint16` plus `uint32` operation may resolve at compile time to a `uint32` result type if that edge exists in the common-type lattice.
 
 ### StaticallyBoundedResult
-- **Definition:** The requirement that every promoted or computed numeric result type has a compile-time-bounded representation and known storage footprint.
+- **Definition:** The numeric type-level requirement that every promoted or computed numeric result type has a compile-time-bounded representation and known storage footprint. This term is distinct from operation outcome status terms such as `BoundedResult`.
 - **Deprecated Synonyms:** statically bounded result, bounded promoted result
-- **Related:** CommonTypeLattice, StaticStorage, NoHeapConstraint
+- **Related:** CommonTypeLattice, StaticStorage, NoHeapConstraint, BoundedResult
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A promoted numeric operation is valid only if its resolved result type remains fixed-width and statically sized.
 
@@ -297,7 +297,7 @@ status: draft
 
 ### BoundedResult
 - **Definition:** An owning cljonic result value whose capacity is finite and known under the operation's documented constraints.
-- **Deprecated Synonyms:** bounded result value
+- **Deprecated Synonyms:** operation-bounded result value
 - **Related:** CompleteResult, BoundedPrefixResult, ProducerOnlyResult
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** A materialized `into` output in a fixed-capacity destination is a bounded result.
@@ -763,6 +763,12 @@ status: draft
 - ThreadingForm and ValidityAdapter define the readable composition model and the boundary for deferred some-thread semantics.
 - CanonicalComparison and FloatingPointExclusion define the canonical comparison contract.
 - ClosedNumericDomain, NumericPromotionPolicy, CommonTypeLattice, StaticallyBoundedResult, and DeterministicOverflowPolicy define the bounded numeric semantics that fit the embedded constraint model.
+- OwningValue, NonOwningView, and StandardViewType define ownership and lifetime semantics for values versus views.
+- BoundedResult, CompleteResult, BoundedPrefixResult, DefaultReturningResult, CheckedFailureResult, ProducerOnlyResult, and PreflightPredicate define canonical result-status and completion semantics.
+- LifecycleClassification with RequirementsBacked, CandidateStatus, DeferredStatus, and ExcludedStatus defines API-surface governance vocabulary.
+- UnboundedProducer and ProducerMaterialization define explicit producer-to-result boundaries.
+- RelationModel governs when relational operations can move from deferred to requirements-backed.
+- SemanticPredicateName with StatePredicate, VerbPredicate, and CapabilityPredicate defines canonical predicate naming constraints.
 - ClojureParity and FunctionalStyle explain where semantics are intentionally borrowed from Clojure.
 - EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, StaticStorage, and DeterministicBehavior define the platform and execution constraints.
 - ContractPolicy and SemanticConcept define how correctness constraints are expressed across layers.
