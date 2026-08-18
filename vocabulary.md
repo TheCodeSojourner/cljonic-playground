@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-08-07
+last_updated: 2026-08-18
 status: draft
 ---
 
@@ -278,6 +278,106 @@ status: draft
 - **Related:** NumericPromotionPolicy, DeterministicBehavior, ClosedNumericDomain
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A profile may choose compile-time rejection for provable overflow cases, or a clearly documented runtime overflow rule such as wraparound or unchanged-result semantics where appropriate.
+
+## Result and Lifecycle Vocabulary
+
+### OwningValue
+- **Definition:** A self-contained cljonic value whose validity does not depend on another value's lifetime, hidden borrowed state, or hidden result cache.
+- **Deprecated Synonyms:** owning value, self-contained value
+- **Related:** NonOwningView, CopyOnModifyCollection, StaticStorage
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Collection values, string values, regex values, map-entry values, and producer parameters are owning values.
+
+### NonOwningView
+- **Definition:** A read-only observation of an existing cljonic value that does not own storage, does not extend source lifetime, and does not allow source mutation.
+- **Deprecated Synonyms:** non-owning view, borrowed view
+- **Related:** OwningValue, Collection, String
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `view(collection)` returns a non-owning view whose validity is limited by the source lifetime and invalidation rules.
+
+### BoundedResult
+- **Definition:** An owning cljonic result value whose capacity is finite and known under the operation's documented constraints.
+- **Deprecated Synonyms:** bounded result value
+- **Related:** CompleteResult, BoundedPrefixResult, ProducerOnlyResult
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** A materialized `into` output in a fixed-capacity destination is a bounded result.
+
+### CompleteResult
+- **Definition:** The full result defined by an operation's contract.
+- **Deprecated Synonyms:** full result
+- **Related:** BoundedResult, BoundedPrefixResult, PreflightPredicate
+- **Usage:** Requirements, specification, tests, and documentation
+- **Examples:** When `fits_into` is true, the corresponding materialization operation returns a complete result.
+
+### BoundedPrefixResult
+- **Definition:** A bounded result that intentionally contains only a deterministic prefix or reduced subset because the complete result could not fit under the documented capacity or result policy.
+- **Deprecated Synonyms:** partial result, prefix result
+- **Related:** BoundedResult, CompleteResult, PreflightPredicate
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** An over-capacity `into` operation may return a bounded-prefix result when its preflight indicates non-fit.
+
+### DefaultReturningResult
+- **Definition:** A documented default value result used when the requested access or lookup cannot produce a valid value.
+- **Deprecated Synonyms:** default result, sentinel-return result
+- **Related:** DefaultElement, CheckedFailureResult, ProbeFirstAccess
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** `get` on a missing key returns a default-returning result according to its contract.
+
+### CheckedFailureResult
+- **Definition:** A documented non-throwing, non-allocating failure outcome indicating an operation could not complete successfully under the library's failure model.
+- **Deprecated Synonyms:** checked failure, explicit failure result
+- **Related:** DefaultReturningResult, DeterministicBehavior, NoExceptionConstraint
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** A checked numeric conversion may return a checked-failure result when representability requirements are not met.
+
+### ProducerOnlyResult
+- **Definition:** A result status in which an operation returns an explicit producer value rather than an owning materialized result.
+- **Deprecated Synonyms:** producer result, producer-returning result
+- **Related:** GeneratedCollection, SinkOperation, BoundedResult
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** Sequence constructors such as `range` and `repeat` are producer-only results until materialized via `into`.
+
+### PreflightPredicate
+- **Definition:** A non-throwing, non-allocating predicate that measures the same completion and failure conditions as its paired operation.
+- **Deprecated Synonyms:** preflight check, capability precheck
+- **Related:** CompleteResult, BoundedPrefixResult, ProbeFirstAccess
+- **Usage:** Requirements, specification, implementation, tests, and documentation
+- **Examples:** `fits_into`, `can_add`, and operation-specific `has_` checks are preflight predicates when they govern completion semantics.
+
+### LifecycleClassification
+- **Definition:** The explicit API-surface status assigned to each public function under review: candidate, deferred, excluded, or requirements-backed.
+- **Deprecated Synonyms:** lifecycle status, API classification
+- **Related:** RequirementsBacked, SemanticConcept, NamespaceAdoptionRoadmap
+- **Usage:** Requirements, architecture, specification governance, and documentation
+- **Examples:** A function can remain candidate during feasibility review and becomes requirements-backed only after governing requirements are approved.
+
+### RequirementsBacked
+- **Definition:** A lifecycle classification indicating a function's public scope, governing behavior, and resource constraints are approved by stable requirements.
+- **Deprecated Synonyms:** requirements backed, approved-by-requirements
+- **Related:** LifecycleClassification, CandidateStatus, DeferredStatus, ExcludedStatus
+- **Usage:** Requirements, architecture, specification governance, and documentation
+- **Examples:** A requirements-backed function may still need detailed overload and diagnostics design, but it is already part of supported scope.
+
+### CandidateStatus
+- **Definition:** A lifecycle classification indicating a function is feasible and under review, but not approved supported behavior.
+- **Deprecated Synonyms:** candidate, in-review status
+- **Related:** LifecycleClassification, RequirementsBacked, DeferredStatus, ExcludedStatus
+- **Usage:** Requirements, architecture, specification governance, and documentation
+- **Examples:** Vocabulary presence alone does not move a candidate function into supported behavior.
+
+### DeferredStatus
+- **Definition:** A lifecycle classification indicating a function is intentionally postponed because required scope or governing requirements are not yet complete.
+- **Deprecated Synonyms:** deferred, postponed status
+- **Related:** LifecycleClassification, CandidateStatus
+- **Usage:** Requirements, architecture, specification governance, and documentation
+- **Examples:** Relational operations can be deferred until a complete relation model is approved.
+
+### ExcludedStatus
+- **Definition:** A lifecycle classification indicating a function is outside cljonic scope or incompatible with the project boundary and semantic model.
+- **Deprecated Synonyms:** excluded, out-of-scope status
+- **Related:** LifecycleClassification, CandidateStatus
+- **Usage:** Requirements, architecture, specification governance, and documentation
+- **Examples:** Runtime macro or reflection features can be excluded by boundary requirements.
 
 ## Supporting Vocabulary
 
