@@ -6,8 +6,7 @@
 namespace cljonic::concepts {
 
 /** Requires that \p value_type is default-initializable and copyable - the
- * minimum contract for Vector element storage and SentinelBasedAccess
- * default-element return.
+ * minimum contract for current Vector element storage semantics.
  */
 template <typename value_type>
 concept VectorElement =

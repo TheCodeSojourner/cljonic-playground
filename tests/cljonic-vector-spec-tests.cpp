@@ -60,6 +60,8 @@ TEST_CASE("Vector spec examples classify bounded states", "[vector][spec]") {
   TRACE_ID("rule-failure.ClassifyVectorAsPopulated.2");
   TRACE_ID("surface-actor.VectorClassificationSurface");
   TRACE_ID("surface-provides.VectorClassificationSurface");
+  TRACE_ID("arch.S3_domain_boundary");
+  TRACE_ID("arch.S1_value_and_view_model");
 
   auto [capacity, size, expected_state] =
       GENERATE(std::make_tuple(1, 0, vector_state::empty),
@@ -130,6 +132,8 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
   TRACE_ID("transition-terminal.VectorConstruction.outcome");
   TRACE_ID("surface-actor.VectorConstructionSurface");
   TRACE_ID("surface-provides.VectorConstructionSurface");
+  TRACE_ID("arch.S3_result_contract_policy");
+  TRACE_ID("arch.S2_operation_vocabulary");
 
   // RejectVectorConstructionOnOversizedElementCount is a static constraint; not
   // runtime-testable.
@@ -181,6 +185,53 @@ TEST_CASE("Vector CapacityConstruction contract", "[vector][construction]") {
     static_assert(NothrowConstructible<NothrowElement, int>);
     static_assert(!NothrowConstructible<ThrowingElement, int>);
     CHECK(true);
+  }
+#else
+  SKIP("Production vector implementation is not present.");
+#endif
+}
+
+TEST_CASE("Vector append uses complete-result vs checked-failure semantics",
+          "[vector][append][status]") {
+#if defined(CLJONIC_HAVE_VECTOR_IMPLEMENTATION)
+  using cljonic::count;
+  using cljonic::Vector;
+  using cljonic::vector_state;
+
+  TRACE_ID("entity-fields.VectorAppend");
+  TRACE_ID("rule-success.AppendWithinCapacityYieldsCompleteResult");
+  TRACE_ID("rule-failure.AppendWithinCapacityYieldsCompleteResult.1");
+  TRACE_ID("rule-failure.AppendWithinCapacityYieldsCompleteResult.2");
+  TRACE_ID("rule-success.AppendAtCapacityYieldsCheckedFailureResult");
+  TRACE_ID("rule-failure.AppendAtCapacityYieldsCheckedFailureResult.1");
+  TRACE_ID("rule-failure.AppendAtCapacityYieldsCheckedFailureResult.2");
+  TRACE_ID("transition-edge.VectorAppend.pending.complete_result");
+  TRACE_ID("transition-edge.VectorAppend.pending.checked_failure_result");
+  TRACE_ID("transition-terminal.VectorAppend.outcome");
+  TRACE_ID("surface-actor.VectorAppendSurface");
+  TRACE_ID("surface-provides.VectorAppendSurface");
+  TRACE_ID("arch.S3_result_contract_policy");
+  TRACE_ID("arch.S1_sequence_materialization_model");
+
+  SECTION("append below capacity returns complete-result signal") {
+    Vector<int, 3> v{1, 2};
+    const auto before = count(v);
+
+    CHECK(v.state() == vector_state::populated);
+    CHECK(v.try_push_back(3));
+    CHECK(count(v) == before + 1U);
+    CHECK(v.state() == vector_state::at_capacity);
+  }
+
+  SECTION("append at capacity returns checked-failure signal and preserves "
+          "size") {
+    Vector<int, 2> v{1, 2};
+    const auto before = count(v);
+
+    CHECK(v.state() == vector_state::at_capacity);
+    CHECK_FALSE(v.try_push_back(3));
+    CHECK(count(v) == before);
+    CHECK(v.state() == vector_state::at_capacity);
   }
 #else
   SKIP("Production vector implementation is not present.");

@@ -118,3 +118,50 @@ surface VectorConstructionSurface {
     provides:
         ConstructVector(construction)
 }
+
+entity VectorAppend {
+    outcome: pending | complete_result | checked_failure_result
+    before_size: Integer
+    after_size: Integer
+    capacity: Integer
+
+    transitions outcome {
+        pending -> complete_result
+        pending -> checked_failure_result
+        terminal: complete_result, checked_failure_result
+    }
+
+    invariant SizesAreNonNegative {
+        this.before_size >= 0 and this.after_size >= 0
+    }
+
+    invariant SizesRespectCapacity {
+        this.before_size <= this.capacity and this.after_size <= this.capacity
+    }
+}
+
+rule AppendWithinCapacityYieldsCompleteResult {
+    when: AppendElement(append)
+    requires: append.outcome = pending
+    requires: append.before_size < append.capacity
+    ensures: append.outcome = complete_result
+    ensures: append.after_size = append.before_size + 1
+}
+
+rule AppendAtCapacityYieldsCheckedFailureResult {
+    when: AppendElement(append)
+    requires: append.outcome = pending
+    requires: append.before_size = append.capacity
+    ensures: append.outcome = checked_failure_result
+    ensures: append.after_size = append.before_size
+}
+
+actor VectorAppender { identified_by: VectorAppend where vector_append.outcome = pending }
+
+surface VectorAppendSurface {
+    facing appender: VectorAppender
+    context append: VectorAppend where append = appender
+
+    provides:
+        AppendElement(append)
+}

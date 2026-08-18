@@ -46,9 +46,16 @@ classify_vector(vector_observation observation) noexcept -> vector_state {
 } // namespace detail::vector
 
 /** \anchor Vector
- * \b Vector is a fixed-capacity collection with copy-on-modify behavior.
+ * \b Vector is a fixed-capacity collection with deterministic bounded
+ * behavior.
   * Construction with more initializers than capacity is a compile-time
   * error.
+ *
+ * Terminology alignment:
+ * - Construction that satisfies static constraints yields a complete result.
+ * - Append via try_push_back yields a complete result when size < capacity.
+ * - Append via try_push_back yields a checked-failure result (false return and
+ *   unchanged logical size) when size == capacity.
  *
  * This example focuses on collection construction. Free functions that operate
  * on collections are documented with their own headers.
@@ -127,6 +134,11 @@ public:
     return detail::vector::classify_vector(observation);
   }
 
+  /**
+   * Appends one element when capacity permits.
+   * Returns true on complete result and false on checked-failure result while
+   * preserving logical size.
+   */
   [[nodiscard]] constexpr auto try_push_back(const value_type &value) noexcept(
       concepts::NothrowCopyAssignable<value_type>) -> bool {
     if (logical_size_ >= capacity_value) {
