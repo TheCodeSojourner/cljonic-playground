@@ -1,2 +1,5 @@
+.clj-kondo/
+.idea/
 build/
 build-*/
+cmake-build-debug/
