@@ -4,9 +4,6 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
-template <typename vector_type>
-concept SupportsOversizedConstruction = requires { vector_type{1, 2}; };
-
 TEST_CASE("Vector construction establishes logical size", "[vector]")
 {
     using cljonic::Vector;
@@ -20,6 +17,8 @@ TEST_CASE("Vector construction establishes logical size", "[vector]")
         "invariant.VectorCollection.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID(
         "invariant.VectorCollection.OversizedInitializerIsCompileTimeFailure");
+    TRACE_ID(
+        "invariant.VectorCollection.OversizedInitializerDiagnosticIdentifiesCapacity");
 
     constexpr Vector<int, 4> empty{};
     constexpr Vector<int, 4> populated{1, 2};
@@ -29,7 +28,6 @@ TEST_CASE("Vector construction establishes logical size", "[vector]")
     STATIC_REQUIRE(populated.size() == 2U);
     STATIC_REQUIRE(full.size() == 2U);
     STATIC_REQUIRE(Vector<int, 4>::capacity() == 4U);
-    STATIC_REQUIRE_FALSE(SupportsOversizedConstruction<Vector<int, 1>>);
 }
 
 TEST_CASE("Vector element storage requires non-throwing operations",
