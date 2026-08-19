@@ -3,6 +3,9 @@
 entity VectorCollection {
     capacity_limit: Integer
     logical_size: Integer
+    supports_literal_deduced_construction: Boolean
+    supports_empty_explicit_capacity_construction: Boolean
+    oversized_initializer_is_compile_time_failure: Boolean
 
     invariant CapacityIsNonNegative {
         this.capacity_limit >= 0
@@ -14,6 +17,18 @@ entity VectorCollection {
 
     invariant LogicalSizeDoesNotExceedCapacity {
         this.logical_size <= this.capacity_limit
+    }
+
+    invariant SupportsLiteralDeducedConstruction {
+        this.supports_literal_deduced_construction = true
+    }
+
+    invariant SupportsEmptyExplicitCapacityConstruction {
+        this.supports_empty_explicit_capacity_construction = true
+    }
+
+    invariant OversizedInitializerIsCompileTimeFailure {
+        this.oversized_initializer_is_compile_time_failure = true
     }
 }
 
