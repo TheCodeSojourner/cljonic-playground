@@ -16,3 +16,5 @@ entity VectorCollection {
         this.logical_size <= this.capacity_limit
     }
 }
+
+actor VectorOperator { identified_by: VectorCollection }
