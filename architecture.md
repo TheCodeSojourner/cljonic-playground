@@ -2,7 +2,7 @@
 
 ## S5 - Identity
 
-cljonic is an embedded-first, header-only C++23 functional collection system whose identity is bounded, deterministic, and semantically clear behavior. The system remains itself only while CopyOnModifyCollection semantics, SentinelBasedAccess with ProbeFirstAccess discipline, and strict resource determinism are preserved.
+cljonic is an embedded-first HeaderOnlyDistribution C++23 functional collection system whose identity is bounded, deterministic, and semantically clear behavior. The system remains itself only while CopyOnModifyCollection semantics, SentinelBasedAccess with ProbeFirstAccess discipline, and strict resource determinism are preserved.
 
 λ expressions:
 
@@ -82,7 +82,7 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
 
 ## S2 - Coordination
 
-Coordination is driven by a shared canonical vocabulary and explicit interaction protocols. Components remain consistent through probe-first access discipline, stable handle contracts across profiles, and preference for Clojure-semantic consistency when embedded constraints permit.
+Coordination is driven by a shared canonical vocabulary and explicit interaction protocols. Components remain consistent through ProbeFirstAccess discipline, stable handle contracts across profiles, and preference for Clojure-semantic consistency when embedded constraints permit.
 
 λ expressions:
 
@@ -118,7 +118,7 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 
 ## S1 - Operations
 
-Operations are C++23, FP-oriented, and header-only. Development uses CMake for build orchestration, Catch2 v3 for testing, and deterministic quality tooling. Distribution is a single amalgamated header artifact.
+Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses CMake for build orchestration, Catch2 v3 for testing, and deterministic quality tooling. Distribution is a single AmalgamatedHeader artifact.
 
 λ expressions:
 
