@@ -462,6 +462,8 @@ REQ-FN-002Q. The callable `Vector<T, N>` lookup forms specified by `REQ-COLL-002
 
 REQ-FN-002R. The callable `Set<T, N>` lookup forms specified by `REQ-COLL-005B` MUST be equivalent to the corresponding `get` overloads for the same set, value, and fallback arguments. Set callable lookup MUST use the same stable equality capability and bounded linear scan as `contains`; it MUST NOT provide a boolean-returning `operator()` overload because `contains(set, value)` is the canonical membership predicate.
 
+REQ-FN-002S. When a public free function uses element equality or ordering internally, the API MUST provide the corresponding `*By` variant that accepts an explicit key function or comparator for extracting the comparison value. The base operation uses the element directly, the `*By` variant uses the extracted comparison value, and predicate-based operations remain the exception unless the operation's contract explicitly requires a comparable key function. The `*By` rule applies across the supported collection family whenever the underlying operation relies on equality or ordering semantics rather than a separate predicate API.
+
 REQ-FN-003. Generic free functions MUST be constrained by explicit concepts or equivalent compile-time requirements.
 
 REQ-FN-004. Unsupported operations MUST fail at compile time with useful diagnostics where the limitation is knowable from the types.
