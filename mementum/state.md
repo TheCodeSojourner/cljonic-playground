@@ -1,60 +1,56 @@
 ## Session State
 
-- last_session_id: 2026-08-19-collection-concept-count-alignment
-- current_timestamp: 2026-08-19T20:08:53Z
+- last_session_id: 2026-08-19-vector-diagnostic-contract
+- current_timestamp: 2026-08-19T21:46:35Z
 - recover: 1
 - session_complete: true
 
 ## Task
 
-**Session focus: Align the minimal Vector/count slice with the generic Collection concept and clean the concepts header.**
+**Session focus: Align the minimal Vector/count slice across architecture, specifications, implementation, tests, and traceability, with actionable compile-time diagnostics.**
 
 **This session results:**
-- ✅ Confirmed the concepts header is small and current-slice appropriate, with construction-specific concepts retained for the deferred construction capability
-- ✅ Added the direct `<cstddef>` dependency and removed the stale duplicate Doxygen comment from `src/cljonic-concepts.hpp`
-- ✅ Formalized the minimal `Collection` entity and generalized `count.allium` from Vector-only to the Collection contract
-- ✅ Preserved Vector-specific invariants and made `VectorCollection` reachable through an explicit specification actor
-- ✅ Updated count test trace IDs and synchronized the strict obligation snapshot
-- ✅ Confirmed Allium checks and analysis, strict traceability, formatting, and the complete test executable pass
-- ✅ Committed the implementation, specification, test, and concept cleanup changes in three focused commits
+- ✅ Ran architecture/spec and spec/code weed workflows for the minimal `Vector` and `count` slice
+- ✅ Added Vector construction obligations for deduced construction, explicit-capacity empty construction, and oversized-initializer rejection
+- ✅ Added the observable requirement that oversized-initializer diagnostics identify the capacity constraint without mandating compiler-specific wording
+- ✅ Preserved the descriptive `static_assert` in `Vector` rather than replacing it with a less informative constructor `requires` clause
+- ✅ Added and synchronized traceability IDs and the committed obligation snapshot
+- ✅ Confirmed Allium checks and analysis, strict traceability, formatting hygiene, and the complete four-test suite pass
+- ✅ Repository is clean and the changes are committed
 
 ## Current Session Status
 
-- ✅ `count` is specified generically over `Collection`, whose current contract is only a logical `size()` result.
-- ✅ `VectorConstruction` remains intentionally deferred; current implementation behavior is preserved for fixtures.
-- ✅ The concepts header remains limited to `VectorElement`, `NothrowVectorElement`, `NothrowElementConstruction`, and `Collection`.
-- ✅ Strict traceability, focused tests, Allium analysis, and formatting pass; the complete test run reports 17 assertions in 4 test cases.
+- ✅ `Collection` remains minimal and count remains generic over `c.size() -> std::size_t`.
+- ✅ Vector construction behavior is now specified narrowly enough to cover the current implementation and its user-facing capacity diagnostic.
+- ✅ Architecture already governs this decision through explicit compile-time messages for likely user-error paths; no architecture edit was necessary.
+- ✅ `Vector` retains the capacity-specific `static_assert` message: initializer count must be less than or equal to capacity.
+- ✅ Strict traceability passes with all normalized obligations represented by test trace IDs.
 
 ## Questions
 
 This session's open questions:
 - ❓ What is the staged process for eventually retiring `cljonic-requirements.md` without losing normative detail?
+- ❓ Which next minimal capability should follow the Vector/count nucleus after the remaining collection API questions are resolved?
 
 ## Decisions
 
-- **Execution pace decision:** Implement full cljonic requirements slowly, step by step, starting with refinement of the existing vector/count nucleus.
-- **Restart scope decision:** Treat the current vocabulary and architecture as fixed authorities; reimplement only the minimal vector/count slice beneath them.
-- **Scope control decision:** Defer vector state classification, append behavior, and other collection capabilities until separately specified and tested.
-- **Element concept decision:** Keep `VectorElement` as the minimal default-initializable/copyable class contract; use `NothrowVectorElement` for the current array storage guarantee and `NothrowElementConstruction` for constructor arguments.
-- **Exception contract decision:** `Vector` construction is non-throwing only when both storage operations and all element argument constructions are non-throwing.
-- **Specification staging decision:** Keep `collection-concept.allium` minimal and make `count.allium` generic over the minimal Collection contract; defer `VectorConstruction` lifecycle and rejection obligations until the next construction-focused capability.
-- **Concept-scope decision:** Retain the four current concepts because each owns an active API or the implementation boundary needed by the deferred construction behavior; do not add forward-looking concepts yet.
-- **Traceability decision:** Keep Vector-specific invariants in `vector.allium` and represent specification reachability with an explicit `VectorOperator` actor rather than coupling them to generic `Collection`.
-- **Future construction decision:** Reintroduce a construction specification after count stabilizes, then generalize it across the collection types identified in `vocabulary.md` and `cljonic-requirements.md`, with dedicated tests and traceability.
-- **Documentation boundary decision:** Legacy Doxygen mainpage and Vector sample narrative comments are protected and should not be changed without explicit user instruction.
-- **Architecture governance decision:** Preserve lifecycle classification and relation-model gating in architecture as mandatory scope-control mechanisms.
-- **Concept inventory decision:** Keep `cljonic-concepts.md` as a future-reference artifact; do not treat its broad inventory as the active implementation plan for the minimal TDD-first development path.
-- **Concept growth decision:** Introduce concepts or traits only when a tested API or data-structure boundary requires them; generalize after a second real use exposes a stable common contract.
-- **Concept refinement decision:** Prefer a narrower concept for a stronger operation-specific guarantee rather than silently tightening an existing public concept.
-- **Diagnostic design decision:** Prefer standard facilities directly and use named public concepts where they add domain meaning or improve corrective compiler diagnostics; keep unavoidable trait mechanics internal.
+- **Execution pace decision:** Implement the broader requirements slowly, one approved capability at a time, beneath the existing vocabulary and architecture authorities.
+- **Minimal-slice decision:** Limit this session to `Vector`, `count`, the generic `Collection` contract, and their direct specification/test/traceability surfaces.
+- **Construction contract decision:** Vector construction supports capacity deduction, empty explicit-capacity construction, and compile-time rejection of oversized initializers.
+- **Diagnostic contract decision:** An oversized-initializer failure must identify the violated capacity constraint; exact compiler wording is not normative.
+- **Diagnostic mechanism decision:** Keep `static_assert` for this context-dependent capacity failure because it provides more actionable user feedback than a bare constructor constraint.
+- **Architecture decision:** Treat the existing S1 user-clarity policy requiring explicit compile-time messages as sufficient architectural coverage; do not encode `static_assert` as an architectural requirement.
+- **Traceability decision:** Every normalized Vector/count obligation must appear in the committed snapshot and in test `TRACE_ID` coverage before completion.
+- **Scope decision:** Do not broaden the Vector construction contract to state classification, append behavior, or other collection capabilities without a separately approved specification.
+- **Formatting decision:** Preserve formatter changes made to the touched test file; do not reintroduce unrelated style churn.
 
 ## Next
 
-1. Decide the next minimal capability from the existing requirements, vocabulary, and architecture, resolving the remaining open questions in those sources first.
-2. Write that capability's specification before adding tests or code.
-3. Add only the tests and implementation required by the approved specification.
-4. Reintroduce `VectorConstruction` as a focused capability after the next API boundary is selected.
-5. Generalize construction specifications across the collection types identified by vocabulary and requirements.
+1. Resolve the next minimal collection capability from the existing requirements, vocabulary, architecture, and agenda before editing specs.
+2. Write or refine that capability's specification first.
+3. Add only its traceable tests and implementation, preserving explicit diagnostics at compile-time failure boundaries.
+4. Run the strict quality and traceability gates before committing the next session.
+5. Generalize construction specifications across other collection types only after a second concrete collection boundary justifies it.
 
 
 
