@@ -520,6 +520,8 @@ REQ-FN-024. The relational map/set operations `index`, `project`, `rename`, and 
 
 REQ-FN-025. The first-pass callable convenience family MUST include `identity`, `constantly`, `complement`, `partial`, `fnil`, `juxt`, `every_pred`, `some_fn`, and `apply`, in addition to the `comp` behavior defined by this document. Each callable constructor or adapter MUST express compatible parameter and return types through concepts or equivalent compile-time constraints, MUST return a bounded callable representation when it returns a callable, and MUST preserve the invocation and non-allocation requirements of its captured functions and values. `juxt`, `every_pred`, and `some_fn` MUST define their short-circuit, result-shape, and invocation-order behavior; `partial` and `fnil` MUST define their captured-argument and default-argument behavior; and `apply` MUST define its supported final sequence argument and capacity behavior. These functions MUST remain ordinary callable operations and MUST NOT provide transducer semantics, runtime type dispatch, hidden mutable caching, or implicit callback retention by collection results.
 
+REQ-PLAT-011A. The cljonic project MUST select CTRE as the canonical compile-time regex library for the supported regular-expression surface. The project MAY expose a runtime regex profile as a separate optional capability, but the default supported regex profile MUST remain compile-time-oriented and MUST use the CTRE-based integration model unless a separate approved requirement changes the selected library.
+
 ### Compile-Time Diagnostics
 
 REQ-DIAG-001. Public templates and free functions MUST express knowable compile-time capability requirements through named concepts or equivalent constraints.
