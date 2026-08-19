@@ -57,3 +57,12 @@ This synthesis distills the current durable operating model across mementum memo
 10. Memory routing policy
 - Repo-specific memory and knowledge belong in mementum only.
 - Copilot memory is reserved for cross-project personal preferences.
+
+11. Requirements-to-bootstrap execution strategy
+- `cljonic-requirements.md` currently describes a scope much larger than implemented vector/count bootstrap behavior.
+- Safe execution favors incremental refinement of the existing nucleus before adding new capabilities.
+- Vocabulary and architecture propagation should precede broader implementation expansion.
+
+12. Documentation edit boundaries
+- Legacy Doxygen mainpage and sample-program narrative blocks may be intentionally retained by maintainers.
+- Do not rewrite those blocks during generic stale-comment cleanup unless explicitly requested.

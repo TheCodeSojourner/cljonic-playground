@@ -1,56 +1,49 @@
 ## Session State
 
-- last_session_id: 2026-08-11-mixed-collection-return-types-clarification
-- current_timestamp: 2026-08-11T23:50:00Z
-- recover: 3
+- last_session_id: 2026-08-19-vector-alignment-vocabulary-architecture
+- current_timestamp: 2026-08-19T12:59:04Z
+- recover: 1
 - session_complete: true
 
 ## Task
 
-**Session focus: Clarify and refine the "mixed-collection return types" open question by identifying missing dimensions and splitting into focused sub-questions. Correct gybis-fini process to validate gates before commit.**
+**Session focus: Align vocabulary and architecture with requirements, then perform no-new-capability refinement on the existing vector/count bootstrap artifacts.**
 
 **This session results:**
-- ✅ Identified critical gap in mixed-collection question: element type resolution was not explicitly addressed
-- ✅ Recognized three independent decision axes: result collection type, result capacity, result element type
-- ✅ Proposed splitting monolithic question into two focused critical questions:
-  1. Mixed-collection return types (collection type and capacity) — what collection type? what capacity policy?
-  2. Mixed-collection element type resolution (NEW) — homogeneous only or common type deduction? float policy interaction?
-- ✅ Updated DESIGN-NOTES.md to split and clarify both questions
-- ✅ Explicitly surfaced float policy constraint in element type question to prevent oversight
-- ✅ Created memory: gybis-fini-gates-before-commit.md documenting workflow correction
-- ✅ Discovered process error: gates must run BEFORE git commit, not after
-- ✅ Corrected gybis-fini protocol understanding for future sessions
+- ✅ Executed gybis-oriented startup and vocabulary elicitation from `cljonic-requirements.md`
+- ✅ Expanded `vocabulary.md` with requirements-native result-status, lifecycle, ownership/view, producer, and predicate taxonomy terms
+- ✅ Propagated new canonical vocabulary into `architecture.md` and closed identified consistency gaps
+- ✅ Completed a no-new-capability vector alignment pass across spec/code/tests
+- ✅ Performed stale-comment audit across `src/` and `tests/`
+- ✅ Restored Doxygen mainpage and Vector sample narrative blocks after user correction request
+- ✅ Added durable memory for explicit-change requirement on legacy Doxygen narrative blocks
 
 ## Current Session Status
 
-- Orientation complete: repo state, design notes, and memory files were reviewed in order.
-- The mixed-collection design work is already captured and split into the correct sub-questions; no implementation patch is justified yet because the policy itself remains open.
-- The remaining blocking work is not code modification but a decision lock: choose the result collection type/capacity policy and the mixed-element-type policy before adding `Concat` or similar free functions.
-- The required gate discipline remains: run `make upsert-gate-strict` before any git commit, with commit only after successful verification.
+- Orientation, synthesis, and architecture/vocabulary propagation are complete for this session.
+- Implementation remains intentionally at vector/count bootstrap scope.
+- No new collection capabilities were added; alignment work focused on language consistency and traceability discipline.
 
 ## Questions
 
 This session's work (NOT YET LOCKED):
-- ❓ What should be the result collection type when combining stored+generated (e.g., Vector + Range)?
-- ❓ Should capacity be sum of counts, maximum, or explicit parameter?
-- ❓ How should mixed element types be resolved (homogeneous-only vs. common type deduction)?
-- ❓ How does strict float policy constrain mixed-collection element type resolution?
+- ❓ What is the first minimal requirement slice to formalize beyond vector/count without capability expansion?
+- ❓ Which requirement clauses should be distilled next into collection specs while preserving architecture > spec > tests > code order?
+- ❓ What is the staged process for eventually retiring `cljonic-requirements.md` without losing normative detail?
 
 ## Decisions
 
-- **Open question refinement strategy:** Split monolithic design questions into focused axes to clarify decision dependencies and prevent overlooked constraints.
-- **Question clarity pattern:** Call out implicit requirements (like float policy) explicitly in related questions.
-- **Design notes maintenance:** Regularly audit open questions for hidden multi-dimensional decisions that should be separated.
-- **gybis-fini workflow correction:** Quality gates (make upsert-gate-strict) must run BEFORE git commit as pre-commit verification barrier.
+- **Execution pace decision:** Implement full cljonic requirements slowly, step by step, starting with refinement of the existing vector/count nucleus.
+- **Scope control decision:** No new vector capability during alignment passes; focus on terminology, architecture coherence, and traceability.
+- **Documentation boundary decision:** Legacy Doxygen mainpage and Vector sample narrative comments are protected and should not be changed without explicit user instruction.
+- **Architecture governance decision:** Preserve lifecycle classification and relation-model gating in architecture as mandatory scope-control mechanisms.
 
 ## Next
 
-1. **Immediate (next session):** Lock mixed-collection return type policy (collection type and capacity rules)
-2. **Immediate (next session):** Lock mixed-collection element type resolution policy (homogeneity and float interaction)
-3. Design and implement Concat free function as first multi-collection operation to validate policies
-4. Test Concat against Collection concept to validate YAGNI bootstrap approach
-5. If Concat requires operator[] or value_type on Collection, update concept at that time
-6. Track Concat implementation in locked decisions section of DESIGN-NOTES.md
+1. Distill one minimal post-bootstrap requirement slice into spec language without adding capability.
+2. Align count-related specs/tests with the same result-status and predicate taxonomy used for vector alignment.
+3. Build a compact traceability matrix from current vocabulary and architecture terms to vector/count specs/tests/code.
+4. Draft explicit deletion-gate criteria for retiring `cljonic-requirements.md` only after full artifact diffusion.
 
 
 
