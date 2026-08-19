@@ -5,45 +5,9 @@
 #include <utility>
 
 #include <cljonic-concepts.hpp>
-
-#if !defined(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT)
-#define CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT 1000
-#endif
-
-#define CLJONIC_STRINGIFY_INNER(x) #x
-#define CLJONIC_STRINGIFY(x) CLJONIC_STRINGIFY_INNER(x)
+#include <cljonic-config.hpp>
 
 namespace cljonic {
-
-/** \anchor vector_state
- * Observable classification of a \ref Vector instance's fill relative to its
- * fixed capacity.
- */
-enum class vector_state {
-  empty,
-  populated,
-  at_capacity,
-};
-
-namespace detail::vector {
-struct vector_observation {
-  int capacity_limit;
-  int logical_size;
-};
-
-[[nodiscard]] constexpr auto
-classify_vector(vector_observation observation) noexcept -> vector_state {
-  if (observation.logical_size == 0) {
-    return vector_state::empty;
-  }
-
-  if (observation.logical_size == observation.capacity_limit) {
-    return vector_state::at_capacity;
-  }
-
-  return vector_state::populated;
-}
-} // namespace detail::vector
 
 /** \anchor Vector
  * \b Vector is a fixed-capacity collection with copy-on-modify behavior.
@@ -86,6 +50,9 @@ class Vector {
 public:
   using value_type = element_type;
 
+  static_assert(concepts::NothrowVectorElement<element_type>,
+                "Vector element storage operations must not throw");
+
   static_assert(capacity_value <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT,
                 "Vector capacity exceeds "
                 "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(
@@ -93,17 +60,17 @@ public:
 
   template <typename... Args>
   constexpr Vector(Args... args) noexcept(
-      (concepts::NothrowConstructible<element_type, Args> && ...))
+      concepts::NothrowVectorElement<element_type> &&
+      (concepts::NothrowElementConstruction<element_type, Args> && ...))
       : storage_{}, logical_size_{0} {
     static_assert(sizeof...(Args) <= capacity_value,
                   "Vector constructor requires initializer count to be less "
                   "than or equal to capacity");
-    static_assert((concepts::ConvertibleToElement<element_type, Args> && ...),
-                  "Vector constructor requires all arguments to be "
-                  "convertible to element_type");
-    static_assert((concepts::NothrowConstructible<element_type, Args> && ...),
-                  "Vector constructor requires all arguments to construct "
-                  "element_type without throwing");
+    static_assert(
+        (concepts::NothrowElementConstruction<element_type, Args> && ...),
+        "Vector constructor requires all arguments to construct "
+        "element_type without throwing and be implicitly "
+        "convertible to element_type");
 
     initialize_storage_if_valid(args...);
   }
@@ -121,29 +88,12 @@ public:
     return logical_size_;
   }
 
-  [[nodiscard]] constexpr auto state() const noexcept -> vector_state {
-    const detail::vector::vector_observation observation{
-        static_cast<int>(capacity_value), static_cast<int>(logical_size_)};
-    return detail::vector::classify_vector(observation);
-  }
-
-  [[nodiscard]] constexpr auto try_push_back(const value_type &value) noexcept(
-      concepts::NothrowCopyAssignable<value_type>) -> bool {
-    if (logical_size_ >= capacity_value) {
-      return false;
-    }
-
-    storage_[logical_size_] = value;
-    ++logical_size_;
-    return true;
-  }
-
 private:
   template <typename... Args>
   static constexpr bool constructor_arguments_valid =
       sizeof...(Args) <= capacity_value &&
-      (concepts::ConvertibleToElement<element_type, Args> && ...) &&
-      (concepts::NothrowConstructible<element_type, Args> && ...);
+      concepts::NothrowVectorElement<element_type> &&
+      (concepts::NothrowElementConstruction<element_type, Args> && ...);
 
   template <typename... Args>
   constexpr void initialize_storage_if_valid(Args... args) noexcept {

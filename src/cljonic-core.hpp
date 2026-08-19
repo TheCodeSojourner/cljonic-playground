@@ -1,6 +1,8 @@
 #ifndef CLJONIC_CORE_HPP
 #define CLJONIC_CORE_HPP
 
+#include <cljonic-config.hpp>
+
 /** \mainpage
  * \b cljonic is a \b header-only C++ library designed to allow an \b embedded
  * \b systems C++ developer to program in a \b Functional \b Programming \b

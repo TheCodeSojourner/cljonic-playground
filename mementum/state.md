@@ -1,7 +1,7 @@
 ## Session State
 
 - last_session_id: 2026-08-19-incremental-concept-development-synthesis
-- current_timestamp: 2026-08-19T18:51:16Z
+- current_timestamp: 2026-08-19T19:20:00Z
 - recover: 1
 - session_complete: true
 
@@ -23,21 +23,26 @@
 
 ## Current Session Status
 
-- Orientation and memory synthesis are complete for this session.
-- No implementation or test capability was added.
-- The active implementation path remains a minimal specification-led TDD slice for `count(Vector)`.
+- Restarted the minimal specification-led TDD slice for `count(Vector)`.
+- Kept `vocabulary.md` and `architecture.md` unchanged.
+- Reduced vector/count specifications, tests, implementation, and no-heap probes to construction, logical size, and count behavior.
+- Preserved the large Doxygen sample blocks in the production headers.
+- Focused tests and the no-heap probe pass.
+- Refined Vector element concepts so storage safety and constructor argument safety are explicit and composable.
+- Updated the specification, concept inventory, traceability snapshot, and tests for non-throwing vector storage operations.
 
 ## Questions
 
 This session's open questions:
-- ❓ What exact construction behavior is needed to test a populated `Vector` for the first `count` slice?
-- ❓ Which existing requirement clauses should govern the minimal `count(Vector)` specification?
 - ❓ What is the staged process for eventually retiring `cljonic-requirements.md` without losing normative detail?
 
 ## Decisions
 
 - **Execution pace decision:** Implement full cljonic requirements slowly, step by step, starting with refinement of the existing vector/count nucleus.
-- **Scope control decision:** No new vector capability during alignment passes; focus on terminology, architecture coherence, and traceability.
+- **Restart scope decision:** Treat the current vocabulary and architecture as fixed authorities; reimplement only the minimal vector/count slice beneath them.
+- **Scope control decision:** Defer vector state classification, append behavior, and other collection capabilities until separately specified and tested.
+- **Element concept decision:** Keep `VectorElement` as the minimal default-initializable/copyable class contract; use `NothrowVectorElement` for the current array storage guarantee and `NothrowElementConstruction` for constructor arguments.
+- **Exception contract decision:** `Vector` construction is non-throwing only when both storage operations and all element argument constructions are non-throwing.
 - **Documentation boundary decision:** Legacy Doxygen mainpage and Vector sample narrative comments are protected and should not be changed without explicit user instruction.
 - **Architecture governance decision:** Preserve lifecycle classification and relation-model gating in architecture as mandatory scope-control mechanisms.
 - **Concept inventory decision:** Keep `cljonic-concepts.md` as a future-reference artifact; do not treat its broad inventory as the active implementation plan for the minimal TDD-first development path.
@@ -47,9 +52,9 @@ This session's open questions:
 
 ## Next
 
-1. Distill the minimal `count(Vector)` behavior into specification language.
-2. Write compile-time and runtime tests for empty and populated vector counts.
-3. Implement only the vector and count code required by those tests.
+1. Decide the next minimal capability from the existing requirements, vocabulary, and architecture.
+2. Write its specification before adding tests or code.
+3. Add only the tests and implementation required by that specification.
 4. Add the next concept only when the next tested behavior requires it.
 
 
