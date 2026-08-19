@@ -1,4 +1,5 @@
 entity-fields.CountRequest
+entity-fields.VectorAppend
 entity-fields.VectorCollection
 entity-fields.VectorConstruction
 entity-optional.CountRequest.vector_subject
@@ -8,6 +9,8 @@ invariant.CountRequest.ResolvedCountRequiresEmptyReturnsZero
 invariant.CountRequest.ResolvedCountRequiresNonNegativeResult
 invariant.CountRequest.VectorSubjectRequiresValidVectorState
 invariant.CountRequest.VectorTargetRequiresVectorSubject
+invariant.VectorAppend.SizesAreNonNegative
+invariant.VectorAppend.SizesRespectCapacity
 invariant.VectorCollection.AtCapacityStateMeansSizeEqualsCapacity
 invariant.VectorCollection.CapacityIsNonNegative
 invariant.VectorCollection.EmptyStateMeansZeroSize
@@ -15,6 +18,10 @@ invariant.VectorCollection.LogicalSizeDoesNotExceedCapacity
 invariant.VectorCollection.LogicalSizeIsNonNegative
 invariant.VectorCollection.PopulatedStateMeansPositiveAndNotAtCapacity
 invariant.VectorConstruction.CapacityRespectsCollectionMaximumElementCount
+rule-failure.AppendAtCapacityYieldsCheckedFailureResult.1
+rule-failure.AppendAtCapacityYieldsCheckedFailureResult.2
+rule-failure.AppendWithinCapacityYieldsCompleteResult.1
+rule-failure.AppendWithinCapacityYieldsCompleteResult.2
 rule-failure.ClassifyVectorAsAtCapacity.1
 rule-failure.ClassifyVectorAsAtCapacity.2
 rule-failure.ClassifyVectorAsEmpty.1
@@ -48,6 +55,8 @@ rule-failure.ResolveCountSemantics.3
 rule-failure.ResolveCountSemantics.4
 rule-failure.ResolveCountSemantics.5
 rule-failure.ResolveCountSemantics.6
+rule-success.AppendAtCapacityYieldsCheckedFailureResult
+rule-success.AppendWithinCapacityYieldsCompleteResult
 rule-success.ClassifyVectorAsAtCapacity
 rule-success.ClassifyVectorAsEmpty
 rule-success.ClassifyVectorAsPopulated
@@ -61,16 +70,22 @@ rule-success.RejectVectorConstructionOnThrowingElementConstruction
 rule-success.RejectVectorConstructionWhenCapacityExceedsCollectionMaximumElementCount
 rule-success.ResolveCountSemantics
 surface-actor.CountSurface
+surface-actor.VectorAppendSurface
 surface-actor.VectorClassificationSurface
 surface-actor.VectorConstructionSurface
 surface-provides.CountSurface
+surface-provides.VectorAppendSurface
 surface-provides.VectorClassificationSurface
 surface-provides.VectorConstructionSurface
 transition-edge.CountRequest.pending.rejected
 transition-edge.CountRequest.pending.resolved
+transition-edge.VectorAppend.pending.checked_failure_result
+transition-edge.VectorAppend.pending.complete_result
 transition-edge.VectorConstruction.pending.rejected_at_compile_time
 transition-edge.VectorConstruction.pending.succeeded
 transition-rejected.CountRequest.count_state
+transition-rejected.VectorAppend.outcome
 transition-rejected.VectorConstruction.outcome
 transition-terminal.CountRequest.count_state
+transition-terminal.VectorAppend.outcome
 transition-terminal.VectorConstruction.outcome
