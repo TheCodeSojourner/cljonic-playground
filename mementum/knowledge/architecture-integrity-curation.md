@@ -3,7 +3,7 @@ title: Architecture Integrity Curation
 status: active
 category: architecture
 tags: [architecture, vsm, validation, coherence]
-related: [architecture.md, DESIGN-NOTES.md, vocabulary.md]
+related: [architecture.md, vocabulary.md]
 depends-on: []
 ---
 

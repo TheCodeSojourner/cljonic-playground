@@ -3,7 +3,7 @@ title: Vocabulary Curation
 status: active
 category: vocabulary
 tags: [vocabulary, curation, architecture, specs]
-related: [vocabulary.md, DESIGN-NOTES.md, README.md]
+related: [vocabulary.md, README.md]
 depends-on: []
 ---
 

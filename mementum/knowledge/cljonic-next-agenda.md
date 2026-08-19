@@ -56,7 +56,7 @@ depends-on: []
 
 Vector and count are implemented and passing all quality gates (lint, complexity, sanitizers, coverage, traceability, no-heap, docs).
 
-Before implementing new collections, answer the Open Questions in DESIGN-NOTES.md:
+Before implementing new collections, resolve the remaining open questions against the current requirements, architecture, and vocabulary sources:
 - Collection C++ concept definition
 - Meaning of the `_M` suffix
 - Mixed-collection return type and capacity policy
@@ -65,4 +65,4 @@ Before implementing new collections, answer the Open Questions in DESIGN-NOTES.m
 - `count` for unbound generated collections
 - String transform return types
 
-Next collection to implement after Open Questions are resolved: Range.
+Next collection to implement after these open questions are resolved: Range.
