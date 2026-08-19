@@ -79,7 +79,7 @@ status: draft
 ### Collection
 - **Definition:** A C++23 concept that gates generic free functions by requiring `c.size() → std::size_t`. Additional requirements (such as indexed element access or `value_type`) are added only when the first free function that needs them is implemented, following a YAGNI bootstrap policy.
 - **Deprecated Synonyms:** none (first use in 2026-08-11)
-- **Related:** StoredCollection, GeneratedCollection, Concept, FreeFunction
+- **Related:** StoredCollection, GeneratedCollection, SemanticConcept
 - **Usage:** Architecture, specification, implementation, and templates
 - **Examples:** `count(c)` is constrained on `concepts::Collection`; `count` is now a single template instead of per-type overloads.
 
