@@ -1,7 +1,6 @@
 -- allium: 3
 
 entity VectorCollection {
-    collection_state: empty | populated | at_capacity
     capacity_limit: Integer
     logical_size: Integer
 
@@ -17,47 +16,6 @@ entity VectorCollection {
         this.logical_size <= this.capacity_limit
     }
 
-    invariant EmptyStateMeansZeroSize {
-        this.collection_state = empty implies this.logical_size = 0
-    }
-
-    invariant PopulatedStateMeansPositiveAndNotAtCapacity {
-        this.collection_state = populated implies this.logical_size > 0 and this.logical_size < this.capacity_limit
-    }
-
-    invariant AtCapacityStateMeansSizeEqualsCapacity {
-        this.collection_state = at_capacity implies this.logical_size = this.capacity_limit
-    }
-}
-
-rule ClassifyVectorAsEmpty {
-    when: ObserveVector(vector)
-    requires: vector.logical_size = 0
-    ensures: vector.collection_state = empty
-}
-
-rule ClassifyVectorAsPopulated {
-    when: ObserveVector(vector)
-    requires: vector.logical_size > 0
-    requires: vector.logical_size < vector.capacity_limit
-    ensures: vector.collection_state = populated
-}
-
-rule ClassifyVectorAsAtCapacity {
-    when: ObserveVector(vector)
-    requires: vector.logical_size > 0
-    requires: vector.logical_size = vector.capacity_limit
-    ensures: vector.collection_state = at_capacity
-}
-
-actor VectorObserver { identified_by: VectorCollection where vector_collection.collection_state in {empty, populated, at_capacity} }
-
-surface VectorClassificationSurface {
-    facing observer: VectorObserver
-    context vector: VectorCollection where vector = observer
-
-    provides:
-        ObserveVector(vector)
 }
 
 entity VectorConstruction {
@@ -65,7 +23,7 @@ entity VectorConstruction {
     initializer_count: Integer
     capacity: Integer
     CollectionMaximumElementCount: Integer
-    arguments_construct_without_throw: Boolean
+    element_storage_operations_construct_without_throw: Boolean
 
     transitions outcome {
         pending -> succeeded
@@ -84,7 +42,7 @@ rule ConstructVectorWithValidElementCount {
     requires: construction.initializer_count >= 0
     requires: construction.capacity <= construction.CollectionMaximumElementCount
     requires: construction.initializer_count <= construction.capacity
-    requires: construction.arguments_construct_without_throw = true
+    requires: construction.element_storage_operations_construct_without_throw = true
     ensures: construction.outcome = succeeded
 }
 
@@ -105,7 +63,7 @@ rule RejectVectorConstructionWhenCapacityExceedsCollectionMaximumElementCount {
 rule RejectVectorConstructionOnThrowingElementConstruction {
     when: ConstructVector(construction)
     requires: construction.outcome = pending
-    requires: construction.arguments_construct_without_throw = false
+    requires: construction.element_storage_operations_construct_without_throw = false
     ensures: construction.outcome = rejected_at_compile_time
 }
 
@@ -117,51 +75,4 @@ surface VectorConstructionSurface {
 
     provides:
         ConstructVector(construction)
-}
-
-entity VectorAppend {
-    outcome: pending | complete_result | checked_failure_result
-    before_size: Integer
-    after_size: Integer
-    capacity: Integer
-
-    transitions outcome {
-        pending -> complete_result
-        pending -> checked_failure_result
-        terminal: complete_result, checked_failure_result
-    }
-
-    invariant SizesAreNonNegative {
-        this.before_size >= 0 and this.after_size >= 0
-    }
-
-    invariant SizesRespectCapacity {
-        this.before_size <= this.capacity and this.after_size <= this.capacity
-    }
-}
-
-rule AppendWithinCapacityYieldsCompleteResult {
-    when: AppendElement(append)
-    requires: append.outcome = pending
-    requires: append.before_size < append.capacity
-    ensures: append.outcome = complete_result
-    ensures: append.after_size = append.before_size + 1
-}
-
-rule AppendAtCapacityYieldsCheckedFailureResult {
-    when: AppendElement(append)
-    requires: append.outcome = pending
-    requires: append.before_size = append.capacity
-    ensures: append.outcome = checked_failure_result
-    ensures: append.after_size = append.before_size
-}
-
-actor VectorAppender { identified_by: VectorAppend where vector_append.outcome = pending }
-
-surface VectorAppendSurface {
-    facing appender: VectorAppender
-    context append: VectorAppend where append = appender
-
-    provides:
-        AppendElement(append)
 }
