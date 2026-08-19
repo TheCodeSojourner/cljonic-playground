@@ -1,6 +1,14 @@
 -- allium: 3
 
 -- Collection Concept Specification
+entity Collection {
+	logical_size: Integer
+
+	invariant LogicalSizeIsNonNegative {
+		this.logical_size >= 0
+	}
+}
+
 -- Bootstraps with minimal requirements: c.size() → std::size_t
 -- YAGNI policy: additional requirements added when first free function needs them
 -- 
