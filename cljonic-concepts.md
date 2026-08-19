@@ -32,7 +32,6 @@ The following are therefore not cljonic inventory entries by themselves:
 - `DefaultElement` as a spelling of `std::default_initializable`;
 - `CopyableValue` as a spelling of `std::copyable`;
 - `MovableValue` as a spelling of `std::movable`;
-- `ConvertibleToElement` as a spelling of `std::convertible_to`;
 - `InvocableWith` as a spelling of `std::invocable`.
 
 ### Prefer concepts for public constraints
@@ -97,19 +96,19 @@ vector/count nucleus.
 - Used by: `Vector` element storage and vector construction
 - Requirements: `REQ-VAL-007`, `REQ-COLL-002`, `REQ-DIAG-001`
 
-### `NothrowCopyAssignable<T>`
+### `NothrowVectorElement<T>`
 
 - Kind: public concept
-- Definition: copy assignment exists, returns `T&`, and is `noexcept`
-- Used by: vector update paths that propagate `noexcept`
+- Definition: `VectorElement<T>` plus non-throwing default construction and copy assignment
+- Used by: vector storage and vector construction
 - Requirements: current vector implementation contract
 
-### `NothrowConstructible<T, U>`
+### `NothrowElementConstruction<T, U>`
 
 - Kind: public concept
-- Definition: `std::constructible_from<T, U>` plus a `noexcept` construction expression
-- Used by: bounded element construction
-- Rationale: this combines a standard construction concept with a distinct exception guarantee
+- Definition: implicit convertibility to `T` plus non-throwing construction of `T` from `U`
+- Used by: bounded vector element construction
+- Rationale: combines the conversion and exception guarantees required by one constructor operation
 
 ### `Collection<C>`
 
