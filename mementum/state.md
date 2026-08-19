@@ -1,13 +1,13 @@
 ## Session State
 
-- last_session_id: 2026-08-19-incremental-concept-development-synthesis
-- current_timestamp: 2026-08-19T19:20:00Z
+- last_session_id: 2026-08-19-minimal-count-specification-cleanup
+- current_timestamp: 2026-08-19T19:51:50Z
 - recover: 1
 - session_complete: true
 
 ## Task
 
-**Session focus: Establish the minimal TDD-first concept-development path and synthesize durable guidance for incremental cljonic concept growth.**
+**Session focus: Finish the minimal `count(Vector)` specification cleanup and preserve the future `VectorConstruction` roadmap.**
 
 **This session results:**
 - ✅ Executed gybis-oriented startup and vocabulary elicitation from `cljonic-requirements.md`
@@ -23,13 +23,12 @@
 
 ## Current Session Status
 
-- Restarted the minimal specification-led TDD slice for `count(Vector)`.
-- Kept `vocabulary.md` and `architecture.md` unchanged.
-- Reduced vector/count specifications, tests, implementation, and no-heap probes to construction, logical size, and count behavior.
-- Preserved the large Doxygen sample blocks in the production headers.
-- Focused tests and the no-heap probe pass.
-- Refined Vector element concepts so storage safety and constructor argument safety are explicit and composable.
-- Updated the specification, concept inventory, traceability snapshot, and tests for non-throwing vector storage operations.
+- ✅ Reduced `count.allium` to the minimal Vector cardinality contract.
+- ✅ Removed current `VectorConstruction` specification obligations while preserving implementation behavior needed for test fixtures.
+- ✅ Updated count tests and the spec-to-code obligation snapshot.
+- ✅ Preserved `vocabulary.md`, `architecture.md`, and the large Doxygen sample blocks.
+- ✅ Stored the future construction roadmap in `mementum/memories/defer-vector-construction-spec.md`.
+- ✅ Strict traceability, focused tests, Allium analysis, and no-heap validation pass.
 
 ## Questions
 
@@ -43,6 +42,8 @@ This session's open questions:
 - **Scope control decision:** Defer vector state classification, append behavior, and other collection capabilities until separately specified and tested.
 - **Element concept decision:** Keep `VectorElement` as the minimal default-initializable/copyable class contract; use `NothrowVectorElement` for the current array storage guarantee and `NothrowElementConstruction` for constructor arguments.
 - **Exception contract decision:** `Vector` construction is non-throwing only when both storage operations and all element argument constructions are non-throwing.
+- **Specification staging decision:** Keep `collection-concept.allium` minimal; make `count.allium` Vector-only for the first slice; defer `VectorConstruction` lifecycle and rejection obligations until the next construction-focused capability.
+- **Future construction decision:** Reintroduce a construction specification after count stabilizes, then generalize it across the collection types identified in `vocabulary.md` and `cljonic-requirements.md`, with dedicated tests and traceability.
 - **Documentation boundary decision:** Legacy Doxygen mainpage and Vector sample narrative comments are protected and should not be changed without explicit user instruction.
 - **Architecture governance decision:** Preserve lifecycle classification and relation-model gating in architecture as mandatory scope-control mechanisms.
 - **Concept inventory decision:** Keep `cljonic-concepts.md` as a future-reference artifact; do not treat its broad inventory as the active implementation plan for the minimal TDD-first development path.
@@ -55,7 +56,8 @@ This session's open questions:
 1. Decide the next minimal capability from the existing requirements, vocabulary, and architecture.
 2. Write its specification before adding tests or code.
 3. Add only the tests and implementation required by that specification.
-4. Add the next concept only when the next tested behavior requires it.
+4. Reintroduce VectorConstruction as a focused capability after count is stable.
+5. Generalize construction specifications across the collection types identified by vocabulary and requirements.
 
 
 
