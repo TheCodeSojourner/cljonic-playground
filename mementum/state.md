@@ -50,7 +50,7 @@ This session's open questions:
 
 ## Next
 
-1. Decide the next minimal capability from the existing requirements, vocabulary, and architecture, resolving the remaining `DESIGN-NOTES.md` open questions first.
+1. Decide the next minimal capability from the existing requirements, vocabulary, and architecture, resolving the remaining open questions in those sources first.
 2. Write that capability's specification before adding tests or code.
 3. Add only the tests and implementation required by the approved specification.
 4. Reintroduce `VectorConstruction` as a focused capability after the next API boundary is selected.
