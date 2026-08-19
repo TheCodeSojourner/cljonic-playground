@@ -37,13 +37,14 @@ This session's work (NOT YET LOCKED):
 - **Scope control decision:** No new vector capability during alignment passes; focus on terminology, architecture coherence, and traceability.
 - **Documentation boundary decision:** Legacy Doxygen mainpage and Vector sample narrative comments are protected and should not be changed without explicit user instruction.
 - **Architecture governance decision:** Preserve lifecycle classification and relation-model gating in architecture as mandatory scope-control mechanisms.
+- **Concept inventory decision:** Keep `cljonic-concepts.md` as a future-reference artifact; do not treat its broad inventory as the active implementation plan for the minimal TDD-first development path.
 
 ## Next
 
-1. Distill one minimal post-bootstrap requirement slice into spec language without adding capability.
-2. Align count-related specs/tests with the same result-status and predicate taxonomy used for vector alignment.
-3. Build a compact traceability matrix from current vocabulary and architecture terms to vector/count specs/tests/code.
-4. Draft explicit deletion-gate criteria for retiring `cljonic-requirements.md` only after full artifact diffusion.
+1. Distill the minimal count-over-vector requirement slice into spec language before tests and code.
+2. Start the TDD-first count/vector slice with only the concepts required by its tested API.
+3. Add later concepts only when a new tested library behavior requires them.
+4. Keep `cljonic-concepts.md` available as reference material during incremental design.
 
 
 

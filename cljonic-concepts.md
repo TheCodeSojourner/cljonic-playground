@@ -1,452 +1,470 @@
-# cljonic Concepts Proposal
+# cljonic C++ Concept Inventory
 
-This document proposes the concept set I believe is needed to fully implement the cljonic library described in [cljonic-requirements.md](cljonic-requirements.md), given the current bootstrap concepts in [src/cljonic-concepts.hpp](src/cljonic-concepts.hpp).
+This document inventories the C++ concepts and supporting compile-time traits
+needed to implement the behavior defined by
+[cljonic-requirements.md](cljonic-requirements.md).
 
-The current file is only a thin starting layer. The requirements describe a broader, bounded, value-semantic, single-header C++ library with explicit failure semantics, bounded capacity behavior, producer semantics, view lifetimes, and collection algebra. The concept model therefore needs to be layered and requirement-driven rather than limited to a few convenience checks.
+The inventory is implementation-oriented. Each entry identifies a concept,
+trait, or compile-time metadata facility that can constrain a public API,
+select an implementation, form a result type, or validate a data-structure
+boundary.
 
-## Design principle
+## Design rules
 
-The concept model should follow the same hierarchy as the requirements:
+### Prefer standard facilities
 
-1. value and lifetime behavior
-2. collection and boundedness behavior
-3. result status and preflight behavior
-4. numeric/text/set/map/function semantics
-5. domain-specific relation and producer behavior
+The library MUST use a standard concept or trait directly when it expresses the
+requirement completely. cljonic MUST NOT introduce a public concept or trait
+that merely renames an equivalent standard facility.
 
-This preserves the project’s durable rule: architecture, specs, and code are constrained by explicit behavior, not by “what happens to compile.”
+Standard facilities used directly include:
 
-## 1) Core value and lifetime concepts
+- `std::default_initializable`
+- `std::copyable`, `std::movable`, and `std::destructible`
+- `std::constructible_from` and `std::convertible_to`
+- `std::invocable` and `std::same_as`
+- `std::integral`, `std::signed_integral`, `std::unsigned_integral`, and `std::floating_point`
+- `std::is_enum_v` and the standard `std::is_nothrow_*` traits
+- `std::ranges::range` and `std::ranges::sized_range` where their semantics apply
 
-These are foundational because the requirements repeatedly require:
+The following are therefore not cljonic inventory entries by themselves:
 
-- immutable-by-default value semantics
-- no hidden allocation
-- no external storage lifetime dependence
-- explicit result-status behavior
-- bounded finite behavior
+- `DefaultElement` as a spelling of `std::default_initializable`;
+- `CopyableValue` as a spelling of `std::copyable`;
+- `MovableValue` as a spelling of `std::movable`;
+- `ConvertibleToElement` as a spelling of `std::convertible_to`;
+- `InvocableWith` as a spelling of `std::invocable`.
 
-### `ValueSemantics<T>`
+### Prefer concepts for public constraints
 
-A type that is copyable, movable, and destructible, and whose semantics are not based on hidden borrowed state or external object lifetime.
+Public templates and free functions SHOULD use named concepts in their
+parameters or `requires` clauses. A cljonic concept is justified when it:
 
-This is the minimum semantic contract for user-visible cljonic values.
+1. combines multiple constraints into a meaningful user-facing capability;
+2. checks a cljonic free-function expression protocol;
+3. adds a cljonic semantic policy not provided by the standard library; or
+4. gives a user-facing diagnostic a precise corrective meaning.
 
-### `OwningValue<T>`
+Supporting traits MAY be used internally when a compile-time policy or metadata
+cannot be expressed as an operation. Such traits are part of this inventory
+when they constrain an API, select a data structure, or determine a result
+type. They SHOULD NOT replace a public concept where a concept can expose the
+same requirement.
 
-A self-contained cljonic value whose validity does not depend on external storage or hidden caches.
+### Concept names are diagnostic interfaces
 
-Examples include collection values, string values, regex results, map entries, producer configuration values, and other first-class library values.
+Names MUST identify the capability the caller needs and, where practical, the
+action needed to fix the violation. Names such as `Valid`, `Supported`,
+`Allowed`, or `Compatible` without a qualified capability are not sufficient.
 
-### `BorrowedView<T>`
+Examples of diagnostic-facing names include:
 
-A non-owning, read-only observation of an existing value.
+- `VectorElement<T>`;
+- `MapKey<K>`;
+- `SetElement<T>`;
+- `Sequenceable<C>`;
+- `MaterializableInto<P, D>`;
+- `StableEqualityComparable<T>`;
+- `StableTotalOrderable<T>`;
+- `ExactlyConvertible<From, To>`; and
+- `CollectionCapacityWithinConfiguredMaximum<N>`.
 
-Requirements for this concept include:
+### Concepts versus static assertions
 
-- no ownership of storage
-- no extension of source lifetime
-- no mutation through the view
-- view validity tied to source lifetime
+The implementation SHOULD use a concept when failure is knowable from types,
+expressions, or non-type template arguments. This allows the compiler to
+identify the failed named constraint at the public API boundary.
 
-### `StableEqualityComparable<T>`
+`static_assert` remains appropriate for:
 
-A type whose equality semantics are explicit and stable, not pointer identity or hidden object state.
+- value-dependent constant-expression checks such as literal length;
+- diagnostics that need to display computed values;
+- constructor invariants involving several dependent values; and
+- implementation invariants that are not API participation constraints.
 
-This matters for set membership, map key semantics, and bounded equality behavior.
+Diagnostics MUST be tested for their intended meaning, not compiler-specific
+wording.
 
-### `TotalOrderable<T>`
+## Phase 0: Existing bootstrap concepts
 
-A type that supports a total ordering when ordering is part of the supported semantics.
+These concepts exist in `src/cljonic-concepts.hpp` and support the current
+vector/count nucleus.
 
-This is a capability, not an assumed property of every value type.
+### `VectorElement<T>`
 
-### `DefaultConstructibleElement<T>`
+- Kind: public concept
+- Definition: `std::default_initializable<T> && std::copyable<T>`
+- Used by: `Vector` element storage and vector construction
+- Requirements: `REQ-VAL-007`, `REQ-COLL-002`, `REQ-DIAG-001`
 
-A type that can be default-initialized in a way that satisfies storage and default-element conventions.
+### `NothrowCopyAssignable<T>`
 
-### `NothrowMovable<T>`
+- Kind: public concept
+- Definition: copy assignment exists, returns `T&`, and is `noexcept`
+- Used by: vector update paths that propagate `noexcept`
+- Requirements: current vector implementation contract
 
-Move construction and move assignment are `noexcept` when the library requires bounded, embedded-safe move behavior.
+### `NothrowConstructible<T, U>`
 
-### `NoAllocation<T>`
-
-A type whose normal construction, copying, movement, lookup, traversal, transformation, and destruction do not require dynamic allocation.
-
-This is a library-level contract, not just a property of one operation.
-
----
-
-## 2) Collection and bounds concepts
-
-These concepts map directly to the bounded collection domain in the requirements.
+- Kind: public concept
+- Definition: `std::constructible_from<T, U>` plus a `noexcept` construction expression
+- Used by: bounded element construction
+- Rationale: this combines a standard construction concept with a distinct exception guarantee
 
 ### `Collection<C>`
 
-A finite logical container with a size and deterministic empty semantics.
+- Kind: bootstrap concept under review
+- Current definition: `c.size()` is convertible to `std::size_t`
+- Decision: retain only until the free-function collection concepts below replace its uses
+- Follow-up: do not expand this concept into a vague general collection hierarchy
 
-This is the general container concept for the library.
+## Phase 1: Value and comparison capabilities
 
-### `SizedCollection<C>`
+### `StableEqualityComparable<T>`
 
-A collection whose logical cardinality is available via `size()` and convertible to `std::size_t`.
+- Kind: public concept
+- Definition: the cljonic equality expression exists and the type is admitted by the stable-equality policy
+- Used by: map keys, set elements, membership, distinctness, frequency counting, finite equality
+- Requirements: `REQ-VAL-007`, `REQ-SEQ-015` through `REQ-SEQ-017`, `REQ-NUM-004` through `REQ-NUM-007`
+- Constraint: raw floating-point types MUST NOT satisfy the default policy
 
-This is close to the current concept in [src/cljonic-concepts.hpp](src/cljonic-concepts.hpp), but it should be more explicit and tied to bounded semantics.
+### `StableTotalOrderable<T>`
 
-### `BoundedCollection<C>`
+- Kind: public concept
+- Definition: the cljonic ordering expression exists and the type is admitted by the stable-order policy
+- Used by: sorting, ordered traversal, `sort_by`, ordered comparisons
+- Requirements: `REQ-VAL-007`, `REQ-NUM-004`, `REQ-NUM-005`, `REQ-NUM-007`
+- Constraint: raw floating-point types MUST NOT satisfy the default policy
 
-A collection whose capacity is known and finite under the operation’s documented constraints.
+### `FiniteDeepEqualityComparable<T>`
 
-Capacity may be compile-time-known or runtime-known, but it must be auditable from the type or instance contract.
+- Kind: public concept
+- Definition: recursive equality is permitted without traversing an unbounded producer
+- Used by: `equal` and nested collection equality
+- Requirements: `REQ-SEQ-015` through `REQ-SEQ-020`
 
-### `ContiguousCollection<C>`
+### `MapKey<K>`
 
-A collection whose elements are laid out in a contiguous, indexable memory model.
+- Kind: public composed concept
+- Definition: stable equality, required value storage, and required key construction capabilities
+- Used by: `Map<K, V, N>` and map lookup operations
+- Requirements: `REQ-VAL-007`, `REQ-COLL-004`, `REQ-NUM-002`, `REQ-PLAT-015`, `REQ-PLAT-028`
 
-This fits `Vector`, `String`, and similar bounded container families.
+### `SetElement<T>`
 
-### `IndexableCollection<C, I>`
+- Kind: public composed concept
+- Definition: stable equality and required value storage capabilities
+- Used by: `Set<T, N>` and set algebra
+- Requirements: `REQ-VAL-007`, `REQ-COLL-005`, `REQ-NUM-002`, `REQ-PLAT-015`
 
-A collection that supports valid indexing and a defined failure or default behavior when an index is invalid.
+## Phase 2: Collection expression protocols
 
-This concept must be paired with a result policy and failure contract.
+These concepts MUST be expressed in terms of cljonic's canonical free
+functions, not merely in terms of member functions.
 
-### `AppendableCollection<C, T>`
+### `Countable<C>`
 
-A collection that supports appending or pushing a value while honoring capacity and bounded-result policy.
+- Requires: `count(c)` with a count-like result
+- Used by: `count`, sequence operations, producers, and capacity calculations
+- Requirements: `REQ-VAL-016`, `REQ-SEQ-004`
 
-### `InsertableCollection<C, K, V>`
+### `EmptyCheckable<C>`
 
-A map-like or set-like collection that supports insertion semantics while preserving boundedness and failure policy.
+- Requires: `empty(c)` returning `bool`
+- Used by: sequence and collection underflow checks
+- Requirements: `REQ-BOUNDS-008`, `REQ-BOUNDS-010`, `REQ-SEQ-002`
 
-### `MutableCollection<C>`
+### `CapacityAware<C>`
 
-A collection whose updates return a new value rather than mutating the input in place.
+- Requires: capacity observation appropriate to the collection
+- Used by: bounded insertion, capacity predicates, and result formation
+- Requirements: `REQ-BOUNDS-010`, `REQ-COLL-007`, `REQ-COLL-008`
 
-### `EmptySafeCollection<C>`
+### `Traversable<C>`
 
-A collection with explicit and deterministic behavior for empty cases.
+- Requires: the common traversal expressions applicable to `C`
+- Used by: `first`, `next`, `rest`, `seq`, and traversal transformations
+- Requirements: `REQ-SEQ-001` through `REQ-SEQ-009`
 
-### `FiniteCapacityAware<C>`
+### `Sequenceable<C>`
 
-A collection whose capacity or maximum size is observable and can be used in preflight and bounded-result decisions.
+- Requires: `seq(c)` returning a supported owning bounded sequence value
+- Used by: generic sequence operations and `into`
+- Requirements: `REQ-SEQ-003`, `REQ-SEQ-004`, `REQ-SEQ-010` through `REQ-SEQ-014`
 
-### `ViewableCollection<C>`
+### `Indexable<C, I>`
 
-A collection that supports read-only viewing without losing lifetime guarantees.
+- Requires: `get(c, i)` and `valid_index(c, i)` with compatible semantics
+- Used by: vector and map-entry indexed access
+- Requirements: `REQ-BOUNDS-001` through `REQ-BOUNDS-011`, `REQ-COLL-002A`, `REQ-SEQ-013`
 
----
+### `Associative<M, K>`
 
-## 3) Result-status and preflight concepts
+- Requires: `get(m, k)`, `contains(m, k)`, and the applicable association operations
+- Used by: maps and key-based free functions
+- Requirements: `REQ-COLL-004`, `REQ-COLL-004A`, `REQ-COLL-004B`, `REQ-FN-002P`
 
-This is the most important conceptual addition relative to the current file. The requirements are explicit that every operation must have a documented result status and, where appropriate, a preflight predicate.
+### `Conjable<C, T>`
 
-### `ResultStatus<S>`
+- Requires: `conj(c, value)` and `can_conj(c, value)`
+- Used by: vector, set, and applicable collection construction
+- Requirements: `REQ-COLL-002`, `REQ-COLL-005`, `REQ-FN-002M`
 
-A value or enum-like type representing one of the required statuses:
+### `StackLike<C>`
 
-- complete result
-- bounded-prefix result
-- default-returning result
-- checked-failure result
-- producer-only result
+- Requires: `peek(c)` and `pop(c)` with documented empty behavior
+- Used by: vector stack-style operations
+- Requirements: `REQ-COLL-002`
 
-### `CompleteResult<R>`
+### `QueueLike<C, T>`
 
-A result object that represents the full valid output of an operation.
-
-### `BoundedPrefixResult<R>`
-
-A deterministic truncated result produced when the complete result cannot fit within the documented capacity or policy.
-
-### `DefaultReturningResult<R>`
-
-A documented default value for absent, invalid, or unavailable results.
-
-### `CheckedFailureResult<R>`
-
-A non-throwing, non-allocating failure indicator that explicitly communicates that the requested result could not be completed under the library’s rules.
-
-### `ProducerResult<P>`
-
-An explicit producer value that represents a materialization source or stream without owning the final result storage.
-
-### `PreflightPredicate<P>`
-
-A non-throwing, non-allocating predicate that answers whether the corresponding operation can produce a complete valid result under the same conditions as the operation itself.
-
-### `OperationOutcome<Op, T>`
-
-A concept tying an operation to its contractually defined outcome category and failure behavior.
-
-### `FitsIntoOperation<O, Dest>`
-
-An operation that has a canonical completeness check for whether a full result fits into the destination representation.
-
-This is the core of the “universal bounded-result and preflight policy” described in the requirements.
-
----
-
-## 4) Numeric concepts
-
-The requirements define a broader numeric family than just capacity arithmetic and indexing.
-
-### `FixedWidthInteger<T>`
-
-An integer type with explicit width and fixed-size semantics.
-
-### `CheckedArithmetic<T>`
-
-Arithmetic operations on the type are checked and must not silently wrap or reinterpret values.
-
-### `RepresentableIn<T, U>`
-
-A value of type `T` can be represented in type `U` under the library’s representability rules.
-
-### `ExplicitlyConvertible<T, U>`
-
-A conversion whose behavior is explicit and documented, including failure semantics when conversion is lossy or impossible.
-
-### `LosslessConvertible<T, U>`
-
-A conversion that preserves the value exactly.
-
-### `ScalarComparable<T>`
-
-A scalar type with defined comparison semantics that are not accidental C++ promotion behavior.
-
-### `DivisionSafe<T>`
-
-A numeric type whose division-by-zero behavior is explicit and documented.
-
-### `BitwiseIntegral<T>`
-
-A fixed-width integral type with defined bitwise operations and explicit semantics.
-
-### `FloatingPointStable<T>`
-
-A floating point type where comparison, conversion, and selection semantics are governed by documented stability rules.
-
----
-
-## 5) String and text concepts
-
-The requirements treat strings as a first-class bounded value layer, not just parser or debug output helpers.
-
-### `StringLike<S>`
-
-A bounded owning text value with known length and capacity, and explicit result semantics for transformations.
-
-### `AsciiPreserving<S>`
-
-A string-like type whose operations preserve ASCII constraints and bounded semantics.
-
-### `StringViewLike<V, S>`
-
-A non-owning string observation tied to the lifetime of an underlying string value.
-
-### `StringAppender<S, Dest>`
-
-A transform or operation that writes into a destination while honoring capacity and bounded-result contracts.
-
-### `StringTransformResult<R>`
-
-A result type whose complete, bounded-prefix, default, or failure behavior is documented by the operation.
-
----
-
-## 6) Set, map, queue, and relation concepts
-
-The requirements explicitly distinguish set algebra, map semantics, queue semantics, and relation-model requirements.
+- Requires: bounded rear insertion, front removal, and front inspection
+- Used by: `Queue<T, N>` operations
+- Requirements: `REQ-COLL-006`, `REQ-ERR-004`
 
 ### `SetLike<S, T>`
 
-A bounded unordered collection with stable equality semantics and algebraic operations such as union, intersection, and difference.
+- Requires: stable membership, insertion, removal, and count expressions
+- Used by: `Set<T, N>` and set algebra
+- Requirements: `REQ-COLL-005` through `REQ-COLL-005B`, `REQ-FN-023`
 
-### `MapLike<M, K, V>`
+### `MapEntry<E, K, V>`
 
-A bounded associative collection with key lookup, insertion, replacement, and explicit failure or default semantics.
+- Requires: key/value access and two-element sequence behavior
+- Used by: map sequencing and map-entry traversal
+- Requirements: `REQ-SEQ-012` and `REQ-SEQ-013`
 
-### `QueueLike<Q, T>`
+### `Viewable<C>`
 
-A bounded FIFO collection with deterministic enqueue/dequeue behavior.
+- Requires: the documented read-only standard view expression for `C`
+- Used by: `view(collection)` and platform interoperability
+- Requirements: `REQ-PLAT-017` through `REQ-PLAT-023`
 
-### `AssociativeCollection<M, K, V>`
+## Phase 3: Result, preflight, and materialization concepts
 
-A more general key-based collection concept covering lookup, membership, and insertion.
+### `CanAssoc<M, K, V>`
 
-### `SubsetPredicate<A, B>`
+- Requires: `can_assoc(m, k, v)` and the corresponding `assoc` expression
+- Used by: bounded map association
+- Requirements: `REQ-FN-002M`, `REQ-COLL-004A`, `REQ-TEST-004A`
 
-A predicate indicating whether `A` is a subset of `B`.
+### `FitsInto<D, P>`
 
-### `SupersetPredicate<A, B>`
+- Requires: `fits_into(destination, producer)` and `into(destination, producer)`
+- Used by: complete producer materialization
+- Requirements: `REQ-BOUNDS-012` through `REQ-BOUNDS-016`, `REQ-FN-009` through `REQ-FN-014C`
 
-A predicate indicating whether `A` is a superset of `B`.
+### `FitsSetAlgebra<S1, S2>`
 
-### `RelationRow<R>`
+- Requires: `fits_set_algebra(left, right)` for compatible set operands
+- Used by: complete set-algebra preflight
+- Requirements: `REQ-FN-023`, `REQ-BOUNDS-017`
 
-A row representation used in a relation model before relational operations are supported.
+### `FitsPrint<D, T>`
 
-### `RelationModel<R>`
-
-A full relation model defining:
-
-- row representation
-- key and value capabilities
-- duplicate semantics
-- nested result behavior
-- traversal order
-- capacity arithmetic
-- complete-result preflight
-- bounded failure behavior
-
-This is explicitly required before relational operations such as `index`, `project`, `rename`, and `join` are supported.
-
----
-
-## 7) Callable / functional concepts
-
-The requirements require bounded free-function-first convenience functionality rather than runtime type dispatch or hidden mutation.
-
-### `CallableObject<F, Args...>`
-
-A function-like object that is invocable with the required arguments.
-
-### `NoCaptureCallable<F>`
-
-A callable whose behavior does not rely on implicit callback retention, hidden mutable cache state, or runtime dispatch.
-
-### `FreeFunctionLike<F>`
-
-An ordinary function object or free function representation that works with cljonic’s bounded functional API.
-
-### `ComposableFunction<F, G>`
-
-A concept capturing the requirement that `comp` supports ordinary right-to-left composition of functions.
-
-### `PredicateFunction<P, T>`
-
-A function-like predicate used for filtering or selection.
-
-### `ResultTransformingFunction<F, In, Out>`
-
-A transformation function whose result type obeys the same bounded-result policy as the library.
-
-### `ClosureStorage<C>`
-
-A type that stores a closure or function object as a value while obeying existing bounded closure storage and non-allocation constraints.
-
----
-
-## 8) Producer concepts
-
-The requirement language strongly distinguishes owning values from explicit producers.
+- Requires: `fits_print(destination, value, maps...)` and `print_to(destination, value, maps...)`
+- Used by: bounded debug formatting
+- Requirements: `REQ-FN-002K`, `REQ-PLAT-033` through `REQ-PLAT-042`
 
 ### `Producer<P>`
 
-A value that represents a materialization source or stream without owning the final materialized result state.
+- Requires: producer observation and materialization expressions
+- Used by: `range`, `repeat`, `cycle`, `iterate`, `repeatedly`, and `into`
+- Requirements: `REQ-VAL-014` through `REQ-VAL-017`, `REQ-FN-009` through `REQ-FN-014C`
 
-### `FiniteProducer<P>`
+### `MaterializableInto<P, D>`
 
-A producer whose source is finite and has explicit length or termination semantics.
+- Requires: producer `P` can materialize into explicit bounded destination `D`
+- Used by: `into`
+- Requirements: `REQ-VAL-014`, `REQ-VAL-015`, `REQ-BOUNDS-012` through `REQ-BOUNDS-016`
 
-### `MaterializableFrom<P, C>`
+## Phase 4: Callable concepts
 
-A producer that can be materialized into the given collection type.
+### `BooleanPredicate<F, T>`
 
-### `IntoTarget<P, C>`
+- Requires: invocation with `T` and an exact `bool` result
+- Used by: `filter`, `take_while`, `drop_while`, `some`, and predicate families
+- Requirements: `REQ-FN-003`, `REQ-FN-008`, `REQ-FN-025`
 
-A producer or source whose materialization contract is defined via an `into`-like target and bounded-result requirements.
+### `UnaryTransform<F, Input, Output>`
 
----
+- Requires: invocation with `Input` and a result convertible to `Output`
+- Used by: `map`, `mapv`, `keep`, `replace`, and string transformations
+- Requirements: `REQ-FN-002G`, `REQ-FN-005` through `REQ-FN-008`
 
-## 9) Enum / keyword / human-readable name concepts
+### `ComposableWith<Outer, Inner>`
 
-These are specific to application-defined enum support and keyword-like map keys.
+- Requires: the return type of `Inner` is accepted by `Outer`
+- Used by: right-to-left `comp`
+- Requirements: `REQ-FN-002H`, `REQ-TEST-064`
 
-### `ScopedEnum<E>`
+### `BoundedCallable<F>`
 
-An `enum class` type used as a domain-specific key.
+- Requires: bounded object size and the required copy, move, destruction, and exception guarantees
+- Used by: stored closures, `comp`, callable constructors, and `Atom::swap`
+- Requirements: `REQ-VAL-021`, `REQ-FN-002H`, `REQ-FN-002I`, `REQ-FN-025`
 
-### `KeywordLike<K>`
+## Phase 5: Numeric concepts
 
-A name-like, stable, explicit domain symbol concept used as a map key or set element.
+### `FixedWidthNumeric<T>`
 
-### `EnumKey<K>`
+- Adds: fixed-width numeric policy beyond `std::integral` or `std::floating_point`
+- Used by: arithmetic, conversion, parsing, and capacity calculations
+- Requirements: `REQ-NUM-000` through `REQ-NUM-017`
 
-A key value that satisfies the application domain’s explicit identity and comparison rules.
+### `DiscreteNumeric<T>`
 
-### `DebugNameProvider<E>`
+- Requires: a numeric domain suitable for deterministic stepping
+- Used by: `range` and integer-step operations
+- Requirements: `REQ-NUM-003`, `REQ-FN-012`
 
-A type that can provide a human-readable debug name without changing the enum’s identity or storage semantics.
+### `BitwiseIntegral<T>`
 
----
+- Requires: fixed-width bitwise operation expressions and valid shift policy
+- Used by: the fixed-width bitwise family
+- Requirements: `REQ-NUM-017`
 
-## 10) Recommended full initial concept set
+### `ExactlyConvertible<From, To>`
 
-If I were implementing the actual concept suite for this library, I would start with these as the canonical public set:
+- Requires: a compile-time-known exact representable conversion
+- Used by: default numeric conversions
+- Requirements: `REQ-NUM-008` through `REQ-NUM-013`
 
-1. `ValueSemantics`
-2. `OwningValue`
-3. `BorrowedView`
-4. `NoAllocation`
-5. `Collection`
-6. `SizedCollection`
-7. `BoundedCollection`
-8. `ContiguousCollection`
-9. `IndexableCollection`
-10. `AppendableCollection`
-11. `InsertableCollection`
-12. `MutableCollection`
-13. `SetLike`
-14. `MapLike`
-15. `QueueLike`
-16. `StringLike`
-17. `Producer`
-18. `CompleteResult`
-19. `BoundedPrefixResult`
-20. `DefaultReturningResult`
-21. `CheckedFailureResult`
-22. `PreflightPredicate`
-23. `FixedWidthInteger`
-24. `CheckedArithmetic`
-25. `RepresentableIn`
-26. `ExplicitlyConvertible`
-27. `ScalarComparable`
-28. `CallableObject`
-29. `PredicateFunction`
-30. `ComposableFunction`
-31. `ScopedEnum`
-32. `KeywordLike`
-33. `RelationModel`
-34. `ResultStatus`
+### `CheckedConvertible<From, To>`
 
-That is the concept set I think is needed to implement the library in a disciplined, requirement-driven way.
+- Requires: an explicitly checked conversion path with a documented failure result
+- Used by: runtime conversion operations
+- Requirements: `REQ-NUM-009` through `REQ-NUM-013`
 
-## Why this is the right shape
+### `CheckedArithmetic<T>`
 
-The existing concepts in [src/cljonic-concepts.hpp](src/cljonic-concepts.hpp) are useful but incomplete because they only model:
+- Requires: the checked arithmetic operation and its applicable preflight expressions
+- Used by: `add`, `sub`, `mult`, `div`, `quot`, `rem`, and `mod`
+- Requirements: `REQ-NUM-015` through `REQ-NUM-017`
 
-- default-initializable value storage
-- copyability
-- convertibility
-- collection size detection
+## Phase 6: String, regex, and formatting concepts
 
-They do not model the library’s real constraints:
+### `BoundedString<S>`
 
-- bounded capacity and preflight
-- result-status classification
-- no-allocation requirements
-- string and set algebra semantics
-- producer semantics
-- numeric safety
-- relation model gating
-- view lifetime rules
+- Requires: bounded owning ASCII string expressions and explicit content capacity
+- Used by: `String<N>` and string transformations
+- Requirements: `REQ-COLL-012` through `REQ-COLL-017`, `REQ-FN-022`
 
-Those are exactly the central concerns described in [cljonic-requirements.md](cljonic-requirements.md).
+### `AsciiString<S>`
 
-## Summary
+- Requires: the documented `0x01` through `0x7F` content policy
+- Used by: construction, parsing, transformation, and formatting
+- Requirements: `REQ-COLL-013`, `REQ-PLAT-038` through `REQ-PLAT-041`
 
-The concept model should be a requirement-driven concept lattice, not a list of convenience compile checks. The minimum set should cover the real cljonic contract: bounded values, collection semantics, explicit result behavior, numeric safety, text support, map/set/queue semantics, producers, callables, and relation gating.
+### `BoundedRegex<R>`
 
-That is the conceptual foundation I would propose before we decide which parts are immediate implementation work and which parts belong to later library layers.
+- Requires: bounded pattern storage and the supported matching expressions
+- Used by: `Regex`, runtime patterns, matchers, and match results
+- Requirements: `REQ-VAL-018`, `REQ-FN-015` through `REQ-FN-020`, `REQ-PLAT-011`
+
+### `PrintableTo<D, T>`
+
+- Requires: bounded formatting into explicit destination `D`
+- Used by: `print_to` and recursive debug formatting
+- Requirements: `REQ-FN-002K`, `REQ-PLAT-033` through `REQ-PLAT-042`
+
+### `SupportedEnumKey<E>`
+
+- Requires: scoped enum identity and the equality/storage expressions required by map or set use
+- Used by: application-defined enum keys and set elements
+- Requirements: `REQ-PLAT-028`, `REQ-PLAT-035`, `REQ-PLAT-038` through `REQ-PLAT-042`
+
+## Supporting compile-time traits and metadata
+
+These are not preferred over concepts. They are included because they provide
+compile-time information that cannot be recovered from a normal expression
+concept and that affects API or data-structure formation.
+
+### Capability policy traits
+
+```text
+is_stable_equality<T>
+is_stable_total_order<T>
+is_finite_observable<T>
+is_non_allocating_value<T>
+is_supported_aggregate<T>
+```
+
+These traits SHOULD remain in `cljonic::detail` and SHOULD be surfaced through
+named public concepts where a public constraint is needed.
+
+### Collection metadata
+
+```text
+element_type_of<C>
+key_type_of<C>
+mapped_type_of<C>
+collection_kind_of<C>
+capacity_of<C>
+maximum_capacity_of<C>
+view_type_of<C>
+```
+
+These metadata facilities support capacity validation, free-function
+constraints, standard view selection, and result-type formation.
+
+### Producer and result metadata
+
+```text
+producer_value_type<P>
+producer_cardinality<P>
+is_finite_producer<P>
+is_unbounded_producer<P>
+result_value_type<Operation, Arguments...>
+result_capacity_of<Operation, Arguments...>
+```
+
+These are justified only where they affect a public result type, bounded
+materialization, or compile-time rejection. They MUST NOT be used to hide
+runtime cardinality or to introduce implicit materialization.
+
+### Capacity concept
+
+```cpp
+template <std::size_t capacity>
+concept CollectionCapacityWithinConfiguredMaximum =
+    capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
+```
+
+This concept constrains collection declarations and derived result capacities.
+
+## Deliberately excluded from the C++ concept inventory
+
+The following remain requirements, specifications, or tests rather than
+concepts or traits:
+
+- whether an implementation actually performs dynamic allocation;
+- callback purity;
+- runtime source lifetime of a view;
+- agreement between a preflight predicate and its operation;
+- deterministic traversal order;
+- preservation of input values;
+- whether a runtime result is complete or a bounded prefix;
+- absence of hidden mutable state;
+- the approved relation model for `index`, `project`, `rename`, and `join`.
+
+They MUST still be documented and tested. They are excluded here only because
+they do not constrain a declaration through a directly implementable C++
+concept or compile-time metadata facility.
+
+## Incremental implementation checklist
+
+1. Preserve the Phase 0 concepts while current vector/count code depends on them.
+2. Add comparison and element concepts before map or set key constraints.
+3. Add collection expression concepts as each free-function family is specified.
+4. Add capacity metadata before derived-capacity result types.
+5. Add producer and preflight concepts before producer materialization.
+6. Add callable concepts before higher-order operations.
+7. Add numeric concepts before numeric convenience functions.
+8. Add string, regex, formatting, and enum concepts with their corresponding APIs.
+9. Add compile-failure tests for every public concept boundary.
+10. Remove bootstrap concepts that become redundant after the refined concepts are adopted.
+
+Every new concept or supporting trait MUST identify its requirements, public
+consumers, dependencies, compile-time acceptance cases, and compile-time
+rejection cases before it is used by a public API.
