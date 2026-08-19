@@ -10,7 +10,7 @@
 namespace cljonic {
 
 /** \anchor Vector
- * \b Vector is a fixed-capacity collection with copy-on-modify behavior.
+ * \b Vector is a CopyOnModifyCollection with fixed-capacity storage.
   * Construction with more initializers than capacity is a compile-time
   * error.
  *
