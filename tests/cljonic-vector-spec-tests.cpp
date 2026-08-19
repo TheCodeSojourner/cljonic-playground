@@ -59,14 +59,16 @@ TEST_CASE("count returns Vector logical cardinality", "[count][vector]")
     using cljonic::Vector;
 
     TRACE_ID("entity-fields.CountRequest");
-    TRACE_ID("invariant.CountRequest.CountRequiresVectorSubject");
+    TRACE_ID("entity-fields.Collection");
+    TRACE_ID("invariant.CountRequest.CountRequiresCollectionSubject");
+    TRACE_ID("invariant.Collection.LogicalSizeIsNonNegative");
     TRACE_ID("invariant.CountRequest.ResolvedCountRequiresLogicalSizeMatch");
     TRACE_ID("invariant.CountRequest.ResolvedCountRequiresEmptyReturnsZero");
     TRACE_ID("invariant.CountRequest.ResolvedCountRequiresNonNegativeResult");
-    TRACE_ID("rule-failure.CountVectorCardinality.1");
-    TRACE_ID("rule-failure.CountVectorCardinality.2");
-    TRACE_ID("rule-failure.CountVectorCardinality.3");
-    TRACE_ID("rule-success.CountVectorCardinality");
+    TRACE_ID("rule-failure.CountCollectionCardinality.1");
+    TRACE_ID("rule-failure.CountCollectionCardinality.2");
+    TRACE_ID("rule-failure.CountCollectionCardinality.3");
+    TRACE_ID("rule-success.CountCollectionCardinality");
     TRACE_ID("surface-actor.CountSurface");
     TRACE_ID("surface-provides.CountSurface");
 
