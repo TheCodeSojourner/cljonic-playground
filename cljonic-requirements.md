@@ -421,6 +421,8 @@ REQ-SEQ-022. The first-pass collection-shaping and traversal family MUST include
 
 REQ-SEQ-022A. `interleave` MUST alternate elements from each source in round-robin order and MUST terminate as soon as any input source is exhausted. The operation MUST be defined as a bounded sequencing operation whose complete result is the deterministic shortest-prefix result over the input sources. It MUST NOT implicitly materialize a hidden cache or mutate its inputs, and it MUST follow the same bounded-result and preflight rules as the rest of the first-pass traversal family.
 
+REQ-SEQ-022B. Collection-specific operation applicability MUST be explicit and type-scoped. Generated collections MUST NOT support mutation-style operations such as `conj`, `conj_M`, `assoc`, or `dissoc` without a separately approved producer-materialization capability; `Sort`, `Shuffle`, and `Replace` apply only to stored collections; transforms over generated collections produce owning bounded `Vector` results sized to the applicable worst-case result capacity; set-algebra operations are valid only for the supported set domain; and map-producing grouping operations such as `group_by`, `frequencies`, and `zipmap` produce `Map` results under the documented bounded result and capacity rules.
+
 ### Free Functions and Functional Operations
 
 REQ-FN-001. The primary user-facing operations MUST be free functions rather than requiring users to learn collection-specific member APIs.
