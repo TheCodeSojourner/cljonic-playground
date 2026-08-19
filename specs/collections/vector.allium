@@ -6,6 +6,7 @@ entity VectorCollection {
     supports_literal_deduced_construction: Boolean
     supports_empty_explicit_capacity_construction: Boolean
     oversized_initializer_is_compile_time_failure: Boolean
+    oversized_initializer_diagnostic_identifies_capacity: Boolean
 
     invariant CapacityIsNonNegative {
         this.capacity_limit >= 0
@@ -29,6 +30,10 @@ entity VectorCollection {
 
     invariant OversizedInitializerIsCompileTimeFailure {
         this.oversized_initializer_is_compile_time_failure = true
+    }
+
+    invariant OversizedInitializerDiagnosticIdentifiesCapacity {
+        this.oversized_initializer_diagnostic_identifies_capacity = true
     }
 }
 
