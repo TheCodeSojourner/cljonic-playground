@@ -3,88 +3,37 @@
 use "./vector.allium" as vector
 
 entity CountRequest {
-    count_state: pending | resolved | rejected
-    target_kind: vector | map | set | string
-    vector_subject: vector/VectorCollection?
-    collection_maximum_element_count_policy_respected: Boolean
-    count_matches_target_cardinality: Boolean
-    empty_target_returns_zero: Boolean
+    vector_subject: vector/VectorCollection
+    count_matches_logical_size: Boolean
+    empty_vector_returns_zero: Boolean
     count_result_is_non_negative: Boolean
 
-    transitions count_state {
-        pending -> resolved
-        pending -> rejected
-        terminal: resolved, rejected
+    invariant CountRequiresVectorSubject {
+        this.vector_subject != null
     }
 
-    invariant ResolvedCountRequiresCardinalityMatch {
-        this.count_state = resolved implies this.count_matches_target_cardinality = true
+    invariant ResolvedCountRequiresLogicalSizeMatch {
+        this.count_matches_logical_size = true
     }
 
     invariant ResolvedCountRequiresEmptyReturnsZero {
-        this.count_state = resolved implies this.empty_target_returns_zero = true
+        this.empty_vector_returns_zero = true
     }
 
     invariant ResolvedCountRequiresNonNegativeResult {
-        this.count_state = resolved implies this.count_result_is_non_negative = true
-    }
-
-    invariant ResolvedCountRequiresCollectionMaximumElementCountPolicyRespect {
-        this.count_state = resolved implies this.collection_maximum_element_count_policy_respected = true
-    }
-
-    invariant VectorTargetRequiresVectorSubject {
-        this.target_kind = vector implies this.vector_subject != null
-    }
-
-    invariant VectorSubjectRequiresValidVectorState {
-        this.vector_subject != null implies this.vector_subject.collection_state in {empty, populated, at_capacity}
+        this.count_result_is_non_negative = true
     }
 }
 
-rule ResolveCountSemantics {
+rule CountVectorCardinality {
     when: Count(request)
-    requires: request.count_state = pending
-    requires: request.target_kind in {vector, map, set, string}
-    requires: request.collection_maximum_element_count_policy_respected = true
-    requires: request.count_matches_target_cardinality = true
-    requires: request.empty_target_returns_zero = true
+    requires: request.count_matches_logical_size = true
+    requires: request.empty_vector_returns_zero = true
     requires: request.count_result_is_non_negative = true
-    ensures: request.count_state = resolved
+    ensures: request.count_matches_logical_size = true
 }
 
-rule RejectCountSemanticsOnCollectionMaximumElementCountPolicyViolation {
-    when: Count(request)
-    requires: request.count_state = pending
-    requires: request.collection_maximum_element_count_policy_respected = false
-    ensures: request.count_state = rejected
-}
-
-rule RejectCountSemanticsOnCardinalityMismatch {
-    when: Count(request)
-    requires: request.count_state = pending
-    requires: request.count_matches_target_cardinality = false
-    ensures: request.count_state = rejected
-}
-
-rule RejectCountSemanticsOnEmptyBehaviorMismatch {
-    when: Count(request)
-    requires: request.count_state = pending
-    requires: request.count_matches_target_cardinality = true
-    requires: request.empty_target_returns_zero = false
-    ensures: request.count_state = rejected
-}
-
-rule RejectCountSemanticsOnInvalidResultRange {
-    when: Count(request)
-    requires: request.count_state = pending
-    requires: request.count_matches_target_cardinality = true
-    requires: request.empty_target_returns_zero = true
-    requires: request.count_result_is_non_negative = false
-    ensures: request.count_state = rejected
-}
-
-actor CountOperator { identified_by: CountRequest where count_request.count_state = pending }
+actor CountOperator { identified_by: CountRequest }
 
 surface CountSurface {
     facing operator: CountOperator
