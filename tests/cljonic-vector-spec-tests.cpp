@@ -4,7 +4,8 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
-TEST_CASE("Vector construction establishes logical size", "[vector]") {
+TEST_CASE("Vector construction establishes logical size", "[vector]")
+{
   using cljonic::Vector;
 
   TRACE_ID("entity-fields.VectorCollection");
@@ -30,17 +31,21 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
 }
 
 TEST_CASE("Vector element storage requires non-throwing operations",
-          "[vector][concepts]") {
-  struct ThrowingDefault {
+          "[vector][concepts]")
+{
+  struct ThrowingDefault
+  {
     ThrowingDefault() noexcept(false) {}
     ThrowingDefault(const ThrowingDefault &) noexcept = default;
     ThrowingDefault &operator=(const ThrowingDefault &) noexcept = default;
   };
 
-  struct ThrowingAssignment {
+  struct ThrowingAssignment
+  {
     ThrowingAssignment() noexcept = default;
     ThrowingAssignment(const ThrowingAssignment &) noexcept = default;
-    ThrowingAssignment &operator=(const ThrowingAssignment &) noexcept(false) {
+    ThrowingAssignment &operator=(const ThrowingAssignment &) noexcept(false)
+    {
       return *this;
     }
   };
@@ -56,8 +61,10 @@ TEST_CASE("Vector element storage requires non-throwing operations",
 }
 
 TEST_CASE("Vector arguments require non-throwing value copies",
-          "[vector][concepts]") {
-  struct ThrowingCopy {
+          "[vector][concepts]")
+{
+  struct ThrowingCopy
+  {
     ThrowingCopy() noexcept = default;
     ThrowingCopy(const ThrowingCopy &) noexcept(false) {}
     operator int() const noexcept { return 1; }
@@ -68,7 +75,8 @@ TEST_CASE("Vector arguments require non-throwing value copies",
 }
 
 TEST_CASE("Vector indexed access is bounded and probeable",
-          "[vector][indexed-access]") {
+          "[vector][indexed-access]")
+{
   using cljonic::Vector;
 
   TRACE_ID("entity-fields.VectorCollection");
@@ -85,7 +93,8 @@ TEST_CASE("Vector indexed access is bounded and probeable",
   STATIC_REQUIRE(values(2U, 99) == 99);
 }
 
-TEST_CASE("count returns Vector logical cardinality", "[count][vector]") {
+TEST_CASE("count returns Vector logical cardinality", "[count][vector]")
+{
   using cljonic::count;
   using cljonic::Vector;
 
