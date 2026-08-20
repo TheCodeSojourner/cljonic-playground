@@ -67,6 +67,24 @@ TEST_CASE("Vector arguments require non-throwing value copies",
       cljonic::concepts::NothrowElementConstruction<int, decltype(argument)>);
 }
 
+TEST_CASE("Vector indexed access is bounded and probeable",
+          "[vector][indexed-access]") {
+  using cljonic::Vector;
+
+  TRACE_ID("entity-fields.VectorCollection");
+  TRACE_ID("invariant.VectorCollection.SupportsIndexedLookup");
+  TRACE_ID("invariant.VectorCollection.SupportsIndexedFallbackLookup");
+  TRACE_ID("invariant.VectorCollection.InvalidIndexReturnsDefaultElement");
+  TRACE_ID("invariant.VectorCollection.InvalidIndexReturnsSuppliedFallback");
+
+  constexpr Vector<int, 4> values{10, 20};
+
+  STATIC_REQUIRE(values(0U) == 10);
+  STATIC_REQUIRE(values(1U) == 20);
+  STATIC_REQUIRE(values(2U) == 0);
+  STATIC_REQUIRE(values(2U, 99) == 99);
+}
+
 TEST_CASE("count returns Vector logical cardinality", "[count][vector]") {
   using cljonic::count;
   using cljonic::Vector;
