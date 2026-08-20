@@ -9,11 +9,8 @@ entity VectorCollection {
     oversized_initializer_diagnostic_identifies_capacity: Boolean
     supports_indexed_lookup: Boolean
     supports_indexed_fallback_lookup: Boolean
-    supports_valid_index_probe: Boolean
     invalid_index_returns_default_element: Boolean
     invalid_index_returns_supplied_fallback: Boolean
-    indexed_access_uses_logical_size: Boolean
-    negative_integral_index_is_invalid: Boolean
 
     invariant CapacityIsNonNegative {
         this.capacity_limit >= 0
@@ -51,10 +48,6 @@ entity VectorCollection {
         this.supports_indexed_fallback_lookup = true
     }
 
-    invariant SupportsValidIndexProbe {
-        this.supports_valid_index_probe = true
-    }
-
     invariant InvalidIndexReturnsDefaultElement {
         this.invalid_index_returns_default_element = true
     }
@@ -63,13 +56,6 @@ entity VectorCollection {
         this.invalid_index_returns_supplied_fallback = true
     }
 
-    invariant IndexedAccessUsesLogicalSize {
-        this.indexed_access_uses_logical_size = true
-    }
-
-    invariant NegativeIntegralIndexIsInvalid {
-        this.negative_integral_index_is_invalid = true
-    }
 }
 
 actor VectorOperator { identified_by: VectorCollection }
