@@ -83,17 +83,17 @@ $(function() {
 <h2 class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> collection_type&gt;</div>
 <div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_collection.html">cljonic::concepts::Collection</a> =  <span class="keyword">requires</span>(<span class="keyword">const</span> collection_type &amp;c) {</div>
-<div class="line">  { c.size() } -&gt; std::convertible_to&lt;std::size_t&gt;;</div>
+<div class="line">  { c.size() } -&gt; std::same_as&lt;std::size_t&gt;;</div>
 <div class="line">}</div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_collection.html">cljonic::concepts::Collection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00042">cljonic-concepts.hpp:42</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_collection.html">cljonic::concepts::Collection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00041">cljonic-concepts.hpp:41</a></div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Requires that <code>collection_type</code> exposes a <code>size()</code> member returning a count of logical elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00042">42</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00041">41</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 18 2026 16:28:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Thu Aug 20 2026 08:37:48 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

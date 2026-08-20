@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['populated_0',['populated',['../namespacecljonic.html#a3dc5a51730fa4fa87c00af14447f5334adc89f87e58fcbb1ad5959f756dbed9e5',1,'cljonic']]],
-  ['predicate_1',['Predicate',['../index.html#autotoc_md6',1,'']]],
-  ['primitive_2',['Primitive',['../index.html#autotoc_md7',1,'']]]
+  ['range_20repeat_20set_20and_20or_20string_0',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]],
+  ['regex_20functions_1',['Regex Functions',['../index.html#autotoc_md9',1,'']]],
+  ['repeat_20set_20and_20or_20string_2',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]]
 ];

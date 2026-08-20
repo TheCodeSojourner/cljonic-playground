@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['or_20string_0',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]]
+  ['predicate_0',['Predicate',['../index.html#autotoc_md6',1,'']]],
+  ['primitive_1',['Primitive',['../index.html#autotoc_md7',1,'']]]
 ];
