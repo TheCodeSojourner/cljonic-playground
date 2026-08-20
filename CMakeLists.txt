@@ -19,6 +19,7 @@ if(BUILD_TESTING)
     FetchContent_MakeAvailable(Catch2)
 
     add_executable(cljonic_tests
+        tests/cljonic-concepts-spec-tests.cpp
         tests/cljonic-vector-spec-tests.cpp
         tests/cljonic-core-count-spec-tests.cpp
     )
