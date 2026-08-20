@@ -1,4 +1,5 @@
 ---
+type: Reference
 title: Collection API Surface Discipline
 status: active
 category: api

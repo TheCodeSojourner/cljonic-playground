@@ -1,4 +1,9 @@
-💡 cljonic core design decisions:
+---
+type: Insight
+symbol: 💡
+title: cljonic-design-notes
+---
+cljonic core design decisions:
 - C++23, concepts and constexpr throughout
 - Embedded: no heap, no exceptions; std::array-backed storage only
 - Value semantics: copy-on-modify (not Clojure persistent internals)

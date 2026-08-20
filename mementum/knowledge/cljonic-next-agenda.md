@@ -1,4 +1,5 @@
 ---
+type: Reference
 title: cljonic Next Discussion Agenda
 status: open
 category: roadmap

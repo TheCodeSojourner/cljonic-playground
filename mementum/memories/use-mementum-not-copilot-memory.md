@@ -1,4 +1,9 @@
-🎯 All gybis-relevant memories and knowledge belong in the mementum system (`mementum/memories/` and `mementum/knowledge/`), not the Copilot memory system (`/memories/repo/`).
+---
+type: Decision
+symbol: 🎯
+title: use-mementum-not-copilot-memory
+---
+All gybis-relevant memories and knowledge belong in the mementum system (`mementum/memories/` and `mementum/knowledge/`), not the Copilot memory system (`/memories/repo/`).
 
 - mementum memories: `mementum/memories/{slug}.md` | <200 words | one insight per file | git-committed
 - mementum knowledge: `mementum/knowledge/{topic}.md` | frontmatter required | for larger/structured content

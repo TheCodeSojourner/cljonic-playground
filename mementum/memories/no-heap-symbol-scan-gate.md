@@ -1,4 +1,9 @@
-🔁 Three-layer no-heap verification in `make no-heap`:
+---
+type: Pattern
+symbol: 🔁
+title: no-heap-symbol-scan-gate
+---
+Three-layer no-heap verification in `make no-heap`:
 1. `no-heap-src` — `rg` source scan blocking heap APIs and heap-backed STL containers in `src/`
 2. Probe build — compiles `cljonic_no_heap_probe` dedicated harness (excluded from default test runs)
 3. `no-heap-symbols` — `nm` binary scan for forbidden allocator symbols:

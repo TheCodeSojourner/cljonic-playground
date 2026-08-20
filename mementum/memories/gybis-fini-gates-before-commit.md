@@ -1,4 +1,9 @@
-🔄 gybis-fini: Quality gates must precede git commit
+---
+type: Shift
+symbol: 🔄
+title: gybis-fini-gates-before-commit
+---
+gybis-fini: Quality gates must precede git commit
 
 **Issue:** In session 2026-08-11-mixed-collection-return-types-clarification, quality gates were run AFTER the git commit. This is backwards.
 

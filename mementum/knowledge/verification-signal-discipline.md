@@ -1,4 +1,5 @@
 ---
+type: Reference
 title: Verification Signal Discipline
 status: active
 category: verification

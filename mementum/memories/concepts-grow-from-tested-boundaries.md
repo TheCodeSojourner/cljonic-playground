@@ -1,1 +1,6 @@
-🔁 Introduce a cljonic concept or trait only when a tested API or data-structure boundary requires it. Generalize only after a second real use exposes a stable common contract. Require each addition to identify its consumers, what it adds beyond standard facilities, diagnostic value, dependencies, and compile-time acceptance/rejection cases.
+---
+type: Pattern
+symbol: 🔁
+title: concepts-grow-from-tested-boundaries
+---
+Introduce a cljonic concept or trait only when a tested API or data-structure boundary requires it. Generalize only after a second real use exposes a stable common contract. Require each addition to identify its consumers, what it adds beyond standard facilities, diagnostic value, dependencies, and compile-time acceptance/rejection cases.

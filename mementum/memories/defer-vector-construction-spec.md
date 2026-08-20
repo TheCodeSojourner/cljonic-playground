@@ -1,1 +1,6 @@
-🔁 Defer `VectorConstruction` specification obligations while restarting the minimal `count(Vector)` slice. The current vector/count implementation still needs construction behavior to create test fixtures, but construction lifecycle, rejection rules, capacity-limit policy, and non-throwing storage guarantees should return as a separately specified capability after count is stable. Reintroduce and generalize that capability for the collection types identified by `vocabulary.md` and `cljonic-requirements.md`, with tests and traceability for each supported collection type.
+---
+type: Pattern
+symbol: 🔁
+title: defer-vector-construction-spec
+---
+Defer `VectorConstruction` specification obligations while restarting the minimal `count(Vector)` slice. The current vector/count implementation still needs construction behavior to create test fixtures, but construction lifecycle, rejection rules, capacity-limit policy, and non-throwing storage guarantees should return as a separately specified capability after count is stable. Reintroduce and generalize that capability for the collection types identified by `vocabulary.md` and `cljonic-requirements.md`, with tests and traceability for each supported collection type.

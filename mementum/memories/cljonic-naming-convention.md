@@ -1,4 +1,9 @@
-🔁 All src and test files use `cljonic-` prefix with dashes. Patterns:
+---
+type: Pattern
+symbol: 🔁
+title: cljonic-naming-convention
+---
+All src and test files use `cljonic-` prefix with dashes. Patterns:
 - `src/cljonic-{entity}.hpp` — collection type (e.g., `cljonic-vector.hpp`)
 - `src/cljonic-concepts.hpp` — shared concept constraints
 - `src/cljonic-core-{function}.hpp` — one file per core function (e.g., `cljonic-core-count.hpp`)

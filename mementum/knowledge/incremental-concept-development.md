@@ -1,4 +1,5 @@
 ---
+type: Reference
 title: Incremental Concept Development
 status: active
 category: implementation

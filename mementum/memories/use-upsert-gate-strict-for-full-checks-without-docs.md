@@ -1,4 +1,9 @@
-🎯 Use `make upsert-gate-strict` as the default full validation gate during iterative development when docs generation is not required.
+---
+type: Decision
+symbol: 🎯
+title: use-upsert-gate-strict-for-full-checks-without-docs
+---
+Use `make upsert-gate-strict` as the default full validation gate during iterative development when docs generation is not required.
 
 Rationale:
 - Covers lint, complexity, sanitizer, coverage, strict spec-to-code traceability, and no-heap verification.

@@ -1,1 +1,6 @@
-💡 When introducing local CMake-based tooling or test infrastructure, generated build directories and fetched third-party content (for example CMake build trees and `_deps/` from `FetchContent`) should not be tracked in Git. Track only hand-authored source and configuration files, and document clean-repo bootstrap steps in the root `README.md` so a fresh clone can recreate local artifacts.
+---
+type: Insight
+symbol: 💡
+title: generated-build-artifacts-belong-in-gitignore
+---
+When introducing local CMake-based tooling or test infrastructure, generated build directories and fetched third-party content (for example CMake build trees and `_deps/` from `FetchContent`) should not be tracked in Git. Track only hand-authored source and configuration files, and document clean-repo bootstrap steps in the root `README.md` so a fresh clone can recreate local artifacts.

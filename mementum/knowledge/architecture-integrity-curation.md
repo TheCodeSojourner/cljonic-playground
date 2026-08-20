@@ -1,4 +1,5 @@
 ---
+type: Reference
 title: Architecture Integrity Curation
 status: active
 category: architecture

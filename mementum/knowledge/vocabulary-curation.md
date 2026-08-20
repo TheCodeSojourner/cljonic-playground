@@ -1,4 +1,5 @@
 ---
+type: Reference
 title: Vocabulary Curation
 status: active
 category: vocabulary

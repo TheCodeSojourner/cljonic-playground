@@ -1,4 +1,9 @@
-💡 Instruction architecture should keep stable instruction metadata separate from project-owned architecture.
+---
+type: Insight
+symbol: 💡
+title: instruction-architecture-root-file
+---
+Instruction architecture should keep stable instruction metadata separate from project-owned architecture.
 
 - Keep architecture in root-level `ARCHITECTURE.md`.
 - Keep stable/replaceable instruction preamble in dedicated instruction files.

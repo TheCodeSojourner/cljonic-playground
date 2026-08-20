@@ -1,4 +1,5 @@
 ---
+type: Reference
 title: Mementum Synthesis
 status: active
 category: synthesis

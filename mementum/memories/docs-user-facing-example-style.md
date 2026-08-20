@@ -1,4 +1,9 @@
-💡 User-facing cljonic doc examples should be contract-first and avoid implementation-detail terminology.
+---
+type: Insight
+symbol: 💡
+title: docs-user-facing-example-style
+---
+User-facing cljonic doc examples should be contract-first and avoid implementation-detail terminology.
 
 - Keep prose concise and non-speculative.
 - Prefer named examples with `const auto name = Type{...};` for readability.

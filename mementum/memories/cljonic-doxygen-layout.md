@@ -1,4 +1,9 @@
-🎯 `doc/` = committed source; `docs/` = committed generated HTML for GitHub Pages.
+---
+type: Decision
+symbol: 🎯
+title: cljonic-doxygen-layout
+---
+`doc/` = committed source; `docs/` = committed generated HTML for GitHub Pages.
 
 - `doc/Doxyfile` — `INPUT = ../src`, `OUTPUT_DIRECTORY = ../docs`, `HTML_OUTPUT = .`
 - `doc/doc-logo.png` — project logo

@@ -1,4 +1,5 @@
 ---
+type: Reference
 title: AI Upsert Quality Loop
 status: active
 category: workflow
