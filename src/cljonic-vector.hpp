@@ -11,11 +11,10 @@ namespace cljonic {
 
 /** \anchor Vector
  * \b Vector is a CopyOnModifyCollection with fixed-capacity storage.
-  * Construction with more initializers than capacity is a compile-time
-  * error.
+ * Construction with more initializers than capacity is a compile-time error.
  *
- * This example focuses on collection construction. Free functions that operate
- * on collections are documented with their own headers.
+ * This example covers bounded construction and indexed observation. Free
+ * functions that operate on collections are documented with their own headers.
  *
  ~~~~~{.cpp}
  #include "cljonic-core.hpp"
@@ -32,14 +31,20 @@ namespace cljonic {
    [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
    [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
    [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
-   [[maybe_unused]] constexpr auto doubles_populated =
-       Vector<double, 3>{1.5, 2.5};
-   [[maybe_unused]] constexpr auto pixels_populated =
-       Vector{Pixel{1, 2}, Pixel{3, 4}};
+   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
+   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
    [[maybe_unused]] constexpr auto nested_int_vectors =
        Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
    [[maybe_unused]] constexpr auto nested_alias_vectors =
        Vector{Inner{4, 5}, Inner{6}};
+
+   constexpr Vector<int, 4> values{10, 20};
+   static_assert(values(0U) == 10);
+   static_assert(values(2U) == 0);
+   static_assert(values(2U, 99) == 99);
+   static_assert(std::same_as<decltype(doubles_populated(0U)), double>);
+   static_assert(pixels_populated(0U).x == 1);
+   static_assert(pixels_populated(1U).y == 4);
 
    return 0;
  }
