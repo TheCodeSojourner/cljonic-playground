@@ -1,5 +1,6 @@
 entity-fields.Collection
 entity-fields.CountRequest
+entity-fields.GetAccess
 entity-fields.IndexedAccess
 entity-fields.VectorCollection
 invariant.Collection.LogicalSizeIsNonNegative
@@ -7,6 +8,15 @@ invariant.CountRequest.CountRequiresCollectionSubject
 invariant.CountRequest.ResolvedCountRequiresEmptyReturnsZero
 invariant.CountRequest.ResolvedCountRequiresLogicalSizeMatch
 invariant.CountRequest.ResolvedCountRequiresNonNegativeResult
+invariant.GetAccess.AccessIsNonAllocating
+invariant.GetAccess.AccessIsNonThrowing
+invariant.GetAccess.DefaultValueMatchesCollectionDefaultElement
+invariant.GetAccess.FallbackValueReplacesDefaultValueOnlyWhenInvalid
+invariant.GetAccess.GetAccessRequiresIndexedVectorSubject
+invariant.GetAccess.NegativeIndexIsInvalid
+invariant.GetAccess.SupportsDefaultElementAccess
+invariant.GetAccess.SupportsFallbackAccess
+invariant.GetAccess.ValidIndexProbeIsAuthoritative
 invariant.IndexedAccess.IndexedAccessRequiresVectorSubject
 invariant.IndexedAccess.IndexedAccessUsesLogicalSize
 invariant.IndexedAccess.NegativeIntegralIndexIsInvalid
@@ -30,6 +40,8 @@ rule-failure.CountCollectionCardinality.2
 rule-failure.CountCollectionCardinality.3
 rule-success.CountCollectionCardinality
 surface-actor.CountSurface
+surface-actor.GetSurface
 surface-actor.IndexedAccessSurface
 surface-provides.CountSurface
+surface-provides.GetSurface
 surface-provides.IndexedAccessSurface
