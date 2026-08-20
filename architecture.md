@@ -145,6 +145,7 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
 
 λ S1_interfaces(x). interface_types(x) ≡ header_only_free_functions
   ∧ template_concept_constrained_apis
+  | required_callable_member_adapters(x) → permitted_when(explicitly_specified_and_behaviorally_equivalent(x))
   | optional_member_wrappers(x) ≡ non_canonical
 
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
