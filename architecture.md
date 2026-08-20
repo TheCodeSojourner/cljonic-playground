@@ -108,7 +108,7 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 λ S2_concept_bootstrap(x). concepts_gate_free_functions(x)
   | minimal_concept_requirements(x) → only_what_current_functions_need(x)
   | future_requirements(x) → add_when_first_function_needs_them(x)
-  | concept(Collection) ≡ { c.size() → std::size_t }
+  | concept(Collection) ≡ { c.size() returns exactly std::size_t }
   | yagni_evolution(x) → preserve(backward_compat) ∧ prevent(feature_creep)
 
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ count ∧ get ∧ assoc ∧ dissoc ∧ conj ∧ contains ∧ first ∧ rest
