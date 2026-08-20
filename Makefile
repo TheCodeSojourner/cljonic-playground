@@ -61,6 +61,7 @@ $(BUILD_DIR)/CMakeCache.txt: CMakeLists.txt
 	$(CMAKE) -S . -B $(BUILD_DIR)
 
 coverage:
+	rm -rf $(COVERAGE_BUILD_DIR)
 	$(CMAKE) -S . -B $(COVERAGE_BUILD_DIR) -DCLJONIC_COVERAGE=ON
 	$(CMAKE) --build $(COVERAGE_BUILD_DIR) --parallel
 	lcov --zerocounters --directory $(COVERAGE_BUILD_DIR)
@@ -76,6 +77,7 @@ coverage:
 	     --fail-under-lines $(COVERAGE_THRESHOLD)
 
 coverage-cli:
+	@rm -rf $(COVERAGE_BUILD_DIR)
 	@$(CMAKE) -S . -B $(COVERAGE_BUILD_DIR) -DCLJONIC_COVERAGE=ON > /dev/null
 	@$(CMAKE) --build $(COVERAGE_BUILD_DIR) --parallel > /dev/null
 	@lcov --zerocounters --directory $(COVERAGE_BUILD_DIR) > /dev/null 2>&1
