@@ -9,11 +9,11 @@ entity Collection {
 	}
 }
 
--- Bootstraps with minimal requirements: c.size() → std::size_t
+-- Bootstraps with minimal requirements: c.size() returns exactly std::size_t
 -- YAGNI policy: additional requirements added when first free function needs them
 -- 
 -- Current state (2026-08-11):
---   - Requirement: c.size() → std::size_t
+--   - Requirement: c.size() returns exactly std::size_t
 --   - No value_type requirement
 --   - No operator[] requirement
 --   - Future requirements: deferred until triggered by a specific free function
