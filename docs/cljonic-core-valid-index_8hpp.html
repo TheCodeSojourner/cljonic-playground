@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: /home/pauwhi/Downloads/junk/cljonic-playground/src/cljonic-vector.hpp File Reference</title>
+<title>cljonic: /home/pauwhi/Downloads/junk/cljonic-playground/src/cljonic-core-valid-index.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -76,25 +76,17 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">cljonic-vector.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic-core-valid-index.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;array&gt;</code><br />
+<div class="textblock"><code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
-<code>#include &lt;utility&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-config_8hpp_source.html">cljonic-config.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>&gt;</code><br />
 </div>
-<p><a href="cljonic-vector_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="cljonic-core-valid-index_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector&lt; element_type, capacity_value &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacecljonic" id="r_namespacecljonic"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
@@ -102,9 +94,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac" id="r_a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplParams" colspan="2">template&lt;typename First , typename... Rest&gt; </td></tr>
-<tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">cljonic::Vector</a> (First, Rest...) -&gt; <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
-<tr class="separator:a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88d884853ac261340e02d9c7529349ba" id="r_a88d884853ac261340e02d9c7529349ba"><td class="memTemplParams" colspan="2">template&lt;typename element_type , std::size_t capacity_value, std::integral index_type&gt; </td></tr>
+<tr class="memitem:a88d884853ac261340e02d9c7529349ba"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a88d884853ac261340e02d9c7529349ba">cljonic::valid_index</a> (const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;vector, index_type index) noexcept -&gt; bool</td></tr>
+<tr class="separator:a88d884853ac261340e02d9c7529349ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
