@@ -20,6 +20,7 @@ concept NothrowVectorElement =
     VectorElement<value_type> &&
     requires(value_type value, const value_type &other) {
       { value_type{} } noexcept;
+      { value_type{other} } noexcept;
       { value = other } noexcept;
     };
 
