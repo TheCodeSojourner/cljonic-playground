@@ -38,7 +38,7 @@ concept NothrowElementConstruction =
  */
 template <typename collection_type>
 concept Collection = requires(const collection_type &c) {
-  { c.size() } -> std::convertible_to<std::size_t>;
+  { c.size() } -> std::same_as<std::size_t>;
 };
 
 } // namespace cljonic::concepts
