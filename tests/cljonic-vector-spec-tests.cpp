@@ -55,6 +55,18 @@ TEST_CASE("Vector element storage requires non-throwing operations",
   STATIC_REQUIRE(noexcept(cljonic::Vector<int, 4>{1, 2}));
 }
 
+TEST_CASE("Vector arguments require non-throwing value copies",
+          "[vector][concepts]") {
+  struct ThrowingCopy {
+    ThrowingCopy() noexcept = default;
+    ThrowingCopy(const ThrowingCopy &) noexcept(false) {}
+    operator int() const noexcept { return 1; }
+  } argument;
+
+  STATIC_REQUIRE_FALSE(
+      cljonic::concepts::NothrowElementConstruction<int, decltype(argument)>);
+}
+
 TEST_CASE("count returns Vector logical cardinality", "[count][vector]") {
   using cljonic::count;
   using cljonic::Vector;

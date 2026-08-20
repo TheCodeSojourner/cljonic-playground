@@ -30,6 +30,7 @@ template <typename value_type, typename argument_type>
 concept NothrowElementConstruction =
     std::convertible_to<argument_type, value_type> &&
     requires(argument_type argument) {
+      { argument_type{argument} } noexcept;
       { value_type{argument} } noexcept;
     };
 

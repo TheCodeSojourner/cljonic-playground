@@ -106,7 +106,7 @@ private:
   template <std::size_t... Indices, typename... Args>
   constexpr void initialize_storage(std::index_sequence<Indices...>,
                                     Args... args) noexcept {
-    ((storage_[Indices] = static_cast<element_type>(args)), ...);
+    ((storage_[Indices] = element_type{args}), ...);
   }
 
   std::array<value_type, capacity_value> storage_{};
