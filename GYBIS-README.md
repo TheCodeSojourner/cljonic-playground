@@ -124,6 +124,71 @@ Use this when code and tests already exist and you need to recover durable proje
 
 Outcome: an existing codebase is brought under explicit vocabulary, architecture, and specification governance.
 
+### Upgrade an Existing gybis Installation
+
+Use this when updating this repository's existing gybis installation from a gybis repository. In this README, the **gybis command bundle** means the set of files in `gybis/.agents/skills/` that gets copied into this repository's `.agents/skills/` directory. The command bundle and this repository's project memory are separate concerns: update the former, then migrate the latter only when the migration command identifies a recognized legacy format.
+
+#### Before You Start
+
+- Identify the gybis repository or directory that provides the command files for this upgrade. Use that same source for the whole upgrade.
+- Finish or deliberately pause any current work before upgrading. If a gybis session is active, run `/gybis-fini` using the existing installation to save its session state before replacing `.agents/skills/`.
+- Keep unrelated repository work separate from the upgrade. The upgrade diff should contain only changes to `.agents/skills/` and, if approved, selected files under `mementum/`.
+- Make sure this repository's `mementum/` directory is backed up or recoverable. It is project-owned durable memory.
+- Do not run the full installation copy against this existing installation. It can overwrite this repository's live `mementum/` directory and other project artifacts.
+
+#### Update the Command Bundle
+
+From this repository, copy only the bundled skills:
+
+```bash
+cp -ra <pathToGybisDirectory>/gybis/.agents/skills/. .agents/skills/
+```
+
+This updates command implementations, internal Allium adapters, and runtime compatibility checks. It does not update specifications, source code, tests, or Mementum data. Review the resulting skill-file diff, especially `internal/allium-runtime-check`, `internal/gybis-internal-skill-check`, and `internal/gybis-ref-check`.
+
+Verify the external prerequisite before running specification commands:
+
+```bash
+allium --version  # current bundle requirement: 3.5.3 or newer
+```
+
+#### Inspect and Migrate Mementum
+
+Run the migration command from this repository:
+
+```text
+/gybis-memory-migrate
+```
+
+The command inspects `mementum/`, classifies the store, and shows an exact preview before it writes anything. Handle the result as follows:
+
+| Result                    | Meaning                                                                  | Next step                                                                         |
+| ------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `NO_MIGRATION_REQUIRED`   | The store already conforms to OKF v0.1.                                  | Continue without migration.                                                       |
+| `MIGRATABLE_LEGACY`       | Recognized legacy files can be converted deterministically.              | Review the file list and before/after preview, then explicitly approve or cancel. |
+| `INITIALIZATION_REQUIRED` | No Mementum store exists to migrate.                                     | Initialize Mementum separately; do not treat initialization as migration.         |
+| `AMBIGUOUS`               | A file is malformed, unknown, conflicting, or otherwise unsafe to infer. | Resolve the reported ambiguity manually, then rerun the command.                  |
+
+If you approve a migration, it must preserve memory and knowledge bodies verbatim, leave conformant files unchanged, and leave `mementum/state.md` unchanged. Continue only after the command reports `MIGRATION_VALIDATED`.
+
+#### Validate Specifications
+
+If the target contains `.allium` specifications, run the relevant scope:
+
+```text
+/gybis-spec-check {concern|domain|all}
+```
+
+When no `.allium` files exist, `NO_SPECS` is expected. It is an absence-of-work result, not an Allium compatibility failure; the bundle upgrade can finish, and specifications can be created later.
+
+#### Commit the Upgrade
+
+Review the final diff, then commit the command-bundle update and any approved Mementum migration as a separately reviewable change. Keep the bundle update and migration history visible; do not silently fold either into unrelated project work.
+
+For a fleet of downstream repositories, repeat these steps independently in each repository. Use the same known bundle version for the batch and record each repository's migration result. Never copy the full `gybis/` bundle over an existing target.
+
+Outcome: the target adopts the newer command bundle and, when required, OKF-compatible Mementum storage without losing or silently rewriting its durable memory.
+
 ### Evolve Vocabulary Safely
 
 Use this when domain terms, definitions, or canonical names need to change after the project is already in motion.
@@ -345,6 +410,7 @@ vocabulary > architecture > specification > tests > code
 | `/gybis-fini`                                                    | CRUD memory before terminate                      |
 | `/gybis-help`                                                    | Show available commands                           |
 | `/gybis-init`                                                    | Initialize gybis AI context                       |
+| `/gybis-memory-migrate` (`/gm-migrate`)                          | Migrate Mementum store to current format          |
 | `/gybis-memory-orient` (`/gm-orient`)                            | Restore prev AI context                           |
 | `/gybis-memory-recall {topic}` (`/gm-recall {topic}`)            | Recall topic/summarize-latest                     |
 | `/gybis-memory-store {insight}` (`/gm-store {insight}`)          | Store insight, or prompt for one                  |
