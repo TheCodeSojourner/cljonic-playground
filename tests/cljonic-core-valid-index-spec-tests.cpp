@@ -26,4 +26,9 @@ TEST_CASE("valid_index probes Vector logical indexes", "[valid-index]") {
   STATIC_REQUIRE_FALSE(valid_index(values, 2U));
   STATIC_REQUIRE_FALSE(valid_index(values, -1));
   STATIC_REQUIRE(noexcept(valid_index(values, 0U)));
+
+  CHECK(valid_index(values, 0U));
+  CHECK(valid_index(values, 1U));
+  CHECK_FALSE(valid_index(values, 2U));
+  CHECK_FALSE(valid_index(values, -1));
 }
