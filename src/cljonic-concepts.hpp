@@ -2,7 +2,6 @@
 
 #include <concepts>
 #include <cstddef>
-#include <type_traits>
 
 namespace cljonic::concepts {
 
@@ -19,8 +18,10 @@ concept VectorElement =
 template <typename value_type>
 concept NothrowVectorElement =
     VectorElement<value_type> &&
-    std::is_nothrow_default_constructible_v<value_type> &&
-    std::is_nothrow_copy_assignable_v<value_type>;
+    requires(value_type value, const value_type &other) {
+      { value_type{} } noexcept;
+      { value = other } noexcept;
+    };
 
 /** Requires that an argument is implicitly convertible to and can construct a
  * Vector element without throwing.
@@ -28,7 +29,9 @@ concept NothrowVectorElement =
 template <typename value_type, typename argument_type>
 concept NothrowElementConstruction =
     std::convertible_to<argument_type, value_type> &&
-    std::is_nothrow_constructible_v<value_type, argument_type>;
+    requires(argument_type argument) {
+      { value_type{argument} } noexcept;
+    };
 
 /** Requires that \p collection_type exposes a \c size() member returning a
  * count of logical elements.
