@@ -22,6 +22,7 @@ if(BUILD_TESTING)
         tests/cljonic-concepts-spec-tests.cpp
         tests/cljonic-vector-spec-tests.cpp
         tests/cljonic-core-count-spec-tests.cpp
+        tests/cljonic-core-valid-index-spec-tests.cpp
     )
     target_compile_features(cljonic_tests PRIVATE cxx_std_23)
     target_link_libraries(cljonic_tests PRIVATE Catch2::Catch2WithMain)
