@@ -88,7 +88,34 @@ public:
     return logical_size_;
   }
 
+  template <std::integral index_type>
+  [[nodiscard]] constexpr auto
+  operator()(index_type index) const noexcept -> value_type {
+    return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)]
+                                 : value_type{};
+  }
+
+  template <std::integral index_type>
+  [[nodiscard]] constexpr auto
+  operator()(index_type index,
+             const value_type &fallback) const noexcept -> value_type {
+    return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)]
+                                 : fallback;
+  }
+
 private:
+  template <std::integral index_type>
+  [[nodiscard]] constexpr auto
+  index_is_valid(index_type index) const noexcept -> bool {
+    if constexpr (std::signed_integral<index_type>) {
+      if (index < 0) {
+        return false;
+      }
+    }
+
+    return static_cast<std::size_t>(index) < logical_size_;
+  }
+
   template <typename... Args>
   static constexpr bool constructor_arguments_valid =
       sizeof...(Args) <= capacity_value &&
