@@ -188,7 +188,7 @@ template&lt;concepts::Collection collection_type&gt; </div>
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="Core_Count"></a> <b>count</b> returns the number of logical elements in <code>collection</code>.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="cljonic-core_8hpp.html">cljonic-core.hpp</a>&quot;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -201,7 +201,6 @@ template&lt;concepts::Collection collection_type&gt; </div>
 <div class="line">  <span class="keywordflow">return</span> (n0 == 0 &amp;&amp; n1 == 2) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00054">cljonic-vector.hpp:54</a></div></div>
-<div class="ttc" id="acljonic-core_8hpp_html"><div class="ttname"><a href="cljonic-core_8hpp.html">cljonic-core.hpp</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00006">cljonic-concepts.hpp:6</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_acbdaef8bdea2d7e22e36c8914ac52751"><div class="ttname"><a href="namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751">cljonic::count</a></div><div class="ttdeci">constexpr auto count(const collection_type &amp;collection) noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-count_8hpp_source.html#l00027">cljonic-core-count.hpp:27</a></div></div>
 </div><!-- fragment --> 
@@ -245,7 +244,7 @@ template&lt;typename element_type , std::size_t capacity_value, std::integral in
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="Core_Get"></a> <b>get</b> returns the logical element at <code>index</code> when the index is valid. When the index is invalid, the default element is returned.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="cljonic-core_8hpp.html">cljonic-core.hpp</a>&quot;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -472,7 +471,7 @@ template&lt;typename element_type , std::size_t capacity_value, std::integral in
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="Core_ValidIndex"></a> <b>valid_index</b> reports whether an integral index addresses a logical element in a <a class="el" href="classcljonic_1_1_vector.html">Vector</a> or <a class="el" href="classcljonic_1_1_range.html">Range</a> without inspecting the produced value.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="cljonic-core_8hpp.html">cljonic-core.hpp</a>&quot;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -559,7 +558,7 @@ template&lt;typename First , typename... Rest&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 21 2026 16:45:29 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Fri Aug 21 2026 16:50:47 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

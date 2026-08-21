@@ -121,7 +121,7 @@ requires (!std::same_as&lt;T, value_type&gt; || !std::same_as&lt;U, value_type&g
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::integral value_type = int&gt;<br />
 class cljonic::Range&lt; value_type &gt;</div><p><a class="anchor" id="Range"></a> <b><a class="el" href="classcljonic_1_1_range.html">Range</a></b> is a bounded integer producer that represents a sequence from <code>start</code> up to but excluding <code>end</code>, advancing by <code>step</code>. The supported subset is intentionally limited to integral types with explicit defaulting and bounded materialization. <code>value_type</code> defaults to <code>int</code>, so <code><a class="el" href="classcljonic_1_1_range.html">Range</a>{}</code> is equivalent to Clojure's <code>(range)</code>.</p>
 <p>This example covers the supported construction forms and free-function observation. <a class="el" href="classcljonic_1_1_range.html">Range</a> has no member accessors for start, end, or step, and canonical observation is free-function-first via <code>count</code> and <code>empty</code>.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="cljonic-core_8hpp.html">cljonic-core.hpp</a>&quot;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -145,7 +145,6 @@ class cljonic::Range&lt; value_type &gt;</div><p><a class="anchor" id="Range"></
 <div class="line">  <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00049">cljonic-range.hpp:49</a></div></div>
-<div class="ttc" id="acljonic-core_8hpp_html"><div class="ttname"><a href="cljonic-core_8hpp.html">cljonic-core.hpp</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00006">cljonic-concepts.hpp:6</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a591193c4ffd57fbcab1db9e3bcc1b78f"><div class="ttname"><a href="namespacecljonic.html#a591193c4ffd57fbcab1db9e3bcc1b78f">cljonic::collection_maximum_element_count</a></div><div class="ttdeci">constexpr auto collection_maximum_element_count() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-collection-maximum-element-count_8hpp_source.html#l00026">cljonic-core-collection-maximum-element-count.hpp:26</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a88d884853ac261340e02d9c7529349ba"><div class="ttname"><a href="namespacecljonic.html#a88d884853ac261340e02d9c7529349ba">cljonic::valid_index</a></div><div class="ttdeci">constexpr auto valid_index(const Vector&lt; element_type, capacity_value &gt; &amp;vector, index_type index) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-valid-index_8hpp_source.html#l00039">cljonic-core-valid-index.hpp:39</a></div></div>
@@ -501,7 +500,7 @@ template&lt;std::integral value_type = int&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 21 2026 16:45:29 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Fri Aug 21 2026 16:50:47 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
