@@ -25,6 +25,7 @@ if(BUILD_TESTING)
         tests/cljonic-core-count-spec-tests.cpp
         tests/cljonic-core-get-spec-tests.cpp
         tests/cljonic-core-valid-index-spec-tests.cpp
+        tests/cljonic-range-spec-tests.cpp
     )
     add_library(cljonic_modular_header_smoke OBJECT tests/cljonic-modular-header-smoke.cpp)
     target_compile_features(cljonic_modular_header_smoke PRIVATE cxx_std_23)
