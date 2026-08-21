@@ -486,7 +486,13 @@ REQ-FN-011. `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` producer val
 
 REQ-FN-012. `range` MUST use an inclusive start and exclusive end, default start `0`, default step `1`, and MUST produce an infinite repetition of `start` when `step` is zero. A nonzero step that moves away from the end MUST produce an empty finite range, and equal start and end MUST produce an empty range when the step is nonzero. The zero-step and other semantically infinite forms MUST be represented with a synthesis cap equal to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
 
-REQ-FN-012A. `Range` construction parameters MUST define producer generation, but canonical user observation MUST be free-function-first. The supported Range interface MUST provide `count`, `empty`, `first`, `next`, `rest`, `seq`, bounded traversal operations such as `take`, and explicit materialization through `into` where the applicable capability exists. Member accessors that expose the stored or normalized `start`, `end`, or `step` values MUST NOT be required public behavior; those values remain implementation details unless a later approved requirement promotes a named inspection operation.
+REQ-FN-012A. `Range` construction parameters MUST define producer generation, but canonical user observation MUST be free-function-first. The supported Range interface MUST provide construction and `count`, `empty`, `first`, `next`, `rest`, `seq`, applicable bounded traversal operations such as `take`, and explicit materialization through `into`. Member accessors that expose the stored or normalized `start`, `end`, or `step` values MUST NOT be required public behavior; those values remain implementation details. `count` MUST report the effective bounded size, and the effective size MUST govern traversal and materialization.
+
+REQ-FN-012B. `get` MUST NOT apply to `Range` and MUST NOT be required for its public interface because Range has no key or indexed value-access contract. Range value observation remains sequence-oriented through its approved free functions rather than `get` lookup access.
+
+REQ-FN-012C. `Range` MUST provide `valid_index(range, index)` as a non-throwing, non-allocating predicate over its effective bounded size.
+
+REQ-FN-012D. For `valid_index(range, index)`, a non-negative index MUST be valid exactly when it is less than `count(range)`, and a negative signed index MUST be invalid.
 
 REQ-FN-013. For `range` with both equal start and end and a zero step, zero-step infinite repetition MUST take precedence over empty-range behavior. The producer still carries the bounded synthesis cap and MUST NOT claim a true finite cardinality.
 
@@ -860,11 +866,11 @@ REQ-TEST-022. Tests MUST verify compile-time rejection and diagnostic content fo
 
 REQ-TEST-023. Tests MUST verify result-capacity preflight predicates for representative unknown-cardinality operations, including a fitting result, an over-capacity result, complete materialization when the predicate succeeds, and the documented bounded-result behavior when the predicate reports that the complete result does not fit.
 
-REQ-TEST-024. Tests MUST cover bounded `cycle`, `iterate`, `range`, `repeat`, and `repeatedly`, including finite results, unbounded-prefix results, empty inputs where applicable, capacity boundaries, and deterministic termination behavior.
+REQ-TEST-024. Tests MUST cover bounded `cycle`, `iterate`, `range`, `repeat`, and `repeatedly` across each producer's approved operation surface, including finite results, unbounded-prefix results, empty inputs where applicable, capacity boundaries, and deterministic termination behavior.
 
 REQ-TEST-025. Tests MUST verify that `count` does not traverse unbounded producers, returns exact counts for finite producers, returns the configured maximum materialization count for unbounded producers, and computes composed producer counts with saturating arithmetic.
 
-REQ-TEST-026. Tests MUST cover `range` default arguments, inclusive-start and exclusive-end behavior, positive and negative steps, steps moving away from the endpoint, zero-step infinite repetition, equal start and end, and the zero-step/equal-end precedence rule through the canonical free-function interface. Tests MUST NOT require Range member accessors for `start`, `end`, or `step` unless a later approved requirement explicitly adds a named inspection operation.
+REQ-TEST-026. Tests MUST cover Range default arguments, inclusive-start and exclusive-end construction semantics, positive and negative steps, steps moving away from the endpoint, zero-step infinite repetition, equal start and end, zero-step/equal-end precedence, capped finite forms, effective endpoint normalization, and effective-size authority through the canonical free-function observation, traversal, and materialization interface. Tests MUST trace `REQ-FN-012C` and `REQ-FN-012D` through `valid_index(range, index)` cases at zero, within-bound, at-bound, over-bound, and negative signed indexes. Tests MUST NOT require Range member accessors for `start`, `end`, or `step`, and MUST NOT test `get` for Range in accordance with `REQ-FN-012B`.
 
 REQ-TEST-027. Tests MUST verify that `iterate` and `repeatedly` require pure, non-allocating callbacks and that counted forms perform exactly the requested number of callback evaluations when completely materialized.
 
