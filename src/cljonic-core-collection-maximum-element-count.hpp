@@ -6,6 +6,17 @@
 
 namespace cljonic {
 
+/** \anchor CollectionMaximumElementCountValue
+ * \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE is a constexpr constant
+ * that captures the configured synthesis ceiling for bounded cljonic
+ * collections and semantically infinite producers. This type-safe constant
+ * can be used in compile-time expressions, static assertions, and constexpr
+ * functions while remaining fully overridable via the
+ * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro.
+ */
+constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
+    CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
+
 /** \anchor Core_CollectionMaximumElementCount
  * \b collection_maximum_element_count returns the configured synthesis
  * ceiling for bounded cljonic collections and semantically infinite
@@ -13,7 +24,7 @@ namespace cljonic {
  */
 [[nodiscard]] constexpr auto
 collection_maximum_element_count() noexcept -> std::size_t {
-  return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
+  return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
 }
 
 } // namespace cljonic
