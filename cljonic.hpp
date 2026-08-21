@@ -425,11 +425,21 @@ public:
   }
 
 private:
+  // Deliberately not defined: calling this during constant evaluation makes
+  // that evaluation ill-formed, turning an oversized constexpr Range into a
+  // compile-time error instead of a silently clamped bounded prefix. This
+  // path is unreachable at runtime, so it is never actually linked.
+  static void reject_oversized_range_in_constant_expression() noexcept;
+
   [[nodiscard]] static constexpr auto
   clamp_to_synthesis_cap(std::size_t computed_size) noexcept -> std::size_t {
-    return computed_size > collection_maximum_element_count()
-               ? collection_maximum_element_count()
-               : computed_size;
+    if (computed_size > collection_maximum_element_count()) {
+      if consteval {
+        reject_oversized_range_in_constant_expression();
+      }
+      return collection_maximum_element_count();
+    }
+    return computed_size;
   }
 
   [[nodiscard]] static constexpr auto
