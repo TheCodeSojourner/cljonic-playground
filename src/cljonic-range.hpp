@@ -22,7 +22,7 @@ namespace cljonic
      * canonical observation is free-function-first via \c count and \c empty.
      *
      ~~~~~{.cpp}
-     #include "cljonic-core.hpp"
+     #include "cljonic.hpp"
      using namespace cljonic;
 
      int main() {

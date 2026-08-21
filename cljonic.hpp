@@ -321,7 +321,7 @@ namespace cljonic {
  * \b count returns the number of logical elements in \p collection.
  *
  ~~~~~{.cpp}
- #include "cljonic-core.hpp"
+ #include "cljonic.hpp"
  using namespace cljonic;
 
  int main() {
@@ -374,7 +374,7 @@ namespace cljonic {
  * canonical observation is free-function-first via \c count and \c empty.
  *
  ~~~~~{.cpp}
- #include "cljonic-core.hpp"
+ #include "cljonic.hpp"
  using namespace cljonic;
 
  int main() {
@@ -548,7 +548,7 @@ namespace cljonic {
  * functions that operate on collections are documented with their own headers.
  *
  ~~~~~{.cpp}
- #include "cljonic-core.hpp"
+ #include "cljonic.hpp"
  using namespace cljonic;
 
  struct Pixel {
@@ -685,7 +685,7 @@ namespace cljonic {
  * element in a Vector or Range without inspecting the produced value.
  *
  ~~~~~{.cpp}
- #include "cljonic-core.hpp"
+ #include "cljonic.hpp"
  using namespace cljonic;
 
  int main() {
@@ -741,7 +741,7 @@ namespace cljonic {
  * When the index is invalid, the default element is returned.
  *
  ~~~~~{.cpp}
- #include "cljonic-core.hpp"
+ #include "cljonic.hpp"
  using namespace cljonic;
 
  int main() {
