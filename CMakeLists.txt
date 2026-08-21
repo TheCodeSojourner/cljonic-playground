@@ -5,6 +5,7 @@ project(cljonic LANGUAGES CXX)
 # Architecture language baseline traceability: C++23.
 
 include(CTest)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 set(CLJONIC_VECTOR_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/cljonic-vector.hpp" CACHE FILEPATH "Path to the production vector header used by integration tests.")
 
@@ -18,19 +19,63 @@ if(BUILD_TESTING)
     )
     FetchContent_MakeAvailable(Catch2)
 
-    add_executable(cljonic_tests
+    set(CLJONIC_SPEC_TEST_SOURCES
         tests/cljonic-concepts-spec-tests.cpp
         tests/cljonic-vector-spec-tests.cpp
         tests/cljonic-core-count-spec-tests.cpp
+        tests/cljonic-core-get-spec-tests.cpp
         tests/cljonic-core-valid-index-spec-tests.cpp
     )
-    target_compile_features(cljonic_tests PRIVATE cxx_std_23)
-    target_link_libraries(cljonic_tests PRIVATE Catch2::Catch2WithMain)
+    set(CLJONIC_SOURCE_HEADERS
+        src/cljonic-config.hpp
+        src/cljonic-concepts.hpp
+        src/cljonic-core-count.hpp
+        src/cljonic-core-get.hpp
+        src/cljonic-core-valid-index.hpp
+        src/cljonic-vector.hpp
+        src/cljonic-core.hpp
+    )
+
+    add_library(cljonic_modular_header_smoke OBJECT ${CLJONIC_SOURCE_HEADERS})
+    set_source_files_properties(${CLJONIC_SOURCE_HEADERS} PROPERTIES LANGUAGE CXX)
+    target_compile_features(cljonic_modular_header_smoke PRIVATE cxx_std_23)
+    target_include_directories(cljonic_modular_header_smoke PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+    add_custom_target(cljonic_header
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/amalgamate.py
+                --source-dir ${CMAKE_CURRENT_SOURCE_DIR}/src
+                --root cljonic-core.hpp
+                --output ${CMAKE_CURRENT_SOURCE_DIR}/cljonic.hpp
+        BYPRODUCTS ${CMAKE_CURRENT_SOURCE_DIR}/cljonic.hpp
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        VERBATIM
+    )
+
+    function(configure_cljonic_spec_tests target_name use_single_header)
+        add_executable(${target_name} ${CLJONIC_SPEC_TEST_SOURCES})
+        target_compile_features(${target_name} PRIVATE cxx_std_23)
+        target_link_libraries(${target_name} PRIVATE Catch2::Catch2WithMain)
+        target_include_directories(${target_name} PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests
+            ${CMAKE_CURRENT_SOURCE_DIR}/src
+        )
+        if(use_single_header)
+            target_compile_definitions(${target_name} PRIVATE CLJONIC_USE_SINGLE_HEADER=1)
+            target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+            add_dependencies(${target_name} cljonic_header)
+        endif()
+    endfunction()
+
+    configure_cljonic_spec_tests(cljonic_tests FALSE)
+    configure_cljonic_spec_tests(cljonic_single_header_tests TRUE)
+    add_dependencies(cljonic_tests cljonic_modular_header_smoke)
 
     option(CLJONIC_COVERAGE "Enable coverage instrumentation (host profiles only)" OFF)
     if(CLJONIC_COVERAGE)
         target_compile_options(cljonic_tests PRIVATE --coverage)
         target_link_options(cljonic_tests PRIVATE --coverage)
+        target_compile_options(cljonic_single_header_tests PRIVATE --coverage)
+        target_link_options(cljonic_single_header_tests PRIVATE --coverage)
     endif()
 
     set(CLJONIC_SANITIZERS "off" CACHE STRING "Sanitizer profile: off or asan-ubsan")
@@ -48,12 +93,13 @@ if(BUILD_TESTING)
 
         target_compile_options(cljonic_tests PRIVATE ${_cljonic_sanitizer_flags})
         target_link_options(cljonic_tests PRIVATE ${_cljonic_sanitizer_flags})
+        target_compile_options(cljonic_single_header_tests PRIVATE ${_cljonic_sanitizer_flags})
+        target_link_options(cljonic_single_header_tests PRIVATE ${_cljonic_sanitizer_flags})
     endif()
-    target_include_directories(cljonic_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
     if(EXISTS "${CLJONIC_VECTOR_HEADER}")
         target_compile_definitions(cljonic_tests PRIVATE CLJONIC_HAVE_VECTOR_IMPLEMENTATION=1)
-        target_include_directories(cljonic_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+        target_compile_definitions(cljonic_single_header_tests PRIVATE CLJONIC_HAVE_VECTOR_IMPLEMENTATION=1)
         message(STATUS "Vector integration tests enabled with header: ${CLJONIC_VECTOR_HEADER}")
     else()
         message(STATUS "Vector integration tests skipped: production header not found at ${CLJONIC_VECTOR_HEADER}")
@@ -61,15 +107,29 @@ if(BUILD_TESTING)
 
     include(Catch)
     catch_discover_tests(cljonic_tests)
+    catch_discover_tests(cljonic_single_header_tests)
 
-    add_executable(cljonic_no_heap_probe EXCLUDE_FROM_ALL
+    set(CLJONIC_NO_HEAP_SOURCES
         tests/no_heap/harness_main.cpp
         tests/no_heap/cljonic-vector-probes.cpp
         tests/no_heap/cljonic-core-count-probes.cpp
     )
-    target_compile_features(cljonic_no_heap_probe PRIVATE cxx_std_23)
-    target_include_directories(cljonic_no_heap_probe PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests
-    )
+
+    function(configure_cljonic_no_heap_probe target_name use_single_header)
+        add_executable(${target_name} EXCLUDE_FROM_ALL ${CLJONIC_NO_HEAP_SOURCES})
+        target_compile_features(${target_name} PRIVATE cxx_std_23)
+        target_include_directories(${target_name} PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/src
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests/no_heap
+        )
+        if(use_single_header)
+            target_compile_definitions(${target_name} PRIVATE CLJONIC_USE_SINGLE_HEADER=1)
+            target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+            add_dependencies(${target_name} cljonic_header)
+        endif()
+    endfunction()
+
+    configure_cljonic_no_heap_probe(cljonic_no_heap_probe FALSE)
+    configure_cljonic_no_heap_probe(cljonic_single_header_no_heap_probe TRUE)
 endif()
