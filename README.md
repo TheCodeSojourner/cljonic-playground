@@ -206,7 +206,7 @@ Check in:
 
 - hand-authored files in `src/`, `tests/`, `specs/`, and project documentation
 - build configuration files such as `CMakeLists.txt`
-- the generated root-level `cljonic.hpp` only when the repository is intentionally shipping a distributable snapshot to consumers or release branches
+- the generated root-level `cljonic.hpp` as a committed release artifact; regenerate it from modular sources and include it whenever release-facing header content changes
 
 Do not check in:
 
