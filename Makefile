@@ -3,6 +3,8 @@ CTEST ?= ctest
 BUILD_DIR ?= build
 COVERAGE_BUILD_DIR ?= build-coverage
 SANITIZER_BUILD_DIR ?= build-sanitizers
+CLJONIC_HEADER ?= cljonic.hpp
+CLJONIC_TEST_BINARY ?= $(BUILD_DIR)/cljonic-single-header-probe
 CYCLOMATIC_COMPLEXITY_THRESHOLD ?= 4
 FUNCTION_LENGTH_THRESHOLD ?= 25
 COMPLEXITY_PATH ?= src
@@ -21,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -30,18 +32,20 @@ help:
 	@printf '%-12s %s\n' 'complexity-cli' 'Quiet lizard warning-only check on COMPLEXITY_PATH; fails if thresholds are exceeded'
 	@printf '%-12s %s\n' 'coverage' 'Build with instrumentation, run tests, enforce $(COVERAGE_THRESHOLD)% line coverage'
 	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
+	@printf '%-12s %s\n' 'cljonic' 'Generate the single public header at $(CLJONIC_HEADER)'
+	@printf '%-12s %s\n' 'cljonic-test' 'Compile and run the standalone single-header probe'
 	@printf '%-12s %s\n' 'docs' 'Generate Doxygen HTML documentation to docs/'
 	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
 	@printf '%-12s %s\n' 'format-doc-samples' 'Format Doxygen C++ sample blocks in src/* headers with clang-format'
 	@printf '%-12s %s\n' 'git' 'Pre-commit gate: format, lint, complexity, sanitizers, coverage, traceability, no-heap, and docs'
 	@printf '%-12s %s\n' 'help' 'Show available targets'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
-	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate: source check, harness build, and binary symbol scan'
+	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate for modular/generated headers: source check, harness build, and symbol scan'
 	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
 	@printf '%-12s %s\n' 'no-heap-symbols' 'Fail if compiled artifact contains forbidden allocator symbols'
 	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
 	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
-	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and parallel test run'
+	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and modular/generated parallel test run'
 	@printf '%-12s %s\n' 'traceability-category-report' 'Non-blocking obligation-family diagnostics from snapshot vs test TRACE_ID coverage'
 	@printf '%-12s %s\n' 'traceability-spec-to-code' 'Strict spec-to-code traceability gate (set-scoped allium, snapshot sync, test macro trace coverage)'
 	@printf '%-12s %s\n' 'traceability-spec-to-code-update-snapshot' 'Regenerate committed spec-to-code obligation snapshot from current specs'
@@ -50,6 +54,17 @@ help:
 	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict spec-to-code traceability and no-heap verification'
 
 all: clean test
+
+cljonic: scripts/amalgamate.py $(wildcard src/*.hpp)
+	@python3 scripts/amalgamate.py --source-dir src --root cljonic-core.hpp --output $(CLJONIC_HEADER)
+	@echo "cljonic:ok:header=$(CLJONIC_HEADER)"
+
+cljonic-test: cljonic tests/cljonic-single-header-probe.cpp
+	@mkdir -p $(BUILD_DIR)
+	@$(CXX) -std=c++23 -Wall -Wextra -Werror -I . tests/cljonic-single-header-probe.cpp -o $(CLJONIC_TEST_BINARY)
+	@$(CLJONIC_TEST_BINARY)
+	@rm -f $(CLJONIC_TEST_BINARY)
+	@echo "cljonic-test:ok"
 
 test: configure
 	$(CMAKE) --build $(BUILD_DIR) --parallel
@@ -177,19 +192,20 @@ no-heap-src:
 
 no-heap-symbols:
 	@command -v nm > /dev/null 2>&1 || (echo "missing required tool: nm" >&2; exit 1)
-	@# Binary-level no-heap gate: verify no allocator symbols in compiled artifact.
-	@BINARY=$(BUILD_DIR)/cljonic_no_heap_probe; \
-	if nm "$$BINARY" 2>/dev/null | grep -E '^[0-9a-f]+ [UT] (malloc|free|calloc|realloc|aligned_alloc|posix_memalign|_Znwm|_Znam|_ZdlPv|_ZdaPv)' > /dev/null; then \
-		echo "no-heap-symbols:fail" >&2; \
-		echo "no-heap-symbols: forbidden allocator symbol found in binary" >&2; \
-		exit 1; \
-	fi
+	@# Binary-level no-heap gate: verify no allocator symbols in either compiled artifact.
+	@for BINARY in $(BUILD_DIR)/cljonic_no_heap_probe $(BUILD_DIR)/cljonic_single_header_no_heap_probe; do \
+		if nm "$$BINARY" 2>/dev/null | grep -E '^[0-9a-f]+ [UT] (malloc|free|calloc|realloc|aligned_alloc|posix_memalign|_Znwm|_Znam|_ZdlPv|_ZdaPv)' > /dev/null; then \
+			echo "no-heap-symbols:fail:binary=$$BINARY" >&2; \
+			echo "no-heap-symbols: forbidden allocator symbol found in binary" >&2; \
+			exit 1; \
+		fi; \
+	done
 	@echo "no-heap-symbols:ok"
 
 no-heap:
 	@$(MAKE) --no-print-directory -s no-heap-src
 	@$(CMAKE) -S . -B $(BUILD_DIR) > /dev/null
-	@$(CMAKE) --build $(BUILD_DIR) --target cljonic_no_heap_probe --parallel > /dev/null
+	@$(CMAKE) --build $(BUILD_DIR) --target cljonic_no_heap_probe cljonic_single_header_no_heap_probe --parallel > /dev/null
 	@$(MAKE) --no-print-directory -s no-heap-symbols
 	@echo "no-heap:ok"
 
@@ -293,6 +309,7 @@ git:
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
 	@$(MAKE) --no-print-directory -s no-heap
 	@$(MAKE) --no-print-directory -s docs
+	@$(MAKE) --no-print-directory -s cljonic-test
 	@echo "git:ok"
 
 docs:
