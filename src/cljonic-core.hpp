@@ -225,11 +225,15 @@
 #include <cljonic-core-count.hpp>
 #include <cljonic-core-get.hpp>
 #include <cljonic-core-valid-index.hpp>
+#include <cljonic-range.hpp>
 #include <cljonic-vector.hpp>
 
-namespace cljonic {
+namespace cljonic
+{
 
-namespace core {} // namespace core
+    namespace core
+    {
+    } // namespace core
 
 } // namespace cljonic
 
