@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <cljonic-core.hpp>
+#include "cljonic-test-api.hpp"
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 

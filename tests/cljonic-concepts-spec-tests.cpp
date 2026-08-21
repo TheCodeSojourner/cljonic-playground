@@ -1,7 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <cljonic-concepts.hpp>
-#include <cljonic-vector.hpp>
+#include "cljonic-test-api.hpp"
 
 TEST_CASE("Collection requires an exact size_t result", "[concepts]") {
   struct ExactSize {

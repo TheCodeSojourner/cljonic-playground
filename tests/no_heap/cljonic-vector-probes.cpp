@@ -1,6 +1,6 @@
+#include "cljonic-no-heap-api.hpp"
 #include "poison.hpp"
 #include "probes.hpp"
-#include <cljonic-core.hpp>
 
 namespace cljonic::no_heap::probes {
 [[nodiscard]] auto vector_count() noexcept -> bool {
