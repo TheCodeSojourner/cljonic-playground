@@ -163,6 +163,7 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | synthesis_cap(x) → not_interpret_as(TrueCardinality)
   | effective_size(x) → authoritative_for(free_function_observation ∧ producer_iteration ∧ producer_materialization)
+  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ valid_index_authoritative_for_indexed_access(x) ∧ effective_endpoint_normalized_before_iteration(x)
   | range_member_accessors(start ∧ end ∧ step) → classify_as(non_canonical)
   | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
