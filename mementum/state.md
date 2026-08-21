@@ -1,48 +1,47 @@
 ## Session State
 
-- last_session_id: 2026-08-20-spec-check
-- current_timestamp: 2026-08-20T20:22:51Z
+- last_session_id: d8401ac6-e82c-4f3f-b787-bd4382f46aee
+- current_timestamp: 2026-08-21T14:13:38Z
 - recover: 1
 - session_complete: true
 
 ## Task
 
-**Session focus: Validate all existing Allium specifications and resolve any reported errors.**
+**Session focus: Organize and clarify the new free-function, concept, and Vector tests.**
 
 **This session results:**
-- ✅ Ran the required reference and internal-skill startup guards
-- ✅ Confirmed Allium runtime version `3.5.3`
-- ✅ Validated all four `specs/**/*.allium` files with zero check diagnostics
-- ✅ Analyzed the complete `specs/` set with zero findings
-- ✅ Confirmed the Allium gate verdict is true through the per-file and set-level checks
-- ✅ No specification fixes were required and no files under `specs/` were modified
+- Moved Vector concept-contract tests into `tests/cljonic-concepts-spec-tests.cpp`.
+- Renamed the general `NothrowElementConstruction` test to `Element construction requires non-throwing value copies` and removed its unnecessary Vector tag.
+- Moved the concrete Vector `count` integration test into `tests/cljonic-core-count-spec-tests.cpp`.
+- Renamed the Vector indexed access test to distinguish value access from the separate `valid_index` probe API.
+- Kept the actual probe assertions in `tests/cljonic-core-valid-index-spec-tests.cpp`.
+- Confirmed the focused concept, count, and indexed-access tests pass, followed by `make all` with 8/8 tests passing.
 
 ## Current Session Status
 
-- ✅ Existing collection specifications remain valid without normalization or repair.
-- ✅ The spec-check state machine completed directly from `ANALYZING_SET` to `COMPLETE` because no issues were found.
-- ✅ The spec-check boundary remains intact: no architecture, implementation, upstream, or non-spec files were changed.
+- The test organization now follows contract ownership: generic concepts and core free-function contracts have dedicated suites, while Vector-specific behavior remains in the Vector suite.
+- `Vector::operator()` tests describe default/fallback value access; `valid_index` tests describe non-inspecting index probing.
+- The worktree was clean before finalization, with no merge or index conflict.
 
 ## Questions
 
 This session's open questions:
-- ❓ What is the staged process for eventually retiring `cljonic-requirements.md` without losing normative detail?
-- ❓ What exact generic `get` contract should apply across Vector and future collection types?
-- ❓ When should the `valid_index` probe contract generalize beyond Vector?
+- What exact generic `get` contract should apply across Vector and future collection types?
+- When should the `valid_index` probe contract generalize beyond Vector?
+- Should future concept tests be split further as the concept surface grows?
 
 ## Decisions
 
-- **Validation decision:** Treat the existing four collection specifications as the complete current spec set; all pass Allium check and analysis.
-- **Scope decision:** Keep spec-check changes limited to `specs/`; because the set was already valid, make no edits.
-- **Gate decision:** Do not invoke prohibited `allium gate` or `allium rerun` shell commands; derive the gate result from the allowed per-file check and set analysis operations.
+- **Test ownership decision:** Place tests according to the abstraction contract, not according to the first concrete implementation type.
+- **Count decision:** Keep the generic count test and the concrete Vector count integration test together in the count-specific suite.
+- **Probe terminology decision:** Reserve “probe” for `valid_index`; do not use it for `Vector::operator()` value-access tests.
+- **Validation decision:** Focused tests and the full `make all` workflow pass after the reorganization.
 
 ## Next
 
-1. Audit the generic `get` free-function contract across requirements, vocabulary, architecture, and current collection surfaces.
-2. Decide whether the first `get` slice is Vector-only implementation under a generic contract or a broader multi-collection capability.
-3. Write and validate `specs/collections/get.allium` before adding implementation.
-4. Add dedicated `get` source/tests and traceability only after the contract is approved.
-5. Run the strict quality and traceability gates before committing the next capability.
+1. Continue with the next free-function or contract question using the same contract-ownership rule.
+2. Broaden `get` or `valid_index` only when a durable multi-collection requirement exists.
+3. Preserve the current green baseline with focused validation followed by `make all` after substantive changes.
 
 
 
