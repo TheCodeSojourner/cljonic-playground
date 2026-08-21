@@ -55,5 +55,32 @@ This session's open questions:
  2. Keep generated-header documentation-example validation in full `make git` gate and promote earlier only if regressions appear.
  3. Extend behavioral and no-heap probe families as additional collections and free functions become requirements-backed.
 
+## Session State
+
+- last_session_id: ef0ebf31-9df2-43b3-aa22-e1c157c20feb
+- current_timestamp: 2026-08-21T15:32:07Z
+- recover: 1
+- session_complete: true
+
+Task:
+1. Add a dedicated `make docs-examples` target that compiles Doxygen C++ examples against generated `cljonic.hpp`.
+2. Keep docs-example compilation out of default `make test` to preserve iteration speed.
+3. Run docs-example compilation in the full pre-release `make git` gate.
+
+Questions:
+1. When should generated-header equivalence and no-heap probes move into earlier automated targets?
+2. Should docs-example compilation run in default tests or only in strict/release gates?
+
+Decisions:
+1. Keep current no-heap placement in strict/release gates; do not move it into default `make test`.
+2. Keep generated-header equivalence in default test automation through current CMake test matrix.
+3. Add and keep `make docs-examples` in the full `make git` gate, not in `make test`.
+4. Keep root-level `cljonic.hpp` committed as a generated release artifact regenerated from modular sources.
+
+Next:
+1. Preserve the full-gate docs-example compilation policy and monitor for regressions.
+2. Expand behavioral and no-heap probe coverage as new collection families become requirements-backed.
+3. Reassess no-heap placement only if regressions indicate earlier enforcement is needed.
+
 
 
