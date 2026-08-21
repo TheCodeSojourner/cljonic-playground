@@ -1,9 +1,35 @@
 ## Session State
 
-- last_session_id: d8401ac6-e82c-4f3f-b787-bd4382f46aee
-- current_timestamp: 2026-08-21T14:27:00Z
+- last_session_id: f1b6de35-c21b-4de8-8bae-cfd722931a07
+- current_timestamp: 2026-08-21T16:01:47Z
 - recover: 1
 - session_complete: true
+
+Task:
+1. Reduce noisy build and documentation output without weakening validation.
+2. Require the production vector header for test configuration.
+3. Add `valid_index` to the curated Doxygen main-page cheatsheet.
+4. Record the API documentation/indexing pattern in repository mementum.
+
+Questions:
+1. Should successful CMake configure and vector integration status messages be printed in the full gate?
+2. Should missing required test dependencies reduce coverage or fail configuration?
+3. Should newly user-facing APIs require both own documentation and a main-page reference?
+
+Decisions:
+1. Suppress successful CMake configure stdout while preserving stderr failures.
+2. Make a missing `CLJONIC_VECTOR_HEADER` a CMake `FATAL_ERROR`.
+3. Treat the Doxygen `\\mainpage` cheatsheet as a curated index, not an automatic API listing.
+4. Add `valid_index` explicitly to the Seq section while preserving implemented and future/unresolved references.
+5. Require each new user-facing API to have source documentation and an explicit main-page reference; regenerate and verify docs.
+6. Store this rule in `mementum/memories/user-facing-apis-require-mainpage-index-entry.md`.
+
+Next:
+1. Apply the curated-index documentation rule to each future user-facing API.
+2. Run `make docs` and verify the main-page entry after API documentation changes.
+3. Preserve the green `make git` gate and current quiet output policy.
+
+Historical session records follow.
  last_session_id: 604d37c3-935d-4335-b464-afefe3538aef
  current_timestamp: 2026-08-21T14:57:44Z
  recover: 1
