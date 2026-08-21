@@ -1,391 +1,80 @@
-{
-  "diagnostics": [],
-  "obligations": [
-    {
-      "category": "invariant",
-      "description": "Verify invariant DefaultStartIsZero holds after any field mutation on RangeSequence",
-      "expression": "this.supports_default_start_zero = true",
-      "id": "invariant.RangeSequence.DefaultStartIsZero",
-      "source_construct": "RangeSequence.DefaultStartIsZero",
-      "source_span": {
-        "end": 1613,
-        "start": 1529
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant DefaultStepIsOne holds after any field mutation on RangeSequence",
-      "expression": "this.supports_default_step_one = true",
-      "id": "invariant.RangeSequence.DefaultStepIsOne",
-      "source_construct": "RangeSequence.DefaultStepIsOne",
-      "source_span": {
-        "end": 1699,
-        "start": 1619
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant SingleArgumentFormSupported holds after any field mutation on RangeSequence",
-      "expression": "this.supports_single_argument_form = true",
-      "id": "invariant.RangeSequence.SingleArgumentFormSupported",
-      "source_construct": "RangeSequence.SingleArgumentFormSupported",
-      "source_span": {
-        "end": 1800,
-        "start": 1705
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant TwoArgumentFormSupported holds after any field mutation on RangeSequence",
-      "expression": "this.supports_two_argument_form = true",
-      "id": "invariant.RangeSequence.TwoArgumentFormSupported",
-      "source_construct": "RangeSequence.TwoArgumentFormSupported",
-      "source_span": {
-        "end": 1895,
-        "start": 1806
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant ThreeArgumentFormSupported holds after any field mutation on RangeSequence",
-      "expression": "this.supports_three_argument_form = true",
-      "id": "invariant.RangeSequence.ThreeArgumentFormSupported",
-      "source_construct": "RangeSequence.ThreeArgumentFormSupported",
-      "source_span": {
-        "end": 1994,
-        "start": 1901
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant InclusiveStart holds after any field mutation on RangeSequence",
-      "expression": "this.inclusive_start = true",
-      "id": "invariant.RangeSequence.InclusiveStart",
-      "source_construct": "RangeSequence.InclusiveStart",
-      "source_span": {
-        "end": 2068,
-        "start": 2000
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant ExclusiveEnd holds after any field mutation on RangeSequence",
-      "expression": "this.exclusive_end = true",
-      "id": "invariant.RangeSequence.ExclusiveEnd",
-      "source_construct": "RangeSequence.ExclusiveEnd",
-      "source_span": {
-        "end": 2138,
-        "start": 2074
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant PositiveStepSupported holds after any field mutation on RangeSequence",
-      "expression": "this.supports_positive_step = true",
-      "id": "invariant.RangeSequence.PositiveStepSupported",
-      "source_construct": "RangeSequence.PositiveStepSupported",
-      "source_span": {
-        "end": 2226,
-        "start": 2144
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant NegativeStepSupported holds after any field mutation on RangeSequence",
-      "expression": "this.supports_negative_step = true",
-      "id": "invariant.RangeSequence.NegativeStepSupported",
-      "source_construct": "RangeSequence.NegativeStepSupported",
-      "source_span": {
-        "end": 2314,
-        "start": 2232
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant AwayFromEndStepYieldsEmptyRange holds after any field mutation on RangeSequence",
-      "expression": "this.away_from_end_step_yields_empty_range = true",
-      "id": "invariant.RangeSequence.AwayFromEndStepYieldsEmptyRange",
-      "source_construct": "RangeSequence.AwayFromEndStepYieldsEmptyRange",
-      "source_span": {
-        "end": 2427,
-        "start": 2320
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant EqualStartAndEndNonZeroStepIsEmpty holds after any field mutation on RangeSequence",
-      "expression": "this.equal_start_and_end_with_nonzero_step_is_empty = true",
-      "id": "invariant.RangeSequence.EqualStartAndEndNonZeroStepIsEmpty",
-      "source_construct": "RangeSequence.EqualStartAndEndNonZeroStepIsEmpty",
-      "source_span": {
-        "end": 2552,
-        "start": 2433
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant ZeroStepCaseIsDocumentedSpecialCase holds after any field mutation on RangeSequence",
-      "expression": "this.zero_step_case_is_documented_special_case = true",
-      "id": "invariant.RangeSequence.ZeroStepCaseIsDocumentedSpecialCase",
-      "source_construct": "RangeSequence.ZeroStepCaseIsDocumentedSpecialCase",
-      "source_span": {
-        "end": 2673,
-        "start": 2558
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant ZeroStepIsSemanticallyInfinite holds after any field mutation on RangeSequence",
-      "expression": "this.zero_step_is_semantically_infinite = true",
-      "id": "invariant.RangeSequence.ZeroStepIsSemanticallyInfinite",
-      "source_construct": "RangeSequence.ZeroStepIsSemanticallyInfinite",
-      "source_span": {
-        "end": 2782,
-        "start": 2679
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant SemanticallyInfiniteFormsUseSynthesisCap holds after any field mutation on RangeSequence",
-      "expression": "this.semantically_infinite_forms_use_synthesis_cap = true",
-      "id": "invariant.RangeSequence.SemanticallyInfiniteFormsUseSynthesisCap",
-      "source_construct": "RangeSequence.SemanticallyInfiniteFormsUseSynthesisCap",
-      "source_span": {
-        "end": 2912,
-        "start": 2788
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant SynthesisCapIsNotTrueCardinality holds after any field mutation on RangeSequence",
-      "expression": "this.synthesis_cap_is_not_true_cardinality = true",
-      "id": "invariant.RangeSequence.SynthesisCapIsNotTrueCardinality",
-      "source_construct": "RangeSequence.SynthesisCapIsNotTrueCardinality",
-      "source_span": {
-        "end": 3026,
-        "start": 2918
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant MaterializationNeverExceedsSynthesisCap holds after any field mutation on RangeSequence",
-      "expression": "this.materialization_never_exceeds_synthesis_cap = true",
-      "id": "invariant.RangeSequence.MaterializationNeverExceedsSynthesisCap",
-      "source_construct": "RangeSequence.MaterializationNeverExceedsSynthesisCap",
-      "source_span": {
-        "end": 3153,
-        "start": 3032
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant OversizedFiniteFormsUseBoundedPrefix holds after any field mutation on RangeSequence",
-      "expression": "this.oversized_finite_forms_use_bounded_prefix = true",
-      "id": "invariant.RangeSequence.OversizedFiniteFormsUseBoundedPrefix",
-      "source_construct": "RangeSequence.OversizedFiniteFormsUseBoundedPrefix",
-      "source_span": {
-        "end": 3275,
-        "start": 3159
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant OversizedFiniteFormsAdjustEffectiveExclusiveEnd holds after any field mutation on RangeSequence",
-      "expression": "this.oversized_finite_forms_adjust_effective_exclusive_end = true",
-      "id": "invariant.RangeSequence.OversizedFiniteFormsAdjustEffectiveExclusiveEnd",
-      "source_construct": "RangeSequence.OversizedFiniteFormsAdjustEffectiveExclusiveEnd",
-      "source_span": {
-        "end": 3420,
-        "start": 3281
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant EffectiveSizeIsAuthoritativeIterationBound holds after any field mutation on RangeSequence",
-      "expression": "this.effective_size_is_authoritative_iteration_bound = true",
-      "id": "invariant.RangeSequence.EffectiveSizeIsAuthoritativeIterationBound",
-      "source_construct": "RangeSequence.EffectiveSizeIsAuthoritativeIterationBound",
-      "source_span": {
-        "end": 3554,
-        "start": 3426
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant CanonicalObservationUsesFreeFunctions holds after any field mutation on RangeSequence",
-      "expression": "this.canonical_observation_uses_free_functions = true",
-      "id": "invariant.RangeSequence.CanonicalObservationUsesFreeFunctions",
-      "source_construct": "RangeSequence.CanonicalObservationUsesFreeFunctions",
-      "source_span": {
-        "end": 3677,
-        "start": 3560
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant RangeMemberAccessorsAreNotRequired holds after any field mutation on RangeSequence",
-      "expression": "this.range_member_accessors_are_not_required = true",
-      "id": "invariant.RangeSequence.RangeMemberAccessorsAreNotRequired",
-      "source_construct": "RangeSequence.RangeMemberAccessorsAreNotRequired",
-      "source_span": {
-        "end": 3795,
-        "start": 3683
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant GetIsExcludedFromRangeContract holds after any field mutation on RangeSequence",
-      "expression": "this.get_is_excluded_from_range_contract = true",
-      "id": "invariant.RangeSequence.GetIsExcludedFromRangeContract",
-      "source_construct": "RangeSequence.GetIsExcludedFromRangeContract",
-      "source_span": {
-        "end": 3905,
-        "start": 3801
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant ValidIndexIsSupported holds after any field mutation on RangeSequence",
-      "expression": "this.valid_index_is_supported = true",
-      "id": "invariant.RangeSequence.ValidIndexIsSupported",
-      "source_construct": "RangeSequence.ValidIndexIsSupported",
-      "source_span": {
-        "end": 3995,
-        "start": 3911
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant ValidIndexUsesEffectiveBoundedSize holds after any field mutation on RangeSequence",
-      "expression": "this.valid_index_uses_effective_bounded_size = true",
-      "id": "invariant.RangeSequence.ValidIndexUsesEffectiveBoundedSize",
-      "source_construct": "RangeSequence.ValidIndexUsesEffectiveBoundedSize",
-      "source_span": {
-        "end": 4113,
-        "start": 4001
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant NegativeSignedIndexIsInvalid holds after any field mutation on RangeSequence",
-      "expression": "this.negative_signed_index_is_invalid = true",
-      "id": "invariant.RangeSequence.NegativeSignedIndexIsInvalid",
-      "source_construct": "RangeSequence.NegativeSignedIndexIsInvalid",
-      "source_span": {
-        "end": 4218,
-        "start": 4119
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant IntegralOnlyBoundsAndSteps holds after any field mutation on RangeSequence",
-      "expression": "this.integral_only_bounds_and_steps = true",
-      "id": "invariant.RangeSequence.IntegralOnlyBoundsAndSteps",
-      "source_construct": "RangeSequence.IntegralOnlyBoundsAndSteps",
-      "source_span": {
-        "end": 4319,
-        "start": 4224
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant FloatingPointBoundsAndStepsAreRejectedAtCompileTime holds after any field mutation on RangeSequence",
-      "expression": "this.floating_point_bounds_and_steps_are_rejected_at_compile_time = true",
-      "id": "invariant.RangeSequence.FloatingPointBoundsAndStepsAreRejectedAtCompileTime",
-      "source_construct": "RangeSequence.FloatingPointBoundsAndStepsAreRejectedAtCompileTime",
-      "source_span": {
-        "end": 4475,
-        "start": 4325
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant ProducerValueNotImplicitMaterialization holds after any field mutation on RangeSequence",
-      "expression": "this.producer_value_not_implicit_materialization = true",
-      "id": "invariant.RangeSequence.ProducerValueNotImplicitMaterialization",
-      "source_construct": "RangeSequence.ProducerValueNotImplicitMaterialization",
-      "source_span": {
-        "end": 4602,
-        "start": 4481
-      }
-    },
-    {
-      "category": "invariant",
-      "description": "Verify invariant MaterializationRequiresExplicitBoundedDestination holds after any field mutation on RangeSequence",
-      "expression": "this.materialization_requires_explicit_bounded_destination = true",
-      "id": "invariant.RangeSequence.MaterializationRequiresExplicitBoundedDestination",
-      "source_construct": "RangeSequence.MaterializationRequiresExplicitBoundedDestination",
-      "source_span": {
-        "end": 4749,
-        "start": 4608
-      }
-    },
-    {
-      "category": "entity_fields",
-      "description": "Verify all declared fields on RangeSequence are present with correct types",
-      "detail": {
-        "fields": [
-          "start",
-          "end",
-          "step",
-          "supports_default_start_zero",
-          "supports_default_step_one",
-          "supports_single_argument_form",
-          "supports_two_argument_form",
-          "supports_three_argument_form",
-          "inclusive_start",
-          "exclusive_end",
-          "supports_positive_step",
-          "supports_negative_step",
-          "away_from_end_step_yields_empty_range",
-          "equal_start_and_end_with_nonzero_step_is_empty",
-          "zero_step_case_is_documented_special_case",
-          "zero_step_is_semantically_infinite",
-          "semantically_infinite_forms_use_synthesis_cap",
-          "synthesis_cap_is_not_true_cardinality",
-          "materialization_never_exceeds_synthesis_cap",
-          "oversized_finite_forms_use_bounded_prefix",
-          "oversized_finite_forms_adjust_effective_exclusive_end",
-          "effective_size_is_authoritative_iteration_bound",
-          "canonical_observation_uses_free_functions",
-          "range_member_accessors_are_not_required",
-          "get_is_excluded_from_range_contract",
-          "valid_index_is_supported",
-          "valid_index_uses_effective_bounded_size",
-          "negative_signed_index_is_invalid",
-          "integral_only_bounds_and_steps",
-          "floating_point_bounds_and_steps_are_rejected_at_compile_time",
-          "producer_value_not_implicit_materialization",
-          "materialization_requires_explicit_bounded_destination"
-        ]
-      },
-      "id": "entity-fields.RangeSequence",
-      "source_construct": "RangeSequence",
-      "source_span": {
-        "end": 4751,
-        "start": 14
-      }
-    },
-    {
-      "category": "surface_actor",
-      "description": "Verify surface RangeSurface is accessible only to the specified actor",
-      "id": "surface-actor.RangeSurface",
-      "source_construct": "RangeSurface",
-      "source_span": {
-        "end": 5170,
-        "start": 4807
-      }
-    },
-    {
-      "category": "surface_provides",
-      "description": "Verify provided operations on RangeSurface appear/hide based on when conditions",
-      "id": "surface-provides.RangeSurface",
-      "source_construct": "RangeSurface",
-      "source_span": {
-        "end": 5168,
-        "start": 4930
-      }
-    }
-  ],
-  "version": 3
-}
+entity-fields.Collection
+entity-fields.CountRequest
+entity-fields.GetAccess
+entity-fields.IndexedAccess
+entity-fields.RangeSequence
+entity-fields.VectorCollection
+invariant.Collection.LogicalSizeIsNonNegative
+invariant.CountRequest.CountRequiresCollectionSubject
+invariant.CountRequest.ResolvedCountRequiresEmptyReturnsZero
+invariant.CountRequest.ResolvedCountRequiresLogicalSizeMatch
+invariant.CountRequest.ResolvedCountRequiresNonNegativeResult
+invariant.GetAccess.AccessIsNonAllocating
+invariant.GetAccess.AccessIsNonThrowing
+invariant.GetAccess.DefaultValueMatchesCollectionDefaultElement
+invariant.GetAccess.FallbackValueReplacesDefaultValueOnlyWhenInvalid
+invariant.GetAccess.GetAccessRequiresIndexedVectorSubject
+invariant.GetAccess.NegativeIndexIsInvalid
+invariant.GetAccess.SupportsDefaultElementAccess
+invariant.GetAccess.SupportsFallbackAccess
+invariant.GetAccess.ValidIndexProbeIsAuthoritative
+invariant.IndexedAccess.IndexedAccessRequiresVectorSubject
+invariant.IndexedAccess.IndexedAccessUsesLogicalSize
+invariant.IndexedAccess.NegativeIntegralIndexIsInvalid
+invariant.IndexedAccess.SupportsValidIndexProbe
+invariant.IndexedAccess.ValidIndexDoesNotInspectElement
+invariant.IndexedAccess.ValidIndexIsNonAllocating
+invariant.IndexedAccess.ValidIndexIsNonThrowing
+invariant.RangeSequence.AwayFromEndStepYieldsEmptyRange
+invariant.RangeSequence.CanonicalObservationUsesFreeFunctions
+invariant.RangeSequence.DefaultStartIsZero
+invariant.RangeSequence.DefaultStepIsOne
+invariant.RangeSequence.DefaultValueTypeIsInt
+invariant.RangeSequence.EffectiveSizeIsAuthoritativeIterationBound
+invariant.RangeSequence.EqualStartAndEndNonZeroStepIsEmpty
+invariant.RangeSequence.ExclusiveEnd
+invariant.RangeSequence.FloatingPointBoundsAndStepsAreRejectedAtCompileTime
+invariant.RangeSequence.GetIsExcludedFromRangeContract
+invariant.RangeSequence.InclusiveStart
+invariant.RangeSequence.IntegralOnlyBoundsAndSteps
+invariant.RangeSequence.MaterializationNeverExceedsSynthesisCap
+invariant.RangeSequence.MaterializationRequiresExplicitBoundedDestination
+invariant.RangeSequence.NegativeSignedIndexIsInvalid
+invariant.RangeSequence.NegativeStepSupported
+invariant.RangeSequence.OversizedFiniteFormsAdjustEffectiveExclusiveEnd
+invariant.RangeSequence.OversizedFiniteFormsUseBoundedPrefix
+invariant.RangeSequence.PositiveStepSupported
+invariant.RangeSequence.ProducerValueNotImplicitMaterialization
+invariant.RangeSequence.RangeMemberAccessorsAreNotRequired
+invariant.RangeSequence.SemanticallyInfiniteFormsUseSynthesisCap
+invariant.RangeSequence.SingleArgumentFormSupported
+invariant.RangeSequence.SynthesisCapIsNotTrueCardinality
+invariant.RangeSequence.ThreeArgumentFormSupported
+invariant.RangeSequence.TwoArgumentFormSupported
+invariant.RangeSequence.ValidIndexIsSupported
+invariant.RangeSequence.ValidIndexUsesEffectiveBoundedSize
+invariant.RangeSequence.ZeroStepCaseIsDocumentedSpecialCase
+invariant.RangeSequence.ZeroStepIsSemanticallyInfinite
+invariant.VectorCollection.CapacityIsNonNegative
+invariant.VectorCollection.InvalidIndexReturnsDefaultElement
+invariant.VectorCollection.InvalidIndexReturnsSuppliedFallback
+invariant.VectorCollection.LogicalSizeDoesNotExceedCapacity
+invariant.VectorCollection.LogicalSizeIsNonNegative
+invariant.VectorCollection.OversizedInitializerDiagnosticIdentifiesCapacity
+invariant.VectorCollection.OversizedInitializerIsCompileTimeFailure
+invariant.VectorCollection.SupportsEmptyExplicitCapacityConstruction
+invariant.VectorCollection.SupportsIndexedFallbackLookup
+invariant.VectorCollection.SupportsIndexedLookup
+invariant.VectorCollection.SupportsLiteralDeducedConstruction
+rule-failure.CountCollectionCardinality.1
+rule-failure.CountCollectionCardinality.2
+rule-failure.CountCollectionCardinality.3
+rule-success.CountCollectionCardinality
+surface-actor.CountSurface
+surface-actor.GetSurface
+surface-actor.IndexedAccessSurface
+surface-actor.RangeSurface
+surface-provides.CountSurface
+surface-provides.GetSurface
+surface-provides.IndexedAccessSurface
+surface-provides.RangeSurface
