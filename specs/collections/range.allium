@@ -6,6 +6,7 @@ entity RangeSequence {
     step: Integer
     supports_default_start_zero: Boolean
     supports_default_step_one: Boolean
+    default_value_type_is_int: Boolean
     supports_single_argument_form: Boolean
     supports_two_argument_form: Boolean
     supports_three_argument_form: Boolean
@@ -40,6 +41,10 @@ entity RangeSequence {
 
     invariant DefaultStepIsOne {
         this.supports_default_step_one = true
+    }
+
+    invariant DefaultValueTypeIsInt {
+        this.default_value_type_is_int = true
     }
 
     invariant SingleArgumentFormSupported {
