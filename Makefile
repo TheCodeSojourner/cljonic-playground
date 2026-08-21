@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples docs-examples lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -35,6 +35,7 @@ help:
 	@printf '%-12s %s\n' 'cljonic' 'Generate the single public header at $(CLJONIC_HEADER)'
 	@printf '%-12s %s\n' 'cljonic-test' 'Compile and run the standalone single-header probe'
 	@printf '%-12s %s\n' 'docs' 'Generate Doxygen HTML documentation to docs/'
+	@printf '%-12s %s\n' 'docs-examples' 'Compile Doxygen C++ sample blocks against generated $(CLJONIC_HEADER)'
 	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
 	@printf '%-12s %s\n' 'format-doc-samples' 'Format Doxygen C++ sample blocks in src/* headers with clang-format'
 	@printf '%-12s %s\n' 'git' 'Pre-commit gate: format, lint, complexity, sanitizers, coverage, traceability, no-heap, and docs'
@@ -142,6 +143,10 @@ format-doc-samples:
 	@find src -type f \( -name '*.hpp' -o -name '*.h' \) -print0 | \
 		xargs -0 -r scripts/format-doc-samples.pl
 	@echo "format-doc-samples:ok"
+
+docs-examples: cljonic
+	@python3 scripts/compile-doc-samples.py --source-dir src --build-dir $(BUILD_DIR)/docs-examples --header $(CLJONIC_HEADER)
+	@echo "docs-examples:ok"
 
 lint: configure
 	@$(MAKE) format > /dev/null
@@ -309,6 +314,7 @@ git:
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
 	@$(MAKE) --no-print-directory -s no-heap
 	@$(MAKE) --no-print-directory -s docs
+	@$(MAKE) --no-print-directory -s docs-examples
 	@$(MAKE) --no-print-directory -s cljonic-test
 	@echo "git:ok"
 

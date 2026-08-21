@@ -167,6 +167,7 @@ changes. Assuming all tests pass, executing `make cljonic` will generate the **c
 | `make coverage-cli`                              | Same as coverage but print lines % to stdout; set `COVERAGE_FILE=foo.hpp` to narrow scope                                    |
 | `make cljonic`                                   | Generate the single public header at `cljonic.hpp`                                                                           |
 | `make cljonic-test`                              | Generate, compile, and run the standalone single-header probe                                                                |
+| `make docs-examples`                             | Compile Doxygen C++ sample blocks against generated `cljonic.hpp`                                                            |
 | `make sanitizer`                                 | Build with ASan+UBSan and run tests                                                                                          |
 | `make sanitizer-cli`                             | Quiet ASan+UBSan run for loops; prints `sanitizer:ok` on pass                                                                |
 | `make complexity`                                | Run lizard on `COMPLEXITY_PATH` (default `src`); set `CYCLOMATIC_COMPLEXITY_THRESHOLD` and `FUNCTION_LENGTH_THRESHOLD`       |
@@ -197,6 +198,7 @@ The root-level `cljonic.hpp` is a generated distribution artifact, not a hand-au
 - Any substantive change to modular headers, public API surfaces, or inclusion structure requires regenerating the root header and re-running the single-header validation gate.
 - `make cljonic-test` is the release gate for the generated artifact; it compiles and runs a standalone probe against the generated header.
 - `make test` and `make no-heap` are also run against the generated header and modular headers to confirm behavioral and no-heap equivalence.
+- `make docs-examples` compiles Doxygen C++ sample blocks against generated `cljonic.hpp` and runs in the full `make git` gate.
 
 This keeps the project portable, reviewable, and easy to evolve while still shipping a simple single-header distribution for downstream users.
 

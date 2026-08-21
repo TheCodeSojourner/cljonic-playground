@@ -34,7 +34,6 @@
 This session's open questions:
 - When should the single-header equivalence and no-heap probes be added to the automated test targets?
 
- - When should documentation examples be compiled against the generated header?
  - Which future collection and free-function families need additional behavioral and no-heap probes?
 - **Generator decision:** Derive concatenation order from the local include graph, not from filename ordering or compiler-specific dependency output.
 - **Root decision:** Use `src/cljonic-core.hpp` as the initial public packaging root.
@@ -45,6 +44,7 @@ This session's open questions:
  - **Smoke decision:** Keep the standalone single-header probe small; use the shared behavioral matrix for equivalence coverage.
  - **No-heap decision:** Run equivalent no-heap probes and allocator-symbol scans against modular and generated headers.
  - **Formatting decision:** Do not minify the generated header for now; preserve readable source documentation and provenance.
+ - **Docs-example decision:** Add dedicated `make docs-examples` compilation against generated `cljonic.hpp`; keep it out of `make test` and run it in full `make git` gate.
 1. Add generated-header behavior and allocation equivalence checks.
 2. Commit `cljonic.hpp` as the release artifact; regenerate from modular sources before release-facing updates.
 3. Preserve the current green baseline with focused validation followed by `make all` after substantive changes.
@@ -52,7 +52,7 @@ This session's open questions:
 
 
  1. Preserve committed root-level `cljonic.hpp` release artifact policy and regenerate it from modular sources for release-facing updates.
- 2. Add generated-header documentation-example validation when the example target is introduced.
+ 2. Keep generated-header documentation-example validation in full `make git` gate and promote earlier only if regressions appear.
  3. Extend behavioral and no-heap probe families as additional collections and free functions become requirements-backed.
 
 
