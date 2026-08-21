@@ -28,6 +28,9 @@
  - The generated header is intentionally readable for now: comments, documentation, and provenance markers are preserved.
  - Minification is deferred until a measured distribution-size requirement justifies a separate packaging policy.
  - `make git` completed successfully with the full quality workflow and generated-header final gate.
+
+**Finalized decision:** root-level `cljonic.hpp` is generated from `src/cljonic-core.hpp` and treated as a release/distribution artifact, not as a hand-authored implementation. The modular headers remain authoritative; the generated header is validated, reproducible, and regenerated from source rather than maintained separately.
+
 This session's open questions:
 - Should the generated header eventually be committed as a release artifact or remain build output?
 - When should the single-header equivalence and no-heap probes be added to the automated test targets?
