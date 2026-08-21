@@ -20,6 +20,11 @@ entity RangeSequence {
     semantically_infinite_forms_use_synthesis_cap: Boolean
     synthesis_cap_is_not_true_cardinality: Boolean
     materialization_never_exceeds_synthesis_cap: Boolean
+    oversized_finite_forms_use_bounded_prefix: Boolean
+    oversized_finite_forms_adjust_effective_exclusive_end: Boolean
+    effective_size_is_authoritative_iteration_bound: Boolean
+    canonical_observation_uses_free_functions: Boolean
+    range_member_accessors_are_not_required: Boolean
     integral_only_bounds_and_steps: Boolean
     floating_point_bounds_and_steps_are_rejected_at_compile_time: Boolean
     producer_value_not_implicit_materialization: Boolean
@@ -87,6 +92,26 @@ entity RangeSequence {
 
     invariant MaterializationNeverExceedsSynthesisCap {
         this.materialization_never_exceeds_synthesis_cap = true
+    }
+
+    invariant OversizedFiniteFormsUseBoundedPrefix {
+        this.oversized_finite_forms_use_bounded_prefix = true
+    }
+
+    invariant OversizedFiniteFormsAdjustEffectiveExclusiveEnd {
+        this.oversized_finite_forms_adjust_effective_exclusive_end = true
+    }
+
+    invariant EffectiveSizeIsAuthoritativeIterationBound {
+        this.effective_size_is_authoritative_iteration_bound = true
+    }
+
+    invariant CanonicalObservationUsesFreeFunctions {
+        this.canonical_observation_uses_free_functions = true
+    }
+
+    invariant RangeMemberAccessorsAreNotRequired {
+        this.range_member_accessors_are_not_required = true
     }
 
     invariant IntegralOnlyBoundsAndSteps {
