@@ -142,8 +142,8 @@ This repository enforces strict spec-to-code traceability in developer validatio
 validation and build tasks. For **help** on the available targets execute `make` from the root directory.
 
 **After cloning the repository**, run `make all` before anything else. For incremental work, run `make test` after
-changes. Assuming all tests pass, executing `make cljonic` *(coming soon)* will generate the **cljonic** single header
-file. Finally, executing `make git` *(coming soon)* will prepare the repository for a **git** commit.
+changes. Assuming all tests pass, executing `make cljonic` will generate the **cljonic** single header file at
+`cljonic.hpp`. The final step of `make git` also generates and tests that single header before reporting success.
 
 > **Note**
 > Whenever new files are added to the `src/` or `tests/` directories the developer must run `make all` again.
@@ -161,10 +161,12 @@ file. Finally, executing `make git` *(coming soon)* will prepare the repository 
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | `make`                                           | Show available targets                                                                                                       |
 | `make all`                                       | Clean, configure, parallel rebuild, and parallel test run                                                                    |
-| `make test`                                      | Incremental parallel rebuild and parallel test run                                                                           |
+| `make test`                                      | Incremental parallel rebuild and parallel tests against modular and generated headers                                        |
 | `make clean`                                     | Remove generated local build output                                                                                          |
 | `make coverage`                                  | Build with instrumentation, run tests, enforce 100% line coverage                                                            |
 | `make coverage-cli`                              | Same as coverage but print lines % to stdout; set `COVERAGE_FILE=foo.hpp` to narrow scope                                    |
+| `make cljonic`                                   | Generate the single public header at `cljonic.hpp`                                                                           |
+| `make cljonic-test`                              | Generate, compile, and run the standalone single-header probe                                                                |
 | `make sanitizer`                                 | Build with ASan+UBSan and run tests                                                                                          |
 | `make sanitizer-cli`                             | Quiet ASan+UBSan run for loops; prints `sanitizer:ok` on pass                                                                |
 | `make complexity`                                | Run lizard on `COMPLEXITY_PATH` (default `src`); set `CYCLOMATIC_COMPLEXITY_THRESHOLD` and `FUNCTION_LENGTH_THRESHOLD`       |
@@ -173,7 +175,7 @@ file. Finally, executing `make git` *(coming soon)* will prepare the repository 
 | `make lint`                                      | Run clang-format and clang-tidy checks; set `LINT_FILE=src/foo.hpp` or `tests/bar.cpp` to narrow scope                       |
 | `make no-heap-src`                               | Fail if `src` contains common heap-allocation APIs or heap-backed STL containers                                             |
 | `make no-heap-symbols`                           | Fail if compiled artifact contains forbidden allocator symbols                                                               |
-| `make no-heap`                                   | Strict no-heap gate: source check, harness build, and binary symbol scan                                                     |
+| `make no-heap`                                   | Strict no-heap gate against modular and generated headers: source check, harness build, and symbol scan                      |
 | `make traceability-spec-to-code`                 | Strict spec-to-code traceability gate: set-scoped allium validation, snapshot drift check, and test traceability enforcement |
 | `make traceability-spec-to-code-update-snapshot` | Regenerate committed obligation snapshot from current specs                                                                  |
 | `make upsert-gate`                               | Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for `UPSERT_COVERAGE_FILE`                               |
