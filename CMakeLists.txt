@@ -26,18 +26,7 @@ if(BUILD_TESTING)
         tests/cljonic-core-get-spec-tests.cpp
         tests/cljonic-core-valid-index-spec-tests.cpp
     )
-    set(CLJONIC_SOURCE_HEADERS
-        src/cljonic-config.hpp
-        src/cljonic-concepts.hpp
-        src/cljonic-core-count.hpp
-        src/cljonic-core-get.hpp
-        src/cljonic-core-valid-index.hpp
-        src/cljonic-vector.hpp
-        src/cljonic-core.hpp
-    )
-
-    add_library(cljonic_modular_header_smoke OBJECT ${CLJONIC_SOURCE_HEADERS})
-    set_source_files_properties(${CLJONIC_SOURCE_HEADERS} PROPERTIES LANGUAGE CXX)
+    add_library(cljonic_modular_header_smoke OBJECT tests/cljonic-modular-header-smoke.cpp)
     target_compile_features(cljonic_modular_header_smoke PRIVATE cxx_std_23)
     target_include_directories(cljonic_modular_header_smoke PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
@@ -100,9 +89,8 @@ if(BUILD_TESTING)
     if(EXISTS "${CLJONIC_VECTOR_HEADER}")
         target_compile_definitions(cljonic_tests PRIVATE CLJONIC_HAVE_VECTOR_IMPLEMENTATION=1)
         target_compile_definitions(cljonic_single_header_tests PRIVATE CLJONIC_HAVE_VECTOR_IMPLEMENTATION=1)
-        message(STATUS "Vector integration tests enabled with header: ${CLJONIC_VECTOR_HEADER}")
     else()
-        message(STATUS "Vector integration tests skipped: production header not found at ${CLJONIC_VECTOR_HEADER}")
+        message(FATAL_ERROR "Vector integration tests require the production header at ${CLJONIC_VECTOR_HEADER}")
     endif()
 
     include(Catch)

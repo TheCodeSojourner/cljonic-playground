@@ -74,7 +74,7 @@ test: configure
 configure: $(BUILD_DIR)/CMakeCache.txt
 
 $(BUILD_DIR)/CMakeCache.txt: CMakeLists.txt
-	$(CMAKE) -S . -B $(BUILD_DIR)
+	@$(CMAKE) -S . -B $(BUILD_DIR) > /dev/null
 
 coverage:
 	rm -rf $(COVERAGE_BUILD_DIR)
