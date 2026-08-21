@@ -121,7 +121,7 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
   | concept(Collection) ≡ { c.size() returns exactly std::size_t }
   | yagni_evolution(x) → preserve(backward_compat) ∧ prevent(feature_creep)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ count ∧ get ∧ assoc ∧ dissoc ∧ conj ∧ contains ∧ first ∧ rest
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ count ∧ get ∧ assoc ∧ dissoc ∧ conj ∧ contains ∧ first ∧ rest ∧ valid_index
   | preserve(clojure_like_names_and_semantics_by_default(x))
   | constrained_divergence(x) → require(explicit_spec_and_test_documentation(x))
   | treat_as(core_nucleus_not_full_surface(x))
