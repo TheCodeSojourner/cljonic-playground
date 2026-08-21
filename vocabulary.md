@@ -51,7 +51,7 @@ status: draft
 ### Vector
 - **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
-- **Related:** StoredCollection, CopyOnModifyCollection, String, ProbeFirstAccess, CapacityConstruction
+- **Related:** StoredCollection, CopyOnModifyCollection, String, ProbeFirstAccess, CapacityConstruction, IndexedAccess
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Vector` supports operations such as `get`, `assoc`, `conj`, `count`, `first`, and `rest`, with out-of-bounds indexed access returning a sentinel element.
 
@@ -96,6 +96,13 @@ status: draft
 - **Related:** Range, Repeat, Cycle, Iterate, Repeatedly, LazySequence, StoredCollection, SinkOperation
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Range(0, 10)` computes elements via arithmetic; `Repeat(val, n)` produces `n` copies of `val`; transforms like `map(f, range)` return `Vector` when materialized.
+
+### IndexedAccess
+- **Definition:** The capability model for validating and observing a collection's numeric index positions through a non-throwing predicate, distinct from key-based or content-based lookup. `valid_index(collection, index)` is the canonical predicate, evaluated against the collection's effective bounded size, with negative signed indexes always invalid.
+- **Deprecated Synonyms:** indexed access, index validity, bounds-checked index access
+- **Related:** Vector, Range, ProbeFirstAccess, DefaultElement
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `valid_index(xs, 2)` and `valid_index(range, 9)` both report whether the given index addresses a logical element without inspecting the stored or produced value.
 
 ### Range
 - **Definition:** A generated producer that represents an integer sequence defined by start, end, and step parameters with Clojure-compatible four-form construction. Range elements are computed as `start + i * step`. The canonical observation surface is free-function-first: `count`, `empty`, `first`, `next`, `rest`, `seq`, bounded traversal, and `into` are the intended public interface. `get` is not part of the Range contract and is explicitly excluded because Range has no key or indexed value-access model. `valid_index(range, index)` is the authoritative predicate for index validity and is evaluated against the effective bounded size, while negative signed indexes remain invalid. Member accessors for start, end, and step are non-canonical public behavior; they may exist for convenience but are not required for the design contract.
