@@ -111,4 +111,22 @@ TEST_CASE("Range supports the bounded integer producer subset", "[range]") {
   CHECK(valid_index(bounded_prefix, 9));
   CHECK_FALSE(valid_index(bounded_prefix, 10));
   CHECK_FALSE(valid_index(bounded_prefix, -1));
+
+  // Runtime exercises: the STATIC_REQUIRE checks above run these same
+  // branches only during compile-time evaluation, which the compiler folds
+  // away entirely for literal arguments, so gcov never observes a runtime
+  // hit. Volatile-derived arguments defeat that constant folding and force
+  // genuine calls, closing the coverage gap for the same branches.
+  volatile int runtime_five = 5;
+  volatile int runtime_ten = 10;
+  volatile int runtime_three = 3;
+  volatile int runtime_nine = 9;
+  volatile int runtime_zero = 0;
+  Range<int> empty_runtime{runtime_five, runtime_five, 1};
+  Range<int> away_from_end_runtime{runtime_five, runtime_ten, -1};
+  Range<int> zero_step_runtime{runtime_three, runtime_nine, runtime_zero};
+  CHECK(count(empty_runtime) == 0U);
+  CHECK(count(away_from_end_runtime) == 0U);
+  CHECK(count(zero_step_runtime) ==
+        cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
 }
