@@ -23,6 +23,10 @@ TEST_CASE("Range supports the bounded integer producer subset", "[range]")
     TRACE_ID("invariant.RangeSequence.AwayFromEndStepYieldsEmptyRange");
     TRACE_ID("invariant.RangeSequence.EqualStartAndEndNonZeroStepIsEmpty");
     TRACE_ID("invariant.RangeSequence.ZeroStepCaseIsDocumentedSpecialCase");
+    TRACE_ID("invariant.RangeSequence.ZeroStepIsSemanticallyInfinite");
+    TRACE_ID("invariant.RangeSequence.SemanticallyInfiniteFormsUseSynthesisCap");
+    TRACE_ID("invariant.RangeSequence.SynthesisCapIsNotTrueCardinality");
+    TRACE_ID("invariant.RangeSequence.MaterializationNeverExceedsSynthesisCap");
     TRACE_ID("invariant.RangeSequence.IntegralOnlyBoundsAndSteps");
     TRACE_ID("invariant.RangeSequence.FloatingPointBoundsAndStepsAreRejectedAtCompileTime");
     TRACE_ID("invariant.RangeSequence.ProducerValueNotImplicitMaterialization");
@@ -49,15 +53,15 @@ TEST_CASE("Range supports the bounded integer producer subset", "[range]")
     STATIC_REQUIRE(ascending.end() == 9);
     STATIC_REQUIRE(empty.size() == 0U);
     STATIC_REQUIRE(away_from_end.size() == 0U);
-    STATIC_REQUIRE(zero_step.size() == 0U);
+    STATIC_REQUIRE(zero_step.size() == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
     STATIC_REQUIRE(zero_step.end() == 9);
     STATIC_REQUIRE(Range{0, 0}.size() == 0U);
     STATIC_REQUIRE(Range{0, 10}.size() == 10U);
-    STATIC_REQUIRE(Range{0, 10, 0}.size() == 0U);
+    STATIC_REQUIRE(Range{0, 10, 0}.size() == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
 
     CHECK(by_default.begin() == 0);
     CHECK(descending.begin() == 10);
     CHECK(ascending.end() == 9);
-    CHECK(zero_step.size() == 0U);
+    CHECK(zero_step.size() == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
     CHECK((Range{5, 8, 2}.size()) == 2U);
 }
