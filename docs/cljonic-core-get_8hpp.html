@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::concepts::NothrowVectorElement Concept Reference</title>
+<title>cljonic: /home/pauwhi/Downloads/junk/cljonic-playground/src/cljonic-core-get.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,31 +71,35 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a class="el" href="namespacecljonic_1_1concepts.html">concepts</a></li><li class="navelem"><a class="el" href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">NothrowVectorElement</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="headertitle"><div class="title">cljonic::concepts::NothrowVectorElement Concept Reference</div></div>
+  <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle"><div class="title">cljonic-core-get.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code></p>
-<h2 class="groupheader">Concept definition</h2>
-<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> value_type&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">cljonic::concepts::NothrowVectorElement</a> = </div>
-<div class="line">    <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_vector_element.html">VectorElement&lt;value_type&gt;</a> &amp;&amp;</div>
-<div class="line">    <span class="keyword">requires</span>(value_type value, <span class="keyword">const</span> value_type &amp;other) {</div>
-<div class="line">      { value_type{} } <span class="keyword">noexcept</span>;</div>
-<div class="line">      { value_type{other} } <span class="keyword">noexcept</span>;</div>
-<div class="line">      { value = other } <span class="keyword">noexcept</span>;</div>
-<div class="line">    }</div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_nothrow_vector_element_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">cljonic::concepts::NothrowVectorElement</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00019">cljonic-concepts.hpp:19</a></div></div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_vector_element_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_vector_element.html">cljonic::concepts::VectorElement</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00012">cljonic-concepts.hpp:12</a></div></div>
-</div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Requires that Vector storage can be initialized and assigned without throwing. </p>
-
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00019">19</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
-</div></div><!-- contents -->
+<div class="textblock"><code>#include &lt;<a class="el" href="cljonic-core-valid-index_8hpp_source.html">cljonic-core-valid-index.hpp</a>&gt;</code><br />
+</div>
+<p><a href="cljonic-core-get_8hpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecljonic" id="r_namespacecljonic"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a3557ee71b9ce69bbd72409c7e310230c" id="r_a3557ee71b9ce69bbd72409c7e310230c"><td class="memTemplParams" colspan="2">template&lt;typename element_type , std::size_t capacity_value, std::integral index_type&gt; </td></tr>
+<tr class="memitem:a3557ee71b9ce69bbd72409c7e310230c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a3557ee71b9ce69bbd72409c7e310230c">cljonic::get</a> (const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;vector, index_type index) noexcept -&gt; element_type</td></tr>
+<tr class="separator:a3557ee71b9ce69bbd72409c7e310230c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b58fa6dcfdc6e7adc0a0d29e438f111" id="r_a2b58fa6dcfdc6e7adc0a0d29e438f111"><td class="memTemplParams" colspan="2">template&lt;typename element_type , std::size_t capacity_value, std::integral index_type&gt; </td></tr>
+<tr class="memitem:a2b58fa6dcfdc6e7adc0a0d29e438f111"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a2b58fa6dcfdc6e7adc0a0d29e438f111">cljonic::get</a> (const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;vector, index_type index, const element_type &amp;fallback) noexcept -&gt; element_type</td></tr>
+<tr class="separator:a2b58fa6dcfdc6e7adc0a0d29e438f111"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated on Fri Aug 21 2026 08:08:41 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8

@@ -96,6 +96,12 @@ Functions</h2></td></tr>
 <tr class="memitem:acbdaef8bdea2d7e22e36c8914ac52751" id="r_acbdaef8bdea2d7e22e36c8914ac52751"><td class="memTemplParams" colspan="2">template&lt;concepts::Collection collection_type&gt; </td></tr>
 <tr class="memitem:acbdaef8bdea2d7e22e36c8914ac52751"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751">count</a> (const collection_type &amp;collection) noexcept -&gt; std::size_t</td></tr>
 <tr class="separator:acbdaef8bdea2d7e22e36c8914ac52751"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3557ee71b9ce69bbd72409c7e310230c" id="r_a3557ee71b9ce69bbd72409c7e310230c"><td class="memTemplParams" colspan="2">template&lt;typename element_type , std::size_t capacity_value, std::integral index_type&gt; </td></tr>
+<tr class="memitem:a3557ee71b9ce69bbd72409c7e310230c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a3557ee71b9ce69bbd72409c7e310230c">get</a> (const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;vector, index_type index) noexcept -&gt; element_type</td></tr>
+<tr class="separator:a3557ee71b9ce69bbd72409c7e310230c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b58fa6dcfdc6e7adc0a0d29e438f111" id="r_a2b58fa6dcfdc6e7adc0a0d29e438f111"><td class="memTemplParams" colspan="2">template&lt;typename element_type , std::size_t capacity_value, std::integral index_type&gt; </td></tr>
+<tr class="memitem:a2b58fa6dcfdc6e7adc0a0d29e438f111"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a2b58fa6dcfdc6e7adc0a0d29e438f111">get</a> (const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;vector, index_type index, const element_type &amp;fallback) noexcept -&gt; element_type</td></tr>
+<tr class="separator:a2b58fa6dcfdc6e7adc0a0d29e438f111"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88d884853ac261340e02d9c7529349ba" id="r_a88d884853ac261340e02d9c7529349ba"><td class="memTemplParams" colspan="2">template&lt;typename element_type , std::size_t capacity_value, std::integral index_type&gt; </td></tr>
 <tr class="memitem:a88d884853ac261340e02d9c7529349ba"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a88d884853ac261340e02d9c7529349ba">valid_index</a> (const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;vector, index_type index) noexcept -&gt; bool</td></tr>
 <tr class="separator:a88d884853ac261340e02d9c7529349ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,6 +156,107 @@ template&lt;concepts::Collection collection_type&gt; </div>
 <div class="ttc" id="anamespacecljonic_html_acbdaef8bdea2d7e22e36c8914ac52751"><div class="ttname"><a href="namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751">cljonic::count</a></div><div class="ttdeci">constexpr auto count(const collection_type &amp;collection) noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-count_8hpp_source.html#l00027">cljonic-core-count.hpp:27</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-core-count_8hpp_source.html#l00027">27</a> of file <a class="el" href="cljonic-core-count_8hpp_source.html">cljonic-core-count.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3557ee71b9ce69bbd72409c7e310230c" name="a3557ee71b9ce69bbd72409c7e310230c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3557ee71b9ce69bbd72409c7e310230c">&#9670;&#160;</a></span>get() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename element_type , std::size_t capacity_value, std::integral index_type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto cljonic::get </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;&#160;</td>
+          <td class="paramname"><em>vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">index_type&#160;</td>
+          <td class="paramname"><em>index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; element_type </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p><a class="anchor" id="Core_Get"></a> <b>get</b> returns the logical element at <code>index</code> when the index is valid. When the index is invalid, the default element is returned.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="cljonic-core_8hpp.html">cljonic-core.hpp</a>&quot;</span></div>
+<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> values = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10, 20};</div>
+<div class="line"> </div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> v0 = <a class="code hl_function" href="namespacecljonic.html#a3557ee71b9ce69bbd72409c7e310230c">get</a>(values, 0U);     <span class="comment">// 10</span></div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> v1 = <a class="code hl_function" href="namespacecljonic.html#a3557ee71b9ce69bbd72409c7e310230c">get</a>(values, 2U);     <span class="comment">// 0</span></div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> v2 = <a class="code hl_function" href="namespacecljonic.html#a3557ee71b9ce69bbd72409c7e310230c">get</a>(values, 2U, 99); <span class="comment">// 99</span></div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> (v0 == 10 &amp;&amp; v1 == 0 &amp;&amp; v2 == 99) ? 0 : 1;</div>
+<div class="line">}</div>
+<div class="ttc" id="anamespacecljonic_html_a3557ee71b9ce69bbd72409c7e310230c"><div class="ttname"><a href="namespacecljonic.html#a3557ee71b9ce69bbd72409c7e310230c">cljonic::get</a></div><div class="ttdeci">constexpr auto get(const Vector&lt; element_type, capacity_value &gt; &amp;vector, index_type index) noexcept -&gt; element_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-get_8hpp_source.html#l00029">cljonic-core-get.hpp:29</a></div></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="cljonic-core-get_8hpp_source.html#l00029">29</a> of file <a class="el" href="cljonic-core-get_8hpp_source.html">cljonic-core-get.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2b58fa6dcfdc6e7adc0a0d29e438f111" name="a2b58fa6dcfdc6e7adc0a0d29e438f111"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b58fa6dcfdc6e7adc0a0d29e438f111">&#9670;&#160;</a></span>get() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename element_type , std::size_t capacity_value, std::integral index_type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto cljonic::get </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; element_type, capacity_value &gt; &amp;&#160;</td>
+          <td class="paramname"><em>vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">index_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const element_type &amp;&#160;</td>
+          <td class="paramname"><em>fallback</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; element_type </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p><a class="anchor" id="Core_Get_Fallback"></a><b>get</b> returns the logical element at <code>index</code> when the index is valid. When the index is invalid, <code>fallback</code> is returned. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-core-get_8hpp_source.html#l00041">41</a> of file <a class="el" href="cljonic-core-get_8hpp_source.html">cljonic-core-get.hpp</a>.</p>
 
 </div>
 </div>
@@ -240,7 +347,7 @@ template&lt;typename First , typename... Rest&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 20 2026 10:22:28 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Fri Aug 21 2026 08:08:41 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

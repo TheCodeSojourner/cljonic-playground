@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['operator_28_29_0',['operator()',['../classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab',1,'cljonic::Vector::operator()(index_type index) const noexcept -&gt; value_type'],['../classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04',1,'cljonic::Vector::operator()(index_type index, const value_type &amp;fallback) const noexcept -&gt; value_type']]]
+  ['get_0',['get',['../namespacecljonic.html#a3557ee71b9ce69bbd72409c7e310230c',1,'cljonic::get(const Vector&lt; element_type, capacity_value &gt; &amp;vector, index_type index) noexcept -&gt; element_type'],['../namespacecljonic.html#a2b58fa6dcfdc6e7adc0a0d29e438f111',1,'cljonic::get(const Vector&lt; element_type, capacity_value &gt; &amp;vector, index_type index, const element_type &amp;fallback) noexcept -&gt; element_type']]]
 ];
