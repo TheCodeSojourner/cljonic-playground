@@ -8,6 +8,8 @@
 
 TEST_CASE("Range supports the bounded integer producer subset", "[range]")
 {
+    using cljonic::collection_maximum_element_count;
+    using cljonic::count;
     using cljonic::Range;
 
     TRACE_ID("entity-fields.RangeSequence");
@@ -27,14 +29,22 @@ TEST_CASE("Range supports the bounded integer producer subset", "[range]")
     TRACE_ID("invariant.RangeSequence.SemanticallyInfiniteFormsUseSynthesisCap");
     TRACE_ID("invariant.RangeSequence.SynthesisCapIsNotTrueCardinality");
     TRACE_ID("invariant.RangeSequence.MaterializationNeverExceedsSynthesisCap");
+    TRACE_ID("invariant.RangeSequence.OversizedFiniteFormsUseBoundedPrefix");
+    TRACE_ID("invariant.RangeSequence.OversizedFiniteFormsAdjustEffectiveExclusiveEnd");
+    TRACE_ID("invariant.RangeSequence.EffectiveSizeIsAuthoritativeIterationBound");
+    TRACE_ID("invariant.RangeSequence.CanonicalObservationUsesFreeFunctions");
+    TRACE_ID("invariant.RangeSequence.RangeMemberAccessorsAreNotRequired");
     TRACE_ID("invariant.RangeSequence.IntegralOnlyBoundsAndSteps");
-    TRACE_ID("invariant.RangeSequence.FloatingPointBoundsAndStepsAreRejectedAtCompileTime");
+    TRACE_ID("invariant.RangeSequence."
+             "FloatingPointBoundsAndStepsAreRejectedAtCompileTime");
     TRACE_ID("invariant.RangeSequence.ProducerValueNotImplicitMaterialization");
-    TRACE_ID("invariant.RangeSequence.MaterializationRequiresExplicitBoundedDestination");
+    TRACE_ID("invariant.RangeSequence."
+             "MaterializationRequiresExplicitBoundedDestination");
     TRACE_ID("surface-actor.RangeSurface");
     TRACE_ID("surface-provides.RangeSurface");
 
     constexpr Range by_default{5};
+    constexpr Range<int> unbounded_default{};
     constexpr Range descending{10, 0, -2};
     constexpr Range ascending{2, 9, 2};
     constexpr Range empty{5, 5, 1};
@@ -42,26 +52,27 @@ TEST_CASE("Range supports the bounded integer producer subset", "[range]")
     constexpr Range zero_step{3, 9, 0};
 
     STATIC_REQUIRE(!std::is_invocable_v<decltype(by_default), int>);
-    STATIC_REQUIRE(by_default.size() == 5U);
-    STATIC_REQUIRE(by_default.begin() == 0);
-    STATIC_REQUIRE(by_default.end() == 5);
-    STATIC_REQUIRE(descending.size() == 5U);
-    STATIC_REQUIRE(descending.begin() == 10);
-    STATIC_REQUIRE(descending.end() == 0);
-    STATIC_REQUIRE(ascending.size() == 4U);
-    STATIC_REQUIRE(ascending.begin() == 2);
-    STATIC_REQUIRE(ascending.end() == 9);
-    STATIC_REQUIRE(empty.size() == 0U);
-    STATIC_REQUIRE(away_from_end.size() == 0U);
-    STATIC_REQUIRE(zero_step.size() == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
-    STATIC_REQUIRE(zero_step.end() == 9);
-    STATIC_REQUIRE(Range{0, 0}.size() == 0U);
-    STATIC_REQUIRE(Range{0, 10}.size() == 10U);
-    STATIC_REQUIRE(Range{0, 10, 0}.size() == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
+    STATIC_REQUIRE(count(unbounded_default) ==
+                   CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
+    STATIC_REQUIRE(collection_maximum_element_count() ==
+                   CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
+    STATIC_REQUIRE(count(by_default) == 5U);
+    STATIC_REQUIRE(count(descending) == 5U);
+    STATIC_REQUIRE(count(ascending) == 4U);
+    STATIC_REQUIRE(count(empty) == 0U);
+    STATIC_REQUIRE(count(away_from_end) == 0U);
+    STATIC_REQUIRE(count(zero_step) ==
+                   CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
+    STATIC_REQUIRE(count(Range{0, 0}) == 0U);
+    STATIC_REQUIRE(count(Range{0, 10}) == 10U);
+    STATIC_REQUIRE(count(Range{0, 10, 0}) ==
+                   CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
+    STATIC_REQUIRE(count(Range{0, CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT + 1}) ==
+                   collection_maximum_element_count());
 
-    CHECK(by_default.begin() == 0);
-    CHECK(descending.begin() == 10);
-    CHECK(ascending.end() == 9);
-    CHECK(zero_step.size() == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
-    CHECK((Range{5, 8, 2}.size()) == 2U);
+    CHECK(count(by_default) == 5U);
+    CHECK(count(descending) == 5U);
+    CHECK(count(ascending) == 4U);
+    CHECK(count(zero_step) == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT);
+    CHECK(count(Range{5, 8, 2}) == 2U);
 }
