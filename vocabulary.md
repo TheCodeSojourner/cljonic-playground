@@ -91,18 +91,18 @@ status: draft
 - **Examples:** `Vector`, `Set`, `String`, and `Map` are all stored collections; `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` are not.
 
 ### GeneratedCollection
-- **Definition:** A collection type that computes elements on demand without retaining them in storage. Generated collections are referentially transparent in element access and produce `Vector` or other concrete results when transformed. Finite generated collections have a true runtime result size, while semantically infinite producers are still bounded by a synthesis cap equal to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than pretending to be a finite collection with a fake size. The canonical generated collections are `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly`.
+- **Definition:** A collection type that computes elements on demand without retaining them in storage. Generated collections are referentially transparent in element access and produce `Vector` or other concrete results when transformed. Their canonical observation surface is the free-function sequence and materialization interface rather than collection-specific member accessors. Finite generated collections have a true runtime result size when they fit; oversized or semantically infinite producers use a deterministic bounded prefix with a synthesis cap equal to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than pretending to be finite with a fake size. The canonical generated collections are `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly`.
 - **Deprecated Synonyms:** Generated Collection, computed collection, on-demand collection
 - **Related:** Range, Repeat, Cycle, Iterate, Repeatedly, LazySequence, StoredCollection, SinkOperation
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Range(0, 10)` computes elements via arithmetic; `Repeat(val, n)` produces `n` copies of `val`; transforms like `map(f, range)` return `Vector` when materialized.
 
 ### Range
-- **Definition:** A generated collection type that represents an integer sequence defined by start, end, and step parameters with Clojure-compatible four-form overloads. Range elements are computed as `start + i * step` and support compile-time precomputation when construction inputs are constants. A zero step or otherwise semantically infinite form is not treated as a finite cardinality; it remains a bounded producer whose synthesis is capped at `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
+- **Definition:** A generated producer that represents an integer sequence defined by start, end, and step parameters with Clojure-compatible four-form construction. Range elements are computed as `start + i * step`. Canonical observation uses free functions such as `count`, `empty`, `first`, `next`, `rest`, `seq`, bounded traversal operations, and `into`; member accessors for start, end, and step are not required public behavior. A zero step or otherwise semantically infinite form is not treated as a finite cardinality; it remains a bounded producer whose synthesis is capped at `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`. A finite request larger than that cap silently degrades to a deterministic bounded prefix, and its stored effective exclusive end is adjusted to that prefix boundary.
 - **Deprecated Synonyms:** Range collection, integer range, generated sequence
 - **Related:** GeneratedCollection, FixedWidthIntegralScalar, LazySequence, CollectionMaximumElementCount
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Range(0, 10)` produces integers 0–9; `Range(10, 0, -1)` descends; `Range()` defaults to `Range(0, MAX, 1)` where `MAX` is `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
+- **Examples:** `range(0, 10)` observed through `take`, `count`, or `into` produces integers 0–9; `range(10, 0, -1)` descends; `range()` defaults to a zero-start, unit-step producer bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
 
 ### Repeat
 - **Definition:** A generated collection type that produces a specified number of identical copies of a given element value. Repeat is referentially transparent: every index access returns the same element value. When the count is omitted or the sequence is otherwise semantically infinite, the producer uses the bounded synthesis cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` instead of exposing a fake finite size.
@@ -706,11 +706,11 @@ status: draft
 - **Examples:** Explicit-capacity empty construction is valid, but an initializer count that exceeds capacity is a compile-time failure.
 
 ### CardinalityModel
-- **Definition:** The explicit representation of whether a sequence is finite or semantically infinite and what size information is valid to expose for that sequence. For true finite results, exact cardinality may be reported when known. For semantically infinite producers, the library exposes a bounded synthesis cap equal to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`, and this cap is not a fake size pretending the sequence is finite.
+- **Definition:** The explicit representation of whether a sequence is finite or semantically infinite and what size information is valid to expose for that sequence. For finite results within the configured bound, exact cardinality may be reported when known. For oversized finite or semantically infinite producers, the library exposes a deterministic bounded-prefix size no greater than `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; that size is the authoritative traversal and materialization bound and is not a fake claim about the producer's semantic cardinality.
 - **Deprecated Synonyms:** finite/infinite cardinality, cardinality representation
 - **Related:** LazySequence, CompileTimeEvaluation, CollectionMaximumElementCount
 - **Usage:** Specification, implementation, tests, and documentation
-- **Examples:** A zero-step range does not report `max size_t` as a fake size; it is represented as a producer with a bounded synthesis cap, while finite ranges may report exact size when computable.
+- **Examples:** A zero-step range reports the configured synthesis cap and repeats its start value during bounded observation; an oversized finite range reports the capped prefix size and uses its adjusted effective endpoint; a finite range within the cap may report its exact size.
 
 ### InvalidPatternSentinel
 - **Definition:** The stable invalid value returned when runtime regex compilation fails under the no-error policy.
