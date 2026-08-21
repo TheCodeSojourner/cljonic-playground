@@ -72,32 +72,34 @@ public:
   }
 
 private:
-  static constexpr auto compute_size(value_type start, value_type end,
-                                     value_type step) noexcept -> std::size_t {
-    if (step == value_type{0}) {
-      return collection_maximum_element_count();
-    }
+  [[nodiscard]] static constexpr auto
+  clamp_to_synthesis_cap(std::size_t computed_size) noexcept -> std::size_t {
+    return computed_size > collection_maximum_element_count()
+               ? collection_maximum_element_count()
+               : computed_size;
+  }
 
-    if (step > value_type{0}) {
-      if (start >= end) {
-        return 0U;
-      }
-      using unsigned_type = std::make_unsigned_t<value_type>;
-      const auto delta =
-          static_cast<unsigned_type>(end) - static_cast<unsigned_type>(start);
-      const auto positive_step = static_cast<unsigned_type>(step);
-      const auto computed_size =
-          static_cast<std::size_t>(delta / positive_step) +
-          (delta % positive_step == 0U ? 0U : 1U);
-      return computed_size > collection_maximum_element_count()
-                 ? collection_maximum_element_count()
-                 : computed_size;
+  [[nodiscard]] static constexpr auto
+  compute_positive_step_size(value_type start, value_type end,
+                             value_type step) noexcept -> std::size_t {
+    if (start >= end) {
+      return 0U;
     }
+    using unsigned_type = std::make_unsigned_t<value_type>;
+    const auto delta =
+        static_cast<unsigned_type>(end) - static_cast<unsigned_type>(start);
+    const auto positive_step = static_cast<unsigned_type>(step);
+    const auto computed_size = static_cast<std::size_t>(delta / positive_step) +
+                               (delta % positive_step == 0U ? 0U : 1U);
+    return clamp_to_synthesis_cap(computed_size);
+  }
 
+  [[nodiscard]] static constexpr auto
+  compute_negative_step_size(value_type start, value_type end,
+                             value_type step) noexcept -> std::size_t {
     if (start <= end) {
       return 0U;
     }
-
     using unsigned_type = std::make_unsigned_t<value_type>;
     const auto magnitude =
         static_cast<unsigned_type>(0) - static_cast<unsigned_type>(step);
@@ -105,9 +107,17 @@ private:
         static_cast<unsigned_type>(start) - static_cast<unsigned_type>(end);
     const auto computed_size = static_cast<std::size_t>(delta / magnitude) +
                                (delta % magnitude == 0U ? 0U : 1U);
-    return computed_size > collection_maximum_element_count()
-               ? collection_maximum_element_count()
-               : computed_size;
+    return clamp_to_synthesis_cap(computed_size);
+  }
+
+  static constexpr auto compute_size(value_type start, value_type end,
+                                     value_type step) noexcept -> std::size_t {
+    if (step == value_type{0}) {
+      return collection_maximum_element_count();
+    }
+
+    return step > value_type{0} ? compute_positive_step_size(start, end, step)
+                                : compute_negative_step_size(start, end, step);
   }
 
   value_type start_;
