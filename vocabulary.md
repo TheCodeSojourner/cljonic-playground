@@ -319,9 +319,16 @@ status: draft
 ### BoundedPrefixResult
 - **Definition:** A bounded result that intentionally contains only a deterministic prefix or reduced subset because the complete result could not fit under the documented capacity or result policy.
 - **Deprecated Synonyms:** partial result, prefix result
-- **Related:** BoundedResult, CompleteResult, PreflightPredicate
+- **Related:** BoundedResult, CompleteResult, PreflightPredicate, EffectiveBoundedPrefixBoundary
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** An over-capacity `into` operation may return a bounded-prefix result when its preflight indicates non-fit.
+
+### EffectiveBoundedPrefixBoundary
+- **Definition:** The adjusted exclusive endpoint a producer normalizes to when its requested result is an oversized finite form, marking where its bounded-prefix result ends.
+- **Deprecated Synonyms:** effective endpoint boundary, adjusted exclusive end
+- **Related:** BoundedPrefixResult, CardinalityModel, Range
+- **Usage:** Architecture, specification, and documentation
+- **Examples:** An oversized finite Range normalizes its effective exclusive end to the EffectiveBoundedPrefixBoundary after its bounded prefix.
 
 ### DefaultReturningResult
 - **Definition:** A documented default value result used when the requested access or lookup cannot produce a valid value.
@@ -424,9 +431,16 @@ status: draft
 ### ProducerMaterialization
 - **Definition:** The explicit process of turning a producer into an owning bounded result in a selected destination under complete-result preflight rules.
 - **Deprecated Synonyms:** producer realization, producer into-materialization
-- **Related:** UnboundedProducer, BoundedResult, PreflightPredicate, SinkOperation
+- **Related:** UnboundedProducer, BoundedResult, PreflightPredicate, SinkOperation, ProducerIteration
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** `into(destination, producer)` plus `fits_into(destination, producer)` defines producer materialization completeness.
+
+### ProducerIteration
+- **Definition:** The bounded traversal of a producer's elements up to its effective size, as distinct from ProducerMaterialization, which realizes those elements into an owning bounded result.
+- **Deprecated Synonyms:** producer iteration, producer traversal
+- **Related:** ProducerMaterialization, UnboundedProducer, GeneratedCollection
+- **Usage:** Architecture, specification, and documentation
+- **Examples:** Free-function observation such as `first`, `next`, and `rest` performs ProducerIteration without necessarily invoking ProducerMaterialization.
 
 ### RelationModel
 - **Definition:** The explicit model that must define row representation, capabilities, duplicate semantics, nested-result representation, traversal order, capacity arithmetic, preflight, and bounded failure behavior before relational operations are supported.
@@ -594,9 +608,16 @@ status: draft
 ### CompileTimeEvaluation
 - **Definition:** The architectural distinction between behavior or validation performed during compile-time evaluation and behavior that remains available at runtime.
 - **Deprecated Synonyms:** compile-time evaluation, constexpr/consteval boundary
-- **Related:** SemanticConcept, RegexProfile
+- **Related:** SemanticConcept, RegexProfile, CompileTimeFailure
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Range precomputes internal fields when inputs are compile-time constants, and some validations are intended to fail during compilation.
+
+### CompileTimeFailure
+- **Definition:** A result classification indicating an operation or construction is rejected during compilation rather than producing a runtime value, used when a violation is statically knowable ahead of program execution.
+- **Deprecated Synonyms:** compile-time failure, compile-time rejection
+- **Related:** CompileTimeEvaluation, CapacityConstruction, CardinalityModel, CheckedFailureResult
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** An oversized Vector initializer and an oversized finite Range constructed in a constexpr context are both CompileTimeFailure outcomes.
 
 ### Regex
 - **Definition:** The cljonic regex abstraction for pattern-based text matching, designed to support profile-specific implementations without changing the public vocabulary.
@@ -715,9 +736,16 @@ status: draft
 ### CardinalityModel
 - **Definition:** The explicit representation of whether a sequence is finite or semantically infinite and what size information is valid to expose for that sequence. For finite results within the configured bound, exact cardinality may be reported when known. For oversized finite or semantically infinite producers, the library exposes a deterministic bounded-prefix size no greater than `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; that size is the authoritative traversal and materialization bound and is not a fake claim about the producer's semantic cardinality. An oversized finite producer constructed as part of a required constant expression is rejected at compile time instead of receiving a bounded-prefix size.
 - **Deprecated Synonyms:** finite/infinite cardinality, cardinality representation
-- **Related:** LazySequence, CompileTimeEvaluation, CollectionMaximumElementCount
+- **Related:** LazySequence, CompileTimeEvaluation, CollectionMaximumElementCount, TrueCardinality
 - **Usage:** Specification, implementation, tests, and documentation
 - **Examples:** A zero-step range reports the configured synthesis cap and repeats its start value during bounded observation; an oversized finite range constructed at runtime reports the capped prefix size and uses its adjusted effective endpoint; an oversized finite range constructed in a `constexpr` context fails to compile instead; a finite range within the cap may report its exact size.
+
+### TrueCardinality
+- **Definition:** A producer's actual semantic element count, as distinct from the synthesis cap or bounded-prefix size the library may report for oversized or semantically infinite producers. The library never claims a synthesis cap or bounded-prefix size is a producer's TrueCardinality.
+- **Deprecated Synonyms:** true cardinality, actual cardinality, real element count
+- **Related:** CardinalityModel, CollectionMaximumElementCount, UnboundedProducer
+- **Usage:** Architecture, specification, and documentation
+- **Examples:** A zero-step Range's synthesis cap is not its TrueCardinality, since the sequence is semantically infinite.
 
 ### InvalidPatternSentinel
 - **Definition:** The stable invalid value returned when runtime regex compilation fails under the no-error policy.
