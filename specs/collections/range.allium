@@ -23,6 +23,7 @@ entity RangeSequence {
     materialization_never_exceeds_synthesis_cap: Boolean
     oversized_finite_forms_use_bounded_prefix: Boolean
     oversized_finite_forms_adjust_effective_exclusive_end: Boolean
+    oversized_finite_forms_are_compile_time_errors_when_constant_evaluated: Boolean
     effective_size_is_authoritative_iteration_bound: Boolean
     canonical_observation_uses_free_functions: Boolean
     range_member_accessors_are_not_required: Boolean
@@ -105,6 +106,10 @@ entity RangeSequence {
 
     invariant OversizedFiniteFormsUseBoundedPrefix {
         this.oversized_finite_forms_use_bounded_prefix = true
+    }
+
+    invariant OversizedFiniteFormsAreCompileTimeErrorsWhenConstantEvaluated {
+        this.oversized_finite_forms_are_compile_time_errors_when_constant_evaluated = true
     }
 
     invariant OversizedFiniteFormsAdjustEffectiveExclusiveEnd {
