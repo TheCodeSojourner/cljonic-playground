@@ -100,7 +100,7 @@ status: draft
 ### IndexedAccess
 - **Definition:** The capability model for validating and observing a collection's numeric index positions through a non-throwing predicate, distinct from key-based or content-based lookup. `valid_index(collection, index)` is the canonical predicate, evaluated against the collection's effective bounded size, with negative signed indexes always invalid.
 - **Deprecated Synonyms:** indexed access, index validity, bounds-checked index access
-- **Related:** Vector, Range, ProbeFirstAccess, DefaultElement
+- **Related:** Vector, Range, ProbeFirstAccess, DefaultElement, CanonicalCollectionOperationFamily
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `valid_index(xs, 2)` and `valid_index(range, 9)` both report whether the given index addresses a logical element without inspecting the stored or produced value.
 
@@ -585,9 +585,9 @@ status: draft
 - **Examples:** Canonical APIs are free-function-first, transforms remain lazy by default, and eager materialization is explicit.
 
 ### CanonicalCollectionOperationFamily
-- **Definition:** The canonical free-operation surface for collection behavior: `count`, `get`, `assoc`, `dissoc`, `conj`, `contains`, `first`, and `rest`. Names and semantics default to Clojure-aligned behavior unless constrained divergence is explicitly documented.
+- **Definition:** The canonical free-operation surface for collection behavior: `count`, `get`, `assoc`, `dissoc`, `conj`, `contains`, `first`, `rest`, and `valid_index`. Names and semantics default to Clojure-aligned behavior unless constrained divergence is explicitly documented.
 - **Deprecated Synonyms:** canonical operation set, collection operation family
-- **Related:** ClojureParity, FunctionalStyle, CopyOnModifyCollection, ProbeFirstAccess
+- **Related:** ClojureParity, FunctionalStyle, CopyOnModifyCollection, ProbeFirstAccess, IndexedAccess
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** A new collection operation should prefer one of the canonical names before introducing a new name, and any constrained semantic divergence is documented in specs and tests.
 
