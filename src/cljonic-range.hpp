@@ -16,6 +16,36 @@ namespace cljonic
      * subset is intentionally limited to integral types with explicit defaulting
      * and bounded materialization. \p value_type defaults to \c int, so
      * \c Range{} is equivalent to Clojure's <tt>(range)</tt>.
+     *
+     * This example covers the supported construction forms and free-function
+     * observation. Range has no member accessors for start, end, or step, and
+     * canonical observation is free-function-first via \c count and \c empty.
+     *
+     ~~~~~{.cpp}
+     #include "cljonic-core.hpp"
+     using namespace cljonic;
+
+     int main() {
+       constexpr Range zero_start_unit_step{};
+       constexpr Range ascending{0, 10};
+       constexpr Range descending{10, 0, -2};
+       constexpr Range empty_range{5, 5, 1};
+       constexpr Range zero_step{3, 9, 0};
+
+       static_assert(count(zero_start_unit_step) ==
+                     collection_maximum_element_count());
+       static_assert(count(ascending) == 10U);
+       static_assert(count(descending) == 5U);
+       static_assert(empty_range.empty());
+       static_assert(valid_index(ascending, 9));
+       static_assert(!valid_index(ascending, 10));
+       // A zero step is semantically infinite: it repeats start and is bounded
+       // by the synthesis cap rather than reporting a true finite cardinality.
+       static_assert(count(zero_step) == collection_maximum_element_count());
+
+       return 0;
+     }
+     ~~~~~
      */
     template <std::integral value_type = int>
     class Range
