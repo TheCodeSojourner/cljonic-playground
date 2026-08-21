@@ -86,6 +86,10 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
   | domain_expansion(x) → require(explicit_approved_requirement)
 
+λ S3_vocabulary_enforcement(x). vocabulary_or_public_surface_change(x) → require(vocabulary_consistency_gate(x))
+  | vocabulary_consistency_gate(x) → enforce(canonical_vocabulary_governs) ∧ traces_to(S5_identity)
+  | vocabulary_consistency_gate_fails(x) → reject_change(x)
+
 ## S2 - Coordination
 
 Coordination is driven by a shared canonical vocabulary and explicit interaction protocols. Components remain consistent through ProbeFirstAccess discipline, stable handle contracts across profiles, and preference for Clojure-semantic consistency when embedded constraints permit.
