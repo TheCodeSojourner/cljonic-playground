@@ -1,0 +1,97 @@
+-- allium: 3
+
+entity RangeSequence {
+    start: Integer
+    end: Integer
+    step: Integer
+    supports_default_start_zero: Boolean
+    supports_default_step_one: Boolean
+    supports_single_argument_form: Boolean
+    supports_two_argument_form: Boolean
+    supports_three_argument_form: Boolean
+    inclusive_start: Boolean
+    exclusive_end: Boolean
+    supports_positive_step: Boolean
+    supports_negative_step: Boolean
+    away_from_end_step_yields_empty_range: Boolean
+    equal_start_and_end_with_nonzero_step_is_empty: Boolean
+    zero_step_case_is_documented_special_case: Boolean
+    integral_only_bounds_and_steps: Boolean
+    floating_point_bounds_and_steps_are_rejected_at_compile_time: Boolean
+    producer_value_not_implicit_materialization: Boolean
+    materialization_requires_explicit_bounded_destination: Boolean
+
+    invariant DefaultStartIsZero {
+        this.supports_default_start_zero = true
+    }
+
+    invariant DefaultStepIsOne {
+        this.supports_default_step_one = true
+    }
+
+    invariant SingleArgumentFormSupported {
+        this.supports_single_argument_form = true
+    }
+
+    invariant TwoArgumentFormSupported {
+        this.supports_two_argument_form = true
+    }
+
+    invariant ThreeArgumentFormSupported {
+        this.supports_three_argument_form = true
+    }
+
+    invariant InclusiveStart {
+        this.inclusive_start = true
+    }
+
+    invariant ExclusiveEnd {
+        this.exclusive_end = true
+    }
+
+    invariant PositiveStepSupported {
+        this.supports_positive_step = true
+    }
+
+    invariant NegativeStepSupported {
+        this.supports_negative_step = true
+    }
+
+    invariant AwayFromEndStepYieldsEmptyRange {
+        this.away_from_end_step_yields_empty_range = true
+    }
+
+    invariant EqualStartAndEndNonZeroStepIsEmpty {
+        this.equal_start_and_end_with_nonzero_step_is_empty = true
+    }
+
+    invariant ZeroStepCaseIsDocumentedSpecialCase {
+        this.zero_step_case_is_documented_special_case = true
+    }
+
+    invariant IntegralOnlyBoundsAndSteps {
+        this.integral_only_bounds_and_steps = true
+    }
+
+    invariant FloatingPointBoundsAndStepsAreRejectedAtCompileTime {
+        this.floating_point_bounds_and_steps_are_rejected_at_compile_time = true
+    }
+
+    invariant ProducerValueNotImplicitMaterialization {
+        this.producer_value_not_implicit_materialization = true
+    }
+
+    invariant MaterializationRequiresExplicitBoundedDestination {
+        this.materialization_requires_explicit_bounded_destination = true
+    }
+}
+
+actor RangeOperator { identified_by: RangeSequence }
+
+surface RangeSurface {
+    facing operator: RangeOperator
+    context request: RangeSequence where request = operator
+
+    provides:
+        Range(request)
+}
