@@ -222,6 +222,7 @@
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-core-count.hpp>
+#include <cljonic-core-get.hpp>
 #include <cljonic-core-valid-index.hpp>
 #include <cljonic-vector.hpp>
 
