@@ -1,33 +1,35 @@
 ## Session State
 
-- last_session_id: f1b6de35-c21b-4de8-8bae-cfd722931a07
-- current_timestamp: 2026-08-21T16:01:47Z
+- last_session_id: cda32b8a-0d02-4868-b490-170d58cea4b2
+- current_timestamp: 2026-08-21T20:36:09Z
 - recover: 1
 - session_complete: true
 
 Task:
-1. Reduce noisy build and documentation output without weakening validation.
-2. Require the production vector header for test configuration.
-3. Add `valid_index` to the curated Doxygen main-page cheatsheet.
-4. Record the API documentation/indexing pattern in repository mementum.
+1. Refine the Range requirements, vocabulary, architecture, specification, traceability, and tests before implementation.
+2. Preserve the bounded producer model with effective endpoint normalization and effective-size authority.
+3. Keep Range observation free-function-first, with `get` excluded and `valid_index` required.
+4. Finalize repository Mementum and leave the next implementation step recoverable.
 
 Questions:
-1. Should successful CMake configure and vector integration status messages be printed in the full gate?
-2. Should missing required test dependencies reduce coverage or fail configuration?
-3. Should newly user-facing APIs require both own documentation and a main-page reference?
+1. Should the next implementation add `valid_index` for Range before broader traversal/materialization operations?
+2. Should effective endpoint normalization be implemented before adding Range iteration?
+3. Which remaining compound requirements should be split before downstream traceability regeneration?
 
 Decisions:
-1. Suppress successful CMake configure stdout while preserving stderr failures.
-2. Make a missing `CLJONIC_VECTOR_HEADER` a CMake `FATAL_ERROR`.
-3. Treat the Doxygen `\\mainpage` cheatsheet as a curated index, not an automatic API listing.
-4. Add `valid_index` explicitly to the Seq section while preserving implemented and future/unresolved references.
-5. Require each new user-facing API to have source documentation and an explicit main-page reference; regenerate and verify docs.
-6. Store this rule in `mementum/memories/user-facing-apis-require-mainpage-index-entry.md`.
+1. Requirements describe the intended completed Range contract, not the current implementation slice.
+2. Range is a producer with free-function-first observation: construction, `count`, `empty`, `first`, `next`, `rest`, `seq`, bounded traversal, and `into` are intended; member accessors are non-canonical.
+3. Oversized finite ranges degrade to deterministic bounded prefixes; effective size governs traversal/materialization and effective endpoint is normalized to the bounded prefix.
+4. `get` is permanently inapplicable to Range because Range has no key or indexed value-access contract.
+5. `valid_index(range, index)` is required over effective bounded size; negative signed indexes are invalid.
+6. Compound `REQ-FN-012B` was split into `REQ-FN-012B` (get exclusion), `REQ-FN-012C` (valid_index API), and `REQ-FN-012D` (valid_index semantics).
+7. Range Allium specification, obligation snapshot, and tests were updated for effective bounds and free-function traceability; the next code step remains gated by validation.
 
 Next:
-1. Apply the curated-index documentation rule to each future user-facing API.
-2. Run `make docs` and verify the main-page entry after API documentation changes.
-3. Preserve the green `make git` gate and current quiet output policy.
+1. Validate the current Range specification and traceability changes with the user.
+2. Regenerate the obligation snapshot after any approved final spec edits.
+3. Add focused executable tests for `valid_index(range, index)` and effective endpoint/size semantics.
+4. Implement Range normalization and Range `valid_index` support, then run focused and full gates.
 
 Historical session records follow.
  last_session_id: 604d37c3-935d-4335-b464-afefe3538aef
