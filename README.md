@@ -187,18 +187,35 @@ The `make` targets drive the existing CMake test harness. The first configure cr
 fetches Catch2 automatically through CMake `FetchContent`. The build path always uses `cmake --build ... --parallel`,
 and tests always run with `ctest --parallel`.
 
+### Single-header Release Policy
+
+The root-level `cljonic.hpp` is a generated distribution artifact, not a hand-authored source file.
+
+- The canonical source of truth remains the modular headers under `src/`, particularly `src/cljonic-core.hpp` and its local include graph.
+- `make cljonic` generates the public single-header artifact at the repository root using `scripts/amalgamate.py`.
+- The generated file is intentionally readable and must not be edited by hand.
+- Any substantive change to modular headers, public API surfaces, or inclusion structure requires regenerating the root header and re-running the single-header validation gate.
+- `make cljonic-test` is the release gate for the generated artifact; it compiles and runs a standalone probe against the generated header.
+- `make test` and `make no-heap` are also run against the generated header and modular headers to confirm behavioral and no-heap equivalence.
+
+This keeps the project portable, reviewable, and easy to evolve while still shipping a simple single-header distribution for downstream users.
+
 ### What Belongs In Git
 
 Check in:
 
 - hand-authored files in `src/`, `tests/`, `specs/`, and project documentation
 - build configuration files such as `CMakeLists.txt`
+- the generated root-level `cljonic.hpp` only when the repository is intentionally shipping a distributable snapshot to consumers or release branches
 
 Do not check in:
 
 - `build/` or other CMake build directories
 - fetched third-party content under CMake `_deps/`
 - local test discovery output, compiler objects, or generated binaries
+- hand-edited generated code or any ad hoc modifications to the amalgamated output
+
+> **Release rule:** the repository's source of truth is modular code; `cljonic.hpp` is regenerated from that source and treated as a generated release artifact, not as a second independent implementation.
 
 ### Current Test Harness Behavior
 
