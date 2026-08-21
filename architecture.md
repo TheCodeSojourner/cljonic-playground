@@ -72,7 +72,9 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
 λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
-  | producer_materialization(x) → require(ProducerMaterialization)
+  | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
+  | synthesis_cap(x) → classify_as(SafetyCeiling) ∧ not(TrueCardinality)
+  | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
 λ S3_domain_boundary(x). first_class_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
   | producer_domain(x) ≡ explicit_producers
@@ -152,8 +154,10 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
   | read_only_observation(x) → use(NonOwningView ∧ StandardViewType)
   | view_lifetime(x) → source_lifetime_bounded(x)
 
-λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer)
-  | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → classify_as(ProducerOnlyResult) ∧ before_materialization(x)
+λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
+  | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → classify_as(ProducerOnlyResult) ∧ preserve_semantic_infinity(x) ∧ before_materialization(x)
+  | semantically_infinite_producer(x) → materialize_at_most(CollectionMaximumElementCount)
+  | synthesis_cap(x) → not_interpret_as(TrueCardinality)
   | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
 
