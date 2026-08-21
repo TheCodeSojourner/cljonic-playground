@@ -91,42 +91,42 @@ status: draft
 - **Examples:** `Vector`, `Set`, `String`, and `Map` are all stored collections; `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` are not.
 
 ### GeneratedCollection
-- **Definition:** A collection type that computes elements on demand without retaining them in storage. Generated collections are finite by construction, referentially transparent in element access, and produce `Vector` or other concrete results when transformed. The canonical generated collections are `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly`.
+- **Definition:** A collection type that computes elements on demand without retaining them in storage. Generated collections are referentially transparent in element access and produce `Vector` or other concrete results when transformed. Finite generated collections have a true runtime result size, while semantically infinite producers are still bounded by a synthesis cap equal to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than pretending to be a finite collection with a fake size. The canonical generated collections are `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly`.
 - **Deprecated Synonyms:** Generated Collection, computed collection, on-demand collection
 - **Related:** Range, Repeat, Cycle, Iterate, Repeatedly, LazySequence, StoredCollection, SinkOperation
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Range(0, 10)` computes elements via arithmetic; `Repeat(val, n)` produces `n` copies of `val`; transforms like `map(f, range)` return `Vector` when materialized.
 
 ### Range
-- **Definition:** A generated collection type that represents an integer sequence defined by start, end, and step parameters with Clojure-compatible four-form overloads. Range elements are computed as `start + i * step` and support compile-time precomputation when construction inputs are constants.
+- **Definition:** A generated collection type that represents an integer sequence defined by start, end, and step parameters with Clojure-compatible four-form overloads. Range elements are computed as `start + i * step` and support compile-time precomputation when construction inputs are constants. A zero step or otherwise semantically infinite form is not treated as a finite cardinality; it remains a bounded producer whose synthesis is capped at `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
 - **Deprecated Synonyms:** Range collection, integer range, generated sequence
 - **Related:** GeneratedCollection, FixedWidthIntegralScalar, LazySequence, CollectionMaximumElementCount
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Range(0, 10)` produces integers 0–9; `Range(10, 0, -1)` descends; `Range()` defaults to `Range(0, MAX, 1)` where `MAX` is `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
 
 ### Repeat
-- **Definition:** A generated collection type that produces a specified number of identical copies of a given element value. Repeat is referentially transparent: every index access returns the same element value.
+- **Definition:** A generated collection type that produces a specified number of identical copies of a given element value. Repeat is referentially transparent: every index access returns the same element value. When the count is omitted or the sequence is otherwise semantically infinite, the producer uses the bounded synthesis cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` instead of exposing a fake finite size.
 - **Deprecated Synonyms:** Repeat collection, repetition sequence
 - **Related:** GeneratedCollection, LazySequence, CollectionMaximumElementCount
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Repeat(42, 5)` produces five copies of `42`; `Repeat(val)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` copies; `Take(n, Repeat(val))` implements the Clojure idiom `(take n (repeat val))`.
 
 ### Cycle
-- **Definition:** A generated collection type that repeatedly cycles through elements of a source collection for a specified cycle count. Element at index `i` is computed as `source[i % count(source)]`. Cycle is referentially transparent and finite by construction.
+- **Definition:** A generated collection type that repeatedly cycles through elements of a source collection for a specified cycle count. Element at index `i` is computed as `source[i % count(source)]`. Cycle is referentially transparent and finite by construction when a finite cycle count is supplied; unbounded or omitted cycle counts are bounded by the synthesis cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than declaring a fake cardinality.
 - **Deprecated Synonyms:** Cycle collection, cycling sequence
 - **Related:** GeneratedCollection, LazySequence, StoredCollection, CollectionMaximumElementCount
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Cycle(Vector{1, 2}, 3)` produces `1, 2, 1, 2, 1, 2` (six elements total); `Cycle(source)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` cycles.
 
 ### Iterate
-- **Definition:** A generated collection type that repeatedly applies a function to produce a sequence. Element at index `i` is computed by applying the function `i` times to a seed value. Iterate is referentially transparent and finite by construction.
+- **Definition:** A generated collection type that repeatedly applies a function to produce a sequence. Element at index `i` is computed by applying the function `i` times to a seed value. Iterate is referentially transparent and finite by construction when a finite count is supplied; unbounded or omitted forms use the synthesis cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than a fake finite size.
 - **Deprecated Synonyms:** Iterate collection, iterated sequence
 - **Related:** GeneratedCollection, LazySequence, CollectionMaximumElementCount
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Iterate(inc, 0, 5)` produces `0, 1, 2, 3, 4` by repeatedly incrementing from `0`; `Iterate(f, seed)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` iterations.
 
 ### Repeatedly
-- **Definition:** A generated collection type that calls a supplied function repeatedly to produce elements. Unlike `Iterate`, `Repeatedly` does not compose function results; each element is produced by an independent function call. The caller is responsible for ensuring the function is pure; non-pure functions violate referential transparency and produce non-deterministic access.
+- **Definition:** A generated collection type that calls a supplied function repeatedly to produce elements. Unlike `Iterate`, `Repeatedly` does not compose function results; each element is produced by an independent function call. The caller is responsible for ensuring the function is pure; non-pure functions violate referential transparency and produce non-deterministic access. If the sequence is semantically unbounded, it is synthesized with the cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than a fake finite cardinality.
 - **Deprecated Synonyms:** Repeatedly collection, repeated call sequence
 - **Related:** GeneratedCollection, LazySequence, CollectionMaximumElementCount
 - **Usage:** Architecture, specification, implementation, tests, and documentation
@@ -529,11 +529,11 @@ status: draft
 - **Examples:** Vector, set, map, and string values use fixed-capacity array-backed storage.
 
 ### CollectionMaximumElementCount
-- **Definition:** The compile-time configuration boundary that sets the maximum element count allowed for cljonic collections. In current documentation this boundary is exposed via the preprocessor macro CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.
+- **Definition:** The compile-time configuration boundary that sets the maximum element count allowed for cljonic collections and the synthesis cap used by semantically infinite lazy producers. In current documentation this boundary is exposed via the preprocessor macro CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.
 - **Deprecated Synonyms:** collection max element count, maximum collection element count, CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro
-- **Related:** CapacityConstruction, EmbeddedConstraint, StaticStorage, DeterministicBehavior
+- **Related:** CapacityConstruction, EmbeddedConstraint, StaticStorage, DeterministicBehavior, CardinalityModel, LazySequence
 - **Usage:** Architecture, specification, implementation, build, and documentation
-- **Examples:** A project can raise the boundary by defining CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT before including cljonic headers or by setting it from compiler/build flags.
+- **Examples:** A project can raise the boundary by defining CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT before including cljonic headers or by setting it from compiler/build flags; a zero-step range may synthesize at most this many elements before truncation.
 
 ### DeterministicBehavior
 - **Definition:** The requirement that behavior, failure modes, and profile-selected semantics remain predictable and stable for the same inputs and configuration.
@@ -706,11 +706,11 @@ status: draft
 - **Examples:** Explicit-capacity empty construction is valid, but an initializer count that exceeds capacity is a compile-time failure.
 
 ### CardinalityModel
-- **Definition:** The explicit representation of whether a sequence is finite or infinite and what size information is valid to expose for that sequence.
+- **Definition:** The explicit representation of whether a sequence is finite or semantically infinite and what size information is valid to expose for that sequence. For true finite results, exact cardinality may be reported when known. For semantically infinite producers, the library exposes a bounded synthesis cap equal to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`, and this cap is not a fake size pretending the sequence is finite.
 - **Deprecated Synonyms:** finite/infinite cardinality, cardinality representation
-- **Related:** LazySequence, CompileTimeEvaluation
+- **Related:** LazySequence, CompileTimeEvaluation, CollectionMaximumElementCount
 - **Usage:** Specification, implementation, tests, and documentation
-- **Examples:** Infinite ranges do not report `max size_t` as a fake size, while finite ranges may report exact size when computable.
+- **Examples:** A zero-step range does not report `max size_t` as a fake size; it is represented as a producer with a bounded synthesis cap, while finite ranges may report exact size when computable.
 
 ### InvalidPatternSentinel
 - **Definition:** The stable invalid value returned when runtime regex compilation fails under the no-error policy.
