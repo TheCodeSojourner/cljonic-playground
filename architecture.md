@@ -75,7 +75,7 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → classify_as(BoundedPrefixResult) ∧ bound_synthesis_by(CollectionMaximumElementCount)
   | oversized_finite_producer_at_constant_evaluation(x) → classify_as(CompileTimeFailure) ∧ reject(x)
-  | synthesis_cap(x) → classify_as(SafetyCeiling) ∧ not(TrueCardinality)
+  | synthesis_cap(x) → classify_as(CollectionMaximumElementCount) ∧ not(TrueCardinality)
   | effective_size(x) → authoritative_for(ProducerIteration ∧ ProducerMaterialization)
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
