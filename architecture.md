@@ -73,7 +73,10 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
+  | oversized_finite_producer(x) → classify_as(BoundedPrefixResult) ∧ bound_synthesis_by(CollectionMaximumElementCount)
   | synthesis_cap(x) → classify_as(SafetyCeiling) ∧ not(TrueCardinality)
+  | effective_size(x) → authoritative_for(ProducerIteration ∧ ProducerMaterialization)
+  | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
 λ S3_domain_boundary(x). first_class_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
@@ -155,9 +158,12 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
   | view_lifetime(x) → source_lifetime_bounded(x)
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
-  | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → classify_as(ProducerOnlyResult) ∧ preserve_semantic_infinity(x) ∧ before_materialization(x)
+  | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → classify_as(ProducerOnlyResult) ∧ preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
   | semantically_infinite_producer(x) → materialize_at_most(CollectionMaximumElementCount)
+  | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | synthesis_cap(x) → not_interpret_as(TrueCardinality)
+  | effective_size(x) → authoritative_for(free_function_observation ∧ producer_iteration ∧ producer_materialization)
+  | range_member_accessors(start ∧ end ∧ step) → classify_as(non_canonical)
   | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
 
