@@ -102,7 +102,7 @@ status: draft
 - **Deprecated Synonyms:** Range collection, integer range, generated sequence
 - **Related:** GeneratedCollection, FixedWidthIntegralScalar, LazySequence, CollectionMaximumElementCount, ValidityAdapter, IndexedAccess
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `range(0, 10)` observed through `count`, `first`, `next`, `rest`, `seq`, or `into` produces integers 0–9; `range(10, 0, -1)` descends; `range()` defaults to a zero-start, unit-step producer bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; oversized finite requests degrade to a deterministic bounded prefix with an effective endpoint normalized to that prefix.
+- **Examples:** `range(0, 10)` observed through `count`, `first`, `next`, `rest`, `seq`, or `into` produces integers 0–9; `range(10, 0, -1)` descends; `range()` defaults to a zero-start, unit-step producer bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; oversized finite requests degrade to a deterministic bounded prefix with an effective endpoint normalized to that prefix at runtime, and are rejected at compile time when constructed as part of a required constant expression.
 
 ### Repeat
 - **Definition:** A generated collection type that produces a specified number of identical copies of a given element value. Repeat is referentially transparent: every index access returns the same element value. When the count is omitted or the sequence is otherwise semantically infinite, the producer uses the bounded synthesis cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` instead of exposing a fake finite size.
@@ -706,11 +706,11 @@ status: draft
 - **Examples:** Explicit-capacity empty construction is valid, but an initializer count that exceeds capacity is a compile-time failure.
 
 ### CardinalityModel
-- **Definition:** The explicit representation of whether a sequence is finite or semantically infinite and what size information is valid to expose for that sequence. For finite results within the configured bound, exact cardinality may be reported when known. For oversized finite or semantically infinite producers, the library exposes a deterministic bounded-prefix size no greater than `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; that size is the authoritative traversal and materialization bound and is not a fake claim about the producer's semantic cardinality.
+- **Definition:** The explicit representation of whether a sequence is finite or semantically infinite and what size information is valid to expose for that sequence. For finite results within the configured bound, exact cardinality may be reported when known. For oversized finite or semantically infinite producers, the library exposes a deterministic bounded-prefix size no greater than `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; that size is the authoritative traversal and materialization bound and is not a fake claim about the producer's semantic cardinality. An oversized finite producer constructed as part of a required constant expression is rejected at compile time instead of receiving a bounded-prefix size.
 - **Deprecated Synonyms:** finite/infinite cardinality, cardinality representation
 - **Related:** LazySequence, CompileTimeEvaluation, CollectionMaximumElementCount
 - **Usage:** Specification, implementation, tests, and documentation
-- **Examples:** A zero-step range reports the configured synthesis cap and repeats its start value during bounded observation; an oversized finite range reports the capped prefix size and uses its adjusted effective endpoint; a finite range within the cap may report its exact size.
+- **Examples:** A zero-step range reports the configured synthesis cap and repeats its start value during bounded observation; an oversized finite range constructed at runtime reports the capped prefix size and uses its adjusted effective endpoint; an oversized finite range constructed in a `constexpr` context fails to compile instead; a finite range within the cap may report its exact size.
 
 ### InvalidPatternSentinel
 - **Definition:** The stable invalid value returned when runtime regex compilation fails under the no-error policy.
