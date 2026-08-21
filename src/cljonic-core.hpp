@@ -170,6 +170,7 @@
  * Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref
  * Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs
  * "Subs"
+ * - \ref Core_ValidIndex "valid_index"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth
  * "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
@@ -226,9 +227,12 @@
 #include <cljonic-core-valid-index.hpp>
 #include <cljonic-vector.hpp>
 
-namespace cljonic {
+namespace cljonic
+{
 
-namespace core {} // namespace core
+    namespace core
+    {
+    } // namespace core
 
 } // namespace cljonic
 
