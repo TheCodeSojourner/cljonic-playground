@@ -58,7 +58,8 @@ public:
   static_assert(concepts::NothrowVectorElement<element_type>,
                 "Vector element storage operations must not throw");
 
-  static_assert(capacity_value <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT,
+  static_assert(capacity_value <=
+                    cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
                 "Vector capacity exceeds "
                 "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(
                     CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
@@ -82,11 +83,6 @@ public:
 
   [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
     return capacity_value;
-  }
-
-  [[nodiscard]] static constexpr auto
-  collection_maximum_element_count() noexcept -> std::size_t {
-    return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
   }
 
   [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
