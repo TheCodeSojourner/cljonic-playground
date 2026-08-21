@@ -1,5 +1,39 @@
 ## Session State
 
+- last_session_id: 34ec8d89-4296-4926-a07b-d685e512143e
+- current_timestamp: 2026-08-21T23:24:11Z
+- recover: 1
+- session_complete: true
+
+Task:
+1. Implement Range `valid_index` support and finish the Range slice (constructors, compile-time trap for oversized-at-constant-evaluation, default `int` type, Doxygen examples).
+2. Refactor collection-maximum-element-count usage to a type-safe `constexpr` constant alongside the existing macro.
+3. Propagate the new compile-time-vs-runtime oversized-Range distinction through requirements, architecture, and vocabulary.
+4. Run the full gybis validation suite (`vocab-check`, `arch-check`, `spec-check`, `vocab-weed`, `arch-weed`, `spec-weed`) to convergence.
+
+Questions:
+1. Should the vocab/arch "unused term" and "principle missing in code" sweeps ever run in full (not scoped to implemented areas) — e.g. before a release?
+2. When should Map/Set/Queue/String/Repeat/Cycle/Iterate/Repeatedly move from aspirational vocabulary/architecture scope into actual specs and implementation?
+
+Decisions:
+1. `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE` (constexpr constant) coexists with the macro and the `collection_maximum_element_count()` free function; the free function is the public/canonical accessor, the constant is for compile-time-constrained call sites (e.g. `static_assert`).
+2. Range's per-type-mismatch deleted-constructor whitelist was replaced with generic constrained deleted templates (`requires (!std::same_as<T, value_type>)`), covering every arity and every possible `value_type` instantiation instead of an enumerated subset.
+3. Range's `value_type` now defaults to `int` (`template <std::integral value_type = int> class Range`), so bare `Range{}` matches Clojure's `(range)`.
+4. Oversized finite Range construction is a compile-time error (`if consteval` trap) only when evaluated as part of a required constant expression; runtime construction still silently clamps to the bounded prefix. This split required a new spec invariant (`OversizedFiniteFormsAreCompileTimeErrorsWhenConstantEvaluated`), a new `REQ-FN-012E`, new architecture rules in both S3 and S1, and vocabulary updates to `CardinalityModel` plus a new `TrueCardinality` term.
+5. `valid_index` is now part of the canonical operation vocabulary in both `architecture.md`'s `S2_operation_vocabulary` and `vocabulary.md`'s `CanonicalCollectionOperationFamily`.
+6. Added a new `IndexedAccess` vocabulary term (previously referenced but undefined) plus four other previously-undefined-but-used terms: `CompileTimeFailure`, `TrueCardinality`, `ProducerIteration`, `EffectiveBoundedPrefixBoundary`.
+7. Added `S3_vocabulary_enforcement` to architecture.md so the `canonical_vocabulary_governs` S5 identity principle has an explicit S3 enforcement mechanism.
+8. `constexpr` function calls with literal arguments are constant-folded by GCC even at `-O0` with `--coverage`, so gcov never sees them as executed; fixed by routing test arguments through `volatile` locals.
+9. Doxygen sample `#include` lines across all headers now use `cljonic.hpp` (the generated single header), not `cljonic-core.hpp`, per explicit end-user-usage policy change.
+
+Next:
+1. Decide whether/when to run a full (non-scoped) vocab/arch unused-term and missing-in-code sweep, likely before a release milestone.
+2. Continue expanding Range's free-function surface (`first`, `next`, `rest`, `seq`, `into`) per the existing requirements once prioritized.
+3. When Map/Set/Queue/String or the remaining producers (Repeat/Cycle/Iterate/Repeatedly) are scheduled for implementation, run `/gybis-arch-weed` and `/gybis-vocab-weed` scoped to the newly-implemented area.
+
+Historical session records follow.
+## Session State
+
 - last_session_id: cda32b8a-0d02-4868-b490-170d58cea4b2
 - current_timestamp: 2026-08-21T20:36:09Z
 - recover: 1
