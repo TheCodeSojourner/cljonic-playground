@@ -95,120 +95,135 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">template</span> &lt;concepts::VectorElement element_type, std::<span class="keywordtype">size_t</span> capacity_value&gt;</div>
-<div class="foldopen" id="foldopen00054" data-start="{" data-end="};">
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html">   54</a></span><span class="keyword">class </span><a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a> {</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">   56</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> = element_type;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keyword">static_assert</span>(<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">concepts::NothrowVectorElement&lt;element_type&gt;</a>,</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>                <span class="stringliteral">&quot;Vector element storage operations must not throw&quot;</span>);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="keyword">static_assert</span>(capacity_value &lt;=</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                    <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                <span class="stringliteral">&quot;Vector capacity exceeds &quot;</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                <span class="stringliteral">&quot;CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=&quot;</span> <a class="code hl_define" href="cljonic-config_8hpp.html#a79e6d0db8a00de83923cebef40296dab">CLJONIC_STRINGIFY</a>(</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                    <a class="code hl_define" href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a>));</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
-<div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f">   68</a></span>  <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f">Vector</a>(Args... args) <span class="keyword">noexcept</span>(</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>      <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">concepts::NothrowVectorElement&lt;element_type&gt;</a> &amp;&amp;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>      (<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html">concepts::NothrowElementConstruction&lt;element_type, Args&gt;</a> &amp;&amp; ...))</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>      : storage_{}, logical_size_{0} {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keyword">static_assert</span>(<span class="keyword">sizeof</span>...(Args) &lt;= capacity_value,</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                  <span class="stringliteral">&quot;Vector constructor requires initializer count to be less &quot;</span></div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                  <span class="stringliteral">&quot;than or equal to capacity&quot;</span>);</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keyword">static_assert</span>(</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        (<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html">concepts::NothrowElementConstruction&lt;element_type, Args&gt;</a> &amp;&amp; ...),</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="stringliteral">&quot;Vector constructor requires all arguments to construct &quot;</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="stringliteral">&quot;element_type without throwing and be implicitly &quot;</span></div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="stringliteral">&quot;convertible to element_type&quot;</span>);</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    initialize_storage_if_valid(args...);</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  }</div>
-</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="foldopen" id="foldopen00084" data-start="{" data-end="}">
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463">   84</a></span>  [[nodiscard]] <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463">capacity</a>() noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keywordflow">return</span> capacity_value;</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>  }</div>
-</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="foldopen" id="foldopen00088" data-start="{" data-end="}">
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101">   88</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101">size</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordflow">return</span> logical_size_;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  }</div>
-</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">int</span>egral index_type&gt;</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00094" data-start="{" data-end="}">
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab">   94</a></span>  <a class="code hl_function" href="classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab">operator()</a>(index_type index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> {</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordflow">return</span> index_is_valid(index) ? storage_[<span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(index)]</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                                 : <a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a>{};</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">// Spec obligations: VectorCollection and its invariants are implemented by</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// this type and covered by the corresponding traceable tests.</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// entity-fields.VectorCollection</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// invariant.VectorCollection.CapacityIsNonNegative</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// invariant.VectorCollection.LogicalSizeIsNonNegative</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">// invariant.VectorCollection.LogicalSizeDoesNotExceedCapacity</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">// invariant.VectorCollection.SupportsLiteralDeducedConstruction</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">// invariant.VectorCollection.SupportsEmptyExplicitCapacityConstruction</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">// invariant.VectorCollection.OversizedInitializerIsCompileTimeFailure</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">// invariant.VectorCollection.OversizedInitializerDiagnosticIdentifiesCapacity</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">// invariant.VectorCollection.SupportsIndexedLookup</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">// invariant.VectorCollection.SupportsIndexedFallbackLookup</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">// invariant.VectorCollection.InvalidIndexReturnsDefaultElement</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">// invariant.VectorCollection.InvalidIndexReturnsSuppliedFallback</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keyword">template</span> &lt;concepts::VectorElement element_type, std::<span class="keywordtype">size_t</span> capacity_value&gt;</div>
+<div class="foldopen" id="foldopen00069" data-start="{" data-end="};">
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html">   69</a></span><span class="keyword">class </span><a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a> {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">   71</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> = element_type;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  <span class="keyword">static_assert</span>(<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">concepts::NothrowVectorElement&lt;element_type&gt;</a>,</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                <span class="stringliteral">&quot;Vector element storage operations must not throw&quot;</span>);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keyword">static_assert</span>(capacity_value &lt;=</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                    <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                <span class="stringliteral">&quot;Vector capacity exceeds &quot;</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                <span class="stringliteral">&quot;CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=&quot;</span> <a class="code hl_define" href="cljonic-config_8hpp.html#a79e6d0db8a00de83923cebef40296dab">CLJONIC_STRINGIFY</a>(</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                    <a class="code hl_define" href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a>));</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
+<div class="foldopen" id="foldopen00083" data-start="{" data-end="}">
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f">   83</a></span>  <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f">Vector</a>(Args... args) <span class="keyword">noexcept</span>(</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>      <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">concepts::NothrowVectorElement&lt;element_type&gt;</a> &amp;&amp;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>      (<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html">concepts::NothrowElementConstruction&lt;element_type, Args&gt;</a> &amp;&amp; ...))</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>      : storage_{}, logical_size_{0} {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">static_assert</span>(<span class="keyword">sizeof</span>...(Args) &lt;= capacity_value,</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                  <span class="stringliteral">&quot;Vector constructor requires initializer count to be less &quot;</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                  <span class="stringliteral">&quot;than or equal to capacity&quot;</span>);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keyword">static_assert</span>(</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        (<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html">concepts::NothrowElementConstruction&lt;element_type, Args&gt;</a> &amp;&amp; ...),</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        <span class="stringliteral">&quot;Vector constructor requires all arguments to construct &quot;</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="stringliteral">&quot;element_type without throwing and be implicitly &quot;</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="stringliteral">&quot;convertible to element_type&quot;</span>);</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    initialize_storage_if_valid(args...);</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  }</div>
 </div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">int</span>egral index_type&gt;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00101" data-start="{" data-end="}">
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04">  101</a></span>  <a class="code hl_function" href="classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04">operator()</a>(index_type index,</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>             <span class="keyword">const</span> <a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> &amp;fallback) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> {</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keywordflow">return</span> index_is_valid(index) ? storage_[<span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(index)]</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                                 : fallback;</div>
+<div class="foldopen" id="foldopen00099" data-start="{" data-end="}">
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463">   99</a></span>  [[nodiscard]] <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463">capacity</a>() noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keywordflow">return</span> capacity_value;</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  }</div>
+</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="foldopen" id="foldopen00103" data-start="{" data-end="}">
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101">  103</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101">size</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">return</span> logical_size_;</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  }</div>
 </div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">int</span>egral index_type&gt;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  index_is_valid(index_type index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::signed_integral&lt;index_type&gt;) {</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>      <span class="keywordflow">if</span> (index &lt; 0) {</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>      }</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    }</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(index) &lt; logical_size_;</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  }</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> constructor_arguments_valid =</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>      <span class="keyword">sizeof</span>...(Args) &lt;= capacity_value &amp;&amp;</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>      concepts::NothrowVectorElement&lt;element_type&gt; &amp;&amp;</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>      (concepts::NothrowElementConstruction&lt;element_type, Args&gt; &amp;&amp; ...);</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  <span class="keyword">constexpr</span> <span class="keywordtype">void</span> initialize_storage_if_valid(Args... args) <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (constructor_arguments_valid&lt;Args...&gt;) {</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>      initialize_storage(std::index_sequence_for&lt;Args...&gt;{}, args...);</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>      logical_size_ = <span class="keyword">sizeof</span>...(Args);</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    }</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>  }</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>  <span class="keyword">template</span> &lt;std::size_t... Indices, <span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>  <span class="keyword">constexpr</span> <span class="keywordtype">void</span> initialize_storage(std::index_sequence&lt;Indices...&gt;,</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                                    Args... args) <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    ((storage_[Indices] = element_type{args}), ...);</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>  }</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>  std::array&lt;value_type, capacity_value&gt; storage_{};</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>  std::size_t logical_size_ = 0;</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>};</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">int</span>egral index_type&gt;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="foldopen" id="foldopen00109" data-start="{" data-end="}">
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab">  109</a></span>  <a class="code hl_function" href="classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab">operator()</a>(index_type index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> {</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keywordflow">return</span> index_is_valid(index) ? storage_[<span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(index)]</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                                 : <a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a>{};</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  }</div>
 </div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> First, <span class="keyword">typename</span>... Rest&gt;</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">  145</a></span><a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>(First, Rest...) -&gt; <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>&lt;First, 1 + <span class="keyword">sizeof</span>...(Rest)&gt;;</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>} <span class="comment">// namespace cljonic</span></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00054">cljonic-vector.hpp:54</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_a3751464b19a9a970946e9607248c7463"><div class="ttname"><a href="classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463">cljonic::Vector::capacity</a></div><div class="ttdeci">static constexpr auto capacity() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00084">cljonic-vector.hpp:84</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_a57f3f9d3631de23142403c7284edea04"><div class="ttname"><a href="classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04">cljonic::Vector::operator()</a></div><div class="ttdeci">constexpr auto operator()(index_type index, const value_type &amp;fallback) const noexcept -&gt; value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00101">cljonic-vector.hpp:101</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_a5ad495c54aa753463f58b7984aab257c"><div class="ttname"><a href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">cljonic::Vector::value_type</a></div><div class="ttdeci">element_type value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00056">cljonic-vector.hpp:56</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_a69c97dd083c9284d3db3bdf5c8fa2101"><div class="ttname"><a href="classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101">cljonic::Vector::size</a></div><div class="ttdeci">constexpr auto size() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00088">cljonic-vector.hpp:88</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_a8fe1189db1370cd0fd7506b6d41f965f"><div class="ttname"><a href="classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f">cljonic::Vector::Vector</a></div><div class="ttdeci">constexpr Vector(Args... args) noexcept(concepts::NothrowVectorElement&lt; element_type &gt; &amp;&amp;(concepts::NothrowElementConstruction&lt; element_type, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00068">cljonic-vector.hpp:68</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_ac9d734359176ff713076045ca91c88ab"><div class="ttname"><a href="classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab">cljonic::Vector::operator()</a></div><div class="ttdeci">constexpr auto operator()(index_type index) const noexcept -&gt; value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00094">cljonic-vector.hpp:94</a></div></div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">int</span>egral index_type&gt;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="foldopen" id="foldopen00116" data-start="{" data-end="}">
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04">  116</a></span>  <a class="code hl_function" href="classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04">operator()</a>(index_type index,</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>             <span class="keyword">const</span> <a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> &amp;fallback) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_typedef" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> {</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordflow">return</span> index_is_valid(index) ? storage_[<span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(index)]</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>                                 : fallback;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  }</div>
+</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">int</span>egral index_type&gt;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>  index_is_valid(index_type index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::signed_integral&lt;index_type&gt;) {</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>      <span class="keywordflow">if</span> (index &lt; 0) {</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>      }</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    }</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(index) &lt; logical_size_;</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>  }</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> constructor_arguments_valid =</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>      <span class="keyword">sizeof</span>...(Args) &lt;= capacity_value &amp;&amp;</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>      concepts::NothrowVectorElement&lt;element_type&gt; &amp;&amp;</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>      (concepts::NothrowElementConstruction&lt;element_type, Args&gt; &amp;&amp; ...);</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>  <span class="keyword">constexpr</span> <span class="keywordtype">void</span> initialize_storage_if_valid(Args... args) <span class="keyword">noexcept</span> {</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (constructor_arguments_valid&lt;Args...&gt;) {</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>      initialize_storage(std::index_sequence_for&lt;Args...&gt;{}, args...);</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>      logical_size_ = <span class="keyword">sizeof</span>...(Args);</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    }</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>  }</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>  <span class="keyword">template</span> &lt;std::size_t... Indices, <span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>  <span class="keyword">constexpr</span> <span class="keywordtype">void</span> initialize_storage(std::index_sequence&lt;Indices...&gt;,</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                                    Args... args) <span class="keyword">noexcept</span> {</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    ((storage_[Indices] = element_type{args}), ...);</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>  }</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>  std::array&lt;value_type, capacity_value&gt; storage_{};</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>  std::size_t logical_size_ = 0;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>};</div>
+</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> First, <span class="keyword">typename</span>... Rest&gt;</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">  160</a></span><a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>(First, Rest...) -&gt; <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>&lt;First, 1 + <span class="keyword">sizeof</span>...(Rest)&gt;;</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span> </div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00069">cljonic-vector.hpp:69</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html_a3751464b19a9a970946e9607248c7463"><div class="ttname"><a href="classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463">cljonic::Vector::capacity</a></div><div class="ttdeci">static constexpr auto capacity() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00099">cljonic-vector.hpp:99</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html_a57f3f9d3631de23142403c7284edea04"><div class="ttname"><a href="classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04">cljonic::Vector::operator()</a></div><div class="ttdeci">constexpr auto operator()(index_type index, const value_type &amp;fallback) const noexcept -&gt; value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00116">cljonic-vector.hpp:116</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html_a5ad495c54aa753463f58b7984aab257c"><div class="ttname"><a href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">cljonic::Vector::value_type</a></div><div class="ttdeci">element_type value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00071">cljonic-vector.hpp:71</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html_a69c97dd083c9284d3db3bdf5c8fa2101"><div class="ttname"><a href="classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101">cljonic::Vector::size</a></div><div class="ttdeci">constexpr auto size() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00103">cljonic-vector.hpp:103</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html_a8fe1189db1370cd0fd7506b6d41f965f"><div class="ttname"><a href="classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f">cljonic::Vector::Vector</a></div><div class="ttdeci">constexpr Vector(Args... args) noexcept(concepts::NothrowVectorElement&lt; element_type &gt; &amp;&amp;(concepts::NothrowElementConstruction&lt; element_type, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00083">cljonic-vector.hpp:83</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html_ac9d734359176ff713076045ca91c88ab"><div class="ttname"><a href="classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab">cljonic::Vector::operator()</a></div><div class="ttdeci">constexpr auto operator()(index_type index) const noexcept -&gt; value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00109">cljonic-vector.hpp:109</a></div></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
 <div class="ttc" id="acljonic-config_8hpp_html"><div class="ttname"><a href="cljonic-config_8hpp.html">cljonic-config.hpp</a></div></div>
 <div class="ttc" id="acljonic-config_8hpp_html_a3de5728cfb3d964bf6b7c08224c174ad"><div class="ttname"><a href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a></div><div class="ttdeci">#define CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</div><div class="ttdef"><b>Definition</b> <a href="cljonic-config_8hpp_source.html#l00004">cljonic-config.hpp:4</a></div></div>
@@ -221,7 +236,7 @@ $(document).ready(function() { init_codefold(0); });
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 26 2026 15:13:05 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Wed Aug 26 2026 16:03:21 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
