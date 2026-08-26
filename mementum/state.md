@@ -1,13 +1,25 @@
 ## Session State
 
-- active_scope: Vector direct construction, storage, and member observation
-- deferred_scope: free-function operations and additional collection types
-- validation: minimal Vector quality gates passed
-
-- last_session_id: 34ec8d89-4296-4926-a07b-d685e512143e
-- current_timestamp: 2026-08-21T23:24:11Z
+- last_session_id: 1248e078-e4ce-42eb-b340-415939acc089
+- current_timestamp: 2026-08-26T22:07:10Z
 - recover: 1
 - session_complete: true
+
+Task:
+1. Finalize the minimal Vector-only baseline and converge its vocabulary, architecture, specification, implementation, tests, and traceability.
+
+Questions:
+1. None unresolved for this session.
+
+Decisions:
+1. The active implementation surface is direct Vector construction, fixed-capacity storage, capacity/size observation, and member indexing; no free-function API is active.
+2. Test TRACE_ID coverage is the authoritative test witness for Allium obligations; production code also contains the 12 normalized Vector obligation IDs for spec-weed compatibility.
+3. Make/CMake/documentation tooling is the enforcement mechanism for repository-wide architecture policies; future collection and producer rules are not current Vector behavior.
+4. The vocabulary is reduced to 40 terms with no duplicate headings, missing fields, undefined relationships, self-links, orphan terms, or synonym conflicts.
+
+Next:
+1. Apply the new requirements document incrementally, beginning with its first approved module and propagating vocabulary -> architecture -> specification -> tests -> implementation.
+2. Re-run the vocabulary, architecture, specification, and full quality gates after each substantive module.
 
 Task:
 1. Implement Range `valid_index` support and finish the Range slice (constructors, compile-time trap for oversized-at-constant-evaluation, default `int` type, Doxygen examples).
