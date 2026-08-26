@@ -81,13 +81,13 @@ The following result-contract rules are retained as future guidance for
 additional operations and producers; they do not constrain the current Vector
 member-only surface.
 
-λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
+λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → classify_as(BoundedPrefixResult) ∧ bound_synthesis_by(CollectionMaximumElementCount)
   | oversized_finite_producer_at_constant_evaluation(x) → classify_as(CompileTimeFailure) ∧ reject(x)
-  | synthesis_cap(x) → classify_as(CollectionMaximumElementCount) ∧ not(TrueCardinality)
+  | synthesis_cap(x) → classify_as(CollectionMaximumElementCount)
   | effective_size(x) → authoritative_for(ProducerIteration ∧ ProducerMaterialization)
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
@@ -112,7 +112,7 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 λ S2_protocol(x). canonical_vocabulary_controls_interfaces(x)
   ∧ canonical_vocabulary_controls_docs(x)
   | probe_first_access_before_sentinel_reads(x)
-  | semantic_predicate_names(x) → enforce(StatePredicate ∧ VerbPredicate ∧ CapabilityPredicate)
+  | semantic_predicate_names(x) → enforce(StatePredicate ∧ VerbPredicate)
   | api_surface_status(x) → enforce(LifecycleClassification)
 
 λ S2_api_lifecycle_gate(x). public_function(x) → classify_as(RequirementsBacked ∨ CandidateStatus ∨ DeferredStatus ∨ ExcludedStatus)
@@ -131,7 +131,6 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
 λ S2_concept_bootstrap(x). concepts_gate_free_functions(x)
   | minimal_concept_requirements(x) → only_what_current_functions_need(x)
   | future_requirements(x) → add_when_first_function_needs_them(x)
-  | concept(Collection) ≡ { c.size() returns exactly std::size_t }
   | yagni_evolution(x) → preserve(backward_compat) ∧ prevent(feature_creep)
 
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ none_currently
@@ -179,11 +178,10 @@ The following sequence and materialization rules are retained as future design
 guidance; no producer or free-function sequence operation is currently active.
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
-  | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → classify_as(ProducerOnlyResult) ∧ preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
+  | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
   | semantically_infinite_producer(x) → materialize_at_most(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | oversized_finite_producer_at_constant_evaluation(x) → reject_as(CompileTimeFailure)
-  | synthesis_cap(x) → not_interpret_as(TrueCardinality)
   | effective_size(x) → authoritative_for(free_function_observation ∧ producer_iteration ∧ producer_materialization)
   | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ valid_index_authoritative_for_indexed_access(x) ∧ effective_endpoint_normalized_before_iteration(x)
   | range_member_accessors(start ∧ end ∧ step) → classify_as(non_canonical)
