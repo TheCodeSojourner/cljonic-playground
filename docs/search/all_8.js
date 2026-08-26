@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['range_0',['range',['../classcljonic_1_1_range.html',1,'cljonic::Range&lt; value_type &gt;'],['../classcljonic_1_1_range.html#abe4002ce0c35cd44c2807ea60a5b3e40',1,'cljonic::Range::Range() noexcept'],['../classcljonic_1_1_range.html#ade737e5f217bd9c85e3aee78f214d8ba',1,'cljonic::Range::Range(value_type end) noexcept'],['../classcljonic_1_1_range.html#a55d0cdafb5a49ec9a44690210388094c',1,'cljonic::Range::Range(value_type start, value_type end) noexcept'],['../classcljonic_1_1_range.html#a8ed3229d4c15a61fc32ed209108357e4',1,'cljonic::Range::Range(value_type start, value_type end, value_type step) noexcept'],['../classcljonic_1_1_range.html#ac5499622e4f2be26ee22b28cfff490ca',1,'cljonic::Range::Range(T) noexcept=delete'],['../classcljonic_1_1_range.html#a6ee474ad6358250768510a329ab37c4c',1,'cljonic::Range::Range(T, U) noexcept=delete'],['../classcljonic_1_1_range.html#ad85352d90b4c62a6fac60066387ca99f',1,'cljonic::Range::Range(T, U, V) noexcept=delete'],['../namespacecljonic.html#a6c59c579619e38bfac222ee5ca6d897b',1,'cljonic::Range(integer_type) -&gt; Range&lt; integer_type &gt;'],['../namespacecljonic.html#a259c5de3745c1fd3aaf97d0aa2e22228',1,'cljonic::Range(integer_type, integer_type) -&gt; Range&lt; integer_type &gt;'],['../namespacecljonic.html#a779d5542d856f8222aec8729fd0f7b12',1,'cljonic::Range(integer_type, integer_type, integer_type) -&gt; Range&lt; integer_type &gt;']]],
-  ['range_20repeat_20set_20and_20or_20string_1',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]],
-  ['regex_20functions_2',['Regex Functions',['../index.html#autotoc_md9',1,'']]],
-  ['repeat_20set_20and_20or_20string_3',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]]
+  ['seq_20i_20e_20sequence_3a_20vector_0',['Seq (i.e., Sequence: Vector)',['../index.html#autotoc_md8',1,'']]],
+  ['sequence_3a_20vector_1',['Seq (i.e., Sequence: Vector)',['../index.html#autotoc_md8',1,'']]],
+  ['set_20functions_2',['Set Functions',['../index.html#autotoc_md10',1,'']]],
+  ['size_3',['size',['../classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101',1,'cljonic::Vector']]],
+  ['string_20functions_4',['String Functions',['../index.html#autotoc_md11',1,'']]]
 ];

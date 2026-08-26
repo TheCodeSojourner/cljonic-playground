@@ -35,12 +35,4 @@ concept NothrowElementConstruction =
       { value_type{argument} } noexcept;
     };
 
-/** Requires that \p collection_type exposes a \c size() member returning a
- * count of logical elements.
- */
-template <typename collection_type>
-concept Collection = requires(const collection_type &c) {
-  { c.size() } -> std::same_as<std::size_t>;
-};
-
 } // namespace cljonic::concepts

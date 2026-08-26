@@ -1,5 +1,13 @@
 # cljonic - System Architecture
 
+## Current Scope
+
+The current implementation realizes only the Vector slice of this architecture.
+The retained rules for Map, Set, Queue, String, producers, and other operations
+describe future approved expansion and must not be treated as implemented
+behavior. A future module becomes active only after its requirements,
+vocabulary, specification, tests, and code are propagated together.
+
 ## S5 - Identity
 
 cljonic is an embedded-first HeaderOnlyDistribution C++23 functional collection system whose identity is bounded, deterministic, and semantically clear behavior. The system remains itself only while CopyOnModifyCollection semantics, SentinelBasedAccess with ProbeFirstAccess discipline, and strict resource determinism are preserved.
@@ -121,10 +129,9 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
   | concept(Collection) ≡ { c.size() returns exactly std::size_t }
   | yagni_evolution(x) → preserve(backward_compat) ∧ prevent(feature_creep)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ count ∧ get ∧ assoc ∧ dissoc ∧ conj ∧ contains ∧ first ∧ rest ∧ valid_index
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ none_currently
+  | future_operation(x) → require(explicit_requirement_and_specification(x))
   | preserve(clojure_like_names_and_semantics_by_default(x))
-  | constrained_divergence(x) → require(explicit_spec_and_test_documentation(x))
-  | treat_as(core_nucleus_not_full_surface(x))
 
 ## S1 - Operations
 
@@ -161,6 +168,9 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
   | read_only_observation(x) → use(NonOwningView ∧ StandardViewType)
   | view_lifetime(x) → source_lifetime_bounded(x)
+
+The following sequence and materialization rules are retained as future design
+guidance; no producer or free-function sequence operation is currently active.
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
   | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → classify_as(ProducerOnlyResult) ∧ preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)

@@ -85,12 +85,8 @@
  * ## Collection Types
  *
  * - \ref Vector "cljonic::Vector"
- * - \ref Range  "cljonic::Range"
- * - \ref Repeat "cljonic::Repeat"
- * - \ref Set    "cljonic::Set"
- * - \ref String "cljonic::String"
  *
- * ## Core Functions
+ * ## Planned Core Functions
  *
  * ### Composition
  *
@@ -134,11 +130,10 @@
  * - \ref Core_Sub "Sub",
  * - \ref Core_Uppercase "Uppercase"
  *
- * ### Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)
+ * ### Seq (i.e., Sequence: Vector)
  *
- * - \ref Core_Compose "Compose", \ref Core_Concat "Concat", \ref Core_Conj
- * "Conj", \ref Core_Conj_M "Conj_M", \ref Core_Count "Count", \ref Core_Count_M
- * "Count_M", \ref Core_Cycle "Cycle"
+ * The Vector type is the initial public surface. Free-function collection
+ * operations are introduced only when their requirements are approved.
  * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref
  * Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M
  * "DefaultElement_M", \ref Core_Different "Different", \ref Core_Distinct
@@ -170,7 +165,6 @@
  * Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref
  * Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs
  * "Subs"
- * - \ref Core_ValidIndex "valid_index"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth
  * "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
@@ -215,18 +209,12 @@
 
 /** \anchor Namespace_Core
  * The \b Core namespace provides the vast majority of \b cljonic functions.
- * Many \b Core functions deal with \ref Array, \ref Range, \ref Repeat, \ref
- * Set, and \ref String, collections. The variety and capability of the \b Core
- * functions provide much of the overall value of the <b>cljonic functional
- * style of programming</b>.
+ * The current Core surface starts with the Vector collection. Free-function
+ * collection operations are planned for later requirements modules.
  */
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-core-collection-maximum-element-count.hpp>
-#include <cljonic-core-count.hpp>
-#include <cljonic-core-get.hpp>
-#include <cljonic-core-valid-index.hpp>
-#include <cljonic-range.hpp>
 #include <cljonic-vector.hpp>
 
 namespace cljonic {

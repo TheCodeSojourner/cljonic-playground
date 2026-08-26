@@ -96,12 +96,8 @@
  * ## Collection Types
  *
  * - \ref Vector "cljonic::Vector"
- * - \ref Range  "cljonic::Range"
- * - \ref Repeat "cljonic::Repeat"
- * - \ref Set    "cljonic::Set"
- * - \ref String "cljonic::String"
  *
- * ## Core Functions
+ * ## Planned Core Functions
  *
  * ### Composition
  *
@@ -145,11 +141,10 @@
  * - \ref Core_Sub "Sub",
  * - \ref Core_Uppercase "Uppercase"
  *
- * ### Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)
+ * ### Seq (i.e., Sequence: Vector)
  *
- * - \ref Core_Compose "Compose", \ref Core_Concat "Concat", \ref Core_Conj
- * "Conj", \ref Core_Conj_M "Conj_M", \ref Core_Count "Count", \ref Core_Count_M
- * "Count_M", \ref Core_Cycle "Cycle"
+ * The Vector type is the initial public surface. Free-function collection
+ * operations are introduced only when their requirements are approved.
  * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref
  * Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M
  * "DefaultElement_M", \ref Core_Different "Different", \ref Core_Distinct
@@ -181,7 +176,6 @@
  * Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref
  * Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs
  * "Subs"
- * - \ref Core_ValidIndex "valid_index"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth
  * "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
@@ -226,10 +220,8 @@
 
 /** \anchor Namespace_Core
  * The \b Core namespace provides the vast majority of \b cljonic functions.
- * Many \b Core functions deal with \ref Array, \ref Range, \ref Repeat, \ref
- * Set, and \ref String, collections. The variety and capability of the \b Core
- * functions provide much of the overall value of the <b>cljonic functional
- * style of programming</b>.
+ * The current Core surface starts with the Vector collection. Free-function
+ * collection operations are planned for later requirements modules.
  */
 
 // Begin cljonic-concepts.hpp
@@ -270,14 +262,6 @@ concept NothrowElementConstruction =
       { value_type{argument} } noexcept;
     };
 
-/** Requires that \p collection_type exposes a \c size() member returning a
- * count of logical elements.
- */
-template <typename collection_type>
-concept Collection = requires(const collection_type &c) {
-  { c.size() } -> std::same_as<std::size_t>;
-};
-
 } // namespace cljonic::concepts
 // End cljonic-concepts.hpp
 // Begin cljonic-core-collection-maximum-element-count.hpp
@@ -299,237 +283,8 @@ namespace cljonic {
 constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
     CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
 
-/** \anchor Core_CollectionMaximumElementCount
- * \b collection_maximum_element_count returns the configured synthesis
- * ceiling for bounded cljonic collections and semantically infinite
- * producers.
- */
-[[nodiscard]] constexpr auto
-collection_maximum_element_count() noexcept -> std::size_t {
-  return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
-}
-
 } // namespace cljonic
 // End cljonic-core-collection-maximum-element-count.hpp
-// Begin cljonic-core-count.hpp
-#pragma once
-
-
-namespace cljonic {
-
-/** \anchor Core_Count
- * \b count returns the number of logical elements in \p collection.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   const auto empty = Vector<int, 4>{};
-   const auto populated = Vector{1, 2};
-
-   const auto n0 = count(empty);     // 0
-   const auto n1 = count(populated); // 2
-
-   return (n0 == 0 && n1 == 2) ? 0 : 1;
- }
- ~~~~~
- */
-template <concepts::Collection collection_type>
-[[nodiscard]] constexpr auto
-count(const collection_type &collection) noexcept -> std::size_t {
-  return collection.size();
-}
-
-} // namespace cljonic
-// End cljonic-core-count.hpp
-// Begin cljonic-core-get.hpp
-#pragma once
-
-// Begin cljonic-core-valid-index.hpp
-#pragma once
-
-#include <concepts>
-#include <cstddef>
-
-// Begin cljonic-range.hpp
-#pragma once
-
-#include <concepts>
-#include <cstddef>
-#include <type_traits>
-
-
-namespace cljonic {
-
-/** \anchor Range
- * \b Range is a bounded integer producer that represents a sequence from
- * \p start up to but excluding \p end, advancing by \p step. The supported
- * subset is intentionally limited to integral types with explicit defaulting
- * and bounded materialization. \p value_type defaults to \c int, so
- * \c Range{} is equivalent to Clojure's <tt>(range)</tt>.
- *
- * This example covers the supported construction forms and free-function
- * observation. Range has no member accessors for start, end, or step, and
- * canonical observation is free-function-first via \c count and \c empty.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   constexpr Range zero_start_unit_step{};
-   constexpr Range ascending{0, 10};
-   constexpr Range descending{10, 0, -2};
-   constexpr Range empty_range{5, 5, 1};
-   constexpr Range zero_step{3, 9, 0};
-
-   static_assert(count(zero_start_unit_step) ==
-                 collection_maximum_element_count());
-   static_assert(count(ascending) == 10U);
-   static_assert(count(descending) == 5U);
-   static_assert(empty_range.empty());
-   static_assert(valid_index(ascending, 9));
-   static_assert(!valid_index(ascending, 10));
-   // A zero step is semantically infinite: it repeats start and is bounded
-   // by the synthesis cap rather than reporting a true finite cardinality.
-   static_assert(count(zero_step) == collection_maximum_element_count());
-
-   return 0;
- }
- ~~~~~
- */
-template <std::integral value_type = int> class Range {
-public:
-  using element_type = value_type;
-
-  static_assert(std::integral<value_type>,
-                "Range requires an integral element type");
-
-  constexpr Range() noexcept
-      : start_{0}, end_{collection_maximum_element_count()}, step_{1},
-        size_{collection_maximum_element_count()} {}
-
-  constexpr explicit Range(value_type end) noexcept
-    requires std::integral<value_type>
-      : Range(value_type{0}, end, value_type{1}) {}
-
-  constexpr Range(value_type start, value_type end) noexcept
-    requires std::integral<value_type>
-      : Range(start, end, value_type{1}) {}
-
-  constexpr Range(value_type start, value_type end, value_type step) noexcept
-    requires std::integral<value_type>
-      : start_{start}, end_{end}, step_{step},
-        size_{compute_size(start, end, step)} {
-    if (step == value_type{0}) {
-      start_ = start;
-      end_ = end;
-      step_ = step;
-      size_ = collection_maximum_element_count();
-    }
-  }
-
-  // Reject construction from any argument type that isn't exactly value_type,
-  // so mismatched integral/floating-point arguments fail to compile instead
-  // of silently truncating via implicit conversion.
-  template <typename T>
-    requires(!std::same_as<T, value_type>)
-  constexpr Range(T) noexcept = delete;
-
-  template <typename T, typename U>
-    requires(!std::same_as<T, value_type> || !std::same_as<U, value_type>)
-  constexpr Range(T, U) noexcept = delete;
-
-  template <typename T, typename U, typename V>
-    requires(!std::same_as<T, value_type> || !std::same_as<U, value_type> ||
-             !std::same_as<V, value_type>)
-  constexpr Range(T, U, V) noexcept = delete;
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return size_;
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return size_ == 0U;
-  }
-
-private:
-  // Deliberately not defined: calling this during constant evaluation makes
-  // that evaluation ill-formed, turning an oversized constexpr Range into a
-  // compile-time error instead of a silently clamped bounded prefix. This
-  // path is unreachable at runtime, so it is never actually linked.
-  static void reject_oversized_range_in_constant_expression() noexcept;
-
-  [[nodiscard]] static constexpr auto
-  clamp_to_synthesis_cap(std::size_t computed_size) noexcept -> std::size_t {
-    if (computed_size > collection_maximum_element_count()) {
-      if consteval {
-        reject_oversized_range_in_constant_expression();
-      }
-      return collection_maximum_element_count();
-    }
-    return computed_size;
-  }
-
-  [[nodiscard]] static constexpr auto
-  compute_positive_step_size(value_type start, value_type end,
-                             value_type step) noexcept -> std::size_t {
-    if (start >= end) {
-      return 0U;
-    }
-    using unsigned_type = std::make_unsigned_t<value_type>;
-    const auto delta =
-        static_cast<unsigned_type>(end) - static_cast<unsigned_type>(start);
-    const auto positive_step = static_cast<unsigned_type>(step);
-    const auto computed_size = static_cast<std::size_t>(delta / positive_step) +
-                               (delta % positive_step == 0U ? 0U : 1U);
-    return clamp_to_synthesis_cap(computed_size);
-  }
-
-  [[nodiscard]] static constexpr auto
-  compute_negative_step_size(value_type start, value_type end,
-                             value_type step) noexcept -> std::size_t {
-    if (start <= end) {
-      return 0U;
-    }
-    using unsigned_type = std::make_unsigned_t<value_type>;
-    const auto magnitude =
-        static_cast<unsigned_type>(0) - static_cast<unsigned_type>(step);
-    const auto delta =
-        static_cast<unsigned_type>(start) - static_cast<unsigned_type>(end);
-    const auto computed_size = static_cast<std::size_t>(delta / magnitude) +
-                               (delta % magnitude == 0U ? 0U : 1U);
-    return clamp_to_synthesis_cap(computed_size);
-  }
-
-  static constexpr auto compute_size(value_type start, value_type end,
-                                     value_type step) noexcept -> std::size_t {
-    if (step == value_type{0}) {
-      return collection_maximum_element_count();
-    }
-
-    return step > value_type{0} ? compute_positive_step_size(start, end, step)
-                                : compute_negative_step_size(start, end, step);
-  }
-
-  value_type start_;
-  value_type end_;
-  value_type step_;
-  std::size_t size_;
-};
-
-template <std::integral integer_type>
-Range(integer_type) -> Range<integer_type>;
-
-template <std::integral integer_type>
-Range(integer_type, integer_type) -> Range<integer_type>;
-
-template <std::integral integer_type>
-Range(integer_type, integer_type, integer_type) -> Range<integer_type>;
-
-} // namespace cljonic
-// End cljonic-range.hpp
 // Begin cljonic-vector.hpp
 #pragma once
 
@@ -544,8 +299,7 @@ namespace cljonic {
  * \b Vector is a CopyOnModifyCollection with fixed-capacity storage.
  * Construction with more initializers than capacity is a compile-time error.
  *
- * This example covers bounded construction and indexed observation. Free
- * functions that operate on collections are documented with their own headers.
+ * This example covers bounded construction and direct member observation.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -677,106 +431,6 @@ Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 
 } // namespace cljonic
 // End cljonic-vector.hpp
-
-namespace cljonic {
-
-/** \anchor Core_ValidIndex
- * \b valid_index reports whether an integral index addresses a logical
- * element in a Vector or Range without inspecting the produced value.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   constexpr Vector<int, 4> values{10, 20};
-
-   static_assert(valid_index(values, 1U));
-   static_assert(!valid_index(values, 2U));
-   static_assert(!valid_index(values, -1));
-
-   constexpr Range<int> range{0, 10};
-
-   static_assert(valid_index(range, 9));
-   static_assert(!valid_index(range, 10));
-   static_assert(!valid_index(range, -1));
-
-   return 0;
- }
- ~~~~~
- */
-template <typename element_type, std::size_t capacity_value,
-          std::integral index_type>
-[[nodiscard]] constexpr auto
-valid_index(const Vector<element_type, capacity_value> &vector,
-            index_type index) noexcept -> bool {
-  if constexpr (std::signed_integral<index_type>) {
-    if (index < 0) {
-      return false;
-    }
-  }
-
-  return static_cast<std::size_t>(index) < vector.size();
-}
-
-template <std::integral value_type, std::integral index_type>
-[[nodiscard]] constexpr auto valid_index(const Range<value_type> &range,
-                                         index_type index) noexcept -> bool {
-  if constexpr (std::signed_integral<index_type>) {
-    if (index < 0) {
-      return false;
-    }
-  }
-
-  return static_cast<std::size_t>(index) < range.size();
-}
-
-} // namespace cljonic
-// End cljonic-core-valid-index.hpp
-
-namespace cljonic {
-
-/** \anchor Core_Get
- * \b get returns the logical element at \p index when the index is valid.
- * When the index is invalid, the default element is returned.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   const auto values = Vector<int, 4>{10, 20};
-
-   const auto v0 = get(values, 0U);     // 10
-   const auto v1 = get(values, 2U);     // 0
-   const auto v2 = get(values, 2U, 99); // 99
-
-   return (v0 == 10 && v1 == 0 && v2 == 99) ? 0 : 1;
- }
- ~~~~~
- */
-template <typename element_type, std::size_t capacity_value,
-          std::integral index_type>
-[[nodiscard]] constexpr auto
-get(const Vector<element_type, capacity_value> &vector,
-    index_type index) noexcept -> element_type {
-  return valid_index(vector, index) ? vector(index) : element_type{};
-}
-
-/** \anchor Core_Get_Fallback
- * \b get returns the logical element at \p index when the index is valid.
- * When the index is invalid, \p fallback is returned.
- */
-template <typename element_type, std::size_t capacity_value,
-          std::integral index_type>
-[[nodiscard]] constexpr auto
-get(const Vector<element_type, capacity_value> &vector, index_type index,
-    const element_type &fallback) noexcept -> element_type {
-  return valid_index(vector, index) ? vector(index) : fallback;
-}
-
-} // namespace cljonic
-// End cljonic-core-get.hpp
 
 namespace cljonic {
 

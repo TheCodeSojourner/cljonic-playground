@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['predicate_0',['Predicate',['../index.html#autotoc_md6',1,'']]],
-  ['primitive_1',['Primitive',['../index.html#autotoc_md7',1,'']]]
+  ['regex_20functions_0',['Regex Functions',['../index.html#autotoc_md9',1,'']]]
 ];

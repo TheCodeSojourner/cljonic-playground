@@ -2,8 +2,8 @@
 
 namespace {
 [[nodiscard]] auto no_heap_probe() noexcept -> bool {
-  return cljonic::no_heap::probes::count_on_vector() &&
-         cljonic::no_heap::probes::vector_count();
+  return cljonic::no_heap::probes::vector_storage() &&
+         cljonic::no_heap::probes::vector_capacity();
 }
 } // namespace
 

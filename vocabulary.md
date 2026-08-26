@@ -6,6 +6,15 @@ status: draft
 
 ## Core Vocabulary
 
+## Current Scope
+
+The current implementation and tests cover only the `Vector` collection and
+its direct construction and member-observation contract. Free-function
+operations are not currently supported. Terms for other collections and
+operations remain planned vocabulary; they do not constitute supported
+behavior until an active specification, test coverage, and implementation are
+added.
+
 ### CopyOnModifyCollection
 - **Definition:** A fixed-capacity value type backed by static storage that returns a modified copy instead of mutating in place. In this repo, vector, set, map, and string all follow this model.
 - **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection, deep copy on write, deep copying on write
@@ -51,9 +60,9 @@ status: draft
 ### Vector
 - **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
-- **Related:** StoredCollection, CopyOnModifyCollection, String, ProbeFirstAccess, CapacityConstruction, IndexedAccess
+- **Related:** StoredCollection, CopyOnModifyCollection, String, CapacityConstruction
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A `Vector` supports operations such as `get`, `assoc`, `conj`, `count`, `first`, and `rest`, with out-of-bounds indexed access returning a sentinel element.
+- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `size()`, `capacity()`, and call operator provide direct member observation.
 
 ### Map
 - **Definition:** The cljonic fixed-capacity associative collection type with content-based key lookup, immutable copy-on-modify updates, and intentionally unspecified iteration order.
@@ -77,11 +86,11 @@ status: draft
 - **Examples:** A `String<32>` means room for 32 characters; in UTF-8 mode its backing storage may reserve worst-case code-unit capacity to preserve that logical character capacity.
 
 ### Collection
-- **Definition:** A C++23 concept that gates generic free functions by requiring `c.size()` to return exactly `std::size_t`. Additional requirements (such as indexed element access or `value_type`) are added only when the first free function that needs them is implemented, following a YAGNI bootstrap policy.
+- **Definition:** A planned C++23 capability concept for generic collection operations. It is not part of the current Vector-only implementation surface.
 - **Deprecated Synonyms:** none (first use in 2026-08-11)
 - **Related:** StoredCollection, GeneratedCollection, SemanticConcept
 - **Usage:** Architecture, specification, implementation, and templates
-- **Examples:** `count(c)` is constrained on `concepts::Collection`; `count` is now a single template instead of per-type overloads.
+- **Examples:** Future collection operations may use a constrained collection concept after their requirements are approved.
 
 ### StoredCollection
 - **Definition:** A collection type that retains all elements in static array-backed memory and supports immutable copy-on-modify updates. The canonical stored collections are `Vector`, `Set`, `String`, and `Map`.
@@ -98,11 +107,11 @@ status: draft
 - **Examples:** `Range(0, 10)` computes elements via arithmetic; `Repeat(val, n)` produces `n` copies of `val`; transforms like `map(f, range)` return `Vector` when materialized.
 
 ### IndexedAccess
-- **Definition:** The capability model for validating and observing a collection's numeric index positions through a non-throwing predicate, distinct from key-based or content-based lookup. `valid_index(collection, index)` is the canonical predicate, evaluated against the collection's effective bounded size, with negative signed indexes always invalid.
+- **Definition:** A planned capability model for validating and observing a collection's numeric index positions. It is not part of the current Vector-only public API.
 - **Deprecated Synonyms:** indexed access, index validity, bounds-checked index access
 - **Related:** Vector, Range, ProbeFirstAccess, DefaultElement, CanonicalCollectionOperationFamily
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `valid_index(xs, 2)` and `valid_index(range, 9)` both report whether the given index addresses a logical element without inspecting the stored or produced value.
+- **Examples:** A future indexed-access operation may report whether an index addresses a logical element without inspecting the stored value.
 
 ### Range
 - **Definition:** A generated producer that represents an integer sequence defined by start, end, and step parameters with Clojure-compatible four-form construction. Range elements are computed as `start + i * step`. The canonical observation surface is free-function-first: `count`, `empty`, `first`, `next`, `rest`, `seq`, bounded traversal, and `into` are the intended public interface. `get` is not part of the Range contract and is explicitly excluded because Range has no key or indexed value-access model. `valid_index(range, index)` is the authoritative predicate for index validity and is evaluated against the effective bounded size, while negative signed indexes remain invalid. Member accessors for start, end, and step are non-canonical public behavior; they may exist for convenience but are not required for the design contract.
@@ -585,11 +594,11 @@ status: draft
 - **Examples:** Canonical APIs are free-function-first, transforms remain lazy by default, and eager materialization is explicit.
 
 ### CanonicalCollectionOperationFamily
-- **Definition:** The canonical free-operation surface for collection behavior: `count`, `get`, `assoc`, `dissoc`, `conj`, `contains`, `first`, `rest`, and `valid_index`. Names and semantics default to Clojure-aligned behavior unless constrained divergence is explicitly documented.
+- **Definition:** The planned canonical free-operation surface for collection behavior: `count`, `get`, `assoc`, `dissoc`, `conj`, `contains`, `first`, `rest`, and `valid_index`. No member of this family is part of the current Vector-only public API. Names and semantics default to Clojure-aligned behavior unless constrained divergence is explicitly documented.
 - **Deprecated Synonyms:** canonical operation set, collection operation family
 - **Related:** ClojureParity, FunctionalStyle, CopyOnModifyCollection, ProbeFirstAccess, IndexedAccess
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A new collection operation should prefer one of the canonical names before introducing a new name, and any constrained semantic divergence is documented in specs and tests.
+- **Examples:** When a future collection operation is approved, it should prefer one of the canonical names before introducing a new name, and any constrained semantic divergence should be documented in specs and tests.
 
 ### HeaderOnlyDistribution
 - **Definition:** The packaging model in which the library is delivered as headers only, with development sources organized separately from the generated distribution artifact.

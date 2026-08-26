@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['element_5ftype_0',['element_type',['../classcljonic_1_1_range.html#afe0c381717309e8d1f401f098602178a',1,'cljonic::Range']]]
+  ['value_5ftype_0',['value_type',['../classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c',1,'cljonic::Vector']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['range_0',['Range',['../classcljonic_1_1_range.html',1,'cljonic']]]
+  ['vector_0',['Vector',['../classcljonic_1_1_vector.html',1,'cljonic']]]
 ];

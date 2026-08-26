@@ -1,5 +1,9 @@
 ## Session State
 
+- active_scope: Vector direct construction, storage, and member observation
+- deferred_scope: free-function operations and additional collection types
+- validation: minimal Vector quality gates passed
+
 - last_session_id: 34ec8d89-4296-4926-a07b-d685e512143e
 - current_timestamp: 2026-08-21T23:24:11Z
 - recover: 1

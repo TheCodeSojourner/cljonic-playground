@@ -27,6 +27,10 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
   STATIC_REQUIRE(populated.size() == 2U);
   STATIC_REQUIRE(full.size() == 2U);
   STATIC_REQUIRE(Vector<int, 4>::capacity() == 4U);
+
+  const auto runtime_values = Vector<int, 4>{1, 2};
+  CHECK(runtime_values.size() == 2U);
+  CHECK(runtime_values.capacity() == 4U);
 }
 
 TEST_CASE("Vector indexed access handles valid and invalid indexes",
@@ -45,4 +49,9 @@ TEST_CASE("Vector indexed access handles valid and invalid indexes",
   STATIC_REQUIRE(values(1U) == 20);
   STATIC_REQUIRE(values(2U) == 0);
   STATIC_REQUIRE(values(2U, 99) == 99);
+
+  const auto runtime_values = Vector<int, 4>{10, 20};
+  CHECK(runtime_values(0U) == 10);
+  CHECK(runtime_values(1U) == 20);
+  CHECK(runtime_values(2U) == 0);
 }
