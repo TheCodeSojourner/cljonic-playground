@@ -78,7 +78,6 @@
  * | Namespace | "using" C++ Statement |
  * |-----------|-------------------------|
  * | \ref Namespace_Core "core" | using **core** = cljonic::core; |
- * | \ref Namespace_Regex "regex" | using **regex** = cljonic::regex; |
  * | \ref Namespace_Set "set" | using **set** = cljonic::set; |
  * | \ref Namespace_String "string" | using **string** = cljonic::string; |
  *
@@ -167,10 +166,6 @@
  * "Subs"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth
  * "TakeNth", \ref Core_TakeWhile "TakeWhile"
- *
- * ## Regex Functions
- *
- * - \ref Regex_ReFind "ReFind", \ref Regex_ReSeq "ReSeq"
  *
  * ## Set Functions
  *
