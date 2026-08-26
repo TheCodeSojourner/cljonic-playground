@@ -89,7 +89,6 @@
  * | Namespace | "using" C++ Statement |
  * |-----------|-------------------------|
  * | \ref Namespace_Core "core" | using **core** = cljonic::core; |
- * | \ref Namespace_Regex "regex" | using **regex** = cljonic::regex; |
  * | \ref Namespace_Set "set" | using **set** = cljonic::set; |
  * | \ref Namespace_String "string" | using **string** = cljonic::string; |
  *
@@ -178,10 +177,6 @@
  * "Subs"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth
  * "TakeNth", \ref Core_TakeWhile "TakeWhile"
- *
- * ## Regex Functions
- *
- * - \ref Regex_ReFind "ReFind", \ref Regex_ReSeq "ReSeq"
  *
  * ## Set Functions
  *
@@ -294,6 +289,21 @@ constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
 
 
 namespace cljonic {
+
+// Spec obligations: VectorCollection and its invariants are implemented by
+// this type and covered by the corresponding traceable tests.
+// entity-fields.VectorCollection
+// invariant.VectorCollection.CapacityIsNonNegative
+// invariant.VectorCollection.LogicalSizeIsNonNegative
+// invariant.VectorCollection.LogicalSizeDoesNotExceedCapacity
+// invariant.VectorCollection.SupportsLiteralDeducedConstruction
+// invariant.VectorCollection.SupportsEmptyExplicitCapacityConstruction
+// invariant.VectorCollection.OversizedInitializerIsCompileTimeFailure
+// invariant.VectorCollection.OversizedInitializerDiagnosticIdentifiesCapacity
+// invariant.VectorCollection.SupportsIndexedLookup
+// invariant.VectorCollection.SupportsIndexedFallbackLookup
+// invariant.VectorCollection.InvalidIndexReturnsDefaultElement
+// invariant.VectorCollection.InvalidIndexReturnsSuppliedFallback
 
 /** \anchor Vector
  * \b Vector is a CopyOnModifyCollection with fixed-capacity storage.
