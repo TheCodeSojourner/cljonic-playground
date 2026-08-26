@@ -77,6 +77,10 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | closed_numeric_domain(x)
   | reject_out_of_policy_inputs(x)
 
+The following result-contract rules are retained as future guidance for
+additional operations and producers; they do not constrain the current Vector
+member-only surface.
+
 λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
@@ -88,8 +92,9 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
-λ S3_domain_boundary(x). first_class_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
-  | producer_domain(x) ≡ explicit_producers
+λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector
+  | planned_value_domain(x) ≡ Map ∧ Set ∧ Queue ∧ String
+  | planned_producer_domain(x) ≡ explicit_producers
   | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
   | domain_expansion(x) → require(explicit_approved_requirement)
@@ -157,11 +162,12 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
   | remote_ci_pipeline(x) ≡ not_required_for_current_scope
 
 λ S1_quality_tools(x). linter_formatter(x) ≡ clang_tidy ∧ clang_format
-  | static_analysis(x) ≡ cppcheck ∧ include_what_you_use
+  | optional_static_analysis(x) ≡ cppcheck ∧ include_what_you_use
   | docs(x) ≡ doxygen_html_site
 
-λ S1_interfaces(x). interface_types(x) ≡ header_only_free_functions
-  ∧ template_concept_constrained_apis
+λ S1_interfaces(x). current_interface_types(x) ≡ header_only_member_api
+  | future_interface_types(x) ≡ header_only_free_functions
+    ∧ template_concept_constrained_apis
   | required_callable_member_adapters(x) → permitted_when(explicitly_specified_and_behaviorally_equivalent(x))
   | optional_member_wrappers(x) ≡ non_canonical
 
