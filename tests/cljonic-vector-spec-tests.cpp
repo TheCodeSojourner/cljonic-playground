@@ -4,8 +4,7 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
-TEST_CASE("Vector construction establishes logical size", "[vector]")
-{
+TEST_CASE("Vector construction establishes logical size", "[vector]") {
   using cljonic::Vector;
 
   TRACE_ID("entity-fields.Vector");
@@ -48,10 +47,7 @@ TEST_CASE("Vector construction establishes logical size", "[vector]")
 
 TEST_CASE(
     "Vector canonical preflight predicates model index validity and emptiness",
-    "[vector][preflight]")
-{
-  using cljonic::is_empty;
-  using cljonic::valid_index;
+    "[vector][preflight]") {
   using cljonic::Vector;
 
   TRACE_ID("entity-fields.Vector");
@@ -75,23 +71,22 @@ TEST_CASE(
   constexpr Vector<int, 4> values{10, 20};
   constexpr Vector<int, 4> empty_values{};
 
-  STATIC_REQUIRE(valid_index(values, 0U));
-  STATIC_REQUIRE(valid_index(values, 1U));
-  STATIC_REQUIRE_FALSE(valid_index(values, 2U));
-  STATIC_REQUIRE(is_empty(empty_values));
-  STATIC_REQUIRE_FALSE(is_empty(values));
+  STATIC_REQUIRE(values.valid_index(0U));
+  STATIC_REQUIRE(values.valid_index(1U));
+  STATIC_REQUIRE_FALSE(values.valid_index(2U));
+  STATIC_REQUIRE(empty_values.empty());
+  STATIC_REQUIRE_FALSE(values.empty());
 
   const auto runtime_values = Vector<int, 4>{10, 20};
-  CHECK(valid_index(runtime_values, 0U));
-  CHECK(valid_index(runtime_values, 1U));
-  CHECK_FALSE(valid_index(runtime_values, 2U));
-  CHECK(is_empty(Vector<int, 4>{}));
-  CHECK_FALSE(is_empty(runtime_values));
+  CHECK(runtime_values.valid_index(0U));
+  CHECK(runtime_values.valid_index(1U));
+  CHECK_FALSE(runtime_values.valid_index(2U));
+  CHECK(Vector<int, 4>{}.empty());
+  CHECK_FALSE(runtime_values.empty());
 }
 
 TEST_CASE("Vector indexed access handles valid and invalid indexes",
-          "[vector][indexed-access]")
-{
+          "[vector][indexed-access]") {
   using cljonic::Vector;
 
   TRACE_ID("entity-fields.Vector");
