@@ -1,30 +1,29 @@
 ## Session State
 
-- last_session_id: b3dd73fe-632b-4933-861b-bf051693ea5d
-- current_timestamp: 2026-08-27T18:00:00Z
+- last_session_id: 65fb61c5-679c-4b00-ba4c-3bc064600e59
+- current_timestamp: 2026-08-27T18:01:34Z
 - recover: 1
 - session_complete: true
 
 Task:
-1. Evolve the Module 2 vocabulary draft using only `vocabulary.md` and the Module 2 requirement and architecture files as authorities.
-2. Resolve all undefined `Related` targets identified by the vocabulary checker, validating each warning with human approval before editing.
-3. Run the complete vocabulary validation procedure and preserve the validated draft state.
+1. Synthesize a starting-point Module 2 architecture revision in `architecture.md`, grounded in the existing architecture, Module 1 context, Module 2 requirements, and canonical vocabulary.
+2. Resolve the architecture integrity warning caused by inconsistent S2 and S3 result-status classifications.
+3. Run architecture integrity and implemented-Vector vocabulary checks, then preserve the validated draft state.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. `contains` is the canonical free function modeled on Clojure's `contains?`; `Contains` is its vocabulary concept and covers map keys, set elements, and indexed positions according to collection domain.
-2. `fits_into` is the canonical C++ spelling of the `FitsInto` vocabulary concept and governs complete producer materialization preflight.
-3. Architecture-specific concept identifiers are not promoted into the shared vocabulary when an existing durable concept already describes their capability.
-4. The undefined related targets `ContainsKey`, `fits_into`, `indexed_cljonic_collection`, `associative_cljonic_collection`, and `sequenceable_cljonic_collection` were resolved through canonical terms or removal of implementation-only associations.
-5. The vocabulary checker passes with 93 terms, zero syntax/completeness issues, zero undefined related targets, zero duplicate headings, zero self-references, and zero synonym conflicts.
-6. Architecture and specification files were not propagated or changed; the vocabulary draft remains pending later refinement and approval.
+1. Module 2 architecture guidance now defines orthogonal capability concepts, result-status classifications, preflight equivalence, canonical operation naming, diagnostics, and constant-evaluation policy.
+2. `S2_result_status_model` and `S3_result_contract_policy` use the same five classifications: `CompleteResult`, `BoundedPrefixResult`, `DefaultReturningResult`, `CheckedFailureResult`, and `Producer`.
+3. The current implementation boundary remains Vector-only; future capabilities and operations remain guidance until requirements, specifications, tests, and code are propagated together.
+4. The full vocabulary sweep reports 33 intentionally unused aspirational terms; the repository's implemented-Vector scope retains them and treats descriptive `header-only` prose as a deprecated synonym.
+5. Architecture integrity passes with zero errors, warnings, and infos; the implemented-Vector vocabulary check and `git diff --check` also pass.
 
 Next:
-1. Review and approve the Module 2 vocabulary draft before any architecture or specification propagation.
-2. Keep the validated vocabulary baseline available for the next explicitly approved refinement.
-3. Re-run the vocabulary checker after any subsequent vocabulary edit.
+1. Review and approve the Module 2 architecture draft before specification or implementation propagation.
+2. Re-run architecture and scoped vocabulary checks after any architecture or vocabulary edit.
+3. When a new collection or producer becomes active, extend the corresponding specification, tests, implementation, and scoped weed checks together.
 
 ## Historical Session Records
 
