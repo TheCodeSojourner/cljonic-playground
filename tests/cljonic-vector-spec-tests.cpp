@@ -26,7 +26,8 @@ TEST_CASE("Vector construction establishes logical size", "[vector]")
   TRACE_ID("invariant.Vector.SupportsLiteralDeducedConstruction");
   TRACE_ID("invariant.Vector.SupportsEmptyExplicitCapacityConstruction");
   TRACE_ID("invariant.Vector.SupportsExplicitCapacityConstruction");
-  TRACE_ID("invariant.Vector.SupportsCapacityInferredLiteralEquivalentSemantics");
+  TRACE_ID(
+      "invariant.Vector.SupportsCapacityInferredLiteralEquivalentSemantics");
   TRACE_ID("invariant.Vector.OversizedInitializerIsCompileTimeFailure");
   TRACE_ID("invariant.Vector.OversizedInitializerDiagnosticIdentifiesCapacity");
   TRACE_ID("invariant.Vector.CapacityExceedsMaximumIsCompileTimeFailure");
@@ -43,6 +44,49 @@ TEST_CASE("Vector construction establishes logical size", "[vector]")
   const auto runtime_values = Vector<int, 4>{1, 2};
   CHECK(runtime_values.size() == 2U);
   CHECK(runtime_values.capacity() == 4U);
+}
+
+TEST_CASE(
+    "Vector canonical preflight predicates model index validity and emptiness",
+    "[vector][preflight]")
+{
+  using cljonic::is_empty;
+  using cljonic::valid_index;
+  using cljonic::Vector;
+
+  TRACE_ID("entity-fields.Vector");
+  TRACE_ID("invariant.Vector.CanonicalResultStatusModelIsDeclared");
+  TRACE_ID("invariant.Vector.CompleteResultStatusDeclared");
+  TRACE_ID("invariant.Vector.BoundedPrefixResultStatusDeclared");
+  TRACE_ID("invariant.Vector.DefaultReturningResultStatusDeclared");
+  TRACE_ID("invariant.Vector.CheckedFailureResultStatusDeclared");
+  TRACE_ID("invariant.Vector.ProducerOnlyResultStatusDeclared");
+  TRACE_ID("invariant.Vector.PreflightPredicatesAreNonThrowingNonAllocating");
+  TRACE_ID("invariant.Vector.ValidIndexIsCanonicalIndexPredicate");
+  TRACE_ID("invariant.Vector.FitsIntoIsCanonicalMaterializationPreflight");
+  TRACE_ID("invariant.Vector.CompileTimeCapacityOverflowIsRejected");
+  TRACE_ID("invariant.Vector.RuntimeCapacityFailuresHaveDocumentedPolicy");
+  TRACE_ID("invariant.Vector.DefaultAccessHasPreflightPredicate");
+  TRACE_ID("invariant.Vector.SupportsIndexedLookup");
+  TRACE_ID("invariant.Vector.SupportsIndexedFallbackLookup");
+  TRACE_ID("invariant.Vector.InvalidIndexReturnsDefaultElement");
+  TRACE_ID("invariant.Vector.InvalidIndexReturnsSuppliedFallback");
+
+  constexpr Vector<int, 4> values{10, 20};
+  constexpr Vector<int, 4> empty_values{};
+
+  STATIC_REQUIRE(valid_index(values, 0U));
+  STATIC_REQUIRE(valid_index(values, 1U));
+  STATIC_REQUIRE_FALSE(valid_index(values, 2U));
+  STATIC_REQUIRE(is_empty(empty_values));
+  STATIC_REQUIRE_FALSE(is_empty(values));
+
+  const auto runtime_values = Vector<int, 4>{10, 20};
+  CHECK(valid_index(runtime_values, 0U));
+  CHECK(valid_index(runtime_values, 1U));
+  CHECK_FALSE(valid_index(runtime_values, 2U));
+  CHECK(is_empty(Vector<int, 4>{}));
+  CHECK_FALSE(is_empty(runtime_values));
 }
 
 TEST_CASE("Vector indexed access handles valid and invalid indexes",
