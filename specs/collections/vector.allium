@@ -25,6 +25,18 @@ entity Vector {
     supports_indexed_fallback_lookup: Boolean
     invalid_index_returns_default_element: Boolean
     invalid_index_returns_supplied_fallback: Boolean
+    canonical_result_status_model_is_declared: Boolean
+    complete_result_status_declared: Boolean
+    bounded_prefix_result_status_declared: Boolean
+    default_returning_result_status_declared: Boolean
+    checked_failure_result_status_declared: Boolean
+    producer_only_result_status_declared: Boolean
+    preflight_predicates_are_non_throwing_non_allocating: Boolean
+    valid_index_is_canonical_index_predicate: Boolean
+    fits_into_is_canonical_materialization_preflight: Boolean
+    compile_time_capacity_overflow_is_rejected: Boolean
+    runtime_capacity_failures_have_documented_policy: Boolean
+    default_access_has_preflight_predicate: Boolean
 
     invariant CapacityIsNonNegative {
         this.capacity_limit >= 0
@@ -124,6 +136,54 @@ entity Vector {
 
     invariant InvalidIndexReturnsSuppliedFallback {
         this.invalid_index_returns_supplied_fallback = true
+    }
+
+    invariant CanonicalResultStatusModelIsDeclared {
+        this.canonical_result_status_model_is_declared = true
+    }
+
+    invariant CompleteResultStatusDeclared {
+        this.complete_result_status_declared = true
+    }
+
+    invariant BoundedPrefixResultStatusDeclared {
+        this.bounded_prefix_result_status_declared = true
+    }
+
+    invariant DefaultReturningResultStatusDeclared {
+        this.default_returning_result_status_declared = true
+    }
+
+    invariant CheckedFailureResultStatusDeclared {
+        this.checked_failure_result_status_declared = true
+    }
+
+    invariant ProducerOnlyResultStatusDeclared {
+        this.producer_only_result_status_declared = true
+    }
+
+    invariant PreflightPredicatesAreNonThrowingNonAllocating {
+        this.preflight_predicates_are_non_throwing_non_allocating = true
+    }
+
+    invariant ValidIndexIsCanonicalIndexPredicate {
+        this.valid_index_is_canonical_index_predicate = true
+    }
+
+    invariant FitsIntoIsCanonicalMaterializationPreflight {
+        this.fits_into_is_canonical_materialization_preflight = true
+    }
+
+    invariant CompileTimeCapacityOverflowIsRejected {
+        this.compile_time_capacity_overflow_is_rejected = true
+    }
+
+    invariant RuntimeCapacityFailuresHaveDocumentedPolicy {
+        this.runtime_capacity_failures_have_documented_policy = true
+    }
+
+    invariant DefaultAccessHasPreflightPredicate {
+        this.default_access_has_preflight_predicate = true
     }
 
 }
