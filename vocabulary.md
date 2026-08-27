@@ -9,11 +9,346 @@ status: draft
 ## Current Scope
 
 The current implementation and tests cover only the `Vector` collection and
-its direct construction and member-observation contract. Free-function
-operations are not currently supported. Terms for other collections and
-operations remain planned vocabulary; they do not constitute supported
-behavior until an active specification, test coverage, and implementation are
-added.
+its direct construction and member-observation contract. Module 2 establishes
+the canonical capability, result, preflight, diagnostic, conversion, and
+naming vocabulary used to govern later collection and producer work. These
+terms do not constitute supported behavior until an active specification,
+test coverage, and implementation are added.
+
+### Collection
+- **Definition:** A bounded cljonic value or data structure admitted to the closed nominal collection domain and governed by collection-specific capacity, access, failure, and value-semantic rules.
+- **Deprecated Synonyms:** collection value, cljonic collection
+- **Related:** ClosedNominalCollectionDomain, CollectionKind, BoundedStorage, OwningValue
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector`, `Map`, `Set`, `Queue`, and `String` are supported collection kinds in the closed domain.
+
+
+### Sequence
+- **Definition:** An ordered collection or producer domain whose elements have a defined traversal order and may support underflow, indexed access, or sequence observation according to its capabilities.
+- **Deprecated Synonyms:** ordered sequence, sequential value
+- **Related:** Collection, Sequenceable, Traversal, Producer
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A `Vector` is a sequence; a producer may represent a sequence without owning materialized storage.
+
+
+### Sequenceable
+- **Definition:** A capability indicating that a nominal cljonic collection exposes non-throwing sequence observation, including emptiness and element count, without requiring indexed access.
+- **Deprecated Synonyms:** sequence capability
+- **Related:** Sequence, Traversal
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A sequenceable collection supports `is_empty` and `count` under the applicable contract.
+
+
+### Traversal
+- **Definition:** Ordered observation of a collection or producer's elements under its documented bounds, without implying materialization, mutation, or indexed access.
+- **Deprecated Synonyms:** sequence traversal, iteration
+- **Related:** Sequence, ProducerIteration, BoundedInspection
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `first`, `next`, and `rest` are traversal operations when supported by the applicable sequence contract.
+
+
+### Capacity
+- **Definition:** The finite number of elements or logical units a bounded value can hold under its declared type and configuration.
+- **Deprecated Synonyms:** collection capacity, declared capacity
+- **Related:** BoundedStorage, CollectionMaximumElementCount, CapacityConstruction, FullState
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector<int, 4>` has capacity four, while `String<32>` has a logical character capacity of thirty-two.
+
+
+### ValidIndex
+- **Definition:** The indexed-access condition that an index belongs to the logical element domain of a collection or sequence; the canonical C++ predicate spelling is `valid_index`.
+- **Deprecated Synonyms:** valid index, index validity
+- **Related:** IndexedAccess, PreflightPredicate, DefaultElement
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `valid_index(xs, i)` is checked before an indexed `get` when the indexed-access capability applies.
+
+
+### FreeFunction
+- **Definition:** A public operation expressed as a namespace-level function rather than a member of the value it observes or transforms.
+- **Deprecated Synonyms:** free function API, namespace-level operation
+- **Related:** SemanticPredicateName, Traversal, PreflightPredicate
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `valid_index(xs, i)` and `fits_into(destination, producer)` are free-function forms of orthogonal operations.
+
+
+### BoundedStorage
+- **Definition:** Storage with a finite, statically knowable bound that does not require dynamic allocation for supported operations.
+- **Deprecated Synonyms:** bounded storage, fixed storage
+- **Related:** StaticInspectableStorage, Capacity, NoHeapConstraint, EmbeddedConstraint
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A collection's inline buffer is bounded storage whose capacity is visible from its type or configuration.
+
+
+### PlatformInteroperability
+- **Definition:** The capability boundary describing which standard C++ and embedded-platform facilities cljonic may use while preserving its documented resource, diagnostic, and value semantics.
+- **Deprecated Synonyms:** platform compatibility, standard-library interoperability
+- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A capability may be implemented with standard C++ facilities only when their behavior satisfies the active cljonic profile.
+
+
+### AggregateLikeStruct
+- **Definition:** A user-defined aggregate-shaped type that may participate in an operation only when every capability required by that operation is explicitly satisfied.
+- **Deprecated Synonyms:** aggregate-like type, aggregate struct
+- **Related:** SimpleAggregateBoundary, StableEquality, TotalOrder
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Storage of an aggregate-like struct does not by itself imply equality, ordering, parsing, or other capabilities.
+
+
+### StableEquality
+- **Definition:** A non-floating-point equality capability whose comparison is stable for the supported value and operation domain.
+- **Deprecated Synonyms:** stable equality comparable, equality capability
+- **Related:** GeneralEquality, NumericEquality, AggregateLikeStruct
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `stable_equality_comparable<T>` admits a type for equality-dependent operations when `a == b` returns `bool`.
+
+
+### TotalOrder
+- **Definition:** A stable, complete ordering capability layered on stable equality and expressed by a supported ordering relation.
+- **Deprecated Synonyms:** totally ordered, total ordering capability
+- **Related:** StableEquality, NumericPolicy
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `totally_ordered<T>` is required only by operations whose contract needs a total order.
+
+
+### DiscreteNumericType
+- **Definition:** A numeric type with discrete values suitable for bounded index, count, capacity, or conversion policies without floating-point equality semantics.
+- **Deprecated Synonyms:** discrete numeric, integral numeric type
+- **Related:** NumericPolicy, ValidIndex, ExactConversion
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** An index policy may accept a discrete numeric type and reject a negative or non-representable value before access.
+
+
+### NumericPolicy
+- **Definition:** The explicit rule governing numeric comparison, representability, conversion, overflow, and failure for an operation.
+- **Deprecated Synonyms:** numeric semantics, numeric contract
+- **Related:** DiscreteNumericType, DeterministicOverflowPolicy, ExactConversion, LossyConversion
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A conversion's numeric policy states whether narrowing is exact, checked, or lossy.
+
+
+### FullState
+- **Definition:** The bounded-capacity condition in which a collection cannot accept another element under the applicable insertion or update operation.
+- **Deprecated Synonyms:** full collection state, capacity-full state
+- **Related:** Capacity, PreflightPredicate, DeterministicBehavior
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `full` or an equivalent capacity inspection reports whether a bounded insertion can complete.
+
+
+### IndexedAccess
+- **Definition:** A capability that provides access to a collection element by an index together with a `valid_index` preflight predicate for the same logical index domain.
+- **Deprecated Synonyms:** indexed collection access, index access capability
+- **Related:** ValidIndex, DefaultReturningResult, Contains
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** An indexed collection can use `valid_index` before a default-returning indexed `get`.
+
+
+### AssociativeAccess
+- **Definition:** A capability that provides key-based lookup over an admitted collection with a documented key type, value type, membership predicate, and missing-key result.
+- **Deprecated Synonyms:** associative collection access, key-based access
+- **Related:** Map, Contains, DefaultReturningResult
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A map's associative access uses key presence before relying on a default-returning lookup.
+
+
+### Contains
+- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to a collection's lookup domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, and for indexed collections it tests index validity.
+- **Deprecated Synonyms:** `contains?`, contains predicate, key-presence check
+- **Related:** FreeFunction, AssociativeAccess, IndexedAccess, ValidIndex, PreflightPredicate, VerbPredicate
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `contains(m, key)` tests a map key, `contains(s, value)` tests set membership, and `contains(xs, index)` tests whether an indexed position is valid.
+
+
+### FitsInto
+- **Definition:** The canonical materialization-completeness preflight predicate; its C++ free-function spelling is `fits_into`. It returns a non-throwing, non-allocating boolean indicating whether the complete producer result fits within the destination under the same cardinality, matching, filtering, transformation, capacity, representability, and overflow semantics as `into`.
+- **Deprecated Synonyms:** `fits_into`, materialization-fit check, capacity-fit predicate
+- **Related:** FreeFunction, ProducerMaterialization, CompleteResult, BoundedPrefixResult, PreflightPredicate, CapabilityPredicate
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `fits_into(destination, producer)` is checked before `into(destination, producer)` when complete materialization matters.
+
+
+### BoundedResult
+- **Definition:** An owning result whose capacity and maximum represented cardinality are finite under the operation's documented constraints.
+- **Deprecated Synonyms:** bounded output, finite result
+- **Related:** CompleteResult, BoundedPrefixResult, BoundedStorage
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A materialized producer result is a bounded result even when the producer itself is unbounded.
+
+
+### PartialResult
+- **Definition:** A result that does not contain the operation's complete result because a documented capacity or result policy limits what can be represented; the canonical cljonic term is `BoundedPrefixResult`.
+- **Deprecated Synonyms:** partial output, truncated result
+- **Related:** BoundedPrefixResult, CompleteResult, FitsInto
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** An `into` operation may return a partial result when `fits_into` is false.
+
+
+### ExactConversion
+- **Definition:** A conversion that preserves the source value exactly in the destination representation and satisfies the applicable representability policy.
+- **Deprecated Synonyms:** exact numeric conversion, lossless conversion
+- **Related:** CheckedConversion, LossyConversion, NumericPolicy
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A conversion is exact only when the destination can represent the source without information loss.
+
+
+### CheckedConversion
+- **Definition:** A conversion that verifies representability or validity and communicates failure through the documented checked-failure or preflight mechanism without throwing or allocating.
+- **Deprecated Synonyms:** checked numeric conversion, validated conversion
+- **Related:** ExactConversion, LossyConversion, CheckedFailureResult, PreflightPredicate
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A checked conversion reports failure when a runtime value cannot be represented in the destination type.
+
+
+### LossyConversion
+- **Definition:** A conversion that may discard precision, range, or other source information under an explicitly documented numeric policy.
+- **Deprecated Synonyms:** lossy numeric conversion, narrowing conversion
+- **Related:** ExactConversion, CheckedConversion, NumericPolicy
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A lossy conversion is permitted only when the governing operation explicitly documents that policy.
+
+
+### Parsing
+- **Definition:** The bounded interpretation of an input representation into a cljonic value with explicit validity, representability, and failure semantics.
+- **Deprecated Synonyms:** value parsing, text parsing
+- **Related:** CheckedConversion, CheckedFailureResult, DeterministicBehavior
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Parsing invalid or unrepresentable input returns the documented non-throwing failure outcome.
+
+
+### FiniteObservation
+- **Definition:** Observation of a producer or value over a finite, explicitly bounded domain, without implying that an unbounded source has a finite complete result.
+- **Deprecated Synonyms:** bounded observation, finite producer observation
+- **Related:** BoundedInspection, ProducerIteration, UnboundedProducer
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Inspecting the first bounded prefix of an unbounded producer is finite observation.
+
+
+### FiniteDeepEquality
+- **Definition:** Equality comparison that observes and compares only the documented finite domain of two values or producers, rather than requiring an unbounded source to terminate.
+- **Deprecated Synonyms:** bounded deep equality, finite sequence equality
+- **Related:** FiniteObservation, GeneralEquality, StableEquality
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A finite deep-equality operation must document the observed bound when either input is an unbounded producer.
+
+
+### BoundedInspection
+- **Definition:** Read-only examination limited by a finite explicit or configured bound, preserving no-heap, no-exception, and deterministic behavior constraints.
+- **Deprecated Synonyms:** bounded inspection, limited inspection
+- **Related:** FiniteObservation, Traversal, NoHeapConstraint
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A bounded inspection may examine producer elements up to a destination capacity or configured maximum.
+
+
+### Producer
+- **Definition:** An explicit value representing a sequence or materialization source without owning the storage of its eventual materialized result.
+- **Deprecated Synonyms:** sequence producer, source producer
+- **Related:** Sequence, UnboundedProducer, ProducerIteration, ProducerMaterialization
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `range`, `repeat`, `cycle`, `iterate`, and `repeatedly` are producer families when their requirements are active.
+
+
+### MapEntry
+- **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value.
+- **Deprecated Synonyms:** map entry, key-value entry
+- **Related:** Map, AssociativeAccess, OwningValue
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A map-entry result owns its key and value rather than borrowing hidden map storage.
+
+
+### GeneralEquality
+- **Definition:** Equality over supported values using the applicable semantic equality capability, distinct from numeric equality and from storage identity.
+- **Deprecated Synonyms:** structural equality, semantic equality
+- **Related:** StableEquality, NumericEquality, FiniteDeepEquality
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** General equality compares supported collection content according to its documented logical semantics.
+
+
+### NumericEquality
+- **Definition:** Equality governed by the operation's numeric policy for supported numeric values, including representability and any permitted cross-type comparison rules.
+- **Deprecated Synonyms:** numeric value equality, numeric comparison
+- **Related:** GeneralEquality, StableEquality, NumericPolicy
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Numeric equality must state whether values of different numeric types compare directly or require exact conversion.
+
+
+### SemanticPredicateName
+- **Definition:** A predicate name chosen to communicate the semantic question it answers, rather than exposing an access operation or an ambiguous truthy convention.
+- **Deprecated Synonyms:** predicate naming policy, semantic predicate naming
+- **Related:** CapabilityPredicate, StatePredicate, VerbPredicate
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `is_empty`, `contains`, `valid_index`, and `fits_into` use names that identify their semantic questions.
+
+
+### CapabilityPredicate
+- **Definition:** A non-throwing, non-allocating predicate that reports whether an operation's required capability or completion condition holds for its inputs.
+- **Deprecated Synonyms:** capability check, operation precondition predicate
+- **Related:** PreflightPredicate, SemanticPredicateName, FullState
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `can_add`, `can_assoc`, and `fits_into` are capability predicates when their contracts govern corresponding operations.
+
+
+### IsPredicatePrefix
+- **Definition:** The canonical `is_` prefix for a state or adjectival predicate derived from a Clojure question-mark function.
+- **Deprecated Synonyms:** `is_` predicate, state predicate prefix
+- **Related:** StatePredicate, SemanticPredicateName
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `empty?` maps to `is_empty`, and `zero?` maps to `is_zero`.
+
+
+### CanPredicatePrefix
+- **Definition:** The canonical `can_` prefix for a capability or feasibility predicate that asks whether an operation can complete under its documented conditions.
+- **Deprecated Synonyms:** `can_` predicate, capability predicate prefix
+- **Related:** CapabilityPredicate, PreflightPredicate
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `can_add` and `can_assoc` express operation-specific completion capability.
+
+
+### HasPredicatePrefix
+- **Definition:** The canonical `has_` prefix for a presence or possession predicate, including key or member presence where that domain applies.
+- **Deprecated Synonyms:** `has_` predicate, presence predicate prefix
+- **Related:** CapabilityPredicate, AssociativeAccess
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A `has_` predicate may report key presence without performing a default-returning lookup.
+
+
+### ValidPredicatePrefix
+- **Definition:** The canonical `valid_` prefix for a predicate that determines whether an input belongs to an operation's valid domain before access or conversion.
+- **Deprecated Synonyms:** `valid_` predicate, validity predicate prefix
+- **Related:** ValidIndex, CapabilityPredicate, PreflightPredicate
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `valid_index` determines whether an index can produce a valid indexed access.
+
+
+### KeywordEnumNameEntry
+- **Definition:** A bounded mapping entry associating a supported keyword name with an application-defined scoped enumeration value.
+- **Deprecated Synonyms:** keyword enum entry, enum-name entry
+- **Related:** KeywordEnumNameMap, MapEntry, OwningValue
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** An entry can associate a keyword such as `:pending` with a scoped enumeration value.
+
+
+### KeywordEnumNameMap
+- **Definition:** A bounded map of keyword names to application-defined scoped enumeration values under the supported associative and capacity rules.
+- **Deprecated Synonyms:** keyword-to-enum map, enum name map
+- **Related:** KeywordEnumNameEntry, KeywordEnumNameContext, Map, AssociativeAccess
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A keyword enum name map provides bounded lookup and documented missing-key behavior.
+
+
+### KeywordEnumNameContext
+- **Definition:** The explicit context required to interpret, validate, or map keyword names to scoped enumeration values without hidden global state.
+- **Deprecated Synonyms:** enum-name mapping context, keyword mapping context
+- **Related:** KeywordEnumNameEntry, KeywordEnumNameMap, NoHiddenGlobalInitialization
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A caller supplies the mapping context rather than relying on a library-managed global registry.
+
+
+### KeywordEnumNameMapping
+- **Definition:** The bounded, explicit operation that maps supported keyword names and scoped enumeration values according to a `KeywordEnumNameContext`.
+- **Deprecated Synonyms:** keyword enum mapping, enum-name mapping
+- **Related:** KeywordEnumNameEntry, KeywordEnumNameMap, KeywordEnumNameContext, Parsing
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Mapping reports invalid, missing, or duplicate names through its documented non-throwing policy.
 
 ### CopyOnModifyCollection
 - **Definition:** A fixed-capacity value type backed by statically inspectable storage that returns a modified copy instead of mutating in place. Its observable contract is PersistentValueSemantics; Module 1 realizes updates through DeepCopyUpdate without structural sharing. In this repo, Vector, Map, Set, Queue, and String follow this model.
