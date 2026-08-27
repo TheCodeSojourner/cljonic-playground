@@ -1,26 +1,28 @@
 ## Session State
 
 - last_session_id: 1248e078-e4ce-42eb-b340-415939acc089
-- current_timestamp: 2026-08-27T00:00:00Z
+- current_timestamp: 2026-08-27T15:54:24Z
 - recover: 1
 - session_complete: true
 
 Task:
-1. Preserve the repository at the minimal Vector-only baseline and keep the restart boundary intact instead of expanding scope into deferred Range or producer requirements.
-2. Maintain the approved Vector implementation, tests, architecture vocabulary, and traceability while deferring the next approved requirements module.
+1. Evolve the canonical vocabulary using Module 1 as the sole authority.
+2. Validate vocabulary structure, completeness, semantic associations, and deferred-reference handling.
 
 Questions:
-1. None unresolved; the current scope remains intentionally limited to the Vector baseline until a new requirements set is explicitly approved.
+1. None unresolved.
 
 Decisions:
-1. The active implementation surface remains direct Vector construction, fixed-capacity storage, capacity/size observation, and member indexing; no free-function API is active.
-2. Range, producer work, and any broader collection expansion are intentionally deferred until a new, explicitly approved requirements set is chosen.
-3. The prior Range expansion was a scope error relative to the restart decision and has been reversed; the repository is restored to the intended minimal baseline.
-4. Make/CMake/documentation tooling remains the enforcement mechanism for repository-wide architecture policies; future collection and producer rules are not current Vector behavior.
+1. Added and standardized Module 1 vocabulary for closed nominal collection recognition, statically inspectable storage, persistent deep-copy values, resource constraints, single-thread execution, referential transparency, and simple aggregate eligibility.
+2. `StaticStorage` is standardized as `StaticInspectableStorage`.
+3. Relationship Notes retain defined canonical terms only; terms owned by deferred Modules 2-7 remain absent until their requirements modules are activated.
+4. The vocabulary validator passed YAML/front-matter, required-field, unique-name, related-association, self-reference, synonym-conflict, and orphan-term checks for 51 terms.
 
 Next:
-1. Maintain the minimal Vector-only baseline and keep the validation gates green.
-2. Resume new requirements work only after a fresh, human-approved scope transition beyond the current Vector slice.
+1. Consider adding a repository-owned vocabulary validation script and Make target when explicitly approved.
+2. Resume requirements work only after a fresh, human-approved scope transition beyond Module 1.
+
+## Historical Session Records
 
 Task:
 1. Implement Range `valid_index` support and finish the Range slice (constructors, compile-time trap for oversized-at-constant-evaluation, default `int` type, Doxygen examples).
