@@ -1,9 +1,26 @@
 ## Session State
 
-- last_session_id: 82020b26-301a-4294-b6d0-e328d214564b
-- current_timestamp: 2026-08-27T21:13:30Z
+- last_session_id: 86121404-0c58-45a8-8e6d-2094892c234a
+- current_timestamp: 2026-08-27T21:40:00Z
 - recover: 1
 - session_complete: true
+
+Task:
+1. Update architecture.md with Module 3 core collection types, storage strategies, and primitive free functions.
+2. Verify architecture.md internal integrity and consistency with vocabulary.md and Module 3 requirements using gybis-arch-check and gybis-vocab-weed.
+
+Questions:
+1. None unresolved.
+
+Decisions:
+1. Module 3 defines concrete collection types (Vector, Map, Set, Queue, String), contiguous array-backed storage, linear scan lookup, swap-and-remove policies, and primitive free functions (conj, assoc, dissoc, disj, peek, pop, seq, can_conj, can_assoc).
+2. architecture.md successfully updated and verified through gybis-arch-check with 0 errors, 0 warnings, and 0 divergences.
+3. Quality gates (make upsert-gate-strict) pass with 100% line coverage, no-heap verification, linting, complexity, sanitizers, and traceability.
+
+Next:
+1. Proceed with downstream Module 3 specifications (specs/collections/*.allium) or test/code implementation for Map, Set, Queue, String, and primitive free functions.
+
+## Historical Session Records
 
 Task:
 1. Update vocabulary.md with Module 3 core collection types, storage strategies, and primitive free functions.
