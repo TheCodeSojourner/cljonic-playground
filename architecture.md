@@ -48,6 +48,8 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
 λ expressions:
 
 λ S3_constraints(x). NoHeapConstraint(x) ∧ NoExceptionConstraint(x)
+  | NoRttiConstraint(x) ∧ NoHiddenGlobalInitialization(x)
+  | SingleThreadedExecutionModel(x)
   | DeterministicOverflowPolicy(x) ∧ SentinelBasedAccess(x)
   | enforce_in_all_profiles(x)
 
@@ -74,8 +76,18 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
 
 λ S3_resource_policy(x). static_storage_only(x)
   | collection_maximum_element_count(x) ≡ CollectionMaximumElementCount
+  | StaticInspectableStorage(x)
+  | automatic_or_static_storage_duration(x)
+  | ClosedNominalCollectionDomain(x) ∧ NominalCollectionRecognition(x)
+  | CollectionKind(x) → distinguish_supported_collection_families(x)
+  | SimpleAggregateBoundary(x)
   | closed_numeric_domain(x)
   | reject_out_of_policy_inputs(x)
+
+λ S3_value_policy(x). PersistentValueSemantics(x) ∧ DeepCopyUpdate(x)
+  | ReferentialTransparency(x)
+  | conditional_on(user_defined_types_being_pure_and_non_allocating(x))
+  | preserve_input_values(x) ∧ return(OwningValue(x))
 
 The following result-contract rules are retained as future guidance for
 additional operations and producers; they do not constrain the current Vector
@@ -157,6 +169,11 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
 
 λ S1_delivery(x). deployment_method(x) ≡ single_amalgamated_header_release_artifact
 
+λ S1_distribution(x). HeaderOnlyDistribution(x)
+  | AmalgamatedHeader(x) → usable_with(one_public_include(x))
+  | production_sources(x) → remain_header_only(x)
+  | generated_distribution(x) → preserve(source_of_truth_in_modular_headers(x))
+
 λ S1_ci_cd(x). ci_cd(x) ≡ local_makefile_target_workflow
   | remote_ci_pipeline(x) ≡ not_required_for_current_scope
 
@@ -171,6 +188,8 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
   | optional_member_wrappers(x) ≡ non_canonical
 
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
+  | collection_updates(x) → realize(PersistentValueSemantics ∧ DeepCopyUpdate)
+  | public_operations(x) → preserve(ReferentialTransparency)
   | read_only_observation(x) → use(NonOwningView ∧ StandardViewType)
   | view_lifetime(x) → source_lifetime_bounded(x)
 
