@@ -4,20 +4,32 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
-TEST_CASE("Vector construction establishes logical size", "[vector]") {
+TEST_CASE("Vector construction establishes logical size", "[vector]")
+{
   using cljonic::Vector;
 
-  TRACE_ID("entity-fields.VectorCollection");
-  TRACE_ID("invariant.VectorCollection.CapacityIsNonNegative");
-  TRACE_ID("invariant.VectorCollection.LogicalSizeIsNonNegative");
-  TRACE_ID("invariant.VectorCollection.LogicalSizeDoesNotExceedCapacity");
-  TRACE_ID("invariant.VectorCollection.SupportsLiteralDeducedConstruction");
-  TRACE_ID(
-      "invariant.VectorCollection.SupportsEmptyExplicitCapacityConstruction");
-  TRACE_ID(
-      "invariant.VectorCollection.OversizedInitializerIsCompileTimeFailure");
-  TRACE_ID("invariant.VectorCollection."
-           "OversizedInitializerDiagnosticIdentifiesCapacity");
+  TRACE_ID("entity-fields.Vector");
+  TRACE_ID("invariant.Vector.CapacityIsNonNegative");
+  TRACE_ID("invariant.Vector.LogicalSizeIsNonNegative");
+  TRACE_ID("invariant.Vector.LogicalSizeDoesNotExceedCapacity");
+  TRACE_ID("invariant.Vector.HeaderOnlyDistribution");
+  TRACE_ID("invariant.Vector.StaticOrAutomaticStorageOnly");
+  TRACE_ID("invariant.Vector.NoHeapAllocation");
+  TRACE_ID("invariant.Vector.NoRtti");
+  TRACE_ID("invariant.Vector.NoExceptions");
+  TRACE_ID("invariant.Vector.SingleThreadedExecutionModel");
+  TRACE_ID("invariant.Vector.ImmutablePublicApi");
+  TRACE_ID("invariant.Vector.UpdateReturnsNewValue");
+  TRACE_ID("invariant.Vector.DeepCopyUpdate");
+  TRACE_ID("invariant.Vector.ReferentialTransparency");
+  TRACE_ID("invariant.Vector.RequiresValueSemanticElements");
+  TRACE_ID("invariant.Vector.SupportsLiteralDeducedConstruction");
+  TRACE_ID("invariant.Vector.SupportsEmptyExplicitCapacityConstruction");
+  TRACE_ID("invariant.Vector.SupportsExplicitCapacityConstruction");
+  TRACE_ID("invariant.Vector.SupportsCapacityInferredLiteralEquivalentSemantics");
+  TRACE_ID("invariant.Vector.OversizedInitializerIsCompileTimeFailure");
+  TRACE_ID("invariant.Vector.OversizedInitializerDiagnosticIdentifiesCapacity");
+  TRACE_ID("invariant.Vector.CapacityExceedsMaximumIsCompileTimeFailure");
 
   constexpr Vector<int, 4> empty{};
   constexpr Vector<int, 4> populated{1, 2};
@@ -34,14 +46,15 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
 }
 
 TEST_CASE("Vector indexed access handles valid and invalid indexes",
-          "[vector][indexed-access]") {
+          "[vector][indexed-access]")
+{
   using cljonic::Vector;
 
-  TRACE_ID("entity-fields.VectorCollection");
-  TRACE_ID("invariant.VectorCollection.SupportsIndexedLookup");
-  TRACE_ID("invariant.VectorCollection.SupportsIndexedFallbackLookup");
-  TRACE_ID("invariant.VectorCollection.InvalidIndexReturnsDefaultElement");
-  TRACE_ID("invariant.VectorCollection.InvalidIndexReturnsSuppliedFallback");
+  TRACE_ID("entity-fields.Vector");
+  TRACE_ID("invariant.Vector.SupportsIndexedLookup");
+  TRACE_ID("invariant.Vector.SupportsIndexedFallbackLookup");
+  TRACE_ID("invariant.Vector.InvalidIndexReturnsDefaultElement");
+  TRACE_ID("invariant.Vector.InvalidIndexReturnsSuppliedFallback");
 
   constexpr Vector<int, 4> values{10, 20};
 
