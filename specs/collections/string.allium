@@ -1,12 +1,14 @@
 -- allium: 3
 
-entity Vector {
+entity String {
     capacity_limit: Integer
     logical_size: Integer
     supports_header_only_distribution: Boolean
     supports_static_or_automatic_storage: Boolean
     supports_contiguous_storage: Boolean
-    supports_callable_lookup: Boolean
+    supports_ordered_ascii_storage: Boolean
+    null_terminator_is_uncounted: Boolean
+    invalid_bytes_rejected_at_compile_time: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -15,13 +17,11 @@ entity Vector {
     update_returns_new_value: Boolean
     deep_copy_update: Boolean
     referential_transparency: Boolean
-    requires_value_semantic_elements: Boolean
     supports_literal_deduced_construction: Boolean
     supports_empty_explicit_capacity_construction: Boolean
     supports_explicit_capacity_construction: Boolean
     supports_capacity_inferred_literal_equivalent_semantics: Boolean
     oversized_initializer_is_compile_time_failure: Boolean
-    oversized_initializer_diagnostic_identifies_capacity: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_indexed_lookup: Boolean
     supports_indexed_fallback_lookup: Boolean
@@ -64,8 +64,16 @@ entity Vector {
         this.supports_contiguous_storage = true
     }
 
-    invariant CallableLookup {
-        this.supports_callable_lookup = true
+    invariant OrderedAsciiStorage {
+        this.supports_ordered_ascii_storage = true
+    }
+
+    invariant NullTerminatorIsUncounted {
+        this.null_terminator_is_uncounted = true
+    }
+
+    invariant InvalidBytesRejectedAtCompileTime {
+        this.invalid_bytes_rejected_at_compile_time = true
     }
 
     invariant NoHeapAllocation {
@@ -100,10 +108,6 @@ entity Vector {
         this.referential_transparency = true
     }
 
-    invariant RequiresValueSemanticElements {
-        this.requires_value_semantic_elements = true
-    }
-
     invariant SupportsLiteralDeducedConstruction {
         this.supports_literal_deduced_construction = true
     }
@@ -122,10 +126,6 @@ entity Vector {
 
     invariant OversizedInitializerIsCompileTimeFailure {
         this.oversized_initializer_is_compile_time_failure = true
-    }
-
-    invariant OversizedInitializerDiagnosticIdentifiesCapacity {
-        this.oversized_initializer_diagnostic_identifies_capacity = true
     }
 
     invariant CapacityExceedsMaximumIsCompileTimeFailure {
@@ -195,7 +195,6 @@ entity Vector {
     invariant DefaultAccessHasPreflightPredicate {
         this.default_access_has_preflight_predicate = true
     }
-
 }
 
-actor VectorOperator { identified_by: Vector }
+actor StringOperator { identified_by: String }

@@ -1,11 +1,13 @@
 -- allium: 3
 
-entity Vector {
+entity Set {
     capacity_limit: Integer
     logical_size: Integer
     supports_header_only_distribution: Boolean
     supports_static_or_automatic_storage: Boolean
     supports_contiguous_storage: Boolean
+    supports_linear_scan_lookup: Boolean
+    supports_swap_and_remove: Boolean
     supports_callable_lookup: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
@@ -16,17 +18,13 @@ entity Vector {
     deep_copy_update: Boolean
     referential_transparency: Boolean
     requires_value_semantic_elements: Boolean
-    supports_literal_deduced_construction: Boolean
     supports_empty_explicit_capacity_construction: Boolean
     supports_explicit_capacity_construction: Boolean
-    supports_capacity_inferred_literal_equivalent_semantics: Boolean
-    oversized_initializer_is_compile_time_failure: Boolean
-    oversized_initializer_diagnostic_identifies_capacity: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
-    supports_indexed_lookup: Boolean
-    supports_indexed_fallback_lookup: Boolean
-    invalid_index_returns_default_element: Boolean
-    invalid_index_returns_supplied_fallback: Boolean
+    supports_membership_lookup: Boolean
+    supports_membership_fallback_lookup: Boolean
+    missing_value_returns_default_element: Boolean
+    missing_value_returns_supplied_fallback: Boolean
     canonical_result_status_model_is_declared: Boolean
     complete_result_status_declared: Boolean
     bounded_prefix_result_status_declared: Boolean
@@ -34,7 +32,8 @@ entity Vector {
     checked_failure_result_status_declared: Boolean
     producer_only_result_status_declared: Boolean
     preflight_predicates_are_non_throwing_non_allocating: Boolean
-    valid_index_is_canonical_index_predicate: Boolean
+    contains_is_canonical_membership_predicate: Boolean
+    can_conj_is_canonical_conj_preflight: Boolean
     fits_into_is_canonical_materialization_preflight: Boolean
     compile_time_capacity_overflow_is_rejected: Boolean
     runtime_capacity_failures_have_documented_policy: Boolean
@@ -62,6 +61,14 @@ entity Vector {
 
     invariant ContiguousStorage {
         this.supports_contiguous_storage = true
+    }
+
+    invariant LinearScanLookup {
+        this.supports_linear_scan_lookup = true
+    }
+
+    invariant SwapAndRemove {
+        this.supports_swap_and_remove = true
     }
 
     invariant CallableLookup {
@@ -104,10 +111,6 @@ entity Vector {
         this.requires_value_semantic_elements = true
     }
 
-    invariant SupportsLiteralDeducedConstruction {
-        this.supports_literal_deduced_construction = true
-    }
-
     invariant SupportsEmptyExplicitCapacityConstruction {
         this.supports_empty_explicit_capacity_construction = true
     }
@@ -116,36 +119,24 @@ entity Vector {
         this.supports_explicit_capacity_construction = true
     }
 
-    invariant SupportsCapacityInferredLiteralEquivalentSemantics {
-        this.supports_capacity_inferred_literal_equivalent_semantics = true
-    }
-
-    invariant OversizedInitializerIsCompileTimeFailure {
-        this.oversized_initializer_is_compile_time_failure = true
-    }
-
-    invariant OversizedInitializerDiagnosticIdentifiesCapacity {
-        this.oversized_initializer_diagnostic_identifies_capacity = true
-    }
-
     invariant CapacityExceedsMaximumIsCompileTimeFailure {
         this.capacity_exceeds_maximum_is_compile_time_failure = true
     }
 
-    invariant SupportsIndexedLookup {
-        this.supports_indexed_lookup = true
+    invariant SupportsMembershipLookup {
+        this.supports_membership_lookup = true
     }
 
-    invariant SupportsIndexedFallbackLookup {
-        this.supports_indexed_fallback_lookup = true
+    invariant SupportsMembershipFallbackLookup {
+        this.supports_membership_fallback_lookup = true
     }
 
-    invariant InvalidIndexReturnsDefaultElement {
-        this.invalid_index_returns_default_element = true
+    invariant MissingValueReturnsDefaultElement {
+        this.missing_value_returns_default_element = true
     }
 
-    invariant InvalidIndexReturnsSuppliedFallback {
-        this.invalid_index_returns_supplied_fallback = true
+    invariant MissingValueReturnsSuppliedFallback {
+        this.missing_value_returns_supplied_fallback = true
     }
 
     invariant CanonicalResultStatusModelIsDeclared {
@@ -176,8 +167,12 @@ entity Vector {
         this.preflight_predicates_are_non_throwing_non_allocating = true
     }
 
-    invariant ValidIndexIsCanonicalIndexPredicate {
-        this.valid_index_is_canonical_index_predicate = true
+    invariant ContainsIsCanonicalMembershipPredicate {
+        this.contains_is_canonical_membership_predicate = true
+    }
+
+    invariant CanConjIsCanonicalConjPreflight {
+        this.can_conj_is_canonical_conj_preflight = true
     }
 
     invariant FitsIntoIsCanonicalMaterializationPreflight {
@@ -195,7 +190,6 @@ entity Vector {
     invariant DefaultAccessHasPreflightPredicate {
         this.default_access_has_preflight_predicate = true
     }
-
 }
 
-actor VectorOperator { identified_by: Vector }
+actor SetOperator { identified_by: Set }

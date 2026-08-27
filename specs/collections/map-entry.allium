@@ -1,0 +1,86 @@
+-- allium: 3
+
+entity MapEntry {
+    key_value_count: Integer
+    supports_header_only_distribution: Boolean
+    supports_static_or_automatic_storage: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    immutable_public_api: Boolean
+    referential_transparency: Boolean
+    requires_value_semantic_elements: Boolean
+    is_sequenceable_two_element_sequence: Boolean
+    supports_indexed_lookup: Boolean
+    supports_key_observation: Boolean
+    supports_val_observation: Boolean
+    supports_first_observation: Boolean
+    supports_last_observation: Boolean
+
+    invariant KeyValueCountIsTwo {
+        this.key_value_count = 2
+    }
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant StaticOrAutomaticStorageOnly {
+        this.supports_static_or_automatic_storage = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ImmutablePublicApi {
+        this.immutable_public_api = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant RequiresValueSemanticElements {
+        this.requires_value_semantic_elements = true
+    }
+
+    invariant IsSequenceableTwoElementSequence {
+        this.is_sequenceable_two_element_sequence = true
+    }
+
+    invariant SupportsIndexedLookup {
+        this.supports_indexed_lookup = true
+    }
+
+    invariant SupportsKeyObservation {
+        this.supports_key_observation = true
+    }
+
+    invariant SupportsValObservation {
+        this.supports_val_observation = true
+    }
+
+    invariant SupportsFirstObservation {
+        this.supports_first_observation = true
+    }
+
+    invariant SupportsLastObservation {
+        this.supports_last_observation = true
+    }
+}
+
+actor MapEntryOperator { identified_by: MapEntry }
