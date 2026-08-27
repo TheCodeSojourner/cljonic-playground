@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vector_0',['vector',['../classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f',1,'cljonic::Vector::Vector()'],['../namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac',1,'cljonic::Vector()']]]
+  ['size_0',['size',['../classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101',1,'cljonic::Vector']]]
 ];
