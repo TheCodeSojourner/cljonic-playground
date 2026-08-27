@@ -210,11 +210,18 @@
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-core-collection-maximum-element-count.hpp>
+#include <cljonic-map.hpp>
+#include <cljonic-queue.hpp>
+#include <cljonic-set.hpp>
+#include <cljonic-string.hpp>
 #include <cljonic-vector.hpp>
 
-namespace cljonic {
+namespace cljonic
+{
 
-namespace core {} // namespace core
+    namespace core
+    {
+    } // namespace core
 
 } // namespace cljonic
 
