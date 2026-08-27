@@ -4,7 +4,8 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
-TEST_CASE("Vector construction establishes logical size", "[vector]") {
+TEST_CASE("Vector construction establishes logical size", "[vector]")
+{
   using cljonic::Vector;
 
   TRACE_ID("entity-fields.Vector");
@@ -13,6 +14,8 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
   TRACE_ID("invariant.Vector.LogicalSizeDoesNotExceedCapacity");
   TRACE_ID("invariant.Vector.HeaderOnlyDistribution");
   TRACE_ID("invariant.Vector.StaticOrAutomaticStorageOnly");
+  TRACE_ID("invariant.Vector.ContiguousStorage");
+  TRACE_ID("invariant.Vector.CallableLookup");
   TRACE_ID("invariant.Vector.NoHeapAllocation");
   TRACE_ID("invariant.Vector.NoRtti");
   TRACE_ID("invariant.Vector.NoExceptions");
@@ -47,7 +50,8 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
 
 TEST_CASE(
     "Vector canonical preflight predicates model index validity and emptiness",
-    "[vector][preflight]") {
+    "[vector][preflight]")
+{
   using cljonic::Vector;
 
   TRACE_ID("entity-fields.Vector");
@@ -86,7 +90,8 @@ TEST_CASE(
 }
 
 TEST_CASE("Vector indexed access handles valid and invalid indexes",
-          "[vector][indexed-access]") {
+          "[vector][indexed-access]")
+{
   using cljonic::Vector;
 
   TRACE_ID("entity-fields.Vector");
