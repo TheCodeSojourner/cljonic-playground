@@ -1,12 +1,26 @@
 -- allium: 3
 
-entity VectorCollection {
+entity Vector {
     capacity_limit: Integer
     logical_size: Integer
+    supports_header_only_distribution: Boolean
+    supports_static_or_automatic_storage: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    immutable_public_api: Boolean
+    update_returns_new_value: Boolean
+    deep_copy_update: Boolean
+    referential_transparency: Boolean
+    requires_value_semantic_elements: Boolean
     supports_literal_deduced_construction: Boolean
     supports_empty_explicit_capacity_construction: Boolean
+    supports_explicit_capacity_construction: Boolean
+    supports_capacity_inferred_literal_equivalent_semantics: Boolean
     oversized_initializer_is_compile_time_failure: Boolean
     oversized_initializer_diagnostic_identifies_capacity: Boolean
+    capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_indexed_lookup: Boolean
     supports_indexed_fallback_lookup: Boolean
     invalid_index_returns_default_element: Boolean
@@ -24,6 +38,50 @@ entity VectorCollection {
         this.logical_size <= this.capacity_limit
     }
 
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant StaticOrAutomaticStorageOnly {
+        this.supports_static_or_automatic_storage = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ImmutablePublicApi {
+        this.immutable_public_api = true
+    }
+
+    invariant UpdateReturnsNewValue {
+        this.update_returns_new_value = true
+    }
+
+    invariant DeepCopyUpdate {
+        this.deep_copy_update = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant RequiresValueSemanticElements {
+        this.requires_value_semantic_elements = true
+    }
+
     invariant SupportsLiteralDeducedConstruction {
         this.supports_literal_deduced_construction = true
     }
@@ -32,12 +90,24 @@ entity VectorCollection {
         this.supports_empty_explicit_capacity_construction = true
     }
 
+    invariant SupportsExplicitCapacityConstruction {
+        this.supports_explicit_capacity_construction = true
+    }
+
+    invariant SupportsCapacityInferredLiteralEquivalentSemantics {
+        this.supports_capacity_inferred_literal_equivalent_semantics = true
+    }
+
     invariant OversizedInitializerIsCompileTimeFailure {
         this.oversized_initializer_is_compile_time_failure = true
     }
 
     invariant OversizedInitializerDiagnosticIdentifiesCapacity {
         this.oversized_initializer_diagnostic_identifies_capacity = true
+    }
+
+    invariant CapacityExceedsMaximumIsCompileTimeFailure {
+        this.capacity_exceeds_maximum_is_compile_time_failure = true
     }
 
     invariant SupportsIndexedLookup {
@@ -58,4 +128,4 @@ entity VectorCollection {
 
 }
 
-actor VectorOperator { identified_by: VectorCollection }
+actor VectorOperator { identified_by: Vector }
