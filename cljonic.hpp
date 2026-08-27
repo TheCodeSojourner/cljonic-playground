@@ -318,22 +318,29 @@ namespace cljonic {
  struct Pixel {
    int x;
    int y;
+
+   friend constexpr bool operator==(const Pixel &lhs,
+                                    const Pixel &rhs) noexcept {
+     return lhs.x == rhs.x && lhs.y == rhs.y;
+   }
  };
 
  using Inner = Vector<int, 2>;
 
  int main() {
+   // Compile-time / constexpr demonstration.
    [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
    [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
    [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
-   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
-   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
    [[maybe_unused]] constexpr auto nested_int_vectors =
        Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
    [[maybe_unused]] constexpr auto nested_alias_vectors =
        Vector{Inner{4, 5}, Inner{6}};
 
+   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
+   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
    constexpr Vector<int, 4> values{10, 20};
+
    static_assert(values(0U) == 10);
    static_assert(values(2U) == 0);
    static_assert(values(2U, 99) == 99);
@@ -341,7 +348,18 @@ namespace cljonic {
    static_assert(pixels_populated(0U).x == 1);
    static_assert(pixels_populated(1U).y == 4);
 
-   return 0;
+   // Runtime demonstration.
+   auto runtime_values = Vector<int, 4>{7, 9};
+   const auto fallback = runtime_values(4U, -1);
+
+   auto runtime_pixels = Vector<Pixel, 4>{Pixel{1, 2}, Pixel{3, 4}};
+   const auto pixel_value = runtime_pixels(1U);
+   const auto pixel_fallback = runtime_pixels(4U, Pixel{99, 99});
+
+   return (fallback == -1 && pixel_value == Pixel{3, 4} &&
+           pixel_fallback == Pixel{99, 99})
+              ? 0
+              : 1;
  }
  ~~~~~
  */
@@ -448,19 +466,6 @@ private:
 
 template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
-
-template <typename element_type, std::size_t capacity_value>
-[[nodiscard]] constexpr auto
-valid_index(const Vector<element_type, capacity_value> &vector,
-            std::size_t index) noexcept -> bool {
-  return vector.valid_index(index);
-}
-
-template <typename element_type, std::size_t capacity_value>
-[[nodiscard]] constexpr auto
-is_empty(const Vector<element_type, capacity_value> &vector) noexcept -> bool {
-  return vector.empty();
-}
 
 } // namespace cljonic
 // End cljonic-vector.hpp
