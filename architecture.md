@@ -93,7 +93,7 @@ The following result-contract rules are retained as future guidance for
 additional operations and producers; they do not constrain the current Vector
 member-only surface.
 
-λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult)
+λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ Producer)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
@@ -145,7 +145,34 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
   | future_requirements(x) → add_when_first_function_needs_them(x)
   | yagni_evolution(x) → preserve(backward_compat) ∧ prevent(feature_creep)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ none_currently
+λ S2_capability_model(x). public_capability(x) → express_as(named_concept_or_equivalent_constraint)
+  | capability(x) → remain_orthogonal_to(nominal_collection_identity)
+  | storage_admission(x) → not_imply(StableEquality ∨ TotalOrder ∨ other_operation_capability)
+  | capability_required_by(operation) → constrain_at(public_api_boundary)
+  | public_concept_name(x) → identify(capability_or_constraint)
+  | vague_concept_name(x) → reject(x)
+
+λ S2_result_status_model(x). public_operation(x) → declare(CompleteResult ∨ BoundedPrefixResult
+  ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ Producer)
+  | operation(x) → document(status ∧ preflight ∧ failure_or_default_semantics)
+  | complete_result_may_fail_to_fit(x) → require(PreflightPredicate(x))
+  | preflight(x) → non_throwing(x) ∧ non_allocating(x)
+  | preflight(x) → measure_same_domain_and_failure_conditions_as(corresponding_operation)
+  | DefaultReturningResult(x) ≠ CheckedFailureResult(x)
+
+λ S2_preflight_model(x). default_returning_access(x) → require(pre_access_predicate(x))
+  | pre_access_predicate(x) → not(inspect_accessed_value(x))
+  | pre_access_predicate(x) → distinguish(empty ∨ invalid_index ∨ missing_key ∨ full_state)
+  | predicate_true(x) ↔ corresponding_operation_can_produce_valid_or_complete_result(x)
+  | predicate_false(x) → follow(documented_default_bounded_or_failure_policy(x))
+  | complete_materialization_into(destination, producer) → use(fits_into)
+  | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
+
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty
+    ∧ full ∧ valid_index ∧ contains ∧ fits_into ∧ into
+  | valid_index(x) → govern(IndexedAccess(x))
+  | contains(x) → govern(domain_specific_membership_or_key_presence(x))
+  | fits_into(x) → govern(complete_producer_materialization(x))
   | future_operation(x) → require(explicit_requirement_and_specification(x))
   | preserve(clojure_like_names_and_semantics_by_default(x))
 
@@ -216,6 +243,19 @@ guidance; no producer or free-function sequence operation is currently active.
   | domain_constraints(x) → encode_as(repo_specific_concepts)
   | traits_usage(x) → allowed_only_if(no_clear_or_portable_concept_form(x))
 
+λ S1_diagnostic_policy(x). compile_time_known_capability_failure(x) → reject_at(public_api_boundary)
+  | compile_time_known_capacity_or_representability_overflow(x) → reject_at_compile_time(x)
+  | context_dependent_compile_time_failure(x) → prefer(targeted_static_assert_diagnostic(x))
+  | diagnostic(x) → identify(relevant_cljonic_capability_capacity_or_value_constraint)
+  | diagnostic_wording(x) → specify(meaning_not_compiler_specific_text)
+  | runtime_unknown_materialization_cardinality(x) → may_warn(default_maximum_capacity_usage)
+  | warning(x) → not_replace(correctness_constraint(x))
+
+λ S1_constant_evaluation_policy(x). constexpr_eligible_operation(x) → prefer(constexpr)
+  | required_compile_time_operation(x) → test_in_constant_expression(x)
+  | consteval(x) → use_only_when_compile_time_execution_is_semantically_required
+  | compile_time_and_runtime_evaluation(x) → produce(equivalent_observable_results)
+
 λ S1_user_clarity_policy(x). public_api_constraints(x) → prefer(named_cljonic_concepts)
   | trait_mechanics(x) → hide_inside(cljonic_concepts_namespace)
   | likely_user_error_paths(x) → require(explicit_compile_time_messages)
@@ -241,3 +281,16 @@ guidance; no producer or free-function sequence operation is currently active.
 λ coherence_result_semantics(x). architecture_change(x) → reject_if(omits_result_status_classification_or_preflight_alignment)
 
 λ coherence_lifecycle_governance(x). api_scope_change(x) → reject_if(missing_LifecycleClassification_or_missing_RelationModel_gate)
+
+## Traceability
+
+- **Foundation authority**: `requirements/cljonic-requirements-module-1.md` and the
+  Module 1 nominal, storage, no-runtime-service, and persistent-value boundaries.
+- **Capability authority**: `requirements/cljonic-requirements-module-2.md` and the
+  Module 2 concept, result-status, preflight, diagnostic, constant-evaluation, and
+  vocabulary requirements.
+- **Vocabulary authority**: `vocabulary.md`; canonical terms govern public names,
+  architecture references, and later specifications and tests.
+- **Current implementation boundary**: only the Vector slice is active. The
+  capability and operation families above are architectural guidance until their
+  requirements, specification, tests, and implementation are propagated together.
