@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['seq_20i_20e_20sequence_3a_20vector_0',['Seq (i.e., Sequence: Vector)',['../index.html#autotoc_md8',1,'']]],
-  ['sequence_3a_20vector_1',['Seq (i.e., Sequence: Vector)',['../index.html#autotoc_md8',1,'']]],
-  ['set_20functions_2',['Set Functions',['../index.html#autotoc_md9',1,'']]],
-  ['size_3',['size',['../classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101',1,'cljonic::Vector']]],
-  ['string_20functions_4',['String Functions',['../index.html#autotoc_md10',1,'']]]
+  ['map_0',['map',['../classcljonic_1_1_map.html',1,'cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;'],['../classcljonic_1_1_map.html#a32aa471442649d059709e92d0818cca3',1,'cljonic::Map::Map()']]],
+  ['mapentry_1',['MapEntry',['../structcljonic_1_1_map_entry.html',1,'cljonic']]],
+  ['mapped_5ftype_2',['mapped_type',['../classcljonic_1_1_map.html#a3d2118cb518b23a5daff9b08d6bafc77',1,'cljonic::Map']]]
 ];

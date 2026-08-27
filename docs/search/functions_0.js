@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['capacity_0',['capacity',['../classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463',1,'cljonic::Vector']]]
+  ['append_0',['append',['../classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170',1,'cljonic::String']]],
+  ['assoc_1',['assoc',['../classcljonic_1_1_map.html#a1f5afef397dac66beef961e55640bd16',1,'cljonic::Map']]]
 ];

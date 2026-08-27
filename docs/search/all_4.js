@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['i_20e_20sequence_3a_20vector_0',['Seq (i.e., Sequence: Vector)',['../index.html#autotoc_md8',1,'']]]
+  ['functions_0',['functions',['../index.html#autotoc_md3',1,'Planned Core Functions'],['../index.html#autotoc_md9',1,'Set Functions'],['../index.html#autotoc_md10',1,'String Functions']]]
 ];

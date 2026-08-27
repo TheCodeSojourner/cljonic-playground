@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['operator_28_29_0',['operator()',['../classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab',1,'cljonic::Vector::operator()(index_type index) const noexcept -&gt; value_type'],['../classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04',1,'cljonic::Vector::operator()(index_type index, const value_type &amp;fallback) const noexcept -&gt; value_type']]]
+  ['disj_0',['disj',['../classcljonic_1_1_set.html#ab5d375f75fd5ac7c9e1039e4ae7ccb6a',1,'cljonic::Set']]],
+  ['dissoc_1',['dissoc',['../classcljonic_1_1_map.html#a4ef0e924a413f0ac3e04ea64acf2acd3',1,'cljonic::Map']]]
 ];

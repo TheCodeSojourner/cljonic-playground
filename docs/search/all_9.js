@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['valid_5findex_0',['valid_index',['../classcljonic_1_1_vector.html#acda3522a15d0d5400d7ef415cb8535ec',1,'cljonic::Vector']]],
-  ['value_5ftype_1',['value_type',['../classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c',1,'cljonic::Vector']]],
-  ['vector_2',['vector',['../index.html#autotoc_md8',1,'Seq (i.e., Sequence: Vector)'],['../classcljonic_1_1_vector.html',1,'cljonic::Vector&lt; element_type, capacity_value &gt;'],['../classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f',1,'cljonic::Vector::Vector()'],['../namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac',1,'cljonic::Vector()']]]
+  ['peek_0',['peek',['../classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b',1,'cljonic::Queue']]],
+  ['planned_20core_20functions_1',['Planned Core Functions',['../index.html#autotoc_md3',1,'']]],
+  ['pop_2',['pop',['../classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c',1,'cljonic::Queue']]],
+  ['predicate_3',['Predicate',['../index.html#autotoc_md6',1,'']]],
+  ['primitive_4',['Primitive',['../index.html#autotoc_md7',1,'']]],
+  ['put_5',['put',['../classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585',1,'cljonic::String']]]
 ];
