@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-08-26
+last_updated: 2026-08-27
 status: draft
 ---
 
@@ -16,9 +16,9 @@ behavior until an active specification, test coverage, and implementation are
 added.
 
 ### CopyOnModifyCollection
-- **Definition:** A fixed-capacity value type backed by static storage that returns a modified copy instead of mutating in place. In this repo, vector, set, map, and string all follow this model.
+- **Definition:** A fixed-capacity value type backed by statically inspectable storage that returns a modified copy instead of mutating in place. Its observable contract is PersistentValueSemantics; Module 1 realizes updates through DeepCopyUpdate without structural sharing. In this repo, Vector, Map, Set, Queue, and String follow this model.
 - **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection, deep copy on write, deep copying on write
-- **Related:** Vector, Map, Set, String, SentinelBasedAccess
+- **Related:** PersistentValueSemantics, DeepCopyUpdate, StaticInspectableStorage, Vector, Map, Set, Queue, String, SentinelBasedAccess
 - **Usage:** Specification and implementation
 - **Examples:** `auto xs = Vector<int, 4>{1, 2, 3}; auto ys = conj(xs, 4);`
 
@@ -166,9 +166,9 @@ added.
 ## Result and Lifecycle Vocabulary
 
 ### OwningValue
-- **Definition:** A self-contained cljonic value whose validity does not depend on another value's lifetime, hidden borrowed state, or hidden result cache.
+- **Definition:** A self-contained cljonic value whose validity does not depend on another value, temporary, external storage, hidden borrowed state, or hidden result cache.
 - **Deprecated Synonyms:** owning value, self-contained value
-- **Related:** NonOwningView, CopyOnModifyCollection
+- **Related:** NonOwningView, CopyOnModifyCollection, PersistentValueSemantics
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** Collection values, string values, regex values, map-entry values, and producer parameters are owning values.
 
@@ -380,16 +380,16 @@ added.
 ### EmbeddedConstraint
 - **Definition:** The platform constraint set that assumes embedded targets with bounded resources and therefore prioritizes fixed capacity, predictable execution, and explicit profiles.
 - **Deprecated Synonyms:** embedded constraint, embedded systems constraint
-- **Related:** NoHeapConstraint, NoExceptionConstraint, DeterministicBehavior
+- **Related:** StaticInspectableStorage, NoHeapConstraint, NoExceptionConstraint, NoRttiConstraint, SingleThreadedExecutionModel, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Collection APIs use fixed-capacity storage and avoid runtime allocation on strict profiles.
 
 
 
 ### NoHeapConstraint
-- **Definition:** The rule that strict profiles must not perform heap allocation anywhere in the library's behavior or infrastructure.
+- **Definition:** The rule that no supported configuration or public API path may allocate from or deallocate to dynamic storage, directly or transitively. It applies to construction, update, lookup, traversal, transformation, failure handling, and destruction, including standard-library and dependency behavior invoked by cljonic.
 - **Deprecated Synonyms:** no heap allocation, no-heap rule
-- **Related:** EmbeddedConstraint, DeterministicBehavior
+- **Related:** EmbeddedConstraint, StaticInspectableStorage, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Verification gates prohibit forbidden allocation APIs and bounded collections store data without dynamic allocation.
 
@@ -407,18 +407,18 @@ added.
 
 
 ### CollectionMaximumElementCount
-- **Definition:** The compile-time configuration boundary that sets the maximum element count allowed for cljonic collections and the synthesis cap used by semantically infinite lazy producers. In current documentation this boundary is exposed via the preprocessor macro CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.
+- **Definition:** The compile-time configuration boundary that sets the maximum element count allowed for cljonic collections. The current preprocessor macro `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` is one configuration mechanism that exposes this boundary.
 - **Deprecated Synonyms:** collection max element count, maximum collection element count, CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro
-- **Related:** CapacityConstruction, EmbeddedConstraint, DeterministicBehavior
+- **Related:** CapacityConstruction, StaticInspectableStorage, EmbeddedConstraint, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, build, and documentation
-- **Examples:** A project can raise the boundary by defining CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT before including cljonic headers or by setting it from compiler/build flags; a zero-step range may synthesize at most this many elements before truncation.
+- **Examples:** A project can set the boundary by defining `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` before including cljonic headers or from compiler/build flags; a collection declaration above it is a CompileTimeFailure.
 
 
 
 ### DeterministicBehavior
-- **Definition:** The requirement that behavior, failure modes, and profile-selected semantics remain predictable and stable for the same inputs and configuration.
+- **Definition:** The requirement that equal explicit inputs, arguments, and fixed configuration produce equivalent results, failure modes, and profile-selected semantics.
 - **Deprecated Synonyms:** deterministic semantics, deterministic execution
-- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint
+- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, ReferentialTransparency
 - **Usage:** Architecture, specification, tests, and documentation
 - **Examples:** Full-capacity `conj` returns the unchanged value deterministically, and invalid runtime regex compilation returns a stable invalid-pattern sentinel.
 
@@ -433,7 +433,7 @@ added.
 
 
 ### HeaderOnlyDistribution
-- **Definition:** The packaging model in which the library is delivered as headers only, with development sources organized separately from the generated distribution artifact.
+- **Definition:** The packaging model in which the library is delivered as headers only, with development sources organized separately from the generated distribution artifact. The generated AmalgamatedHeader exposes the distributable library through one public include.
 - **Deprecated Synonyms:** header-only, header-only library
 - **Related:** AmalgamatedHeader
 - **Usage:** Architecture, implementation, build, and documentation
@@ -494,11 +494,110 @@ added.
 
 
 ### CapacityConstruction
-- **Definition:** The construction contract that supports both literal-deduced and explicit-capacity creation while rejecting oversized initializers at compile time.
+- **Definition:** The construction contract that supports both literal-deduced and explicit-capacity creation. Oversized explicit-capacity initializers and declared capacities above CollectionMaximumElementCount are CompileTimeFailure outcomes; the latter diagnostic identifies both the declared capacity and configured maximum.
 - **Deprecated Synonyms:** collection construction pattern, explicit-capacity construction, literal-deduced construction
-- **Related:** CopyOnModifyCollection
+- **Related:** CollectionMaximumElementCount, CompileTimeFailure, CopyOnModifyCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Explicit-capacity empty construction is valid, but an initializer count that exceeds capacity is a compile-time failure.
+
+
+
+### ClosedNominalCollectionDomain
+- **Definition:** The fixed set of types eligible for cljonic collection recognition: Vector, Map, Set, Queue, and String. Standard containers, external containers, and third-party types cannot enter this domain through structural similarity.
+- **Deprecated Synonyms:** closed collection domain, nominal collection domain
+- **Related:** NominalCollectionRecognition, CollectionKind, Vector, Map, Set, Queue, String
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `std::vector<int>` is not a member of the ClosedNominalCollectionDomain even if it provides operations similar to Vector.
+
+
+
+### NominalCollectionRecognition
+- **Definition:** The two-stage recognition model in which a type must first be admitted by cljonic-owned traits before an operation evaluates structural capabilities.
+- **Deprecated Synonyms:** nominal admission, collection identity gate
+- **Related:** ClosedNominalCollectionDomain, CollectionKind
+- **Usage:** Architecture, implementation, and tests
+- **Examples:** `cljonic_collection<T>` depends on cljonic-owned trait admission rather than matching an external container structurally.
+
+
+
+### CollectionKind
+- **Definition:** The closed discriminant used by nominal traits and concepts to distinguish the supported collection families.
+- **Deprecated Synonyms:** collection category, nominal collection kind
+- **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition
+- **Usage:** Architecture, implementation, and tests
+- **Examples:** A collection trait classifies an admitted type as vector, map, set, queue, or string.
+
+
+
+### StaticInspectableStorage
+- **Definition:** A storage property whose capacity, representation bound, and resource implications can be determined from a collection type or compile-time configuration.
+- **Deprecated Synonyms:** static storage
+- **Related:** CollectionMaximumElementCount, EmbeddedConstraint, NoHeapConstraint
+- **Usage:** Requirements, architecture, implementation, tests, and documentation
+- **Examples:** A fixed-capacity collection owns its buffer directly by value, allowing its capacity to be inspected from its type or configuration.
+
+
+
+### PersistentValueSemantics
+- **Definition:** The observable rule that an update returns a new independently valid value while leaving the prior value unchanged. This contract does not itself prescribe a storage algorithm.
+- **Deprecated Synonyms:** persistent collection semantics, immutable update semantics
+- **Related:** CopyOnModifyCollection, DeepCopyUpdate, OwningValue
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Updating a Vector produces a new value while the original Vector remains valid and unchanged.
+
+
+
+### DeepCopyUpdate
+- **Definition:** The Module 1 implementation strategy for persistent collection updates: stored elements are copied into the returned value without structural sharing, reference counting, or shared internal storage.
+- **Deprecated Synonyms:** deep-copy update, copy-on-write update
+- **Related:** PersistentValueSemantics, CopyOnModifyCollection
+- **Usage:** Requirements, architecture, implementation, and tests
+- **Examples:** A collection update returns a new owning collection instance containing copied stored elements.
+
+
+
+### NoRttiConstraint
+- **Definition:** The rule that library behavior and implementation do not use RTTI facilities, including `typeid`, `dynamic_cast`, or virtual-dispatch machinery.
+- **Deprecated Synonyms:** no RTTI, RTTI-free rule
+- **Related:** EmbeddedConstraint, NoExceptionConstraint
+- **Usage:** Requirements, architecture, implementation, and tests
+- **Examples:** Collection recognition uses compile-time traits rather than runtime type inspection.
+
+
+
+### NoHiddenGlobalInitialization
+- **Definition:** The rule that cljonic introduces no hidden global initialization or library-managed mutable global state.
+- **Deprecated Synonyms:** no global initialization, no hidden global state
+- **Related:** DeterministicBehavior, ReferentialTransparency
+- **Usage:** Requirements, architecture, implementation, and tests
+- **Examples:** A collection operation cannot rely on a library-initialized mutable registry to produce its result.
+
+
+
+### SingleThreadedExecutionModel
+- **Definition:** The library contract that neither requires nor provides synchronization, atomics, thread-local state, parallel execution, or concurrent-access safety. A multithreaded caller may use cljonic only when it confines each operation and value access to one thread at a time.
+- **Deprecated Synonyms:** single-threaded model, non-concurrent execution model
+- **Related:** DeterministicBehavior, NoHiddenGlobalInitialization
+- **Usage:** Requirements, architecture, implementation, tests, and documentation
+- **Examples:** cljonic does not synchronize concurrent accesses to a collection value.
+
+
+
+### ReferentialTransparency
+- **Definition:** The condition that, for equal explicit inputs and fixed configuration, an operation returns equivalent results without mutating inputs, performing I/O, reading or modifying hidden mutable state, or depending on it. The guarantee is conditional on the required operations of user-defined element, key, and value types being pure and non-allocating.
+- **Deprecated Synonyms:** pure operation, functional purity
+- **Related:** DeterministicBehavior, NoHiddenGlobalInitialization, OwningValue
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Given equal Vector inputs and configuration, an update returns equivalent new values without changing its input.
+
+
+
+### SimpleAggregateBoundary
+- **Definition:** The admissible user-defined element, key, and value type boundary: simple aggregates are permitted only when every capability required by the applicable collection and operation is non-allocating and does not require forbidden runtime services. Storage alone does not require equality or ordering.
+- **Deprecated Synonyms:** aggregate type boundary, user-defined aggregate boundary
+- **Related:** NoHeapConstraint, NoExceptionConstraint, StaticInspectableStorage
+- **Usage:** Requirements, architecture, implementation, and tests
+- **Examples:** A user-defined aggregate may be stored in a Vector when its required construction, copying, moving, and destruction capabilities satisfy the applicable operation contract.
 
 
 
@@ -519,23 +618,15 @@ added.
 
 - CopyOnModifyCollection is the foundational value model for the repo.
 - SentinelBasedAccess and ProbeFirstAccess define the canonical error-handling discipline for collection APIs.
-- Keyword and KeywordCatalog define the canonical keyword identity model used by map-like structures.
-- LazySequence and SinkOperation define the execution boundary between deferred pipelines and concrete results.
-- ThreadingForm and ValidityAdapter define the readable composition model and the boundary for deferred some-thread semantics.
-- CanonicalComparison and FloatingPointExclusion define the canonical comparison contract.
-- ClosedNumericDomain, NumericPromotionPolicy, CommonTypeLattice, StaticallyBoundedResult, and DeterministicOverflowPolicy define the bounded numeric semantics that fit the embedded constraint model.
+- DeterministicOverflowPolicy defines the bounded numeric semantics that fit the embedded constraint model.
 - OwningValue, NonOwningView, and StandardViewType define ownership and lifetime semantics for values versus views.
 - CompleteResult, BoundedPrefixResult, DefaultReturningResult, CheckedFailureResult, and PreflightPredicate define canonical result-status and completion semantics.
 - LifecycleClassification with RequirementsBacked, CandidateStatus, DeferredStatus, and ExcludedStatus defines API-surface governance vocabulary.
 - UnboundedProducer and ProducerMaterialization define explicit producer-to-result boundaries.
 - RelationModel governs when relational operations can move from deferred to requirements-backed.
-- SemanticPredicateName with StatePredicate and VerbPredicate defines canonical predicate naming constraints.
-- ClojureParity and FunctionalStyle explain where semantics are intentionally borrowed from Clojure.
-- EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, StaticStorage, and DeterministicBehavior define the platform and execution constraints.
-- ContractPolicy and SemanticConcept define how correctness constraints are expressed across layers.
+- StatePredicate and VerbPredicate define canonical predicate naming constraints.
+- EmbeddedConstraint, StaticInspectableStorage, NoHeapConstraint, NoExceptionConstraint, NoRttiConstraint, NoHiddenGlobalInitialization, SingleThreadedExecutionModel, and DeterministicBehavior define the platform and execution constraints.
+- ClosedNominalCollectionDomain, NominalCollectionRecognition, and CollectionKind define which types may participate as cljonic collections.
+- PersistentValueSemantics defines the public value contract, while DeepCopyUpdate defines Module 1's required realization of that contract.
 - HeaderOnlyDistribution and AmalgamatedHeader define the packaging vocabulary for build and user documentation.
-- CompileTimeEvaluation, RegexProfile, and StableHandleModel define capability boundaries that architecture must preserve across compile-time and runtime modes.
-- NamespaceAdoptionRoadmap, MvpNamespaceCutLine, OptionalNamespaceCutLine, and NamespacePhaseOrder define architectural scope and rollout boundaries.
-- SourceLayout, QualityGate, and NoHeapVerification define the structural and verification constraints that architecture must treat as first-class.
-- ComparisonArity, ContentEquality, CapacityConstruction, and CardinalityModel define observable behavior contracts that should map directly into Allium specs.
-- InvalidPatternSentinel, PatternValidityProbe, StepDescriptor, UnchangedValueReturn, SwapWithLastCompaction, and ProbeValidityConcept capture edge-case and rejection semantics that behavioral specs must name explicitly.
+- CompileTimeFailure and CapacityConstruction define observable construction behavior contracts that should map directly into Allium specs.
