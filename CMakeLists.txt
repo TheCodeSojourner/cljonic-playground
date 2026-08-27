@@ -21,6 +21,11 @@ if(BUILD_TESTING)
 
     set(CLJONIC_SPEC_TEST_SOURCES
         tests/cljonic-concepts-spec-tests.cpp
+        tests/cljonic-map-entry-spec-tests.cpp
+        tests/cljonic-map-spec-tests.cpp
+        tests/cljonic-queue-spec-tests.cpp
+        tests/cljonic-set-spec-tests.cpp
+        tests/cljonic-string-spec-tests.cpp
         tests/cljonic-vector-spec-tests.cpp
     )
     add_library(cljonic_modular_header_smoke OBJECT tests/cljonic-modular-header-smoke.cpp)
