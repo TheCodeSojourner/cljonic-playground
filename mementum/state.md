@@ -1,9 +1,27 @@
 ## Session State
 
-- last_session_id: 7a7295ef-103a-434d-8e50-56a6aae677f6
-- current_timestamp: 2026-08-27T20:11:44Z
+- last_session_id: 82020b26-301a-4294-b6d0-e328d214564b
+- current_timestamp: 2026-08-27T21:13:30Z
 - recover: 1
 - session_complete: true
+
+Task:
+1. Update vocabulary.md with Module 3 core collection types, storage strategies, and primitive free functions.
+2. Deduplicate collection entries (Map, Set, Queue, String) in vocabulary.md.
+3. Validate vocabulary.md using gybis-vocab-check to ensure syntax, completeness, and semantic integrity pass with 0 errors and 0 warnings.
+
+Questions:
+1. None unresolved.
+
+Decisions:
+1. Module 3 defines concrete collection types (Vector, Map, Set, Queue, String), contiguous array-backed storage, linear scan lookup, swap-and-remove policies, and primitive free functions (conj, assoc, dissoc, disj, peek, pop, seq, can_conj, can_assoc).
+2. All collection types are unified into single canonical entries in vocabulary.md.
+3. vocabulary.md validation passes cleanly with 0 errors and 0 warnings.
+
+Next:
+1. Proceed with downstream Module 3 artifacts (specs or architecture refinement) as requested.
+
+## Historical Session Records
 
 Task:
 1. Add a non-mutating `make validate` target that establishes the green state without regenerating documentation timestamps.
@@ -25,8 +43,6 @@ Next:
 1. Use `make validate` for routine green-state checks during development.
 2. Reserve `make git` for the full docs-including final repository gate when a human wants the stricter pre-commit or release-quality check.
 3. Keep the validation target non-mutating so repeated green checks do not create noisy generated-doc churn.
-
-## Historical Session Records
 
 Task:
 1. Implement Range `valid_index` support and finish the Range slice (constructors, compile-time trap for oversized-at-constant-evaluation, default `int` type, Doxygen examples).
