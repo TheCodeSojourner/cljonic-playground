@@ -1,30 +1,30 @@
 ## Session State
 
-- last_session_id: 65fb61c5-679c-4b00-ba4c-3bc064600e59
-- current_timestamp: 2026-08-27T19:15:52Z
+- last_session_id: 7a7295ef-103a-434d-8e50-56a6aae677f6
+- current_timestamp: 2026-08-27T20:11:44Z
 - recover: 1
 - session_complete: true
 
 Task:
-1. Refine the Vector documentation example so it cleanly demonstrates construction and callable use, with a clear compile-time/runtime split and a value-style `Pixel` example.
-2. Keep the runtime sample self-checking via a compact ternary expression while preserving the intended fallback semantics.
-3. Preserve the validated sample state and finish the momentum session record.
+1. Add a non-mutating `make validate` target that establishes the green state without regenerating documentation timestamps.
+2. Keep the final `make git` gate as the docs-including release-quality validation path.
+3. Preserve the repo's validation semantics while avoiding timestamp-only HTML churn in generated docs.
+4. Verify the help listing remains alphabetically ordered and the validation target passes cleanly.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. The sample program intentionally has two sections: a compile-time section for proofs and a runtime section for ordinary usage.
-2. The compile-time section groups intentionally unused declarations first, followed by a blank line and the declarations used by the static assertions.
-3. The runtime section demonstrates a `Pixel` value type with a `==` overload to show the good-practice pattern for structured elements stored in a `Vector`.
-4. The runtime validation uses a compact functional-style ternary expression, returning `0` only when the fallback integer and `Pixel` fallback match the expected values, otherwise returning `1`.
-5. The sample stays scoped to the current Vector-only boundary and does not advertise free functions that are not yet part of the intentional public API.
-6. The current Vector sample remains validated through the repository gate (`make git`) and the docs example continues to compile.
+1. `make validate` is the preferred green-state validation target for routine checks because it does not regenerate Doxygen output or mutate generated documentation files.
+2. `make git` remains the full repository gate and is allowed to regenerate docs and run docs-example compilation as part of the final release-quality check.
+3. Validation status and commit status are distinct: a green validation run does not imply a required git commit or push.
+4. The Makefile help list is alphabetized and `validate` is listed in the correct position.
+5. Timestamp-only Doxygen diffs are not a meaningful content change and should not be treated as a reason to commit or push by themselves.
 
 Next:
-1. Keep the current Vector sample as the reference pattern for future collection examples, and avoid promoting prototype free functions before their public API is intentionally approved.
-2. When a later collection or operation becomes active, apply the same pattern: demonstrate construction, callable/lookup behavior, and a value-style sample type without premature API exposure.
-3. Preserve this state in the repository and commit the momentum record for the session.
+1. Use `make validate` for routine green-state checks during development.
+2. Reserve `make git` for the full docs-including final repository gate when a human wants the stricter pre-commit or release-quality check.
+3. Keep the validation target non-mutating so repeated green checks do not create noisy generated-doc churn.
 
 ## Historical Session Records
 
