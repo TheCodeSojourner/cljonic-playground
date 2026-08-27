@@ -1,29 +1,30 @@
 ## Session State
 
 - last_session_id: 65fb61c5-679c-4b00-ba4c-3bc064600e59
-- current_timestamp: 2026-08-27T18:01:34Z
+- current_timestamp: 2026-08-27T19:15:52Z
 - recover: 1
 - session_complete: true
 
 Task:
-1. Synthesize a starting-point Module 2 architecture revision in `architecture.md`, grounded in the existing architecture, Module 1 context, Module 2 requirements, and canonical vocabulary.
-2. Resolve the architecture integrity warning caused by inconsistent S2 and S3 result-status classifications.
-3. Run architecture integrity and implemented-Vector vocabulary checks, then preserve the validated draft state.
+1. Refine the Vector documentation example so it cleanly demonstrates construction and callable use, with a clear compile-time/runtime split and a value-style `Pixel` example.
+2. Keep the runtime sample self-checking via a compact ternary expression while preserving the intended fallback semantics.
+3. Preserve the validated sample state and finish the momentum session record.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Module 2 architecture guidance now defines orthogonal capability concepts, result-status classifications, preflight equivalence, canonical operation naming, diagnostics, and constant-evaluation policy.
-2. `S2_result_status_model` and `S3_result_contract_policy` use the same five classifications: `CompleteResult`, `BoundedPrefixResult`, `DefaultReturningResult`, `CheckedFailureResult`, and `Producer`.
-3. The current implementation boundary remains Vector-only; future capabilities and operations remain guidance until requirements, specifications, tests, and code are propagated together.
-4. The full vocabulary sweep reports 33 intentionally unused aspirational terms; the repository's implemented-Vector scope retains them and treats descriptive `header-only` prose as a deprecated synonym.
-5. Architecture integrity passes with zero errors, warnings, and infos; the implemented-Vector vocabulary check and `git diff --check` also pass.
+1. The sample program intentionally has two sections: a compile-time section for proofs and a runtime section for ordinary usage.
+2. The compile-time section groups intentionally unused declarations first, followed by a blank line and the declarations used by the static assertions.
+3. The runtime section demonstrates a `Pixel` value type with a `==` overload to show the good-practice pattern for structured elements stored in a `Vector`.
+4. The runtime validation uses a compact functional-style ternary expression, returning `0` only when the fallback integer and `Pixel` fallback match the expected values, otherwise returning `1`.
+5. The sample stays scoped to the current Vector-only boundary and does not advertise free functions that are not yet part of the intentional public API.
+6. The current Vector sample remains validated through the repository gate (`make git`) and the docs example continues to compile.
 
 Next:
-1. Review and approve the Module 2 architecture draft before specification or implementation propagation.
-2. Re-run architecture and scoped vocabulary checks after any architecture or vocabulary edit.
-3. When a new collection or producer becomes active, extend the corresponding specification, tests, implementation, and scoped weed checks together.
+1. Keep the current Vector sample as the reference pattern for future collection examples, and avoid promoting prototype free functions before their public API is intentionally approved.
+2. When a later collection or operation becomes active, apply the same pattern: demonstrate construction, callable/lookup behavior, and a value-style sample type without premature API exposure.
+3. Preserve this state in the repository and commit the momentum record for the session.
 
 ## Historical Session Records
 
