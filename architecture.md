@@ -2,11 +2,16 @@
 
 ## Current Scope
 
-The current implementation realizes only the Vector slice of this architecture.
-The retained rules for Map, Set, Queue, String, producers, and other operations
-describe future approved expansion and must not be treated as implemented
-behavior. A future module becomes active only after its requirements,
-vocabulary, specification, tests, and code are propagated together.
+The current implementation and tests cover the core collection types (`Vector`,
+`Map`, `Set`, `Queue`, and `String`), their direct construction, member-observation,
+callable forms, sequence traversal interfaces, and primitive free-function
+operations defined in Module 3. Module 3 establishes the concrete, array-backed,
+bounded collection types, their contiguous storage strategies, linear scan lookup
+algorithms, swap-and-remove policies, and primitive free functions. Stored
+collection building blocks govern all higher-order algorithms. Rules for
+unbounded producers, transformations, regexes, and relational models describe
+future approved expansion and remain inactive until their respective modules
+are propagated.
 
 ## S5 - Identity
 
@@ -90,8 +95,8 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | preserve_input_values(x) ∧ return(OwningValue(x))
 
 The following result-contract rules are retained as future guidance for
-additional operations and producers; they do not constrain the current Vector
-member-only surface.
+additional operations and producers; they do not constrain the current stored
+collection and primitive free-function surface.
 
 λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ Producer)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
@@ -104,8 +109,7 @@ member-only surface.
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
-λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector
-  | planned_value_domain(x) ≡ Map ∧ Set ∧ Queue ∧ String
+λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
   | planned_producer_domain(x) ≡ explicit_producers
   | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
@@ -169,10 +173,12 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
   | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
 
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty
-    ∧ full ∧ valid_index ∧ contains ∧ fits_into ∧ into
+    ∧ full ∧ valid_index ∧ contains ∧ fits_into ∧ into ∧ count ∧ first ∧ next ∧ rest ∧ seq
+    ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | valid_index(x) → govern(IndexedAccess(x))
   | contains(x) → govern(domain_specific_membership_or_key_presence(x))
   | fits_into(x) → govern(complete_producer_materialization(x))
+  | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
   | future_operation(x) → require(explicit_requirement_and_specification(x))
   | preserve(clojure_like_names_and_semantics_by_default(x))
 
@@ -209,10 +215,17 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
   | docs(x) ≡ doxygen_html_site
 
 λ S1_interfaces(x). current_interface_types(x) ≡ header_only_member_api
-  | future_interface_types(x) ≡ header_only_free_functions
-    ∧ template_concept_constrained_apis
+    ∧ header_only_free_functions ∧ callable_collection_lookup
+  | future_interface_types(x) ≡ template_concept_constrained_apis
   | required_callable_member_adapters(x) → permitted_when(explicitly_specified_and_behaviorally_equivalent(x))
   | optional_member_wrappers(x) ≡ non_canonical
+
+λ S1_collection_storage_and_algorithms(x). collection_storage(x) ≡ ContiguousStorage
+  | MapEntry(x) → ContiguousStorage(x) ∧ value_semantics(x)
+  | search_algorithm(x) ≡ LinearScan
+  | unsorted_removal(Map ∨ Set) ≡ SwapAndRemove
+  | sequence_representation(seq) ≡ OwningValue(Vector)
+  | string_storage(String) ≡ ContiguousStorage(ASCII_bytes) ∧ uncounted_null_terminator
 
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
   | collection_updates(x) → realize(PersistentValueSemantics ∧ DeepCopyUpdate)
@@ -221,7 +234,7 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
   | view_lifetime(x) → source_lifetime_bounded(x)
 
 The following sequence and materialization rules are retained as future design
-guidance; no producer or free-function sequence operation is currently active.
+guidance; no producer operation is currently active.
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
   | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
@@ -291,6 +304,9 @@ guidance; no producer or free-function sequence operation is currently active.
   vocabulary requirements.
 - **Vocabulary authority**: `vocabulary.md`; canonical terms govern public names,
   architecture references, and later specifications and tests.
-- **Current implementation boundary**: only the Vector slice is active. The
-  capability and operation families above are architectural guidance until their
-  requirements, specification, tests, and implementation are propagated together.
+- **Module 3 Stored Collection authority**: `requirements/cljonic-requirements-module-3.md`
+  and `requirements/cljonic-architecture-module-3.md` govern concrete storage, linear scan
+  search, swap-and-remove removal, and primitive collection free functions.
+- **Current implementation boundary**: `Vector`, `Map`, `Set`, `Queue`, `String`, and
+  primitive free functions are active. Unbounded producers, algorithms, and regexes
+  remain architectural guidance until their specifications and implementations are propagated.
