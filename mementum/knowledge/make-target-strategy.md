@@ -1,4 +1,13 @@
-# cljonic Build Target Strategy
+---
+type: Reference
+title: cljonic Build Target Strategy
+description: Workflow for choosing granular Make checks during development and the comprehensive validation gate.
+status: active
+category: workflow
+tags: [make, build, verification, documentation]
+related: [mementum/knowledge/ai-upsert-quality-loop.md, mementum/state.md]
+depends-on: []
+---
 
 **Decision:** Minimize doc generation by using granular make targets for intermediate checks; only run `make git` for final comprehensive validation.
 
