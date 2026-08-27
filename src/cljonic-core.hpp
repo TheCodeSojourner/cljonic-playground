@@ -216,12 +216,9 @@
 #include <cljonic-string.hpp>
 #include <cljonic-vector.hpp>
 
-namespace cljonic
-{
+namespace cljonic {
 
-    namespace core
-    {
-    } // namespace core
+namespace core {} // namespace core
 
 } // namespace cljonic
 

@@ -294,148 +294,135 @@ constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
 #include <concepts>
 #include <cstddef>
 
-namespace cljonic
-{
+namespace cljonic {
 
-    /** \anchor MapEntry
-     * \b MapEntry is a value-semantic pair representing a single key-value association.
-     */
-    template <typename KeyType, typename ValueType>
-    struct MapEntry
-    {
-        KeyType key{};
-        ValueType value{};
+/** \anchor MapEntry
+ * \b MapEntry is a value-semantic pair representing a single key-value
+ * association.
+ */
+template <typename KeyType, typename ValueType> struct MapEntry {
+  KeyType key{};
+  ValueType value{};
 
-        [[nodiscard]] constexpr auto operator==(const MapEntry &other) const noexcept -> bool
-        {
-            return key == other.key && value == other.value;
-        }
+  [[nodiscard]] constexpr auto
+  operator==(const MapEntry &other) const noexcept -> bool {
+    return key == other.key && value == other.value;
+  }
 
-        template <std::integral IndexType>
-        [[nodiscard]] constexpr auto valid_index(IndexType index) const noexcept -> bool
-        {
-            if constexpr (std::signed_integral<IndexType>)
-            {
-                if (index < 0)
-                {
-                    return false;
-                }
-            }
-            return static_cast<std::size_t>(index) < 2U;
-        }
-    };
+  template <std::integral IndexType>
+  [[nodiscard]] constexpr auto
+  valid_index(IndexType index) const noexcept -> bool {
+    if constexpr (std::signed_integral<IndexType>) {
+      if (index < 0) {
+        return false;
+      }
+    }
+    return static_cast<std::size_t>(index) < 2U;
+  }
+};
 
 } // namespace cljonic
 // End cljonic-map-entry.hpp
 
-namespace cljonic
-{
+namespace cljonic {
 
-    /** \anchor Map
-     * \b Map is a fixed-capacity associative collection backed by contiguous array storage
-     * and linear scan lookup with copy-on-modify updates.
-     */
-    template <concepts::VectorElement KeyType, concepts::VectorElement ValueType, std::size_t CapacityValue>
-    class Map
-    {
-    public:
-        using key_type = KeyType;
-        using mapped_type = ValueType;
-        using value_type = MapEntry<KeyType, ValueType>;
+/** \anchor Map
+ * \b Map is a fixed-capacity associative collection backed by contiguous array
+ * storage and linear scan lookup with copy-on-modify updates.
+ */
+template <concepts::VectorElement KeyType, concepts::VectorElement ValueType,
+          std::size_t CapacityValue>
+class Map {
+public:
+  using key_type = KeyType;
+  using mapped_type = ValueType;
+  using value_type = MapEntry<KeyType, ValueType>;
 
-        static_assert(concepts::NothrowVectorElement<KeyType>,
-                      "Map key type operations must not throw");
-        static_assert(concepts::NothrowVectorElement<ValueType>,
-                      "Map value type operations must not throw");
-        static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                      "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+  static_assert(concepts::NothrowVectorElement<KeyType>,
+                "Map key type operations must not throw");
+  static_assert(concepts::NothrowVectorElement<ValueType>,
+                "Map value type operations must not throw");
+  static_assert(
+      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+      "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-        constexpr Map() noexcept : entries_{}, logical_size_{0} {}
+  constexpr Map() noexcept : entries_{}, logical_size_{0} {}
 
-        [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t
-        {
-            return CapacityValue;
-        }
+  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+    return CapacityValue;
+  }
 
-        [[nodiscard]] constexpr auto size() const noexcept -> std::size_t
-        {
-            return logical_size_;
-        }
+  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    return logical_size_;
+  }
 
-        [[nodiscard]] constexpr auto empty() const noexcept -> bool
-        {
-            return logical_size_ == 0U;
-        }
+  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    return logical_size_ == 0U;
+  }
 
-        [[nodiscard]] constexpr auto contains(const KeyType &key) const noexcept -> bool
-        {
-            return find_index(key) < logical_size_;
-        }
+  [[nodiscard]] constexpr auto
+  contains(const KeyType &key) const noexcept -> bool {
+    return find_index(key) < logical_size_;
+  }
 
-        [[nodiscard]] constexpr auto operator()(const KeyType &key) const noexcept -> ValueType
-        {
-            const auto idx = find_index(key);
-            return (idx < logical_size_) ? entries_[idx].value : ValueType{};
-        }
+  [[nodiscard]] constexpr auto
+  operator()(const KeyType &key) const noexcept -> ValueType {
+    const auto idx = find_index(key);
+    return (idx < logical_size_) ? entries_[idx].value : ValueType{};
+  }
 
-        [[nodiscard]] constexpr auto operator()(const KeyType &key, const ValueType &fallback) const noexcept -> ValueType
-        {
-            const auto idx = find_index(key);
-            return (idx < logical_size_) ? entries_[idx].value : fallback;
-        }
+  [[nodiscard]] constexpr auto
+  operator()(const KeyType &key,
+             const ValueType &fallback) const noexcept -> ValueType {
+    const auto idx = find_index(key);
+    return (idx < logical_size_) ? entries_[idx].value : fallback;
+  }
 
-        [[nodiscard]] constexpr auto can_assoc(const KeyType &key) const noexcept -> bool
-        {
-            return contains(key) || (logical_size_ < CapacityValue);
-        }
+  [[nodiscard]] constexpr auto
+  can_assoc(const KeyType &key) const noexcept -> bool {
+    return contains(key) || (logical_size_ < CapacityValue);
+  }
 
-        [[nodiscard]] constexpr auto assoc(const KeyType &key, const ValueType &value) const noexcept -> Map
-        {
-            Map result = *this;
-            const auto idx = result.find_index(key);
-            if (idx < result.logical_size_)
-            {
-                result.entries_[idx].value = value;
-            }
-            else if (result.logical_size_ < CapacityValue)
-            {
-                result.entries_[result.logical_size_] = value_type{key, value};
-                ++result.logical_size_;
-            }
-            return result;
-        }
+  [[nodiscard]] constexpr auto
+  assoc(const KeyType &key, const ValueType &value) const noexcept -> Map {
+    Map result = *this;
+    const auto idx = result.find_index(key);
+    if (idx < result.logical_size_) {
+      result.entries_[idx].value = value;
+    } else if (result.logical_size_ < CapacityValue) {
+      result.entries_[result.logical_size_] = value_type{key, value};
+      ++result.logical_size_;
+    }
+    return result;
+  }
 
-        [[nodiscard]] constexpr auto dissoc(const KeyType &key) const noexcept -> Map
-        {
-            Map result = *this;
-            const auto idx = result.find_index(key);
-            if (idx < result.logical_size_)
-            {
-                if (idx + 1U < result.logical_size_)
-                {
-                    result.entries_[idx] = result.entries_[result.logical_size_ - 1U];
-                }
-                --result.logical_size_;
-            }
-            return result;
-        }
+  [[nodiscard]] constexpr auto
+  dissoc(const KeyType &key) const noexcept -> Map {
+    Map result = *this;
+    const auto idx = result.find_index(key);
+    if (idx < result.logical_size_) {
+      if (idx + 1U < result.logical_size_) {
+        result.entries_[idx] = result.entries_[result.logical_size_ - 1U];
+      }
+      --result.logical_size_;
+    }
+    return result;
+  }
 
-    private:
-        [[nodiscard]] constexpr auto find_index(const KeyType &key) const noexcept -> std::size_t
-        {
-            for (std::size_t i = 0; i < logical_size_; ++i)
-            {
-                if (entries_[i].key == key)
-                {
-                    return i;
-                }
-            }
-            return logical_size_;
-        }
+private:
+  [[nodiscard]] constexpr auto
+  find_index(const KeyType &key) const noexcept -> std::size_t {
+    for (std::size_t i = 0; i < logical_size_; ++i) {
+      if (entries_[i].key == key) {
+        return i;
+      }
+    }
+    return logical_size_;
+  }
 
-        std::array<value_type, CapacityValue> entries_{};
-        std::size_t logical_size_{0};
-    };
+  std::array<value_type, CapacityValue> entries_{};
+  std::size_t logical_size_{0};
+};
 
 } // namespace cljonic
 // End cljonic-map.hpp
@@ -448,83 +435,75 @@ namespace cljonic
 #include <utility>
 
 
-namespace cljonic
-{
+namespace cljonic {
 
-    /** \anchor Queue
-     * \b Queue is a fixed-capacity FIFO sequence collection backed by contiguous array storage
-     * with copy-on-modify semantics.
-     */
-    template <concepts::VectorElement T, std::size_t CapacityValue>
-    class Queue
-    {
-    public:
-        using value_type = T;
+/** \anchor Queue
+ * \b Queue is a fixed-capacity FIFO sequence collection backed by contiguous
+ * array storage with copy-on-modify semantics.
+ */
+template <concepts::VectorElement T, std::size_t CapacityValue> class Queue {
+public:
+  using value_type = T;
 
-        static_assert(concepts::NothrowVectorElement<T>,
-                      "Queue element type operations must not throw");
-        static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                      "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+  static_assert(concepts::NothrowVectorElement<T>,
+                "Queue element type operations must not throw");
+  static_assert(
+      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+      "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-        constexpr Queue() noexcept : elements_{}, head_{0}, logical_size_{0} {}
+  constexpr Queue() noexcept : elements_{}, head_{0}, logical_size_{0} {}
 
-        [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t
-        {
-            return CapacityValue;
-        }
+  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+    return CapacityValue;
+  }
 
-        [[nodiscard]] constexpr auto size() const noexcept -> std::size_t
-        {
-            return logical_size_;
-        }
+  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    return logical_size_;
+  }
 
-        [[nodiscard]] constexpr auto empty() const noexcept -> bool
-        {
-            return logical_size_ == 0U;
-        }
+  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    return logical_size_ == 0U;
+  }
 
-        /** Returns true when there is room for at least one more element. */
-        [[nodiscard]] constexpr auto can_conj() const noexcept -> bool
-        {
-            return logical_size_ < CapacityValue;
-        }
+  /** Returns true when there is room for at least one more element. */
+  [[nodiscard]] constexpr auto can_conj() const noexcept -> bool {
+    return logical_size_ < CapacityValue;
+  }
 
-        /** Adds an element to the back of a copy of the queue (enqueue). Returns an unchanged copy when full. */
-        [[nodiscard]] constexpr auto conj(const T &element) const noexcept -> Queue
-        {
-            Queue result = *this;
-            if (result.logical_size_ < CapacityValue)
-            {
-                const auto tail = (result.head_ + result.logical_size_) % CapacityValue;
-                result.elements_[tail] = element;
-                ++result.logical_size_;
-            }
-            return result;
-        }
+  /** Adds an element to the back of a copy of the queue (enqueue). Returns an
+   * unchanged copy when full. */
+  [[nodiscard]] constexpr auto conj(const T &element) const noexcept -> Queue {
+    Queue result = *this;
+    if (result.logical_size_ < CapacityValue) {
+      const auto tail = (result.head_ + result.logical_size_) % CapacityValue;
+      result.elements_[tail] = element;
+      ++result.logical_size_;
+    }
+    return result;
+  }
 
-        /** Peeks at the front element without removing it. Returns default-constructed value when empty. */
-        [[nodiscard]] constexpr auto peek() const noexcept -> T
-        {
-            return (logical_size_ > 0) ? elements_[head_] : T{};
-        }
+  /** Peeks at the front element without removing it. Returns
+   * default-constructed value when empty. */
+  [[nodiscard]] constexpr auto peek() const noexcept -> T {
+    return (logical_size_ > 0) ? elements_[head_] : T{};
+  }
 
-        /** Removes the front element from a copy of the queue (dequeue). Returns an unchanged copy when empty. */
-        [[nodiscard]] constexpr auto pop() const noexcept -> Queue
-        {
-            Queue result = *this;
-            if (result.logical_size_ > 0)
-            {
-                result.head_ = (result.head_ + 1) % CapacityValue;
-                --result.logical_size_;
-            }
-            return result;
-        }
+  /** Removes the front element from a copy of the queue (dequeue). Returns an
+   * unchanged copy when empty. */
+  [[nodiscard]] constexpr auto pop() const noexcept -> Queue {
+    Queue result = *this;
+    if (result.logical_size_ > 0) {
+      result.head_ = (result.head_ + 1) % CapacityValue;
+      --result.logical_size_;
+    }
+    return result;
+  }
 
-    private:
-        std::array<value_type, CapacityValue> elements_{};
-        std::size_t head_{0};
-        std::size_t logical_size_{0};
-    };
+private:
+  std::array<value_type, CapacityValue> elements_{};
+  std::size_t head_{0};
+  std::size_t logical_size_{0};
+};
 
 } // namespace cljonic
 // End cljonic-queue.hpp
@@ -538,116 +517,109 @@ namespace cljonic
 #include <utility>
 
 
-namespace cljonic
-{
+namespace cljonic {
 
-    /** \anchor Set
-     * \b Set is a fixed-capacity associative sequence collection backed by contiguous array storage
-     * with linear-scan lookup and copy-on-modify semantics.
-     */
-    template <concepts::VectorElement T, std::size_t CapacityValue>
-    class Set
-    {
-    public:
-        using value_type = T;
+/** \anchor Set
+ * \b Set is a fixed-capacity associative sequence collection backed by
+ * contiguous array storage with linear-scan lookup and copy-on-modify
+ * semantics.
+ */
+template <concepts::VectorElement T, std::size_t CapacityValue> class Set {
+public:
+  using value_type = T;
 
-        static_assert(concepts::NothrowVectorElement<T>,
-                      "Set element type operations must not throw");
-        static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                      "Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+  static_assert(concepts::NothrowVectorElement<T>,
+                "Set element type operations must not throw");
+  static_assert(
+      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+      "Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-        constexpr Set() noexcept : elements_{}, logical_size_{0} {}
+  constexpr Set() noexcept : elements_{}, logical_size_{0} {}
 
-        [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t
-        {
-            return CapacityValue;
-        }
+  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+    return CapacityValue;
+  }
 
-        [[nodiscard]] constexpr auto size() const noexcept -> std::size_t
-        {
-            return logical_size_;
-        }
+  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    return logical_size_;
+  }
 
-        [[nodiscard]] constexpr auto count() const noexcept -> std::size_t
-        {
-            return logical_size_;
-        }
+  [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+    return logical_size_;
+  }
 
-        [[nodiscard]] constexpr auto empty() const noexcept -> bool
-        {
-            return logical_size_ == 0U;
-        }
+  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    return logical_size_ == 0U;
+  }
 
-        [[nodiscard]] constexpr auto contains(const T &element) const noexcept -> bool
-        {
-            return find_index(element) < logical_size_;
-        }
+  [[nodiscard]] constexpr auto
+  contains(const T &element) const noexcept -> bool {
+    return find_index(element) < logical_size_;
+  }
 
-        /** Returns the stored element value when present; otherwise returns a default-constructed value. */
-        [[nodiscard]] constexpr auto operator()(const T &element) const noexcept -> T
-        {
-            const auto idx = find_index(element);
-            return (idx < logical_size_) ? elements_[idx] : T{};
-        }
+  /** Returns the stored element value when present; otherwise returns a
+   * default-constructed value. */
+  [[nodiscard]] constexpr auto
+  operator()(const T &element) const noexcept -> T {
+    const auto idx = find_index(element);
+    return (idx < logical_size_) ? elements_[idx] : T{};
+  }
 
-        /** Returns the stored element value when present; otherwise returns the supplied fallback. */
-        [[nodiscard]] constexpr auto operator()(const T &element, const T &fallback) const noexcept -> T
-        {
-            const auto idx = find_index(element);
-            return (idx < logical_size_) ? elements_[idx] : fallback;
-        }
+  /** Returns the stored element value when present; otherwise returns the
+   * supplied fallback. */
+  [[nodiscard]] constexpr auto
+  operator()(const T &element, const T &fallback) const noexcept -> T {
+    const auto idx = find_index(element);
+    return (idx < logical_size_) ? elements_[idx] : fallback;
+  }
 
-        /** Returns true when the element is already present or the set has room for one more. */
-        [[nodiscard]] constexpr auto can_conj(const T &element) const noexcept -> bool
-        {
-            return contains(element) || (logical_size_ < CapacityValue);
-        }
+  /** Returns true when the element is already present or the set has room for
+   * one more. */
+  [[nodiscard]] constexpr auto
+  can_conj(const T &element) const noexcept -> bool {
+    return contains(element) || (logical_size_ < CapacityValue);
+  }
 
-        /** Adds an element to a copy of the set. If the element is already present or capacity is full, returns an unchanged copy. */
-        [[nodiscard]] constexpr auto conj(const T &element) const noexcept -> Set
-        {
-            Set result = *this;
-            if (!result.contains(element) && result.logical_size_ < CapacityValue)
-            {
-                result.elements_[result.logical_size_] = element;
-                ++result.logical_size_;
-            }
-            return result;
-        }
+  /** Adds an element to a copy of the set. If the element is already present or
+   * capacity is full, returns an unchanged copy. */
+  [[nodiscard]] constexpr auto conj(const T &element) const noexcept -> Set {
+    Set result = *this;
+    if (!result.contains(element) && result.logical_size_ < CapacityValue) {
+      result.elements_[result.logical_size_] = element;
+      ++result.logical_size_;
+    }
+    return result;
+  }
 
-        /** Removes an element via swap-and-remove if present; always returns a valid copy. */
-        [[nodiscard]] constexpr auto disj(const T &element) const noexcept -> Set
-        {
-            Set result = *this;
-            const auto idx = result.find_index(element);
-            if (idx < result.logical_size_)
-            {
-                if (idx + 1U < result.logical_size_)
-                {
-                    result.elements_[idx] = result.elements_[result.logical_size_ - 1U];
-                }
-                --result.logical_size_;
-            }
-            return result;
-        }
+  /** Removes an element via swap-and-remove if present; always returns a valid
+   * copy. */
+  [[nodiscard]] constexpr auto disj(const T &element) const noexcept -> Set {
+    Set result = *this;
+    const auto idx = result.find_index(element);
+    if (idx < result.logical_size_) {
+      if (idx + 1U < result.logical_size_) {
+        result.elements_[idx] = result.elements_[result.logical_size_ - 1U];
+      }
+      --result.logical_size_;
+    }
+    return result;
+  }
 
-    private:
-        /** Returns `logical_size_` when the element is absent. */
-        [[nodiscard]] constexpr auto find_index(const T &element) const noexcept -> std::size_t
-        {
-            for (std::size_t i = 0; i < logical_size_; ++i)
-            {
-                if (elements_[i] == element)
-                {
-                    return i;
-                }
-            }
-            return logical_size_;
-        }
+private:
+  /** Returns `logical_size_` when the element is absent. */
+  [[nodiscard]] constexpr auto
+  find_index(const T &element) const noexcept -> std::size_t {
+    for (std::size_t i = 0; i < logical_size_; ++i) {
+      if (elements_[i] == element) {
+        return i;
+      }
+    }
+    return logical_size_;
+  }
 
-        std::array<value_type, CapacityValue> elements_{};
-        std::size_t logical_size_{0};
-    };
+  std::array<value_type, CapacityValue> elements_{};
+  std::size_t logical_size_{0};
+};
 
 } // namespace cljonic
 
@@ -662,108 +634,100 @@ namespace cljonic
 #include <utility>
 
 
-namespace cljonic
-{
+namespace cljonic {
 
-    /** \anchor String
-     * \b String is a fixed-capacity ASCII string backed by contiguous array storage
-     * with automatic null termination and copy-on-modify semantics.
-     */
-    template <std::size_t CapacityValue>
-    class String
-    {
-    public:
-        using value_type = char;
+/** \anchor String
+ * \b String is a fixed-capacity ASCII string backed by contiguous array storage
+ * with automatic null termination and copy-on-modify semantics.
+ */
+template <std::size_t CapacityValue> class String {
+public:
+  using value_type = char;
 
-        static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                      "String capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+  static_assert(
+      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+      "String capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-        constexpr String() noexcept : data_{}, logical_size_{0}
-        {
-            data_[0] = '\0';
-        }
+  constexpr String() noexcept : data_{}, logical_size_{0} { data_[0] = '\0'; }
 
-        /** Construct from character array literal. Capacity must accommodate N-1 chars plus null terminator. */
-        template <std::size_t N>
-        constexpr String(const char (&arr)[N]) noexcept : data_{}, logical_size_{0}
-        {
-            static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
-            logical_size_ = N - 1U;
-            for (std::size_t i = 0; i < logical_size_; ++i)
-            {
-                data_[i] = arr[i];
-            }
-            data_[logical_size_] = '\0';
-        }
+  /** Construct from character array literal. Capacity must accommodate N-1
+   * chars plus null terminator. */
+  template <std::size_t N>
+  constexpr String(const char (&arr)[N]) noexcept : data_{}, logical_size_{0} {
+    static_assert(N - 1U <= CapacityValue,
+                  "String literal too long for capacity");
+    logical_size_ = N - 1U;
+    for (std::size_t i = 0; i < logical_size_; ++i) {
+      data_[i] = arr[i];
+    }
+    data_[logical_size_] = '\0';
+  }
 
-        [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t
-        {
-            return CapacityValue;
-        }
+  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+    return CapacityValue;
+  }
 
-        [[nodiscard]] constexpr auto size() const noexcept -> std::size_t
-        {
-            return logical_size_;
-        }
+  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    return logical_size_;
+  }
 
-        [[nodiscard]] constexpr auto empty() const noexcept -> bool
-        {
-            return logical_size_ == 0U;
-        }
+  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    return logical_size_ == 0U;
+  }
 
-        /** Returns true when index falls within logical bounds (not counting null terminator). */
-        [[nodiscard]] constexpr auto valid(std::size_t index) const noexcept -> bool
-        {
-            return index < logical_size_;
-        }
+  /** Returns true when index falls within logical bounds (not counting null
+   * terminator). */
+  [[nodiscard]] constexpr auto valid(std::size_t index) const noexcept -> bool {
+    return index < logical_size_;
+  }
 
-        /** Index access: returns '\\0' for out-of-bounds indices. */
-        [[nodiscard]] constexpr auto operator[](std::size_t index) const noexcept -> char
-        {
-            return (index < logical_size_) ? data_[index] : '\0';
-        }
+  /** Index access: returns '\\0' for out-of-bounds indices. */
+  [[nodiscard]] constexpr auto
+  operator[](std::size_t index) const noexcept -> char {
+    return (index < logical_size_) ? data_[index] : '\0';
+  }
 
-        /** Callable index access returning default-constructed char ('\\0') on invalid index. */
-        [[nodiscard]] constexpr auto operator()(std::size_t index) const noexcept -> char
-        {
-            return (index < logical_size_) ? data_[index] : '\0';
-        }
+  /** Callable index access returning default-constructed char ('\\0') on
+   * invalid index. */
+  [[nodiscard]] constexpr auto
+  operator()(std::size_t index) const noexcept -> char {
+    return (index < logical_size_) ? data_[index] : '\0';
+  }
 
-        /** Callable index access with custom fallback value on invalid index. */
-        [[nodiscard]] constexpr auto operator()(std::size_t index, char fallback) const noexcept -> char
-        {
-            return (index < logical_size_) ? data_[index] : fallback;
-        }
+  /** Callable index access with custom fallback value on invalid index. */
+  [[nodiscard]] constexpr auto
+  operator()(std::size_t index, char fallback) const noexcept -> char {
+    return (index < logical_size_) ? data_[index] : fallback;
+  }
 
-        /** Returns a new String with the character at index replaced. Out-of-bounds indices leave copy unchanged. */
-        [[nodiscard]] constexpr auto put(std::size_t index, char c) const noexcept -> String
-        {
-            String result = *this;
-            if (index < logical_size_)
-            {
-                result.data_[index] = c;
-            }
-            return result;
-        }
+  /** Returns a fresh String with the character at index replaced. Out-of-bounds
+   * indices leave copy unchanged. */
+  [[nodiscard]] constexpr auto put(std::size_t index,
+                                   char c) const noexcept -> String {
+    String result = *this;
+    if (index < logical_size_) {
+      result.data_[index] = c;
+    }
+    return result;
+  }
 
-        /** Appends a character to the end of a copy of the string if room is available. */
-        [[nodiscard]] constexpr auto append(char c) const noexcept -> String
-        {
-            String result = *this;
-            if (result.logical_size_ < CapacityValue)
-            {
-                result.data_[result.logical_size_] = c;
-                ++result.logical_size_;
-                result.data_[result.logical_size_] = '\0';
-            }
-            return result;
-        }
+  /** Appends a character to the end of a copy of the string if room is
+   * available. */
+  [[nodiscard]] constexpr auto append(char c) const noexcept -> String {
+    String result = *this;
+    if (result.logical_size_ < CapacityValue) {
+      result.data_[result.logical_size_] = c;
+      ++result.logical_size_;
+      result.data_[result.logical_size_] = '\0';
+    }
+    return result;
+  }
 
-    private:
-        // Internal array is CapacityValue+1 to hold null terminator
-        std::array<char, CapacityValue + 1> data_{};
-        std::size_t logical_size_{0};
-    };
+private:
+  // Internal array is CapacityValue+1 to hold null terminator
+  std::array<char, CapacityValue + 1> data_{};
+  std::size_t logical_size_{0};
+};
 
 } // namespace cljonic
 // End cljonic-string.hpp
@@ -957,12 +921,9 @@ Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 } // namespace cljonic
 // End cljonic-vector.hpp
 
-namespace cljonic
-{
+namespace cljonic {
 
-    namespace core
-    {
-    } // namespace core
+namespace core {} // namespace core
 
 } // namespace cljonic
 
