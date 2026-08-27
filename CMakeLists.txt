@@ -20,9 +20,17 @@ if(BUILD_TESTING)
     FetchContent_MakeAvailable(Catch2)
 
     set(CLJONIC_SPEC_TEST_SOURCES
+        tests/cljonic-assoc-spec-tests.cpp
+        tests/cljonic-can-assoc-spec-tests.cpp
+        tests/cljonic-can-conj-spec-tests.cpp
         tests/cljonic-concepts-spec-tests.cpp
+        tests/cljonic-conj-spec-tests.cpp
+        tests/cljonic-disj-spec-tests.cpp
+        tests/cljonic-dissoc-spec-tests.cpp
         tests/cljonic-map-entry-spec-tests.cpp
         tests/cljonic-map-spec-tests.cpp
+        tests/cljonic-peek-spec-tests.cpp
+        tests/cljonic-pop-spec-tests.cpp
         tests/cljonic-queue-spec-tests.cpp
         tests/cljonic-set-spec-tests.cpp
         tests/cljonic-string-spec-tests.cpp

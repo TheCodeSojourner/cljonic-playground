@@ -70,6 +70,12 @@ public:
   }
 
   [[nodiscard]] constexpr auto
+  can_assoc(const KeyType &key,
+            const ValueType & /*value*/) const noexcept -> bool {
+    return can_assoc(key);
+  }
+
+  [[nodiscard]] constexpr auto
   assoc(const KeyType &key, const ValueType &value) const noexcept -> Map {
     Map result = *this;
     const auto idx = result.find_index(key);

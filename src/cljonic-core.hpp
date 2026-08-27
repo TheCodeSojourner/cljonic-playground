@@ -208,9 +208,17 @@
  * collection operations are planned for later requirements modules.
  */
 
+#include <cljonic-assoc.hpp>
+#include <cljonic-can-assoc.hpp>
+#include <cljonic-can-conj.hpp>
 #include <cljonic-concepts.hpp>
+#include <cljonic-conj.hpp>
 #include <cljonic-core-collection-maximum-element-count.hpp>
+#include <cljonic-disj.hpp>
+#include <cljonic-dissoc.hpp>
 #include <cljonic-map.hpp>
+#include <cljonic-peek.hpp>
+#include <cljonic-pop.hpp>
 #include <cljonic-queue.hpp>
 #include <cljonic-set.hpp>
 #include <cljonic-string.hpp>

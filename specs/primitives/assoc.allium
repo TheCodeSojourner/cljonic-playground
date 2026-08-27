@@ -1,0 +1,46 @@
+-- allium: 3
+
+entity Assoc {
+    supports_assoc_free_function: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    functional_immutability_preserved: Boolean
+    referential_transparency: Boolean
+    copy_on_modify_semantics: Boolean
+
+    invariant AssocFreeFunctionSupported {
+        this.supports_assoc_free_function = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant FunctionalImmutabilityPreserved {
+        this.functional_immutability_preserved = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant CopyOnModifySemantics {
+        this.copy_on_modify_semantics = true
+    }
+}
+
+actor AssocOperator { identified_by: Assoc }

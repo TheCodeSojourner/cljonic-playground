@@ -1,28 +1,30 @@
 ## Session State
 
 - last_session_id: c8cd66c4-5e3d-421a-95cb-159e352cf6c7
-- current_timestamp: 2026-08-27T22:15:00Z
+- current_timestamp: 2026-08-28T00:15:00Z
 - recover: 1
 - session_complete: true
 
 Task:
-1. Verify and reconcile test/code implementations against specifications, architecture, and requirements for Modules 1-3 using gybis-spec-weed.
-2. Resolve test coverage gap in MapEntry negative-index guard and eliminate false positive in no-heap scanner for String documentation comment.
-3. Validate complete repository state across all quality gates (format, lint, complexity, sanitizers, coverage, traceability, no-heap, docs).
+1. Ensure every free function header in `src/` (`cljonic-conj.hpp`, `cljonic-assoc.hpp`, `cljonic-dissoc.hpp`, `cljonic-disj.hpp`, `cljonic-peek.hpp`, `cljonic-pop.hpp`, `cljonic-can-conj.hpp`, `cljonic-can-assoc.hpp`) includes a self-contained Doxygen runnable example program with `main()`.
+2. Verify all quality gates pass including strict spec-to-code traceability, zero heap, linting, complexity, 100% line coverage, and Doxygen documentation generation.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Added runtime test coverage with volatile-derived inputs for `MapEntry::valid_index` signed negative-index check to ensure GCC code coverage instrumentation records execution.
-2. Reworded Doxygen comment in `cljonic-string.hpp` to prevent false positive matching on the `new ` token in the source no-heap scan.
-3. Verified all 213 specification obligations across MapEntry, Map, Set, Queue, String, and Vector map directly to `TRACE_ID` test assertions.
-4. All quality gates pass cleanly (format, lint, complexity, sanitizers, 100% line coverage, traceability, no-heap, and release-quality docs).
+1. Replaced snippet references in all Group A free function headers with complete, self-contained `main()` example programs matching the `Vector` Doxygen documentation style.
+2. Verified all quality gates pass cleanly (`make upsert-gate-strict` and `make docs`).
 
 Next:
-1. Proceed with Module 4 requirements and specifications or downstream features as requested.
+1. Proceed with Group B primitive free functions (`count`, `empty`, `is_empty`, `not_empty`, `first`, `next`, `rest`, `seq`, `get`) specifications, tests, and header implementations with Doxygen example programs.
 
 ## Historical Session Records
+
+Task:
+1. Verify and reconcile test/code implementations against specifications, architecture, and requirements for Modules 1-3 using gybis-spec-weed.
+2. Resolve test coverage gap in MapEntry negative-index guard and eliminate false positive in no-heap scanner for String documentation comment.
+3. Validate complete repository state across all quality gates (format, lint, complexity, sanitizers, coverage, traceability, no-heap, docs).
 
 Task:
 1. Update architecture.md with Module 3 core collection types, storage strategies, and primitive free functions.

@@ -219,6 +219,10 @@
  * collection operations are planned for later requirements modules.
  */
 
+// Begin cljonic-assoc.hpp
+#ifndef CLJONIC_ASSOC_HPP
+#define CLJONIC_ASSOC_HPP
+
 // Begin cljonic-concepts.hpp
 #pragma once
 
@@ -259,6 +263,150 @@ concept NothrowElementConstruction =
 
 } // namespace cljonic::concepts
 // End cljonic-concepts.hpp
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Assoc
+ * \brief Associates a key and value in an associative collection or index in a
+ * vector.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   constexpr auto m = assoc(Map<int, int, 4>{}, 1, 100);
+ *   static_assert(m.contains(1));
+ *   static_assert(m(1) == 100);
+ *
+ *   return 0;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K, typename V>
+[[nodiscard]] constexpr auto assoc(const C &collection, const K &key,
+                                   const V &value) noexcept {
+  return collection.assoc(key, value);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_ASSOC_HPP
+// End cljonic-assoc.hpp
+// Begin cljonic-can-assoc.hpp
+#ifndef CLJONIC_CAN_ASSOC_HPP
+#define CLJONIC_CAN_ASSOC_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor CanAssoc
+ * \brief Checks if assoc can succeed without capacity overflow.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   constexpr Map<int, int, 4> m{};
+ *   static_assert(can_assoc(m, 1, 100));
+ *
+ *   return 0;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K, typename V>
+[[nodiscard]] constexpr auto can_assoc(const C &collection, const K &key,
+                                       const V &value) noexcept -> bool {
+  return collection.can_assoc(key, value);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_CAN_ASSOC_HPP
+// End cljonic-can-assoc.hpp
+// Begin cljonic-can-conj.hpp
+#ifndef CLJONIC_CAN_CONJ_HPP
+#define CLJONIC_CAN_CONJ_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor CanConj
+ * \brief Checks if conj can succeed without capacity overflow.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   constexpr Queue<int, 4> q{};
+ *   static_assert(can_conj(q));
+ *
+ *   constexpr Set<int, 4> s{};
+ *   static_assert(can_conj(s, 1));
+ *
+ *   return 0;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename... Args>
+[[nodiscard]] constexpr auto can_conj(const C &collection,
+                                      Args &&...args) noexcept -> bool {
+  return collection.can_conj(std::forward<Args>(args)...);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_CAN_CONJ_HPP
+// End cljonic-can-conj.hpp
+// Begin cljonic-conj.hpp
+#ifndef CLJONIC_CONJ_HPP
+#define CLJONIC_CONJ_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Conj
+ * \brief Adds an element to a collection according to its type conventions.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   constexpr auto q = conj(Queue<int, 4>{}, 10);
+ *   constexpr auto s = conj(Set<int, 4>{}, 20);
+ *
+ *   static_assert(peek(q) == 10);
+ *   static_assert(s.contains(20));
+ *
+ *   return 0;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename T>
+[[nodiscard]] constexpr auto conj(const C &collection,
+                                  const T &value) noexcept {
+  return collection.conj(value);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_CONJ_HPP
+// End cljonic-conj.hpp
 // Begin cljonic-core-collection-maximum-element-count.hpp
 #pragma once
 
@@ -280,6 +428,78 @@ constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
 
 } // namespace cljonic
 // End cljonic-core-collection-maximum-element-count.hpp
+// Begin cljonic-disj.hpp
+#ifndef CLJONIC_DISJ_HPP
+#define CLJONIC_DISJ_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Disj
+ * \brief Disjoins an element from a set.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   constexpr auto s0 = conj(Set<int, 4>{}, 42);
+ *   constexpr auto s1 = disj(s0, 42);
+ *   static_assert(!s1.contains(42));
+ *
+ *   return 0;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename T>
+[[nodiscard]] constexpr auto disj(const C &collection,
+                                  const T &value) noexcept {
+  return collection.disj(value);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_DISJ_HPP
+// End cljonic-disj.hpp
+// Begin cljonic-dissoc.hpp
+#ifndef CLJONIC_DISSOC_HPP
+#define CLJONIC_DISSOC_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Dissoc
+ * \brief Disassociates a key from a map.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   constexpr auto m0 = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto m1 = dissoc(m0, 1);
+ *   static_assert(!m1.contains(1));
+ *
+ *   return 0;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K>
+[[nodiscard]] constexpr auto dissoc(const C &collection,
+                                    const K &key) noexcept {
+  return collection.dissoc(key);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_DISSOC_HPP
+// End cljonic-dissoc.hpp
 // Begin cljonic-map.hpp
 #pragma once
 
@@ -384,6 +604,12 @@ public:
   }
 
   [[nodiscard]] constexpr auto
+  can_assoc(const KeyType &key,
+            const ValueType & /*value*/) const noexcept -> bool {
+    return can_assoc(key);
+  }
+
+  [[nodiscard]] constexpr auto
   assoc(const KeyType &key, const ValueType &value) const noexcept -> Map {
     Map result = *this;
     const auto idx = result.find_index(key);
@@ -426,6 +652,75 @@ private:
 
 } // namespace cljonic
 // End cljonic-map.hpp
+// Begin cljonic-peek.hpp
+#ifndef CLJONIC_PEEK_HPP
+#define CLJONIC_PEEK_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Peek
+ * \brief Observes the accessible element without removal.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   constexpr auto q = conj(Queue<int, 4>{}, 99);
+ *   static_assert(peek(q) == 99);
+ *
+ *   return 0;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto peek(const C &collection) noexcept {
+  return collection.peek();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_PEEK_HPP
+// End cljonic-peek.hpp
+// Begin cljonic-pop.hpp
+#ifndef CLJONIC_POP_HPP
+#define CLJONIC_POP_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Pop
+ * \brief Yields an updated collection with the accessible element removed.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   constexpr auto q0 = conj(conj(Queue<int, 4>{}, 1), 2);
+ *   constexpr auto q1 = pop(q0);
+ *   static_assert(peek(q1) == 2);
+ *
+ *   return 0;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto pop(const C &collection) noexcept {
+  return collection.pop();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_POP_HPP
+// End cljonic-pop.hpp
 // Begin cljonic-queue.hpp
 #pragma once
 
