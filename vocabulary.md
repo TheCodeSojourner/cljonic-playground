@@ -8,12 +8,13 @@ status: draft
 
 ## Current Scope
 
-The current implementation and tests cover only the `Vector` collection and
-its direct construction and member-observation contract. Module 2 establishes
-the canonical capability, result, preflight, diagnostic, conversion, and
-naming vocabulary used to govern later collection and producer work. These
-terms do not constitute supported behavior until an active specification,
-test coverage, and implementation are added.
+The current implementation and tests cover the core collection types (`Vector`,
+`Map`, `Set`, `Queue`, and `String`), their direct construction, member-observation,
+callable forms, sequence traversal interfaces, and primitive free-function
+operations defined in Module 3. Module 3 establishes the concrete, array-backed,
+bounded collection types, their contiguous storage strategies, linear scan lookup
+algorithms, swap-and-remove policies, and primitive free functions. These terms
+govern stored collection building blocks used across all higher-order algorithms.
 
 ### Collection
 - **Definition:** A bounded cljonic value or data structure admitted to the closed nominal collection domain and governed by collection-specific capacity, access, failure, and value-semantic rules.
@@ -393,51 +394,145 @@ test coverage, and implementation are added.
 ### Vector
 - **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
-- **Related:** CopyOnModifyCollection, String, CapacityConstruction
+- **Related:** CopyOnModifyCollection, String, CapacityConstruction, IndexedAccess, ValidIndex
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `size()`, `capacity()`, and call operator provide direct member observation.
-
+- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `size()`, `capacity()`, `operator()`, and `valid_index` provide direct member and free-function observation.
 
 
 ### Map
-- **Definition:** The cljonic fixed-capacity associative collection type with content-based key lookup, immutable copy-on-modify updates, and intentionally unspecified iteration order.
-- **Deprecated Synonyms:** map collection, bounded map, fixed-capacity map
-- **Related:** CopyOnModifyCollection, String
+- **Definition:** The cljonic fixed-capacity associative collection type mapping unique keys to values using contiguous storage and linear scans with immutable copy-on-modify updates.
+- **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
+- **Related:** MapEntry, AssociativeAccess, Contains, SwapAndRemove, CopyOnModifyCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A `Map` supports `assoc`, `dissoc`, `contains`, and `get`, with duplicate-key `assoc` replacing an existing value in the returned copy.
-
+- **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`.
 
 
 ### Set
-- **Definition:** The cljonic fixed-capacity uniqueness-preserving collection type with content-based membership semantics and immutable copy-on-modify updates.
-- **Deprecated Synonyms:** set collection, bounded set, fixed-capacity set
-- **Related:** CopyOnModifyCollection, CapacityConstruction
+- **Definition:** The cljonic fixed-capacity unordered collection type storing unique elements using contiguous storage and linear scans with immutable copy-on-modify updates.
+- **Deprecated Synonyms:** bounded set, fixed-capacity set, unique element collection
+- **Related:** StableEquality, Contains, SwapAndRemove, CopyOnModifyCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A `Set` supports `conj`, `dissoc`, `contains`, and `count`, with equality defined by logical content rather than storage order.
+- **Examples:** `Set<int, 4>{1, 2, 3}` creates a bounded set supporting `conj`, `disj`, `contains`, `get`, and callable lookup `s(v)`.
 
+
+### Queue
+- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates.
+- **Deprecated Synonyms:** bounded queue, fixed-capacity queue, FIFO queue
+- **Related:** Sequence, CopyOnModifyCollection, Traversal
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front).
 
 
 ### String
-- **Definition:** The cljonic fixed-capacity string collection type. Its logical capacity is measured in characters, while its physical storage is measured in code units under the active StringEncoding. In UTF-8 mode, storage is sized for the worst-case number of code units needed to hold the declared character capacity.
-- **Deprecated Synonyms:** StaticString, static string, fixed-capacity string, string collection
-- **Related:** CopyOnModifyCollection, Vector, Map, Set, CapacityConstruction
+- **Definition:** The cljonic fixed-capacity array-backed collection type with ordered ASCII byte storage (range `0x01`–`0x7F`) and an uncounted null terminator immediately following its content.
+- **Deprecated Synonyms:** bounded string, fixed-capacity string, cljonic string
+- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A `String<32>` means room for 32 characters; in UTF-8 mode its backing storage may reserve worst-case code-unit capacity to preserve that logical character capacity.
+- **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length.
 
 
+### SwapAndRemove
+- **Definition:** An $O(1)$ removal strategy for unsorted collections (`Map` and `Set`) where the target element or key-value entry is overwritten by the last active stored element before decrementing the count.
+- **Deprecated Synonyms:** swap and remove, swap-with-back, unordered removal
+- **Related:** Map, Set, ContiguousStorage, Dissoc, Disj
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** Calling `disj(set, val)` or `dissoc(map, key)` copies the final element into the vacated slot and decrements the collection count without preserving internal traversal order.
 
 
+### ContiguousStorage
+- **Definition:** Flat internal array-backed storage (`std::array`) holding active collection elements or key-value entries in a single contiguous memory block without indirection or node allocation.
+- **Deprecated Synonyms:** flat storage, contiguous array storage, inline array buffer
+- **Related:** BoundedStorage, Vector, Map, Set, Queue, String
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `std::array<MapEntry<K, V>, N>` and `std::array<T, N>` store all active items contiguously within the collection value.
 
 
+### CallableLookup
+- **Definition:** Invocation of a collection instance via `operator()` providing concise read-only lookup with optional fallback default, behaviorally equivalent to `get`.
+- **Deprecated Synonyms:** callable collection, functional lookup syntax, operator() lookup
+- **Related:** SentinelBasedAccess, DefaultElement, IndexedAccess, AssociativeAccess
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `xs(2)` on a Vector, `m(key)` on a Map, and `s(val)` on a Set invoke callable lookup without mutating the collection.
 
 
+### LinearScan
+- **Definition:** An $O(N)$ sequential traversal over contiguous stored elements or key-value pairs used exclusively for search, lookup, association, and membership testing across bounded collections.
+- **Deprecated Synonyms:** linear search, sequential scan, bounded scan
+- **Related:** Map, Set, ContiguousStorage, Contains, StableEquality
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `contains(m, key)` performs a linear scan over active map entries matching key equality.
 
 
+### Conj
+- **Definition:** The primitive collection free function that returns a new collection with one or more elements added according to the target collection's type conventions (rear for `Vector` and `Queue`, membership insertion for `Set`).
+- **Deprecated Synonyms:** conjoin, append, insert element
+- **Related:** CopyOnModifyCollection, CanConj, PreflightPredicate, Vector, Set, Queue
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `conj(xs, 4)` appends 4 to a Vector; `conj(s, 4)` adds 4 to a Set if not already present.
 
 
+### Assoc
+- **Definition:** The primitive associative free function that returns a new `Map` with the supplied key-value association added or replaced.
+- **Deprecated Synonyms:** associate, map assoc, put
+- **Related:** Map, MapEntry, CanAssoc, Dissoc, CopyOnModifyCollection
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `assoc(m, key, val)` updates the value if `key` exists (without consuming extra capacity) or inserts the new pair if capacity remains.
 
 
+### Dissoc
+- **Definition:** The primitive associative free function that returns a new `Map` with the specified key and its associated value removed via swap-and-remove.
+- **Deprecated Synonyms:** disassociate, map remove, erase key
+- **Related:** Map, Assoc, SwapAndRemove, CopyOnModifyCollection
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `dissoc(m, key)` removes `key` if present and decrements count, returning an unchanged copy if absent.
 
+
+### Disj
+- **Definition:** The primitive set free function that returns a new `Set` with the specified element removed via swap-and-remove.
+- **Deprecated Synonyms:** disjoin, set remove, erase element
+- **Related:** Set, Conj, SwapAndRemove, CopyOnModifyCollection
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `disj(s, val)` removes `val` from the set if present and decrements count.
+
+
+### Peek
+- **Definition:** The primitive sequential free function that observes the first or accessible element without removal (`Vector` top/last, `Queue` front) returning `DefaultElement` if empty.
+- **Deprecated Synonyms:** peek front, peek top
+- **Related:** Pop, Queue, Vector, SentinelBasedAccess
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `peek(q)` observes the head of the FIFO queue; `peek(v)` observes the last element of the vector.
+
+
+### Pop
+- **Definition:** The primitive sequential free function that returns a new collection with the accessible element removed (`Vector` last element, `Queue` front element).
+- **Deprecated Synonyms:** pop front, pop back, dequeue
+- **Related:** Peek, Queue, Vector, CopyOnModifyCollection
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `pop(q)` dequeues the front element; `pop(v)` removes the trailing element.
+
+
+### Seq
+- **Definition:** The primitive traversal free function that converts any sequenceable collection or input into an owning, value-semantic `Vector` of its traversal elements (or `MapEntry` elements for maps).
+- **Deprecated Synonyms:** sequence conversion, to-seq, seq conversion
+- **Related:** Sequenceable, Vector, MapEntry, Traversal
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `seq(m)` returns an owning `Vector<MapEntry<K, V>, N>` of map entries.
+
+
+### CanConj
+- **Definition:** The canonical preflight capability predicate (`can_conj`) checking whether `conj` can succeed without capacity overflow, returning true if capacity is available or if the item is an existing set element.
+- **Deprecated Synonyms:** can_conj, can-conj predicate
+- **Related:** Conj, CapabilityPredicate, PreflightPredicate, FullState, Set
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `can_conj(s, x)` returns true if `s` is not full or if `s` already contains `x`.
+
+
+### CanAssoc
+- **Definition:** The canonical preflight capability predicate (`can_assoc`) checking whether `assoc` can succeed without capacity overflow, returning true if the key already exists or if spare capacity remains.
+- **Deprecated Synonyms:** can_assoc, can-assoc predicate
+- **Related:** Assoc, CapabilityPredicate, PreflightPredicate, FullState, Map
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `can_assoc(m, k, v)` returns true if `contains(m, k)` is true or if `m` is not full.
 
 
 ### Iterate
@@ -617,20 +712,6 @@ test coverage, and implementation are added.
 - **Related:** LifecycleClassification, CandidateStatus
 - **Usage:** Requirements, architecture, specification governance, and documentation
 - **Examples:** Runtime macro or reflection features can be excluded by boundary requirements.
-
-
-
-### Queue
-- **Definition:** The cljonic bounded first-class collection type for queue semantics within the closed value and data-structure domain.
-- **Deprecated Synonyms:** queue collection, bounded queue
-- **Related:** Vector, Map, Set, String
-- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Queue` is part of the required first-class bounded domain alongside `Vector`, `Map`, `Set`, and `String`.
-
-
-
-
-
 
 
 ### StandardViewType
