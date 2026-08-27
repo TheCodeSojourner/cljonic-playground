@@ -4,108 +4,107 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
-TEST_CASE("Set construction and basic operations", "[set]")
-{
-    using cljonic::Set;
+TEST_CASE("Set construction and basic operations", "[set]") {
+  using cljonic::Set;
 
-    TRACE_ID("entity-fields.Set");
-    TRACE_ID("invariant.Set.CapacityIsNonNegative");
-    TRACE_ID("invariant.Set.LogicalSizeIsNonNegative");
-    TRACE_ID("invariant.Set.LogicalSizeDoesNotExceedCapacity");
-    TRACE_ID("invariant.Set.HeaderOnlyDistribution");
-    TRACE_ID("invariant.Set.StaticOrAutomaticStorageOnly");
-    TRACE_ID("invariant.Set.ContiguousStorage");
-    TRACE_ID("invariant.Set.LinearScanLookup");
-    TRACE_ID("invariant.Set.SwapAndRemove");
-    TRACE_ID("invariant.Set.CallableLookup");
-    TRACE_ID("invariant.Set.NoHeapAllocation");
-    TRACE_ID("invariant.Set.NoRtti");
-    TRACE_ID("invariant.Set.NoExceptions");
-    TRACE_ID("invariant.Set.SingleThreadedExecutionModel");
-    TRACE_ID("invariant.Set.ImmutablePublicApi");
-    TRACE_ID("invariant.Set.UpdateReturnsNewValue");
-    TRACE_ID("invariant.Set.DeepCopyUpdate");
-    TRACE_ID("invariant.Set.ReferentialTransparency");
-    TRACE_ID("invariant.Set.RequiresValueSemanticElements");
-    TRACE_ID("invariant.Set.SupportsEmptyExplicitCapacityConstruction");
-    TRACE_ID("invariant.Set.SupportsExplicitCapacityConstruction");
-    TRACE_ID("invariant.Set.CapacityExceedsMaximumIsCompileTimeFailure");
-    TRACE_ID("invariant.Set.SupportsMembershipLookup");
-    TRACE_ID("invariant.Set.SupportsMembershipFallbackLookup");
-    TRACE_ID("invariant.Set.MissingValueReturnsDefaultElement");
-    TRACE_ID("invariant.Set.MissingValueReturnsSuppliedFallback");
-    TRACE_ID("invariant.Set.CanonicalResultStatusModelIsDeclared");
-    TRACE_ID("invariant.Set.CompleteResultStatusDeclared");
-    TRACE_ID("invariant.Set.BoundedPrefixResultStatusDeclared");
-    TRACE_ID("invariant.Set.DefaultReturningResultStatusDeclared");
-    TRACE_ID("invariant.Set.CheckedFailureResultStatusDeclared");
-    TRACE_ID("invariant.Set.ProducerOnlyResultStatusDeclared");
-    TRACE_ID("invariant.Set.PreflightPredicatesAreNonThrowingNonAllocating");
-    TRACE_ID("invariant.Set.ContainsIsCanonicalMembershipPredicate");
-    TRACE_ID("invariant.Set.CanConjIsCanonicalConjPreflight");
-    TRACE_ID("invariant.Set.FitsIntoIsCanonicalMaterializationPreflight");
-    TRACE_ID("invariant.Set.CompileTimeCapacityOverflowIsRejected");
-    TRACE_ID("invariant.Set.RuntimeCapacityFailuresHaveDocumentedPolicy");
-    TRACE_ID("invariant.Set.DefaultAccessHasPreflightPredicate");
+  TRACE_ID("entity-fields.Set");
+  TRACE_ID("invariant.Set.CapacityIsNonNegative");
+  TRACE_ID("invariant.Set.LogicalSizeIsNonNegative");
+  TRACE_ID("invariant.Set.LogicalSizeDoesNotExceedCapacity");
+  TRACE_ID("invariant.Set.HeaderOnlyDistribution");
+  TRACE_ID("invariant.Set.StaticOrAutomaticStorageOnly");
+  TRACE_ID("invariant.Set.ContiguousStorage");
+  TRACE_ID("invariant.Set.LinearScanLookup");
+  TRACE_ID("invariant.Set.SwapAndRemove");
+  TRACE_ID("invariant.Set.CallableLookup");
+  TRACE_ID("invariant.Set.NoHeapAllocation");
+  TRACE_ID("invariant.Set.NoRtti");
+  TRACE_ID("invariant.Set.NoExceptions");
+  TRACE_ID("invariant.Set.SingleThreadedExecutionModel");
+  TRACE_ID("invariant.Set.ImmutablePublicApi");
+  TRACE_ID("invariant.Set.UpdateReturnsNewValue");
+  TRACE_ID("invariant.Set.DeepCopyUpdate");
+  TRACE_ID("invariant.Set.ReferentialTransparency");
+  TRACE_ID("invariant.Set.RequiresValueSemanticElements");
+  TRACE_ID("invariant.Set.SupportsEmptyExplicitCapacityConstruction");
+  TRACE_ID("invariant.Set.SupportsExplicitCapacityConstruction");
+  TRACE_ID("invariant.Set.CapacityExceedsMaximumIsCompileTimeFailure");
+  TRACE_ID("invariant.Set.SupportsMembershipLookup");
+  TRACE_ID("invariant.Set.SupportsMembershipFallbackLookup");
+  TRACE_ID("invariant.Set.MissingValueReturnsDefaultElement");
+  TRACE_ID("invariant.Set.MissingValueReturnsSuppliedFallback");
+  TRACE_ID("invariant.Set.CanonicalResultStatusModelIsDeclared");
+  TRACE_ID("invariant.Set.CompleteResultStatusDeclared");
+  TRACE_ID("invariant.Set.BoundedPrefixResultStatusDeclared");
+  TRACE_ID("invariant.Set.DefaultReturningResultStatusDeclared");
+  TRACE_ID("invariant.Set.CheckedFailureResultStatusDeclared");
+  TRACE_ID("invariant.Set.ProducerOnlyResultStatusDeclared");
+  TRACE_ID("invariant.Set.PreflightPredicatesAreNonThrowingNonAllocating");
+  TRACE_ID("invariant.Set.ContainsIsCanonicalMembershipPredicate");
+  TRACE_ID("invariant.Set.CanConjIsCanonicalConjPreflight");
+  TRACE_ID("invariant.Set.FitsIntoIsCanonicalMaterializationPreflight");
+  TRACE_ID("invariant.Set.CompileTimeCapacityOverflowIsRejected");
+  TRACE_ID("invariant.Set.RuntimeCapacityFailuresHaveDocumentedPolicy");
+  TRACE_ID("invariant.Set.DefaultAccessHasPreflightPredicate");
 
-    constexpr Set<int, 4> s{};
-    STATIC_REQUIRE(s.empty());
-    STATIC_REQUIRE(s.size() == 0U);
-    STATIC_REQUIRE(s.count() == 0U);
-    STATIC_REQUIRE(s.capacity() == 4U);
+  constexpr Set<int, 4> s{};
+  STATIC_REQUIRE(s.empty());
+  STATIC_REQUIRE(s.size() == 0U);
+  STATIC_REQUIRE(s.count() == 0U);
+  STATIC_REQUIRE(s.capacity() == 4U);
 
-    // conj adds elements (copy-on-modify semantics)
-    constexpr auto s1 = s.conj(10);
-    STATIC_REQUIRE_FALSE(s1.empty());
-    STATIC_REQUIRE(s1.size() == 1U);
-    STATIC_REQUIRE(s1.contains(10));
-    STATIC_REQUIRE_FALSE(s1.contains(20));
+  // conj adds elements (copy-on-modify semantics)
+  constexpr auto s1 = s.conj(10);
+  STATIC_REQUIRE_FALSE(s1.empty());
+  STATIC_REQUIRE(s1.size() == 1U);
+  STATIC_REQUIRE(s1.contains(10));
+  STATIC_REQUIRE_FALSE(s1.contains(20));
 
-    constexpr auto s2 = s1.conj(20);
-    STATIC_REQUIRE(s2.size() == 2U);
-    STATIC_REQUIRE(s2.contains(10));
-    STATIC_REQUIRE(s2.contains(20));
+  constexpr auto s2 = s1.conj(20);
+  STATIC_REQUIRE(s2.size() == 2U);
+  STATIC_REQUIRE(s2.contains(10));
+  STATIC_REQUIRE(s2.contains(20));
 
-    // conj on full set returns unchanged copy
-    constexpr auto s3 = s2.conj(30).conj(40);
-    STATIC_REQUIRE(s3.size() == 4U);
-    constexpr auto s4 = s3.conj(99); // overflow attempt
-    STATIC_REQUIRE(s4.size() == 4U); // size unchanged
+  // conj on full set returns unchanged copy
+  constexpr auto s3 = s2.conj(30).conj(40);
+  STATIC_REQUIRE(s3.size() == 4U);
+  constexpr auto s4 = s3.conj(99); // overflow attempt
+  STATIC_REQUIRE(s4.size() == 4U); // size unchanged
 
-    // conj ignores duplicates
-    constexpr auto s5 = s1.conj(10);
-    STATIC_REQUIRE(s5.size() == 1U);
+  // conj ignores duplicates
+  constexpr auto s5 = s1.conj(10);
+  STATIC_REQUIRE(s5.size() == 1U);
 
-    // callable lookup: present element returns stored value
-    STATIC_REQUIRE(s2(10) == 10);
-    STATIC_REQUIRE(s2(20) == 20);
+  // callable lookup: present element returns stored value
+  STATIC_REQUIRE(s2(10) == 10);
+  STATIC_REQUIRE(s2(20) == 20);
 
-    // callable lookup: missing element returns default-constructed value
-    STATIC_REQUIRE(s2(99) == 0);
+  // callable lookup: missing element returns default-constructed value
+  STATIC_REQUIRE(s2(99) == 0);
 
-    // callable lookup: missing element with fallback
-    STATIC_REQUIRE(s2(99, -1) == -1);
+  // callable lookup: missing element with fallback
+  STATIC_REQUIRE(s2(99, -1) == -1);
 
-    // can_conj preflight
-    STATIC_REQUIRE(s.can_conj(10));       // empty set, room available
-    STATIC_REQUIRE(s1.can_conj(10));      // duplicate allowed
-    STATIC_REQUIRE(s4.can_conj(10));      // full set but duplicate → true
-    STATIC_REQUIRE_FALSE(s4.can_conj(5)); // full set, not present → false
+  // can_conj preflight
+  STATIC_REQUIRE(s.can_conj(10));       // empty set, room available
+  STATIC_REQUIRE(s1.can_conj(10));      // duplicate allowed
+  STATIC_REQUIRE(s4.can_conj(10));      // full set but duplicate → true
+  STATIC_REQUIRE_FALSE(s4.can_conj(5)); // full set, not present → false
 
-    // disj via swap-and-remove
-    constexpr auto s6 = s2.disj(10);
-    STATIC_REQUIRE(s6.size() == 1U);
-    STATIC_REQUIRE_FALSE(s6.contains(10));
-    STATIC_REQUIRE(s6.contains(20));
+  // disj via swap-and-remove
+  constexpr auto s6 = s2.disj(10);
+  STATIC_REQUIRE(s6.size() == 1U);
+  STATIC_REQUIRE_FALSE(s6.contains(10));
+  STATIC_REQUIRE(s6.contains(20));
 
-    // disj removes last via swap
-    constexpr auto s7 = s2.disj(20);
-    STATIC_REQUIRE(s7.size() == 1U);
-    STATIC_REQUIRE(s7.contains(10));
-    STATIC_REQUIRE_FALSE(s7.contains(20));
+  // disj removes last via swap
+  constexpr auto s7 = s2.disj(20);
+  STATIC_REQUIRE(s7.size() == 1U);
+  STATIC_REQUIRE(s7.contains(10));
+  STATIC_REQUIRE_FALSE(s7.contains(20));
 
-    // disj absent key returns unchanged copy
-    constexpr auto s8 = s1.disj(99);
-    STATIC_REQUIRE(s8.size() == 1U);
-    STATIC_REQUIRE(s8.contains(10));
+  // disj absent key returns unchanged copy
+  constexpr auto s8 = s1.disj(99);
+  STATIC_REQUIRE(s8.size() == 1U);
+  STATIC_REQUIRE(s8.contains(10));
 }
