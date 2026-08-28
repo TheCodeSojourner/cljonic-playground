@@ -1,33 +1,34 @@
 ## Session State
 
 - last_session_id: 32e09e8f-b690-471f-a7ca-c2b0f962d45e
-- current_timestamp: 2026-08-28T04:15:00Z
+- current_timestamp: 2026-08-28
 - recover: 1
-- session_complete: true
+- session_complete: false
 
 Task:
-1. Reconcile and upsert the `\mainpage` cheatsheet in `src/cljonic-core.hpp` against implemented Module 3 collection types and primitive free functions.
-2. Link implemented collection types (`Map`, `MapEntry`, `Queue`, `Set`, `String`, `Vector`) to their Doxygen anchors.
-3. Merge implemented primitive free functions (`assoc`, `can_assoc`, `can_conj`, `conj`, `count`, `disj`, `dissoc`, `empty`, `first`, `get`, `is_empty`, `next`, `not_empty`, `peek`, `pop`, `rest`, `seq`) into the existing `### Seq` section without removing planned functions.
-4. Clarify library namespace boundaries (`cljonic::core` for types + primitives, `cljonic::set` ≙ `clojure.set`, `cljonic::string` ≙ `clojure.string`).
-5. Verify complete build and doc generation via `make git`.
+1. Lay the declarative foundation (Phase A) for the library's C++20 concept layer: vocabulary alignment, architecture concept layer, and specification.
+2. Canonicalize vocabulary with `CollectionConcept`/`CapabilityConcept` terms and C++ concept identifiers (`Cljonic*`, `SequenceableCollection`, `IndexedCollection`, `AssociativeCollection`, `StableEqualityComparable`, `TotallyOrdered`).
+3. Rewrite `architecture.md` human prose into nucleus lambda notation and document the two-level concept model in a Concept Architecture section.
+4. Proceed to `specs/concepts.allium` + concept tests (Phase A Step 3), then the shared concept layer (Phase B), container conformance (Phase C), free-function constraints (Phase D), and verification (Phase E).
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Implemented collection types and primitive free functions link to their canonical Doxygen anchors on the mainpage.
-2. Planned functions and categories are preserved in full; only implemented entries link to live targets.
-3. Concrete collection types `Set` and `String` reside in `cljonic::core`/`cljonic::`; `cljonic::set` and `cljonic::string` are dedicated namespaces for Clojure-analog relational and string utility operations.
-4. All quality gates (`make git`) pass with zero Doxygen warnings and 100% coverage.
+1. Adopt C++ Core Guidelines for all C++ code: concepts PascalCase (NL.17), functions snake_case, namespaces lowercase.
+2. Two-level concept model: `CollectionConcept` (nominal, `Cljonic*`) + `CapabilityConcept` (structural + value, no prefix).
+3. Container members use Clojure-parity names: `count()`/`is_empty()` replace `size()`/`empty()`; `operator[]` removed from all collections.
+4. `StableEqualityComparable` (base, rejects float/double) and `TotallyOrdered` (derived) both required.
+5. `architecture.md` written in nucleus lambda notation, not human prose.
+6. C++ concept identifiers are first-class vocabulary terms (cljonic users are developers).
 
 Next:
-1. Proceed with the next increment of Module 3 free functions (`last`, `key`, `val`, `contains`, `nth`, comparisons `equal`/`not_equal`/etc.) or downstream Module 4 requirements as requested.
+1. Phases A Step 3 through E: specs, shared concepts, container conformance, free-function constraints, full-stack verification.
 
 ## Historical Session Records
 
 Task:
-1. Specify, implement, test, and verify Module 3 Group A (`conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `can_conj`, `can_assoc`) and Group B (`count`, `empty`, `is_empty`, `not_empty`, `first`, `next`, `rest`, `seq`, `get`) collection primitive free functions.
+1. Align vocabulary.md and architecture.md with the C++ Core Guidelines concept-layer naming and rewrite architecture prose into lambda notation; all gybis-vocab-check, gypis-arch-check, and gypis-vocab-weed gates pass.
 2. Establish 1:1 artifact granularity across specifications (`specs/primitives/*.allium`), headers (`src/cljonic-*.hpp` with dual compile-time/runtime Doxygen examples), tests (`tests/cljonic-*-spec-tests.cpp` with runtime volatile coverage), and dedicated probe files (`tests/no_heap/*.cpp`).
 3. Ensure 100% line coverage visibility across all 22 source headers in `make coverage` and `coverage-src.info`.
 4. Synthesize session learnings into `mementum/knowledge/header-addition-and-verification-lifecycle.md` and optimize `CMakeLists.txt` with `file(GLOB ... CONFIGURE_DEPENDS)`.
