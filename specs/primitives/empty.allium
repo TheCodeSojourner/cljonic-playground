@@ -1,0 +1,46 @@
+-- allium: 3
+
+entity Empty {
+    supports_empty_free_function: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+    preserves_input: Boolean
+    returns_empty_same_type: Boolean
+
+    invariant EmptyFreeFunctionSupported {
+        this.supports_empty_free_function = true
+    }
+
+    invariant ReturnsEmptySameType {
+        this.returns_empty_same_type = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant PreservesInput {
+        this.preserves_input = true
+    }
+}
+
+actor EmptyOperator { identified_by: Empty }

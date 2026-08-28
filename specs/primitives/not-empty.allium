@@ -1,0 +1,46 @@
+-- allium: 3
+
+entity NotEmpty {
+    supports_not_empty_free_function: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+    preserves_input: Boolean
+    returns_owning_copy: Boolean
+
+    invariant NotEmptyFreeFunctionSupported {
+        this.supports_not_empty_free_function = true
+    }
+
+    invariant PreservesInput {
+        this.preserves_input = true
+    }
+
+    invariant ReturnsOwningCopy {
+        this.returns_owning_copy = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+actor NotEmptyOperator { identified_by: NotEmpty }
