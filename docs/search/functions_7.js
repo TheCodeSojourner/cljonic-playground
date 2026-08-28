@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['queue_0',['Queue',['../classcljonic_1_1_queue.html#a31559309eb2c223649263def193e98ef',1,'cljonic::Queue']]]
+  ['map_0',['Map',['../classcljonic_1_1_map.html#a32aa471442649d059709e92d0818cca3',1,'cljonic::Map']]]
 ];

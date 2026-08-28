@@ -1,9 +1,5 @@
 var searchData=
 [
-  ['peek_0',['peek',['../classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b',1,'cljonic::Queue']]],
-  ['planned_20core_20functions_1',['Planned Core Functions',['../index.html#autotoc_md3',1,'']]],
-  ['pop_2',['pop',['../classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c',1,'cljonic::Queue']]],
-  ['predicate_3',['Predicate',['../index.html#autotoc_md6',1,'']]],
-  ['primitive_4',['Primitive',['../index.html#autotoc_md7',1,'']]],
-  ['put_5',['put',['../classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585',1,'cljonic::String']]]
+  ['next_0',['next',['../namespacecljonic.html#a375ca6d156afd5ac8cd31bae763d4062',1,'cljonic']]],
+  ['not_5fempty_1',['not_empty',['../namespacecljonic.html#a8180deddc8b1aa7386990604604648f0',1,'cljonic']]]
 ];

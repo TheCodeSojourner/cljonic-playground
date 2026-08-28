@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['i_20e_20sequence_3a_20vector_0',['Seq (i.e., Sequence: Vector)',['../index.html#autotoc_md8',1,'']]]
+  ['get_0',['get',['../namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208',1,'cljonic::get(const C &amp;collection, const K &amp;key) noexcept -&gt; decltype(collection(key))'],['../namespacecljonic.html#a5247ce9f0e562cb836651927ce19aec4',1,'cljonic::get(const C &amp;collection, const K &amp;key, const V &amp;fallback) noexcept -&gt; decltype(collection(key, fallback))']]]
 ];

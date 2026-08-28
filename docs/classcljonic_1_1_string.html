@@ -122,9 +122,32 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t CapacityValue&gt;<br />
-class cljonic::String&lt; CapacityValue &gt;</div><p><a class="anchor" id="String"></a><b><a class="el" href="classcljonic_1_1_string.html">String</a></b> is a fixed-capacity ASCII string backed by contiguous array storage with automatic null termination and copy-on-modify semantics. </p>
-
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00018">18</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+class cljonic::String&lt; CapacityValue &gt;</div><p><a class="anchor" id="String"></a><b><a class="el" href="classcljonic_1_1_string.html">String</a></b> is a fixed-capacity ASCII string backed by contiguous array storage with automatic null termination and copy-on-modify semantics.</p>
+<p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;cljonic.hpp&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;8&gt;</a> s_const{<span class="stringliteral">&quot;Hello&quot;</span>};</div>
+<div class="line">  <span class="keyword">static_assert</span>(s_const.size() == 5U);</div>
+<div class="line">  <span class="keyword">static_assert</span>(s_const[0] == <span class="charliteral">&#39;H&#39;</span>);</div>
+<div class="line">  <span class="keyword">static_assert</span>(s_const(0) == <span class="charliteral">&#39;H&#39;</span>);</div>
+<div class="line">  <span class="keyword">static_assert</span>(s_const(99, <span class="charliteral">&#39;Z&#39;</span>) == <span class="charliteral">&#39;Z&#39;</span>);</div>
+<div class="line">  <span class="keyword">static_assert</span>(s_const.valid(0));</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
+<div class="line">  <span class="keyword">auto</span> s_runtime = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;8&gt;</a>{<span class="stringliteral">&quot;Hi&quot;</span>};</div>
+<div class="line">  <span class="keyword">auto</span> s1 = s_runtime.<a class="code hl_function" href="classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170">append</a>(<span class="charliteral">&#39;!&#39;</span>);</div>
+<div class="line">  <span class="keyword">auto</span> s2 = s1.put(0, <span class="charliteral">&#39;h&#39;</span>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> (s1.size() == 3U &amp;&amp; s2[0] == <span class="charliteral">&#39;h&#39;</span>) ? 0 : 1;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00042">cljonic-string.hpp:42</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_aaeed17ff7f10a2f1dd823c482d772170"><div class="ttname"><a href="classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170">cljonic::String::append</a></div><div class="ttdeci">constexpr auto append(char c) const noexcept -&gt; String</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00115">cljonic-string.hpp:115</a></div></div>
+<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00042">42</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a1e5c5ec072faa23dddc279673c881708" name="a1e5c5ec072faa23dddc279673c881708"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1e5c5ec072faa23dddc279673c881708">&#9670;&#160;</a></span>value_type</h2>
@@ -140,7 +163,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00020">20</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00044">44</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -170,7 +193,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00026">26</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00050">50</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -203,7 +226,7 @@ template&lt;std::size_t N&gt; </div>
 </div><div class="memdoc">
 <p>Construct from character array literal. Capacity must accommodate N-1 chars plus null terminator. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00031">31</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00055">55</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -235,7 +258,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Appends a character to the end of a copy of the string if room is available. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00091">91</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00115">115</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -264,7 +287,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00041">41</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00065">65</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -293,7 +316,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00049">49</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00073">73</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -324,7 +347,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Callable index access returning default-constructed char ('\0') on invalid index. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00068">68</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00092">92</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -365,7 +388,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Callable index access with custom fallback value on invalid index. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00074">74</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00098">98</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -396,7 +419,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Index access: returns '\0' for out-of-bounds indices. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00061">61</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00085">85</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -437,7 +460,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Returns a fresh <a class="el" href="classcljonic_1_1_string.html">String</a> with the character at index replaced. Out-of-bounds indices leave copy unchanged. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00080">80</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00104">104</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -466,7 +489,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00045">45</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00069">69</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -497,7 +520,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Returns true when index falls within logical bounds (not counting null terminator). </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00055">55</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00079">79</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -507,7 +530,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 27 2026 17:10:05 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Thu Aug 27 2026 18:29:16 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

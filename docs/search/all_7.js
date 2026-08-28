@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['map_0',['map',['../classcljonic_1_1_map.html',1,'cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;'],['../classcljonic_1_1_map.html#a32aa471442649d059709e92d0818cca3',1,'cljonic::Map::Map()']]],
-  ['mapentry_1',['MapEntry',['../structcljonic_1_1_map_entry.html',1,'cljonic']]],
-  ['mapped_5ftype_2',['mapped_type',['../classcljonic_1_1_map.html#a3d2118cb518b23a5daff9b08d6bafc77',1,'cljonic::Map']]]
+  ['key_0',['key',['../structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95',1,'cljonic::MapEntry']]],
+  ['key_5ftype_1',['key_type',['../classcljonic_1_1_map.html#abbeea97f83441d303186b7949fe63f78',1,'cljonic::Map']]]
 ];

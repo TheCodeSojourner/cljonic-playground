@@ -97,140 +97,140 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="foldopen" id="foldopen00020" data-start="{" data-end="};">
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html">   20</a></span><span class="keyword">template</span> &lt;concepts::VectorElement T, std::<span class="keywordtype">size_t</span> CapacityValue&gt; <span class="keyword">class </span><a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a056a1615008a05f29b4acfe2d5e56f99">   22</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classcljonic_1_1_set.html#a056a1615008a05f29b4acfe2d5e56f99">value_type</a> = T;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keyword">static_assert</span>(<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">concepts::NothrowVectorElement&lt;T&gt;</a>,</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>                <span class="stringliteral">&quot;Set element type operations must not throw&quot;</span>);</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  <span class="keyword">static_assert</span>(</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      CapacityValue &lt;= <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>      <span class="stringliteral">&quot;Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT&quot;</span>);</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a879d4ede98cccf9ca0b465fe883d4a3a">   30</a></span>  <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a879d4ede98cccf9ca0b465fe883d4a3a">Set</a>() noexcept : elements_{}, logical_size_{0} {}</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a7a8276d296c565b851dac2b6c5561007">   32</a></span>  [[nodiscard]] <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a7a8276d296c565b851dac2b6c5561007">capacity</a>() noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">return</span> CapacityValue;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  }</div>
-</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="foldopen" id="foldopen00036" data-start="{" data-end="}">
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a13a831e9091b22b033612044faf156af">   36</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a13a831e9091b22b033612044faf156af">size</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">return</span> logical_size_;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  }</div>
-</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#aec6b3e343d7acb73745e218225ad4b66">   40</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#aec6b3e343d7acb73745e218225ad4b66">count</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">return</span> logical_size_;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  }</div>
-</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a4adae2e6b3c54cd63acbc77add3591e6">   44</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a4adae2e6b3c54cd63acbc77add3591e6">empty</a>() const noexcept -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordflow">return</span> logical_size_ == 0U;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  }</div>
-</div>
+<div class="foldopen" id="foldopen00044" data-start="{" data-end="};">
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html">   44</a></span><span class="keyword">template</span> &lt;concepts::VectorElement T, std::<span class="keywordtype">size_t</span> CapacityValue&gt; <span class="keyword">class </span><a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a056a1615008a05f29b4acfe2d5e56f99">   46</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classcljonic_1_1_set.html#a056a1615008a05f29b4acfe2d5e56f99">value_type</a> = T;</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00049" data-start="{" data-end="}">
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">   49</a></span>  <a class="code hl_function" href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">contains</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">return</span> find_index(element) &lt; logical_size_;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  }</div>
-</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="keyword">static_assert</span>(<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">concepts::NothrowVectorElement&lt;T&gt;</a>,</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                <span class="stringliteral">&quot;Set element type operations must not throw&quot;</span>);</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keyword">static_assert</span>(</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>      CapacityValue &lt;= <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>      <span class="stringliteral">&quot;Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT&quot;</span>);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a879d4ede98cccf9ca0b465fe883d4a3a">   54</a></span>  <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a879d4ede98cccf9ca0b465fe883d4a3a">Set</a>() noexcept : elements_{}, logical_size_{0} {}</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
 <div class="foldopen" id="foldopen00056" data-start="{" data-end="}">
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#ac24cca6416aa9251f9522134da35b191">   56</a></span>  <a class="code hl_function" href="classcljonic_1_1_set.html#ac24cca6416aa9251f9522134da35b191">operator()</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; T {</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keyword">const</span> <span class="keyword">auto</span> idx = find_index(element);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">return</span> (idx &lt; logical_size_) ? elements_[idx] : T{};</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  }</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a7a8276d296c565b851dac2b6c5561007">   56</a></span>  [[nodiscard]] <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a7a8276d296c565b851dac2b6c5561007">capacity</a>() noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> CapacityValue;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  }</div>
 </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="foldopen" id="foldopen00060" data-start="{" data-end="}">
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a13a831e9091b22b033612044faf156af">   60</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a13a831e9091b22b033612044faf156af">size</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span> logical_size_;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  }</div>
+</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
 <div class="foldopen" id="foldopen00064" data-start="{" data-end="}">
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#ab032633488431b868af84e40fa834910">   64</a></span>  <a class="code hl_function" href="classcljonic_1_1_set.html#ab032633488431b868af84e40fa834910">operator()</a>(<span class="keyword">const</span> T &amp;element, <span class="keyword">const</span> T &amp;fallback) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; T {</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keyword">const</span> <span class="keyword">auto</span> idx = find_index(element);</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordflow">return</span> (idx &lt; logical_size_) ? elements_[idx] : fallback;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  }</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#aec6b3e343d7acb73745e218225ad4b66">   64</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#aec6b3e343d7acb73745e218225ad4b66">count</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">return</span> logical_size_;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  }</div>
 </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00072" data-start="{" data-end="}">
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a931859adef0a001a05cb6bde83676eb5">   72</a></span>  <a class="code hl_function" href="classcljonic_1_1_set.html#a931859adef0a001a05cb6bde83676eb5">can_conj</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">contains</a>(element) || (logical_size_ &lt; CapacityValue);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a4adae2e6b3c54cd63acbc77add3591e6">   68</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a4adae2e6b3c54cd63acbc77add3591e6">empty</a>() const noexcept -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordflow">return</span> logical_size_ == 0U;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  }</div>
 </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="foldopen" id="foldopen00078" data-start="{" data-end="}">
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">   78</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">conj</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> {</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> result = *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">if</span> (!result.<a class="code hl_function" href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">contains</a>(element) &amp;&amp; result.logical_size_ &lt; CapacityValue) {</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>      result.elements_[result.logical_size_] = element;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>      ++result.logical_size_;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    }</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  }</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="}">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">   73</a></span>  <a class="code hl_function" href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">contains</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">return</span> find_index(element) &lt; logical_size_;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  }</div>
 </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="foldopen" id="foldopen00089" data-start="{" data-end="}">
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#ab5d375f75fd5ac7c9e1039e4ae7ccb6a">   89</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#ab5d375f75fd5ac7c9e1039e4ae7ccb6a">disj</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> {</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> result = *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keyword">const</span> <span class="keyword">auto</span> idx = result.find_index(element);</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordflow">if</span> (idx &lt; result.logical_size_) {</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>      <span class="keywordflow">if</span> (idx + 1U &lt; result.logical_size_) {</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        result.elements_[idx] = result.elements_[result.logical_size_ - 1U];</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>      }</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>      --result.logical_size_;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    }</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  }</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="foldopen" id="foldopen00080" data-start="{" data-end="}">
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#ac24cca6416aa9251f9522134da35b191">   80</a></span>  <a class="code hl_function" href="classcljonic_1_1_set.html#ac24cca6416aa9251f9522134da35b191">operator()</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; T {</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keyword">const</span> <span class="keyword">auto</span> idx = find_index(element);</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordflow">return</span> (idx &lt; logical_size_) ? elements_[idx] : T{};</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  }</div>
 </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  find_index(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; std::size_t {</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; logical_size_; ++i) {</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>      <span class="keywordflow">if</span> (elements_[i] == element) {</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        <span class="keywordflow">return</span> i;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>      }</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    }</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keywordflow">return</span> logical_size_;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  }</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  std::array&lt;value_type, CapacityValue&gt; elements_{};</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  std::size_t logical_size_{0};</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>};</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="foldopen" id="foldopen00088" data-start="{" data-end="}">
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#ab032633488431b868af84e40fa834910">   88</a></span>  <a class="code hl_function" href="classcljonic_1_1_set.html#ab032633488431b868af84e40fa834910">operator()</a>(<span class="keyword">const</span> T &amp;element, <span class="keyword">const</span> T &amp;fallback) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; T {</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keyword">const</span> <span class="keyword">auto</span> idx = find_index(element);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordflow">return</span> (idx &lt; logical_size_) ? elements_[idx] : fallback;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  }</div>
 </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>} <span class="comment">// namespace cljonic</span></div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span><span class="preprocessor">#endif </span><span class="comment">// CLJONIC_SET_HPP</span></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00020">cljonic-set.hpp:20</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a056a1615008a05f29b4acfe2d5e56f99"><div class="ttname"><a href="classcljonic_1_1_set.html#a056a1615008a05f29b4acfe2d5e56f99">cljonic::Set::value_type</a></div><div class="ttdeci">T value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00022">cljonic-set.hpp:22</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a13a831e9091b22b033612044faf156af"><div class="ttname"><a href="classcljonic_1_1_set.html#a13a831e9091b22b033612044faf156af">cljonic::Set::size</a></div><div class="ttdeci">constexpr auto size() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00036">cljonic-set.hpp:36</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a3d2368c95f9a3abd37b0db3279c3fb16"><div class="ttname"><a href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">cljonic::Set::conj</a></div><div class="ttdeci">constexpr auto conj(const T &amp;element) const noexcept -&gt; Set</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00078">cljonic-set.hpp:78</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a4adae2e6b3c54cd63acbc77add3591e6"><div class="ttname"><a href="classcljonic_1_1_set.html#a4adae2e6b3c54cd63acbc77add3591e6">cljonic::Set::empty</a></div><div class="ttdeci">constexpr auto empty() const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00044">cljonic-set.hpp:44</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a5f3bc4d7f35b686760cb7c4c20af9301"><div class="ttname"><a href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">cljonic::Set::contains</a></div><div class="ttdeci">constexpr auto contains(const T &amp;element) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00049">cljonic-set.hpp:49</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a7a8276d296c565b851dac2b6c5561007"><div class="ttname"><a href="classcljonic_1_1_set.html#a7a8276d296c565b851dac2b6c5561007">cljonic::Set::capacity</a></div><div class="ttdeci">static constexpr auto capacity() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00032">cljonic-set.hpp:32</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a879d4ede98cccf9ca0b465fe883d4a3a"><div class="ttname"><a href="classcljonic_1_1_set.html#a879d4ede98cccf9ca0b465fe883d4a3a">cljonic::Set::Set</a></div><div class="ttdeci">constexpr Set() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00030">cljonic-set.hpp:30</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a931859adef0a001a05cb6bde83676eb5"><div class="ttname"><a href="classcljonic_1_1_set.html#a931859adef0a001a05cb6bde83676eb5">cljonic::Set::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const T &amp;element) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00072">cljonic-set.hpp:72</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_ab032633488431b868af84e40fa834910"><div class="ttname"><a href="classcljonic_1_1_set.html#ab032633488431b868af84e40fa834910">cljonic::Set::operator()</a></div><div class="ttdeci">constexpr auto operator()(const T &amp;element, const T &amp;fallback) const noexcept -&gt; T</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00064">cljonic-set.hpp:64</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_ab5d375f75fd5ac7c9e1039e4ae7ccb6a"><div class="ttname"><a href="classcljonic_1_1_set.html#ab5d375f75fd5ac7c9e1039e4ae7ccb6a">cljonic::Set::disj</a></div><div class="ttdeci">constexpr auto disj(const T &amp;element) const noexcept -&gt; Set</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00089">cljonic-set.hpp:89</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_ac24cca6416aa9251f9522134da35b191"><div class="ttname"><a href="classcljonic_1_1_set.html#ac24cca6416aa9251f9522134da35b191">cljonic::Set::operator()</a></div><div class="ttdeci">constexpr auto operator()(const T &amp;element) const noexcept -&gt; T</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00056">cljonic-set.hpp:56</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_aec6b3e343d7acb73745e218225ad4b66"><div class="ttname"><a href="classcljonic_1_1_set.html#aec6b3e343d7acb73745e218225ad4b66">cljonic::Set::count</a></div><div class="ttdeci">constexpr auto count() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00040">cljonic-set.hpp:40</a></div></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="foldopen" id="foldopen00096" data-start="{" data-end="}">
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a931859adef0a001a05cb6bde83676eb5">   96</a></span>  <a class="code hl_function" href="classcljonic_1_1_set.html#a931859adef0a001a05cb6bde83676eb5">can_conj</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">contains</a>(element) || (logical_size_ &lt; CapacityValue);</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  }</div>
+</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="foldopen" id="foldopen00102" data-start="{" data-end="}">
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">  102</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">conj</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> {</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> result = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">if</span> (!result.<a class="code hl_function" href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">contains</a>(element) &amp;&amp; result.logical_size_ &lt; CapacityValue) {</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>      result.elements_[result.logical_size_] = element;</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>      ++result.logical_size_;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    }</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  }</div>
+</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="foldopen" id="foldopen00113" data-start="{" data-end="}">
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="classcljonic_1_1_set.html#ab5d375f75fd5ac7c9e1039e4ae7ccb6a">  113</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_set.html#ab5d375f75fd5ac7c9e1039e4ae7ccb6a">disj</a>(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> {</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a> result = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keyword">const</span> <span class="keyword">auto</span> idx = result.find_index(element);</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordflow">if</span> (idx &lt; result.logical_size_) {</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>      <span class="keywordflow">if</span> (idx + 1U &lt; result.logical_size_) {</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        result.elements_[idx] = result.elements_[result.logical_size_ - 1U];</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>      }</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>      --result.logical_size_;</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    }</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  }</div>
+</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>  find_index(<span class="keyword">const</span> T &amp;element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; std::size_t {</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; logical_size_; ++i) {</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>      <span class="keywordflow">if</span> (elements_[i] == element) {</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        <span class="keywordflow">return</span> i;</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>      }</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    }</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    <span class="keywordflow">return</span> logical_size_;</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>  }</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>  std::array&lt;value_type, CapacityValue&gt; elements_{};</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>  std::size_t logical_size_{0};</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>};</div>
+</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span><span class="preprocessor">#endif </span><span class="comment">// CLJONIC_SET_HPP</span></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00044">cljonic-set.hpp:44</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_a056a1615008a05f29b4acfe2d5e56f99"><div class="ttname"><a href="classcljonic_1_1_set.html#a056a1615008a05f29b4acfe2d5e56f99">cljonic::Set::value_type</a></div><div class="ttdeci">T value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00046">cljonic-set.hpp:46</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_a13a831e9091b22b033612044faf156af"><div class="ttname"><a href="classcljonic_1_1_set.html#a13a831e9091b22b033612044faf156af">cljonic::Set::size</a></div><div class="ttdeci">constexpr auto size() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00060">cljonic-set.hpp:60</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_a3d2368c95f9a3abd37b0db3279c3fb16"><div class="ttname"><a href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">cljonic::Set::conj</a></div><div class="ttdeci">constexpr auto conj(const T &amp;element) const noexcept -&gt; Set</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00102">cljonic-set.hpp:102</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_a4adae2e6b3c54cd63acbc77add3591e6"><div class="ttname"><a href="classcljonic_1_1_set.html#a4adae2e6b3c54cd63acbc77add3591e6">cljonic::Set::empty</a></div><div class="ttdeci">constexpr auto empty() const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00068">cljonic-set.hpp:68</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_a5f3bc4d7f35b686760cb7c4c20af9301"><div class="ttname"><a href="classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301">cljonic::Set::contains</a></div><div class="ttdeci">constexpr auto contains(const T &amp;element) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00073">cljonic-set.hpp:73</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_a7a8276d296c565b851dac2b6c5561007"><div class="ttname"><a href="classcljonic_1_1_set.html#a7a8276d296c565b851dac2b6c5561007">cljonic::Set::capacity</a></div><div class="ttdeci">static constexpr auto capacity() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00056">cljonic-set.hpp:56</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_a879d4ede98cccf9ca0b465fe883d4a3a"><div class="ttname"><a href="classcljonic_1_1_set.html#a879d4ede98cccf9ca0b465fe883d4a3a">cljonic::Set::Set</a></div><div class="ttdeci">constexpr Set() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00054">cljonic-set.hpp:54</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_a931859adef0a001a05cb6bde83676eb5"><div class="ttname"><a href="classcljonic_1_1_set.html#a931859adef0a001a05cb6bde83676eb5">cljonic::Set::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const T &amp;element) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00096">cljonic-set.hpp:96</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_ab032633488431b868af84e40fa834910"><div class="ttname"><a href="classcljonic_1_1_set.html#ab032633488431b868af84e40fa834910">cljonic::Set::operator()</a></div><div class="ttdeci">constexpr auto operator()(const T &amp;element, const T &amp;fallback) const noexcept -&gt; T</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00088">cljonic-set.hpp:88</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_ab5d375f75fd5ac7c9e1039e4ae7ccb6a"><div class="ttname"><a href="classcljonic_1_1_set.html#ab5d375f75fd5ac7c9e1039e4ae7ccb6a">cljonic::Set::disj</a></div><div class="ttdeci">constexpr auto disj(const T &amp;element) const noexcept -&gt; Set</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00113">cljonic-set.hpp:113</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_ac24cca6416aa9251f9522134da35b191"><div class="ttname"><a href="classcljonic_1_1_set.html#ac24cca6416aa9251f9522134da35b191">cljonic::Set::operator()</a></div><div class="ttdeci">constexpr auto operator()(const T &amp;element) const noexcept -&gt; T</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00080">cljonic-set.hpp:80</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html_aec6b3e343d7acb73745e218225ad4b66"><div class="ttname"><a href="classcljonic_1_1_set.html#aec6b3e343d7acb73745e218225ad4b66">cljonic::Set::count</a></div><div class="ttdeci">constexpr auto count() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00064">cljonic-set.hpp:64</a></div></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
 <div class="ttc" id="acljonic-config_8hpp_html"><div class="ttname"><a href="cljonic-config_8hpp.html">cljonic-config.hpp</a></div></div>
 <div class="ttc" id="acljonic-core-collection-maximum-element-count_8hpp_html"><div class="ttname"><a href="cljonic-core-collection-maximum-element-count_8hpp.html">cljonic-core-collection-maximum-element-count.hpp</a></div></div>
 <div class="ttc" id="aconceptcljonic_1_1concepts_1_1_nothrow_vector_element_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html">cljonic::concepts::NothrowVectorElement</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00019">cljonic-concepts.hpp:19</a></div></div>
-<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00006">cljonic-concepts.hpp:6</a></div></div>
+<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a41fa65c16edb0a95aa942c48307777d6"><div class="ttname"><a href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a></div><div class="ttdeci">constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-collection-maximum-element-count_8hpp_source.html#l00017">cljonic-core-collection-maximum-element-count.hpp:17</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 27 2026 17:10:05 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Thu Aug 27 2026 18:29:16 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

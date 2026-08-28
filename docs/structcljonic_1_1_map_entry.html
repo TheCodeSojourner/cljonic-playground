@@ -102,9 +102,33 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename KeyType, typename ValueType&gt;<br />
-struct cljonic::MapEntry&lt; KeyType, ValueType &gt;</div><p><a class="anchor" id="MapEntry"></a><b><a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a></b> is a value-semantic pair representing a single key-value association. </p>
-
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00012">12</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+struct cljonic::MapEntry&lt; KeyType, ValueType &gt;</div><p><a class="anchor" id="MapEntry"></a><b><a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a></b> is a value-semantic pair representing a single key-value association.</p>
+<p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;cljonic.hpp&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry&lt;int, int&gt;</a> e_const{1, 100};</div>
+<div class="line">  <span class="keyword">static_assert</span>(e_const.key == 1);</div>
+<div class="line">  <span class="keyword">static_assert</span>(e_const.value == 100);</div>
+<div class="line">  <span class="keyword">static_assert</span>(e_const.valid_index(0));</div>
+<div class="line">  <span class="keyword">static_assert</span>(e_const.valid_index(1));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!e_const.valid_index(2));</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
+<div class="line">  <span class="keyword">auto</span> e_runtime = <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry&lt;int, int&gt;</a>{2, 200};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> k = e_runtime.<a class="code hl_variable" href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">key</a>;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> v = e_runtime.value;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> ok = e_runtime.valid_index(0);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> (k == 2 &amp;&amp; v == 200 &amp;&amp; ok) ? 0 : 1;</div>
+<div class="line">}</div>
+<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00037">cljonic-map-entry.hpp:37</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html_ad6ce6bddae994010ca731229636d3d95"><div class="ttname"><a href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">cljonic::MapEntry::key</a></div><div class="ttdeci">KeyType key</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00038">cljonic-map-entry.hpp:38</a></div></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00037">37</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="af8a6e59c3c457862ffe4b959fbc3676d" name="af8a6e59c3c457862ffe4b959fbc3676d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af8a6e59c3c457862ffe4b959fbc3676d">&#9670;&#160;</a></span>operator==()</h2>
@@ -132,7 +156,7 @@ template&lt;typename KeyType , typename ValueType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00017">17</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00042">42</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 
 </div>
 </div>
@@ -164,7 +188,7 @@ template&lt;std::integral IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00023">23</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00048">48</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 
 </div>
 </div>
@@ -183,7 +207,7 @@ template&lt;typename KeyType , typename ValueType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00013">13</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00038">38</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 
 </div>
 </div>
@@ -201,7 +225,7 @@ template&lt;typename KeyType , typename ValueType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00014">14</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00039">39</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 
 </div>
 </div>
@@ -211,7 +235,7 @@ template&lt;typename KeyType , typename ValueType &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 27 2026 17:10:05 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Thu Aug 27 2026 18:29:16 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
