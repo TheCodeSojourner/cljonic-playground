@@ -83,9 +83,14 @@
  *
  * ## Collection Types
  *
+ * - \ref Map "cljonic::Map"
+ * - \ref MapEntry "cljonic::MapEntry"
+ * - \ref Queue "cljonic::Queue"
+ * - \ref Set "cljonic::Set"
+ * - \ref String "cljonic::String"
  * - \ref Vector "cljonic::Vector"
  *
- * ## Planned Core Functions
+ * ## Core Functions
  *
  * ### Composition
  *
@@ -131,36 +136,41 @@
  *
  * ### Seq (i.e., Sequence: Vector)
  *
- * The Vector type is the initial public surface. Free-function collection
- * operations are introduced only when their requirements are approved.
+ * Implemented free functions link to their documentation. Remaining entries
+ * are planned and will be introduced only when their requirements are
+ * approved.
+ * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj",
+ * \ref Conj "conj", \ref Count "count"
  * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref
  * Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M
- * "DefaultElement_M", \ref Core_Different "Different", \ref Core_Distinct
- * "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
- * Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
- * - \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy
- * "EqualBy", \ref Core_Every "Every"
- * - \ref Core_Filter "Filter", \ref Core_First "First", \ref Core_Flatten
+ * "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref
+ * Dissoc "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy
+ * "DistinctBy", \ref Core_Drop "Drop", \ref Core_DropLast "DropLast", \ref
+ * Core_DropWhile "DropWhile"
+ * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal",
+ * \ref Core_EqualBy "EqualBy", \ref Core_Every "Every"
+ * - \ref Core_Filter "Filter", \ref First "first", \ref Core_Flatten
  * "Flatten", \ref Core_FlattenSize "FlattenSize", \ref Core_Frequencies
  * "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy"
+ * - \ref Get "get"
  * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref
  * Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref Core_Interleave
  * "Interleave", \ref Core_Interpose "Interpose", \ref Core_IsDistinct
- * "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref Core_IsEmpty
- * "IsEmpty", \ref Core_IsFull "IsFull", \ref Core_Iterate "Iterate"
+ * "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty
+ * "is_empty", \ref Core_IsFull "IsFull", \ref Core_Iterate "Iterate"
  * - \ref Core_Juxt "Juxt"
  * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref
  * Core_LastIndexOfBy "LastIndexOfBy"
  * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref
  * Core_Min "Min", \ref Core_MinBy "MinBy"
- * - \ref Core_NotAny "NotAny", \ref Core_NotEvery "NotEvery", \ref Core_Nth
- * "Nth", \ref Core_Nth_M "Nth_M"
+ * - \ref Next "next", \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty",
+ * \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
  * - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
- * \ref Core_PartitionBy "PartitionBy"
+ * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop"
  * - \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref
- * Core_Remove "Remove", \ref Core_Replace "Replace", \ref Core_Reverse
- * "Reverse"
- * - \ref Core_Second "Second", \ref Core_Seq "Seq", \ref Core_Size "Size", \ref
+ * Core_Remove "Remove", \ref Core_Replace "Replace", \ref Rest "rest", \ref
+ * Core_Reverse "Reverse"
+ * - \ref Core_Second "Second", \ref Seq "seq", \ref Core_Size "Size", \ref
  * Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref
  * Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs
  * "Subs"
