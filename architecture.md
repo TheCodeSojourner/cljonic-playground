@@ -2,20 +2,26 @@
 
 ## Current Scope
 
-The current implementation and tests cover the core collection types (`Vector`,
-`Map`, `Set`, `Queue`, and `String`), their direct construction, member-observation,
-callable forms, sequence traversal interfaces, and primitive free-function
-operations defined in Module 3. Module 3 establishes the concrete, array-backed,
-bounded collection types, their contiguous storage strategies, linear scan lookup
-algorithms, swap-and-remove policies, and primitive free functions. Stored
-collection building blocks govern all higher-order algorithms. Rules for
-unbounded producers, transformations, regexes, and relational models describe
-future approved expansion and remain inactive until their respective modules
-are propagated.
+λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
+  ∧ direct_construction(x) ∧ member_observation(x) ∧ callable_lookup(x)
+  ∧ sequence_traversal_interfaces(x) ∧ primitive_free_functions(x)
+  | module3(x) → concrete_array_backed_bounded_types(x)
+    ∧ contiguous_storage_strategies(x) ∧ linear_scan_lookup(x)
+    ∧ swap_and_remove_policies(x) ∧ primitive_free_functions(x)
+  | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
+  | future_expansion(unbounded_producers ∨ transformations ∨ regexes ∨ relational_models)
+    → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
+
+λ current_concept_model(x). two_level_concept_model(x) → gate(public_collection_surface ∧ free_function_surface)
+  | CollectionConcept_layer(x) → admit(ClosedNominalCollectionDomain)
+  | CapabilityConcept_layer(x) → express(sequenceable ∨ indexed ∨ associative semantic_capability)
+  | model_active(x) → true_for(current_stored_collection_surface(x))
 
 ## S5 - Identity
 
-cljonic is an embedded-first HeaderOnlyDistribution C++23 functional collection system whose identity is bounded, deterministic, and semantically clear behavior. The system remains itself only while CopyOnModifyCollection semantics, SentinelBasedAccess with ProbeFirstAccess discipline, and strict resource determinism are preserved.
+λ S5_identity_intro(x). identity(x) ≡ embedded_first ∧ HeaderOnlyDistribution ∧ C++23 ∧ functional_collection_system
+  | identity(x) → bounded(x) ∧ deterministic(x) ∧ semantically_clear(x)
+  | preserve_identity(x) → CopyOnModifyCollection(x) ∧ SentinelBasedAccess(x) ∧ ProbeFirstAccess(x) ∧ strict_resource_determinism(x)
 
 λ expressions:
 
@@ -33,7 +39,9 @@ cljonic is an embedded-first HeaderOnlyDistribution C++23 functional collection 
 
 ## S4 - Intelligence
 
-cljonic adapts through profile-gated evolution while preserving a stable public vocabulary and backward-compatible semantic contracts. New capabilities are introduced as explicit modes, not silent behavior drift.
+λ S4_intelligence_intro(x). adapt(x) → profile_gated_evolution(x)
+  | profile_evolution(x) → preserve(stable_public_vocabulary ∧ backward_compatible_semantic_contracts)
+  | new_capability(x) → introduce_as(explicit_mode) ∧ ¬silent_behavior_drift(x)
 
 λ expressions:
 
@@ -48,7 +56,8 @@ cljonic adapts through profile-gated evolution while preserving a stable public 
 
 ## S3 - Control
 
-Control enforces hard constraints: no heap, no exceptions, deterministic sentinel and overflow behavior, and strict quality gates. Resource usage and policy outcomes are bounded and auditable.
+λ S3_control_intro(x). enforce(x) → NoHeapConstraint ∧ NoExceptionConstraint ∧ deterministic_sentinel_and_overflow_behavior ∧ strict_quality_gates
+  | resource_usage(x) ∧ policy_outcomes(x) → bounded ∧ auditable
 
 λ expressions:
 
@@ -94,9 +103,8 @@ Control enforces hard constraints: no heap, no exceptions, deterministic sentine
   | conditional_on(user_defined_types_being_pure_and_non_allocating(x))
   | preserve_input_values(x) ∧ return(OwningValue(x))
 
-The following result-contract rules are retained as future guidance for
-additional operations and producers; they do not constrain the current stored
-collection and primitive free-function surface.
+λ S3_result_contract_guidance(x). result_contract_rules(x) → retained_as(future_guidance) for(additional_operations ∨ producers)
+  | guidance(x) → ¬constrain(current_stored_collection_surface ∨ primitive_free_function_surface)
 
 λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ Producer)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
@@ -121,7 +129,8 @@ collection and primitive free-function surface.
 
 ## S2 - Coordination
 
-Coordination is driven by a shared canonical vocabulary and explicit interaction protocols. Components remain consistent through ProbeFirstAccess discipline, stable handle contracts across profiles, and preference for Clojure-semantic consistency when embedded constraints permit.
+λ S2_coordination_intro(x). coordination(x) → driven_by(canonical_vocabulary ∧ interaction_protocols)
+  | component_consistency(x) → ProbeFirstAccess(x) ∧ stable_handle_contracts(x) ∧ prefer(Clojure_semantic_consistency) when(embedded_constraints_permit(x))
 
 λ expressions:
 
@@ -182,9 +191,105 @@ Coordination is driven by a shared canonical vocabulary and explicit interaction
   | future_operation(x) → require(explicit_requirement_and_specification(x))
   | preserve(clojure_like_names_and_semantics_by_default(x))
 
+## Concept Architecture
+
+λ concept_architecture_intro(x). public_collection_type(x) ∨ primitive_free_function(x) → participate_in(two_level_concept_model(x))
+  | two_level_model(x) → govern(admission ∧ capability) ∧ ¬mix(admission ∨ capability)
+
+### Level 1: CollectionConcept (nominal admission)
+
+λ CollectionConcept_level(x). gate(type) → nominal_cljonic_identity(x) ≡ admission(ClosedNominalCollectionDomain) ∧ classification(CollectionKind)
+  | recognition(x) → cljonic_owned_traits(x) ∧ ¬structural_similarity(external_or_standard_container(x))
+  | nominal_pattern(x) → applies_to(CljonicVector ∧ CljonicMap ∧ CljonicSet ∧ CljonicQueue ∧ CljonicString)
+
+```cpp
+template<class Type>
+concept CljonicCollection = detail::is_cljonic_collection_v<Type>;
+
+template<class Type>
+concept CljonicVector =
+    CljonicCollection<Type> &&
+    (detail::collection_kind_of_v<Type> == detail::collection_kind::vector);
+```
+
+### Level 2: CapabilityConcept (semantic capability gates)
+
+λ CapabilityConcept_level(x). require(admitted_collection(x)) → expose(semantic_capability(x)) to(participate_in(operation(x)))
+  | capability(x) → layered_on(CollectionConcept_admission(x))
+  | value_capabilities(x) → separate_from(structural_capabilities(x))
+
+```cpp
+// Value capabilities (apply to element and key types)
+template<class T>
+concept StableEqualityComparable =
+    requires { { std::declval<const T&>() == std::declval<const T&>() } -> std::same_as<bool>; }
+    && !std::is_floating_point_v<std::remove_cvref_t<T>>;
+
+template<class T>
+concept TotallyOrdered =
+    StableEqualityComparable<T> &&
+    requires { { std::declval<const T&>() < std::declval<const T&>() } -> std::same_as<bool>; };
+
+// Structural capabilities (gated by nominal CollectionConcept identity)
+template<class C>
+concept SequenceableCollection =
+    CljonicCollection<C> &&
+    requires(const C& c) {
+      { c.is_empty() } -> std::same_as<bool>;
+      { c.count() } -> std::integral;
+    };
+
+template<class C>
+concept IndexedCollection =
+    SequenceableCollection<C> &&
+    requires(const C& c, std::size_t i) {
+      { c(i) };
+      { c.valid_index(i) } -> std::same_as<bool>;
+    };
+
+template<class C>
+concept AssociativeCollection =
+    SequenceableCollection<C> &&
+    requires(const C& c, const typename C::key_type& k) {
+      { c(k) };
+      { c.contains(k) } -> std::same_as<bool>;
+    };
+```
+
+### Concept naming, scoping, and evolution
+
+λ concept_guidelines_alignment(x). cpp_code(x) → follows(C++CoreGuidelines)
+  | concept_identifier(x) → type_level_predicate(x) ∧ pascal_case(x) ∧ governed_by(NL.17)
+  | function_identifier(x) → snake_case(x) ∧ namespace_identifier(x) → lowercase(x)
+  | nominal_concept(x) → keep(Cljonic_domain_prefix) because(names_closed_collection_domain(x))
+  | structural_or_value_capability_concept(x) → ¬require(Cljonic_prefix) because(gated_on_nominal_identity(x) ∧ scope_carried_by(suffix ∨ comparative_name))
+
+λ concept_naming(x). CollectionConcept_names(x) → identify_nominal_identity(x)
+  | CapabilityConcept_names(x) → identify_semantic_capability(x)
+  | public_concept_names(x) → capability_oriented(x) ∧ reject(vague_names)
+  | concept_identifiers(x) → pascal_case(x) ∧ distinct_from_functions_and_namespaces(x)
+
+λ concept_scoping(x). nominal_and_capability_concepts(x) → live_in(cljonic::concepts)
+  | trait_mechanics(x) → hide_inside(cljonic::concepts_detail) ∨ detail
+  | standard_concepts(x) → prefer_at_public_api_boundary
+
+λ concept_storage_orthogonality(x). storage_admission(x) → not_imply(StableEquality ∨ TotalOrder ∨ other_capability)
+  | capability_required_by(operation) → constrain_at(public_api_boundary)
+
+λ concept_evolution(x). concepts_gate_free_functions(x)
+  | minimal_concept_requirements(x) → only_what_current_functions_need(x)
+  | future_requirements(x) → add_when_first_function_needs_them(x)
+  | introduce_concept(x) → require(tested_api_boundary(x)) ∧ specify(consumers_and_diagnostics(x))
+
+λ concept_member_naming(x). canonical_capacity_observation(x) ≡ count ∧ is_empty
+  | member_lookup(x) ≡ operator()(...) ∧ valid_index
+  | index_bracket_lookup(x) → omitted_from_all_collections(x)
+
 ## S1 - Operations
 
-Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses CMake for build orchestration, Catch2 v3 for testing, and deterministic quality tooling. Distribution is a single AmalgamatedHeader artifact.
+λ S1_operations_intro(x). operations(x) → C++23 ∧ FP_oriented ∧ HeaderOnlyDistribution
+  | development(x) → CMake_orchestration ∧ Catch2_v3_testing ∧ deterministic_quality_tooling
+  | distribution(x) → single_AmalgamatedHeader_artifact(x)
 
 λ expressions:
 
@@ -233,8 +338,8 @@ Operations are C++23, FP-oriented, and HeaderOnlyDistribution. Development uses 
   | read_only_observation(x) → use(NonOwningView ∧ StandardViewType)
   | view_lifetime(x) → source_lifetime_bounded(x)
 
-The following sequence and materialization rules are retained as future design
-guidance; no producer operation is currently active.
+λ S1_sequence_guidance(x). sequence_and_materialization_rules(x) → retained_as(future_design_guidance)
+  | producer_operation(x) → ¬active(x) currently
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
   | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
@@ -273,7 +378,7 @@ guidance; no producer operation is currently active.
   | trait_mechanics(x) → hide_inside(cljonic_concepts_namespace)
   | likely_user_error_paths(x) → require(explicit_compile_time_messages)
   | collection_header_examples(x) → focus_on(collection_construction)
-  | user_facing_names(x) → prefer(stl_familiar_terms_like_size_and_capacity)
+  | user_facing_names(x) → prefer(canonical_clojure_terms_like_count_is_empty_and_capacity)
   | cross_cutting_free_operations(x) → document_in(operation_specific_headers)
 
 λ S1_pattern(x). architectural_pattern(x) ≡ functional_core_with_profile_gated_capabilities
@@ -297,16 +402,10 @@ guidance; no producer operation is currently active.
 
 ## Traceability
 
-- **Foundation authority**: `requirements/cljonic-requirements-module-1.md` and the
-  Module 1 nominal, storage, no-runtime-service, and persistent-value boundaries.
-- **Capability authority**: `requirements/cljonic-requirements-module-2.md` and the
-  Module 2 concept, result-status, preflight, diagnostic, constant-evaluation, and
-  vocabulary requirements.
-- **Vocabulary authority**: `vocabulary.md`; canonical terms govern public names,
-  architecture references, and later specifications and tests.
-- **Module 3 Stored Collection authority**: `requirements/cljonic-requirements-module-3.md`
-  and `requirements/cljonic-architecture-module-3.md` govern concrete storage, linear scan
-  search, swap-and-remove removal, and primitive collection free functions.
-- **Current implementation boundary**: `Vector`, `Map`, `Set`, `Queue`, `String`, and
-  primitive free functions are active. Unbounded producers, algorithms, and regexes
-  remain architectural guidance until their specifications and implementations are propagated.
+λ traceability_authorities(x). foundation_authority(x) ≡ requirements/cljonic-requirements-module-1.md ∧ Module1(nominal ∧ storage ∧ no_runtime_service ∧ persistent_value boundaries)
+  | capability_authority(x) ≡ requirements/cljonic-requirements-module-2.md ∧ Module2(concept ∧ result_status ∧ preflight ∧ diagnostic ∧ constant_evaluation ∧ vocabulary requirements)
+  | vocabulary_authority(x) ≡ vocabulary.md ∧ canonical_terms(x) → govern(public_names ∧ architecture_references ∧ specifications ∧ tests)
+  | module3_stored_collection_authority(x) ≡ requirements/cljonic-requirements-module-3.md ∧ requirements/cljonic-architecture-module-3.md → govern(concrete_storage ∧ linear_scan ∧ swap_and_remove ∧ primitive_free_functions)
+
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ primitive_free_functions
+  | future_guidance(unbounded_producers ∨ algorithms ∨ regexes) → remain_architectural_guidance until(specification_and_implementation_propagated(x))
