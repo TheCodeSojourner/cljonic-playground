@@ -1,0 +1,220 @@
+-- allium: 3
+
+entity CljonicCollection {
+    nominal_admission_requires_cljonic_owned_trait: Boolean
+    excludes_structural_similarity: Boolean
+    distinguishes_collection_kind: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+
+    invariant NominalAdmissionRequiresCljonicOwnedTrait {
+        this.nominal_admission_requires_cljonic_owned_trait = true
+    }
+
+    invariant ExcludesStructuralSimilarity {
+        this.excludes_structural_similarity = true
+    }
+
+    invariant DistinguishesCollectionKind {
+        this.distinguishes_collection_kind = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+entity CljonicVector {
+    nominal_concept_identifies_vector_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesVectorKind {
+        this.nominal_concept_identifies_vector_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity CljonicMap {
+    nominal_concept_identifies_map_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesMapKind {
+        this.nominal_concept_identifies_map_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity CljonicSet {
+    nominal_concept_identifies_set_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesSetKind {
+        this.nominal_concept_identifies_set_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity CljonicQueue {
+    nominal_concept_identifies_queue_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesQueueKind {
+        this.nominal_concept_identifies_queue_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity CljonicString {
+    nominal_concept_identifies_string_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesStringKind {
+        this.nominal_concept_identifies_string_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity SequenceableCollection {
+    requires_non_throwing_is_empty: Boolean
+    requires_non_throwing_count: Boolean
+    layered_on_nominal_admission: Boolean
+
+    invariant RequiresNonThrowingIsEmpty {
+        this.requires_non_throwing_is_empty = true
+    }
+
+    invariant RequiresNonThrowingCount {
+        this.requires_non_throwing_count = true
+    }
+
+    invariant LayeredOnNominalAdmission {
+        this.layered_on_nominal_admission = true
+    }
+}
+
+entity IndexedCollection {
+    extends_sequenceable: Boolean
+    requires_callable_indexed_lookup: Boolean
+    requires_valid_index_predicate: Boolean
+
+    invariant ExtendsSequenceable {
+        this.extends_sequenceable = true
+    }
+
+    invariant RequiresCallableIndexedLookup {
+        this.requires_callable_indexed_lookup = true
+    }
+
+    invariant RequiresValidIndexPredicate {
+        this.requires_valid_index_predicate = true
+    }
+}
+
+entity AssociativeCollection {
+    extends_sequenceable: Boolean
+    requires_callable_key_lookup: Boolean
+    requires_membership_predicate: Boolean
+
+    invariant ExtendsSequenceable {
+        this.extends_sequenceable = true
+    }
+
+    invariant RequiresCallableKeyLookup {
+        this.requires_callable_key_lookup = true
+    }
+
+    invariant RequiresMembershipPredicate {
+        this.requires_membership_predicate = true
+    }
+}
+
+entity StableEqualityComparable {
+    requires_bool_equality: Boolean
+    rejects_floating_point: Boolean
+
+    invariant RequiresBoolEquality {
+        this.requires_bool_equality = true
+    }
+
+    invariant RejectsFloatingPoint {
+        this.rejects_floating_point = true
+    }
+}
+
+entity TotallyOrdered {
+    extends_stable_equality: Boolean
+    requires_strict_ordering: Boolean
+
+    invariant ExtendsStableEquality {
+        this.extends_stable_equality = true
+    }
+
+    invariant RequiresStrictOrdering {
+        this.requires_strict_ordering = true
+    }
+}
+
+entity ConceptMemberNaming {
+    uses_count_is_empty_members: Boolean
+    omits_index_bracket_lookup: Boolean
+    uses_valid_index_predicate: Boolean
+
+    invariant UsesCountIsEmptyMembers {
+        this.uses_count_is_empty_members = true
+    }
+
+    invariant OmitsIndexBracketLookup {
+        this.omits_index_bracket_lookup = true
+    }
+
+    invariant UsesValidIndexPredicate {
+        this.uses_valid_index_predicate = true
+    }
+}
+
+actor CljonicCollectionOperator { identified_by: CljonicCollection }
+actor CljonicVectorOperator { identified_by: CljonicVector }
+actor CljonicMapOperator { identified_by: CljonicMap }
+actor CljonicSetOperator { identified_by: CljonicSet }
+actor CljonicQueueOperator { identified_by: CljonicQueue }
+actor CljonicStringOperator { identified_by: CljonicString }
+actor SequenceableCollectionOperator { identified_by: SequenceableCollection }
+actor IndexedCollectionOperator { identified_by: IndexedCollection }
+actor AssociativeCollectionOperator { identified_by: AssociativeCollection }
+actor StableEqualityComparableOperator { identified_by: StableEqualityComparable }
+actor TotallyOrderedOperator { identified_by: TotallyOrdered }
+actor ConceptMemberNamingOperator { identified_by: ConceptMemberNaming }
