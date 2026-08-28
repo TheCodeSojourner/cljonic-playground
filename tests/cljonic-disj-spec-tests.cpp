@@ -24,4 +24,13 @@ TEST_CASE("Disj free function operations", "[disj]") {
   constexpr auto s2 = disj(s1, 42);
   STATIC_REQUIRE_FALSE(s2.contains(42));
   STATIC_REQUIRE(s1.contains(42));
+
+  // Runtime tests for code coverage instrumentation
+  volatile int v_raw = 77;
+  int v = v_raw;
+  auto rs0 = Set<int, 4>{};
+  auto rs1 = conj(rs0, v);
+  auto rs2 = disj(rs1, v);
+  REQUIRE_FALSE(rs2.contains(v));
+  REQUIRE(rs1.contains(v));
 }

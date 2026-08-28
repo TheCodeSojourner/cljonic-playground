@@ -23,4 +23,15 @@ TEST_CASE("Assoc free function operations", "[assoc]") {
   STATIC_REQUIRE(m1.contains(1));
   STATIC_REQUIRE(m1(1) == 100);
   STATIC_REQUIRE(m0.size() == 0U);
+
+  // Runtime tests for code coverage instrumentation
+  volatile int k_raw = 42;
+  volatile int val_raw = 999;
+  int k = k_raw;
+  int val = val_raw;
+  auto rm0 = Map<int, int, 4>{};
+  auto rm1 = assoc(rm0, k, val);
+  REQUIRE(rm1.contains(k));
+  REQUIRE(rm1(k) == 999);
+  REQUIRE(rm0.size() == 0U);
 }

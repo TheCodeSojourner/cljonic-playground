@@ -108,4 +108,12 @@ TEST_CASE("Vector indexed access handles valid and invalid indexes",
   CHECK(runtime_values(0U) == 10);
   CHECK(runtime_values(1U) == 20);
   CHECK(runtime_values(2U) == 0);
+
+  // Runtime signed negative-index guard (defeats constexpr folding so gcov
+  // records the branch).
+  volatile int neg_raw = -1;
+  const int neg = neg_raw;
+  CHECK(runtime_values(neg) == 0);
+  CHECK(runtime_values(neg, 99) == 99);
+  CHECK_FALSE(runtime_values.valid_index(neg));
 }

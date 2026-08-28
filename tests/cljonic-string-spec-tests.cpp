@@ -111,4 +111,40 @@ TEST_CASE("String construction and indexed operations", "[string]") {
   // Append to zero-capacity string is a no-op
   constexpr auto s_zero_appended = s_empty_cap.append('A');
   STATIC_REQUIRE(s_zero_appended.empty());
+
+  // Runtime tests for code coverage instrumentation
+  volatile char c1_raw = 'A';
+  volatile char c2_raw = 'B';
+  volatile std::size_t idx0_raw = 0;
+  char c1 = c1_raw;
+  char c2 = c2_raw;
+  std::size_t idx0 = idx0_raw;
+  auto rs = String<8>{};
+  REQUIRE(rs.empty());
+  REQUIRE(rs.size() == 0U);
+  REQUIRE(rs.capacity() == 8U);
+  REQUIRE(rs[idx0] == '\0');
+  REQUIRE_FALSE(rs.valid(idx0));
+
+  auto rs1 = rs.append(c1).append(c2);
+  REQUIRE_FALSE(rs1.empty());
+  REQUIRE(rs1.size() == 2U);
+  REQUIRE(rs1[idx0] == 'A');
+  REQUIRE(rs1[1] == 'B');
+  REQUIRE(rs1.valid(idx0));
+  REQUIRE(rs1.valid(1));
+  REQUIRE_FALSE(rs1.valid(2));
+  REQUIRE(rs1(idx0) == 'A');
+  REQUIRE(rs1(99) == '\0');
+  REQUIRE(rs1(99, 'Z') == 'Z');
+
+  auto rs_put = rs1.put(idx0, 'X');
+  REQUIRE(rs_put[idx0] == 'X');
+  REQUIRE(rs1[idx0] == 'A'); // immutability
+
+  auto rs_put_oob = rs1.put(99, 'X');
+  REQUIRE(rs_put_oob.size() == 2U);
+
+  auto rs_full = String<2>{"AB"};
+  REQUIRE(rs_full.append('C').size() == 2U);
 }

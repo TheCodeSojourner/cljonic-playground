@@ -29,4 +29,19 @@ TEST_CASE("Conj free function operations", "[conj]") {
   constexpr auto s1 = conj(s0, 1);
   STATIC_REQUIRE(s1.count() == 1U);
   STATIC_REQUIRE(s0.count() == 0U);
+
+  // Runtime tests for code coverage instrumentation
+  volatile int qv_raw = 55;
+  volatile int sv_raw = 66;
+  int qv = qv_raw;
+  int sv = sv_raw;
+  auto rq = Queue<int, 4>{};
+  auto rq1 = conj(rq, qv);
+  REQUIRE(rq1.size() == 1U);
+  REQUIRE(rq.size() == 0U);
+
+  auto rs = Set<int, 4>{};
+  auto rs1 = conj(rs, sv);
+  REQUIRE(rs1.count() == 1U);
+  REQUIRE(rs.count() == 0U);
 }

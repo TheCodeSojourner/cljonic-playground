@@ -101,4 +101,35 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
   // Pop on empty returns identical state
   constexpr auto q_pop_again = q_empty_pop.pop();
   STATIC_REQUIRE(q_pop_again.size() == 0U);
+
+  // Runtime tests for code coverage instrumentation
+  volatile int v1_raw = 10;
+  volatile int v2_raw = 20;
+  int v1 = v1_raw;
+  int v2 = v2_raw;
+  auto rq = Queue<int, 4>{};
+  REQUIRE(rq.empty());
+  REQUIRE(rq.size() == 0U);
+  REQUIRE(rq.capacity() == 4U);
+  REQUIRE(rq.can_conj());
+  REQUIRE(rq.peek() == 0);
+  REQUIRE(rq.pop().empty());
+
+  auto rq1 = rq.conj(v1);
+  REQUIRE_FALSE(rq1.empty());
+  REQUIRE(rq1.size() == 1U);
+  REQUIRE(rq1.peek() == 10);
+
+  auto rq2 = rq1.conj(v2);
+  REQUIRE(rq2.size() == 2U);
+  REQUIRE(rq2.peek() == 10);
+
+  auto rq_popped = rq2.pop();
+  REQUIRE(rq_popped.size() == 1U);
+  REQUIRE(rq_popped.peek() == 20);
+
+  auto rq_full = rq_popped.conj(30).conj(40).conj(50);
+  REQUIRE(rq_full.size() == 4U);
+  REQUIRE_FALSE(rq_full.can_conj());
+  REQUIRE(rq_full.conj(60).size() == 4U); // rejected overflow
 }

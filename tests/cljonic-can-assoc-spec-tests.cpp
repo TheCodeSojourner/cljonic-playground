@@ -18,4 +18,12 @@ TEST_CASE("CanAssoc free function operations", "[can_assoc]") {
 
   constexpr Map<int, int, 4> m0{};
   STATIC_REQUIRE(can_assoc(m0, 1, 100));
+
+  // Runtime tests for code coverage instrumentation
+  volatile int k_raw = 1;
+  volatile int v_raw = 100;
+  int k = k_raw;
+  int v = v_raw;
+  auto rm = Map<int, int, 4>{};
+  REQUIRE(can_assoc(rm, k, v));
 }

@@ -71,4 +71,55 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
   STATIC_REQUIRE_FALSE(m3.contains(10));
   STATIC_REQUIRE(m3.contains(20));
   STATIC_REQUIRE(m3(20) == 200);
+
+  // Runtime tests for code coverage instrumentation
+  volatile int mk1_raw = 10;
+  volatile int mv1_raw = 100;
+  volatile int mk2_raw = 20;
+  volatile int mv2_raw = 200;
+  int mk1 = mk1_raw;
+  int mv1 = mv1_raw;
+  int mk2 = mk2_raw;
+  int mv2 = mv2_raw;
+  auto rm = Map<int, int, 4>{};
+  REQUIRE(rm.empty());
+  REQUIRE(rm.size() == 0U);
+  REQUIRE(rm.capacity() == 4U);
+  REQUIRE_FALSE(rm.contains(mk1));
+  REQUIRE(rm(mk1) == 0);
+  REQUIRE(rm(mk1, -1) == -1);
+  REQUIRE(rm.can_assoc(mk1));
+  REQUIRE(rm.can_assoc(mk1, mv1));
+
+  auto rm1 = rm.assoc(mk1, mv1);
+  REQUIRE_FALSE(rm1.empty());
+  REQUIRE(rm1.size() == 1U);
+  REQUIRE(rm1.contains(mk1));
+  REQUIRE(rm1(mk1) == 100);
+
+  // Replace existing key
+  auto rm1_updated = rm1.assoc(mk1, 999);
+  REQUIRE(rm1_updated.size() == 1U);
+  REQUIRE(rm1_updated(mk1) == 999);
+
+  auto rm2 = rm1.assoc(mk2, mv2);
+  REQUIRE(rm2.size() == 2U);
+  REQUIRE(rm2(mk2) == 200);
+
+  auto rm_full = rm2.assoc(30, 300).assoc(40, 400);
+  REQUIRE(rm_full.size() == 4U);
+  REQUIRE_FALSE(rm_full.can_assoc(50));
+  REQUIRE(rm_full.assoc(50, 500).size() == 4U); // rejected overflow
+
+  auto rm_dissoc_first = rm2.dissoc(mk1);
+  REQUIRE(rm_dissoc_first.size() == 1U);
+  REQUIRE_FALSE(rm_dissoc_first.contains(mk1));
+  REQUIRE(rm_dissoc_first.contains(mk2));
+
+  auto rm_dissoc_last = rm2.dissoc(mk2);
+  REQUIRE(rm_dissoc_last.size() == 1U);
+  REQUIRE(rm_dissoc_last.contains(mk1));
+
+  auto rm_dissoc_absent = rm1.dissoc(999);
+  REQUIRE(rm_dissoc_absent.size() == 1U);
 }

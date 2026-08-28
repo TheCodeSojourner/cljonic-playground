@@ -20,4 +20,11 @@ TEST_CASE("Peek free function operations", "[peek]") {
   constexpr Queue<int, 4> q0{};
   constexpr auto q1 = conj(q0, 99);
   STATIC_REQUIRE(peek(q1) == 99);
+
+  // Runtime tests for code coverage instrumentation
+  volatile int v_raw = 123;
+  int v = v_raw;
+  auto rq = Queue<int, 4>{};
+  auto rq1 = conj(rq, v);
+  REQUIRE(peek(rq1) == 123);
 }
