@@ -29,9 +29,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto can_assoc(const C &collection, const K &key,
-                                       const V &value) noexcept -> bool {
-  return collection.can_assoc(key, value);
+[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key, const V& value) noexcept -> bool {
+    return collection.can_assoc(key, value);
 }
 
 } // namespace cljonic

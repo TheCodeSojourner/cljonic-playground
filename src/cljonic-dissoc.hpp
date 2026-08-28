@@ -30,9 +30,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto dissoc(const C &collection,
-                                    const K &key) noexcept {
-  return collection.dissoc(key);
+[[nodiscard]] constexpr auto dissoc(const C& collection, const K& key) noexcept {
+    return collection.dissoc(key);
 }
 
 } // namespace cljonic

@@ -35,16 +35,14 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename KeyType, typename ValueType>
-[[nodiscard]] constexpr auto
-first(const MapEntry<KeyType, ValueType> &entry) noexcept -> const KeyType & {
-  return entry.key;
+[[nodiscard]] constexpr auto first(const MapEntry<KeyType, ValueType>& entry) noexcept -> const KeyType& {
+    return entry.key;
 }
 
 /** Returns the element at index zero of the sequenceable collection. */
 template <typename C>
-[[nodiscard]] constexpr auto
-first(const C &collection) noexcept -> decltype(collection(0U)) {
-  return collection(0U);
+[[nodiscard]] constexpr auto first(const C& collection) noexcept -> decltype(collection(0U)) {
+    return collection(0U);
 }
 
 } // namespace cljonic

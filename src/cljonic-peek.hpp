@@ -29,8 +29,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto peek(const C &collection) noexcept {
-  return collection.peek();
+[[nodiscard]] constexpr auto peek(const C& collection) noexcept {
+    return collection.peek();
 }
 
 } // namespace cljonic

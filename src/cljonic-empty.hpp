@@ -33,8 +33,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto empty(const C &) noexcept -> C {
-  return C{};
+[[nodiscard]] constexpr auto empty(const C&) noexcept -> C {
+    return C{};
 }
 
 } // namespace cljonic

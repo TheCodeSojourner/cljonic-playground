@@ -40,17 +40,15 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto
-get(const C &collection, const K &key) noexcept -> decltype(collection(key)) {
-  return collection(key);
+[[nodiscard]] constexpr auto get(const C& collection, const K& key) noexcept -> decltype(collection(key)) {
+    return collection(key);
 }
 
 /** Returns the stored value when present, otherwise the supplied fallback. */
 template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto
-get(const C &collection, const K &key,
-    const V &fallback) noexcept -> decltype(collection(key, fallback)) {
-  return collection(key, fallback);
+[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback) noexcept
+    -> decltype(collection(key, fallback)) {
+    return collection(key, fallback);
 }
 
 } // namespace cljonic

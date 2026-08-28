@@ -31,9 +31,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto assoc(const C &collection, const K &key,
-                                   const V &value) noexcept {
-  return collection.assoc(key, value);
+[[nodiscard]] constexpr auto assoc(const C& collection, const K& key, const V& value) noexcept {
+    return collection.assoc(key, value);
 }
 
 } // namespace cljonic

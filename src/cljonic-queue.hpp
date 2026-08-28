@@ -37,68 +37,68 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <concepts::VectorElement T, std::size_t CapacityValue> class Queue {
-public:
-  using value_type = T;
+template <concepts::VectorElement T, std::size_t CapacityValue>
+class Queue {
+  public:
+    using value_type = T;
 
-  static_assert(concepts::NothrowVectorElement<T>,
-                "Queue element type operations must not throw");
-  static_assert(
-      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-      "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(concepts::NothrowVectorElement<T>, "Queue element type operations must not throw");
+    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+                  "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-  constexpr Queue() noexcept : elements_{}, head_{0}, logical_size_{0} {}
-
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return CapacityValue;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return logical_size_ == 0U;
-  }
-
-  /** Returns true when there is room for at least one more element. */
-  [[nodiscard]] constexpr auto can_conj() const noexcept -> bool {
-    return logical_size_ < CapacityValue;
-  }
-
-  /** Adds an element to the back of a copy of the queue (enqueue). Returns an
-   * unchanged copy when full. */
-  [[nodiscard]] constexpr auto conj(const T &element) const noexcept -> Queue {
-    Queue result = *this;
-    if (result.logical_size_ < CapacityValue) {
-      const auto tail = (result.head_ + result.logical_size_) % CapacityValue;
-      result.elements_[tail] = element;
-      ++result.logical_size_;
+    constexpr Queue() noexcept : elements_{}, head_{0}, logical_size_{0} {
     }
-    return result;
-  }
 
-  /** Peeks at the front element without removing it. Returns
-   * default-constructed value when empty. */
-  [[nodiscard]] constexpr auto peek() const noexcept -> T {
-    return (logical_size_ > 0) ? elements_[head_] : T{};
-  }
-
-  /** Removes the front element from a copy of the queue (dequeue). Returns an
-   * unchanged copy when empty. */
-  [[nodiscard]] constexpr auto pop() const noexcept -> Queue {
-    Queue result = *this;
-    if (result.logical_size_ > 0) {
-      result.head_ = (result.head_ + 1) % CapacityValue;
-      --result.logical_size_;
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
     }
-    return result;
-  }
 
-private:
-  std::array<value_type, CapacityValue> elements_{};
-  std::size_t head_{0};
-  std::size_t logical_size_{0};
+    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    /** Returns true when there is room for at least one more element. */
+    [[nodiscard]] constexpr auto can_conj() const noexcept -> bool {
+        return logical_size_ < CapacityValue;
+    }
+
+    /** Adds an element to the back of a copy of the queue (enqueue). Returns an
+     * unchanged copy when full. */
+    [[nodiscard]] constexpr auto conj(const T& element) const noexcept -> Queue {
+        Queue result = *this;
+        if (result.logical_size_ < CapacityValue) {
+            const auto tail = (result.head_ + result.logical_size_) % CapacityValue;
+            result.elements_[tail] = element;
+            ++result.logical_size_;
+        }
+        return result;
+    }
+
+    /** Peeks at the front element without removing it. Returns
+     * default-constructed value when empty. */
+    [[nodiscard]] constexpr auto peek() const noexcept -> T {
+        return (logical_size_ > 0) ? elements_[head_] : T{};
+    }
+
+    /** Removes the front element from a copy of the queue (dequeue). Returns an
+     * unchanged copy when empty. */
+    [[nodiscard]] constexpr auto pop() const noexcept -> Queue {
+        Queue result = *this;
+        if (result.logical_size_ > 0) {
+            result.head_ = (result.head_ + 1) % CapacityValue;
+            --result.logical_size_;
+        }
+        return result;
+    }
+
+  private:
+    std::array<value_type, CapacityValue> elements_{};
+    std::size_t head_{0};
+    std::size_t logical_size_{0};
 };
 
 } // namespace cljonic

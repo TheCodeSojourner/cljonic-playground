@@ -1,33 +1,30 @@
 ## Session State
 
-- last_session_id: 2026-08-28-phase-b-concept-layer
+- last_session_id: 2026-08-28-clang-format-config-ai-token-density
 - current_timestamp: 2026-08-28
 - recover: 1
 - session_complete: true
 
 Task:
-1. Lay the declarative foundation (Phase A) for the library's C++20 concept layer: vocabulary alignment, architecture concept layer, and specification.
-2. Canonicalize vocabulary with `CollectionConcept`/`CapabilityConcept` terms and C++ concept identifiers (`Cljonic*`, `SequenceableCollection`, `IndexedCollection`, `AssociativeCollection`, `StableEqualityComparable`, `TotallyOrdered`).
-3. Rewrite `architecture.md` human prose into nucleus lambda notation and document the two-level concept model in a Concept Architecture section.
-4. Implement the shared concept layer (Phase B Step 1) in `src/cljonic-concepts.hpp` with nominal + capability + value concepts.
-5. Pending: Phase B Step 2 (concept spec tests + no-heap probe), Phase B Step 3 (spec-to-code traceability snapshot reconciliation), Phase C (containers conform to count/is_empty/operators), Phase D (constrain free functions), Phase E (full-stack verification via make git).
+1. Reconfigure project formatting with a repo-root `.clang-format` file tuned for AI/parser token density and reformat the codebase.
+2. Upgrade clang-format from 18 to 20 (Ubuntu 24.04 apt `clang-format-20`; symlink `/usr/bin/clang-format`).
+3. Verify the reconfiguration end-to-end (`make format`, `make lint`, `make test`).
+4. Pending: Phase B Step 2 (concept spec tests + no-heap probe), Phase B Step 3 (spec-to-code traceability snapshot reconciliation), Phase C (containers conform to count/is_empty/operators), Phase D (constrain free functions), Phase E (full-stack verification via make git).
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Adopt C++ Core Guidelines for all C++ code: concepts PascalCase (NL.17), functions snake_case, namespaces lowercase.
-2. Two-level concept model: `CollectionConcept` (nominal, `Cljonic*`) + `CapabilityConcept` (structural + value, no prefix).
-3. Container members use Clojure-parity names: `count()`/`is_empty()` replace `size()`/`empty()`; `operator[]` removed from all collections.
-4. `StableEqualityComparable` (base, rejects float/double) and `TotallyOrdered` (derived) both required.
-5. `architecture.md` written in nucleus lambda notation, not human prose.
-6. C++ concept identifiers are first-class vocabulary terms (cljonic users are developers).
-7. Specs live in domain-oriented directories (`specs/{capabilities,collections,primitives}/*.allium`); no `.allium` directly under `specs/`.
+1. `.clang-format` keys: `Standard: c++20`, `BreakBeforeBraces: Attach`, `BinPackArguments/Parameters: true`, `SortIncludes: CaseSensitive`, `RequiresClausePosition: OwnLine`, `IndentRequiresClause: true`, `ColumnLimit: 120`, `IndentWidth: 4`, `PointerAlignment: Left`, `SpaceBeforeParens: ControlStatements`, `AllowShort*: false`, `AlwaysBreakTemplateDeclarations: true` (Allman dropped).
+2. `make format` and `make format-doc-samples` both invoke `clang-format` with no `-style` flag, so raw C/C++ and Doxygen example blocks share the root `.clang-format`.
+3. clang-format 20.1.2 confirmed active after upgrade; `make format:ok`, `make lint:ok`, `make test` 54/54 pass.
+4. All source/test files reformatted to the new style (large working-tree diff).
 
 Next:
-1. Phase B Step 2: add concept spec tests to `tests/cljonic-concepts-spec-tests.cpp` (cover 46 obligations from `specs/capabilities/concepts.allium`) + no-heap probe `tests/no_heap/cljonic-concepts-probes.cpp`.
-2. Phase B Step 3: reconcile spec-to-code traceability snapshot (`make traceability-spec-to-code-update-snapshot`).
-3. Phases C, D, E: containers conform, free functions constrained, full-stack verification.
+1. Commit the reformatting session: `.clang-format` + reformatted `src/`/`tests/` + mementum state/memory.
+2. Phase B Step 2: add concept spec tests to `tests/cljonic-concepts-spec-tests.cpp` (cover 46 obligations from `specs/capabilities/concepts.allium`) + no-heap probe `tests/no_heap/cljonic-concepts-probes.cpp`.
+3. Phase B Step 3: reconcile spec-to-code traceability snapshot (`make traceability-spec-to-code-update-snapshot`).
+4. Phases C, D, E: containers conform, free functions constrained, full-stack verification.
 
 ## Historical Session Records
 

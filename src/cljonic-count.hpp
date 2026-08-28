@@ -33,9 +33,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto
-count(const C &collection) noexcept -> std::size_t {
-  return collection.size();
+[[nodiscard]] constexpr auto count(const C& collection) noexcept -> std::size_t {
+    return collection.size();
 }
 
 } // namespace cljonic

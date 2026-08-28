@@ -40,104 +40,91 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <concepts::VectorElement KeyType, concepts::VectorElement ValueType,
-          std::size_t CapacityValue>
+template <concepts::VectorElement KeyType, concepts::VectorElement ValueType, std::size_t CapacityValue>
 class Map {
-public:
-  using key_type = KeyType;
-  using mapped_type = ValueType;
-  using value_type = MapEntry<KeyType, ValueType>;
+  public:
+    using key_type = KeyType;
+    using mapped_type = ValueType;
+    using value_type = MapEntry<KeyType, ValueType>;
 
-  static_assert(concepts::NothrowVectorElement<KeyType>,
-                "Map key type operations must not throw");
-  static_assert(concepts::NothrowVectorElement<ValueType>,
-                "Map value type operations must not throw");
-  static_assert(
-      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-      "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(concepts::NothrowVectorElement<KeyType>, "Map key type operations must not throw");
+    static_assert(concepts::NothrowVectorElement<ValueType>, "Map value type operations must not throw");
+    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+                  "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-  constexpr Map() noexcept : entries_{}, logical_size_{0} {}
-
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return CapacityValue;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return logical_size_ == 0U;
-  }
-
-  [[nodiscard]] constexpr auto
-  contains(const KeyType &key) const noexcept -> bool {
-    return find_index(key) < logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto
-  operator()(const KeyType &key) const noexcept -> ValueType {
-    const auto idx = find_index(key);
-    return (idx < logical_size_) ? entries_[idx].value : ValueType{};
-  }
-
-  [[nodiscard]] constexpr auto
-  operator()(const KeyType &key,
-             const ValueType &fallback) const noexcept -> ValueType {
-    const auto idx = find_index(key);
-    return (idx < logical_size_) ? entries_[idx].value : fallback;
-  }
-
-  [[nodiscard]] constexpr auto
-  can_assoc(const KeyType &key) const noexcept -> bool {
-    return contains(key) || (logical_size_ < CapacityValue);
-  }
-
-  [[nodiscard]] constexpr auto
-  can_assoc(const KeyType &key,
-            const ValueType & /*value*/) const noexcept -> bool {
-    return can_assoc(key);
-  }
-
-  [[nodiscard]] constexpr auto
-  assoc(const KeyType &key, const ValueType &value) const noexcept -> Map {
-    Map result = *this;
-    const auto idx = result.find_index(key);
-    if (idx < result.logical_size_) {
-      result.entries_[idx].value = value;
-    } else if (result.logical_size_ < CapacityValue) {
-      result.entries_[result.logical_size_] = value_type{key, value};
-      ++result.logical_size_;
+    constexpr Map() noexcept : entries_{}, logical_size_{0} {
     }
-    return result;
-  }
 
-  [[nodiscard]] constexpr auto
-  dissoc(const KeyType &key) const noexcept -> Map {
-    Map result = *this;
-    const auto idx = result.find_index(key);
-    if (idx < result.logical_size_) {
-      if (idx + 1U < result.logical_size_) {
-        result.entries_[idx] = result.entries_[result.logical_size_ - 1U];
-      }
-      --result.logical_size_;
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
     }
-    return result;
-  }
 
-private:
-  [[nodiscard]] constexpr auto
-  find_index(const KeyType &key) const noexcept -> std::size_t {
-    for (std::size_t i = 0; i < logical_size_; ++i) {
-      if (entries_[i].key == key) {
-        return i;
-      }
+    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+        return logical_size_;
     }
-    return logical_size_;
-  }
 
-  std::array<value_type, CapacityValue> entries_{};
-  std::size_t logical_size_{0};
+    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto contains(const KeyType& key) const noexcept -> bool {
+        return find_index(key) < logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto operator()(const KeyType& key) const noexcept -> ValueType {
+        const auto idx = find_index(key);
+        return (idx < logical_size_) ? entries_[idx].value : ValueType{};
+    }
+
+    [[nodiscard]] constexpr auto operator()(const KeyType& key, const ValueType& fallback) const noexcept -> ValueType {
+        const auto idx = find_index(key);
+        return (idx < logical_size_) ? entries_[idx].value : fallback;
+    }
+
+    [[nodiscard]] constexpr auto can_assoc(const KeyType& key) const noexcept -> bool {
+        return contains(key) || (logical_size_ < CapacityValue);
+    }
+
+    [[nodiscard]] constexpr auto can_assoc(const KeyType& key, const ValueType& /*value*/) const noexcept -> bool {
+        return can_assoc(key);
+    }
+
+    [[nodiscard]] constexpr auto assoc(const KeyType& key, const ValueType& value) const noexcept -> Map {
+        Map result = *this;
+        const auto idx = result.find_index(key);
+        if (idx < result.logical_size_) {
+            result.entries_[idx].value = value;
+        } else if (result.logical_size_ < CapacityValue) {
+            result.entries_[result.logical_size_] = value_type{key, value};
+            ++result.logical_size_;
+        }
+        return result;
+    }
+
+    [[nodiscard]] constexpr auto dissoc(const KeyType& key) const noexcept -> Map {
+        Map result = *this;
+        const auto idx = result.find_index(key);
+        if (idx < result.logical_size_) {
+            if (idx + 1U < result.logical_size_) {
+                result.entries_[idx] = result.entries_[result.logical_size_ - 1U];
+            }
+            --result.logical_size_;
+        }
+        return result;
+    }
+
+  private:
+    [[nodiscard]] constexpr auto find_index(const KeyType& key) const noexcept -> std::size_t {
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (entries_[i].key == key) {
+                return i;
+            }
+        }
+        return logical_size_;
+    }
+
+    std::array<value_type, CapacityValue> entries_{};
+    std::size_t logical_size_{0};
 };
 
 } // namespace cljonic

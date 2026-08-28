@@ -14,7 +14,6 @@ namespace cljonic {
  * functions while remaining fully overridable via the
  * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro.
  */
-constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
-    CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
+constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE = CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
 
 } // namespace cljonic

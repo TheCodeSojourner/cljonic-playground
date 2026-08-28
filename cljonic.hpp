@@ -246,28 +246,19 @@ namespace cljonic {
 
 namespace concepts_detail {
 
-enum class collection_kind {
-  none,
-  vector,
-  map,
-  set,
-  queue,
-  string
-};
+enum class collection_kind { none, vector, map, set, queue, string };
 
 template <typename T>
 struct collection_traits {
-  static constexpr bool is_cljonic_collection = false;
-  static constexpr collection_kind kind = collection_kind::none;
+    static constexpr bool is_cljonic_collection = false;
+    static constexpr collection_kind kind = collection_kind::none;
 };
 
 template <typename T>
-inline constexpr bool is_cljonic_collection_v =
-    collection_traits<std::remove_cvref_t<T>>::is_cljonic_collection;
+inline constexpr bool is_cljonic_collection_v = collection_traits<std::remove_cvref_t<T>>::is_cljonic_collection;
 
 template <typename T>
-inline constexpr collection_kind collection_kind_of_v =
-    collection_traits<std::remove_cvref_t<T>>::kind;
+inline constexpr collection_kind collection_kind_of_v = collection_traits<std::remove_cvref_t<T>>::kind;
 
 } // namespace concepts_detail
 
@@ -279,29 +270,24 @@ namespace concepts {
 
 /** Requires that \p T is default-initializable and copyable. */
 template <typename T>
-concept CopyableElement =
-    std::default_initializable<T> && std::copyable<T>;
+concept CopyableElement = std::default_initializable<T> && std::copyable<T>;
 
 /** Requires that element storage operations (default construct, copy construct,
  *  copy assign) do not throw exceptions. */
 template <typename T>
-concept NothrowCopyableElement =
-    CopyableElement<T> &&
-    requires(T value, const T &other) {
-      { T{} } noexcept;
-      { T{other} } noexcept;
-      { value = other } noexcept;
-    };
+concept NothrowCopyableElement = CopyableElement<T> && requires(T value, const T& other) {
+    { T{} } noexcept;
+    { T{other} } noexcept;
+    { value = other } noexcept;
+};
 
 /** Requires that an argument is convertible to and can construct an element
  *  without throwing. */
 template <typename T, typename Arg>
-concept NothrowElementConstruction =
-    std::convertible_to<Arg, T> &&
-    requires(Arg argument) {
-      { Arg{argument} } noexcept;
-      { T{argument} } noexcept;
-    };
+concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg argument) {
+    { Arg{argument} } noexcept;
+    { T{argument} } noexcept;
+};
 
 // Backward-compatible aliases for existing container templates during Phase C.
 template <typename T>
@@ -318,18 +304,15 @@ concept NothrowVectorElement = NothrowCopyableElement<T>;
  *  floating-point types to prevent NaN/precision instabilities in map keys
  *  and set elements. */
 template <typename T>
-concept StableEqualityComparable =
-    requires(const T &a, const T &b) {
-      { a == b } -> std::same_as<bool>;
-    } && !std::is_floating_point_v<std::remove_cvref_t<T>>;
+concept StableEqualityComparable = requires(const T& a, const T& b) {
+    { a == b } -> std::same_as<bool>;
+} && !std::is_floating_point_v<std::remove_cvref_t<T>>;
 
 /** Requires a strict total ordering layered on stable equality. */
 template <typename T>
-concept TotallyOrdered =
-    StableEqualityComparable<T> &&
-    requires(const T &a, const T &b) {
-      { a < b } -> std::same_as<bool>;
-    };
+concept TotallyOrdered = StableEqualityComparable<T> && requires(const T& a, const T& b) {
+    { a < b } -> std::same_as<bool>;
+};
 
 // ============================================================================
 // Level 1: CollectionConcept (Nominal Collection Admission)
@@ -338,77 +321,60 @@ concept TotallyOrdered =
 /** Gates types admitted to the closed nominal cljonic collection domain
  *  through cljonic-owned trait specialization. */
 template <typename T>
-concept CljonicCollection =
-    concepts_detail::is_cljonic_collection_v<T>;
+concept CljonicCollection = concepts_detail::is_cljonic_collection_v<T>;
 
 /** Nominal identity gate for Vector collection types. */
 template <typename T>
 concept CljonicVector =
-    CljonicCollection<T> &&
-    (concepts_detail::collection_kind_of_v<T> ==
-     concepts_detail::collection_kind::vector);
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::vector);
 
 /** Nominal identity gate for Map collection types. */
 template <typename T>
 concept CljonicMap =
-    CljonicCollection<T> &&
-    (concepts_detail::collection_kind_of_v<T> ==
-     concepts_detail::collection_kind::map);
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::map);
 
 /** Nominal identity gate for Set collection types. */
 template <typename T>
 concept CljonicSet =
-    CljonicCollection<T> &&
-    (concepts_detail::collection_kind_of_v<T> ==
-     concepts_detail::collection_kind::set);
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::set);
 
 /** Nominal identity gate for Queue collection types. */
 template <typename T>
 concept CljonicQueue =
-    CljonicCollection<T> &&
-    (concepts_detail::collection_kind_of_v<T> ==
-     concepts_detail::collection_kind::queue);
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::queue);
 
 /** Nominal identity gate for String collection types. */
 template <typename T>
 concept CljonicString =
-    CljonicCollection<T> &&
-    (concepts_detail::collection_kind_of_v<T> ==
-     concepts_detail::collection_kind::string);
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::string);
 
 // ============================================================================
 // Level 2: CapabilityConcept (Structural Collection Capabilities)
 // ============================================================================
 
-/** Requires that an admitted nominal collection provides non-throwing is_empty()
- *  and count() sequence observation. */
+/** Requires that an admitted nominal collection provides non-throwing
+ * is_empty() and count() sequence observation. */
 template <typename C>
-concept SequenceableCollection =
-    CljonicCollection<C> &&
-    requires(const C &c) {
-      { c.is_empty() } noexcept -> std::same_as<bool>;
-      { c.count() } noexcept -> std::integral;
-    };
+concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
+    { c.is_empty() } noexcept -> std::same_as<bool>;
+    { c.count() } noexcept -> std::integral;
+};
 
 /** Requires that a sequenceable collection provides callable indexed lookup
  *  c(index) and the valid_index(index) preflight predicate. */
 template <typename C>
-concept IndexedCollection =
-    SequenceableCollection<C> &&
-    requires(const C &c, std::size_t i) {
-      { c(i) } noexcept;
-      { c.valid_index(i) } noexcept -> std::same_as<bool>;
-    };
+concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, std::size_t i) {
+    { c(i) } noexcept;
+    { c.valid_index(i) } noexcept -> std::same_as<bool>;
+};
 
 /** Requires that a sequenceable collection provides callable key lookup
  *  c(key) and the contains(key) membership test. */
 template <typename C>
-concept AssociativeCollection =
-    SequenceableCollection<C> &&
-    requires(const C &c, const typename C::key_type &k) {
-      { c(k) } noexcept;
-      { c.contains(k) } noexcept -> std::same_as<bool>;
-    };
+concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c, const typename C::key_type& k) {
+    { c(k) } noexcept;
+    { c.contains(k) } noexcept -> std::same_as<bool>;
+};
 
 } // namespace concepts
 
@@ -445,9 +411,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto assoc(const C &collection, const K &key,
-                                   const V &value) noexcept {
-  return collection.assoc(key, value);
+[[nodiscard]] constexpr auto assoc(const C& collection, const K& key, const V& value) noexcept {
+    return collection.assoc(key, value);
 }
 
 } // namespace cljonic
@@ -485,9 +450,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto can_assoc(const C &collection, const K &key,
-                                       const V &value) noexcept -> bool {
-  return collection.can_assoc(key, value);
+[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key, const V& value) noexcept -> bool {
+    return collection.can_assoc(key, value);
 }
 
 } // namespace cljonic
@@ -529,9 +493,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename... Args>
-[[nodiscard]] constexpr auto can_conj(const C &collection,
-                                      Args &&...args) noexcept -> bool {
-  return collection.can_conj(std::forward<Args>(args)...);
+[[nodiscard]] constexpr auto can_conj(const C& collection, Args&&... args) noexcept -> bool {
+    return collection.can_conj(std::forward<Args>(args)...);
 }
 
 } // namespace cljonic
@@ -573,9 +536,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename T>
-[[nodiscard]] constexpr auto conj(const C &collection,
-                                  const T &value) noexcept {
-  return collection.conj(value);
+[[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept {
+    return collection.conj(value);
 }
 
 } // namespace cljonic
@@ -598,8 +560,7 @@ namespace cljonic {
  * functions while remaining fully overridable via the
  * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro.
  */
-constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
-    CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
+constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE = CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
 
 } // namespace cljonic
 // End cljonic-core-collection-maximum-element-count.hpp
@@ -638,9 +599,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto
-count(const C &collection) noexcept -> std::size_t {
-  return collection.size();
+[[nodiscard]] constexpr auto count(const C& collection) noexcept -> std::size_t {
+    return collection.size();
 }
 
 } // namespace cljonic
@@ -678,9 +638,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename T>
-[[nodiscard]] constexpr auto disj(const C &collection,
-                                  const T &value) noexcept {
-  return collection.disj(value);
+[[nodiscard]] constexpr auto disj(const C& collection, const T& value) noexcept {
+    return collection.disj(value);
 }
 
 } // namespace cljonic
@@ -719,9 +678,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto dissoc(const C &collection,
-                                    const K &key) noexcept {
-  return collection.dissoc(key);
+[[nodiscard]] constexpr auto dissoc(const C& collection, const K& key) noexcept {
+    return collection.dissoc(key);
 }
 
 } // namespace cljonic
@@ -763,8 +721,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto empty(const C &) noexcept -> C {
-  return C{};
+[[nodiscard]] constexpr auto empty(const C&) noexcept -> C {
+    return C{};
 }
 
 } // namespace cljonic
@@ -819,25 +777,24 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename KeyType, typename ValueType> struct MapEntry {
-  KeyType key{};
-  ValueType value{};
+template <typename KeyType, typename ValueType>
+struct MapEntry {
+    KeyType key{};
+    ValueType value{};
 
-  [[nodiscard]] constexpr auto
-  operator==(const MapEntry &other) const noexcept -> bool {
-    return key == other.key && value == other.value;
-  }
-
-  template <std::integral IndexType>
-  [[nodiscard]] constexpr auto
-  valid_index(IndexType index) const noexcept -> bool {
-    if constexpr (std::signed_integral<IndexType>) {
-      if (index < 0) {
-        return false;
-      }
+    [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool {
+        return key == other.key && value == other.value;
     }
-    return static_cast<std::size_t>(index) < 2U;
-  }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto valid_index(IndexType index) const noexcept -> bool {
+        if constexpr (std::signed_integral<IndexType>) {
+            if (index < 0) {
+                return false;
+            }
+        }
+        return static_cast<std::size_t>(index) < 2U;
+    }
 };
 
 } // namespace cljonic
@@ -873,104 +830,91 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <concepts::VectorElement KeyType, concepts::VectorElement ValueType,
-          std::size_t CapacityValue>
+template <concepts::VectorElement KeyType, concepts::VectorElement ValueType, std::size_t CapacityValue>
 class Map {
-public:
-  using key_type = KeyType;
-  using mapped_type = ValueType;
-  using value_type = MapEntry<KeyType, ValueType>;
+  public:
+    using key_type = KeyType;
+    using mapped_type = ValueType;
+    using value_type = MapEntry<KeyType, ValueType>;
 
-  static_assert(concepts::NothrowVectorElement<KeyType>,
-                "Map key type operations must not throw");
-  static_assert(concepts::NothrowVectorElement<ValueType>,
-                "Map value type operations must not throw");
-  static_assert(
-      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-      "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(concepts::NothrowVectorElement<KeyType>, "Map key type operations must not throw");
+    static_assert(concepts::NothrowVectorElement<ValueType>, "Map value type operations must not throw");
+    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+                  "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-  constexpr Map() noexcept : entries_{}, logical_size_{0} {}
-
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return CapacityValue;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return logical_size_ == 0U;
-  }
-
-  [[nodiscard]] constexpr auto
-  contains(const KeyType &key) const noexcept -> bool {
-    return find_index(key) < logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto
-  operator()(const KeyType &key) const noexcept -> ValueType {
-    const auto idx = find_index(key);
-    return (idx < logical_size_) ? entries_[idx].value : ValueType{};
-  }
-
-  [[nodiscard]] constexpr auto
-  operator()(const KeyType &key,
-             const ValueType &fallback) const noexcept -> ValueType {
-    const auto idx = find_index(key);
-    return (idx < logical_size_) ? entries_[idx].value : fallback;
-  }
-
-  [[nodiscard]] constexpr auto
-  can_assoc(const KeyType &key) const noexcept -> bool {
-    return contains(key) || (logical_size_ < CapacityValue);
-  }
-
-  [[nodiscard]] constexpr auto
-  can_assoc(const KeyType &key,
-            const ValueType & /*value*/) const noexcept -> bool {
-    return can_assoc(key);
-  }
-
-  [[nodiscard]] constexpr auto
-  assoc(const KeyType &key, const ValueType &value) const noexcept -> Map {
-    Map result = *this;
-    const auto idx = result.find_index(key);
-    if (idx < result.logical_size_) {
-      result.entries_[idx].value = value;
-    } else if (result.logical_size_ < CapacityValue) {
-      result.entries_[result.logical_size_] = value_type{key, value};
-      ++result.logical_size_;
+    constexpr Map() noexcept : entries_{}, logical_size_{0} {
     }
-    return result;
-  }
 
-  [[nodiscard]] constexpr auto
-  dissoc(const KeyType &key) const noexcept -> Map {
-    Map result = *this;
-    const auto idx = result.find_index(key);
-    if (idx < result.logical_size_) {
-      if (idx + 1U < result.logical_size_) {
-        result.entries_[idx] = result.entries_[result.logical_size_ - 1U];
-      }
-      --result.logical_size_;
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
     }
-    return result;
-  }
 
-private:
-  [[nodiscard]] constexpr auto
-  find_index(const KeyType &key) const noexcept -> std::size_t {
-    for (std::size_t i = 0; i < logical_size_; ++i) {
-      if (entries_[i].key == key) {
-        return i;
-      }
+    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+        return logical_size_;
     }
-    return logical_size_;
-  }
 
-  std::array<value_type, CapacityValue> entries_{};
-  std::size_t logical_size_{0};
+    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto contains(const KeyType& key) const noexcept -> bool {
+        return find_index(key) < logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto operator()(const KeyType& key) const noexcept -> ValueType {
+        const auto idx = find_index(key);
+        return (idx < logical_size_) ? entries_[idx].value : ValueType{};
+    }
+
+    [[nodiscard]] constexpr auto operator()(const KeyType& key, const ValueType& fallback) const noexcept -> ValueType {
+        const auto idx = find_index(key);
+        return (idx < logical_size_) ? entries_[idx].value : fallback;
+    }
+
+    [[nodiscard]] constexpr auto can_assoc(const KeyType& key) const noexcept -> bool {
+        return contains(key) || (logical_size_ < CapacityValue);
+    }
+
+    [[nodiscard]] constexpr auto can_assoc(const KeyType& key, const ValueType& /*value*/) const noexcept -> bool {
+        return can_assoc(key);
+    }
+
+    [[nodiscard]] constexpr auto assoc(const KeyType& key, const ValueType& value) const noexcept -> Map {
+        Map result = *this;
+        const auto idx = result.find_index(key);
+        if (idx < result.logical_size_) {
+            result.entries_[idx].value = value;
+        } else if (result.logical_size_ < CapacityValue) {
+            result.entries_[result.logical_size_] = value_type{key, value};
+            ++result.logical_size_;
+        }
+        return result;
+    }
+
+    [[nodiscard]] constexpr auto dissoc(const KeyType& key) const noexcept -> Map {
+        Map result = *this;
+        const auto idx = result.find_index(key);
+        if (idx < result.logical_size_) {
+            if (idx + 1U < result.logical_size_) {
+                result.entries_[idx] = result.entries_[result.logical_size_ - 1U];
+            }
+            --result.logical_size_;
+        }
+        return result;
+    }
+
+  private:
+    [[nodiscard]] constexpr auto find_index(const KeyType& key) const noexcept -> std::size_t {
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (entries_[i].key == key) {
+                return i;
+            }
+        }
+        return logical_size_;
+    }
+
+    std::array<value_type, CapacityValue> entries_{};
+    std::size_t logical_size_{0};
 };
 
 } // namespace cljonic
@@ -1007,16 +951,14 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename KeyType, typename ValueType>
-[[nodiscard]] constexpr auto
-first(const MapEntry<KeyType, ValueType> &entry) noexcept -> const KeyType & {
-  return entry.key;
+[[nodiscard]] constexpr auto first(const MapEntry<KeyType, ValueType>& entry) noexcept -> const KeyType& {
+    return entry.key;
 }
 
 /** Returns the element at index zero of the sequenceable collection. */
 template <typename C>
-[[nodiscard]] constexpr auto
-first(const C &collection) noexcept -> decltype(collection(0U)) {
-  return collection(0U);
+[[nodiscard]] constexpr auto first(const C& collection) noexcept -> decltype(collection(0U)) {
+    return collection(0U);
 }
 
 } // namespace cljonic
@@ -1064,17 +1006,15 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto
-get(const C &collection, const K &key) noexcept -> decltype(collection(key)) {
-  return collection(key);
+[[nodiscard]] constexpr auto get(const C& collection, const K& key) noexcept -> decltype(collection(key)) {
+    return collection(key);
 }
 
 /** Returns the stored value when present, otherwise the supplied fallback. */
 template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto
-get(const C &collection, const K &key,
-    const V &fallback) noexcept -> decltype(collection(key, fallback)) {
-  return collection(key, fallback);
+[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback) noexcept
+    -> decltype(collection(key, fallback)) {
+    return collection(key, fallback);
 }
 
 } // namespace cljonic
@@ -1112,8 +1052,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto is_empty(const C &collection) noexcept -> bool {
-  return collection.empty();
+[[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
+    return collection.empty();
 }
 
 } // namespace cljonic
@@ -1153,9 +1093,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto
-next(const C &collection) noexcept -> decltype(collection.pop()) {
-  return collection.pop();
+[[nodiscard]] constexpr auto next(const C& collection) noexcept -> decltype(collection.pop()) {
+    return collection.pop();
 }
 
 } // namespace cljonic
@@ -1198,8 +1137,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto not_empty(const C &collection) noexcept -> C {
-  return collection.empty() ? C{} : C{collection};
+[[nodiscard]] constexpr auto not_empty(const C& collection) noexcept -> C {
+    return collection.empty() ? C{} : C{collection};
 }
 
 } // namespace cljonic
@@ -1236,8 +1175,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto peek(const C &collection) noexcept {
-  return collection.peek();
+[[nodiscard]] constexpr auto peek(const C& collection) noexcept {
+    return collection.peek();
 }
 
 } // namespace cljonic
@@ -1276,8 +1215,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto pop(const C &collection) noexcept {
-  return collection.pop();
+[[nodiscard]] constexpr auto pop(const C& collection) noexcept {
+    return collection.pop();
 }
 
 } // namespace cljonic
@@ -1321,68 +1260,68 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <concepts::VectorElement T, std::size_t CapacityValue> class Queue {
-public:
-  using value_type = T;
+template <concepts::VectorElement T, std::size_t CapacityValue>
+class Queue {
+  public:
+    using value_type = T;
 
-  static_assert(concepts::NothrowVectorElement<T>,
-                "Queue element type operations must not throw");
-  static_assert(
-      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-      "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(concepts::NothrowVectorElement<T>, "Queue element type operations must not throw");
+    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+                  "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-  constexpr Queue() noexcept : elements_{}, head_{0}, logical_size_{0} {}
-
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return CapacityValue;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return logical_size_ == 0U;
-  }
-
-  /** Returns true when there is room for at least one more element. */
-  [[nodiscard]] constexpr auto can_conj() const noexcept -> bool {
-    return logical_size_ < CapacityValue;
-  }
-
-  /** Adds an element to the back of a copy of the queue (enqueue). Returns an
-   * unchanged copy when full. */
-  [[nodiscard]] constexpr auto conj(const T &element) const noexcept -> Queue {
-    Queue result = *this;
-    if (result.logical_size_ < CapacityValue) {
-      const auto tail = (result.head_ + result.logical_size_) % CapacityValue;
-      result.elements_[tail] = element;
-      ++result.logical_size_;
+    constexpr Queue() noexcept : elements_{}, head_{0}, logical_size_{0} {
     }
-    return result;
-  }
 
-  /** Peeks at the front element without removing it. Returns
-   * default-constructed value when empty. */
-  [[nodiscard]] constexpr auto peek() const noexcept -> T {
-    return (logical_size_ > 0) ? elements_[head_] : T{};
-  }
-
-  /** Removes the front element from a copy of the queue (dequeue). Returns an
-   * unchanged copy when empty. */
-  [[nodiscard]] constexpr auto pop() const noexcept -> Queue {
-    Queue result = *this;
-    if (result.logical_size_ > 0) {
-      result.head_ = (result.head_ + 1) % CapacityValue;
-      --result.logical_size_;
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
     }
-    return result;
-  }
 
-private:
-  std::array<value_type, CapacityValue> elements_{};
-  std::size_t head_{0};
-  std::size_t logical_size_{0};
+    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    /** Returns true when there is room for at least one more element. */
+    [[nodiscard]] constexpr auto can_conj() const noexcept -> bool {
+        return logical_size_ < CapacityValue;
+    }
+
+    /** Adds an element to the back of a copy of the queue (enqueue). Returns an
+     * unchanged copy when full. */
+    [[nodiscard]] constexpr auto conj(const T& element) const noexcept -> Queue {
+        Queue result = *this;
+        if (result.logical_size_ < CapacityValue) {
+            const auto tail = (result.head_ + result.logical_size_) % CapacityValue;
+            result.elements_[tail] = element;
+            ++result.logical_size_;
+        }
+        return result;
+    }
+
+    /** Peeks at the front element without removing it. Returns
+     * default-constructed value when empty. */
+    [[nodiscard]] constexpr auto peek() const noexcept -> T {
+        return (logical_size_ > 0) ? elements_[head_] : T{};
+    }
+
+    /** Removes the front element from a copy of the queue (dequeue). Returns an
+     * unchanged copy when empty. */
+    [[nodiscard]] constexpr auto pop() const noexcept -> Queue {
+        Queue result = *this;
+        if (result.logical_size_ > 0) {
+            result.head_ = (result.head_ + 1) % CapacityValue;
+            --result.logical_size_;
+        }
+        return result;
+    }
+
+  private:
+    std::array<value_type, CapacityValue> elements_{};
+    std::size_t head_{0};
+    std::size_t logical_size_{0};
 };
 
 } // namespace cljonic
@@ -1421,9 +1360,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto
-rest(const C &collection) noexcept -> decltype(collection.pop()) {
-  return collection.pop();
+[[nodiscard]] constexpr auto rest(const C& collection) noexcept -> decltype(collection.pop()) {
+    return collection.pop();
 }
 
 } // namespace cljonic
@@ -1463,8 +1401,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto seq(const C &collection) noexcept -> C {
-  return collection;
+[[nodiscard]] constexpr auto seq(const C& collection) noexcept -> C {
+    return collection;
 }
 
 } // namespace cljonic
@@ -1511,101 +1449,96 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <concepts::VectorElement T, std::size_t CapacityValue> class Set {
-public:
-  using value_type = T;
+template <concepts::VectorElement T, std::size_t CapacityValue>
+class Set {
+  public:
+    using value_type = T;
 
-  static_assert(concepts::NothrowVectorElement<T>,
-                "Set element type operations must not throw");
-  static_assert(
-      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-      "Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(concepts::NothrowVectorElement<T>, "Set element type operations must not throw");
+    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+                  "Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-  constexpr Set() noexcept : elements_{}, logical_size_{0} {}
-
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return CapacityValue;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return logical_size_ == 0U;
-  }
-
-  [[nodiscard]] constexpr auto
-  contains(const T &element) const noexcept -> bool {
-    return find_index(element) < logical_size_;
-  }
-
-  /** Returns the stored element value when present; otherwise returns a
-   * default-constructed value. */
-  [[nodiscard]] constexpr auto
-  operator()(const T &element) const noexcept -> T {
-    const auto idx = find_index(element);
-    return (idx < logical_size_) ? elements_[idx] : T{};
-  }
-
-  /** Returns the stored element value when present; otherwise returns the
-   * supplied fallback. */
-  [[nodiscard]] constexpr auto
-  operator()(const T &element, const T &fallback) const noexcept -> T {
-    const auto idx = find_index(element);
-    return (idx < logical_size_) ? elements_[idx] : fallback;
-  }
-
-  /** Returns true when the element is already present or the set has room for
-   * one more. */
-  [[nodiscard]] constexpr auto
-  can_conj(const T &element) const noexcept -> bool {
-    return contains(element) || (logical_size_ < CapacityValue);
-  }
-
-  /** Adds an element to a copy of the set. If the element is already present or
-   * capacity is full, returns an unchanged copy. */
-  [[nodiscard]] constexpr auto conj(const T &element) const noexcept -> Set {
-    Set result = *this;
-    if (!result.contains(element) && result.logical_size_ < CapacityValue) {
-      result.elements_[result.logical_size_] = element;
-      ++result.logical_size_;
+    constexpr Set() noexcept : elements_{}, logical_size_{0} {
     }
-    return result;
-  }
 
-  /** Removes an element via swap-and-remove if present; always returns a valid
-   * copy. */
-  [[nodiscard]] constexpr auto disj(const T &element) const noexcept -> Set {
-    Set result = *this;
-    const auto idx = result.find_index(element);
-    if (idx < result.logical_size_) {
-      if (idx + 1U < result.logical_size_) {
-        result.elements_[idx] = result.elements_[result.logical_size_ - 1U];
-      }
-      --result.logical_size_;
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
     }
-    return result;
-  }
 
-private:
-  /** Returns `logical_size_` when the element is absent. */
-  [[nodiscard]] constexpr auto
-  find_index(const T &element) const noexcept -> std::size_t {
-    for (std::size_t i = 0; i < logical_size_; ++i) {
-      if (elements_[i] == element) {
-        return i;
-      }
+    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+        return logical_size_;
     }
-    return logical_size_;
-  }
 
-  std::array<value_type, CapacityValue> elements_{};
-  std::size_t logical_size_{0};
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto contains(const T& element) const noexcept -> bool {
+        return find_index(element) < logical_size_;
+    }
+
+    /** Returns the stored element value when present; otherwise returns a
+     * default-constructed value. */
+    [[nodiscard]] constexpr auto operator()(const T& element) const noexcept -> T {
+        const auto idx = find_index(element);
+        return (idx < logical_size_) ? elements_[idx] : T{};
+    }
+
+    /** Returns the stored element value when present; otherwise returns the
+     * supplied fallback. */
+    [[nodiscard]] constexpr auto operator()(const T& element, const T& fallback) const noexcept -> T {
+        const auto idx = find_index(element);
+        return (idx < logical_size_) ? elements_[idx] : fallback;
+    }
+
+    /** Returns true when the element is already present or the set has room for
+     * one more. */
+    [[nodiscard]] constexpr auto can_conj(const T& element) const noexcept -> bool {
+        return contains(element) || (logical_size_ < CapacityValue);
+    }
+
+    /** Adds an element to a copy of the set. If the element is already present or
+     * capacity is full, returns an unchanged copy. */
+    [[nodiscard]] constexpr auto conj(const T& element) const noexcept -> Set {
+        Set result = *this;
+        if (!result.contains(element) && result.logical_size_ < CapacityValue) {
+            result.elements_[result.logical_size_] = element;
+            ++result.logical_size_;
+        }
+        return result;
+    }
+
+    /** Removes an element via swap-and-remove if present; always returns a valid
+     * copy. */
+    [[nodiscard]] constexpr auto disj(const T& element) const noexcept -> Set {
+        Set result = *this;
+        const auto idx = result.find_index(element);
+        if (idx < result.logical_size_) {
+            if (idx + 1U < result.logical_size_) {
+                result.elements_[idx] = result.elements_[result.logical_size_ - 1U];
+            }
+            --result.logical_size_;
+        }
+        return result;
+    }
+
+  private:
+    /** Returns `logical_size_` when the element is absent. */
+    [[nodiscard]] constexpr auto find_index(const T& element) const noexcept -> std::size_t {
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (elements_[i] == element) {
+                return i;
+            }
+        }
+        return logical_size_;
+    }
+
+    std::array<value_type, CapacityValue> elements_{};
+    std::size_t logical_size_{0};
 };
 
 } // namespace cljonic
@@ -1651,93 +1584,90 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <std::size_t CapacityValue> class String {
-public:
-  using value_type = char;
+template <std::size_t CapacityValue>
+class String {
+  public:
+    using value_type = char;
 
-  static_assert(
-      CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-      "String capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+                  "String capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
-  constexpr String() noexcept : data_{}, logical_size_{0} { data_[0] = '\0'; }
-
-  /** Construct from character array literal. Capacity must accommodate N-1
-   * chars plus null terminator. */
-  template <std::size_t N>
-  constexpr String(const char (&arr)[N]) noexcept : data_{}, logical_size_{0} {
-    static_assert(N - 1U <= CapacityValue,
-                  "String literal too long for capacity");
-    logical_size_ = N - 1U;
-    for (std::size_t i = 0; i < logical_size_; ++i) {
-      data_[i] = arr[i];
+    constexpr String() noexcept : data_{}, logical_size_{0} {
+        data_[0] = '\0';
     }
-    data_[logical_size_] = '\0';
-  }
 
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return CapacityValue;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return logical_size_ == 0U;
-  }
-
-  /** Returns true when index falls within logical bounds (not counting null
-   * terminator). */
-  [[nodiscard]] constexpr auto valid(std::size_t index) const noexcept -> bool {
-    return index < logical_size_;
-  }
-
-  /** Index access: returns '\\0' for out-of-bounds indices. */
-  [[nodiscard]] constexpr auto
-  operator[](std::size_t index) const noexcept -> char {
-    return (index < logical_size_) ? data_[index] : '\0';
-  }
-
-  /** Callable index access returning default-constructed char ('\\0') on
-   * invalid index. */
-  [[nodiscard]] constexpr auto
-  operator()(std::size_t index) const noexcept -> char {
-    return (index < logical_size_) ? data_[index] : '\0';
-  }
-
-  /** Callable index access with custom fallback value on invalid index. */
-  [[nodiscard]] constexpr auto
-  operator()(std::size_t index, char fallback) const noexcept -> char {
-    return (index < logical_size_) ? data_[index] : fallback;
-  }
-
-  /** Returns a fresh String with the character at index replaced. Out-of-bounds
-   * indices leave copy unchanged. */
-  [[nodiscard]] constexpr auto put(std::size_t index,
-                                   char c) const noexcept -> String {
-    String result = *this;
-    if (index < logical_size_) {
-      result.data_[index] = c;
+    /** Construct from character array literal. Capacity must accommodate N-1
+     * chars plus null terminator. */
+    template <std::size_t N>
+    constexpr String(const char (&arr)[N]) noexcept : data_{}, logical_size_{0} {
+        static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
+        logical_size_ = N - 1U;
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            data_[i] = arr[i];
+        }
+        data_[logical_size_] = '\0';
     }
-    return result;
-  }
 
-  /** Appends a character to the end of a copy of the string if room is
-   * available. */
-  [[nodiscard]] constexpr auto append(char c) const noexcept -> String {
-    String result = *this;
-    if (result.logical_size_ < CapacityValue) {
-      result.data_[result.logical_size_] = c;
-      ++result.logical_size_;
-      result.data_[result.logical_size_] = '\0';
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
     }
-    return result;
-  }
 
-private:
-  // Internal array is CapacityValue+1 to hold null terminator
-  std::array<char, CapacityValue + 1> data_{};
-  std::size_t logical_size_{0};
+    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    /** Returns true when index falls within logical bounds (not counting null
+     * terminator). */
+    [[nodiscard]] constexpr auto valid(std::size_t index) const noexcept -> bool {
+        return index < logical_size_;
+    }
+
+    /** Index access: returns '\\0' for out-of-bounds indices. */
+    [[nodiscard]] constexpr auto operator[](std::size_t index) const noexcept -> char {
+        return (index < logical_size_) ? data_[index] : '\0';
+    }
+
+    /** Callable index access returning default-constructed char ('\\0') on
+     * invalid index. */
+    [[nodiscard]] constexpr auto operator()(std::size_t index) const noexcept -> char {
+        return (index < logical_size_) ? data_[index] : '\0';
+    }
+
+    /** Callable index access with custom fallback value on invalid index. */
+    [[nodiscard]] constexpr auto operator()(std::size_t index, char fallback) const noexcept -> char {
+        return (index < logical_size_) ? data_[index] : fallback;
+    }
+
+    /** Returns a fresh String with the character at index replaced. Out-of-bounds
+     * indices leave copy unchanged. */
+    [[nodiscard]] constexpr auto put(std::size_t index, char c) const noexcept -> String {
+        String result = *this;
+        if (index < logical_size_) {
+            result.data_[index] = c;
+        }
+        return result;
+    }
+
+    /** Appends a character to the end of a copy of the string if room is
+     * available. */
+    [[nodiscard]] constexpr auto append(char c) const noexcept -> String {
+        String result = *this;
+        if (result.logical_size_ < CapacityValue) {
+            result.data_[result.logical_size_] = c;
+            ++result.logical_size_;
+            result.data_[result.logical_size_] = '\0';
+        }
+        return result;
+    }
+
+  private:
+    // Internal array is CapacityValue+1 to hold null terminator
+    std::array<char, CapacityValue + 1> data_{};
+    std::size_t logical_size_{0};
 };
 
 } // namespace cljonic
@@ -1827,103 +1757,89 @@ namespace cljonic {
  */
 template <concepts::VectorElement element_type, std::size_t capacity_value>
 class Vector {
-public:
-  using value_type = element_type;
+  public:
+    using value_type = element_type;
 
-  static_assert(concepts::NothrowVectorElement<element_type>,
-                "Vector element storage operations must not throw");
+    static_assert(concepts::NothrowVectorElement<element_type>, "Vector element storage operations must not throw");
 
-  static_assert(capacity_value <=
-                    cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                "Vector capacity exceeds "
-                "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(
-                    CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
-
-  template <typename... Args>
-  constexpr Vector(Args... args) noexcept(
-      concepts::NothrowVectorElement<element_type> &&
-      (concepts::NothrowElementConstruction<element_type, Args> && ...))
-      : storage_{}, logical_size_{0} {
-    static_assert(sizeof...(Args) <= capacity_value,
-                  "Vector constructor requires initializer count to be less "
-                  "than or equal to capacity");
     static_assert(
-        (concepts::NothrowElementConstruction<element_type, Args> && ...),
-        "Vector constructor requires all arguments to construct "
-        "element_type without throwing and be implicitly "
-        "convertible to element_type");
+        capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Vector capacity exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    initialize_storage_if_valid(args...);
-  }
+    template <typename... Args>
+    constexpr Vector(Args... args) noexcept(concepts::NothrowVectorElement<element_type> &&
+                                            (concepts::NothrowElementConstruction<element_type, Args> && ...))
+        : storage_{}, logical_size_{0} {
+        static_assert(sizeof...(Args) <= capacity_value, "Vector constructor requires initializer count to be less "
+                                                         "than or equal to capacity");
+        static_assert((concepts::NothrowElementConstruction<element_type, Args> && ...),
+                      "Vector constructor requires all arguments to construct "
+                      "element_type without throwing and be implicitly "
+                      "convertible to element_type");
 
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return capacity_value;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  operator()(index_type index) const noexcept -> value_type {
-    return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)]
-                                 : value_type{};
-  }
-
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  operator()(index_type index,
-             const value_type &fallback) const noexcept -> value_type {
-    return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)]
-                                 : fallback;
-  }
-
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  valid_index(index_type index) const noexcept -> bool {
-    return index_is_valid(index);
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return logical_size_ == 0U;
-  }
-
-private:
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  index_is_valid(index_type index) const noexcept -> bool {
-    if constexpr (std::signed_integral<index_type>) {
-      if (index < 0) {
-        return false;
-      }
+        initialize_storage_if_valid(args...);
     }
 
-    return static_cast<std::size_t>(index) < logical_size_;
-  }
-
-  template <typename... Args>
-  static constexpr bool constructor_arguments_valid =
-      sizeof...(Args) <= capacity_value &&
-      concepts::NothrowVectorElement<element_type> &&
-      (concepts::NothrowElementConstruction<element_type, Args> && ...);
-
-  template <typename... Args>
-  constexpr void initialize_storage_if_valid(Args... args) noexcept {
-    if constexpr (constructor_arguments_valid<Args...>) {
-      initialize_storage(std::index_sequence_for<Args...>{}, args...);
-      logical_size_ = sizeof...(Args);
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return capacity_value;
     }
-  }
 
-  template <std::size_t... Indices, typename... Args>
-  constexpr void initialize_storage(std::index_sequence<Indices...>,
-                                    Args... args) noexcept {
-    ((storage_[Indices] = element_type{args}), ...);
-  }
+    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+        return logical_size_;
+    }
 
-  std::array<value_type, capacity_value> storage_{};
-  std::size_t logical_size_ = 0;
+    template <std::integral index_type>
+    [[nodiscard]] constexpr auto operator()(index_type index) const noexcept -> value_type {
+        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : value_type{};
+    }
+
+    template <std::integral index_type>
+    [[nodiscard]] constexpr auto operator()(index_type index, const value_type& fallback) const noexcept -> value_type {
+        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : fallback;
+    }
+
+    template <std::integral index_type>
+    [[nodiscard]] constexpr auto valid_index(index_type index) const noexcept -> bool {
+        return index_is_valid(index);
+    }
+
+    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+  private:
+    template <std::integral index_type>
+    [[nodiscard]] constexpr auto index_is_valid(index_type index) const noexcept -> bool {
+        if constexpr (std::signed_integral<index_type>) {
+            if (index < 0) {
+                return false;
+            }
+        }
+
+        return static_cast<std::size_t>(index) < logical_size_;
+    }
+
+    template <typename... Args>
+    static constexpr bool constructor_arguments_valid =
+        sizeof...(Args) <= capacity_value && concepts::NothrowVectorElement<element_type> &&
+        (concepts::NothrowElementConstruction<element_type, Args> && ...);
+
+    template <typename... Args>
+    constexpr void initialize_storage_if_valid(Args... args) noexcept {
+        if constexpr (constructor_arguments_valid<Args...>) {
+            initialize_storage(std::index_sequence_for<Args...>{}, args...);
+            logical_size_ = sizeof...(Args);
+        }
+    }
+
+    template <std::size_t... Indices, typename... Args>
+    constexpr void initialize_storage(std::index_sequence<Indices...>, Args... args) noexcept {
+        ((storage_[Indices] = element_type{args}), ...);
+    }
+
+    std::array<value_type, capacity_value> storage_{};
+    std::size_t logical_size_ = 0;
 };
 
 template <typename First, typename... Rest>

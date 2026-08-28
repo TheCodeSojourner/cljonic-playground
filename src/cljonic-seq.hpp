@@ -32,8 +32,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto seq(const C &collection) noexcept -> C {
-  return collection;
+[[nodiscard]] constexpr auto seq(const C& collection) noexcept -> C {
+    return collection;
 }
 
 } // namespace cljonic

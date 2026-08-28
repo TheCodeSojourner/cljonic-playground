@@ -32,9 +32,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto
-next(const C &collection) noexcept -> decltype(collection.pop()) {
-  return collection.pop();
+[[nodiscard]] constexpr auto next(const C& collection) noexcept -> decltype(collection.pop()) {
+    return collection.pop();
 }
 
 } // namespace cljonic

@@ -30,8 +30,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto pop(const C &collection) noexcept {
-  return collection.pop();
+[[nodiscard]] constexpr auto pop(const C& collection) noexcept {
+    return collection.pop();
 }
 
 } // namespace cljonic

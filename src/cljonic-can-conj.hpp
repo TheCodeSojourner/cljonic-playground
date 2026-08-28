@@ -33,9 +33,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename... Args>
-[[nodiscard]] constexpr auto can_conj(const C &collection,
-                                      Args &&...args) noexcept -> bool {
-  return collection.can_conj(std::forward<Args>(args)...);
+[[nodiscard]] constexpr auto can_conj(const C& collection, Args&&... args) noexcept -> bool {
+    return collection.can_conj(std::forward<Args>(args)...);
 }
 
 } // namespace cljonic

@@ -85,103 +85,89 @@ namespace cljonic {
  */
 template <concepts::VectorElement element_type, std::size_t capacity_value>
 class Vector {
-public:
-  using value_type = element_type;
+  public:
+    using value_type = element_type;
 
-  static_assert(concepts::NothrowVectorElement<element_type>,
-                "Vector element storage operations must not throw");
+    static_assert(concepts::NothrowVectorElement<element_type>, "Vector element storage operations must not throw");
 
-  static_assert(capacity_value <=
-                    cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                "Vector capacity exceeds "
-                "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(
-                    CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
-
-  template <typename... Args>
-  constexpr Vector(Args... args) noexcept(
-      concepts::NothrowVectorElement<element_type> &&
-      (concepts::NothrowElementConstruction<element_type, Args> && ...))
-      : storage_{}, logical_size_{0} {
-    static_assert(sizeof...(Args) <= capacity_value,
-                  "Vector constructor requires initializer count to be less "
-                  "than or equal to capacity");
     static_assert(
-        (concepts::NothrowElementConstruction<element_type, Args> && ...),
-        "Vector constructor requires all arguments to construct "
-        "element_type without throwing and be implicitly "
-        "convertible to element_type");
+        capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Vector capacity exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    initialize_storage_if_valid(args...);
-  }
+    template <typename... Args>
+    constexpr Vector(Args... args) noexcept(concepts::NothrowVectorElement<element_type> &&
+                                            (concepts::NothrowElementConstruction<element_type, Args> && ...))
+        : storage_{}, logical_size_{0} {
+        static_assert(sizeof...(Args) <= capacity_value, "Vector constructor requires initializer count to be less "
+                                                         "than or equal to capacity");
+        static_assert((concepts::NothrowElementConstruction<element_type, Args> && ...),
+                      "Vector constructor requires all arguments to construct "
+                      "element_type without throwing and be implicitly "
+                      "convertible to element_type");
 
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return capacity_value;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  operator()(index_type index) const noexcept -> value_type {
-    return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)]
-                                 : value_type{};
-  }
-
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  operator()(index_type index,
-             const value_type &fallback) const noexcept -> value_type {
-    return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)]
-                                 : fallback;
-  }
-
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  valid_index(index_type index) const noexcept -> bool {
-    return index_is_valid(index);
-  }
-
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return logical_size_ == 0U;
-  }
-
-private:
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  index_is_valid(index_type index) const noexcept -> bool {
-    if constexpr (std::signed_integral<index_type>) {
-      if (index < 0) {
-        return false;
-      }
+        initialize_storage_if_valid(args...);
     }
 
-    return static_cast<std::size_t>(index) < logical_size_;
-  }
-
-  template <typename... Args>
-  static constexpr bool constructor_arguments_valid =
-      sizeof...(Args) <= capacity_value &&
-      concepts::NothrowVectorElement<element_type> &&
-      (concepts::NothrowElementConstruction<element_type, Args> && ...);
-
-  template <typename... Args>
-  constexpr void initialize_storage_if_valid(Args... args) noexcept {
-    if constexpr (constructor_arguments_valid<Args...>) {
-      initialize_storage(std::index_sequence_for<Args...>{}, args...);
-      logical_size_ = sizeof...(Args);
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return capacity_value;
     }
-  }
 
-  template <std::size_t... Indices, typename... Args>
-  constexpr void initialize_storage(std::index_sequence<Indices...>,
-                                    Args... args) noexcept {
-    ((storage_[Indices] = element_type{args}), ...);
-  }
+    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+        return logical_size_;
+    }
 
-  std::array<value_type, capacity_value> storage_{};
-  std::size_t logical_size_ = 0;
+    template <std::integral index_type>
+    [[nodiscard]] constexpr auto operator()(index_type index) const noexcept -> value_type {
+        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : value_type{};
+    }
+
+    template <std::integral index_type>
+    [[nodiscard]] constexpr auto operator()(index_type index, const value_type& fallback) const noexcept -> value_type {
+        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : fallback;
+    }
+
+    template <std::integral index_type>
+    [[nodiscard]] constexpr auto valid_index(index_type index) const noexcept -> bool {
+        return index_is_valid(index);
+    }
+
+    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+  private:
+    template <std::integral index_type>
+    [[nodiscard]] constexpr auto index_is_valid(index_type index) const noexcept -> bool {
+        if constexpr (std::signed_integral<index_type>) {
+            if (index < 0) {
+                return false;
+            }
+        }
+
+        return static_cast<std::size_t>(index) < logical_size_;
+    }
+
+    template <typename... Args>
+    static constexpr bool constructor_arguments_valid =
+        sizeof...(Args) <= capacity_value && concepts::NothrowVectorElement<element_type> &&
+        (concepts::NothrowElementConstruction<element_type, Args> && ...);
+
+    template <typename... Args>
+    constexpr void initialize_storage_if_valid(Args... args) noexcept {
+        if constexpr (constructor_arguments_valid<Args...>) {
+            initialize_storage(std::index_sequence_for<Args...>{}, args...);
+            logical_size_ = sizeof...(Args);
+        }
+    }
+
+    template <std::size_t... Indices, typename... Args>
+    constexpr void initialize_storage(std::index_sequence<Indices...>, Args... args) noexcept {
+        ((storage_[Indices] = element_type{args}), ...);
+    }
+
+    std::array<value_type, capacity_value> storage_{};
+    std::size_t logical_size_ = 0;
 };
 
 template <typename First, typename... Rest>

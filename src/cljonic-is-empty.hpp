@@ -30,8 +30,8 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto is_empty(const C &collection) noexcept -> bool {
-  return collection.empty();
+[[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
+    return collection.empty();
 }
 
 } // namespace cljonic
