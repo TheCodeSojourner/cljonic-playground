@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-08-27
+last_updated: 2026-08-28
 status: draft
 ---
 
@@ -396,7 +396,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
 - **Related:** CopyOnModifyCollection, String, CapacityConstruction, IndexedAccess, ValidIndex
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `size()`, `capacity()`, `operator()`, and `valid_index` provide direct member and free-function observation.
+- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `count()`, `capacity()`, `operator()`, and `valid_index` provide direct member and free-function observation.
 
 
 ### Map
@@ -942,6 +942,22 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition
 - **Usage:** Architecture, implementation, and tests
 - **Examples:** A collection trait classifies an admitted type as vector, map, set, queue, or string.
+
+
+### CollectionConcept
+- **Definition:** A C++20 concept that gates a type on its cljonic nominal collection identity (admission to the ClosedNominalCollectionDomain), rather than on structural similarity to an external container.
+- **Deprecated Synonyms:** nominal concept, public nominal concept
+- **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition, CollectionKind, CapabilityConcept
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `cljonic_collection<T>` is a CollectionConcept that depends on cljonic-owned trait admission.
+
+
+### CapabilityConcept
+- **Definition:** A C++20 concept that expresses a semantic capability a cljonic collection must expose (sequenceable, indexed, or associative observation) in order to participate in an operation, layered on top of nominal collection identity.
+- **Deprecated Synonyms:** capability concept, semantic capability gate
+- **Related:** CollectionConcept, Sequenceable, IndexedAccess, AssociativeAccess, CapabilityPredicate
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `sequenceable_cljonic_collection<C>` is a CapabilityConcept requiring non-throwing `is_empty` and `count` observation.
 
 
 
