@@ -278,11 +278,16 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   constexpr auto m = assoc(Map<int, int, 4>{}, 1, 100);
- *   static_assert(m.contains(1));
- *   static_assert(m(1) == 100);
+ *   // Compile-time demonstration.
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   static_assert(m_const.contains(1));
+ *   static_assert(m_const(1) == 100);
  *
- *   return 0;
+ *   // Runtime demonstration.
+ *   auto m_runtime = Map<int, int, 4>{};
+ *   auto m1 = assoc(m_runtime, 2, 200);
+ *
+ *   return (m1.contains(2) && m1(2) == 200) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -314,10 +319,15 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   constexpr Map<int, int, 4> m{};
- *   static_assert(can_assoc(m, 1, 100));
+ *   // Compile-time demonstration.
+ *   constexpr Map<int, int, 4> m_const{};
+ *   static_assert(can_assoc(m_const, 1, 100));
  *
- *   return 0;
+ *   // Runtime demonstration.
+ *   auto m_runtime = Map<int, int, 4>{};
+ *   const auto ok = can_assoc(m_runtime, 2, 200);
+ *
+ *   return ok ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -349,13 +359,19 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   constexpr Queue<int, 4> q{};
- *   static_assert(can_conj(q));
+ *   // Compile-time demonstration.
+ *   constexpr Queue<int, 4> q_const{};
+ *   static_assert(can_conj(q_const));
+ *   constexpr Set<int, 4> s_const{};
+ *   static_assert(can_conj(s_const, 1));
  *
- *   constexpr Set<int, 4> s{};
- *   static_assert(can_conj(s, 1));
+ *   // Runtime demonstration.
+ *   auto q_runtime = Queue<int, 4>{};
+ *   auto s_runtime = Set<int, 4>{};
+ *   const auto q_ok = can_conj(q_runtime);
+ *   const auto s_ok = can_conj(s_runtime, 10);
  *
- *   return 0;
+ *   return (q_ok && s_ok) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -387,13 +403,19 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   constexpr auto q = conj(Queue<int, 4>{}, 10);
- *   constexpr auto s = conj(Set<int, 4>{}, 20);
+ *   // Compile-time demonstration.
+ *   constexpr auto q_const = conj(Queue<int, 4>{}, 10);
+ *   constexpr auto s_const = conj(Set<int, 4>{}, 20);
+ *   static_assert(peek(q_const) == 10);
+ *   static_assert(s_const.contains(20));
  *
- *   static_assert(peek(q) == 10);
- *   static_assert(s.contains(20));
+ *   // Runtime demonstration.
+ *   auto q_runtime = Queue<int, 4>{};
+ *   auto q1 = conj(q_runtime, 100);
+ *   auto s_runtime = Set<int, 4>{};
+ *   auto s1 = conj(s_runtime, 200);
  *
- *   return 0;
+ *   return (peek(q1) == 100 && s1.contains(200)) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -428,6 +450,49 @@ constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
 
 } // namespace cljonic
 // End cljonic-core-collection-maximum-element-count.hpp
+// Begin cljonic-count.hpp
+#ifndef CLJONIC_COUNT_HPP
+#define CLJONIC_COUNT_HPP
+
+#include <cstddef>
+
+namespace cljonic {
+
+/** \anchor Count
+ * \brief Returns the logical size (number of active elements) of a collection.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto q_const = conj(Queue<int, 4>{}, 9);
+ *   static_assert(count(v_const) == 3U);
+ *   static_assert(count(m_const) == 1U);
+ *   static_assert(count(q_const) == 1U);
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10, 20};
+ *   const auto sz = count(v_runtime);
+ *
+ *   return (sz == 2U) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto
+count(const C &collection) noexcept -> std::size_t {
+  return collection.size();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_COUNT_HPP// End cljonic-count.hpp
 // Begin cljonic-disj.hpp
 #ifndef CLJONIC_DISJ_HPP
 #define CLJONIC_DISJ_HPP
@@ -446,11 +511,16 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   constexpr auto s0 = conj(Set<int, 4>{}, 42);
- *   constexpr auto s1 = disj(s0, 42);
- *   static_assert(!s1.contains(42));
+ *   // Compile-time demonstration.
+ *   constexpr auto s0_const = conj(Set<int, 4>{}, 42);
+ *   constexpr auto s1_const = disj(s0_const, 42);
+ *   static_assert(!s1_const.contains(42));
  *
- *   return 0;
+ *   // Runtime demonstration.
+ *   auto s0_runtime = conj(Set<int, 4>{}, 99);
+ *   auto s1_runtime = disj(s0_runtime, 99);
+ *
+ *   return (!s1_runtime.contains(99) && s1_runtime.empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -482,11 +552,16 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   constexpr auto m0 = assoc(Map<int, int, 4>{}, 1, 100);
- *   constexpr auto m1 = dissoc(m0, 1);
- *   static_assert(!m1.contains(1));
+ *   // Compile-time demonstration.
+ *   constexpr auto m0_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto m1_const = dissoc(m0_const, 1);
+ *   static_assert(!m1_const.contains(1));
  *
- *   return 0;
+ *   // Runtime demonstration.
+ *   auto m0_runtime = assoc(Map<int, int, 4>{}, 2, 200);
+ *   auto m1_runtime = dissoc(m0_runtime, 2);
+ *
+ *   return (!m1_runtime.contains(2) && m1_runtime.empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -500,6 +575,52 @@ template <typename C, typename K>
 
 #endif // CLJONIC_DISSOC_HPP
 // End cljonic-dissoc.hpp
+// Begin cljonic-empty.hpp
+#ifndef CLJONIC_EMPTY_HPP
+#define CLJONIC_EMPTY_HPP
+
+
+namespace cljonic {
+
+/** \anchor Empty
+ * \brief Returns an empty owning value of the same collection type as the
+ * input.
+ *
+ * Per REQ-FN-026, `empty` produces an empty owning value of the same supported
+ * collection type as its input.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
+ *   [[maybe_unused]] constexpr auto e_const = empty(v_const);
+ *   static_assert(is_empty(e_const));
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10, 20};
+ *   auto e_runtime = empty(v_runtime);
+ *
+ *   return (is_empty(e_runtime) && count(v_runtime) == 2U) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto empty(const C &) noexcept -> C {
+  return C{};
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_EMPTY_HPP// End cljonic-empty.hpp
+// Begin cljonic-first.hpp
+#ifndef CLJONIC_FIRST_HPP
+#define CLJONIC_FIRST_HPP
+
 // Begin cljonic-map.hpp
 #pragma once
 
@@ -519,6 +640,31 @@ namespace cljonic {
 /** \anchor MapEntry
  * \b MapEntry is a value-semantic pair representing a single key-value
  * association.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr MapEntry<int, int> e_const{1, 100};
+ *   static_assert(e_const.key == 1);
+ *   static_assert(e_const.value == 100);
+ *   static_assert(e_const.valid_index(0));
+ *   static_assert(e_const.valid_index(1));
+ *   static_assert(!e_const.valid_index(2));
+ *
+ *   // Runtime demonstration.
+ *   auto e_runtime = MapEntry<int, int>{2, 200};
+ *   const auto k = e_runtime.key;
+ *   const auto v = e_runtime.value;
+ *   const auto ok = e_runtime.valid_index(0);
+ *
+ *   return (k == 2 && v == 200 && ok) ? 0 : 1;
+ * }
+ * ~~~~~
  */
 template <typename KeyType, typename ValueType> struct MapEntry {
   KeyType key{};
@@ -549,6 +695,30 @@ namespace cljonic {
 /** \anchor Map
  * \b Map is a fixed-capacity associative collection backed by contiguous array
  * storage and linear scan lookup with copy-on-modify updates.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto m_const = Map<int, int, 4>{}.assoc(1, 10).assoc(2, 20);
+ *   static_assert(m_const.size() == 2U);
+ *   static_assert(m_const.contains(1));
+ *   static_assert(m_const(1) == 10);
+ *   static_assert(m_const(99, -1) == -1);
+ *   static_assert(m_const.can_assoc(3));
+ *
+ *   // Runtime demonstration.
+ *   auto m_runtime = Map<int, int, 4>{};
+ *   auto m1 = m_runtime.assoc(10, 100);
+ *   auto m2 = m1.dissoc(10);
+ *
+ *   return (m1.contains(10) && !m2.contains(10) && m2.empty()) ? 0 : 1;
+ * }
+ * ~~~~~
  */
 template <concepts::VectorElement KeyType, concepts::VectorElement ValueType,
           std::size_t CapacityValue>
@@ -652,6 +822,236 @@ private:
 
 } // namespace cljonic
 // End cljonic-map.hpp
+
+namespace cljonic {
+
+/** \anchor First
+ * \brief Returns the first element of a sequenceable collection, or the key of
+ *        a MapEntry.
+ *
+ * For a MapEntry value, `first` returns its key. For a sequenceable collection,
+ * `first` returns the element at index zero.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+ *   constexpr MapEntry<int, int> e_const{1, 100};
+ *   static_assert(first(v_const) == 10);
+ *   static_assert(first(e_const) == 1);
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{100, 200};
+ *   const auto fst = first(v_runtime);
+ *
+ *   return (fst == 100) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename KeyType, typename ValueType>
+[[nodiscard]] constexpr auto
+first(const MapEntry<KeyType, ValueType> &entry) noexcept -> const KeyType & {
+  return entry.key;
+}
+
+/** Returns the element at index zero of the sequenceable collection. */
+template <typename C>
+[[nodiscard]] constexpr auto
+first(const C &collection) noexcept -> decltype(collection(0U)) {
+  return collection(0U);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_FIRST_HPP// End cljonic-first.hpp
+// Begin cljonic-get.hpp
+#ifndef CLJONIC_GET_HPP
+#define CLJONIC_GET_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Get
+ * \brief Looks up an element by a key or index, returning the default or
+ *        supplied fallback when absent.
+ *
+ * Dispatches to the collection's callable lookup forms, consistent with the
+ * `operator()` behavior of Map, Vector, and Set.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{10, 20};
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+ *   static_assert(get(v_const, 0U) == 10);
+ *   static_assert(get(v_const, 9U, -1) == -1);
+ *   static_assert(get(m_const, 1) == 100);
+ *   static_assert(get(m_const, 2, -1) == -1);
+ *   static_assert(get(s_const, 5) == 5);
+ *   static_assert(get(s_const, 8, -1) == -1);
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10, 20};
+ *   const auto val = get(v_runtime, 0U);
+ *
+ *   return (val == 10) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K>
+[[nodiscard]] constexpr auto
+get(const C &collection, const K &key) noexcept -> decltype(collection(key)) {
+  return collection(key);
+}
+
+/** Returns the stored value when present, otherwise the supplied fallback. */
+template <typename C, typename K, typename V>
+[[nodiscard]] constexpr auto
+get(const C &collection, const K &key,
+    const V &fallback) noexcept -> decltype(collection(key, fallback)) {
+  return collection(key, fallback);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_GET_HPP// End cljonic-get.hpp
+// Begin cljonic-is-empty.hpp
+#ifndef CLJONIC_IS_EMPTY_HPP
+#define CLJONIC_IS_EMPTY_HPP
+
+
+namespace cljonic {
+
+/** \anchor IsEmpty
+ * \brief Returns true when the collection has no active elements.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto e_const = Vector<int, 4>{};
+ *   constexpr auto v_const = Vector<int, 4>{1};
+ *   static_assert(is_empty(e_const));
+ *   static_assert(!is_empty(v_const));
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10};
+ *   const auto empty_res = is_empty(v_runtime);
+ *
+ *   return (!empty_res) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto is_empty(const C &collection) noexcept -> bool {
+  return collection.empty();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_IS_EMPTY_HPP// End cljonic-is-empty.hpp
+// Begin cljonic-next.hpp
+#ifndef CLJONIC_NEXT_HPP
+#define CLJONIC_NEXT_HPP
+
+
+namespace cljonic {
+
+/** \anchor Next
+ * \brief Returns a collection without its first element.
+ *
+ * For a Queue, `next` dequeues the front element (the accessible element) and
+ * returns the remaining collection.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto q0_const = conj(conj(conj(Queue<int, 4>{}, 1), 2), 3);
+ *   constexpr auto q1_const = next(q0_const);
+ *   static_assert(peek(q1_const) == 2);
+ *
+ *   // Runtime demonstration.
+ *   auto q0_runtime = conj(conj(Queue<int, 4>{}, 10), 20);
+ *   auto q1_runtime = next(q0_runtime);
+ *
+ *   return (peek(q1_runtime) == 20) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto
+next(const C &collection) noexcept -> decltype(collection.pop()) {
+  return collection.pop();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_NEXT_HPP// End cljonic-next.hpp
+// Begin cljonic-not-empty.hpp
+#ifndef CLJONIC_NOT_EMPTY_HPP
+#define CLJONIC_NOT_EMPTY_HPP
+
+
+namespace cljonic {
+
+/** \anchor NotEmpty
+ * \brief Returns an owning copy of the input when nonempty, otherwise the
+ * corresponding empty owning value.
+ *
+ * Per REQ-FN-026, `not_empty` preserves the input collection type and capacity
+ * and returns an owning copy of the input when nonempty or the corresponding
+ * empty value when empty.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{1};
+ *   constexpr auto e_const = Vector<int, 4>{};
+ *   static_assert(count(not_empty(v_const)) == 1U);
+ *   static_assert(count(not_empty(e_const)) == 0U);
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10};
+ *   auto nv_runtime = not_empty(v_runtime);
+ *
+ *   return (count(nv_runtime) == 1U) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto not_empty(const C &collection) noexcept -> C {
+  return collection.empty() ? C{} : C{collection};
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_NOT_EMPTY_HPP// End cljonic-not-empty.hpp
 // Begin cljonic-peek.hpp
 #ifndef CLJONIC_PEEK_HPP
 #define CLJONIC_PEEK_HPP
@@ -670,10 +1070,15 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   constexpr auto q = conj(Queue<int, 4>{}, 99);
- *   static_assert(peek(q) == 99);
+ *   // Compile-time demonstration.
+ *   constexpr auto q_const = conj(Queue<int, 4>{}, 99);
+ *   static_assert(peek(q_const) == 99);
  *
- *   return 0;
+ *   // Runtime demonstration.
+ *   auto q_runtime = conj(Queue<int, 4>{}, 77);
+ *   const auto v = peek(q_runtime);
+ *
+ *   return (v == 77) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -704,11 +1109,16 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   constexpr auto q0 = conj(conj(Queue<int, 4>{}, 1), 2);
- *   constexpr auto q1 = pop(q0);
- *   static_assert(peek(q1) == 2);
+ *   // Compile-time demonstration.
+ *   constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
+ *   constexpr auto q1_const = pop(q0_const);
+ *   static_assert(peek(q1_const) == 2);
  *
- *   return 0;
+ *   // Runtime demonstration.
+ *   auto q0_runtime = conj(conj(Queue<int, 4>{}, 10), 20);
+ *   auto q1_runtime = pop(q0_runtime);
+ *
+ *   return (peek(q1_runtime) == 20) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -735,6 +1145,28 @@ namespace cljonic {
 /** \anchor Queue
  * \b Queue is a fixed-capacity FIFO sequence collection backed by contiguous
  * array storage with copy-on-modify semantics.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto q_const = Queue<int, 4>{}.conj(10).conj(20);
+ *   static_assert(q_const.size() == 2U);
+ *   static_assert(q_const.peek() == 10);
+ *   static_assert(q_const.can_conj());
+ *
+ *   // Runtime demonstration.
+ *   auto q_runtime = Queue<int, 4>{};
+ *   auto q1 = q_runtime.conj(100);
+ *   auto q2 = q1.pop();
+ *
+ *   return (q1.peek() == 100 && q2.empty()) ? 0 : 1;
+ * }
+ * ~~~~~
  */
 template <concepts::VectorElement T, std::size_t CapacityValue> class Queue {
 public:
@@ -802,6 +1234,89 @@ private:
 
 } // namespace cljonic
 // End cljonic-queue.hpp
+// Begin cljonic-rest.hpp
+#ifndef CLJONIC_REST_HPP
+#define CLJONIC_REST_HPP
+
+
+namespace cljonic {
+
+/** \anchor Rest
+ * \brief Returns a collection without its first/accessible element.
+ *
+ * For a Queue, this removes the front element. Unlike `next`, `rest` returns an
+ * empty collection rather than signaling absence on an empty input.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
+ *   constexpr auto q1_const = rest(q0_const);
+ *   static_assert(peek(q1_const) == 2);
+ *
+ *   // Runtime demonstration.
+ *   auto q0_runtime = conj(conj(Queue<int, 4>{}, 100), 200);
+ *   auto q1_runtime = rest(q0_runtime);
+ *
+ *   return (peek(q1_runtime) == 200) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto
+rest(const C &collection) noexcept -> decltype(collection.pop()) {
+  return collection.pop();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_REST_HPP// End cljonic-rest.hpp
+// Begin cljonic-seq.hpp
+#ifndef CLJONIC_SEQ_HPP
+#define CLJONIC_SEQ_HPP
+
+
+namespace cljonic {
+
+/** \anchor Seq
+ * \brief Converts a collection into an owning, value-semantic sequence.
+ *
+ * For a Vector this returns the owning vector itself; for other sequenceable
+ * collections it produces an owning Vector of their traversal elements.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
+ *   constexpr auto s_const = seq(v_const);
+ *   static_assert(count(s_const) == 3U);
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10, 20};
+ *   auto s_runtime = seq(v_runtime);
+ *
+ *   return (count(s_runtime) == 2U) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto seq(const C &collection) noexcept -> C {
+  return collection;
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_SEQ_HPP// End cljonic-seq.hpp
 // Begin cljonic-set.hpp
 #ifndef CLJONIC_SET_HPP
 #define CLJONIC_SET_HPP
@@ -818,6 +1333,30 @@ namespace cljonic {
  * \b Set is a fixed-capacity associative sequence collection backed by
  * contiguous array storage with linear-scan lookup and copy-on-modify
  * semantics.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto s_const = Set<int, 4>{}.conj(1).conj(2);
+ *   static_assert(s_const.count() == 2U);
+ *   static_assert(s_const.contains(1));
+ *   static_assert(s_const(1) == 1);
+ *   static_assert(s_const(99, -1) == -1);
+ *   static_assert(s_const.can_conj(3));
+ *
+ *   // Runtime demonstration.
+ *   auto s_runtime = Set<int, 4>{};
+ *   auto s1 = s_runtime.conj(10);
+ *   auto s2 = s1.disj(10);
+ *
+ *   return (s1.contains(10) && !s2.contains(10) && s2.empty()) ? 0 : 1;
+ * }
+ * ~~~~~
  */
 template <concepts::VectorElement T, std::size_t CapacityValue> class Set {
 public:
@@ -934,6 +1473,30 @@ namespace cljonic {
 /** \anchor String
  * \b String is a fixed-capacity ASCII string backed by contiguous array storage
  * with automatic null termination and copy-on-modify semantics.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr String<8> s_const{"Hello"};
+ *   static_assert(s_const.size() == 5U);
+ *   static_assert(s_const[0] == 'H');
+ *   static_assert(s_const(0) == 'H');
+ *   static_assert(s_const(99, 'Z') == 'Z');
+ *   static_assert(s_const.valid(0));
+ *
+ *   // Runtime demonstration.
+ *   auto s_runtime = String<8>{"Hi"};
+ *   auto s1 = s_runtime.append('!');
+ *   auto s2 = s1.put(0, 'h');
+ *
+ *   return (s1.size() == 3U && s2[0] == 'h') ? 0 : 1;
+ * }
+ * ~~~~~
  */
 template <std::size_t CapacityValue> class String {
 public:
