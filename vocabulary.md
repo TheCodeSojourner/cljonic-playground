@@ -947,18 +947,105 @@ govern stored collection building blocks used across all higher-order algorithms
 ### CollectionConcept
 - **Definition:** A C++20 concept that gates a type on its cljonic nominal collection identity (admission to the ClosedNominalCollectionDomain), rather than on structural similarity to an external container.
 - **Deprecated Synonyms:** nominal concept, public nominal concept
-- **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition, CollectionKind, CapabilityConcept
+- **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition, CollectionKind, CapabilityConcept, CljonicCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `cljonic_collection<T>` is a CollectionConcept that depends on cljonic-owned trait admission.
+- **Examples:** `CljonicCollection<T>` is a CollectionConcept that depends on cljonic-owned trait admission.
+
+
+### CljonicCollection
+- **Definition:** The C++ concept identifier implementing the CollectionConcept for the full closed collection domain; it admits a type to the ClosedNominalCollectionDomain through cljonic-owned traits.
+- **Deprecated Synonyms:** cljonic_collection, cljonic collection concept
+- **Related:** CollectionConcept, ClosedNominalCollectionDomain, CollectionKind, CljonicVector, CljonicMap, CljonicSet, CljonicQueue, CljonicString
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `template<class T> concept CljonicCollection = detail::is_cljonic_collection_v<T>;`
+
+
+### CljonicVector
+- **Definition:** The C++ concept identifier implementing the nominal CollectionConcept for the Vector collection family.
+- **Deprecated Synonyms:** cljonic_vector, cljonic vector concept
+- **Related:** CollectionConcept, CljonicCollection, Vector, CollectionKind
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicVector<Vector<int, 4>>` is satisfied while an external container is not.
+
+
+### CljonicMap
+- **Definition:** The C++ concept identifier implementing the nominal CollectionConcept for the Map collection family.
+- **Deprecated Synonyms:** cljonic_map, cljonic map concept
+- **Related:** CollectionConcept, CljonicCollection, Map, CollectionKind
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicMap<Map<int, int, 4>>` is satisfied while an external container is not.
+
+
+### CljonicSet
+- **Definition:** The C++ concept identifier implementing the nominal CollectionConcept for the Set collection family.
+- **Deprecated Synonyms:** cljonic_set, cljonic set concept
+- **Related:** CollectionConcept, CljonicCollection, Set, CollectionKind
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicSet<Set<int, 4>>` is satisfied while an external container is not.
+
+
+### CljonicQueue
+- **Definition:** The C++ concept identifier implementing the nominal CollectionConcept for the Queue collection family.
+- **Deprecated Synonyms:** cljonic_queue, cljonic queue concept
+- **Related:** CollectionConcept, CljonicCollection, Queue, CollectionKind
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicQueue<Queue<int, 4>>` is satisfied while an external container is not.
+
+
+### CljonicString
+- **Definition:** The C++ concept identifier implementing the nominal CollectionConcept for the String collection family.
+- **Deprecated Synonyms:** cljonic_string, cljonic string concept
+- **Related:** CollectionConcept, CljonicCollection, String, CollectionKind
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicString<String<16>>` is satisfied while an external container is not.
 
 
 ### CapabilityConcept
 - **Definition:** A C++20 concept that expresses a semantic capability a cljonic collection must expose (sequenceable, indexed, or associative observation) in order to participate in an operation, layered on top of nominal collection identity.
 - **Deprecated Synonyms:** capability concept, semantic capability gate
-- **Related:** CollectionConcept, Sequenceable, IndexedAccess, AssociativeAccess, CapabilityPredicate
+- **Related:** CollectionConcept, Sequenceable, IndexedAccess, AssociativeAccess, CapabilityPredicate, SequenceableCollection, IndexedCollection, AssociativeCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `sequenceable_cljonic_collection<C>` is a CapabilityConcept requiring non-throwing `is_empty` and `count` observation.
+- **Examples:** `SequenceableCollection<C>` is a CapabilityConcept requiring non-throwing `is_empty` and `count` observation.
 
+
+### SequenceableCollection
+- **Definition:** The C++ concept identifier implementing the sequenceable CapabilityConcept, requiring non-throwing `is_empty` and `count` observation on an admitted collection.
+- **Deprecated Synonyms:** sequenceable_cljonic_collection, sequenceable collection concept
+- **Related:** CapabilityConcept, Sequenceable, CljonicCollection, IndexedCollection, AssociativeCollection
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `SequenceableCollection<C>` requires `c.is_empty()` and `c.count()`.
+
+
+### IndexedCollection
+- **Definition:** The C++ concept identifier implementing the indexed CapabilityConcept, extending sequenceable observation with callable indexed lookup and the `valid_index` preflight predicate.
+- **Deprecated Synonyms:** indexed_cljonic_collection, indexed collection concept
+- **Related:** CapabilityConcept, IndexedAccess, SequenceableCollection, CljonicCollection
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `IndexedCollection<C>` requires `c(i)` and `c.valid_index(i)`.
+
+
+### AssociativeCollection
+- **Definition:** The C++ concept identifier implementing the associative CapabilityConcept, extending sequenceable observation with key-based callable lookup and membership testing.
+- **Deprecated Synonyms:** associative_cljonic_collection, associative collection concept
+- **Related:** CapabilityConcept, AssociativeAccess, SequenceableCollection, CljonicCollection
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `AssociativeCollection<C>` requires `c(k)` and `c.contains(k)`.
+
+
+### StableEqualityComparable
+- **Definition:** The C++ concept identifier implementing the StableEquality capability: a non-floating-point equality comparison admitting a type for equality-dependent operations.
+- **Deprecated Synonyms:** stable_equality_comparable, stable equality comparable concept
+- **Related:** StableEquality, TotalOrder, TotallyOrdered, AggregateLikeStruct
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `StableEqualityComparable<T>` is satisfied when `a == b` returns `bool` and `T` is not a floating-point type.
+
+
+### TotallyOrdered
+- **Definition:** The C++ concept identifier implementing the TotalOrder capability, layered on StableEqualityComparable and adding a strict ordering relation.
+- **Deprecated Synonyms:** totally_ordered, totally ordered concept
+- **Related:** TotalOrder, StableEqualityComparable, StableEquality, NumericPolicy
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `TotallyOrdered<T>` requires `a < b` in addition to stable equality.
 
 
 ### StaticInspectableStorage
