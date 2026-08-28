@@ -46,6 +46,6 @@ var searchData=
   ['conj_43',['conj',['../classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16',1,'cljonic::Set::conj()'],['../namespacecljonic.html#a86846fd28653328908ea2435439065f6',1,'cljonic::conj()'],['../classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1',1,'cljonic::Queue::conj()']]],
   ['contains_44',['contains',['../classcljonic_1_1_set.html#a5f3bc4d7f35b686760cb7c4c20af9301',1,'cljonic::Set::contains()'],['../classcljonic_1_1_map.html#a5c44757b8c95260c05c64a0377429ac7',1,'cljonic::Map::contains()']]],
   ['control_45',['Control',['../index.html#autotoc_md5',1,'']]],
-  ['core_20functions_46',['Planned Core Functions',['../index.html#autotoc_md3',1,'']]],
+  ['core_20functions_46',['Core Functions',['../index.html#autotoc_md3',1,'']]],
   ['count_47',['count',['../namespacecljonic.html#a33ef3cad32c48f7b361f8c9a9e554e67',1,'cljonic::count()'],['../classcljonic_1_1_set.html#aec6b3e343d7acb73745e218225ad4b66',1,'cljonic::Set::count()']]]
 ];
