@@ -240,7 +240,6 @@
 #include <concepts>
 #include <cstddef>
 #include <type_traits>
-#include <utility>
 
 namespace cljonic {
 
@@ -304,15 +303,11 @@ concept NothrowVectorElement = NothrowCopyableElement<T>;
  *  floating-point types to prevent NaN/precision instabilities in map keys
  *  and set elements. */
 template <typename T>
-concept StableEqualityComparable = requires(const T& a, const T& b) {
-    { a == b } -> std::same_as<bool>;
-} && !std::is_floating_point_v<std::remove_cvref_t<T>>;
+concept StableEqualityComparable = std::equality_comparable<T> && !std::floating_point<std::remove_cvref_t<T>>;
 
 /** Requires a strict total ordering layered on stable equality. */
 template <typename T>
-concept TotallyOrdered = StableEqualityComparable<T> && requires(const T& a, const T& b) {
-    { a < b } -> std::same_as<bool>;
-};
+concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
 
 // ============================================================================
 // Level 1: CollectionConcept (Nominal Collection Admission)
