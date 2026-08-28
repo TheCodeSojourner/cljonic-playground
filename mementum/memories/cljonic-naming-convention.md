@@ -16,3 +16,9 @@ Infrastructure files keep no prefix: `harness_main.cpp`, `poison.hpp`, `probes.h
 
 Core functions (count, conj, etc.) belong in `cljonic-core-{function}.hpp`, not in collection files.
 Makefile `help` entries must be added in alphabetical order.
+
+C++ identifier naming follows the C++ Core Guidelines:
+- Types and concepts: PascalCase (concepts per `NL.17`)
+- Namespaces: lowercase_with_underscores (Clojure-analog `cljonic::core`, `cljonic::set`, `cljonic::string`)
+- Free and member functions: snake_case (Clojure parity: `count`, `is_empty`, `valid_index`)
+- Nominal concepts keep `Cljonic` prefix; capability/value concepts do not require it
