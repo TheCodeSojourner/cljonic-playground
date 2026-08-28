@@ -1,15 +1,16 @@
 ## Session State
 
-- last_session_id: 32e09e8f-b690-471f-a7ca-c2b0f962d45e
+- last_session_id: 2026-08-28-phase-b-concept-layer
 - current_timestamp: 2026-08-28
 - recover: 1
-- session_complete: false
+- session_complete: true
 
 Task:
 1. Lay the declarative foundation (Phase A) for the library's C++20 concept layer: vocabulary alignment, architecture concept layer, and specification.
 2. Canonicalize vocabulary with `CollectionConcept`/`CapabilityConcept` terms and C++ concept identifiers (`Cljonic*`, `SequenceableCollection`, `IndexedCollection`, `AssociativeCollection`, `StableEqualityComparable`, `TotallyOrdered`).
 3. Rewrite `architecture.md` human prose into nucleus lambda notation and document the two-level concept model in a Concept Architecture section.
-4. Proceed to `specs/concepts.allium` + concept tests (Phase A Step 3), then the shared concept layer (Phase B), container conformance (Phase C), free-function constraints (Phase D), and verification (Phase E).
+4. Implement the shared concept layer (Phase B Step 1) in `src/cljonic-concepts.hpp` with nominal + capability + value concepts.
+5. Pending: Phase B Step 2 (concept spec tests + no-heap probe), Phase B Step 3 (spec-to-code traceability snapshot reconciliation), Phase C (containers conform to count/is_empty/operators), Phase D (constrain free functions), Phase E (full-stack verification via make git).
 
 Questions:
 1. None unresolved.
@@ -21,9 +22,12 @@ Decisions:
 4. `StableEqualityComparable` (base, rejects float/double) and `TotallyOrdered` (derived) both required.
 5. `architecture.md` written in nucleus lambda notation, not human prose.
 6. C++ concept identifiers are first-class vocabulary terms (cljonic users are developers).
+7. Specs live in domain-oriented directories (`specs/{capabilities,collections,primitives}/*.allium`); no `.allium` directly under `specs/`.
 
 Next:
-1. Phases A Step 3 through E: specs, shared concepts, container conformance, free-function constraints, full-stack verification.
+1. Phase B Step 2: add concept spec tests to `tests/cljonic-concepts-spec-tests.cpp` (cover 46 obligations from `specs/capabilities/concepts.allium`) + no-heap probe `tests/no_heap/cljonic-concepts-probes.cpp`.
+2. Phase B Step 3: reconcile spec-to-code traceability snapshot (`make traceability-spec-to-code-update-snapshot`).
+3. Phases C, D, E: containers conform, free functions constrained, full-stack verification.
 
 ## Historical Session Records
 
