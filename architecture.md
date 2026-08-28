@@ -222,13 +222,10 @@ concept CljonicVector =
 // Value capabilities (apply to element and key types)
 template<class T>
 concept StableEqualityComparable =
-    requires { { std::declval<const T&>() == std::declval<const T&>() } -> std::same_as<bool>; }
-    && !std::is_floating_point_v<std::remove_cvref_t<T>>;
+    std::equality_comparable<T> && !std::floating_point<std::remove_cvref_t<T>>;
 
 template<class T>
-concept TotallyOrdered =
-    StableEqualityComparable<T> &&
-    requires { { std::declval<const T&>() < std::declval<const T&>() } -> std::same_as<bool>; };
+concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
 
 // Structural capabilities (gated by nominal CollectionConcept identity)
 template<class C>
