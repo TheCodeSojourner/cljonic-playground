@@ -1,9 +1,30 @@
 ## Session State
 
 - last_session_id: 32e09e8f-b690-471f-a7ca-c2b0f962d45e
-- current_timestamp: 2026-08-28T03:30:00Z
+- current_timestamp: 2026-08-28T04:15:00Z
 - recover: 1
 - session_complete: true
+
+Task:
+1. Reconcile and upsert the `\mainpage` cheatsheet in `src/cljonic-core.hpp` against implemented Module 3 collection types and primitive free functions.
+2. Link implemented collection types (`Map`, `MapEntry`, `Queue`, `Set`, `String`, `Vector`) to their Doxygen anchors.
+3. Merge implemented primitive free functions (`assoc`, `can_assoc`, `can_conj`, `conj`, `count`, `disj`, `dissoc`, `empty`, `first`, `get`, `is_empty`, `next`, `not_empty`, `peek`, `pop`, `rest`, `seq`) into the existing `### Seq` section without removing planned functions.
+4. Clarify library namespace boundaries (`cljonic::core` for types + primitives, `cljonic::set` ≙ `clojure.set`, `cljonic::string` ≙ `clojure.string`).
+5. Verify complete build and doc generation via `make git`.
+
+Questions:
+1. None unresolved.
+
+Decisions:
+1. Implemented collection types and primitive free functions link to their canonical Doxygen anchors on the mainpage.
+2. Planned functions and categories are preserved in full; only implemented entries link to live targets.
+3. Concrete collection types `Set` and `String` reside in `cljonic::core`/`cljonic::`; `cljonic::set` and `cljonic::string` are dedicated namespaces for Clojure-analog relational and string utility operations.
+4. All quality gates (`make git`) pass with zero Doxygen warnings and 100% coverage.
+
+Next:
+1. Proceed with the next increment of Module 3 free functions (`last`, `key`, `val`, `contains`, `nth`, comparisons `equal`/`not_equal`/etc.) or downstream Module 4 requirements as requested.
+
+## Historical Session Records
 
 Task:
 1. Specify, implement, test, and verify Module 3 Group A (`conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `can_conj`, `can_assoc`) and Group B (`count`, `empty`, `is_empty`, `not_empty`, `first`, `next`, `rest`, `seq`, `get`) collection primitive free functions.
