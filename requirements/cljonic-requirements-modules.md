@@ -10,7 +10,7 @@ This document outlines the modular implementation roadmap for `cljonic`. To ensu
 
 2. **[cljonic-requirements-module-2.md](cljonic-requirements-module-2.md)** / **[cljonic-architecture-module-2.md](cljonic-architecture-module-2.md)** — *Capability Concepts & Preflight Infrastructure*
    - **Goal**: Defines the C++20 concept capability framework and non-throwing preflight result model.
-   - **Scope**: Outcome status classification (complete, bounded-prefix, default-returning, checked-failure, producer-only), preflight predicates (`fits_into`, `valid_index`, `contains_key`, `is_empty`), compile-time diagnostic rules, `constexpr` constraints, and vocabulary conventions (`REQ-BOUNDS-*`, `REQ-ERR-*`, `REQ-DIAG-*`, `REQ-VOCAB-*`).
+   - **Scope**: Outcome status classification (complete, bounded-prefix, default-returning, checked-failure, producer-only), preflight predicates (`fits_into`, `contains`, `is_empty`), compile-time diagnostic rules, `constexpr` constraints, and vocabulary conventions (`REQ-BOUNDS-*`, `REQ-ERR-*`, `REQ-DIAG-*`, `REQ-VOCAB-*`).
 
 3. **[cljonic-requirements-module-3.md](cljonic-requirements-module-3.md)** / **[cljonic-architecture-module-3.md](cljonic-architecture-module-3.md)** — *Core Collection Types & Primitive Free Functions*
    - **Goal**: Implements concrete, array-backed, bounded collection types and their primitive member and free-function operations.

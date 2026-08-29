@@ -32,7 +32,7 @@ concept sequenceable_cljonic_collection = cljonic_collection<C> && requires(cons
 template<class C>
 concept indexed_cljonic_collection = sequenceable_cljonic_collection<C> && requires(const C& c, std::size_t i) {
     { c.get(i) };
-    { c.valid_index(i) } -> std::same_as<bool>;
+    { c.contains(i) } -> std::same_as<bool>;
 };
 
 template<class C>
@@ -57,14 +57,14 @@ Public operations return outcomes classified into 5 canonical categories:
 
 For every operation whose complete result can fail or truncate, a non-throwing preflight predicate MUST be provided:
 
-| Operation              | Canonical Preflight Predicate | Preflight Signature                  |
-| :--------------------- | :---------------------------- | :----------------------------------- |
-| `into(dest, producer)` | `fits_into`                   | `fits_into(dest, producer) -> bool`  |
-| `get(vector, index)`   | `valid_index`                 | `valid_index(vector, index) -> bool` |
-| `get(map, key)`        | `contains_key` / `contains`   | `contains(map, key) -> bool`         |
-| `conj(set, val)`       | `can_conj`                    | `can_conj(set, val) -> bool`         |
-| `assoc(map, k, v)`     | `can_assoc`                   | `can_assoc(map, k, v) -> bool`       |
-| `add(a, b)`            | `can_add`                     | `can_add(a, b) -> bool`              |
+| Operation              | Canonical Preflight Predicate | Preflight Signature                 |
+| :--------------------- | :---------------------------- | :---------------------------------- |
+| `into(dest, producer)` | `fits_into`                   | `fits_into(dest, producer) -> bool` |
+| `get(vector, index)`   | `contains`                    | `contains(vector, index) -> bool`   |
+| `get(map, key)`        | `contains`                    | `contains(map, key) -> bool`        |
+| `conj(set, val)`       | `can_conj`                    | `can_conj(set, val) -> bool`        |
+| `assoc(map, k, v)`     | `can_assoc`                   | `can_assoc(map, k, v) -> bool`      |
+| `add(a, b)`            | `can_add`                     | `can_add(a, b) -> bool`             |
 
 ## Diagnostic Strategy
 
