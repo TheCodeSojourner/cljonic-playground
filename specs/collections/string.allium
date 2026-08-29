@@ -34,7 +34,7 @@ entity String {
     checked_failure_result_status_declared: Boolean
     producer_only_result_status_declared: Boolean
     preflight_predicates_are_non_throwing_non_allocating: Boolean
-    valid_index_is_canonical_index_predicate: Boolean
+    contains_is_canonical_index_predicate: Boolean
     fits_into_is_canonical_materialization_preflight: Boolean
     compile_time_capacity_overflow_is_rejected: Boolean
     runtime_capacity_failures_have_documented_policy: Boolean
@@ -176,8 +176,8 @@ entity String {
         this.preflight_predicates_are_non_throwing_non_allocating = true
     }
 
-    invariant ValidIndexIsCanonicalIndexPredicate {
-        this.valid_index_is_canonical_index_predicate = true
+    invariant ContainsIsCanonicalIndexPredicate {
+        this.contains_is_canonical_index_predicate = true
     }
 
     invariant FitsIntoIsCanonicalMaterializationPreflight {

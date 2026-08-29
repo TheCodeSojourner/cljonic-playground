@@ -129,7 +129,7 @@ entity SequenceableCollection {
 entity IndexedCollection {
     extends_sequenceable: Boolean
     requires_callable_indexed_lookup: Boolean
-    requires_valid_index_predicate: Boolean
+    requires_contains_predicate: Boolean
 
     invariant ExtendsSequenceable {
         this.extends_sequenceable = true
@@ -139,8 +139,8 @@ entity IndexedCollection {
         this.requires_callable_indexed_lookup = true
     }
 
-    invariant RequiresValidIndexPredicate {
-        this.requires_valid_index_predicate = true
+    invariant RequiresContainsPredicate {
+        this.requires_contains_predicate = true
     }
 }
 
@@ -191,7 +191,7 @@ entity TotallyOrdered {
 entity ConceptMemberNaming {
     uses_count_is_empty_members: Boolean
     omits_index_bracket_lookup: Boolean
-    uses_valid_index_predicate: Boolean
+    uses_contains_predicate: Boolean
 
     invariant UsesCountIsEmptyMembers {
         this.uses_count_is_empty_members = true
@@ -201,8 +201,8 @@ entity ConceptMemberNaming {
         this.omits_index_bracket_lookup = true
     }
 
-    invariant UsesValidIndexPredicate {
-        this.uses_valid_index_predicate = true
+    invariant UsesContainsPredicate {
+        this.uses_contains_predicate = true
     }
 }
 
