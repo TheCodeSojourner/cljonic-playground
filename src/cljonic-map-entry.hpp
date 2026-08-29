@@ -20,15 +20,15 @@ namespace cljonic {
  *   constexpr MapEntry<int, int> e_const{1, 100};
  *   static_assert(e_const.key == 1);
  *   static_assert(e_const.value == 100);
- *   static_assert(e_const.valid_index(0));
- *   static_assert(e_const.valid_index(1));
- *   static_assert(!e_const.valid_index(2));
+ *   static_assert(e_const.contains(0));
+ *   static_assert(e_const.contains(1));
+ *   static_assert(!e_const.contains(2));
  *
  *   // Runtime demonstration.
  *   auto e_runtime = MapEntry<int, int>{2, 200};
  *   const auto k = e_runtime.key;
  *   const auto v = e_runtime.value;
- *   const auto ok = e_runtime.valid_index(0);
+ *   const auto ok = e_runtime.contains(0);
  *
  *   return (k == 2 && v == 200 && ok) ? 0 : 1;
  * }
@@ -44,7 +44,7 @@ struct MapEntry {
     }
 
     template <std::integral IndexType>
-    [[nodiscard]] constexpr auto valid_index(IndexType index) const noexcept -> bool {
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
         if constexpr (std::signed_integral<IndexType>) {
             if (index < 0) {
                 return false;

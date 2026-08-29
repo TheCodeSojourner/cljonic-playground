@@ -356,15 +356,16 @@ concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
 };
 
 /** Requires that a sequenceable collection provides callable indexed lookup
- *  c(index) and the valid_index(index) preflight predicate. */
+ *  c(index) and the contains(index) index-in-range membership test (Clojure
+ *  contains? over vector/string indices). */
 template <typename C>
 concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, std::size_t i) {
     { c(i) } noexcept;
-    { c.valid_index(i) } noexcept -> std::same_as<bool>;
+    { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 
 /** Requires that a sequenceable collection provides callable key lookup
- *  c(key) and the contains(key) membership test. */
+ *  c(key) and the contains(key) key-presence membership test. */
 template <typename C>
 concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c, const typename C::key_type& k) {
     { c(k) } noexcept;
@@ -539,6 +540,64 @@ template <typename C, typename T>
 
 #endif // CLJONIC_CONJ_HPP
 // End cljonic-conj.hpp
+// Begin cljonic-contains.hpp
+#ifndef CLJONIC_CONTAINS_HPP
+#define CLJONIC_CONTAINS_HPP
+
+
+namespace cljonic {
+
+/** \anchor Contains
+ * \brief Tests whether its argument belongs to a collection's lookup domain,
+ * mirroring Clojure's `contains?` predicate.
+ *
+ * The meaning of the argument follows the collection kind:
+ * - Map: tests key presence (`contains(m, key)` is true when key is present).
+ * - Set: tests element presence (`contains(s, value)` is true when value is a
+ *   member).
+ * - Vector / String: tests whether a numeric index is in range
+ *   (`contains(xs, index)` is true when index is valid, like Clojure's
+ *   `contains?` over vector/string indices).
+ *
+ * `contains` never performs a default-returning access; it only answers the
+ * membership question for the collection's lookup domain.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+ *   constexpr auto st_const = String<8>{"abc"};
+ *   static_assert(contains(v_const, 0U));
+ *   static_assert(!contains(v_const, 9U));
+ *   static_assert(contains(m_const, 1));
+ *   static_assert(!contains(m_const, 2));
+ *   static_assert(contains(s_const, 5));
+ *   static_assert(!contains(s_const, 8));
+ *   static_assert(contains(st_const, 1U));
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10, 20};
+ *   const auto in_range = contains(v_runtime, 0U);
+ *
+ *   return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K>
+[[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept -> bool {
+    return collection.contains(key);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_CONTAINS_HPP// End cljonic-contains.hpp
 // Begin cljonic-core-collection-maximum-element-count.hpp
 #pragma once
 
@@ -758,15 +817,15 @@ namespace cljonic {
  *   constexpr MapEntry<int, int> e_const{1, 100};
  *   static_assert(e_const.key == 1);
  *   static_assert(e_const.value == 100);
- *   static_assert(e_const.valid_index(0));
- *   static_assert(e_const.valid_index(1));
- *   static_assert(!e_const.valid_index(2));
+ *   static_assert(e_const.contains(0));
+ *   static_assert(e_const.contains(1));
+ *   static_assert(!e_const.contains(2));
  *
  *   // Runtime demonstration.
  *   auto e_runtime = MapEntry<int, int>{2, 200};
  *   const auto k = e_runtime.key;
  *   const auto v = e_runtime.value;
- *   const auto ok = e_runtime.valid_index(0);
+ *   const auto ok = e_runtime.contains(0);
  *
  *   return (k == 2 && v == 200 && ok) ? 0 : 1;
  * }
@@ -782,7 +841,7 @@ struct MapEntry {
     }
 
     template <std::integral IndexType>
-    [[nodiscard]] constexpr auto valid_index(IndexType index) const noexcept -> bool {
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
         if constexpr (std::signed_integral<IndexType>) {
             if (index < 0) {
                 return false;
@@ -1568,7 +1627,7 @@ namespace cljonic {
  *   static_assert(s_const[0] == 'H');
  *   static_assert(s_const(0) == 'H');
  *   static_assert(s_const(99, 'Z') == 'Z');
- *   static_assert(s_const.valid(0));
+ *   static_assert(s_const.contains(0));
  *
  *   // Runtime demonstration.
  *   auto s_runtime = String<8>{"Hi"};
@@ -1616,8 +1675,8 @@ class String {
     }
 
     /** Returns true when index falls within logical bounds (not counting null
-     * terminator). */
-    [[nodiscard]] constexpr auto valid(std::size_t index) const noexcept -> bool {
+     * terminator). Mirrors Clojure contains? over string indices. */
+    [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
         return index < logical_size_;
     }
 
@@ -1795,7 +1854,7 @@ class Vector {
     }
 
     template <std::integral index_type>
-    [[nodiscard]] constexpr auto valid_index(index_type index) const noexcept -> bool {
+    [[nodiscard]] constexpr auto contains(index_type index) const noexcept -> bool {
         return index_is_valid(index);
     }
 

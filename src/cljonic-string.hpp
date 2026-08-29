@@ -28,7 +28,7 @@ namespace cljonic {
  *   static_assert(s_const[0] == 'H');
  *   static_assert(s_const(0) == 'H');
  *   static_assert(s_const(99, 'Z') == 'Z');
- *   static_assert(s_const.valid(0));
+ *   static_assert(s_const.contains(0));
  *
  *   // Runtime demonstration.
  *   auto s_runtime = String<8>{"Hi"};
@@ -76,8 +76,8 @@ class String {
     }
 
     /** Returns true when index falls within logical bounds (not counting null
-     * terminator). */
-    [[nodiscard]] constexpr auto valid(std::size_t index) const noexcept -> bool {
+     * terminator). Mirrors Clojure contains? over string indices. */
+    [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
         return index < logical_size_;
     }
 

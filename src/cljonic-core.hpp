@@ -223,6 +223,7 @@
 #include <cljonic-can-conj.hpp>
 #include <cljonic-concepts.hpp>
 #include <cljonic-conj.hpp>
+#include <cljonic-contains.hpp>
 #include <cljonic-core-collection-maximum-element-count.hpp>
 #include <cljonic-count.hpp>
 #include <cljonic-disj.hpp>

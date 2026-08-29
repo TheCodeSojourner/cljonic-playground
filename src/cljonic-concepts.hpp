@@ -120,15 +120,16 @@ concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
 };
 
 /** Requires that a sequenceable collection provides callable indexed lookup
- *  c(index) and the valid_index(index) preflight predicate. */
+ *  c(index) and the contains(index) index-in-range membership test (Clojure
+ *  contains? over vector/string indices). */
 template <typename C>
 concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, std::size_t i) {
     { c(i) } noexcept;
-    { c.valid_index(i) } noexcept -> std::same_as<bool>;
+    { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 
 /** Requires that a sequenceable collection provides callable key lookup
- *  c(key) and the contains(key) membership test. */
+ *  c(key) and the contains(key) key-presence membership test. */
 template <typename C>
 concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c, const typename C::key_type& k) {
     { c(k) } noexcept;

@@ -128,7 +128,7 @@ class Vector {
     }
 
     template <std::integral index_type>
-    [[nodiscard]] constexpr auto valid_index(index_type index) const noexcept -> bool {
+    [[nodiscard]] constexpr auto contains(index_type index) const noexcept -> bool {
         return index_is_valid(index);
     }
 
