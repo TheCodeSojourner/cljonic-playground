@@ -57,7 +57,7 @@ TEST_CASE("Vector canonical preflight predicates model index validity and emptin
     TRACE_ID("invariant.Vector.CheckedFailureResultStatusDeclared");
     TRACE_ID("invariant.Vector.ProducerOnlyResultStatusDeclared");
     TRACE_ID("invariant.Vector.PreflightPredicatesAreNonThrowingNonAllocating");
-    TRACE_ID("invariant.Vector.ValidIndexIsCanonicalIndexPredicate");
+    TRACE_ID("invariant.Vector.ContainsIsCanonicalIndexPredicate");
     TRACE_ID("invariant.Vector.FitsIntoIsCanonicalMaterializationPreflight");
     TRACE_ID("invariant.Vector.CompileTimeCapacityOverflowIsRejected");
     TRACE_ID("invariant.Vector.RuntimeCapacityFailuresHaveDocumentedPolicy");
@@ -70,16 +70,16 @@ TEST_CASE("Vector canonical preflight predicates model index validity and emptin
     constexpr Vector<int, 4> values{10, 20};
     constexpr Vector<int, 4> empty_values{};
 
-    STATIC_REQUIRE(values.valid_index(0U));
-    STATIC_REQUIRE(values.valid_index(1U));
-    STATIC_REQUIRE_FALSE(values.valid_index(2U));
+    STATIC_REQUIRE(values.contains(0U));
+    STATIC_REQUIRE(values.contains(1U));
+    STATIC_REQUIRE_FALSE(values.contains(2U));
     STATIC_REQUIRE(empty_values.empty());
     STATIC_REQUIRE_FALSE(values.empty());
 
     const auto runtime_values = Vector<int, 4>{10, 20};
-    CHECK(runtime_values.valid_index(0U));
-    CHECK(runtime_values.valid_index(1U));
-    CHECK_FALSE(runtime_values.valid_index(2U));
+    CHECK(runtime_values.contains(0U));
+    CHECK(runtime_values.contains(1U));
+    CHECK_FALSE(runtime_values.contains(2U));
     CHECK(Vector<int, 4>{}.empty());
     CHECK_FALSE(runtime_values.empty());
 }
@@ -111,5 +111,5 @@ TEST_CASE("Vector indexed access handles valid and invalid indexes", "[vector][i
     const int neg = neg_raw;
     CHECK(runtime_values(neg) == 0);
     CHECK(runtime_values(neg, 99) == 99);
-    CHECK_FALSE(runtime_values.valid_index(neg));
+    CHECK_FALSE(runtime_values.contains(neg));
 }

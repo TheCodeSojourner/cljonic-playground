@@ -42,7 +42,7 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.CheckedFailureResultStatusDeclared");
     TRACE_ID("invariant.String.ProducerOnlyResultStatusDeclared");
     TRACE_ID("invariant.String.PreflightPredicatesAreNonThrowingNonAllocating");
-    TRACE_ID("invariant.String.ValidIndexIsCanonicalIndexPredicate");
+    TRACE_ID("invariant.String.ContainsIsCanonicalIndexPredicate");
     TRACE_ID("invariant.String.FitsIntoIsCanonicalMaterializationPreflight");
     TRACE_ID("invariant.String.CompileTimeCapacityOverflowIsRejected");
     TRACE_ID("invariant.String.RuntimeCapacityFailuresHaveDocumentedPolicy");
@@ -53,8 +53,8 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     STATIC_REQUIRE(s.empty());
     STATIC_REQUIRE(s.size() == 0U);
     STATIC_REQUIRE(s.capacity() == 8U);
-    STATIC_REQUIRE(s[0] == '\0');        // out-of-bounds returns '\0'
-    STATIC_REQUIRE(s.valid(0) == false); // index 0 not valid when empty
+    STATIC_REQUIRE(s[0] == '\0');           // out-of-bounds returns '\0'
+    STATIC_REQUIRE(s.contains(0) == false); // index 0 not valid when empty
 
     // Literal construction deduces size from initializer
     constexpr String<8> s1{"Hello"}; // "Hello" = 5 chars + null terminator
@@ -62,10 +62,10 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     STATIC_REQUIRE(s1.size() == 5U); // logical size excludes null terminator
     STATIC_REQUIRE(s1[0] == 'H');
     STATIC_REQUIRE(s1[4] == 'o');
-    STATIC_REQUIRE(s1[5] == '\0'); // position 5 is null terminator (out-of-logical-bounds)
-    STATIC_REQUIRE(s1.valid(0));   // valid indices 0..4
-    STATIC_REQUIRE(s1.valid(4));
-    STATIC_REQUIRE_FALSE(s1.valid(5)); // null terminator position is invalid
+    STATIC_REQUIRE(s1[5] == '\0');  // position 5 is null terminator (out-of-logical-bounds)
+    STATIC_REQUIRE(s1.contains(0)); // valid indices 0..4
+    STATIC_REQUIRE(s1.contains(4));
+    STATIC_REQUIRE_FALSE(s1.contains(5)); // null terminator position is invalid
 
     // Callable index access: present element
     STATIC_REQUIRE(s1(0) == 'H');
@@ -122,16 +122,16 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     REQUIRE(rs.size() == 0U);
     REQUIRE(rs.capacity() == 8U);
     REQUIRE(rs[idx0] == '\0');
-    REQUIRE_FALSE(rs.valid(idx0));
+    REQUIRE_FALSE(rs.contains(idx0));
 
     auto rs1 = rs.append(c1).append(c2);
     REQUIRE_FALSE(rs1.empty());
     REQUIRE(rs1.size() == 2U);
     REQUIRE(rs1[idx0] == 'A');
     REQUIRE(rs1[1] == 'B');
-    REQUIRE(rs1.valid(idx0));
-    REQUIRE(rs1.valid(1));
-    REQUIRE_FALSE(rs1.valid(2));
+    REQUIRE(rs1.contains(idx0));
+    REQUIRE(rs1.contains(1));
+    REQUIRE_FALSE(rs1.contains(2));
     REQUIRE(rs1(idx0) == 'A');
     REQUIRE(rs1(99) == '\0');
     REQUIRE(rs1(99, 'Z') == 'Z');

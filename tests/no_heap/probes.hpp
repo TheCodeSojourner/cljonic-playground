@@ -10,6 +10,7 @@ namespace cljonic::no_heap::probes {
 [[nodiscard]] auto concepts_probe() noexcept -> bool;
 [[nodiscard]] auto config_probe() noexcept -> bool;
 [[nodiscard]] auto conj_probe() noexcept -> bool;
+[[nodiscard]] auto contains_probe() noexcept -> bool;
 [[nodiscard]] auto max_count_probe() noexcept -> bool;
 [[nodiscard]] auto core_probe() noexcept -> bool;
 [[nodiscard]] auto count_probe() noexcept -> bool;
