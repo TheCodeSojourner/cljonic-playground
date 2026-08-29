@@ -56,20 +56,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `Vector<int, 4>` has capacity four, while `String<32>` has a logical character capacity of thirty-two.
 
 
-### ValidIndex
-- **Definition:** The indexed-access condition that an index belongs to the logical element domain of a collection or sequence; the canonical C++ predicate spelling is `valid_index`.
-- **Deprecated Synonyms:** valid index, index validity
-- **Related:** IndexedAccess, PreflightPredicate, DefaultElement
-- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `valid_index(xs, i)` is checked before an indexed `get` when the indexed-access capability applies.
-
-
 ### FreeFunction
 - **Definition:** A public operation expressed as a namespace-level function rather than a member of the value it observes or transforms.
 - **Deprecated Synonyms:** free function API, namespace-level operation
 - **Related:** SemanticPredicateName, Traversal, PreflightPredicate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `valid_index(xs, i)` and `fits_into(destination, producer)` are free-function forms of orthogonal operations.
+- **Examples:** `contains(xs, i)` and `fits_into(destination, producer)` are free-function forms of orthogonal operations.
 
 
 ### BoundedStorage
@@ -115,7 +107,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### DiscreteNumericType
 - **Definition:** A numeric type with discrete values suitable for bounded index, count, capacity, or conversion policies without floating-point equality semantics.
 - **Deprecated Synonyms:** discrete numeric, integral numeric type
-- **Related:** NumericPolicy, ValidIndex, ExactConversion
+- **Related:** NumericPolicy, ExactConversion
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** An index policy may accept a discrete numeric type and reject a negative or non-representable value before access.
 
@@ -137,11 +129,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### IndexedAccess
-- **Definition:** A capability that provides access to a collection element by an index together with a `valid_index` preflight predicate for the same logical index domain.
+- **Definition:** A capability that provides access to a collection element by an index together with a `contains` (index-in-range) predicate for the same logical index domain.
 - **Deprecated Synonyms:** indexed collection access, index access capability
-- **Related:** ValidIndex, DefaultReturningResult, Contains
+- **Related:** DefaultReturningResult, Contains
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** An indexed collection can use `valid_index` before a default-returning indexed `get`.
+- **Examples:** An indexed collection can use `contains(xs, i)` before a default-returning indexed `get`.
 
 
 ### AssociativeAccess
@@ -153,9 +145,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Contains
-- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to a collection's lookup domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, and for indexed collections it tests index validity.
+- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to a collection's lookup domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, and for indexed collections (vector/string) it tests index-in-range.
 - **Deprecated Synonyms:** `contains?`, contains predicate, key-presence check
-- **Related:** FreeFunction, AssociativeAccess, IndexedAccess, ValidIndex, PreflightPredicate, VerbPredicate
+- **Related:** FreeFunction, AssociativeAccess, IndexedAccess, PreflightPredicate, VerbPredicate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `contains(m, key)` tests a map key, `contains(s, value)` tests set membership, and `contains(xs, index)` tests whether an indexed position is valid.
 
@@ -277,7 +269,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** predicate naming policy, semantic predicate naming
 - **Related:** CapabilityPredicate, StatePredicate, VerbPredicate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `is_empty`, `contains`, `valid_index`, and `fits_into` use names that identify their semantic questions.
+- **Examples:** `is_empty`, `contains`, and `fits_into` use names that identify their semantic questions.
 
 
 ### CapabilityPredicate
@@ -315,9 +307,9 @@ govern stored collection building blocks used across all higher-order algorithms
 ### ValidPredicatePrefix
 - **Definition:** The canonical `valid_` prefix for a predicate that determines whether an input belongs to an operation's valid domain before access or conversion.
 - **Deprecated Synonyms:** `valid_` predicate, validity predicate prefix
-- **Related:** ValidIndex, CapabilityPredicate, PreflightPredicate
+- **Related:** CapabilityPredicate, PreflightPredicate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `valid_index` determines whether an index can produce a valid indexed access.
+- **Examples:** `contains(xs, i)` determines whether an index can produce a valid indexed access.
 
 
 ### KeywordEnumNameEntry
@@ -394,9 +386,9 @@ govern stored collection building blocks used across all higher-order algorithms
 ### Vector
 - **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
-- **Related:** CopyOnModifyCollection, String, CapacityConstruction, IndexedAccess, ValidIndex
+- **Related:** CopyOnModifyCollection, String, CapacityConstruction, IndexedAccess
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `count()`, `capacity()`, `operator()`, and `valid_index` provide direct member and free-function observation.
+- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `count()`, `capacity()`, `operator()`, and `contains` provide direct member and free-function observation.
 
 
 ### Map
@@ -1017,11 +1009,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### IndexedCollection
-- **Definition:** The C++ concept identifier implementing the indexed CapabilityConcept, extending sequenceable observation with callable indexed lookup and the `valid_index` preflight predicate.
+- **Definition:** The C++ concept identifier implementing the indexed CapabilityConcept, extending sequenceable observation with callable indexed lookup and the `contains` (index-in-range) predicate.
 - **Deprecated Synonyms:** indexed_cljonic_collection, indexed collection concept
-- **Related:** CapabilityConcept, IndexedAccess, SequenceableCollection, CljonicCollection
+- **Related:** CapabilityConcept, IndexedAccess, SequenceableCollection, CljonicCollection, Contains
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `IndexedCollection<C>` requires `c(i)` and `c.valid_index(i)`.
+- **Examples:** `IndexedCollection<C>` requires `c(i)` and `c.contains(i)`.
 
 
 ### AssociativeCollection
