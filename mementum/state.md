@@ -1,15 +1,38 @@
 ## Session State
 
-- last_session_id: 2026-08-28-clang-format-config-ai-token-density
+- last_session_id: 2026-08-28-contains-unification-and-phase-b
 - current_timestamp: 2026-08-28
 - recover: 1
 - session_complete: true
 
 Task:
+1. Complete Phase B: add concept spec tests covering the 46 obligations in `specs/capabilities/concepts.allium` (`tests/cljonic-concepts-spec-tests.cpp`) plus no-heap probe (`tests/no_heap/cljonic-concepts-probes.cpp`), then reconcile the spec-to-code traceability snapshot.
+2. Refactor the value capability concepts to prefer standard concepts (`std::equality_comparable`, `std::floating_point`, `std::totally_ordered`) over manual requires-clauses and trait predicates; drop now-unused `#include <utility>`.
+3. Unify the membership predicate to Clojure `contains?` parity: rename `valid_index`/String `valid()` → `contains` across all collection kinds (map key presence, set element presence, vector/string index-in-range), add free `contains(c, x)` in `src/cljonic-contains.hpp`, add `specs/primitives/contains.allium`, and remove `ValidIndex`/`valid_index` from vocabulary.
+4. Validate end-to-end coherence via gybis-vocab-check, gybis-arch-check, gybis-vocab-weed, gybis-spec-check, gybis-arch-weed, gybis-spec-weed.
+
+Questions:
+1. None unresolved.
+
+Decisions:
+1. Value capability concepts now use standard concepts: `StableEqualityComparable = std::equality_comparable<T> && !std::floating_point<std::remove_cvref_t<T>>`; `TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>`.
+2. `contains` is the single Clojure `contains?`-parity membership predicate: map key presence, set element presence, vector/string index-in-range. `IndexedCollection` requires `c.contains(i)` (replacing `c.valid_index(i)`); `AssociativeCollection` keeps `c.contains(k)`.
+3. Free `contains(c, x)` is a non-allocating, non-throwing forwarder to `collection.contains(x)`; lives in `src/cljonic-contains.hpp`, included by `cljonic-core.hpp`.
+4. Added `specs/primitives/contains.allium` (10 obligations incl. `ContainsDoesNotPerformDefaultReturningAccess`); renamed `ValidIndexIsCanonicalIndexPredicate` → `ContainsIsCanonicalIndexPredicate` (vector/string) and `RequiresValidIndexPredicate`/`UsesValidIndexPredicate` → `RequiresContainsPredicate`/`UsesContainsPredicate` (concepts).
+5. Removed the `ValidIndex` vocabulary term and all `valid_index`/`ValidIndex` references; kept `ValidPredicatePrefix` (distinct: general `valid_` prefix).
+6. Full strict gate (`make upsert-gate-strict`) and 80/80 tests pass; traceability snapshot regenerated.
+
+Next:
+1. Phase C: containers conform to count/is_empty/operators (complete the container member surface so actual containers satisfy `SequenceableCollection`/`IndexedCollection`/`AssociativeCollection`).
+2. Phase D: constrain primitive free functions with the concept layer.
+3. Phase E: full-stack verification via `make git`.
+
+## Historical Session Records
+
+Task:
 1. Reconfigure project formatting with a repo-root `.clang-format` file tuned for AI/parser token density and reformat the codebase.
 2. Upgrade clang-format from 18 to 20 (Ubuntu 24.04 apt `clang-format-20`; symlink `/usr/bin/clang-format`).
 3. Verify the reconfiguration end-to-end (`make format`, `make lint`, `make test`).
-4. Pending: Phase B Step 2 (concept spec tests + no-heap probe), Phase B Step 3 (spec-to-code traceability snapshot reconciliation), Phase C (containers conform to count/is_empty/operators), Phase D (constrain free functions), Phase E (full-stack verification via make git).
 
 Questions:
 1. None unresolved.
@@ -22,9 +45,6 @@ Decisions:
 
 Next:
 1. Commit the reformatting session: `.clang-format` + reformatted `src/`/`tests/` + mementum state/memory.
-2. Phase B Step 2: add concept spec tests to `tests/cljonic-concepts-spec-tests.cpp` (cover 46 obligations from `specs/capabilities/concepts.allium`) + no-heap probe `tests/no_heap/cljonic-concepts-probes.cpp`.
-3. Phase B Step 3: reconcile spec-to-code traceability snapshot (`make traceability-spec-to-code-update-snapshot`).
-4. Phases C, D, E: containers conform, free functions constrained, full-stack verification.
 
 ## Historical Session Records
 

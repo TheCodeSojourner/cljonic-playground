@@ -12,7 +12,8 @@ Collection-facing free operations should default to Clojure-like semantics and n
 
 Rules:
 - Member operations use Clojure-parity names: `count()` and `is_empty()` replace `size()` and `empty()` entirely across all collections (`Vector`, `Map`, `Set`, `Queue`, `String`).
-- `operator[]` is omitted from all collections (Clojure parity, not std::string). Callable lookup uses `operator()(index)`, `operator()(index, fallback)`, and `get`, gated by `valid_index`.
+- `operator[]` is omitted from all collections (Clojure parity, not std::string). Callable lookup uses `operator()(index)`, `operator()(index, fallback)`, and `get`, gated by `contains`.
+- `contains` is the single Clojure `contains?`-parity membership predicate across all collection kinds: map key presence, set element presence, vector/string index-in-range. `valid_index`/`valid()` are removed; `IndexedCollection` requires `c.contains(i)`.
 - C++ concept identifiers use PascalCase per C++ Core Guidelines `NL.17`: `Cljonic*` for nominal identity, `SequenceableCollection`/`IndexedCollection`/`AssociativeCollection` for capabilities, `StableEqualityComparable`/`TotallyOrdered` for values.
 - Preserve behavioral shape first; any constrained divergence must be explicit in specs and tests.
 - A shared function name across structures is acceptable only when each accepted structure has valid, explicit semantics.
