@@ -104,9 +104,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a57f3f9d3631de23142403c7284edea04" id="r_a57f3f9d3631de23142403c7284edea04"><td class="memTemplParams" colspan="2">template&lt;std::integral index_type&gt; </td></tr>
 <tr class="memitem:a57f3f9d3631de23142403c7284edea04"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04">operator()</a> (index_type index, const <a class="el" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a> &amp;fallback) const noexcept -&gt; <a class="el" href="classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c">value_type</a></td></tr>
 <tr class="separator:a57f3f9d3631de23142403c7284edea04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acda3522a15d0d5400d7ef415cb8535ec" id="r_acda3522a15d0d5400d7ef415cb8535ec"><td class="memTemplParams" colspan="2">template&lt;std::integral index_type&gt; </td></tr>
-<tr class="memitem:acda3522a15d0d5400d7ef415cb8535ec"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcljonic_1_1_vector.html#acda3522a15d0d5400d7ef415cb8535ec">valid_index</a> (index_type index) const noexcept -&gt; bool</td></tr>
-<tr class="separator:acda3522a15d0d5400d7ef415cb8535ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a004efaf0a8949d262d67959b4fc93bac" id="r_a004efaf0a8949d262d67959b4fc93bac"><td class="memTemplParams" colspan="2">template&lt;std::integral index_type&gt; </td></tr>
+<tr class="memitem:a004efaf0a8949d262d67959b4fc93bac"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcljonic_1_1_vector.html#a004efaf0a8949d262d67959b4fc93bac">contains</a> (index_type index) const noexcept -&gt; bool</td></tr>
+<tr class="separator:a004efaf0a8949d262d67959b4fc93bac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3586b9febacdca1af744adebff9aea5d" id="r_a3586b9febacdca1af744adebff9aea5d"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcljonic_1_1_vector.html#a3586b9febacdca1af744adebff9aea5d">empty</a> () const noexcept -&gt; bool</td></tr>
 <tr class="separator:a3586b9febacdca1af744adebff9aea5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -220,7 +220,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00101">101</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00099">99</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -250,7 +250,39 @@ template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt;
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00117">117</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00112">112</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a004efaf0a8949d262d67959b4fc93bac" name="a004efaf0a8949d262d67959b4fc93bac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a004efaf0a8949d262d67959b4fc93bac">&#9670;&#160;</a></span>contains()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt; </div>
+<div class="memtemplate">
+template&lt;std::integral index_type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto <a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector</a>&lt; element_type, capacity_value &gt;::contains </td>
+          <td>(</td>
+          <td class="paramtype">index_type&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const -&gt; bool </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00131">131</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -279,7 +311,7 @@ template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt;
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00146">146</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00135">135</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -311,7 +343,7 @@ template&lt;std::integral index_type&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00127">127</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00121">121</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +385,7 @@ template&lt;std::integral index_type&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00134">134</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00126">126</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -382,39 +414,7 @@ template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt;
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00121">121</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
-
-</div>
-</div>
-<a id="acda3522a15d0d5400d7ef415cb8535ec" name="acda3522a15d0d5400d7ef415cb8535ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acda3522a15d0d5400d7ef415cb8535ec">&#9670;&#160;</a></span>valid_index()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;concepts::VectorElement element_type, std::size_t capacity_value&gt; </div>
-<div class="memtemplate">
-template&lt;std::integral index_type&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr auto <a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector</a>&lt; element_type, capacity_value &gt;::valid_index </td>
-          <td>(</td>
-          <td class="paramtype">index_type&#160;</td>
-          <td class="paramname"><em>index</em></td><td>)</td>
-          <td> const -&gt; bool </td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00142">142</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00116">116</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -424,7 +424,7 @@ template&lt;std::integral index_type&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 27 2026 18:58:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Fri Aug 28 2026 18:21:37 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

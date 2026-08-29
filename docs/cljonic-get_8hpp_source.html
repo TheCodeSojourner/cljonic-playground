@@ -92,32 +92,30 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K&gt;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">   44</a></span><a class="code hl_function" href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">get</a>(<span class="keyword">const</span> C &amp;collection, <span class="keyword">const</span> K &amp;key) <span class="keyword">noexcept</span> -&gt; <span class="keyword">decltype</span>(collection(key)) {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="keywordflow">return</span> collection(key);</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>}</div>
+<div class="foldopen" id="foldopen00043" data-start="{" data-end="}">
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">   43</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">get</a>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key) <span class="keyword">noexcept</span> -&gt; <span class="keyword">decltype</span>(collection(key)) {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">return</span> collection(key);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>}</div>
 </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K, <span class="keyword">typename</span> V&gt;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00051" data-start="{" data-end="}">
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a5247ce9f0e562cb836651927ce19aec4">   51</a></span><a class="code hl_function" href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">get</a>(<span class="keyword">const</span> C &amp;collection, <span class="keyword">const</span> K &amp;key,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">const</span> V &amp;fallback) <span class="keyword">noexcept</span> -&gt; <span class="keyword">decltype</span>(collection(key, fallback)) {</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  <span class="keywordflow">return</span> collection(key, fallback);</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K, <span class="keyword">typename</span> V&gt;</div>
+<div class="foldopen" id="foldopen00049" data-start="{" data-end="}">
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a5247ce9f0e562cb836651927ce19aec4">   49</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">get</a>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key, <span class="keyword">const</span> V&amp; fallback) <span class="keyword">noexcept</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    -&gt; <span class="keyword">decltype</span>(collection(key, fallback)) {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keywordflow">return</span> collection(key, fallback);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}</div>
 </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>} <span class="comment">// namespace cljonic</span></div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>} <span class="comment">// namespace cljonic</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#endif </span><span class="comment">// CLJONIC_GET_HPP</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif </span><span class="comment">// CLJONIC_GET_HPP</span></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a84410b2eb652f696f8a8bc9656e07208"><div class="ttname"><a href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">cljonic::get</a></div><div class="ttdeci">constexpr auto get(const C &amp;collection, const K &amp;key) noexcept -&gt; decltype(collection(key))</div><div class="ttdoc">Looks up an element by a key or index, returning the default or supplied fallback when absent.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-get_8hpp_source.html#l00044">cljonic-get.hpp:44</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a84410b2eb652f696f8a8bc9656e07208"><div class="ttname"><a href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">cljonic::get</a></div><div class="ttdeci">constexpr auto get(const C &amp;collection, const K &amp;key) noexcept -&gt; decltype(collection(key))</div><div class="ttdoc">Looks up an element by a key or index, returning the default or supplied fallback when absent.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-get_8hpp_source.html#l00043">cljonic-get.hpp:43</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 27 2026 18:58:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Fri Aug 28 2026 18:21:37 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

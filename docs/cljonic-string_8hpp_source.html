@@ -96,119 +96,118 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="foldopen" id="foldopen00042" data-start="{" data-end="};">
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html">   42</a></span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> CapacityValue&gt; <span class="keyword">class </span><a class="code hl_class" href="classcljonic_1_1_string.html">String</a> {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a1e5c5ec072faa23dddc279673c881708">   44</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classcljonic_1_1_string.html#a1e5c5ec072faa23dddc279673c881708">value_type</a> = char;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="keyword">static_assert</span>(</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>      CapacityValue &lt;= <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>      <span class="stringliteral">&quot;String capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT&quot;</span>);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> CapacityValue&gt;</div>
+<div class="foldopen" id="foldopen00043" data-start="{" data-end="};">
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html">   43</a></span><span class="keyword">class </span><a class="code hl_class" href="classcljonic_1_1_string.html">String</a> {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a1e5c5ec072faa23dddc279673c881708">   45</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="classcljonic_1_1_string.html#a1e5c5ec072faa23dddc279673c881708">value_type</a> = char;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keyword">static_assert</span>(CapacityValue &lt;= <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>                  <span class="stringliteral">&quot;String capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT&quot;</span>);</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a7ea679911d132d5b5c601904153c8d64">   50</a></span>  <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a7ea679911d132d5b5c601904153c8d64">String</a>() noexcept : data_{}, logical_size_{0} { data_[0] = <span class="charliteral">&#39;\0&#39;</span>; }</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> N&gt;</div>
-<div class="foldopen" id="foldopen00055" data-start="{" data-end="}">
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2">   55</a></span>  <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2">String</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> (&amp;arr)[N]) noexcept : data_{}, logical_size_{0} {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keyword">static_assert</span>(N - 1U &lt;= CapacityValue,</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>                  <span class="stringliteral">&quot;String literal too long for capacity&quot;</span>);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    logical_size_ = N - 1U;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; logical_size_; ++i) {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>      data_[i] = arr[i];</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    }</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    data_[logical_size_] = <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  }</div>
+<div class="foldopen" id="foldopen00050" data-start="{" data-end="}">
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a7ea679911d132d5b5c601904153c8d64">   50</a></span>    <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a7ea679911d132d5b5c601904153c8d64">String</a>() noexcept : data_{}, logical_size_{0} {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        data_[0] = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    }</div>
 </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="foldopen" id="foldopen00065" data-start="{" data-end="}">
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a05ff57b68b18689f1b7c0bbc2bfc9079">   65</a></span>  [[nodiscard]] <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a05ff57b68b18689f1b7c0bbc2bfc9079">capacity</a>() noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordflow">return</span> CapacityValue;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> N&gt;</div>
+<div class="foldopen" id="foldopen00057" data-start="{" data-end="}">
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2">   57</a></span>    <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2">String</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> (&amp;arr)[N]) noexcept : data_{}, logical_size_{0} {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keyword">static_assert</span>(N - 1U &lt;= CapacityValue, <span class="stringliteral">&quot;String literal too long for capacity&quot;</span>);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        logical_size_ = N - 1U;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; logical_size_; ++i) {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>            data_[i] = arr[i];</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        }</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        data_[logical_size_] = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    }</div>
 </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="foldopen" id="foldopen00069" data-start="{" data-end="}">
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#aa8bf902ffa10127f4cd4540ef1225a76">   69</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#aa8bf902ffa10127f4cd4540ef1225a76">size</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordflow">return</span> logical_size_;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  }</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="foldopen" id="foldopen00066" data-start="{" data-end="}">
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a05ff57b68b18689f1b7c0bbc2bfc9079">   66</a></span>    [[nodiscard]] <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a05ff57b68b18689f1b7c0bbc2bfc9079">capacity</a>() noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        <span class="keywordflow">return</span> CapacityValue;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    }</div>
 </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="foldopen" id="foldopen00073" data-start="{" data-end="}">
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a54368970448cc004c1b70970655ff2f7">   73</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a54368970448cc004c1b70970655ff2f7">empty</a>() const noexcept -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">return</span> logical_size_ == 0U;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  }</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="foldopen" id="foldopen00070" data-start="{" data-end="}">
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#aa8bf902ffa10127f4cd4540ef1225a76">   70</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#aa8bf902ffa10127f4cd4540ef1225a76">size</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="keywordflow">return</span> logical_size_;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    }</div>
 </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="foldopen" id="foldopen00079" data-start="{" data-end="}">
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#abe8b2c12ccadb05075a225ac23ee0652">   79</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#abe8b2c12ccadb05075a225ac23ee0652">valid</a>(std::size_t index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">return</span> index &lt; logical_size_;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  }</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="foldopen" id="foldopen00074" data-start="{" data-end="}">
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a54368970448cc004c1b70970655ff2f7">   74</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a54368970448cc004c1b70970655ff2f7">empty</a>() const noexcept -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keywordflow">return</span> logical_size_ == 0U;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    }</div>
 </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="foldopen" id="foldopen00080" data-start="{" data-end="}">
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a5cd4a19d5e711e1f73d4d6632aa9b2c1">   80</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a5cd4a19d5e711e1f73d4d6632aa9b2c1">contains</a>(std::size_t index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordflow">return</span> index &lt; logical_size_;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    }</div>
+</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
 <div class="foldopen" id="foldopen00085" data-start="{" data-end="}">
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a1290781fe1f9051b65b606b84a814106">   85</a></span>  <a class="code hl_function" href="classcljonic_1_1_string.html#a1290781fe1f9051b65b606b84a814106">operator[]</a>(std::size_t index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">char</span> {</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">return</span> (index &lt; logical_size_) ? data_[index] : <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  }</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a1290781fe1f9051b65b606b84a814106">   85</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a1290781fe1f9051b65b606b84a814106">operator[]</a>(std::size_t index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">char</span> {</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <span class="keywordflow">return</span> (index &lt; logical_size_) ? data_[index] : <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    }</div>
 </div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00092" data-start="{" data-end="}">
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#aebb69bf0bad5e54de804ceb7fb8c3c69">   92</a></span>  <a class="code hl_function" href="classcljonic_1_1_string.html#aebb69bf0bad5e54de804ceb7fb8c3c69">operator()</a>(std::size_t index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">char</span> {</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordflow">return</span> (index &lt; logical_size_) ? data_[index] : <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  }</div>
+<div class="foldopen" id="foldopen00091" data-start="{" data-end="}">
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#aebb69bf0bad5e54de804ceb7fb8c3c69">   91</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#aebb69bf0bad5e54de804ceb7fb8c3c69">operator()</a>(std::size_t index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">char</span> {</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        <span class="keywordflow">return</span> (index &lt; logical_size_) ? data_[index] : <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    }</div>
 </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00098" data-start="{" data-end="}">
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a63d48eecddaa77c7e74326b53cb490c0">   98</a></span>  <a class="code hl_function" href="classcljonic_1_1_string.html#a63d48eecddaa77c7e74326b53cb490c0">operator()</a>(std::size_t index, <span class="keywordtype">char</span> fallback) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">char</span> {</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordflow">return</span> (index &lt; logical_size_) ? data_[index] : fallback;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  }</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="foldopen" id="foldopen00096" data-start="{" data-end="}">
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a63d48eecddaa77c7e74326b53cb490c0">   96</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a63d48eecddaa77c7e74326b53cb490c0">operator()</a>(std::size_t index, <span class="keywordtype">char</span> fallback) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">char</span> {</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        <span class="keywordflow">return</span> (index &lt; logical_size_) ? data_[index] : fallback;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    }</div>
 </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="foldopen" id="foldopen00104" data-start="{" data-end="}">
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585">  104</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585">put</a>(std::size_t index,</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                                   <span class="keywordtype">char</span> c) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_string.html">String</a> {</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    <a class="code hl_class" href="classcljonic_1_1_string.html">String</a> result = *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordflow">if</span> (index &lt; logical_size_) {</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>      result.data_[index] = c;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    }</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  }</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="foldopen" id="foldopen00102" data-start="{" data-end="}">
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585">  102</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585">put</a>(std::size_t index, <span class="keywordtype">char</span> c) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_string.html">String</a> {</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <a class="code hl_class" href="classcljonic_1_1_string.html">String</a> result = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        <span class="keywordflow">if</span> (index &lt; logical_size_) {</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            result.data_[index] = c;</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        }</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    }</div>
 </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="foldopen" id="foldopen00115" data-start="{" data-end="}">
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170">  115</a></span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170">append</a>(<span class="keywordtype">char</span> c) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_string.html">String</a> {</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <a class="code hl_class" href="classcljonic_1_1_string.html">String</a> result = *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordflow">if</span> (result.logical_size_ &lt; CapacityValue) {</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>      result.data_[result.logical_size_] = c;</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>      ++result.logical_size_;</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>      result.data_[result.logical_size_] = <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    }</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  }</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
+<div class="foldopen" id="foldopen00112" data-start="{" data-end="}">
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170">  112</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170">append</a>(<span class="keywordtype">char</span> c) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_string.html">String</a> {</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <a class="code hl_class" href="classcljonic_1_1_string.html">String</a> result = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="keywordflow">if</span> (result.logical_size_ &lt; CapacityValue) {</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            result.data_[result.logical_size_] = c;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>            ++result.logical_size_;</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>            result.data_[result.logical_size_] = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        }</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    }</div>
 </div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  <span class="comment">// Internal array is CapacityValue+1 to hold null terminator</span></div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  std::array&lt;char, CapacityValue + 1&gt; data_{};</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>  std::size_t logical_size_{0};</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>};</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="comment">// Internal array is CapacityValue+1 to hold null terminator</span></div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    std::array&lt;char, CapacityValue + 1&gt; data_{};</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    std::size_t logical_size_{0};</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>};</div>
 </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>} <span class="comment">// namespace cljonic</span></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00042">cljonic-string.hpp:42</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_a05ff57b68b18689f1b7c0bbc2bfc9079"><div class="ttname"><a href="classcljonic_1_1_string.html#a05ff57b68b18689f1b7c0bbc2bfc9079">cljonic::String::capacity</a></div><div class="ttdeci">static constexpr auto capacity() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00065">cljonic-string.hpp:65</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_a063bd56b0efea34aaf6c0fbb2a9d1585"><div class="ttname"><a href="classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585">cljonic::String::put</a></div><div class="ttdeci">constexpr auto put(std::size_t index, char c) const noexcept -&gt; String</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00104">cljonic-string.hpp:104</a></div></div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span> </div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00043">cljonic-string.hpp:43</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_a05ff57b68b18689f1b7c0bbc2bfc9079"><div class="ttname"><a href="classcljonic_1_1_string.html#a05ff57b68b18689f1b7c0bbc2bfc9079">cljonic::String::capacity</a></div><div class="ttdeci">static constexpr auto capacity() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00066">cljonic-string.hpp:66</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_a063bd56b0efea34aaf6c0fbb2a9d1585"><div class="ttname"><a href="classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585">cljonic::String::put</a></div><div class="ttdeci">constexpr auto put(std::size_t index, char c) const noexcept -&gt; String</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00102">cljonic-string.hpp:102</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_string_html_a1290781fe1f9051b65b606b84a814106"><div class="ttname"><a href="classcljonic_1_1_string.html#a1290781fe1f9051b65b606b84a814106">cljonic::String::operator[]</a></div><div class="ttdeci">constexpr auto operator[](std::size_t index) const noexcept -&gt; char</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00085">cljonic-string.hpp:85</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_a1e5c5ec072faa23dddc279673c881708"><div class="ttname"><a href="classcljonic_1_1_string.html#a1e5c5ec072faa23dddc279673c881708">cljonic::String::value_type</a></div><div class="ttdeci">char value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00044">cljonic-string.hpp:44</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_a54368970448cc004c1b70970655ff2f7"><div class="ttname"><a href="classcljonic_1_1_string.html#a54368970448cc004c1b70970655ff2f7">cljonic::String::empty</a></div><div class="ttdeci">constexpr auto empty() const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00073">cljonic-string.hpp:73</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_a63d48eecddaa77c7e74326b53cb490c0"><div class="ttname"><a href="classcljonic_1_1_string.html#a63d48eecddaa77c7e74326b53cb490c0">cljonic::String::operator()</a></div><div class="ttdeci">constexpr auto operator()(std::size_t index, char fallback) const noexcept -&gt; char</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00098">cljonic-string.hpp:98</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_a1e5c5ec072faa23dddc279673c881708"><div class="ttname"><a href="classcljonic_1_1_string.html#a1e5c5ec072faa23dddc279673c881708">cljonic::String::value_type</a></div><div class="ttdeci">char value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00045">cljonic-string.hpp:45</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_a54368970448cc004c1b70970655ff2f7"><div class="ttname"><a href="classcljonic_1_1_string.html#a54368970448cc004c1b70970655ff2f7">cljonic::String::empty</a></div><div class="ttdeci">constexpr auto empty() const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00074">cljonic-string.hpp:74</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_a5cd4a19d5e711e1f73d4d6632aa9b2c1"><div class="ttname"><a href="classcljonic_1_1_string.html#a5cd4a19d5e711e1f73d4d6632aa9b2c1">cljonic::String::contains</a></div><div class="ttdeci">constexpr auto contains(std::size_t index) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00080">cljonic-string.hpp:80</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_a63d48eecddaa77c7e74326b53cb490c0"><div class="ttname"><a href="classcljonic_1_1_string.html#a63d48eecddaa77c7e74326b53cb490c0">cljonic::String::operator()</a></div><div class="ttdeci">constexpr auto operator()(std::size_t index, char fallback) const noexcept -&gt; char</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00096">cljonic-string.hpp:96</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_string_html_a7ea679911d132d5b5c601904153c8d64"><div class="ttname"><a href="classcljonic_1_1_string.html#a7ea679911d132d5b5c601904153c8d64">cljonic::String::String</a></div><div class="ttdeci">constexpr String() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00050">cljonic-string.hpp:50</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_aa8bf902ffa10127f4cd4540ef1225a76"><div class="ttname"><a href="classcljonic_1_1_string.html#aa8bf902ffa10127f4cd4540ef1225a76">cljonic::String::size</a></div><div class="ttdeci">constexpr auto size() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00069">cljonic-string.hpp:69</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_aaeed17ff7f10a2f1dd823c482d772170"><div class="ttname"><a href="classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170">cljonic::String::append</a></div><div class="ttdeci">constexpr auto append(char c) const noexcept -&gt; String</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00115">cljonic-string.hpp:115</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_abe8b2c12ccadb05075a225ac23ee0652"><div class="ttname"><a href="classcljonic_1_1_string.html#abe8b2c12ccadb05075a225ac23ee0652">cljonic::String::valid</a></div><div class="ttdeci">constexpr auto valid(std::size_t index) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00079">cljonic-string.hpp:79</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_ae3e26d18bb8bc456e6acd07b28ec73b2"><div class="ttname"><a href="classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2">cljonic::String::String</a></div><div class="ttdeci">constexpr String(const char(&amp;arr)[N]) noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00055">cljonic-string.hpp:55</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html_aebb69bf0bad5e54de804ceb7fb8c3c69"><div class="ttname"><a href="classcljonic_1_1_string.html#aebb69bf0bad5e54de804ceb7fb8c3c69">cljonic::String::operator()</a></div><div class="ttdeci">constexpr auto operator()(std::size_t index) const noexcept -&gt; char</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00092">cljonic-string.hpp:92</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_aa8bf902ffa10127f4cd4540ef1225a76"><div class="ttname"><a href="classcljonic_1_1_string.html#aa8bf902ffa10127f4cd4540ef1225a76">cljonic::String::size</a></div><div class="ttdeci">constexpr auto size() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00070">cljonic-string.hpp:70</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_aaeed17ff7f10a2f1dd823c482d772170"><div class="ttname"><a href="classcljonic_1_1_string.html#aaeed17ff7f10a2f1dd823c482d772170">cljonic::String::append</a></div><div class="ttdeci">constexpr auto append(char c) const noexcept -&gt; String</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00112">cljonic-string.hpp:112</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_ae3e26d18bb8bc456e6acd07b28ec73b2"><div class="ttname"><a href="classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2">cljonic::String::String</a></div><div class="ttdeci">constexpr String(const char(&amp;arr)[N]) noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00057">cljonic-string.hpp:57</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html_aebb69bf0bad5e54de804ceb7fb8c3c69"><div class="ttname"><a href="classcljonic_1_1_string.html#aebb69bf0bad5e54de804ceb7fb8c3c69">cljonic::String::operator()</a></div><div class="ttdeci">constexpr auto operator()(std::size_t index) const noexcept -&gt; char</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00091">cljonic-string.hpp:91</a></div></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
 <div class="ttc" id="acljonic-config_8hpp_html"><div class="ttname"><a href="cljonic-config_8hpp.html">cljonic-config.hpp</a></div></div>
 <div class="ttc" id="acljonic-core-collection-maximum-element-count_8hpp_html"><div class="ttname"><a href="cljonic-core-collection-maximum-element-count_8hpp.html">cljonic-core-collection-maximum-element-count.hpp</a></div></div>
@@ -217,7 +216,7 @@ $(document).ready(function() { init_codefold(0); });
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 27 2026 18:58:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Fri Aug 28 2026 18:21:37 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['map_0',['Map',['../classcljonic_1_1_map.html',1,'cljonic']]],
-  ['mapentry_1',['MapEntry',['../structcljonic_1_1_map_entry.html',1,'cljonic']]]
+  ['collection_5ftraits_0',['collection_traits',['../structcljonic_1_1concepts__detail_1_1collection__traits.html',1,'cljonic::concepts_detail']]]
 ];

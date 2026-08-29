@@ -90,44 +90,43 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="foldopen" id="foldopen00037" data-start="{" data-end="};">
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html">   37</a></span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> KeyType, <span class="keyword">typename</span> ValueType&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a> {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">   38</a></span>  KeyType <a class="code hl_variable" href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">key</a>{};</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23">   39</a></span>  ValueType <a class="code hl_variable" href="structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23">value</a>{};</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> KeyType, <span class="keyword">typename</span> ValueType&gt;</div>
+<div class="foldopen" id="foldopen00038" data-start="{" data-end="};">
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html">   38</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a> {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">   39</a></span>    KeyType <a class="code hl_variable" href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">key</a>{};</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23">   40</a></span>    ValueType <a class="code hl_variable" href="structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23">value</a>{};</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="foldopen" id="foldopen00042" data-start="{" data-end="}">
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html#af8a6e59c3c457862ffe4b959fbc3676d">   42</a></span>  <a class="code hl_function" href="structcljonic_1_1_map_entry.html#af8a6e59c3c457862ffe4b959fbc3676d">operator==</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">key</a> == other.key &amp;&amp; <a class="code hl_variable" href="structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23">value</a> == other.value;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html#af8a6e59c3c457862ffe4b959fbc3676d">   42</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="structcljonic_1_1_map_entry.html#af8a6e59c3c457862ffe4b959fbc3676d">operator==</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a>&amp; other) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="keywordflow">return</span> <a class="code hl_variable" href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">key</a> == other.key &amp;&amp; <a class="code hl_variable" href="structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23">value</a> == other.value;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    }</div>
 </div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">int</span>egral IndexType&gt;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="foldopen" id="foldopen00048" data-start="{" data-end="}">
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html#ad39c9ad6faf90844e412a5a7e298b383">   48</a></span>  <a class="code hl_function" href="structcljonic_1_1_map_entry.html#ad39c9ad6faf90844e412a5a7e298b383">valid_index</a>(IndexType index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::signed_integral&lt;IndexType&gt;) {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>      <span class="keywordflow">if</span> (index &lt; 0) {</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>      }</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(index) &lt; 2U;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  }</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">template</span> &lt;std::<span class="keywordtype">int</span>egral IndexType&gt;</div>
+<div class="foldopen" id="foldopen00047" data-start="{" data-end="}">
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="structcljonic_1_1_map_entry.html#adf7b06e3813881f5333389c629baa97a">   47</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="structcljonic_1_1_map_entry.html#adf7b06e3813881f5333389c629baa97a">contains</a>(IndexType index) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::signed_integral&lt;IndexType&gt;) {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            <span class="keywordflow">if</span> (index &lt; 0) {</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            }</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(index) &lt; 2U;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    }</div>
 </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>};</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>};</div>
 </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>} <span class="comment">// namespace cljonic</span></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00037">cljonic-map-entry.hpp:37</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html_a83603835c380c14d13c252cf99b11c23"><div class="ttname"><a href="structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23">cljonic::MapEntry::value</a></div><div class="ttdeci">ValueType value</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00039">cljonic-map-entry.hpp:39</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html_ad39c9ad6faf90844e412a5a7e298b383"><div class="ttname"><a href="structcljonic_1_1_map_entry.html#ad39c9ad6faf90844e412a5a7e298b383">cljonic::MapEntry::valid_index</a></div><div class="ttdeci">constexpr auto valid_index(IndexType index) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00048">cljonic-map-entry.hpp:48</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html_ad6ce6bddae994010ca731229636d3d95"><div class="ttname"><a href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">cljonic::MapEntry::key</a></div><div class="ttdeci">KeyType key</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00038">cljonic-map-entry.hpp:38</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00038">cljonic-map-entry.hpp:38</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html_a83603835c380c14d13c252cf99b11c23"><div class="ttname"><a href="structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23">cljonic::MapEntry::value</a></div><div class="ttdeci">ValueType value</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00040">cljonic-map-entry.hpp:40</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html_ad6ce6bddae994010ca731229636d3d95"><div class="ttname"><a href="structcljonic_1_1_map_entry.html#ad6ce6bddae994010ca731229636d3d95">cljonic::MapEntry::key</a></div><div class="ttdeci">KeyType key</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00039">cljonic-map-entry.hpp:39</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html_adf7b06e3813881f5333389c629baa97a"><div class="ttname"><a href="structcljonic_1_1_map_entry.html#adf7b06e3813881f5333389c629baa97a">cljonic::MapEntry::contains</a></div><div class="ttdeci">constexpr auto contains(IndexType index) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00047">cljonic-map-entry.hpp:47</a></div></div>
 <div class="ttc" id="astructcljonic_1_1_map_entry_html_af8a6e59c3c457862ffe4b959fbc3676d"><div class="ttname"><a href="structcljonic_1_1_map_entry.html#af8a6e59c3c457862ffe4b959fbc3676d">cljonic::MapEntry::operator==</a></div><div class="ttdeci">constexpr auto operator==(const MapEntry &amp;other) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00042">cljonic-map-entry.hpp:42</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 27 2026 18:58:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Fri Aug 28 2026 18:21:37 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
