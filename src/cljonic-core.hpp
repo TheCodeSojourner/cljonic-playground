@@ -140,7 +140,7 @@
  * are planned and will be introduced only when their requirements are
  * approved.
  * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj",
- * \ref Conj "conj", \ref Count "count"
+ * \ref Conj "conj", \ref Contains "contains", \ref Count "count"
  * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref
  * Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M
  * "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref
@@ -179,8 +179,7 @@
  *
  * ## Set Functions
  *
- * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy", \ref Set_Contains
- * "Contains", \ref Set_ContainsBy "ContainsBy"
+ * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy"
  * - \ref Set_Difference "Difference", \ref Set_DifferenceBy "DifferenceBy",
  * \ref Set_Disj "Disj", \ref Set_DisjBy "DisjBy"
  * - \ref Set_IndexOf "IndexOf", \ref Set_IndexOfBy "IndexOfBy", \ref
