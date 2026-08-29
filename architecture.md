@@ -175,17 +175,16 @@
 
 λ S2_preflight_model(x). default_returning_access(x) → require(pre_access_predicate(x))
   | pre_access_predicate(x) → not(inspect_accessed_value(x))
-  | pre_access_predicate(x) → distinguish(empty ∨ invalid_index ∨ missing_key ∨ full_state)
+  | pre_access_predicate(x) → distinguish(empty ∨ index_out_of_range ∨ missing_key ∨ full_state)
   | predicate_true(x) ↔ corresponding_operation_can_produce_valid_or_complete_result(x)
   | predicate_false(x) → follow(documented_default_bounded_or_failure_policy(x))
   | complete_materialization_into(destination, producer) → use(fits_into)
   | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
 
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty
-    ∧ full ∧ valid_index ∧ contains ∧ fits_into ∧ into ∧ count ∧ first ∧ next ∧ rest ∧ seq
+    ∧ full ∧ contains ∧ fits_into ∧ into ∧ count ∧ first ∧ next ∧ rest ∧ seq
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | valid_index(x) → govern(IndexedAccess(x))
-  | contains(x) → govern(domain_specific_membership_or_key_presence(x))
+  | contains(x) → govern(IndexedAccess(x) ∨ MembershipOrKeyPresence(x))
   | fits_into(x) → govern(complete_producer_materialization(x))
   | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
   | future_operation(x) → require(explicit_requirement_and_specification(x))
@@ -241,7 +240,7 @@ concept IndexedCollection =
     SequenceableCollection<C> &&
     requires(const C& c, std::size_t i) {
       { c(i) };
-      { c.valid_index(i) } -> std::same_as<bool>;
+      { c.contains(i) } -> std::same_as<bool>;
     };
 
 template<class C>
@@ -279,7 +278,7 @@ concept AssociativeCollection =
   | introduce_concept(x) → require(tested_api_boundary(x)) ∧ specify(consumers_and_diagnostics(x))
 
 λ concept_member_naming(x). canonical_capacity_observation(x) ≡ count ∧ is_empty
-  | member_lookup(x) ≡ operator()(...) ∧ valid_index
+  | member_lookup(x) ≡ operator()(...) ∧ contains
   | index_bracket_lookup(x) → omitted_from_all_collections(x)
 
 ## S1 - Operations
@@ -344,7 +343,7 @@ concept AssociativeCollection =
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | effective_size(x) → authoritative_for(free_function_observation ∧ producer_iteration ∧ producer_materialization)
-  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ valid_index_authoritative_for_indexed_access(x) ∧ effective_endpoint_normalized_before_iteration(x)
+  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_for_indexed_access(x) ∧ effective_endpoint_normalized_before_iteration(x)
   | range_member_accessors(start ∧ end ∧ step) → classify_as(non_canonical)
   | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
