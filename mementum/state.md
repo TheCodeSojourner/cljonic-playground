@@ -1,9 +1,28 @@
 ## Session State
 
-- last_session_id: 2026-08-28-contains-unification-and-phase-b
+- last_session_id: 2026-08-28-doxygen-contains-integration
 - current_timestamp: 2026-08-28
 - recover: 1
 - session_complete: true
+
+Task:
+1. Fix Doxygen `mainpage` integration in `src/cljonic-core.hpp`: add `\ref Contains "contains"` to the core/seq free functions listing in alphabetical order, and remove the obsolete legacy `Set_Contains`/`Set_ContainsBy` references from the Set Functions section.
+2. Rebuild Doxygen documentation (`make docs`) and verify all strict quality gates pass (`make upsert-gate-strict`).
+
+Questions:
+1. None unresolved.
+
+Decisions:
+1. Added `\ref Contains "contains"` to `### Seq` in `src/cljonic-core.hpp` alongside `\ref Count "count"`.
+2. Removed obsolete `\ref Set_Contains "Contains", \ref Set_ContainsBy "ContainsBy"` from `## Set Functions`.
+3. Verified documentation builds cleanly and all strict gates pass (`make upsert-gate-strict`).
+
+Next:
+1. Phase C: containers conform to count/is_empty/operators (complete the container member surface so actual containers satisfy `SequenceableCollection`/`IndexedCollection`/`AssociativeCollection`).
+2. Phase D: constrain primitive free functions with the concept layer.
+3. Phase E: full-stack verification via `make git`.
+
+## Historical Session Records
 
 Task:
 1. Complete Phase B: add concept spec tests covering the 46 obligations in `specs/capabilities/concepts.allium` (`tests/cljonic-concepts-spec-tests.cpp`) plus no-heap probe (`tests/no_heap/cljonic-concepts-probes.cpp`), then reconcile the spec-to-code traceability snapshot.
