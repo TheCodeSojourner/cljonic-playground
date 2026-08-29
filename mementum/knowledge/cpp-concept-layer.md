@@ -63,9 +63,10 @@ Clojure parity, not STL naming.
 - Free functions `count(c)`/`is_empty(c)` dispatch on these members.
 - `operator[]` is omitted from all collections. Lookup uses
   `operator()(index)`, `operator()(index, fallback)`, and `get`, gated by
-  `valid_index`.
-- String `valid()` is renamed to `valid_index()` and aligns to the other
-  containers.
+  `contains`. `contains` is the unified Clojure-parity membership predicate
+  across all collection kinds (map key presence, set element presence,
+  vector/string index-in-range); `valid_index` is a deprecated synonym for the
+  index-in-range form.
 
 ## Machinery placement
 
