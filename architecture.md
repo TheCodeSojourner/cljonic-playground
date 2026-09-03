@@ -194,6 +194,20 @@
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty
     ∧ full ∧ contains ∧ fits_into ∧ into ∧ count ∧ first ∧ next ∧ rest ∧ seq
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
+  | collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
+    ∧ take_nth ∧ nth ∧ nthnext ∧ nthrest ∧ butlast ∧ map_indexed ∧ rseq ∧ second ∧ ffirst ∧ fnext
+    ∧ nfirst ∧ nnext ∧ some ∧ is_every ∧ not_any ∧ not_every ∧ distinct ∧ dedupe ∧ frequencies
+    ∧ reductions ∧ split_at ∧ split_with ∧ mapcat ∧ interleave ∧ interpose ∧ partition ∧ partition_all
+    ∧ partition_by ∧ partitionv ∧ partitionv_all ∧ group_by ∧ flatten ∧ tree_seq ∧ keep ∧ keep_indexed
+    ∧ remove ∧ replace ∧ mapv ∧ filterv ∧ subvec ∧ find ∧ reduce_kv ∧ sort ∧ sort_by
+  | collection_shaping_traversal_family(x) → require(individually_named_behavioral_specification(x))
+  | collection_shaping_traversal_family(x) → require(preserves_input_values(x)
+    ∧ callbacks_are_pure_and_non_allocating(x) ∧ termination_policy_is_declared(x)
+    ∧ equality_and_ordering_gates_are_declared(x) ∧ nested_result_representation_is_declared(x)
+    ∧ producer_behavior_is_declared(x) ∧ result_capacity_policy_is_declared(x)
+    ∧ typed_absence_and_failure_policy_is_declared(x) ∧ result_status_is_declared(x)
+    ∧ bounded_owning_results_are_preferred(x) ∧ maps_and_sets_are_semantically_unordered(x)
+    ∧ transducers_and_hidden_lazy_sequences_are_unsupported(x))
   | contains(x) → govern(IndexedAccess(x) ∨ AssociativeAccess(x))
   | fits_into(x) → govern(complete_producer_materialization(x))
   | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
