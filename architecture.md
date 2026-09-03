@@ -103,10 +103,13 @@
   | conditional_on(user_defined_types_being_pure_and_non_allocating(x))
   | preserve_input_values(x) ∧ return(OwningValue(x))
 
-λ S3_result_contract_guidance(x). result_contract_rules(x) → retained_as(future_guidance) for(additional_operations ∨ producers)
-  | guidance(x) → ¬constrain(current_stored_collection_surface ∨ primitive_free_function_surface)
+λ S3_result_contract_guidance(x). result_contract_rules(x) → active_for(all_public_operations)
+  | approved_operation(x) → comply_with(result_contract_rules(x))
 
-λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ Producer)
+λ S3_result_contract_enforcement(x). result_contract_rules(x) → active_for(all_public_operations)
+  | new_operation(x) → comply_with(S3_result_contract_policy ∧ S2_result_status_model)
+
+λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
@@ -143,7 +146,14 @@
 λ S2_api_lifecycle_gate(x). public_function(x) → classify_as(RequirementsBacked ∨ CandidateStatus ∨ DeferredStatus ∨ ExcludedStatus)
   | classify_as(RequirementsBacked) → requires(approved_behavioral_contracts)
   | classify_as(CandidateStatus ∨ DeferredStatus ∨ ExcludedStatus) → not_supported_behavior(x)
-  | relational_ops(index ∨ project ∨ rename ∨ join) → require(RelationModel) before RequirementsBacked
+  | public_function(x) → classified_before(api_surface_finalization)
+  | RequirementsBacked(x) → require(approved_req_mapping ∧ executable_test_coverage)
+  | CandidateStatus(x) → awaiting(specification)
+  | DeferredStatus(x) → awaiting(approved_design)
+  | ExcludedStatus(x) → out_of_scope(x)
+
+λ S2_relational_operations_gate(x). relational_ops(index ∨ project ∨ rename ∨ join)
+  → require(RelationModel ∧ approved_behavioral_contracts) before RequirementsBacked
   | relation_model_minimum(x) → require(row_representation ∧ key_value_capabilities ∧ duplicate_row_key_semantics ∧ nested_result_representation ∧ traversal_order_semantics ∧ capacity_arithmetic ∧ complete_result_preflight ∧ bounded_failure_behavior)
 
 λ S2_profile_coherence(x). profile_change(x) → preserve(stable_handle_model(x))
@@ -166,7 +176,7 @@
   | vague_concept_name(x) → reject(x)
 
 λ S2_result_status_model(x). public_operation(x) → declare(CompleteResult ∨ BoundedPrefixResult
-  ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ Producer)
+  ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | operation(x) → document(status ∧ preflight ∧ failure_or_default_semantics)
   | complete_result_may_fail_to_fit(x) → require(PreflightPredicate(x))
   | preflight(x) → non_throwing(x) ∧ non_allocating(x)
@@ -184,7 +194,7 @@
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty
     ∧ full ∧ contains ∧ fits_into ∧ into ∧ count ∧ first ∧ next ∧ rest ∧ seq
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | contains(x) → govern(IndexedAccess(x) ∨ MembershipOrKeyPresence(x))
+  | contains(x) → govern(IndexedAccess(x) ∨ AssociativeAccess(x))
   | fits_into(x) → govern(complete_producer_materialization(x))
   | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
   | future_operation(x) → require(explicit_requirement_and_specification(x))
@@ -241,6 +251,14 @@ concept IndexedCollection =
     requires(const C& c, std::size_t i) {
       { c(i) };
       { c.contains(i) } -> std::same_as<bool>;
+    };
+
+template<class C>
+concept LookupCollection =
+    SequenceableCollection<C> &&
+    requires(const C& c, const typename C::lookup_type& key) {
+      { c(key) };
+      { c.contains(key) } -> std::same_as<bool>;
     };
 
 template<class C>
@@ -331,11 +349,12 @@ concept AssociativeCollection =
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
   | collection_updates(x) → realize(PersistentValueSemantics ∧ DeepCopyUpdate)
   | public_operations(x) → preserve(ReferentialTransparency)
-  | read_only_observation(x) → use(NonOwningView ∧ StandardViewType)
+  | read_only_observation(x) → use(ReadOnlyInteropAccessor ∧ ConstRangeTraversal)
+  | contiguous_observation(x) → use(ContiguousConstView) when(complete_active_logical_range_is_contiguous(x))
   | view_lifetime(x) → source_lifetime_bounded(x)
 
-λ S1_sequence_guidance(x). sequence_and_materialization_rules(x) → retained_as(future_design_guidance)
-  | producer_operation(x) → ¬active(x) currently
+λ S1_sequence_guidance(x). sequence_and_materialization_rules(x) → active_for(approved_operations_and_producers)
+  | producer_operation(x) → active(x) when(approved_by(Module4) ∧ governed_by_behavioral_contract(x))
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
   | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
@@ -347,6 +366,10 @@ concept AssociativeCollection =
   | range_member_accessors(start ∧ end ∧ step) → classify_as(non_canonical)
   | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
+
+λ bounded_prefix_semantics(x). oversized_producer(x) → materialize_as(BoundedPrefixResult)
+  | prefix_determinism(x) → preserve(source_traversal_order)
+  | prefix_cardinality(x) → limited_to(destination_capacity)
 
 λ S1_construction(x). collection_construction(x) ≡ CapacityConstruction
   | literal_deduced(x) → ctad_deduction_guides(x)
@@ -364,6 +387,8 @@ concept AssociativeCollection =
   | diagnostic_wording(x) → specify(meaning_not_compiler_specific_text)
   | runtime_unknown_materialization_cardinality(x) → may_warn(default_maximum_capacity_usage)
   | warning(x) → not_replace(correctness_constraint(x))
+  | concept_constraint_diagnostics(x) → enforce_at(public_api_boundary)
+  | diagnostic_content(x) → identify(cljonic_capability_or_constraint) ∧ ¬depend_on(compiler_specific_text)
 
 λ S1_constant_evaluation_policy(x). constexpr_eligible_operation(x) → prefer(constexpr)
   | required_compile_time_operation(x) → test_in_constant_expression(x)
@@ -401,7 +426,12 @@ concept AssociativeCollection =
 λ traceability_authorities(x). foundation_authority(x) ≡ requirements/cljonic-requirements-module-1.md ∧ Module1(nominal ∧ storage ∧ no_runtime_service ∧ persistent_value boundaries)
   | capability_authority(x) ≡ requirements/cljonic-requirements-module-2.md ∧ Module2(concept ∧ result_status ∧ preflight ∧ diagnostic ∧ constant_evaluation ∧ vocabulary requirements)
   | vocabulary_authority(x) ≡ vocabulary.md ∧ canonical_terms(x) → govern(public_names ∧ architecture_references ∧ specifications ∧ tests)
-  | module3_stored_collection_authority(x) ≡ requirements/cljonic-requirements-module-3.md ∧ requirements/cljonic-architecture-module-3.md → govern(concrete_storage ∧ linear_scan ∧ swap_and_remove ∧ primitive_free_functions)
+  | module3_stored_collection_authority(x) ≡ requirements/cljonic-requirements-module-3.md → govern(concrete_storage ∧ linear_scan ∧ swap_and_remove ∧ primitive_free_functions)
+  | module4_producer_authority(x) ≡ requirements/cljonic-requirements-module-4.md → govern(producers ∧ materialization ∧ interop)
+  | module5_algorithm_authority(x) ≡ requirements/cljonic-requirements-module-5.md → govern(composition ∧ traversal_family)
+  | module6_numeric_authority(x) ≡ requirements/cljonic-requirements-module-6.md → govern(checked_arithmetic ∧ callables)
+  | module7_extended_domain_authority(x) ≡ requirements/cljonic-requirements-module-7.md → govern(relations ∧ regex ∧ state ∧ formatting)
 
 λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ primitive_free_functions
-  | future_guidance(unbounded_producers ∨ algorithms ∨ regexes) → remain_architectural_guidance until(specification_and_implementation_propagated(x))
+  | approved_but_unimplemented(unbounded_producers ∨ algorithms ∨ regexes) → remain_outside(active_surface(x))
+  | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
