@@ -1,0 +1,1070 @@
+-- allium: 3
+
+-- First-pass behavioral contract shared by the REQ-SEQ-022 operation family.
+entity CollectionShapingTraversalPolicy {
+    preserves_input_values: Boolean
+    callbacks_are_pure_and_non_allocating: Boolean
+    termination_policy_is_declared: Boolean
+    equality_and_ordering_gates_are_declared: Boolean
+    nested_result_representation_is_declared: Boolean
+    producer_behavior_is_declared: Boolean
+    result_capacity_policy_is_declared: Boolean
+    typed_absence_and_failure_policy_is_declared: Boolean
+    result_status_is_declared: Boolean
+    bounded_owning_results_are_preferred: Boolean
+    maps_and_sets_are_semantically_unordered: Boolean
+    transducers_and_hidden_lazy_sequences_are_unsupported: Boolean
+
+    invariant InputValuesArePreserved {
+        this.preserves_input_values = true
+    }
+
+    invariant CallbacksArePureAndNonAllocating {
+        this.callbacks_are_pure_and_non_allocating = true
+    }
+
+    invariant TerminationPolicyIsDeclared {
+        this.termination_policy_is_declared = true
+    }
+
+    invariant EqualityAndOrderingGatesAreDeclared {
+        this.equality_and_ordering_gates_are_declared = true
+    }
+
+    invariant NestedResultRepresentationIsDeclared {
+        this.nested_result_representation_is_declared = true
+    }
+
+    invariant ProducerBehaviorIsDeclared {
+        this.producer_behavior_is_declared = true
+    }
+
+    invariant ResultCapacityPolicyIsDeclared {
+        this.result_capacity_policy_is_declared = true
+    }
+
+    invariant TypedAbsenceAndFailurePolicyIsDeclared {
+        this.typed_absence_and_failure_policy_is_declared = true
+    }
+
+    invariant ResultStatusIsDeclared {
+        this.result_status_is_declared = true
+    }
+
+    invariant BoundedOwningResultsArePreferred {
+        this.bounded_owning_results_are_preferred = true
+    }
+
+    invariant UnorderedMapAndSetSemantics {
+        this.maps_and_sets_are_semantically_unordered = true
+    }
+
+    invariant NoTransducersOrHiddenLazySequences {
+        this.transducers_and_hidden_lazy_sequences_are_unsupported = true
+    }
+}
+
+-- Each operation is individually named for REQ-SEQ-022 traceability.
+entity Take {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    preserves_inputs: Boolean
+    returns_bounded_prefix_result: Boolean
+    terminates_at_requested_count_or_source_end: Boolean
+    capacity_policy_is_declared: Boolean
+    failure_policy_is_declared: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant InputsArePreserved { this.preserves_inputs = true }
+    invariant ReturnsBoundedPrefix { this.returns_bounded_prefix_result = true }
+    invariant TerminationIsBounded { this.terminates_at_requested_count_or_source_end = true }
+    invariant CapacityPolicyIsDeclared { this.capacity_policy_is_declared = true }
+    invariant FailurePolicyIsDeclared { this.failure_policy_is_declared = true }
+}
+
+entity Drop {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    preserves_inputs: Boolean
+    returns_complete_result: Boolean
+    terminates_after_requested_count_or_source_end: Boolean
+    capacity_policy_is_declared: Boolean
+    failure_policy_is_declared: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant InputsArePreserved { this.preserves_inputs = true }
+    invariant ReturnsCompleteResult { this.returns_complete_result = true }
+    invariant TerminationIsBounded { this.terminates_after_requested_count_or_source_end = true }
+    invariant CapacityPolicyIsDeclared { this.capacity_policy_is_declared = true }
+    invariant FailurePolicyIsDeclared { this.failure_policy_is_declared = true }
+}
+
+entity TakeWhile {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    stops_at_first_predicate_failure_or_source_end: Boolean
+    returns_bounded_prefix_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant TerminationIsDeclared { this.stops_at_first_predicate_failure_or_source_end = true }
+    invariant ReturnsBoundedPrefix { this.returns_bounded_prefix_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity DropWhile {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    skips_through_first_predicate_failure: Boolean
+    returns_remaining_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant TerminationIsDeclared { this.skips_through_first_predicate_failure = true }
+    invariant ReturnsRemainingResult { this.returns_remaining_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity TakeLast {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    count_argument_position: Integer
+    requires_bounded_source_inspection: Boolean
+    preserves_source_order_in_retained_suffix: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CountIsFirstArgument { this.count_argument_position = 1 }
+    invariant BoundedInspectionIsRequired { this.requires_bounded_source_inspection = true }
+    invariant RetainedSuffixPreservesOrder { this.preserves_source_order_in_retained_suffix = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity DropLast {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    count_argument_position: Integer
+    source_argument_position: Integer
+    removes_final_requested_count: Boolean
+    returns_bounded_result: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CountIsFirstArgument { this.count_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant FinalCountRemovalIsDeclared { this.removes_final_requested_count = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Keep {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    keeps_non_null_callback_results: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant NonNullResultsAreKept { this.keeps_non_null_callback_results = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity KeepIndexed {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    receives_zero_based_index: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant ZeroBasedIndexIsDeclared { this.receives_zero_based_index = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Remove {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    predicate_argument_position: Integer
+    source_argument_position: Integer
+    predicate_is_pure_and_non_allocating: Boolean
+    removes_matching_elements: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant PredicateIsFirstArgument { this.predicate_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant PredicateIsPureAndNonAllocating { this.predicate_is_pure_and_non_allocating = true }
+    invariant MatchingElementsAreRemoved { this.removes_matching_elements = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Replace {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    substitution_argument_position: Integer
+    source_argument_position: Integer
+    requires_stable_equality: Boolean
+    replaces_matching_values: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant SubstitutionIsFirstArgument { this.substitution_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant EqualityGateIsRequired { this.requires_stable_equality = true }
+    invariant MatchingValuesAreReplaced { this.replaces_matching_values = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Mapv {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    returns_bounded_transformed_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant ReturnsBoundedTransformedResult { this.returns_bounded_transformed_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Filterv {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    predicate_argument_position: Integer
+    source_argument_position: Integer
+    predicate_is_pure_and_non_allocating: Boolean
+    returns_bounded_filtered_result: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant PredicateIsFirstArgument { this.predicate_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant PredicateIsPureAndNonAllocating { this.predicate_is_pure_and_non_allocating = true }
+    invariant ReturnsBoundedFilteredResult { this.returns_bounded_filtered_result = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Subvec {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    start_argument_position: Integer
+    end_argument_is_optional: Boolean
+    uses_contains_for_bounds: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsThree { this.maximum_arity = 3 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant StartIsSecondArgument { this.start_argument_position = 2 }
+    invariant EndIsOptional { this.end_argument_is_optional = true }
+    invariant BoundsPolicyIsDeclared { this.uses_contains_for_bounds = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Find {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    map_argument_position: Integer
+    key_argument_position: Integer
+    requires_associative_access: Boolean
+    returns_entry_or_typed_absence: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant MapIsFirstArgument { this.map_argument_position = 1 }
+    invariant KeyIsSecondArgument { this.key_argument_position = 2 }
+    invariant AssociativeAccessIsRequired { this.requires_associative_access = true }
+    invariant TypedAbsenceIsDeclared { this.returns_entry_or_typed_absence = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity ReduceKv {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    initial_value_argument_position: Integer
+    map_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    traverses_map_entries: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsThree { this.minimum_arity = 3 }
+    invariant MaximumArityIsThree { this.maximum_arity = 3 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant InitialValueIsSecondArgument { this.initial_value_argument_position = 2 }
+    invariant MapIsThirdArgument { this.map_argument_position = 3 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant MapEntriesAreTraversed { this.traverses_map_entries = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Sort {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    comparator_is_optional: Boolean
+    requires_total_order_when_defaulted: Boolean
+    returns_bounded_ordered_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant ComparatorIsOptional { this.comparator_is_optional = true }
+    invariant DefaultOrderGateIsRequired { this.requires_total_order_when_defaulted = true }
+    invariant ReturnsBoundedOrderedResult { this.returns_bounded_ordered_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity SortBy {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    key_function_argument_position: Integer
+    source_argument_position: Integer
+    key_function_is_pure_and_non_allocating: Boolean
+    requires_total_order_for_keys: Boolean
+    returns_bounded_ordered_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant KeyFunctionIsFirstArgument { this.key_function_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant KeyFunctionIsPureAndNonAllocating { this.key_function_is_pure_and_non_allocating = true }
+    invariant KeyOrderGateIsRequired { this.requires_total_order_for_keys = true }
+    invariant ReturnsBoundedOrderedResult { this.returns_bounded_ordered_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity TakeNth {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    step_argument_position: Integer
+    source_argument_position: Integer
+    requires_positive_step: Boolean
+    selects_periodic_elements: Boolean
+    returns_bounded_result: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant StepIsFirstArgument { this.step_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant PositiveStepIsRequired { this.requires_positive_step = true }
+    invariant PeriodicSelectionIsDeclared { this.selects_periodic_elements = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Nth {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    index_argument_position: Integer
+    fallback_argument_is_optional: Boolean
+    returns_default_or_fallback_on_absence: Boolean
+    contains_is_preflight: Boolean
+    preserves_input: Boolean
+    failure_policy_is_declared: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsThree { this.maximum_arity = 3 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant IndexIsSecondArgument { this.index_argument_position = 2 }
+    invariant FallbackIsOptional { this.fallback_argument_is_optional = true }
+    invariant TypedAbsenceIsDeclared { this.returns_default_or_fallback_on_absence = true }
+    invariant ContainsIsPreflight { this.contains_is_preflight = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+    invariant FailurePolicyIsDeclared { this.failure_policy_is_declared = true }
+}
+
+entity NthNext {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    count_argument_position: Integer
+    skips_at_most_requested_count: Boolean
+    returns_remaining_sequence_or_empty: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant CountIsSecondArgument { this.count_argument_position = 2 }
+    invariant SkippingIsBounded { this.skips_at_most_requested_count = true }
+    invariant RemainingResultIsDeclared { this.returns_remaining_sequence_or_empty = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity NthRest {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    count_argument_position: Integer
+    skips_at_most_requested_count: Boolean
+    returns_remaining_sequence_or_empty: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant CountIsSecondArgument { this.count_argument_position = 2 }
+    invariant SkippingIsBounded { this.skips_at_most_requested_count = true }
+    invariant RemainingResultIsDeclared { this.returns_remaining_sequence_or_empty = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity ButLast {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    returns_all_but_final_element: Boolean
+    returns_bounded_result: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant FinalElementIsRemoved { this.returns_all_but_final_element = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity MapIndexed {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    receives_zero_based_index: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant ZeroBasedIndexIsDeclared { this.receives_zero_based_index = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Rseq {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    reverses_logical_traversal: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant ReverseTraversalIsDeclared { this.reverses_logical_traversal = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Second {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    returns_second_element_or_default: Boolean
+    uses_bounded_traversal: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant TypedAbsenceIsDeclared { this.returns_second_element_or_default = true }
+    invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Ffirst {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    returns_first_of_first_or_default: Boolean
+    uses_bounded_traversal: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant TypedAbsenceIsDeclared { this.returns_first_of_first_or_default = true }
+    invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Fnext {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    returns_next_of_first_or_empty: Boolean
+    uses_bounded_traversal: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant TypedAbsenceIsDeclared { this.returns_next_of_first_or_empty = true }
+    invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Nfirst {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    returns_first_of_nested_or_default: Boolean
+    uses_bounded_traversal: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant TypedAbsenceIsDeclared { this.returns_first_of_nested_or_default = true }
+    invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Nnext {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    returns_next_of_nested_or_empty: Boolean
+    uses_bounded_traversal: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant TypedAbsenceIsDeclared { this.returns_next_of_nested_or_empty = true }
+    invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Some {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    short_circuits_on_matching_value: Boolean
+    returns_boolean_or_matching_value: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant ShortCircuitIsDeclared { this.short_circuits_on_matching_value = true }
+    invariant ResultSemanticsAreDeclared { this.returns_boolean_or_matching_value = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity IsEvery {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    short_circuits_on_predicate_failure: Boolean
+    returns_boolean: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant ShortCircuitIsDeclared { this.short_circuits_on_predicate_failure = true }
+    invariant ReturnsBoolean { this.returns_boolean = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity NotAny {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    short_circuits_on_matching_value: Boolean
+    returns_boolean: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant ShortCircuitIsDeclared { this.short_circuits_on_matching_value = true }
+    invariant ReturnsBoolean { this.returns_boolean = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity NotEvery {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    short_circuits_on_predicate_failure: Boolean
+    returns_boolean: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant ShortCircuitIsDeclared { this.short_circuits_on_predicate_failure = true }
+    invariant ReturnsBoolean { this.returns_boolean = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Distinct {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    requires_stable_equality: Boolean
+    preserves_first_occurrence_order: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant EqualityGateIsRequired { this.requires_stable_equality = true }
+    invariant FirstOccurrenceOrderIsPreserved { this.preserves_first_occurrence_order = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Dedupe {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    requires_stable_equality: Boolean
+    removes_adjacent_duplicates_only: Boolean
+    preserves_source_order: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant EqualityGateIsRequired { this.requires_stable_equality = true }
+    invariant AdjacentDuplicatePolicyIsDeclared { this.removes_adjacent_duplicates_only = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Frequencies {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    requires_stable_equality: Boolean
+    returns_count_by_value: Boolean
+    returns_bounded_map: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant EqualityGateIsRequired { this.requires_stable_equality = true }
+    invariant CountResultIsDeclared { this.returns_count_by_value = true }
+    invariant ReturnsBoundedMap { this.returns_bounded_map = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Reductions {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    initial_value_is_optional: Boolean
+    callback_is_pure_and_non_allocating: Boolean
+    emits_intermediate_accumulators: Boolean
+    terminates_at_source_end: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsThree { this.maximum_arity = 3 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant InitialValueIsOptional { this.initial_value_is_optional = true }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant IntermediateAccumulatorsAreEmitted { this.emits_intermediate_accumulators = true }
+    invariant TerminationIsDeclared { this.terminates_at_source_end = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity SplitAt {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    count_argument_position: Integer
+    source_argument_position: Integer
+    returns_two_bounded_results: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CountIsFirstArgument { this.count_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant ReturnsTwoResults { this.returns_two_bounded_results = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity SplitWith {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    returns_two_bounded_results: Boolean
+    stops_at_first_predicate_failure: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant ReturnsTwoResults { this.returns_two_bounded_results = true }
+    invariant TerminationIsDeclared { this.stops_at_first_predicate_failure = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Mapcat {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    flattens_one_result_level: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant OneLevelFlatteningIsDeclared { this.flattens_one_result_level = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Interleave {
+    minimum_arity: Integer
+    source_count_is_variable: Boolean
+    round_robin_order_is_declared: Boolean
+    stops_when_shortest_source_ends: Boolean
+    returns_bounded_result: Boolean
+    preserves_inputs: Boolean
+
+    invariant AtLeastOneSource { this.minimum_arity = 1 }
+    invariant VariableSourceCount { this.source_count_is_variable = true }
+    invariant RoundRobinOrderIsDeclared { this.round_robin_order_is_declared = true }
+    invariant ShortestSourceTermination { this.stops_when_shortest_source_ends = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputsArePreserved { this.preserves_inputs = true }
+}
+
+entity Interpose {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    separator_argument_position: Integer
+    source_argument_position: Integer
+    inserts_between_adjacent_elements: Boolean
+    preserves_source_order: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant SeparatorIsFirstArgument { this.separator_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant SeparatorPolicyIsDeclared { this.inserts_between_adjacent_elements = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Partition {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    partition_size_argument_position: Integer
+    source_argument_position: Integer
+    emits_full_partitions_only: Boolean
+    returns_bounded_nested_result: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant PartitionSizeIsFirstArgument { this.partition_size_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant FullPartitionPolicyIsDeclared { this.emits_full_partitions_only = true }
+    invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity PartitionAll {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    partition_size_argument_position: Integer
+    source_argument_position: Integer
+    emits_final_partial_partition: Boolean
+    returns_bounded_nested_result: Boolean
+    preserves_source_order: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant PartitionSizeIsFirstArgument { this.partition_size_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant FinalPartialPolicyIsDeclared { this.emits_final_partial_partition = true }
+    invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
+    invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity PartitionBy {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    starts_new_partition_on_key_change: Boolean
+    returns_bounded_nested_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant KeyChangePartitionPolicy { this.starts_new_partition_on_key_change = true }
+    invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Partitionv {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    partition_size_argument_position: Integer
+    source_argument_position: Integer
+    emits_full_partitions_only: Boolean
+    returns_bounded_nested_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant PartitionSizeIsFirstArgument { this.partition_size_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant FullPartitionPolicyIsDeclared { this.emits_full_partitions_only = true }
+    invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity PartitionvAll {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    partition_size_argument_position: Integer
+    source_argument_position: Integer
+    emits_final_partial_partition: Boolean
+    returns_bounded_nested_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant PartitionSizeIsFirstArgument { this.partition_size_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant FinalPartialPolicyIsDeclared { this.emits_final_partial_partition = true }
+    invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity GroupBy {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    callback_argument_position: Integer
+    source_argument_position: Integer
+    callback_is_pure_and_non_allocating: Boolean
+    requires_stable_equality_for_keys: Boolean
+    returns_bounded_map_of_groups: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsTwo { this.minimum_arity = 2 }
+    invariant MaximumArityIsTwo { this.maximum_arity = 2 }
+    invariant CallbackIsFirstArgument { this.callback_argument_position = 1 }
+    invariant SourceIsSecondArgument { this.source_argument_position = 2 }
+    invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
+    invariant KeyEqualityGateIsRequired { this.requires_stable_equality_for_keys = true }
+    invariant ReturnsBoundedMap { this.returns_bounded_map_of_groups = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity Flatten {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    source_argument_position: Integer
+    flattens_nested_sequences: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsOne { this.minimum_arity = 1 }
+    invariant MaximumArityIsOne { this.maximum_arity = 1 }
+    invariant SourceIsFirstArgument { this.source_argument_position = 1 }
+    invariant NestedSequenceFlatteningIsDeclared { this.flattens_nested_sequences = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+entity TreeSeq {
+    minimum_arity: Integer
+    maximum_arity: Integer
+    branch_predicate_argument_position: Integer
+    children_function_argument_position: Integer
+    root_argument_position: Integer
+    branch_and_children_callbacks_are_pure: Boolean
+    traversal_termination_is_declared: Boolean
+    returns_bounded_result: Boolean
+    preserves_input: Boolean
+
+    invariant MinimumArityIsThree { this.minimum_arity = 3 }
+    invariant MaximumArityIsThree { this.maximum_arity = 3 }
+    invariant BranchPredicateIsFirstArgument { this.branch_predicate_argument_position = 1 }
+    invariant ChildrenFunctionIsSecondArgument { this.children_function_argument_position = 2 }
+    invariant RootIsThirdArgument { this.root_argument_position = 3 }
+    invariant CallbacksArePure { this.branch_and_children_callbacks_are_pure = true }
+    invariant TerminationIsDeclared { this.traversal_termination_is_declared = true }
+    invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant InputIsPreserved { this.preserves_input = true }
+}
+
+actor CollectionShapingTraversalPolicyOperator { identified_by: CollectionShapingTraversalPolicy }
+actor TakeOperator { identified_by: Take }
+actor DropOperator { identified_by: Drop }
+actor TakeWhileOperator { identified_by: TakeWhile }
+actor DropWhileOperator { identified_by: DropWhile }
+actor TakeLastOperator { identified_by: TakeLast }
+actor DropLastOperator { identified_by: DropLast }
+actor TakeNthOperator { identified_by: TakeNth }
+actor NthOperator { identified_by: Nth }
+actor NthNextOperator { identified_by: NthNext }
+actor NthRestOperator { identified_by: NthRest }
+actor ButLastOperator { identified_by: ButLast }
+actor MapIndexedOperator { identified_by: MapIndexed }
+actor RseqOperator { identified_by: Rseq }
+actor SecondOperator { identified_by: Second }
+actor FfirstOperator { identified_by: Ffirst }
+actor FnextOperator { identified_by: Fnext }
+actor NfirstOperator { identified_by: Nfirst }
+actor NnextOperator { identified_by: Nnext }
+actor SomeOperator { identified_by: Some }
+actor IsEveryOperator { identified_by: IsEvery }
+actor NotAnyOperator { identified_by: NotAny }
+actor NotEveryOperator { identified_by: NotEvery }
+actor DistinctOperator { identified_by: Distinct }
+actor DedupeOperator { identified_by: Dedupe }
+actor FrequenciesOperator { identified_by: Frequencies }
+actor ReductionsOperator { identified_by: Reductions }
+actor SplitAtOperator { identified_by: SplitAt }
+actor SplitWithOperator { identified_by: SplitWith }
+actor MapcatOperator { identified_by: Mapcat }
+actor InterleaveOperator { identified_by: Interleave }
+actor InterposeOperator { identified_by: Interpose }
+actor PartitionOperator { identified_by: Partition }
+actor PartitionAllOperator { identified_by: PartitionAll }
+actor PartitionByOperator { identified_by: PartitionBy }
+actor PartitionvOperator { identified_by: Partitionv }
+actor PartitionvAllOperator { identified_by: PartitionvAll }
+actor GroupByOperator { identified_by: GroupBy }
+actor FlattenOperator { identified_by: Flatten }
+actor TreeSeqOperator { identified_by: TreeSeq }
+actor KeepOperator { identified_by: Keep }
+actor KeepIndexedOperator { identified_by: KeepIndexed }
+actor RemoveOperator { identified_by: Remove }
+actor ReplaceOperator { identified_by: Replace }
+actor MapvOperator { identified_by: Mapv }
+actor FiltervOperator { identified_by: Filterv }
+actor SubvecOperator { identified_by: Subvec }
+actor FindOperator { identified_by: Find }
+actor ReduceKvOperator { identified_by: ReduceKv }
+actor SortOperator { identified_by: Sort }
+actor SortByOperator { identified_by: SortBy }

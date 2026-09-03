@@ -144,6 +144,29 @@ entity IndexedCollection {
     }
 }
 
+entity LookupCollection {
+    extends_sequenceable: Boolean
+    requires_lookup_type: Boolean
+    requires_callable_lookup: Boolean
+    requires_membership_predicate: Boolean
+
+    invariant ExtendsSequenceable {
+        this.extends_sequenceable = true
+    }
+
+    invariant RequiresLookupType {
+        this.requires_lookup_type = true
+    }
+
+    invariant RequiresCallableLookup {
+        this.requires_callable_lookup = true
+    }
+
+    invariant RequiresMembershipPredicate {
+        this.requires_membership_predicate = true
+    }
+}
+
 entity AssociativeCollection {
     extends_sequenceable: Boolean
     requires_callable_key_lookup: Boolean
@@ -214,6 +237,7 @@ actor CljonicQueueOperator { identified_by: CljonicQueue }
 actor CljonicStringOperator { identified_by: CljonicString }
 actor SequenceableCollectionOperator { identified_by: SequenceableCollection }
 actor IndexedCollectionOperator { identified_by: IndexedCollection }
+actor LookupCollectionOperator { identified_by: LookupCollection }
 actor AssociativeCollectionOperator { identified_by: AssociativeCollection }
 actor StableEqualityComparableOperator { identified_by: StableEqualityComparable }
 actor TotallyOrderedOperator { identified_by: TotallyOrdered }
