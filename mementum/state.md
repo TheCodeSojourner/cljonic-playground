@@ -1,26 +1,26 @@
 ## Session State
 
-- last_session_id: 2026-08-28-doxygen-contains-integration
-- current_timestamp: 2026-08-28
+- last_session_id: 2026-09-03-lookup-collection-concept
+- current_timestamp: 2026-09-03
 - recover: 1
 - session_complete: true
 
 Task:
-1. Fix Doxygen `mainpage` integration in `src/cljonic-core.hpp`: add `\ref Contains "contains"` to the core/seq free functions listing in alphabetical order, and remove the obsolete legacy `Set_Contains`/`Set_ContainsBy` references from the Set Functions section.
-2. Rebuild Doxygen documentation (`make docs`) and verify all strict quality gates pass (`make upsert-gate-strict`).
+1. Reconcile the collection concept model by adding the general `LookupCollection` capability for map and set lookup domains.
+2. Route `get` through `LookupCollection` or `IndexedCollection`, add `lookup_type` to `Map` and `Set`, and propagate formal traceability.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Added `\ref Contains "contains"` to `### Seq` in `src/cljonic-core.hpp` alongside `\ref Count "count"`.
-2. Removed obsolete `\ref Set_Contains "Contains", \ref Set_ContainsBy "ContainsBy"` from `## Set Functions`.
-3. Verified documentation builds cleanly and all strict gates pass (`make upsert-gate-strict`).
+1. Added `LookupCollection`, requiring `SequenceableCollection`, `lookup_type`, callable lookup, and matching `contains`.
+2. `Map::lookup_type` aliases `key_type`; `Set::lookup_type` aliases `value_type`; set elements remain public values/elements, not map keys.
+3. `get` accepts `LookupCollection` or `IndexedCollection`; `AssociativeCollection` remains map-oriented and continues to reject `Set`.
+4. Added concept tests and regenerated the obligation snapshot. `make upsert-gate-strict` passed lint, complexity, sanitizers, 100% coverage, traceability, and no-heap checks.
 
 Next:
-1. Phase C: containers conform to count/is_empty/operators (complete the container member surface so actual containers satisfy `SequenceableCollection`/`IndexedCollection`/`AssociativeCollection`).
-2. Phase D: constrain primitive free functions with the concept layer.
-3. Phase E: full-stack verification via `make git`.
+1. Continue Phase D with the remaining sequence primitives (`next`, `rest`, and `seq`) using the narrowest sequence capability constraints.
+2. Phase E: full-stack verification via `make git`.
 
 ## Historical Session Records
 
