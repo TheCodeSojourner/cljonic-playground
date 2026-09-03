@@ -1,32 +1,25 @@
 ## Session State
 
-- last_session_id: 2026-09-03-requirements-quality-repair
+- last_session_id: 2026-09-03-agenda-refresh
 - current_timestamp: 2026-09-03
 - recover: 1
 - session_complete: true
 
 Task:
-1. Quality-review the requirements set for identifier integrity, internal consistency, completeness, capacity semantics, producer/result contracts, and downstream readiness.
-2. Repair the concrete requirements defects and synchronize the stale Module 7 architecture governed-requirements reference.
+1. Review whether the mementum agenda remained useful after the requirements-quality repair.
+2. Refresh the stale `cljonic-next-agenda.md` roadmap and determine whether any additional memories or knowledge pages are warranted.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Requirement identifiers are globally unique and exact references resolve; the requirements-only inventory contains 233 defined designators and zero duplicate or undefined exact references.
-2. `REQ-DIAG-008` treats ordering as applying within contiguous family-specific lists while allowing requirements to be distributed across dependency-ordered thematic modules.
-3. Module 7 defines `REQ-TEST-001` through `REQ-TEST-005` explicitly; the stale `REQ-TEST-001`–`089` range and undefined `REQ-PLAT-011` reference were removed from requirements and the Module 7 architecture governed list.
-4. `REQ-SEQ-022` requires an individually named downstream behavioral specification before any listed operation is implementation-ready; missing operation contracts remain deferred.
-5. Relational `index` capacity uses the source relation's compile-time row-capacity upper bound, not runtime distinct-key cardinality; grouped sets use the source row capacity and join intermediates use derived bounded capacities.
-6. Runtime `re_pattern` returns a tagged checked construction result with a bounded `Regex<N>` success value and an explicit invalid-pattern failure state.
-7. Set-algebra union prefixes use left-operand traversal followed by right-operand traversal with duplicates skipped on first encounter; this deterministic truncation rule does not create semantic set ordering.
-8. The Module 7 architecture reference now matches the corrected requirements range: `REQ-PLAT-024`–`042` and `REQ-TEST-001`–`005`.
+1. Keep `mementum/knowledge/cljonic-next-agenda.md`; it remains useful as the durable roadmap for approval-gated downstream propagation.
+2. Retire the agenda's obsolete keyword-catalog, initial map milestone, and pre-implementation design-question list from active guidance.
+3. No additional memory or knowledge page is warranted; the current decision is fully represented by the refreshed agenda and this state entry.
 
 Validation:
-1. Requirements-only identifier check passed: 233 defined designators, zero duplicates, zero undefined exact references.
-2. Requirements-only targeted repair checks passed: no legacy `REQ-PLAT-011` or `REQ-TEST-006`–`089` references in requirements; required repair wording present; `git diff --check` passed.
-3. Architecture Module 7 targeted reference check passed after synchronization.
-4. Vocabulary remains synchronized with all canonical `REQ-VOCAB-001` terms; no vocabulary edits were required in this session.
+1. Refreshed agenda reviewed against the current requirements-repair state and related collection API knowledge.
+2. `git diff --check -- mementum/knowledge/cljonic-next-agenda.md` passed.
 
 Next:
 1. Validate and approve the repaired requirements and architecture reference before propagating changes into architecture content, behavioral specifications, tests, or implementation.
