@@ -391,14 +391,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `auto xs = Vector<int, 4>{1, 2, 3}; auto ys = conj(xs, 4);`
 
 
-
 ### SentinelBasedAccess
 - **Definition:** The access model where missing or invalid lookup returns a default sentinel value such as `T{}` or `char{}` instead of raising an error or returning an explicit status object.
 - **Deprecated Synonyms:** Sentinel-Based Access, sentinel access, sentinel return, default-value access
 - **Related:** CopyOnModifyCollection, DefaultElement, ProbeFirstAccess
 - **Usage:** Specification and implementation
 - **Examples:** `auto value = get(m, key);` and callers use `contains(m, key)` or `contains(xs, i)` before relying on the result.
-
 
 
 ### DefaultElement
@@ -409,18 +407,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `get(xs, 99)` returns the collection's `DefaultElement` when index `99` is invalid, and `first(xs)` returns the `DefaultElement` when `xs` is empty.
 
 
-
 ### ProbeFirstAccess
 - **Definition:** The required calling discipline for ambiguous domains: first ask a presence or index-validity question, then perform sentinel-based access only when the probe succeeds.
 - **Deprecated Synonyms:** Probe-First Access, guard-before-get, presence check
 - **Related:** SentinelBasedAccess, DefaultElement, CopyOnModifyCollection
 - **Usage:** Specification and implementation
 - **Examples:** `if (contains(m, key)) { auto value = get(m, key); }`
-
-
-
-
-
 
 
 ### Vector
@@ -575,49 +567,6 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `Iterate(inc, 0, 5)` produces `0, 1, 2, 3, 4` by repeatedly incrementing from `0`; `Iterate(f, seed)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` iterations.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### DeterministicOverflowPolicy
 - **Definition:** The explicit, profile-defined rule for numeric overflow behavior, chosen so that overflow outcomes are stable, documented, and never hidden behind undefined or silently heap-backed behavior.
 - **Deprecated Synonyms:** overflow policy, deterministic overflow behavior
@@ -635,16 +584,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** Collection values, string values, regex values, map-entry values, and producer parameters are owning values.
 
 
-
 ### NonOwningView
 - **Definition:** A read-only observation of an existing cljonic value that does not own storage, does not extend source lifetime, and does not allow source mutation. A NonOwningView is not an owning cljonic result and MUST NOT be returned by a public semantic cljonic free function; it MAY be returned only by an explicitly identified collection-owned C++ interoperability accessor or equivalent const logical-range interoperability mechanism governed by the interoperability requirements, or used internally without escaping the operation.
 - **Deprecated Synonyms:** non-owning view, borrowed view
 - **Related:** OwningValue, ReadOnlyInteropAccessor, ContiguousConstView, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A collection-owned interoperability accessor returns a non-owning view whose validity is limited by the source lifetime and invalidation rules.
-
-
-
 
 
 ### CompleteResult
@@ -655,14 +600,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** When `fits_into` is true, the corresponding materialization operation returns a complete result.
 
 
-
 ### BoundedPrefixResult
 - **Definition:** A bounded result that intentionally contains only a deterministic prefix or reduced subset because the complete result could not fit under the documented capacity or result policy.
 - **Deprecated Synonyms:** partial result, prefix result
 - **Related:** CompleteResult, PreflightPredicate, EffectiveBoundedPrefixBoundary
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** An over-capacity `into` operation may return a bounded-prefix result when its preflight indicates non-fit.
-
 
 
 ### EffectiveBoundedPrefixBoundary
@@ -673,14 +616,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** An oversized finite Range normalizes its effective exclusive end to the EffectiveBoundedPrefixBoundary after its bounded prefix.
 
 
-
 ### DefaultReturningResult
 - **Definition:** A documented default value result used when the requested access or lookup cannot produce a valid value.
 - **Deprecated Synonyms:** default result, sentinel-return result
 - **Related:** DefaultElement, CheckedFailureResult, ProbeFirstAccess
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** `get` on a missing key returns a default-returning result according to its contract.
-
 
 
 ### CheckedFailureResult
@@ -691,15 +632,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** A checked numeric conversion may return a checked-failure result when representability requirements are not met.
 
 
-
-
 ### PreflightPredicate
 - **Definition:** A non-throwing, non-allocating predicate that measures the same completion and failure conditions as its paired operation.
 - **Deprecated Synonyms:** preflight check, capability precheck
 - **Related:** CompleteResult, BoundedPrefixResult, ProbeFirstAccess
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** `fits_into`, `can_add`, and operation-specific `has_` checks are preflight predicates when they govern completion semantics.
-
 
 
 ### LifecycleClassification
@@ -710,14 +648,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** A function can remain candidate during feasibility review and becomes requirements-backed only after governing requirements are approved.
 
 
-
 ### RequirementsBacked
 - **Definition:** A lifecycle classification indicating a function's public scope, governing behavior, and resource constraints are approved by stable requirements.
 - **Deprecated Synonyms:** requirements backed, approved-by-requirements
 - **Related:** LifecycleClassification, CandidateStatus, DeferredStatus, ExcludedStatus
 - **Usage:** Requirements, architecture, specification governance, and documentation
 - **Examples:** A requirements-backed function may still need detailed overload and diagnostics design, but it is already part of supported scope.
-
 
 
 ### CandidateStatus
@@ -728,14 +664,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** Vocabulary presence alone does not move a candidate function into supported behavior.
 
 
-
 ### DeferredStatus
 - **Definition:** A lifecycle classification indicating a function is intentionally postponed because required scope or governing requirements are not yet complete.
 - **Deprecated Synonyms:** deferred, postponed status
 - **Related:** LifecycleClassification, CandidateStatus
 - **Usage:** Requirements, architecture, specification governance, and documentation
 - **Examples:** Relational operations can be deferred until a complete relation model is approved.
-
 
 
 ### ExcludedStatus
@@ -754,14 +688,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** A read-only interoperability accessor may expose a standard view type that cannot outlive its source; semantic operations still return owning cljonic results.
 
 
-
 ### UnboundedProducer
 - **Definition:** An explicit producer value with no finite caller-independent complete-result bound, requiring bounded materialization semantics.
 - **Deprecated Synonyms:** infinite producer, open-ended producer
 - **Related:** ProducerMaterialization, PreflightPredicate
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** Unbound forms of `range`, `repeat`, `cycle`, `iterate`, and `repeatedly` are unbounded producers until bounded by destination materialization.
-
 
 
 ### ProducerMaterialization
@@ -772,14 +704,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `into(destination, producer)` plus `fits_into(destination, producer)` defines producer materialization completeness.
 
 
-
 ### ProducerIteration
 - **Definition:** The bounded traversal of a producer's elements up to its effective size, as distinct from ProducerMaterialization, which realizes those elements into an owning bounded result.
 - **Deprecated Synonyms:** producer iteration, producer traversal
 - **Related:** ProducerMaterialization, UnboundedProducer
 - **Usage:** Architecture, specification, and documentation
 - **Examples:** Free-function observation such as `first`, `next`, and `rest` performs ProducerIteration without necessarily invoking ProducerMaterialization.
-
 
 
 ### RelationModel
@@ -790,26 +720,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `index`, `project`, `rename`, and `join` remain deferred until a relation model is approved.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### StatePredicate
 - **Definition:** A predicate whose canonical naming uses `is_` to express a state or adjectival condition.
 - **Deprecated Synonyms:** `is_` predicate
 - **Related:** VerbPredicate
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** `is_empty`, `is_zero`, and `is_subset` are state predicates.
-
 
 
 ### VerbPredicate
@@ -820,9 +736,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `contains`, `starts_with`, `ends_with`, and `includes` are verb predicates.
 
 
-
 ## Supporting Vocabulary
-
 
 
 ### EmbeddedConstraint
@@ -833,14 +747,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** Collection APIs use fixed-capacity storage and avoid runtime allocation on strict profiles.
 
 
-
 ### NoHeapConstraint
 - **Definition:** The rule that no supported configuration or public API path may allocate from or deallocate to dynamic storage, directly or transitively. It applies to construction, update, lookup, traversal, transformation, failure handling, and destruction, including standard-library and dependency behavior invoked by cljonic.
 - **Deprecated Synonyms:** no heap allocation, no-heap rule
 - **Related:** EmbeddedConstraint, StaticInspectableStorage, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Verification gates prohibit forbidden allocation APIs and bounded collections store data without dynamic allocation.
-
 
 
 ### NoExceptionConstraint
@@ -859,16 +771,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** A traversal may inspect a collection through const access, while `assoc` returns a changed copy and leaves its input unchanged.
 
 
-
-
-
 ### CollectionMaximumElementCount
 - **Definition:** The compile-time configuration boundary that sets the maximum element count allowed for cljonic collections. The current preprocessor macro `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` is one configuration mechanism that exposes this boundary.
 - **Deprecated Synonyms:** collection max element count, maximum collection element count, CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro
 - **Related:** CapacityConstruction, StaticInspectableStorage, EmbeddedConstraint, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, build, and documentation
 - **Examples:** A project can set the boundary by defining `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` before including cljonic headers or from compiler/build flags; a collection declaration above it is a CompileTimeFailure.
-
 
 
 ### DeterministicBehavior
@@ -879,22 +787,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** Full-capacity `conj` returns the unchanged value deterministically, and invalid runtime regex compilation returns a stable invalid-pattern sentinel.
 
 
-
-
-
-
-
-
-
-
-
 ### HeaderOnlyDistribution
 - **Definition:** The packaging model in which the library is delivered as headers only, with development sources organized separately from the generated distribution artifact. The generated AmalgamatedHeader exposes the distributable library through one public include.
 - **Deprecated Synonyms:** header-only, header-only library
 - **Related:** AmalgamatedHeader
 - **Usage:** Architecture, implementation, build, and documentation
 - **Examples:** Production implementation units live as headers and are combined into a distributable single-header output.
-
 
 
 ### AmalgamatedHeader
@@ -905,9 +803,6 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** Build automation regenerates the distributable header from the production header tree.
 
 
-
-
-
 ### CompileTimeFailure
 - **Definition:** A result classification indicating an operation or construction is rejected during compilation rather than producing a runtime value, used when a violation is statically knowable ahead of program execution.
 - **Deprecated Synonyms:** compile-time failure, compile-time rejection
@@ -916,37 +811,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** An oversized Vector initializer and an oversized finite Range constructed in a constexpr context are both CompileTimeFailure outcomes.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Behavioral Specification Vocabulary
-
-
-
 
 
 ### CapacityConstruction
@@ -957,7 +822,6 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** Explicit-capacity empty construction is valid, but an initializer count that exceeds capacity is a compile-time failure.
 
 
-
 ### ClosedNominalCollectionDomain
 - **Definition:** The fixed set of types eligible for cljonic collection recognition: Vector, Map, Set, Queue, and String. Standard containers, external containers, and third-party types cannot enter this domain through structural similarity.
 - **Deprecated Synonyms:** closed collection domain, nominal collection domain
@@ -966,14 +830,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `std::vector<int>` is not a member of the ClosedNominalCollectionDomain even if it provides operations similar to Vector.
 
 
-
 ### NominalCollectionRecognition
 - **Definition:** The two-stage recognition model in which a type must first be admitted by cljonic-owned traits before an operation evaluates structural capabilities.
 - **Deprecated Synonyms:** nominal admission, collection identity gate
 - **Related:** ClosedNominalCollectionDomain, CollectionKind
 - **Usage:** Architecture, implementation, and tests
 - **Examples:** `cljonic_collection<T>` depends on cljonic-owned trait admission rather than matching an external container structurally.
-
 
 
 ### CollectionKind
@@ -1104,14 +966,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** A fixed-capacity collection owns its buffer directly by value, allowing its capacity to be inspected from its type or configuration.
 
 
-
 ### PersistentValueSemantics
 - **Definition:** The observable rule that an update returns a new independently valid value while leaving the prior value unchanged. This contract does not itself prescribe a storage algorithm.
 - **Deprecated Synonyms:** persistent collection semantics, immutable update semantics
 - **Related:** CopyOnModifyCollection, DeepCopyUpdate, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** Updating a Vector produces a new value while the original Vector remains valid and unchanged.
-
 
 
 ### DeepCopyUpdate
@@ -1122,14 +982,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** A collection update returns a new owning collection instance containing copied stored elements.
 
 
-
 ### NoRttiConstraint
 - **Definition:** The rule that library behavior and implementation do not use RTTI facilities, including `typeid`, `dynamic_cast`, or virtual-dispatch machinery.
 - **Deprecated Synonyms:** no RTTI, RTTI-free rule
 - **Related:** EmbeddedConstraint, NoExceptionConstraint
 - **Usage:** Requirements, architecture, implementation, and tests
 - **Examples:** Collection recognition uses compile-time traits rather than runtime type inspection.
-
 
 
 ### NoHiddenGlobalInitialization
@@ -1140,14 +998,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** A collection operation cannot rely on a library-initialized mutable registry to produce its result.
 
 
-
 ### SingleThreadedExecutionModel
 - **Definition:** The library contract that neither requires nor provides synchronization, atomics, thread-local state, parallel execution, or concurrent-access safety. A multithreaded caller may use cljonic only when it confines each operation and value access to one thread at a time.
 - **Deprecated Synonyms:** single-threaded model, non-concurrent execution model
 - **Related:** DeterministicBehavior, NoHiddenGlobalInitialization
 - **Usage:** Requirements, architecture, implementation, tests, and documentation
 - **Examples:** cljonic does not synchronize concurrent accesses to a collection value.
-
 
 
 ### ReferentialTransparency
@@ -1158,27 +1014,12 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** Given equal Vector inputs and configuration, an update returns equivalent new values without changing its input.
 
 
-
 ### SimpleAggregateBoundary
 - **Definition:** The admissible user-defined element, key, and value type boundary: simple aggregates are permitted only when every capability required by the applicable collection and operation is non-allocating and does not require forbidden runtime services. Storage alone does not require equality or ordering.
 - **Deprecated Synonyms:** aggregate type boundary, user-defined aggregate boundary
 - **Related:** NoHeapConstraint, NoExceptionConstraint, StaticInspectableStorage
 - **Usage:** Requirements, architecture, implementation, and tests
 - **Examples:** A user-defined aggregate may be stored in a Vector when its required construction, copying, moving, and destruction capabilities satisfy the applicable operation contract.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Relationship Notes
