@@ -1,29 +1,30 @@
 ## Session State
 
-- last_session_id: 2026-09-03-agenda-refresh
+- last_session_id: 2026-09-03-user-manual
 - current_timestamp: 2026-09-03
 - recover: 1
 - session_complete: true
 
 Task:
-1. Review whether the mementum agenda remained useful after the requirements-quality repair.
-2. Refresh the stale `cljonic-next-agenda.md` roadmap and determine whether any additional memories or knowledge pages are warranted.
+1. Generate a user-facing manual for the cljonic C++ single-header library using only the current `requirements/` set.
+2. Remove developer-facing requirements-process and implementation-readiness language from the manual.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Keep `mementum/knowledge/cljonic-next-agenda.md`; it remains useful as the durable roadmap for approval-gated downstream propagation.
-2. Retire the agenda's obsolete keyword-catalog, initial map milestone, and pre-implementation design-question list from active guidance.
-3. No additional memory or knowledge page is warranted; the current decision is fully represented by the refreshed agenda and this state entry.
+1. Create the root-level `user_manual.md` as a user-facing guide based only on the canonical `requirements/` files.
+2. Describe behavior directly for users and omit requirement-family staging, implementation readiness, internal storage strategy, and specification-process guidance.
+3. Keep the user manual separate from the mementum bundle; no additional memory or knowledge page is warranted for this documentation task.
 
 Validation:
-1. Refreshed agenda reviewed against the current requirements-repair state and related collection API knowledge.
-2. `git diff --check -- mementum/knowledge/cljonic-next-agenda.md` passed.
+1. `user_manual.md` was reviewed against requirements Modules 1 through 7 only.
+2. `git diff --check -- user_manual.md` passed.
+3. A targeted search found no `requirements`, `requirements-backed`, `implementation-ready`, `behavioral specification`, `source of truth`, `user contract`, or `storage strategy` wording in the manual.
 
 Next:
-1. Validate and approve the repaired requirements and architecture reference before propagating changes into architecture content, behavioral specifications, tests, or implementation.
-2. After approval, reconcile the remaining downstream operation-level specifications required by `REQ-SEQ-022`, beginning with the collection-shaping and traversal inventory.
+1. Generate the developer-facing document from the appropriate developer and repository process sources when requested.
+2. Preserve `user_manual.md` as a user-facing artifact and keep developer workflow guidance out of it.
 
 ## Historical Session Records
 
