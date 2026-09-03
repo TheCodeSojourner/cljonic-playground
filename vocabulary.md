@@ -273,7 +273,7 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### ProducerOnlyResult
-- **Definition:** A public operation result whose value is a self-contained producer rather than an owning materialized collection. A ProducerOnlyResult owns producer parameters, does not own materialized result storage, and does not borrow source storage or hidden mutable state.
+- **Definition:** A public operation result whose value is a self-contained producer rather than an owning materialized collection. A ProducerOnlyResult is a result-status category, not a synonym for the Producer value/domain concept. A ProducerOnlyResult owns producer parameters, does not own materialized result storage, and does not borrow source storage or hidden mutable state.
 - **Deprecated Synonyms:** producer-only result, unmaterialized result
 - **Related:** Producer, UnboundedProducer, OwningValue, ProducerMaterialization
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
