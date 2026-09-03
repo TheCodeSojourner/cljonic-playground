@@ -1,26 +1,28 @@
 ## Session State
 
-- last_session_id: 2026-09-03-lookup-collection-concept
+- last_session_id: 2026-09-03-requirements-vocabulary-reconciliation
 - current_timestamp: 2026-09-03
 - recover: 1
 - session_complete: true
 
 Task:
-1. Reconcile the collection concept model by adding the general `LookupCollection` capability for map and set lookup domains.
-2. Route `get` through `LookupCollection` or `IndexedCollection`, add `lookup_type` to `Map` and `Set`, and propagate formal traceability.
+1. Reconcile the approved requirements and vocabulary for functional C++ implementation policy, const logical traversal, mandatory read-only interoperability, owning semantic results, producer results, queue FIFO traversal, and zero-capacity collections.
+2. Apply bounded vocabulary upserts only after the requirements were treated as authoritative, then validate the vocabulary structure and associations.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Added `LookupCollection`, requiring `SequenceableCollection`, `lookup_type`, callable lookup, and matching `contains`.
-2. `Map::lookup_type` aliases `key_type`; `Set::lookup_type` aliases `value_type`; set elements remain public values/elements, not map keys.
-3. `get` accepts `LookupCollection` or `IndexedCollection`; `AssociativeCollection` remains map-oriented and continues to reject `Set`.
-4. Added concept tests and regenerated the obligation snapshot. `make upsert-gate-strict` passed lint, complexity, sanitizers, 100% coverage, traceability, and no-heap checks.
+1. Semantic cljonic free functions MUST NOT return standard ranges, views, borrowed iterators, or other lazy/non-owning traversal results; collection-owned interoperability remains a separate mandatory const read-only boundary.
+2. Every supported collection MUST provide const logical traversal and a read-only interoperability mechanism; a single contiguous standard view remains conditional on physical logical contiguity, especially for circular queues.
+3. `Sequenceable` covers supported collections, approved producers, and explicitly approved values such as `MapEntry`; `SequenceableCollection` remains the intentionally bootstrapped C++ count/emptiness baseline.
+4. Vocabulary terms distinguish `ConstRangeTraversal`, `LogicalTraversalOrder`, `ReadOnlyInteropAccessor`, `ContiguousConstView`, `ProducerOnlyResult`, `NonOwningView`, and `StandardViewType`.
+5. Requirements and vocabulary define logical `next`/`rest` semantics independently of `pop()`, producer ownership boundaries, queue FIFO traversal, zero-capacity validity, and callback no-mutation/resource constraints.
+6. Vocabulary reconciliation and repairs completed. Final vocabulary validation reported 125 complete terms, no missing fields, duplicate headings, undefined related references, or canonical synonym conflicts; `git diff --check` passed.
 
 Next:
-1. Continue Phase D with the remaining sequence primitives (`next`, `rest`, and `seq`) using the narrowest sequence capability constraints.
-2. Phase E: full-stack verification via `make git`.
+1. Update the architecture artifacts from the approved requirements and vocabulary, removing stale universal `view(collection)` claims and defining the mandatory const traversal/interoperability boundary.
+2. Validate the architecture before proceeding to specifications, tests, or implementation.
 
 ## Historical Session Records
 
