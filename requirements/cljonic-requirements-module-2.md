@@ -13,6 +13,7 @@ This module establishes the C++20 concept capability framework, result status ou
 - A default-returning result is the documented default value produced by a convenience operation when the requested access or lookup cannot produce a valid value.
 - A checked-failure result is a documented non-throwing, non-allocating result indicating that an operation could not complete successfully without violating the library's failure model.
 - A producer is an explicit, self-contained value that represents a sequence or materialization source without owning the materialized result storage. A producer MUST own its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. A producer is distinct from both an owning materialized result and a collection-owned C++ interoperability view.
+- A producer-only result is a public operation result whose value is a self-contained producer rather than an owning materialized collection. A producer-only result owns producer parameters, does not own materialized result storage, and does not borrow source storage or hidden mutable state.
 - A complete result is the full result of an operation as defined by the relevant requirement.
 - Every public operation MUST document whether it returns a complete result, a bounded-prefix result, a default value, or a checked failure. When the complete result may fail to fit, the operation MUST expose a corresponding non-throwing, non-allocating preflight predicate that measures the same result and failure conditions as the operation.
 - Stable equality and total ordering are capabilities, not assumptions implied by storage. A type is eligible for equality or ordering only when the applicable requirement or capability contract explicitly permits it.
@@ -24,7 +25,7 @@ This module establishes the C++20 concept capability framework, result status ou
   - bounded-prefix result
   - default-returning result
   - checked-failure result
-  - producer-only result
+  - `ProducerOnlyResult`
 - An operation MUST document which status it returns, which preflight predicate (if any) governs completion, and which failure or default semantics apply when the operation does not produce a complete result.
 - For operations whose complete result may fail to fit or may be invalid under runtime conditions, the operation MUST provide a corresponding non-throwing, non-allocating preflight predicate that measures the same success and failure conditions as the operation itself.
 - A default-returning result and a checked-failure result are distinct: the former is a documented convenience value for an absent or invalid access, while the latter is an explicit signal that the operation could not complete successfully under the required model.

@@ -51,7 +51,7 @@ Public operations return outcomes classified into 5 canonical categories:
 2. **Bounded-Prefix Result**: Owning bounded value truncated to fit capacity.
 3. **Default-Returning Result**: Documented default value (`T{}` or fallback) on missing key/index.
 4. **Checked-Failure Result**: Checked result structure communicating operational failure non-throwingly.
-5. **Producer-Only Result**: Standalone sequence producer value (unmaterialized).
+5. **ProducerOnlyResult**: Public operation result whose value is a standalone sequence producer (unmaterialized), distinct from the `Producer` value/domain concept.
 
 ## Preflight Predicate Architecture
 
