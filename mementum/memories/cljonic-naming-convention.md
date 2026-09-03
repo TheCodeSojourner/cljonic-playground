@@ -20,5 +20,5 @@ Makefile `help` entries must be added in alphabetical order.
 C++ identifier naming follows the C++ Core Guidelines:
 - Types and concepts: PascalCase (concepts per `NL.17`)
 - Namespaces: lowercase_with_underscores (Clojure-analog `cljonic::core`, `cljonic::set`, `cljonic::string`)
-- Free and member functions: snake_case (Clojure parity: `count`, `is_empty`, `valid_index`)
+- Free and member functions: snake_case (Clojure parity: `count`, `is_empty`, `contains`)
 - Nominal concepts keep `Cljonic` prefix; capability/value concepts do not require it
