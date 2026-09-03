@@ -71,5 +71,5 @@ public:
 
 ## Traceability
 
-- Governed Requirements: `cljonic-requirements-module-7.md` (`REQ-FN-015`–`024`, `REQ-FN-028`–`031`, `REQ-PLAT-011`, `REQ-PLAT-024`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`089`).
+- Governed Requirements: `cljonic-requirements-module-7.md` (`REQ-FN-015`–`024`, `REQ-FN-028`–`031`, `REQ-PLAT-024`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`).
 - Completes the entire 7-module implementation architecture roadmap for `cljonic`.
