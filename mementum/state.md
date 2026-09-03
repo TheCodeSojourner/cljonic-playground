@@ -1,30 +1,61 @@
 ## Session State
 
-- last_session_id: 2026-09-03-user-manual
+- last_session_id: 2026-09-03-sequence-specification
 - current_timestamp: 2026-09-03
 - recover: 1
 - session_complete: true
 
 Task:
-1. Generate a user-facing manual for the cljonic C++ single-header library using only the current `requirements/` set.
-2. Remove developer-facing requirements-process and implementation-readiness language from the manual.
+1. Complete the requirements, vocabulary, architecture, and specification quality pass for the REQ-SEQ-022 collection-shaping and traversal family.
+2. Preserve the architecture > specifications > tests > code authority order and hand off to focused specification-test propagation.
 
 Questions:
 1. None unresolved.
 
 Decisions:
-1. Create the root-level `user_manual.md` as a user-facing guide based only on the canonical `requirements/` files.
-2. Describe behavior directly for users and omit requirement-family staging, implementation readiness, internal storage strategy, and specification-process guidance.
-3. Keep the user manual separate from the mementum bundle; no additional memory or knowledge page is warranted for this documentation task.
+1. Keep the existing S5-to-S1 architecture and reconcile its authority mappings and policy statements in place.
+2. Treat producer operations as active only when approved by Module 4 and governed by behavioral contracts.
+3. Make Modules 3 through 7 and vocabulary.md explicit traceability authorities; remove the nonexistent Module 3 architecture-file reference.
+4. Make interoperability, result classification, lifecycle classification, relational gating, bounded-prefix behavior, and concept diagnostics explicit architectural policies.
+5. Approved architecture-check recommendation 1: result-contract rules are active for all public operations.
+6. Approved architecture-check recommendation 3: approved capabilities remain outside the active implementation surface until their specifications and implementation propagation are complete.
+7. Approved architecture-check recommendation 2: `Producer` names the value/domain concept, while `ProducerOnlyResult` names the public operation result-status category.
+8. Propagate `ProducerOnlyResult` consistently through the Module 2 requirements model, Module 2 architecture summary, root architecture result classifications, and vocabulary cross-links.
+9. During vocabulary weed, resolve the undefined architecture symbol `MembershipOrKeyPresence` to canonical `IndexedAccess ∨ AssociativeAccess`; requirements and vocabulary remain authoritative.
 
 Validation:
-1. `user_manual.md` was reviewed against requirements Modules 1 through 7 only.
-2. `git diff --check -- user_manual.md` passed.
-3. A targeted search found no `requirements`, `requirements-backed`, `implementation-ready`, `behavioral specification`, `source of truth`, `user contract`, or `storage strategy` wording in the manual.
+1. The focused architecture consistency check found no stale producer-inactive statement or nonexistent architecture authority path.
+2. `git diff --check -- architecture.md` passed.
+3. `make test` passed: 82/82 tests.
+4. `make upsert-gate-strict` reached lint and complexity successfully but was interrupted during its parallel rebuild before completion.
+5. The approved terminology propagation check found no old `Producer` result classification or `Producer-Only Result` label.
+6. `make lint` passed and `make test` passed: 82/82 tests.
+7. Vocabulary weed found no remaining targeted architecture drift after replacing `MembershipOrKeyPresence`; `git diff --check` passed.
+
+Current Increment:
+1. Create `specs/sequences/collection-shaping.allium` as the first-pass domain contract for the REQ-SEQ-022 collection-shaping and traversal family.
+2. Model all 50 listed operations as individually named entities under the new `specs/sequences/` domain, with a shared policy covering input preservation, callback purity, termination, capability gates, nested results, producer behavior, capacity, absence/failure, result status, bounded ownership, unordered map/set semantics, and unsupported transducers/lazy sequences.
+3. Reflect the approved operation inventory in `architecture.md` without duplicating operation-level behavioral detail.
+4. Tighten all 50 operation entities with operation-specific arity, argument roles, callback behavior, termination, result shape, capacity or ordering policy, absence/failure behavior, and input-preservation constraints; representative contracts include `take`, `drop`, `nth`, predicate traversal, partitioning, grouping, transformation, and ordering operations.
+
+Current Increment Validation:
+1. `allium check specs` passed with zero diagnostics.
+2. `allium analyse specs` passed with zero findings.
+3. `allium plan specs/sequences/collection-shaping.allium` passed with zero diagnostics.
+4. Architecture/spec inventory synchronization found all 50 operation entities reflected in `architecture.md`.
+5. `git diff --check` passed for the increment.
+6. The tightened operation slices passed focused and full Allium check/analyse validation with zero diagnostics and findings.
+7. The completed 50-operation contract file passed full `allium check specs` and `allium analyse specs` with zero diagnostics and findings.
+8. Architecture synchronization found all 50 unique operation contracts reflected in `architecture.md`.
+9. The `gybis-arch-weed` convergence pass found one architecture/spec directive gap: the shared sequence policy dimensions were present in the spec but not named explicitly in architecture; adding the family-level policy resolved it.
+10. Final architecture/spec convergence has zero remaining targeted divergences; the five-layer order remains `S5 S4 S3 S2 S1`.
+11. The consolidated requirements/vocabulary/architecture/specifications quality pass found no genuine vocabulary drift, no missing authority references, no missing sequence policy dimensions, and no missing operation directives.
+12. Final quality pass: all 26 Allium files passed check/analyse, core authority terms are present in requirements and vocabulary, architecture references resolve, and `git diff --check` passed.
 
 Next:
-1. Generate the developer-facing document from the appropriate developer and repository process sources when requested.
-2. Preserve `user_manual.md` as a user-facing artifact and keep developer workflow guidance out of it.
+1. Propagate approved specifications into focused executable specification tests.
+2. Update spec-to-code traceability from those tests.
+3. Implement only after tests and traceability establish the required behavior.
 
 ## Historical Session Records
 
