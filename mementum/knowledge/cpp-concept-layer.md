@@ -29,7 +29,7 @@ All C++ code follows the C++ Core Guidelines.
 - Namespaces: lowercase_with_underscores (Clojure-analog `cljonic::core`,
   `cljonic::set`, `cljonic::string`).
 - Free and member functions: snake_case with Clojure parity (`count`,
-  `is_empty`, `valid_index`).
+  `is_empty`, `contains`).
 - Because cljonic users are developers, C++ concept identifiers are first-class
   vocabulary terms, not hidden references under Examples.
 
@@ -44,7 +44,7 @@ concept model.
   structural similarity to external containers. Keep the `Cljonic` prefix.
 - Level 2 `CapabilityConcept` (semantic gates layered on nominal identity):
   - Structural: `SequenceableCollection` (`count`/`is_empty`),
-    `IndexedCollection` (`operator(i)`/`valid_index`),
+    `IndexedCollection` (`operator(i)`/`contains(index)`),
     `AssociativeCollection` (`operator(k)`/`contains`).
   - Value: `StableEqualityComparable` (base, rejects float/double),
     `TotallyOrdered` (derived).
@@ -65,8 +65,7 @@ Clojure parity, not STL naming.
   `operator()(index)`, `operator()(index, fallback)`, and `get`, gated by
   `contains`. `contains` is the unified Clojure-parity membership predicate
   across all collection kinds (map key presence, set element presence,
-  vector/string index-in-range); `valid_index` is a deprecated synonym for the
-  index-in-range form.
+  vector/string index-in-range); legacy index aliases are removed.
 
 ## Machinery placement
 
