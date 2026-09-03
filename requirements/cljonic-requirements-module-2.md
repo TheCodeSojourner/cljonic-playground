@@ -12,7 +12,7 @@ This module establishes the C++20 concept capability framework, result status ou
 - A bounded-prefix result is a bounded result that is intentionally smaller than the complete result because the complete result could not fit within the declared capacity or the operation's documented result policy.
 - A default-returning result is the documented default value produced by a convenience operation when the requested access or lookup cannot produce a valid value.
 - A checked-failure result is a documented non-throwing, non-allocating result indicating that an operation could not complete successfully without violating the library's failure model.
-- A producer is an explicit value that represents a sequence or materialization source without owning the materialized result storage.
+- A producer is an explicit, self-contained value that represents a sequence or materialization source without owning the materialized result storage. A producer MUST own its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. A producer is distinct from both an owning materialized result and a collection-owned C++ interoperability view.
 - A complete result is the full result of an operation as defined by the relevant requirement.
 - Every public operation MUST document whether it returns a complete result, a bounded-prefix result, a default value, or a checked failure. When the complete result may fail to fit, the operation MUST expose a corresponding non-throwing, non-allocating preflight predicate that measures the same result and failure conditions as the operation.
 - Stable equality and total ordering are capabilities, not assumptions implied by storage. A type is eligible for equality or ordering only when the applicable requirement or capability contract explicitly permits it.
@@ -107,6 +107,10 @@ REQ-DIAG-005. Public concept names MUST be precise, capability-oriented, and und
 
 REQ-DIAG-006. Materialization APIs with runtime-unknown result cardinality SHOULD provide an implementation-defined compiler warning or equivalent tooling diagnostic when the caller uses the default maximum capacity, recommending an explicit call-site capacity. Such a warning MUST NOT replace the required capacity parameter or depend on non-portable diagnostics for correctness.
 
+REQ-DIAG-007. Callable requirements MUST distinguish compile-time-checkable constraints from behavioral policy constraints. Named concepts or equivalent constraints SHOULD enforce invocability, argument compatibility, result compatibility, required `noexcept` behavior, and any required `constexpr` capability at the public API boundary. Allocation behavior, I/O, input mutation, hidden mutable-state dependence, and semantic determinism MUST remain explicit contract obligations verified through implementation review, focused tests, resource checks, or other applicable quality gates; a C++ concept MUST NOT be represented as proving those properties unless it actually can.
+
+REQ-DIAG-008. Requirement designators MUST be globally unique and MUST remain stable after publication so that traceability survives requirement refinement. Designators MUST use the form `REQ-<FAMILY>-<NUMBER>` with an optional uppercase alphabetic suffix reserved for a refinement of the immediately preceding numeric requirement. Within each family, requirements MUST be presented and referenced in numeric order, with a suffixed refinement immediately following its base requirement; existing designators MUST NOT be renumbered to fill gaps.
+
 ## Compile-Time Evaluation
 
 REQ-CONST-001. Collection construction and non-allocating operations SHOULD be `constexpr` when the value types and compiler permit it.
@@ -119,7 +123,7 @@ REQ-CONST-004. Compile-time and runtime evaluation MUST produce equivalent obser
 
 ## Vocabulary and Naming Conventions
 
-REQ-VOCAB-001. The canonical terms MUST include collection, sequence, sequenceable, traversal, vector, map, set, queue, string, capacity, default element, valid index, `contains`, persistent value, free function, bounded storage, platform interoperability, aggregate-like struct, stable equality, total order, discrete numeric type, numeric policy, owning value, non-owning view, standard view type, bounded result, partial result, preflight predicate, exact conversion, checked conversion, lossy conversion, parsing, finite observation, finite deep equality, bounded inspection, unbounded producer, producer materialization, relation model, `MapEntry`, general equality, numeric equality, semantic predicate name, state predicate, verb predicate, capability predicate, `is_` predicate prefix, `can_` predicate prefix, `has_` predicate prefix, `valid_` predicate prefix, lifecycle classification, `candidate`, `deferred`, `excluded`, `requirements-backed`, `KeywordEnumNameEntry`, `KeywordEnumNameMap`, `KeywordEnumNameContext`, and keyword enum name mapping.
+REQ-VOCAB-001. The canonical terms MUST include collection, sequence, sequenceable, traversal, vector, map, set, queue, string, capacity, default element, `contains`, persistent value, free function, bounded storage, platform interoperability, aggregate-like struct, stable equality, total order, discrete numeric type, numeric policy, owning value, non-owning view, standard view type, bounded result, partial result, preflight predicate, exact conversion, checked conversion, lossy conversion, parsing, finite observation, finite deep equality, bounded inspection, unbounded producer, producer materialization, relation model, `MapEntry`, general equality, numeric equality, semantic predicate name, state predicate, verb predicate, capability predicate, `is_` predicate prefix, `can_` predicate prefix, `has_` predicate prefix, `valid_` predicate prefix, lifecycle classification, `candidate`, `deferred`, `excluded`, `requirements-backed`, `KeywordEnumNameEntry`, `KeywordEnumNameMap`, `KeywordEnumNameContext`, and keyword enum name mapping.
 
 REQ-VOCAB-002. Each canonical term MUST have one meaning in public documentation, requirements, tests, and code.
 
@@ -144,4 +148,4 @@ REQ-VOCAB-011. Every public function considered during API-surface review MUST h
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: C++20 concepts, preflight predicates, compile-time assertions, and result status type definitions.
-- **Governed REQs**: `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`006`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.
+- **Governed REQs**: `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`008`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.

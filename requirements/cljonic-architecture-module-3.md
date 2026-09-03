@@ -94,5 +94,5 @@ Primitive operations are exposed via free-function templates:
 
 ## Traceability
 
-- Governed Requirements: `cljonic-requirements-module-3.md` (`REQ-COLL-001`–`017`, `REQ-SEQ-001`–`014`, `REQ-FN-001`–`008`, `REQ-FN-026`).
+- Governed Requirements: `cljonic-requirements-module-3.md` (`REQ-COLL-001`–`017`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`).
 - Downstream Modules: Module 4 (Producers & Materialization), Module 5 (Algorithms).

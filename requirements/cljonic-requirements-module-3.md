@@ -28,6 +28,8 @@ REQ-COLL-006. The library MUST provide a bounded FIFO queue with insertion at th
 
 REQ-COLL-007. Collection capacity MUST be encoded in each collection type and bounded by a documented configuration-time limit.
 
+REQ-COLL-007A. A collection capacity MAY be zero. A zero-capacity collection MUST be a valid empty owning value, MUST report `count() == 0` and `is_empty() == true`, MUST return documented default or fallback values for access, and MUST preserve its value when an insertion operation cannot add an element. It MUST support empty const traversal without accessing element storage, allocating, throwing, or invoking capacity-dependent arithmetic with zero as a divisor. A zero-capacity collection MUST fail any compile-time construction that would require stored elements.
+
 REQ-COLL-008. `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` MUST supply the default and maximum permitted collection element count and MUST default to 1000 unless a later approved requirement changes it.
 
 REQ-COLL-009. The public API MUST distinguish collection behavior from storage strategy. Users MUST be able to use the collection contracts without depending on a particular internal representation.
@@ -36,7 +38,7 @@ REQ-COLL-010. Map lookup, association, removal, membership, and traversal, and s
 
 REQ-COLL-010A. Removal from unsorted `Map` and `Set` MUST use swap-and-remove after the target has been found: the final stored element, or final map key/value pair, MUST be copied into the removed position before the count is decremented. This optimization MUST preserve membership and association semantics while allowing implementation traversal order to change.
 
-REQ-COLL-010B. The supported `Map`, `Set`, and `Queue` implementations MUST use flat contiguous bounded storage. A `Map` MUST store its active key/value pairs contiguously, a `Set` MUST store its active values contiguously, and a `Queue` MUST store its active logical elements contiguously. The implementation MUST preserve the collection semantics while maintaining these contiguous active ranges.
+REQ-COLL-010B. The supported `Map`, `Set`, and `Queue` implementations MUST use flat bounded array-backed storage. A `Map` MUST store its active key/value pairs within its bounded array, and a `Set` MUST store its active values within its bounded array. A `Queue` MAY use circular physical storage; its const traversal and any interoperability accessor MUST expose active elements in logical FIFO order. The implementation MUST preserve collection semantics while maintaining bounded storage and a defined logical traversal range.
 
 REQ-COLL-011. Map and set iteration order MUST be semantically unordered, consistent with their Clojure counterparts. Implementations MAY exhibit a repeatable order, but callers MUST NOT rely on any particular order.
 
@@ -59,6 +61,10 @@ REQ-COLL-017. The API MUST support capacity-inferred string-literal construction
 REQ-SEQ-001. The library MUST define sequence as a traversal behavior over immutable values in the cljonic collection family, not as a separate owning collection type.
 
 REQ-SEQ-002. A sequence MUST support determining emptiness, obtaining the first value, and obtaining the remainder.
+
+REQ-SEQ-002A. `next` and `rest` MUST operate on the collection's documented logical traversal order. For a nonempty sequence, both operations MUST produce an owning bounded result containing every logical element after the first; for an empty sequence, both operations MUST produce the documented empty owning result. `next` and `rest` MUST NOT derive their semantics from `pop()` because `pop()` MAY remove a different logical end for different collection kinds, including the last element of a vector and the first element of a queue.
+
+REQ-SEQ-002B. `next` and `rest` MUST preserve the source collection, MUST preserve the relative logical order of all retained elements, and MUST apply the same element representation and capacity policy as `seq`. For maps, retained elements MUST be value-semantic `MapEntry` values; for sets and maps, implementation traversal order MAY be repeatable but MUST remain semantically unordered; for queues, retained elements MUST remain in FIFO order.
 
 REQ-SEQ-003. A collection that can be traversed as a sequence MUST expose a sequence conversion operation and the common traversal operations directly.
 
@@ -122,9 +128,11 @@ REQ-FN-007. Functions MUST be composable across compatible collection and sequen
 
 REQ-FN-008. `map`, `filter`, `reduce`, and similar higher-order operations MUST preserve the purity and input-preservation guarantees of the library. Supported callbacks MUST be non-throwing, non-allocating, non-mutating with respect to operation inputs, and deterministic for equal arguments. The library and its supported callbacks MUST NOT perform I/O, mutate input collections or their elements, depend on hidden mutable state or mutable global state, or introduce side effects independently of an explicitly approved effectful API contract. The library MUST reject standard-library facilities and callback forms when their use would violate the bounded, deterministic, no-heap, no-exception, input-preservation, or owning-result contracts.
 
+REQ-FN-008A. Higher-order operation constraints MUST enforce at the public API boundary every callable property that can be expressed portably in the C++ type system, including invocability with the documented arguments, compatible result types, required `noexcept` behavior, and required `constexpr` capability. Non-allocating behavior, absence of I/O, absence of hidden mutable-state dependence, input preservation, and semantic determinism MUST be treated as behavioral contract obligations and MUST be verified by implementation review, focused tests, no-heap checks, or other applicable quality gates rather than assumed from callable syntax or a concept name.
+
 REQ-FN-026. The core vocabulary MUST include `empty`, `is_empty`, and `not_empty` with the semantics defined by `REQ-BOUNDS-010A`. `empty` MUST produce an empty owning value of the same supported collection type as its input. `is_empty` MUST return a boolean predicate result. `not_empty` MUST preserve the input collection type and capacity and MUST return an owning copy of the input when nonempty or the corresponding empty value when empty. These operations MUST preserve their inputs and require no dynamic allocation or exceptions.
 
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
-- **Governed REQs**: `REQ-COLL-001`–`017`, `REQ-SEQ-001`–`014`, `REQ-FN-001`–`008`, `REQ-FN-026`.
+- **Governed REQs**: `REQ-COLL-001`–`017`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`.

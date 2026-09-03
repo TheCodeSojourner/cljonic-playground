@@ -1,6 +1,6 @@
 # cljonic Requirements Modules
 
-This document outlines the modular implementation roadmap for `cljonic`. To ensure clean architecture and testable boundaries, the master requirements in `cljonic-requirements.md` have been partitioned into 7 dependency-ordered module files.
+This document outlines the modular implementation roadmap for `cljonic`. To ensure clean architecture and testable boundaries, the requirements are organized into 7 dependency-ordered module files that together form the current requirements set.
 
 ## Module Implementation Order & Summary
 
@@ -14,11 +14,11 @@ This document outlines the modular implementation roadmap for `cljonic`. To ensu
 
 3. **[cljonic-requirements-module-3.md](cljonic-requirements-module-3.md)** / **[cljonic-architecture-module-3.md](cljonic-architecture-module-3.md)** — *Core Collection Types & Primitive Free Functions*
    - **Goal**: Implements concrete, array-backed, bounded collection types and their primitive member and free-function operations.
-   - **Scope**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String`, flat contiguous active storage, swap-and-remove mechanics, callable collection syntax (`v(idx)`, `m(key)`, `s(val)`), and core primitive free functions (`count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`) (`REQ-COLL-*`, `REQ-SEQ-001`–`014`, `REQ-FN-001`–`008`).
+   - **Scope**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String`, bounded array-backed storage, swap-and-remove mechanics, callable collection syntax (`v(idx)`, `m(key)`, `s(val)`), and core primitive free functions (`count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`) (`REQ-COLL-*`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`).
 
 4. **[cljonic-requirements-module-4.md](cljonic-requirements-module-4.md)** / **[cljonic-architecture-module-4.md](cljonic-architecture-module-4.md)** — *Sequence Producers & Materialization Pipeline*
    - **Goal**: Adds explicit materialization, non-collection generator values, and standard view interop.
-   - **Scope**: Generator producers (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization free functions (`into`, `fits_into`), C++ standard view imports (`std::span`, `std::string_view`), and non-owning observation views (`view(collection)`) (`REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, `REQ-FN-027`, `REQ-PLAT-017`–`023`).
+   - **Scope**: Generator producers (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization free functions (`into`, `fits_into`), const logical-range traversal, and conditional C++ interoperability accessors (`std::span<const T>`-like and `std::string_view`-like representations) (`REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, `REQ-FN-027`, `REQ-PLAT-017`–`023`).
 
 5. **[cljonic-requirements-module-5.md](cljonic-requirements-module-5.md)** / **[cljonic-architecture-module-5.md](cljonic-architecture-module-5.md)** — *Higher-Order Algorithms & Traversal*
    - **Goal**: Implements generic sequence transformation algorithms over any `cljonic_source`.
