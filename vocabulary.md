@@ -25,35 +25,67 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Sequence
-- **Definition:** An ordered collection or producer domain whose elements have a defined traversal order and may support underflow, indexed access, or sequence observation according to its capabilities.
+- **Definition:** A collection or producer domain with a defined logical traversal sequence whose elements may support underflow, indexed access, or sequence observation according to its capabilities. A Sequence may also be semantically ordered, as with `Vector`, `String`, or `Queue`, but logical traversal order does not itself imply semantic ordering; `Map` and `Set` are sequenceable while remaining semantically unordered.
 - **Deprecated Synonyms:** ordered sequence, sequential value
-- **Related:** Collection, Sequenceable, Traversal, Producer
+- **Related:** Collection, Sequenceable, Traversal, LogicalTraversalOrder, Producer
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Vector` is a sequence; a producer may represent a sequence without owning materialized storage.
 
 
 ### Sequenceable
-- **Definition:** A capability indicating that a nominal cljonic collection exposes non-throwing sequence observation, including emptiness and element count, without requiring indexed access.
+- **Definition:** A semantic capability indicating that a supported cljonic collection, approved producer, or other explicitly approved value participates in the cljonic sequence-operation family, including the applicable emptiness, counting, first-element, remainder, and sequence-conversion contracts. Sequenceable does not by itself imply indexed access, contiguous storage, a particular iterator category, or a standard C++ range representation; the implementation-facing traversal mechanism is named `ConstRangeTraversal`.
 - **Deprecated Synonyms:** sequence capability
-- **Related:** Sequence, Traversal
+- **Related:** Sequence, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A sequenceable collection supports `is_empty` and `count` under the applicable contract.
+- **Examples:** A sequenceable collection supports the applicable `first`, `next`, `rest`, `seq`, `is_empty`, and `count` operations under its documented contract.
 
 
 ### Traversal
-- **Definition:** Ordered observation of a collection or producer's elements under its documented bounds, without implying materialization, mutation, or indexed access.
+- **Definition:** Observation of a collection or producer's active elements through its documented traversal mechanism and bounds, without implying materialization, mutation, indexed access, or a semantic ordering guarantee. The repeatable sequence used during observation is named `LogicalTraversalOrder`.
 - **Deprecated Synonyms:** sequence traversal, iteration
-- **Related:** Sequence, ProducerIteration, BoundedInspection
+- **Related:** Sequence, ProducerIteration, BoundedInspection, LogicalTraversalOrder
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `first`, `next`, and `rest` are traversal operations when supported by the applicable sequence contract.
 
 
-### Capacity
-- **Definition:** The finite number of elements or logical units a bounded value can hold under its declared type and configuration.
-- **Deprecated Synonyms:** collection capacity, declared capacity
-- **Related:** BoundedStorage, CollectionMaximumElementCount, CapacityConstruction, FullState
+### ConstRangeTraversal
+- **Definition:** Read-only logical traversal of a supported collection or other explicitly approved sequenceable value, such as `MapEntry`, through a const range-compatible mechanism that is usable from a const expression, exposes a read-only dereference result, advances without allocation or exceptions, and terminates after exactly the value's active element count in its documented `LogicalTraversalOrder`. ConstRangeTraversal is `constexpr`-capable where the value and element types permit it; it exposes only active elements and does not mutate the source value.
+- **Deprecated Synonyms:** const range, read-only range traversal
+- **Related:** Traversal, CapabilityConcept, Sequenceable, SequenceableCollection, MapEntry, ReadOnlyInteropAccessor, LogicalTraversalOrder, NoMutationConstraint
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<int, 4>` has capacity four, while `String<32>` has a logical character capacity of thirty-two.
+- **Examples:** A `Queue` provides const range traversal in FIFO order even when its physical storage is circular.
+
+
+### LogicalTraversalOrder
+- **Definition:** The collection-specific repeatable sequence in which active elements are observed by traversal operations, independent of physical storage layout and distinct from semantic ordering guarantees. A logical traversal order may be exposed for deterministic implementation behavior without making the collection semantically ordered.
+- **Deprecated Synonyms:** logical iteration order, traversal order
+- **Related:** Traversal, ConstRangeTraversal, Vector, Map, Set, Queue, String
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Queue traversal is front-to-back FIFO; map and set traversal may be repeatable but is semantically unordered.
+
+
+### ReadOnlyInteropAccessor
+- **Definition:** The mandatory collection-owned C++ interoperability boundary for every supported collection. It is const-qualified and exposes a bounded, non-owning, read-only observation without extending source lifetime or exposing mutable storage access. It is distinct from ordinary internal `ConstRangeTraversal`, but may directly expose that traversal or be realized as a named const-qualified accessor or another explicitly identified const logical-range interoperability mechanism. Its concrete representation may be a `ContiguousConstView` or another const range-compatible form, depending on the collection's physical logical representation.
+- **Deprecated Synonyms:** interoperability view accessor, const interop view
+- **Related:** PlatformInteroperability, NonOwningView, StandardViewType, ContiguousConstView, ConstRangeTraversal
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A collection may provide a `std::span<const T>`-like accessor when its active logical elements form one contiguous range; a `Queue` may satisfy the same boundary through FIFO `ConstRangeTraversal` when circular storage prevents one contiguous standard view.
+
+
+### ContiguousConstView
+- **Definition:** A read-only non-owning interoperability observation whose complete active logical range is represented by one contiguous sequence of const elements or characters.
+- **Deprecated Synonyms:** const span view, contiguous read-only view
+- **Related:** ReadOnlyInteropAccessor, StandardViewType, ContiguousStorage, NonOwningView
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A `String` content accessor may expose a `std::string_view`-like contiguous const view excluding its null terminator.
+
+
+### Capacity
+- **Definition:** The finite number of elements or logical units a bounded value can hold under its declared type and configuration. Capacity MAY be zero; a zero-capacity collection is a valid empty owning value rather than an invalid or uninitialized collection.
+- **Deprecated Synonyms:** collection capacity, declared capacity
+- **Related:** BoundedStorage, CollectionMaximumElementCount, CapacityConstruction, FullState, DefaultElement, ConstRangeTraversal
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector<int, 4>` has capacity four, `String<32>` has a logical character capacity of thirty-two, and `Vector<int, 0>` is a valid empty collection that reports zero count, supports empty const traversal, and cannot store elements.
 
 
 ### FreeFunction
@@ -73,9 +105,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### PlatformInteroperability
-- **Definition:** The capability boundary describing which standard C++ and embedded-platform facilities cljonic may use while preserving its documented resource, diagnostic, and value semantics.
+- **Definition:** The capability boundary describing which standard C++ and embedded-platform facilities cljonic may use while preserving its documented resource, diagnostic, and value semantics. PlatformInteroperability includes mandatory `ConstRangeTraversal` support for cljonic implementations and mandatory collection-owned `ReadOnlyInteropAccessor` support for every supported collection; a `ContiguousConstView` is conditional on the collection's physical logical representation. Public semantic cljonic free functions MUST NOT return standard ranges, standard views, borrowed iterators, or other lazy or non-owning traversal results. PlatformInteroperability does not require every collection to expose one contiguous standard view or define how applications use standard C++ ranges and views.
 - **Deprecated Synonyms:** platform compatibility, standard-library interoperability
-- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint
+- **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, ConstRangeTraversal, ReadOnlyInteropAccessor, StandardViewType, ContiguousConstView
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A capability may be implemented with standard C++ facilities only when their behavior satisfies the active cljonic profile.
 
@@ -233,17 +265,25 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Producer
-- **Definition:** An explicit value representing a sequence or materialization source without owning the storage of its eventual materialized result.
+- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime.
 - **Deprecated Synonyms:** sequence producer, source producer
-- **Related:** Sequence, UnboundedProducer, ProducerIteration, ProducerMaterialization
+- **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `range`, `repeat`, `cycle`, `iterate`, and `repeatedly` are producer families when their requirements are active.
 
 
+### ProducerOnlyResult
+- **Definition:** A public operation result whose value is a self-contained producer rather than an owning materialized collection. A ProducerOnlyResult owns producer parameters, does not own materialized result storage, and does not borrow source storage or hidden mutable state.
+- **Deprecated Synonyms:** producer-only result, unmaterialized result
+- **Related:** Producer, UnboundedProducer, OwningValue, ProducerMaterialization
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** An unbounded `range` operation may return a ProducerOnlyResult that must be materialized into an explicit bounded destination.
+
+
 ### MapEntry
-- **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value.
+- **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value. MapEntry is also an explicitly approved fixed two-element sequence: its first element is the key, its second element is the value, and its count is always two.
 - **Deprecated Synonyms:** map entry, key-value entry
-- **Related:** Map, AssociativeAccess, OwningValue
+- **Related:** Map, AssociativeAccess, Sequenceable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A map-entry result owns its key and value rather than borrowing hidden map storage.
 
@@ -357,7 +397,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** Sentinel-Based Access, sentinel access, sentinel return, default-value access
 - **Related:** CopyOnModifyCollection, DefaultElement, ProbeFirstAccess
 - **Usage:** Specification and implementation
-- **Examples:** `auto value = get(m, key);` and callers use `contains(m, key)` or `has_index(xs, i)` before relying on the result.
+- **Examples:** `auto value = get(m, key);` and callers use `contains(m, key)` or `contains(xs, i)` before relying on the result.
 
 
 
@@ -386,31 +426,31 @@ govern stored collection building blocks used across all higher-order algorithms
 ### Vector
 - **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
-- **Related:** CopyOnModifyCollection, String, CapacityConstruction, IndexedAccess
+- **Related:** CopyOnModifyCollection, String, CapacityConstruction, IndexedAccess, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `count()`, `capacity()`, `operator()`, and `contains` provide direct member and free-function observation.
 
 
 ### Map
-- **Definition:** The cljonic fixed-capacity associative collection type mapping unique keys to values using contiguous storage and linear scans with immutable copy-on-modify updates.
+- **Definition:** The cljonic fixed-capacity associative collection type mapping unique keys to values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
-- **Related:** MapEntry, AssociativeAccess, Contains, SwapAndRemove, CopyOnModifyCollection
+- **Related:** MapEntry, AssociativeAccess, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`.
 
 
 ### Set
-- **Definition:** The cljonic fixed-capacity unordered collection type storing unique elements using contiguous storage and linear scans with immutable copy-on-modify updates.
+- **Definition:** The cljonic fixed-capacity unordered collection type storing unique elements using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** bounded set, fixed-capacity set, unique element collection
-- **Related:** StableEquality, Contains, SwapAndRemove, CopyOnModifyCollection
+- **Related:** StableEquality, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Set<int, 4>{1, 2, 3}` creates a bounded set supporting `conj`, `disj`, `contains`, `get`, and callable lookup `s(v)`.
 
 
 ### Queue
-- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates.
+- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates. Queue traversal observes elements from front to back in FIFO `LogicalTraversalOrder` regardless of whether its physical backing storage is linear or circular. Queue interoperability uses this FIFO `ConstRangeTraversal`; a single `ContiguousConstView` is available only when the complete active logical range is physically contiguous without allocation or normalization.
 - **Deprecated Synonyms:** bounded queue, fixed-capacity queue, FIFO queue
-- **Related:** Sequence, CopyOnModifyCollection, Traversal
+- **Related:** Sequence, CopyOnModifyCollection, Traversal, ConstRangeTraversal, LogicalTraversalOrder, ContiguousStorage, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front).
 
@@ -418,7 +458,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### String
 - **Definition:** The cljonic fixed-capacity array-backed collection type with ordered ASCII byte storage (range `0x01`–`0x7F`) and an uncounted null terminator immediately following its content.
 - **Deprecated Synonyms:** bounded string, fixed-capacity string, cljonic string
-- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage
+- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length.
 
@@ -432,11 +472,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### ContiguousStorage
-- **Definition:** Flat internal array-backed storage (`std::array`) holding active collection elements or key-value entries in a single contiguous memory block without indirection or node allocation.
+- **Definition:** Flat bounded array-backed internal storage (`std::array`-like) holding collection elements or key-value entries without indirection or node allocation. ContiguousStorage describes the physical backing storage; it does not by itself guarantee that a collection's complete active logical range is physically contiguous or representable by one standard view.
 - **Deprecated Synonyms:** flat storage, contiguous array storage, inline array buffer
-- **Related:** BoundedStorage, Vector, Map, Set, Queue, String
+- **Related:** BoundedStorage, Capacity, StaticInspectableStorage, ContiguousConstView
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `std::array<MapEntry<K, V>, N>` and `std::array<T, N>` store all active items contiguously within the collection value.
+- **Examples:** `std::array<MapEntry<K, V>, N>` and `std::array<T, N>` provide flat bounded backing storage; a circular queue may store its active logical range across two physical segments.
 
 
 ### CallableLookup
@@ -448,9 +488,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### LinearScan
-- **Definition:** An $O(N)$ sequential traversal over contiguous stored elements or key-value pairs used exclusively for search, lookup, association, and membership testing across bounded collections.
+- **Definition:** A bounded $O(N)$ sequential search over the active stored elements or key-value entries of a collection whose lookup or membership contract requires linear search, currently `Map` and `Set`. LinearScan does not require every collection's logical traversal range to be physically contiguous and does not describe the general `ConstRangeTraversal` mechanism.
 - **Deprecated Synonyms:** linear search, sequential scan, bounded scan
-- **Related:** Map, Set, ContiguousStorage, Contains, StableEquality
+- **Related:** Map, Set, ContiguousStorage, Contains, StableEquality, LogicalTraversalOrder
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `contains(m, key)` performs a linear scan over active map entries matching key equality.
 
@@ -504,9 +544,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Seq
-- **Definition:** The primitive traversal free function that converts any sequenceable collection or input into an owning, value-semantic `Vector` of its traversal elements (or `MapEntry` elements for maps).
+- **Definition:** The primitive traversal free function that converts a supported `Sequenceable` collection, explicitly approved sequenceable value such as `MapEntry`, or approved `Producer` into an owning, value-semantic bounded `Vector` of its logical traversal elements, using the applicable `ConstRangeTraversal`, `ProducerIteration`, element representation, and capacity policy. Seq does not imply support for arbitrary external ranges, iterables, arrays, or containers.
 - **Deprecated Synonyms:** sequence conversion, to-seq, seq conversion
-- **Related:** Sequenceable, Vector, MapEntry, Traversal
+- **Related:** Sequenceable, ConstRangeTraversal, ProducerIteration, BoundedResult, Vector, MapEntry, Traversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `seq(m)` returns an owning `Vector<MapEntry<K, V>, N>` of map entries.
 
@@ -597,11 +637,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### NonOwningView
-- **Definition:** A read-only observation of an existing cljonic value that does not own storage, does not extend source lifetime, and does not allow source mutation.
+- **Definition:** A read-only observation of an existing cljonic value that does not own storage, does not extend source lifetime, and does not allow source mutation. A NonOwningView is not an owning cljonic result and MUST NOT be returned by a public semantic cljonic free function; it MAY be returned only by an explicitly identified collection-owned C++ interoperability accessor or equivalent const logical-range interoperability mechanism governed by the interoperability requirements, or used internally without escaping the operation.
 - **Deprecated Synonyms:** non-owning view, borrowed view
-- **Related:** OwningValue, String
+- **Related:** OwningValue, ReadOnlyInteropAccessor, ContiguousConstView, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `view(collection)` returns a non-owning view whose validity is limited by the source lifetime and invalidation rules.
+- **Examples:** A collection-owned interoperability accessor returns a non-owning view whose validity is limited by the source lifetime and invalidation rules.
 
 
 
@@ -707,11 +747,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### StandardViewType
-- **Definition:** A read-only non-owning view type aligned with standard C++ view conventions and cljonic lifetime rules.
+- **Definition:** A read-only non-owning view type aligned with standard C++ view conventions and cljonic lifetime rules, used only as an explicitly identified collection interoperability representation. StandardViewType is optional, does not imply that every collection has one contiguous view, and MUST NOT be returned by a public semantic cljonic free function.
 - **Deprecated Synonyms:** standard view, standard span-style view
-- **Related:** NonOwningView, String
+- **Related:** NonOwningView, ReadOnlyInteropAccessor, ContiguousConstView, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `view(collection)` exposes a standard view type that cannot outlive its source.
+- **Examples:** A read-only interoperability accessor may expose a standard view type that cannot outlive its source; semantic operations still return owning cljonic results.
 
 
 
@@ -809,6 +849,14 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Related:** EmbeddedConstraint, SentinelBasedAccess, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** Missing access returns sentinel values instead of throwing, and contract failures route through explicit policy hooks.
+
+
+### NoMutationConstraint
+- **Definition:** The rule that cljonic semantic operations, read-only traversal mechanisms, and supported callbacks supplied to higher-order operations MUST NOT mutate input collection values or expose a mutable path to source storage. Copy-on-modify operations satisfy this constraint by returning independent owning results.
+- **Deprecated Synonyms:** no input mutation, read-only mutation rule
+- **Related:** ReferentialTransparency, PersistentValueSemantics, DeterministicBehavior, NoHeapConstraint, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A traversal may inspect a collection through const access, while `assoc` returns a changed copy and leaves its input unchanged.
 
 
 
@@ -1001,9 +1049,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### SequenceableCollection
-- **Definition:** The C++ concept identifier implementing the sequenceable CapabilityConcept, requiring non-throwing `is_empty` and `count` observation on an admitted collection.
+- **Definition:** The C++ concept identifier implementing the current sequenceable CapabilityConcept baseline, requiring non-throwing `is_empty` and `count` observation on an admitted collection. SequenceableCollection is intentionally bootstrapped and may grow only when a public operation needs stronger sequence behavior; it is not the complete semantic definition of `Sequenceable` and does not by itself imply `ConstRangeTraversal`, indexed access, lookup, contiguous storage, or a particular iterator category.
 - **Deprecated Synonyms:** sequenceable_cljonic_collection, sequenceable collection concept
-- **Related:** CapabilityConcept, Sequenceable, CljonicCollection, IndexedCollection, AssociativeCollection
+- **Related:** CapabilityConcept, Sequenceable, Traversal, ConstRangeTraversal, CljonicCollection, IndexedCollection, LookupCollection, AssociativeCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `SequenceableCollection<C>` requires `c.is_empty()` and `c.count()`.
 
@@ -1014,6 +1062,14 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Related:** CapabilityConcept, IndexedAccess, SequenceableCollection, CljonicCollection, Contains
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `IndexedCollection<C>` requires `c(i)` and `c.contains(i)`.
+
+
+### LookupCollection
+- **Definition:** The C++ concept identifier implementing the general lookup CapabilityConcept for an admitted collection, requiring an explicit `lookup_type`, callable lookup, and a matching `contains` predicate without implying map-style key-to-value association.
+- **Deprecated Synonyms:** lookup collection concept, general lookup capability
+- **Related:** CapabilityConcept, SequenceableCollection, IndexedCollection, AssociativeCollection, Map, Set, Contains
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `LookupCollection<Map<int, int, 4>>` and `LookupCollection<Set<int, 4>>` are satisfied when each exposes its lookup domain through `lookup_type`.
 
 
 ### AssociativeCollection
@@ -1097,7 +1153,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### ReferentialTransparency
 - **Definition:** The condition that, for equal explicit inputs and fixed configuration, an operation returns equivalent results without mutating inputs, performing I/O, reading or modifying hidden mutable state, or depending on it. The guarantee is conditional on the required operations of user-defined element, key, and value types being pure and non-allocating.
 - **Deprecated Synonyms:** pure operation, functional purity
-- **Related:** DeterministicBehavior, NoHiddenGlobalInitialization, OwningValue
+- **Related:** DeterministicBehavior, NoMutationConstraint, NoHeapConstraint, NoHiddenGlobalInitialization, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** Given equal Vector inputs and configuration, an update returns equivalent new values without changing its input.
 
@@ -1130,7 +1186,8 @@ govern stored collection building blocks used across all higher-order algorithms
 - CopyOnModifyCollection is the foundational value model for the repo.
 - SentinelBasedAccess and ProbeFirstAccess define the canonical error-handling discipline for collection APIs.
 - DeterministicOverflowPolicy defines the bounded numeric semantics that fit the embedded constraint model.
-- OwningValue, NonOwningView, and StandardViewType define ownership and lifetime semantics for values versus views.
+- OwningValue, NonOwningView, StandardViewType, ReadOnlyInteropAccessor, and ContiguousConstView define ownership and lifetime semantics for values versus views.
+- ConstRangeTraversal and LogicalTraversalOrder define read-only collection traversal independently of whether a contiguous interoperability view is available.
 - CompleteResult, BoundedPrefixResult, DefaultReturningResult, CheckedFailureResult, and PreflightPredicate define canonical result-status and completion semantics.
 - LifecycleClassification with RequirementsBacked, CandidateStatus, DeferredStatus, and ExcludedStatus defines API-surface governance vocabulary.
 - UnboundedProducer and ProducerMaterialization define explicit producer-to-result boundaries.
