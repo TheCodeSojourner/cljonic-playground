@@ -71,16 +71,20 @@ entity Take {
     preserves_inputs: Boolean
     returns_bounded_prefix_result: Boolean
     terminates_at_requested_count_or_source_end: Boolean
-    capacity_policy_is_declared: Boolean
-    failure_policy_is_declared: Boolean
+    result_is_explicit_bounded_producer: Boolean
+    materialization_uses_caller_destination_capacity: Boolean
+    capacity_is_minimum_of_count_and_source_bound: Boolean
+    failure_policy_is_typed: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
     invariant MaximumArityIsTwo { this.maximum_arity = 2 }
     invariant InputsArePreserved { this.preserves_inputs = true }
     invariant ReturnsBoundedPrefix { this.returns_bounded_prefix_result = true }
     invariant TerminationIsBounded { this.terminates_at_requested_count_or_source_end = true }
-    invariant CapacityPolicyIsDeclared { this.capacity_policy_is_declared = true }
-    invariant FailurePolicyIsDeclared { this.failure_policy_is_declared = true }
+    invariant ResultIsExplicitBoundedProducer { this.result_is_explicit_bounded_producer = true }
+    invariant MaterializationUsesCallerDestinationCapacity { this.materialization_uses_caller_destination_capacity = true }
+    invariant CapacityIsMinimumOfCountAndSourceBound { this.capacity_is_minimum_of_count_and_source_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
 }
 
 entity Drop {
@@ -89,16 +93,20 @@ entity Drop {
     preserves_inputs: Boolean
     returns_complete_result: Boolean
     terminates_after_requested_count_or_source_end: Boolean
-    capacity_policy_is_declared: Boolean
-    failure_policy_is_declared: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    capacity_is_preserved_when_source_bound_is_safe: Boolean
+    failure_policy_is_typed: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
     invariant MaximumArityIsTwo { this.maximum_arity = 2 }
     invariant InputsArePreserved { this.preserves_inputs = true }
     invariant ReturnsCompleteResult { this.returns_complete_result = true }
     invariant TerminationIsBounded { this.terminates_after_requested_count_or_source_end = true }
-    invariant CapacityPolicyIsDeclared { this.capacity_policy_is_declared = true }
-    invariant FailurePolicyIsDeclared { this.failure_policy_is_declared = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant CapacityIsPreservedWhenSourceBoundIsSafe { this.capacity_is_preserved_when_source_bound_is_safe = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
 }
 
 entity TakeWhile {
@@ -109,6 +117,9 @@ entity TakeWhile {
     callback_is_pure_and_non_allocating: Boolean
     stops_at_first_predicate_failure_or_source_end: Boolean
     returns_bounded_prefix_result: Boolean
+    result_is_explicit_bounded_producer: Boolean
+    materialization_uses_caller_destination_capacity: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -118,6 +129,9 @@ entity TakeWhile {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant TerminationIsDeclared { this.stops_at_first_predicate_failure_or_source_end = true }
     invariant ReturnsBoundedPrefix { this.returns_bounded_prefix_result = true }
+    invariant ResultIsExplicitBoundedProducer { this.result_is_explicit_bounded_producer = true }
+    invariant MaterializationUsesCallerDestinationCapacity { this.materialization_uses_caller_destination_capacity = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -129,6 +143,9 @@ entity DropWhile {
     callback_is_pure_and_non_allocating: Boolean
     skips_through_first_predicate_failure: Boolean
     returns_remaining_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -138,6 +155,9 @@ entity DropWhile {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant TerminationIsDeclared { this.skips_through_first_predicate_failure = true }
     invariant ReturnsRemainingResult { this.returns_remaining_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -149,6 +169,9 @@ entity TakeLast {
     requires_bounded_source_inspection: Boolean
     preserves_source_order_in_retained_suffix: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -158,6 +181,9 @@ entity TakeLast {
     invariant BoundedInspectionIsRequired { this.requires_bounded_source_inspection = true }
     invariant RetainedSuffixPreservesOrder { this.preserves_source_order_in_retained_suffix = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -169,6 +195,9 @@ entity DropLast {
     removes_final_requested_count: Boolean
     returns_bounded_result: Boolean
     preserves_source_order: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -178,6 +207,9 @@ entity DropLast {
     invariant FinalCountRemovalIsDeclared { this.removes_final_requested_count = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -189,6 +221,10 @@ entity Keep {
     callback_is_pure_and_non_allocating: Boolean
     keeps_non_null_callback_results: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_callback_result_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -198,6 +234,10 @@ entity Keep {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant NonNullResultsAreKept { this.keeps_non_null_callback_results = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsCallbackResultType { this.result_element_type_is_callback_result_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -209,6 +249,10 @@ entity KeepIndexed {
     callback_is_pure_and_non_allocating: Boolean
     receives_zero_based_index: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_callback_result_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -218,6 +262,10 @@ entity KeepIndexed {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant ZeroBasedIndexIsDeclared { this.receives_zero_based_index = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsCallbackResultType { this.result_element_type_is_callback_result_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -229,6 +277,9 @@ entity Remove {
     predicate_is_pure_and_non_allocating: Boolean
     removes_matching_elements: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -238,6 +289,9 @@ entity Remove {
     invariant PredicateIsPureAndNonAllocating { this.predicate_is_pure_and_non_allocating = true }
     invariant MatchingElementsAreRemoved { this.removes_matching_elements = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -249,6 +303,9 @@ entity Replace {
     requires_stable_equality: Boolean
     replaces_matching_values: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -258,6 +315,9 @@ entity Replace {
     invariant EqualityGateIsRequired { this.requires_stable_equality = true }
     invariant MatchingValuesAreReplaced { this.replaces_matching_values = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -268,6 +328,10 @@ entity Mapv {
     source_argument_position: Integer
     callback_is_pure_and_non_allocating: Boolean
     returns_bounded_transformed_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_callback_result_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -276,6 +340,10 @@ entity Mapv {
     invariant SourceIsSecondArgument { this.source_argument_position = 2 }
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant ReturnsBoundedTransformedResult { this.returns_bounded_transformed_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsCallbackResultType { this.result_element_type_is_callback_result_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -287,6 +355,10 @@ entity Filterv {
     predicate_is_pure_and_non_allocating: Boolean
     returns_bounded_filtered_result: Boolean
     preserves_source_order: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_source_element_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -296,6 +368,10 @@ entity Filterv {
     invariant PredicateIsPureAndNonAllocating { this.predicate_is_pure_and_non_allocating = true }
     invariant ReturnsBoundedFilteredResult { this.returns_bounded_filtered_result = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsSourceElementType { this.result_element_type_is_source_element_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -307,6 +383,9 @@ entity Subvec {
     end_argument_is_optional: Boolean
     uses_contains_for_bounds: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    bounds_failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -316,6 +395,9 @@ entity Subvec {
     invariant EndIsOptional { this.end_argument_is_optional = true }
     invariant BoundsPolicyIsDeclared { this.uses_contains_for_bounds = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant BoundsFailurePolicyIsTyped { this.bounds_failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -326,6 +408,9 @@ entity Find {
     key_argument_position: Integer
     requires_associative_access: Boolean
     returns_entry_or_typed_absence: Boolean
+    result_representation_is_optional_map_entry: Boolean
+    missing_key_is_typed_absence: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -334,6 +419,9 @@ entity Find {
     invariant KeyIsSecondArgument { this.key_argument_position = 2 }
     invariant AssociativeAccessIsRequired { this.requires_associative_access = true }
     invariant TypedAbsenceIsDeclared { this.returns_entry_or_typed_absence = true }
+    invariant ResultRepresentationIsOptionalMapEntry { this.result_representation_is_optional_map_entry = true }
+    invariant MissingKeyIsTypedAbsence { this.missing_key_is_typed_absence = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -345,6 +433,9 @@ entity ReduceKv {
     map_argument_position: Integer
     callback_is_pure_and_non_allocating: Boolean
     traverses_map_entries: Boolean
+    result_is_accumulator_value: Boolean
+    result_cardinality_is_one: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsThree { this.minimum_arity = 3 }
@@ -354,6 +445,9 @@ entity ReduceKv {
     invariant MapIsThirdArgument { this.map_argument_position = 3 }
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant MapEntriesAreTraversed { this.traverses_map_entries = true }
+    invariant ResultIsAccumulatorValue { this.result_is_accumulator_value = true }
+    invariant ResultCardinalityIsOne { this.result_cardinality_is_one = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -363,6 +457,9 @@ entity Sort {
     comparator_is_optional: Boolean
     requires_total_order_when_defaulted: Boolean
     returns_bounded_ordered_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -370,6 +467,9 @@ entity Sort {
     invariant ComparatorIsOptional { this.comparator_is_optional = true }
     invariant DefaultOrderGateIsRequired { this.requires_total_order_when_defaulted = true }
     invariant ReturnsBoundedOrderedResult { this.returns_bounded_ordered_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -381,6 +481,10 @@ entity SortBy {
     key_function_is_pure_and_non_allocating: Boolean
     requires_total_order_for_keys: Boolean
     returns_bounded_ordered_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_source_element_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -390,6 +494,10 @@ entity SortBy {
     invariant KeyFunctionIsPureAndNonAllocating { this.key_function_is_pure_and_non_allocating = true }
     invariant KeyOrderGateIsRequired { this.requires_total_order_for_keys = true }
     invariant ReturnsBoundedOrderedResult { this.returns_bounded_ordered_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsSourceElementType { this.result_element_type_is_source_element_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -402,6 +510,9 @@ entity TakeNth {
     selects_periodic_elements: Boolean
     returns_bounded_result: Boolean
     preserves_source_order: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -412,6 +523,9 @@ entity TakeNth {
     invariant PeriodicSelectionIsDeclared { this.selects_periodic_elements = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -423,8 +537,9 @@ entity Nth {
     fallback_argument_is_optional: Boolean
     returns_default_or_fallback_on_absence: Boolean
     contains_is_preflight: Boolean
+    result_is_scalar_element_or_fallback: Boolean
     preserves_input: Boolean
-    failure_policy_is_declared: Boolean
+    failure_policy_is_typed: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
     invariant MaximumArityIsThree { this.maximum_arity = 3 }
@@ -433,8 +548,9 @@ entity Nth {
     invariant FallbackIsOptional { this.fallback_argument_is_optional = true }
     invariant TypedAbsenceIsDeclared { this.returns_default_or_fallback_on_absence = true }
     invariant ContainsIsPreflight { this.contains_is_preflight = true }
+    invariant ResultIsScalarElementOrFallback { this.result_is_scalar_element_or_fallback = true }
     invariant InputIsPreserved { this.preserves_input = true }
-    invariant FailurePolicyIsDeclared { this.failure_policy_is_declared = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
 }
 
 entity NthNext {
@@ -445,6 +561,9 @@ entity NthNext {
     skips_at_most_requested_count: Boolean
     returns_remaining_sequence_or_empty: Boolean
     preserves_source_order: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -454,6 +573,9 @@ entity NthNext {
     invariant SkippingIsBounded { this.skips_at_most_requested_count = true }
     invariant RemainingResultIsDeclared { this.returns_remaining_sequence_or_empty = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -465,6 +587,9 @@ entity NthRest {
     skips_at_most_requested_count: Boolean
     returns_remaining_sequence_or_empty: Boolean
     preserves_source_order: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -474,6 +599,9 @@ entity NthRest {
     invariant SkippingIsBounded { this.skips_at_most_requested_count = true }
     invariant RemainingResultIsDeclared { this.returns_remaining_sequence_or_empty = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -484,6 +612,9 @@ entity ButLast {
     returns_all_but_final_element: Boolean
     returns_bounded_result: Boolean
     preserves_source_order: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -492,6 +623,9 @@ entity ButLast {
     invariant FinalElementIsRemoved { this.returns_all_but_final_element = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -503,6 +637,10 @@ entity MapIndexed {
     callback_is_pure_and_non_allocating: Boolean
     receives_zero_based_index: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_callback_result_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -512,6 +650,10 @@ entity MapIndexed {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant ZeroBasedIndexIsDeclared { this.receives_zero_based_index = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsCallbackResultType { this.result_element_type_is_callback_result_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -521,6 +663,9 @@ entity Rseq {
     source_argument_position: Integer
     reverses_logical_traversal: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -528,6 +673,9 @@ entity Rseq {
     invariant SourceIsFirstArgument { this.source_argument_position = 1 }
     invariant ReverseTraversalIsDeclared { this.reverses_logical_traversal = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -537,6 +685,8 @@ entity Second {
     source_argument_position: Integer
     returns_second_element_or_default: Boolean
     uses_bounded_traversal: Boolean
+    result_is_scalar_element_or_default: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -544,6 +694,8 @@ entity Second {
     invariant SourceIsFirstArgument { this.source_argument_position = 1 }
     invariant TypedAbsenceIsDeclared { this.returns_second_element_or_default = true }
     invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant ResultIsScalarElementOrDefault { this.result_is_scalar_element_or_default = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -553,6 +705,8 @@ entity Ffirst {
     source_argument_position: Integer
     returns_first_of_first_or_default: Boolean
     uses_bounded_traversal: Boolean
+    result_is_scalar_element_or_default: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -560,6 +714,8 @@ entity Ffirst {
     invariant SourceIsFirstArgument { this.source_argument_position = 1 }
     invariant TypedAbsenceIsDeclared { this.returns_first_of_first_or_default = true }
     invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant ResultIsScalarElementOrDefault { this.result_is_scalar_element_or_default = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -569,6 +725,9 @@ entity Fnext {
     source_argument_position: Integer
     returns_next_of_first_or_empty: Boolean
     uses_bounded_traversal: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -576,6 +735,9 @@ entity Fnext {
     invariant SourceIsFirstArgument { this.source_argument_position = 1 }
     invariant TypedAbsenceIsDeclared { this.returns_next_of_first_or_empty = true }
     invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -585,6 +747,8 @@ entity Nfirst {
     source_argument_position: Integer
     returns_first_of_nested_or_default: Boolean
     uses_bounded_traversal: Boolean
+    result_is_scalar_element_or_default: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -592,6 +756,8 @@ entity Nfirst {
     invariant SourceIsFirstArgument { this.source_argument_position = 1 }
     invariant TypedAbsenceIsDeclared { this.returns_first_of_nested_or_default = true }
     invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant ResultIsScalarElementOrDefault { this.result_is_scalar_element_or_default = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -601,6 +767,9 @@ entity Nnext {
     source_argument_position: Integer
     returns_next_of_nested_or_empty: Boolean
     uses_bounded_traversal: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -608,6 +777,9 @@ entity Nnext {
     invariant SourceIsFirstArgument { this.source_argument_position = 1 }
     invariant TypedAbsenceIsDeclared { this.returns_next_of_nested_or_empty = true }
     invariant TraversalIsBounded { this.uses_bounded_traversal = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -619,6 +791,8 @@ entity Some {
     callback_is_pure_and_non_allocating: Boolean
     short_circuits_on_matching_value: Boolean
     returns_boolean_or_matching_value: Boolean
+    result_is_optional_matching_element: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -628,6 +802,8 @@ entity Some {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant ShortCircuitIsDeclared { this.short_circuits_on_matching_value = true }
     invariant ResultSemanticsAreDeclared { this.returns_boolean_or_matching_value = true }
+    invariant ResultIsOptionalMatchingElement { this.result_is_optional_matching_element = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -639,6 +815,8 @@ entity IsEvery {
     callback_is_pure_and_non_allocating: Boolean
     short_circuits_on_predicate_failure: Boolean
     returns_boolean: Boolean
+    result_is_boolean: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -648,6 +826,8 @@ entity IsEvery {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant ShortCircuitIsDeclared { this.short_circuits_on_predicate_failure = true }
     invariant ReturnsBoolean { this.returns_boolean = true }
+    invariant ResultIsBoolean { this.result_is_boolean = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -659,6 +839,8 @@ entity NotAny {
     callback_is_pure_and_non_allocating: Boolean
     short_circuits_on_matching_value: Boolean
     returns_boolean: Boolean
+    result_is_boolean: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -668,6 +850,8 @@ entity NotAny {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant ShortCircuitIsDeclared { this.short_circuits_on_matching_value = true }
     invariant ReturnsBoolean { this.returns_boolean = true }
+    invariant ResultIsBoolean { this.result_is_boolean = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -679,6 +863,8 @@ entity NotEvery {
     callback_is_pure_and_non_allocating: Boolean
     short_circuits_on_predicate_failure: Boolean
     returns_boolean: Boolean
+    result_is_boolean: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -688,6 +874,8 @@ entity NotEvery {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant ShortCircuitIsDeclared { this.short_circuits_on_predicate_failure = true }
     invariant ReturnsBoolean { this.returns_boolean = true }
+    invariant ResultIsBoolean { this.result_is_boolean = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -698,6 +886,10 @@ entity Distinct {
     requires_stable_equality: Boolean
     preserves_first_occurrence_order: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_source_element_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -706,6 +898,10 @@ entity Distinct {
     invariant EqualityGateIsRequired { this.requires_stable_equality = true }
     invariant FirstOccurrenceOrderIsPreserved { this.preserves_first_occurrence_order = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsSourceElementType { this.result_element_type_is_source_element_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -717,6 +913,10 @@ entity Dedupe {
     removes_adjacent_duplicates_only: Boolean
     preserves_source_order: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_source_element_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -726,6 +926,10 @@ entity Dedupe {
     invariant AdjacentDuplicatePolicyIsDeclared { this.removes_adjacent_duplicates_only = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsSourceElementType { this.result_element_type_is_source_element_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -736,6 +940,10 @@ entity Frequencies {
     requires_stable_equality: Boolean
     returns_count_by_value: Boolean
     returns_bounded_map: Boolean
+    result_is_bounded_map: Boolean
+    result_capacity_is_source_cardinality_bound: Boolean
+    result_value_type_is_count: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -744,6 +952,10 @@ entity Frequencies {
     invariant EqualityGateIsRequired { this.requires_stable_equality = true }
     invariant CountResultIsDeclared { this.returns_count_by_value = true }
     invariant ReturnsBoundedMap { this.returns_bounded_map = true }
+    invariant ResultIsBoundedMap { this.result_is_bounded_map = true }
+    invariant ResultCapacityIsSourceCardinalityBound { this.result_capacity_is_source_cardinality_bound = true }
+    invariant ResultValueTypeIsCount { this.result_value_type_is_count = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -756,6 +968,10 @@ entity Reductions {
     emits_intermediate_accumulators: Boolean
     terminates_at_source_end: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_cardinality_plus_initial_bound: Boolean
+    result_element_type_is_accumulator_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -766,6 +982,10 @@ entity Reductions {
     invariant IntermediateAccumulatorsAreEmitted { this.emits_intermediate_accumulators = true }
     invariant TerminationIsDeclared { this.terminates_at_source_end = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCardinalityPlusInitialBound { this.result_capacity_is_source_cardinality_plus_initial_bound = true }
+    invariant ResultElementTypeIsAccumulatorType { this.result_element_type_is_accumulator_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -776,6 +996,9 @@ entity SplitAt {
     source_argument_position: Integer
     returns_two_bounded_results: Boolean
     preserves_source_order: Boolean
+    result_is_two_bounded_owning_collections: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -784,6 +1007,9 @@ entity SplitAt {
     invariant SourceIsSecondArgument { this.source_argument_position = 2 }
     invariant ReturnsTwoResults { this.returns_two_bounded_results = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsTwoBoundedOwningCollections { this.result_is_two_bounded_owning_collections = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -796,6 +1022,9 @@ entity SplitWith {
     returns_two_bounded_results: Boolean
     stops_at_first_predicate_failure: Boolean
     preserves_input: Boolean
+    result_is_two_bounded_owning_collections: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
     invariant MaximumArityIsTwo { this.maximum_arity = 2 }
@@ -804,6 +1033,9 @@ entity SplitWith {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant ReturnsTwoResults { this.returns_two_bounded_results = true }
     invariant TerminationIsDeclared { this.stops_at_first_predicate_failure = true }
+    invariant ResultIsTwoBoundedOwningCollections { this.result_is_two_bounded_owning_collections = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -815,6 +1047,10 @@ entity Mapcat {
     callback_is_pure_and_non_allocating: Boolean
     flattens_one_result_level: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_bound: Boolean
+    result_element_type_is_inner_result_element_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -824,6 +1060,10 @@ entity Mapcat {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant OneLevelFlatteningIsDeclared { this.flattens_one_result_level = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityBound { this.result_capacity_is_source_capacity_bound = true }
+    invariant ResultElementTypeIsInnerResultElementType { this.result_element_type_is_inner_result_element_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -833,6 +1073,9 @@ entity Interleave {
     round_robin_order_is_declared: Boolean
     stops_when_shortest_source_ends: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_shortest_source_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_inputs: Boolean
 
     invariant AtLeastOneSource { this.minimum_arity = 1 }
@@ -840,6 +1083,9 @@ entity Interleave {
     invariant RoundRobinOrderIsDeclared { this.round_robin_order_is_declared = true }
     invariant ShortestSourceTermination { this.stops_when_shortest_source_ends = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsShortestSourceBound { this.result_capacity_is_shortest_source_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputsArePreserved { this.preserves_inputs = true }
 }
 
@@ -851,6 +1097,9 @@ entity Interpose {
     inserts_between_adjacent_elements: Boolean
     preserves_source_order: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_source_capacity_plus_separator_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -860,6 +1109,9 @@ entity Interpose {
     invariant SeparatorPolicyIsDeclared { this.inserts_between_adjacent_elements = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsSourceCapacityPlusSeparatorBound { this.result_capacity_is_source_capacity_plus_separator_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -871,6 +1123,10 @@ entity Partition {
     emits_full_partitions_only: Boolean
     returns_bounded_nested_result: Boolean
     preserves_source_order: Boolean
+    result_is_bounded_nested_owning_collection: Boolean
+    outer_capacity_is_source_capacity_bound: Boolean
+    inner_capacity_is_partition_size_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -880,6 +1136,10 @@ entity Partition {
     invariant FullPartitionPolicyIsDeclared { this.emits_full_partitions_only = true }
     invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsBoundedNestedOwningCollection { this.result_is_bounded_nested_owning_collection = true }
+    invariant OuterCapacityIsSourceCapacityBound { this.outer_capacity_is_source_capacity_bound = true }
+    invariant InnerCapacityIsPartitionSizeBound { this.inner_capacity_is_partition_size_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -891,6 +1151,10 @@ entity PartitionAll {
     emits_final_partial_partition: Boolean
     returns_bounded_nested_result: Boolean
     preserves_source_order: Boolean
+    result_is_bounded_nested_owning_collection: Boolean
+    outer_capacity_is_source_capacity_bound: Boolean
+    inner_capacity_is_partition_size_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -900,6 +1164,10 @@ entity PartitionAll {
     invariant FinalPartialPolicyIsDeclared { this.emits_final_partial_partition = true }
     invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
     invariant SourceOrderIsPreserved { this.preserves_source_order = true }
+    invariant ResultIsBoundedNestedOwningCollection { this.result_is_bounded_nested_owning_collection = true }
+    invariant OuterCapacityIsSourceCapacityBound { this.outer_capacity_is_source_capacity_bound = true }
+    invariant InnerCapacityIsPartitionSizeBound { this.inner_capacity_is_partition_size_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -911,6 +1179,10 @@ entity PartitionBy {
     callback_is_pure_and_non_allocating: Boolean
     starts_new_partition_on_key_change: Boolean
     returns_bounded_nested_result: Boolean
+    result_is_bounded_nested_owning_collection: Boolean
+    outer_capacity_is_source_capacity_bound: Boolean
+    inner_capacity_is_source_capacity_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -920,6 +1192,10 @@ entity PartitionBy {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant KeyChangePartitionPolicy { this.starts_new_partition_on_key_change = true }
     invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
+    invariant ResultIsBoundedNestedOwningCollection { this.result_is_bounded_nested_owning_collection = true }
+    invariant OuterCapacityIsSourceCapacityBound { this.outer_capacity_is_source_capacity_bound = true }
+    invariant InnerCapacityIsSourceCapacityBound { this.inner_capacity_is_source_capacity_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -930,6 +1206,10 @@ entity Partitionv {
     source_argument_position: Integer
     emits_full_partitions_only: Boolean
     returns_bounded_nested_result: Boolean
+    result_is_bounded_nested_owning_collection: Boolean
+    outer_capacity_is_source_capacity_bound: Boolean
+    inner_capacity_is_partition_size_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -938,6 +1218,10 @@ entity Partitionv {
     invariant SourceIsSecondArgument { this.source_argument_position = 2 }
     invariant FullPartitionPolicyIsDeclared { this.emits_full_partitions_only = true }
     invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
+    invariant ResultIsBoundedNestedOwningCollection { this.result_is_bounded_nested_owning_collection = true }
+    invariant OuterCapacityIsSourceCapacityBound { this.outer_capacity_is_source_capacity_bound = true }
+    invariant InnerCapacityIsPartitionSizeBound { this.inner_capacity_is_partition_size_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -948,6 +1232,10 @@ entity PartitionvAll {
     source_argument_position: Integer
     emits_final_partial_partition: Boolean
     returns_bounded_nested_result: Boolean
+    result_is_bounded_nested_owning_collection: Boolean
+    outer_capacity_is_source_capacity_bound: Boolean
+    inner_capacity_is_partition_size_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -956,6 +1244,10 @@ entity PartitionvAll {
     invariant SourceIsSecondArgument { this.source_argument_position = 2 }
     invariant FinalPartialPolicyIsDeclared { this.emits_final_partial_partition = true }
     invariant ReturnsBoundedNestedResult { this.returns_bounded_nested_result = true }
+    invariant ResultIsBoundedNestedOwningCollection { this.result_is_bounded_nested_owning_collection = true }
+    invariant OuterCapacityIsSourceCapacityBound { this.outer_capacity_is_source_capacity_bound = true }
+    invariant InnerCapacityIsPartitionSizeBound { this.inner_capacity_is_partition_size_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -967,6 +1259,10 @@ entity GroupBy {
     callback_is_pure_and_non_allocating: Boolean
     requires_stable_equality_for_keys: Boolean
     returns_bounded_map_of_groups: Boolean
+    result_is_bounded_map_of_owning_groups: Boolean
+    result_capacity_is_source_cardinality_bound: Boolean
+    group_value_capacity_is_source_cardinality_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsTwo { this.minimum_arity = 2 }
@@ -976,6 +1272,10 @@ entity GroupBy {
     invariant CallbackIsPureAndNonAllocating { this.callback_is_pure_and_non_allocating = true }
     invariant KeyEqualityGateIsRequired { this.requires_stable_equality_for_keys = true }
     invariant ReturnsBoundedMap { this.returns_bounded_map_of_groups = true }
+    invariant ResultIsBoundedMapOfOwningGroups { this.result_is_bounded_map_of_owning_groups = true }
+    invariant ResultCapacityIsSourceCardinalityBound { this.result_capacity_is_source_cardinality_bound = true }
+    invariant GroupValueCapacityIsSourceCardinalityBound { this.group_value_capacity_is_source_cardinality_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -985,6 +1285,10 @@ entity Flatten {
     source_argument_position: Integer
     flattens_nested_sequences: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_nested_source_cardinality_bound: Boolean
+    result_element_type_is_leaf_element_type: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsOne { this.minimum_arity = 1 }
@@ -992,6 +1296,10 @@ entity Flatten {
     invariant SourceIsFirstArgument { this.source_argument_position = 1 }
     invariant NestedSequenceFlatteningIsDeclared { this.flattens_nested_sequences = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsNestedSourceCardinalityBound { this.result_capacity_is_nested_source_cardinality_bound = true }
+    invariant ResultElementTypeIsLeafElementType { this.result_element_type_is_leaf_element_type = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
@@ -1004,6 +1312,9 @@ entity TreeSeq {
     branch_and_children_callbacks_are_pure: Boolean
     traversal_termination_is_declared: Boolean
     returns_bounded_result: Boolean
+    result_is_bounded_owning_collection: Boolean
+    result_capacity_is_traversal_bound: Boolean
+    failure_policy_is_typed: Boolean
     preserves_input: Boolean
 
     invariant MinimumArityIsThree { this.minimum_arity = 3 }
@@ -1014,6 +1325,9 @@ entity TreeSeq {
     invariant CallbacksArePure { this.branch_and_children_callbacks_are_pure = true }
     invariant TerminationIsDeclared { this.traversal_termination_is_declared = true }
     invariant ReturnsBoundedResult { this.returns_bounded_result = true }
+    invariant ResultIsBoundedOwningCollection { this.result_is_bounded_owning_collection = true }
+    invariant ResultCapacityIsTraversalBound { this.result_capacity_is_traversal_bound = true }
+    invariant FailurePolicyIsTyped { this.failure_policy_is_typed = true }
     invariant InputIsPreserved { this.preserves_input = true }
 }
 
