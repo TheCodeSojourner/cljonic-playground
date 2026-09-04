@@ -441,6 +441,10 @@ invariant.MapEntry.NoExceptions
 invariant.MapEntry.NoHeapAllocation
 invariant.MapEntry.NoRtti
 invariant.MapEntry.ReferentialTransparency
+invariant.MapEntry.RequiresNothrowCopyAssignment
+invariant.MapEntry.RequiresNothrowCopyConstruction
+invariant.MapEntry.RequiresNothrowDefaultConstruction
+invariant.MapEntry.RequiresNothrowDestruction
 invariant.MapEntry.RequiresValueSemanticElements
 invariant.MapEntry.SingleThreadedExecutionModel
 invariant.MapEntry.StaticOrAutomaticStorageOnly
@@ -475,6 +479,10 @@ invariant.Map.NoRtti
 invariant.Map.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Map.ProducerOnlyResultStatusDeclared
 invariant.Map.ReferentialTransparency
+invariant.Map.RequiresNothrowCopyAssignment
+invariant.Map.RequiresNothrowCopyConstruction
+invariant.Map.RequiresNothrowDefaultConstruction
+invariant.Map.RequiresNothrowDestruction
 invariant.Map.RequiresValueSemanticElements
 invariant.Map.RuntimeCapacityFailuresHaveDocumentedPolicy
 invariant.Map.SingleThreadedExecutionModel
@@ -678,6 +686,10 @@ invariant.Queue.NoRtti
 invariant.Queue.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Queue.ProducerOnlyResultStatusDeclared
 invariant.Queue.ReferentialTransparency
+invariant.Queue.RequiresNothrowCopyAssignment
+invariant.Queue.RequiresNothrowCopyConstruction
+invariant.Queue.RequiresNothrowDefaultConstruction
+invariant.Queue.RequiresNothrowDestruction
 invariant.Queue.RequiresValueSemanticElements
 invariant.Queue.RuntimeCapacityFailuresHaveDocumentedPolicy
 invariant.Queue.SingleThreadedExecutionModel
@@ -795,6 +807,10 @@ invariant.Set.NoRtti
 invariant.Set.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Set.ProducerOnlyResultStatusDeclared
 invariant.Set.ReferentialTransparency
+invariant.Set.RequiresNothrowCopyAssignment
+invariant.Set.RequiresNothrowCopyConstruction
+invariant.Set.RequiresNothrowDefaultConstruction
+invariant.Set.RequiresNothrowDestruction
 invariant.Set.RequiresValueSemanticElements
 invariant.Set.RuntimeCapacityFailuresHaveDocumentedPolicy
 invariant.Set.SingleThreadedExecutionModel
@@ -888,6 +904,10 @@ invariant.String.OversizedInitializerIsCompileTimeFailure
 invariant.String.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.String.ProducerOnlyResultStatusDeclared
 invariant.String.ReferentialTransparency
+invariant.String.RequiresNothrowCopyAssignment
+invariant.String.RequiresNothrowCopyConstruction
+invariant.String.RequiresNothrowDefaultConstruction
+invariant.String.RequiresNothrowDestruction
 invariant.String.RuntimeCapacityFailuresHaveDocumentedPolicy
 invariant.String.SingleThreadedExecutionModel
 invariant.String.StaticOrAutomaticStorageOnly
@@ -994,6 +1014,10 @@ invariant.Vector.OversizedInitializerIsCompileTimeFailure
 invariant.Vector.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Vector.ProducerOnlyResultStatusDeclared
 invariant.Vector.ReferentialTransparency
+invariant.Vector.RequiresNothrowCopyAssignment
+invariant.Vector.RequiresNothrowCopyConstruction
+invariant.Vector.RequiresNothrowDefaultConstruction
+invariant.Vector.RequiresNothrowDestruction
 invariant.Vector.RequiresValueSemanticElements
 invariant.Vector.RuntimeCapacityFailuresHaveDocumentedPolicy
 invariant.Vector.SingleThreadedExecutionModel
