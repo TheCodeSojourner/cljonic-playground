@@ -50,19 +50,19 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     // Empty construction with explicit capacity
     constexpr String<8> s{};
-    STATIC_REQUIRE(s.empty());
-    STATIC_REQUIRE(s.size() == 0U);
+    STATIC_REQUIRE(s.is_empty());
+    STATIC_REQUIRE(s.count() == 0U);
     STATIC_REQUIRE(s.capacity() == 8U);
-    STATIC_REQUIRE(s[0] == '\0');           // out-of-bounds returns '\0'
+    STATIC_REQUIRE(s(0) == '\0');           // out-of-bounds returns '\0'
     STATIC_REQUIRE(s.contains(0) == false); // index 0 not valid when empty
 
     // Literal construction deduces size from initializer
     constexpr String<8> s1{"Hello"}; // "Hello" = 5 chars + null terminator
-    STATIC_REQUIRE_FALSE(s1.empty());
-    STATIC_REQUIRE(s1.size() == 5U); // logical size excludes null terminator
-    STATIC_REQUIRE(s1[0] == 'H');
-    STATIC_REQUIRE(s1[4] == 'o');
-    STATIC_REQUIRE(s1[5] == '\0');  // position 5 is null terminator (out-of-logical-bounds)
+    STATIC_REQUIRE_FALSE(s1.is_empty());
+    STATIC_REQUIRE(s1.count() == 5U); // logical size excludes null terminator
+    STATIC_REQUIRE(s1(0) == 'H');
+    STATIC_REQUIRE(s1(4) == 'o');
+    STATIC_REQUIRE(s1(5) == '\0');  // position 5 is null terminator (out-of-logical-bounds)
     STATIC_REQUIRE(s1.contains(0)); // valid indices 0..4
     STATIC_REQUIRE(s1.contains(4));
     STATIC_REQUIRE_FALSE(s1.contains(5)); // null terminator position is invalid
@@ -79,36 +79,36 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     // put replaces character at index (copy-on-modify semantics)
     constexpr auto s2 = s1.put(0, 'h');
-    STATIC_REQUIRE(s2[0] == 'h');
-    STATIC_REQUIRE(s2[1] == 'e');
-    STATIC_REQUIRE(s1[0] == 'H'); // original unchanged — referential transparency
+    STATIC_REQUIRE(s2(0) == 'h');
+    STATIC_REQUIRE(s2(1) == 'e');
+    STATIC_REQUIRE(s1(0) == 'H'); // original unchanged — referential transparency
 
     // put with out-of-bounds index leaves copy unchanged
     constexpr auto s3 = s1.put(99, 'X');
-    STATIC_REQUIRE(s3[0] == 'H');
-    STATIC_REQUIRE(s3.size() == 5U);
+    STATIC_REQUIRE(s3(0) == 'H');
+    STATIC_REQUIRE(s3.count() == 5U);
 
     // append adds character to end (if room available)
     constexpr auto s4 = s1.append('!');
-    STATIC_REQUIRE(s4.size() == 6U);
-    STATIC_REQUIRE(s4[5] == '!');
-    STATIC_REQUIRE(s4[6] == '\0'); // new null terminator
+    STATIC_REQUIRE(s4.count() == 6U);
+    STATIC_REQUIRE(s4(5) == '!');
+    STATIC_REQUIRE(s4(6) == '\0'); // new null terminator
 
     // append on full string returns unchanged copy
     constexpr String<5> s_full{"Hello"}; // exactly at capacity
-    STATIC_REQUIRE(s_full.size() == 5U);
+    STATIC_REQUIRE(s_full.count() == 5U);
     constexpr auto s_n_append = s_full.append('!');
-    STATIC_REQUIRE(s_n_append.size() == 5U); // unchanged — no room
+    STATIC_REQUIRE(s_n_append.count() == 5U); // unchanged — no room
 
     // Capacity zero: can only hold empty/null
     constexpr String<0> s_empty_cap{};
-    STATIC_REQUIRE(s_empty_cap.empty());
-    STATIC_REQUIRE(s_empty_cap.size() == 0U);
-    STATIC_REQUIRE(s_empty_cap[0] == '\0');
+    STATIC_REQUIRE(s_empty_cap.is_empty());
+    STATIC_REQUIRE(s_empty_cap.count() == 0U);
+    STATIC_REQUIRE(s_empty_cap(0) == '\0');
 
     // Append to zero-capacity string is a no-op
     constexpr auto s_zero_appended = s_empty_cap.append('A');
-    STATIC_REQUIRE(s_zero_appended.empty());
+    STATIC_REQUIRE(s_zero_appended.is_empty());
 
     // Runtime tests for code coverage instrumentation
     volatile char c1_raw = 'A';
@@ -118,17 +118,17 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     char c2 = c2_raw;
     std::size_t idx0 = idx0_raw;
     auto rs = String<8>{};
-    REQUIRE(rs.empty());
-    REQUIRE(rs.size() == 0U);
+    REQUIRE(rs.is_empty());
+    REQUIRE(rs.count() == 0U);
     REQUIRE(rs.capacity() == 8U);
-    REQUIRE(rs[idx0] == '\0');
+    REQUIRE(rs(idx0) == '\0');
     REQUIRE_FALSE(rs.contains(idx0));
 
     auto rs1 = rs.append(c1).append(c2);
-    REQUIRE_FALSE(rs1.empty());
-    REQUIRE(rs1.size() == 2U);
-    REQUIRE(rs1[idx0] == 'A');
-    REQUIRE(rs1[1] == 'B');
+    REQUIRE_FALSE(rs1.is_empty());
+    REQUIRE(rs1.count() == 2U);
+    REQUIRE(rs1(idx0) == 'A');
+    REQUIRE(rs1(1) == 'B');
     REQUIRE(rs1.contains(idx0));
     REQUIRE(rs1.contains(1));
     REQUIRE_FALSE(rs1.contains(2));
@@ -137,12 +137,12 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     REQUIRE(rs1(99, 'Z') == 'Z');
 
     auto rs_put = rs1.put(idx0, 'X');
-    REQUIRE(rs_put[idx0] == 'X');
-    REQUIRE(rs1[idx0] == 'A'); // immutability
+    REQUIRE(rs_put(idx0) == 'X');
+    REQUIRE(rs1(idx0) == 'A'); // immutability
 
     auto rs_put_oob = rs1.put(99, 'X');
-    REQUIRE(rs_put_oob.size() == 2U);
+    REQUIRE(rs_put_oob.count() == 2U);
 
     auto rs_full = String<2>{"AB"};
-    REQUIRE(rs_full.append('C').size() == 2U);
+    REQUIRE(rs_full.append('C').count() == 2U);
 }

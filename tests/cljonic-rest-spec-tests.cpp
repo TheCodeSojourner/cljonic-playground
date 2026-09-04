@@ -22,10 +22,10 @@ TEST_CASE("Rest free function operations", "[rest]") {
     constexpr auto r1 = conj(conj(r0, 1), 2);
     constexpr auto r2 = rest(r1);
     STATIC_REQUIRE(peek(r2) == 2);
-    STATIC_REQUIRE(r1.size() == 2U);
+    STATIC_REQUIRE(r1.count() == 2U);
 
     constexpr auto r3 = rest(r2);
-    STATIC_REQUIRE(r3.size() == 0U);
+    STATIC_REQUIRE(r3.count() == 0U);
 
     // Runtime tests for code coverage instrumentation
     volatile int v1_raw = 10;
@@ -33,5 +33,5 @@ TEST_CASE("Rest free function operations", "[rest]") {
     auto rq = Queue<int, 4>{};
     auto rq1 = conj(rq, v1);
     auto rq2 = rest(rq1);
-    REQUIRE(rq2.size() == 0U);
+    REQUIRE(rq2.count() == 0U);
 }

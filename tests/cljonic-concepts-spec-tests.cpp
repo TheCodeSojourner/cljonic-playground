@@ -42,6 +42,7 @@ struct VectorLike {
 
 struct MapLike {
     using key_type = int;
+    using lookup_type = int;
     using mapped_type = int;
     using value_type = int;
 
@@ -59,14 +60,25 @@ struct MapLike {
     }
 };
 
+struct SetLookupKey {};
+
 struct SetLike {
     using value_type = int;
+    using lookup_type = SetLookupKey;
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return true;
     }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
+    }
+
+    [[nodiscard]] constexpr auto operator()(const SetLookupKey&) const noexcept -> int {
+        return 0;
+    }
+
+    [[nodiscard]] constexpr auto contains(const SetLookupKey&) const noexcept -> bool {
+        return false;
     }
 };
 
@@ -265,6 +277,7 @@ TEST_CASE("CljonicVector nominal kind identity", "[concepts][collection]") {
     TRACE_ID("invariant.CljonicVector.RejectsExternalContainer");
 
     STATIC_REQUIRE(CljonicVector<VectorLike>);
+    STATIC_REQUIRE(CljonicVector<cljonic::Vector<int, 4>>);
     STATIC_REQUIRE_FALSE(CljonicVector<MapLike>);
     STATIC_REQUIRE_FALSE(CljonicVector<ExternalLike>);
     STATIC_REQUIRE_FALSE(CljonicVector<std::vector<int>>);
@@ -278,6 +291,7 @@ TEST_CASE("CljonicMap nominal kind identity", "[concepts][collection]") {
     TRACE_ID("invariant.CljonicMap.RejectsExternalContainer");
 
     STATIC_REQUIRE(CljonicMap<MapLike>);
+    STATIC_REQUIRE(CljonicMap<cljonic::Map<int, int, 4>>);
     STATIC_REQUIRE_FALSE(CljonicMap<VectorLike>);
     STATIC_REQUIRE_FALSE(CljonicMap<ExternalLike>);
     STATIC_REQUIRE_FALSE(CljonicMap<std::map<int, int>>);
@@ -291,6 +305,7 @@ TEST_CASE("CljonicSet nominal kind identity", "[concepts][collection]") {
     TRACE_ID("invariant.CljonicSet.RejectsExternalContainer");
 
     STATIC_REQUIRE(CljonicSet<SetLike>);
+    STATIC_REQUIRE(CljonicSet<cljonic::Set<int, 4>>);
     STATIC_REQUIRE_FALSE(CljonicSet<VectorLike>);
     STATIC_REQUIRE_FALSE(CljonicSet<ExternalLike>);
     STATIC_REQUIRE_FALSE(CljonicSet<std::set<int>>);
@@ -304,6 +319,7 @@ TEST_CASE("CljonicQueue nominal kind identity", "[concepts][collection]") {
     TRACE_ID("invariant.CljonicQueue.RejectsExternalContainer");
 
     STATIC_REQUIRE(CljonicQueue<QueueLike>);
+    STATIC_REQUIRE(CljonicQueue<cljonic::Queue<int, 4>>);
     STATIC_REQUIRE_FALSE(CljonicQueue<VectorLike>);
     STATIC_REQUIRE_FALSE(CljonicQueue<ExternalLike>);
     STATIC_REQUIRE_FALSE(CljonicQueue<std::deque<int>>);
@@ -317,6 +333,7 @@ TEST_CASE("CljonicString nominal kind identity", "[concepts][collection]") {
     TRACE_ID("invariant.CljonicString.RejectsExternalContainer");
 
     STATIC_REQUIRE(CljonicString<StringLike>);
+    STATIC_REQUIRE(CljonicString<cljonic::String<8>>);
     STATIC_REQUIRE_FALSE(CljonicString<VectorLike>);
     STATIC_REQUIRE_FALSE(CljonicString<ExternalLike>);
     STATIC_REQUIRE_FALSE(CljonicString<std::string>);
@@ -337,6 +354,11 @@ TEST_CASE("SequenceableCollection structural capability", "[concepts][collection
     // RequiresNonThrowingIsEmpty + RequiresNonThrowingCount.
     STATIC_REQUIRE(SequenceableCollection<VectorLike>);
     STATIC_REQUIRE(SequenceableCollection<MapLike>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::Map<int, int, 4>>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::Set<int, 4>>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::Queue<int, 4>>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::String<8>>);
 
     // LayeredOnNominalAdmission: a structurally identical external type is NOT
     // sequenceable because it is not admitted.
@@ -359,14 +381,40 @@ TEST_CASE("IndexedCollection structural capability", "[concepts][collection]") {
     // ExtendsSequenceable: an indexed collection is sequenceable.
     STATIC_REQUIRE(SequenceableCollection<VectorLike>);
     STATIC_REQUIRE(IndexedCollection<VectorLike>);
+    STATIC_REQUIRE(IndexedCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(IndexedCollection<cljonic::String<8>>);
 
     // RequiresCallableIndexedLookup + RequiresContainsPredicate: a sequenceable
     // collection without operator()(size_t)/contains is not indexed.
     STATIC_REQUIRE(SequenceableCollection<SetLike>);
     STATIC_REQUIRE_FALSE(IndexedCollection<SetLike>);
+    STATIC_REQUIRE_FALSE(IndexedCollection<cljonic::Set<EqualityOnly, 4>>);
+    STATIC_REQUIRE_FALSE(IndexedCollection<cljonic::Queue<int, 4>>);
 
     // operator[] is not sufficient; the surface requires operator()(size_t).
     STATIC_REQUIRE_FALSE(IndexedCollection<BracketLike>);
+}
+
+// ============================================================================
+// LookupCollection
+// ============================================================================
+
+TEST_CASE("LookupCollection general lookup capability", "[concepts][collection]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("entity-fields.LookupCollection");
+    TRACE_ID("invariant.LookupCollection.ExtendsSequenceable");
+    TRACE_ID("invariant.LookupCollection.RequiresLookupType");
+    TRACE_ID("invariant.LookupCollection.RequiresCallableLookup");
+    TRACE_ID("invariant.LookupCollection.RequiresMembershipPredicate");
+
+    STATIC_REQUIRE(LookupCollection<MapLike>);
+    STATIC_REQUIRE(LookupCollection<SetLike>);
+    STATIC_REQUIRE(LookupCollection<cljonic::Map<int, int, 4>>);
+    STATIC_REQUIRE(LookupCollection<cljonic::Set<int, 4>>);
+    STATIC_REQUIRE_FALSE(LookupCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE_FALSE(LookupCollection<cljonic::Queue<int, 4>>);
+    STATIC_REQUIRE_FALSE(LookupCollection<ExternalLike>);
 }
 
 // ============================================================================
@@ -384,11 +432,16 @@ TEST_CASE("AssociativeCollection structural capability", "[concepts][collection]
     // ExtendsSequenceable.
     STATIC_REQUIRE(SequenceableCollection<MapLike>);
     STATIC_REQUIRE(AssociativeCollection<MapLike>);
+    STATIC_REQUIRE(AssociativeCollection<cljonic::Map<int, int, 4>>);
 
     // RequiresCallableKeyLookup + RequiresMembershipPredicate: a sequenceable
     // collection without key lookup/contains is not associative.
     STATIC_REQUIRE(SequenceableCollection<SetLike>);
     STATIC_REQUIRE_FALSE(AssociativeCollection<SetLike>);
+    STATIC_REQUIRE_FALSE(AssociativeCollection<cljonic::Set<int, 4>>);
+    STATIC_REQUIRE_FALSE(AssociativeCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE_FALSE(AssociativeCollection<cljonic::Queue<int, 4>>);
+    STATIC_REQUIRE_FALSE(AssociativeCollection<cljonic::String<8>>);
 }
 
 // ============================================================================
@@ -446,14 +499,23 @@ TEST_CASE("ConceptMemberNaming surface", "[concepts][collection]") {
     // UsesCountIsEmptyMembers: count()/is_empty() are required; size()/empty()
     // alone do not satisfy the sequenceable surface.
     STATIC_REQUIRE(SequenceableCollection<VectorLike>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::Map<int, int, 4>>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::Set<int, 4>>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::Queue<int, 4>>);
+    STATIC_REQUIRE(SequenceableCollection<cljonic::String<8>>);
     STATIC_REQUIRE_FALSE(SequenceableCollection<SizeEmptyLike>);
 
     // OmitsIndexBracketLookup: operator[] is not used; operator()(size_t) is.
     STATIC_REQUIRE(IndexedCollection<VectorLike>);
+    STATIC_REQUIRE(IndexedCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(IndexedCollection<cljonic::String<8>>);
     STATIC_REQUIRE_FALSE(IndexedCollection<BracketLike>);
 
     // UsesContainsPredicate: the indexed surface requires contains.
     STATIC_REQUIRE(IndexedCollection<VectorLike>);
+    STATIC_REQUIRE(IndexedCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(IndexedCollection<cljonic::String<8>>);
 }
 
 TEST_CASE("Vector element storage requires non-throwing operations", "[vector][concepts]") {

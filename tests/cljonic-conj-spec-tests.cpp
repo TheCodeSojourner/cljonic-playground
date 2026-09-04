@@ -22,8 +22,8 @@ TEST_CASE("Conj free function operations", "[conj]") {
 
     constexpr Queue<int, 4> q0{};
     constexpr auto q1 = conj(q0, 10);
-    STATIC_REQUIRE(q1.size() == 1U);
-    STATIC_REQUIRE(q0.size() == 0U);
+    STATIC_REQUIRE(q1.count() == 1U);
+    STATIC_REQUIRE(q0.count() == 0U);
 
     constexpr Set<int, 4> s0{};
     constexpr auto s1 = conj(s0, 1);
@@ -37,8 +37,8 @@ TEST_CASE("Conj free function operations", "[conj]") {
     int sv = sv_raw;
     auto rq = Queue<int, 4>{};
     auto rq1 = conj(rq, qv);
-    REQUIRE(rq1.size() == 1U);
-    REQUIRE(rq.size() == 0U);
+    REQUIRE(rq1.count() == 1U);
+    REQUIRE(rq.count() == 0U);
 
     auto rs = Set<int, 4>{};
     auto rs1 = conj(rs, sv);

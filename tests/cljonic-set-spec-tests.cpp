@@ -48,32 +48,31 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     TRACE_ID("invariant.Set.DefaultAccessHasPreflightPredicate");
 
     constexpr Set<int, 4> s{};
-    STATIC_REQUIRE(s.empty());
-    STATIC_REQUIRE(s.size() == 0U);
+    STATIC_REQUIRE(s.is_empty());
     STATIC_REQUIRE(s.count() == 0U);
     STATIC_REQUIRE(s.capacity() == 4U);
 
     // conj adds elements (copy-on-modify semantics)
     constexpr auto s1 = s.conj(10);
-    STATIC_REQUIRE_FALSE(s1.empty());
-    STATIC_REQUIRE(s1.size() == 1U);
+    STATIC_REQUIRE_FALSE(s1.is_empty());
+    STATIC_REQUIRE(s1.count() == 1U);
     STATIC_REQUIRE(s1.contains(10));
     STATIC_REQUIRE_FALSE(s1.contains(20));
 
     constexpr auto s2 = s1.conj(20);
-    STATIC_REQUIRE(s2.size() == 2U);
+    STATIC_REQUIRE(s2.count() == 2U);
     STATIC_REQUIRE(s2.contains(10));
     STATIC_REQUIRE(s2.contains(20));
 
     // conj on full set returns unchanged copy
     constexpr auto s3 = s2.conj(30).conj(40);
-    STATIC_REQUIRE(s3.size() == 4U);
-    constexpr auto s4 = s3.conj(99); // overflow attempt
-    STATIC_REQUIRE(s4.size() == 4U); // size unchanged
+    STATIC_REQUIRE(s3.count() == 4U);
+    constexpr auto s4 = s3.conj(99);  // overflow attempt
+    STATIC_REQUIRE(s4.count() == 4U); // size unchanged
 
     // conj ignores duplicates
     constexpr auto s5 = s1.conj(10);
-    STATIC_REQUIRE(s5.size() == 1U);
+    STATIC_REQUIRE(s5.count() == 1U);
 
     // callable lookup: present element returns stored value
     STATIC_REQUIRE(s2(10) == 10);
@@ -93,19 +92,19 @@ TEST_CASE("Set construction and basic operations", "[set]") {
 
     // disj via swap-and-remove
     constexpr auto s6 = s2.disj(10);
-    STATIC_REQUIRE(s6.size() == 1U);
+    STATIC_REQUIRE(s6.count() == 1U);
     STATIC_REQUIRE_FALSE(s6.contains(10));
     STATIC_REQUIRE(s6.contains(20));
 
     // disj removes last via swap
     constexpr auto s7 = s2.disj(20);
-    STATIC_REQUIRE(s7.size() == 1U);
+    STATIC_REQUIRE(s7.count() == 1U);
     STATIC_REQUIRE(s7.contains(10));
     STATIC_REQUIRE_FALSE(s7.contains(20));
 
     // disj absent key returns unchanged copy
     constexpr auto s8 = s1.disj(99);
-    STATIC_REQUIRE(s8.size() == 1U);
+    STATIC_REQUIRE(s8.count() == 1U);
     STATIC_REQUIRE(s8.contains(10));
 
     // Runtime tests for code coverage instrumentation
@@ -114,41 +113,40 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     int sv1 = sv1_raw;
     int sv2 = sv2_raw;
     auto rs = Set<int, 4>{};
-    REQUIRE(rs.empty());
-    REQUIRE(rs.size() == 0U);
-    REQUIRE(rs.capacity() == 4U);
+    REQUIRE(rs.is_empty());
     REQUIRE(rs.count() == 0U);
+    REQUIRE(rs.capacity() == 4U);
     REQUIRE_FALSE(rs.contains(sv1));
     REQUIRE(rs(sv1) == 0);
     REQUIRE(rs(sv1, -1) == -1);
     REQUIRE(rs.can_conj(sv1));
 
     auto rs1 = rs.conj(sv1);
-    REQUIRE_FALSE(rs1.empty());
-    REQUIRE(rs1.size() == 1U);
+    REQUIRE_FALSE(rs1.is_empty());
+    REQUIRE(rs1.count() == 1U);
     REQUIRE(rs1.contains(sv1));
     REQUIRE(rs1(sv1) == 100);
-    REQUIRE(rs1.conj(sv1).size() == 1U); // duplicate insertion is no-op
+    REQUIRE(rs1.conj(sv1).count() == 1U); // duplicate insertion is no-op
 
     auto rs2 = rs1.conj(sv2);
-    REQUIRE(rs2.size() == 2U);
+    REQUIRE(rs2.count() == 2U);
     REQUIRE(rs2.contains(sv2));
 
     auto rs_full = rs2.conj(300).conj(400);
-    REQUIRE(rs_full.size() == 4U);
+    REQUIRE(rs_full.count() == 4U);
     REQUIRE_FALSE(rs_full.can_conj(500));
-    REQUIRE(rs_full.conj(500).size() == 4U); // rejected overflow
+    REQUIRE(rs_full.conj(500).count() == 4U); // rejected overflow
 
     auto rs_disj_mid = rs2.disj(sv1);
-    REQUIRE(rs_disj_mid.size() == 1U);
+    REQUIRE(rs_disj_mid.count() == 1U);
     REQUIRE_FALSE(rs_disj_mid.contains(sv1));
     REQUIRE(rs_disj_mid.contains(sv2));
 
     auto rs_disj_last = rs2.disj(sv2);
-    REQUIRE(rs_disj_last.size() == 1U);
+    REQUIRE(rs_disj_last.count() == 1U);
     REQUIRE(rs_disj_last.contains(sv1));
     REQUIRE_FALSE(rs_disj_last.contains(sv2));
 
     auto rs_disj_absent = rs1.disj(999);
-    REQUIRE(rs_disj_absent.size() == 1U);
+    REQUIRE(rs_disj_absent.count() == 1U);
 }

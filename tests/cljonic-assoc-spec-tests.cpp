@@ -22,7 +22,7 @@ TEST_CASE("Assoc free function operations", "[assoc]") {
     constexpr auto m1 = assoc(m0, 1, 100);
     STATIC_REQUIRE(m1.contains(1));
     STATIC_REQUIRE(m1(1) == 100);
-    STATIC_REQUIRE(m0.size() == 0U);
+    STATIC_REQUIRE(m0.count() == 0U);
 
     // Runtime tests for code coverage instrumentation
     volatile int k_raw = 42;
@@ -33,5 +33,5 @@ TEST_CASE("Assoc free function operations", "[assoc]") {
     auto rm1 = assoc(rm0, k, val);
     REQUIRE(rm1.contains(k));
     REQUIRE(rm1(k) == 999);
-    REQUIRE(rm0.size() == 0U);
+    REQUIRE(rm0.count() == 0U);
 }

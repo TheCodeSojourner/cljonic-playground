@@ -25,7 +25,7 @@ TEST_CASE("Empty free function operations", "[empty]") {
     constexpr Vector<int, 4> v{1, 2};
     constexpr auto ev = empty(v);
     STATIC_REQUIRE(is_empty(ev));
-    STATIC_REQUIRE(ev.size() == 0U);
+    STATIC_REQUIRE(ev.count() == 0U);
 
     constexpr Set<int, 4> s{};
     constexpr auto es = empty(s);
@@ -35,10 +35,10 @@ TEST_CASE("Empty free function operations", "[empty]") {
     constexpr auto eq = empty(q);
     STATIC_REQUIRE(is_empty(eq));
 
-    STATIC_REQUIRE(v.size() == 2U); // input preserved
+    STATIC_REQUIRE(v.count() == 2U); // input preserved
 
     // Runtime tests for code coverage instrumentation
     auto rv = Vector<int, 4>{1, 2};
     auto rev = empty(rv);
-    REQUIRE(rev.size() == 0U);
+    REQUIRE(rev.count() == 0U);
 }

@@ -22,7 +22,7 @@ TEST_CASE("Next free function operations", "[next]") {
     constexpr auto q1 = conj(conj(conj(q, 1), 2), 3);
     constexpr auto q2 = next(q1);
     STATIC_REQUIRE(peek(q2) == 2);
-    STATIC_REQUIRE(q1.size() == 3U); // input preserved
+    STATIC_REQUIRE(q1.count() == 3U); // input preserved
 
     // Runtime tests for code coverage instrumentation
     volatile int v1_raw = 1;

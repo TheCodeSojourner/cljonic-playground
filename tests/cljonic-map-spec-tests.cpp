@@ -48,13 +48,13 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     TRACE_ID("invariant.Map.DefaultAccessHasPreflightPredicate");
 
     constexpr Map<int, int, 4> m{};
-    STATIC_REQUIRE(m.empty());
-    STATIC_REQUIRE(m.size() == 0U);
+    STATIC_REQUIRE(m.is_empty());
+    STATIC_REQUIRE(m.count() == 0U);
     STATIC_REQUIRE(m.capacity() == 4U);
 
     constexpr auto m1 = m.assoc(10, 100);
-    STATIC_REQUIRE_FALSE(m1.empty());
-    STATIC_REQUIRE(m1.size() == 1U);
+    STATIC_REQUIRE_FALSE(m1.is_empty());
+    STATIC_REQUIRE(m1.count() == 1U);
     STATIC_REQUIRE(m1.contains(10));
     STATIC_REQUIRE_FALSE(m1.contains(20));
     STATIC_REQUIRE(m1(10) == 100);
@@ -62,12 +62,12 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     STATIC_REQUIRE(m1(20, -1) == -1);
 
     constexpr auto m2 = m1.assoc(20, 200);
-    STATIC_REQUIRE(m2.size() == 2U);
+    STATIC_REQUIRE(m2.count() == 2U);
     STATIC_REQUIRE(m2(20) == 200);
 
     // Dissoc using swap-and-remove
     constexpr auto m3 = m2.dissoc(10);
-    STATIC_REQUIRE(m3.size() == 1U);
+    STATIC_REQUIRE(m3.count() == 1U);
     STATIC_REQUIRE_FALSE(m3.contains(10));
     STATIC_REQUIRE(m3.contains(20));
     STATIC_REQUIRE(m3(20) == 200);
@@ -82,8 +82,8 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     int mk2 = mk2_raw;
     int mv2 = mv2_raw;
     auto rm = Map<int, int, 4>{};
-    REQUIRE(rm.empty());
-    REQUIRE(rm.size() == 0U);
+    REQUIRE(rm.is_empty());
+    REQUIRE(rm.count() == 0U);
     REQUIRE(rm.capacity() == 4U);
     REQUIRE_FALSE(rm.contains(mk1));
     REQUIRE(rm(mk1) == 0);
@@ -92,34 +92,34 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     REQUIRE(rm.can_assoc(mk1, mv1));
 
     auto rm1 = rm.assoc(mk1, mv1);
-    REQUIRE_FALSE(rm1.empty());
-    REQUIRE(rm1.size() == 1U);
+    REQUIRE_FALSE(rm1.is_empty());
+    REQUIRE(rm1.count() == 1U);
     REQUIRE(rm1.contains(mk1));
     REQUIRE(rm1(mk1) == 100);
 
     // Replace existing key
     auto rm1_updated = rm1.assoc(mk1, 999);
-    REQUIRE(rm1_updated.size() == 1U);
+    REQUIRE(rm1_updated.count() == 1U);
     REQUIRE(rm1_updated(mk1) == 999);
 
     auto rm2 = rm1.assoc(mk2, mv2);
-    REQUIRE(rm2.size() == 2U);
+    REQUIRE(rm2.count() == 2U);
     REQUIRE(rm2(mk2) == 200);
 
     auto rm_full = rm2.assoc(30, 300).assoc(40, 400);
-    REQUIRE(rm_full.size() == 4U);
+    REQUIRE(rm_full.count() == 4U);
     REQUIRE_FALSE(rm_full.can_assoc(50));
-    REQUIRE(rm_full.assoc(50, 500).size() == 4U); // rejected overflow
+    REQUIRE(rm_full.assoc(50, 500).count() == 4U); // rejected overflow
 
     auto rm_dissoc_first = rm2.dissoc(mk1);
-    REQUIRE(rm_dissoc_first.size() == 1U);
+    REQUIRE(rm_dissoc_first.count() == 1U);
     REQUIRE_FALSE(rm_dissoc_first.contains(mk1));
     REQUIRE(rm_dissoc_first.contains(mk2));
 
     auto rm_dissoc_last = rm2.dissoc(mk2);
-    REQUIRE(rm_dissoc_last.size() == 1U);
+    REQUIRE(rm_dissoc_last.count() == 1U);
     REQUIRE(rm_dissoc_last.contains(mk1));
 
     auto rm_dissoc_absent = rm1.dissoc(999);
-    REQUIRE(rm_dissoc_absent.size() == 1U);
+    REQUIRE(rm_dissoc_absent.count() == 1U);
 }

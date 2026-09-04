@@ -36,13 +36,13 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     constexpr Vector<int, 4> populated{1, 2};
     constexpr Vector<int, 2> full{1, 2};
 
-    STATIC_REQUIRE(empty.size() == 0U);
-    STATIC_REQUIRE(populated.size() == 2U);
-    STATIC_REQUIRE(full.size() == 2U);
+    STATIC_REQUIRE(empty.count() == 0U);
+    STATIC_REQUIRE(populated.count() == 2U);
+    STATIC_REQUIRE(full.count() == 2U);
     STATIC_REQUIRE(Vector<int, 4>::capacity() == 4U);
 
     const auto runtime_values = Vector<int, 4>{1, 2};
-    CHECK(runtime_values.size() == 2U);
+    CHECK(runtime_values.count() == 2U);
     CHECK(runtime_values.capacity() == 4U);
 }
 
@@ -73,15 +73,15 @@ TEST_CASE("Vector canonical preflight predicates model index validity and emptin
     STATIC_REQUIRE(values.contains(0U));
     STATIC_REQUIRE(values.contains(1U));
     STATIC_REQUIRE_FALSE(values.contains(2U));
-    STATIC_REQUIRE(empty_values.empty());
-    STATIC_REQUIRE_FALSE(values.empty());
+    STATIC_REQUIRE(empty_values.is_empty());
+    STATIC_REQUIRE_FALSE(values.is_empty());
 
     const auto runtime_values = Vector<int, 4>{10, 20};
     CHECK(runtime_values.contains(0U));
     CHECK(runtime_values.contains(1U));
     CHECK_FALSE(runtime_values.contains(2U));
-    CHECK(Vector<int, 4>{}.empty());
-    CHECK_FALSE(runtime_values.empty());
+    CHECK(Vector<int, 4>{}.is_empty());
+    CHECK_FALSE(runtime_values.is_empty());
 }
 
 TEST_CASE("Vector indexed access handles valid and invalid indexes", "[vector][indexed-access]") {
