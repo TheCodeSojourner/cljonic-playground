@@ -1,60 +1,56 @@
 ## Session State
 
-- last_session_id: 2026-09-03-sequence-specification
-- current_timestamp: 2026-09-03
+- last_session_id: 2026-09-04-sequence-readiness
+- current_timestamp: 2026-09-04
 - recover: 1
 - session_complete: true
 
 Task:
-1. Complete the requirements, vocabulary, architecture, and specification quality pass for the REQ-SEQ-022 collection-shaping and traversal family.
-2. Preserve the architecture > specifications > tests > code authority order and hand off to focused specification-test propagation.
+1. Complete REQ-SEQ-022 specification-test propagation and implementation-readiness review against the active C++ API surface.
+2. Preserve the architecture > specifications > tests > code authority order and do not implement sequence algorithms before their supporting API contracts exist.
 
 Questions:
-1. None unresolved.
+1. No user questions unresolved; implementation readiness has four technical blockers.
 
 Decisions:
-1. Keep the existing S5-to-S1 architecture and reconcile its authority mappings and policy statements in place.
-2. Treat producer operations as active only when approved by Module 4 and governed by behavioral contracts.
-3. Make Modules 3 through 7 and vocabulary.md explicit traceability authorities; remove the nonexistent Module 3 architecture-file reference.
-4. Make interoperability, result classification, lifecycle classification, relational gating, bounded-prefix behavior, and concept diagnostics explicit architectural policies.
-5. Approved architecture-check recommendation 1: result-contract rules are active for all public operations.
-6. Approved architecture-check recommendation 3: approved capabilities remain outside the active implementation surface until their specifications and implementation propagation are complete.
-7. Approved architecture-check recommendation 2: `Producer` names the value/domain concept, while `ProducerOnlyResult` names the public operation result-status category.
-8. Propagate `ProducerOnlyResult` consistently through the Module 2 requirements model, Module 2 architecture summary, root architecture result classifications, and vocabulary cross-links.
-9. During vocabulary weed, resolve the undefined architecture symbol `MembershipOrKeyPresence` to canonical `IndexedAccess ∨ AssociativeAccess`; requirements and vocabulary remain authoritative.
+1. All 50 REQ-SEQ-022 operation entities have concrete first-pass result, capacity, and typed-failure representations.
+2. `Take` and `TakeWhile` use explicit bounded producers materialized into caller-supplied destination capacity.
+3. Stored-result operations use bounded owning collections with source-derived capacity bounds; scalar, optional, map, nested, accumulator, boolean, and grouped-result shapes are explicit in the sequence specification.
+4. Keep the architecture boundary unchanged: the active implementation surface remains stored collections and primitive free functions; sequence algorithms remain outside it until the supporting API is approved.
+5. The active C++ surface has no producer/materialization API, optional or typed-failure result abstraction, common traversal/source capability, or nested-result construction surface.
 
 Validation:
-1. The focused architecture consistency check found no stale producer-inactive statement or nonexistent architecture authority path.
-2. `git diff --check -- architecture.md` passed.
-3. `make test` passed: 82/82 tests.
-4. `make upsert-gate-strict` reached lint and complexity successfully but was interrupted during its parallel rebuild before completion.
-5. The approved terminology propagation check found no old `Producer` result classification or `Producer-Only Result` label.
-6. `make lint` passed and `make test` passed: 82/82 tests.
-7. Vocabulary weed found no remaining targeted architecture drift after replacing `MembershipOrKeyPresence`; `git diff --check` passed.
+1. All 50 refined sequence contracts pass `allium check specs` and `allium analyse specs` with zero diagnostics and findings.
+2. Focused collection-shaping tests pass 108 assertions in 9 test cases.
+3. `make traceability-spec-to-code-update-snapshot` and `make traceability-spec-to-code` pass.
+4. Repeated full modular and single-header regression runs pass: 100/100 tests.
+5. The active API review found no producer, `into`, `fits_into`, `std::optional`, traversal, or nested-result abstraction in `src/`; `Vector`/`Map` use fixed non-type-template capacities and `std::array` storage.
+6. No files were modified during the final readiness review; the fini update is limited to this state record.
 
 Current Increment:
-1. Complete concrete result, capacity, and typed failure refinement for all 50 REQ-SEQ-022 operation entities.
-2. Hand off to implementation-readiness review and production propagation planning.
+1. Complete implementation-readiness review against the active C++ API surface.
+2. Hand off to design of the producer/materialization, result-status, and traversal foundations.
 
 Current Increment Validation:
-1. All 50 refined REQ-SEQ-022 operation contracts pass `allium check specs` and `allium analyse specs` with zero diagnostics and findings.
-2. Focused collection-shaping tests pass all 108 assertions in nine test cases after trace-ID propagation.
-3. `make traceability-spec-to-code-update-snapshot` and `make traceability-spec-to-code` pass after the obligation replacement.
-4. `Take` and `TakeWhile` are specified as explicit bounded producers materialized into caller-supplied destination capacity.
-5. `Drop`, `DropWhile`, `TakeLast`, `DropLast`, `Keep`, `KeepIndexed`, `Remove`, `Replace`, `Mapv`, `Filterv`, `Subvec`, `Sort`, `SortBy`, `TakeNth`, `NthNext`, `NthRest`, `ButLast`, `MapIndexed`, `Rseq`, `Fnext`, and `Nnext` are specified as bounded owning results using a source-capacity bound; callback transformations declare result element-type constraints and typed failure-policy obligations.
-6. `Find` is specified as an optional `MapEntry` result with typed missing-key absence; `ReduceKv` is specified as a single accumulator value; `Nth`, `Second`, `Ffirst`, and `Nfirst` are specified as scalar element-or-fallback results; `Some` is specified as an optional matching element; `IsEvery`, `NotAny`, and `NotEvery` are typed boolean results; `Distinct` and `Dedupe` return source-element owning collections; `Frequencies` returns a bounded count map; `Reductions` returns accumulator values with source-cardinality-plus-initial capacity; and the split, partition, grouping, flattening, and tree families specify concrete bounded owning result capacities.
+1. `allium check specs` and `allium analyse specs`: zero diagnostics and findings across all specifications.
+2. Focused collection-shaping tests: 108 assertions, 9 test cases passed.
+3. Traceability snapshot regeneration and strict traceability: passed.
+4. Full regression: 100/100 tests passed.
+5. Implementation-readiness blockers are documented below.
 
 Implementation-Readiness Review:
 1. The active implementation surface remains limited to stored collections and primitive free functions; no sequence-shaping production API exists yet.
 2. Module 5 requires concrete result capacity derivation, nested result representation, producer behavior, typed absence/failure behavior, and complete-versus-bounded result classification before implementation readiness.
-3. The current operation entities assert that those policy dimensions are declared but do not yet name the concrete C++ result types, capacity formulas, or typed failure forms required for implementation.
-4. All 50 REQ-SEQ-022 operation entities now have concrete first-pass result, capacity, and typed failure representations.
-5. Implementation remains deferred until the refined result contracts are reviewed against the active C++ API surface and approved for production propagation.
-5. Next decision: refine the remaining sequence contracts with concrete result and failure representations before adding production sequence algorithms.
+3. Blocker: no producer, `into`, or `fits_into` abstraction exists for explicit bounded producer materialization.
+4. Blocker: no optional/default/checked-failure result representation exists for scalar absence, `Find`, `Some`, or operation failures.
+5. Blocker: no common traversal/source capability exists for element, map-entry, nested, or tree traversal.
+6. Blocker: fixed non-type-template capacities and `std::array` storage cannot directly represent runtime-derived result capacities without an approved destination/materialization design.
+7. The declaration-oriented propagation tests establish traceability but do not yet execute sequence behavior; behavioral tests depend on the missing API foundations.
 
 Next:
-1. Refine implementation-readiness details for the remaining sequence contracts and propagate any resulting authority changes.
-2. Implement only after result representations and failure behavior are explicit.
+1. Design and approve the producer/materialization foundation, result-status/absence types, and common traversal/source capability.
+2. Add focused compile-time and runtime tests for those foundations.
+3. Replace declaration-only sequence propagation tests with behavioral tests, then implement sequence algorithms.
 
 ## Historical Session Records
 
