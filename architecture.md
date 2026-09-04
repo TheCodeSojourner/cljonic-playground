@@ -98,6 +98,13 @@
   | closed_numeric_domain(x)
   | reject_out_of_policy_inputs(x)
 
+λ S3_collection_storage_admission(x). stored_user_defined_type(x) → require(NothrowCollectionElement(x))
+  | NothrowCollectionElement(x) → require(nothrow_default_construction(x)
+    ∧ nothrow_copy_construction(x) ∧ nothrow_copy_assignment(x) ∧ nothrow_destruction(x))
+  | storage_admission(x) → not_imply(StableEquality ∨ TotalOrder ∨ hashing ∨ parsing ∨ traversal)
+  | collection_storage_position(x) ≡ element ∨ map_key ∨ map_value
+  | String(x) → apply(non_throwing_storage_and_destruction(x))
+
 λ S3_value_policy(x). PersistentValueSemantics(x) ∧ DeepCopyUpdate(x)
   | ReferentialTransparency(x)
   | conditional_on(user_defined_types_being_pure_and_non_allocating(x))
