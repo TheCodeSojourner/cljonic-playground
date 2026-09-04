@@ -9,7 +9,7 @@ namespace cljonic::no_heap::probes {
     const auto q1 = conj(q, 10);
     const auto s = Set<int, 4>{};
     const auto s1 = conj(s, 20);
-    return q1.size() == 1U && s1.count() == 1U;
+    return q1.count() == 1U && s1.count() == 1U;
 }
 
 } // namespace cljonic::no_heap::probes
