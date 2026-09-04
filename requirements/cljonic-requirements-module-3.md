@@ -8,6 +8,8 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 REQ-COLL-001. The supported collection family MUST include vector, map, set, queue, and string.
 
+REQ-COLL-001A. Vector elements, set elements, queue elements, map keys, map values, and map-entry fields MUST satisfy the `NothrowCollectionElement` storage contract defined by `REQ-VAL-007A`. String storage uses its separately defined bounded ASCII-byte representation and MUST preserve the same non-throwing storage and destruction guarantees.
+
 REQ-COLL-002. The library MUST provide a bounded vector with indexed lookup, indexed replacement, append, count, sequence conversion, traversal operations, and stack-style pop/peek behavior where applicable.
 
 REQ-COLL-002A. A `Vector<T, N>` MUST be callable with `operator()(Index)` and `operator()(Index, T)` when `Index` and `T` satisfy the same capabilities required by bounded indexed lookup. The one-argument form MUST return the element at a valid index or `T{}` when the index is invalid. The two-argument form MUST return the element at a valid index or the supplied fallback value when the index is invalid. Neither form MUST mutate the vector, allocate, throw, or change vector order or traversal state. `contains(vector, index)` MUST remain the authoritative way to distinguish an invalid index from a valid index whose element equals `T{}`; `get(vector, index)` and `get(vector, index, fallback)` MUST remain behaviorally equivalent free-function forms. Negative indexes, when representable by the accepted index type, MUST be invalid.
