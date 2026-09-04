@@ -88,7 +88,7 @@ class Vector {
   public:
     using value_type = element_type;
 
-    static_assert(concepts::NothrowCopyableElement<element_type>, "Vector element storage operations must not throw");
+    static_assert(concepts::NothrowCollectionElement<element_type>, "Vector element storage operations must not throw");
 
     static_assert(
         capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
@@ -96,7 +96,7 @@ class Vector {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args... args) noexcept(concepts::NothrowCopyableElement<element_type> &&
+    constexpr Vector(Args... args) noexcept(concepts::NothrowCollectionElement<element_type> &&
                                             (concepts::NothrowElementConstruction<element_type, Args> && ...))
         : storage_{}, logical_size_{0} {
         static_assert(sizeof...(Args) <= capacity_value, "Vector constructor requires initializer count to be less "
@@ -150,7 +150,7 @@ class Vector {
 
     template <typename... Args>
     static constexpr bool constructor_arguments_valid =
-        sizeof...(Args) <= capacity_value && concepts::NothrowCopyableElement<element_type> &&
+        sizeof...(Args) <= capacity_value && concepts::NothrowCollectionElement<element_type> &&
         (concepts::NothrowElementConstruction<element_type, Args> && ...);
 
     template <typename... Args>

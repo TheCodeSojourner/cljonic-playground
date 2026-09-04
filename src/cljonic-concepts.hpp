@@ -35,14 +35,17 @@ namespace concepts {
 template <typename T>
 concept CopyableElement = std::default_initializable<T> && std::copyable<T>;
 
-/** Requires that element storage operations (default construct, copy construct,
- *  copy assign) do not throw exceptions. */
+/** Requires that all collection storage lifetime and copy operations do not throw. */
 template <typename T>
-concept NothrowCopyableElement = CopyableElement<T> && requires(T value, const T& other) {
-    { T{} } noexcept;
-    { T{other} } noexcept;
-    { value = other } noexcept;
-};
+concept NothrowCollectionElement =
+    CopyableElement<T> && std::is_nothrow_destructible_v<T> && requires(T value, const T& other) {
+        { T{} } noexcept;
+        { T{other} } noexcept;
+        { value = other } noexcept;
+    };
+
+template <typename T>
+concept NothrowCopyableElement = NothrowCollectionElement<T>;
 
 /** Requires that an argument is convertible to and can construct an element
  *  without throwing. */

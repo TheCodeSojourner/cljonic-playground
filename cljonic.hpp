@@ -270,14 +270,17 @@ namespace concepts {
 template <typename T>
 concept CopyableElement = std::default_initializable<T> && std::copyable<T>;
 
-/** Requires that element storage operations (default construct, copy construct,
- *  copy assign) do not throw exceptions. */
+/** Requires that all collection storage lifetime and copy operations do not throw. */
 template <typename T>
-concept NothrowCopyableElement = CopyableElement<T> && requires(T value, const T& other) {
-    { T{} } noexcept;
-    { T{other} } noexcept;
-    { value = other } noexcept;
-};
+concept NothrowCollectionElement =
+    CopyableElement<T> && std::is_nothrow_destructible_v<T> && requires(T value, const T& other) {
+        { T{} } noexcept;
+        { T{other} } noexcept;
+        { value = other } noexcept;
+    };
+
+template <typename T>
+concept NothrowCopyableElement = NothrowCollectionElement<T>;
 
 /** Requires that an argument is convertible to and can construct an element
  *  without throwing. */
@@ -1857,7 +1860,7 @@ class Vector {
   public:
     using value_type = element_type;
 
-    static_assert(concepts::NothrowCopyableElement<element_type>, "Vector element storage operations must not throw");
+    static_assert(concepts::NothrowCollectionElement<element_type>, "Vector element storage operations must not throw");
 
     static_assert(
         capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
@@ -1865,7 +1868,7 @@ class Vector {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args... args) noexcept(concepts::NothrowCopyableElement<element_type> &&
+    constexpr Vector(Args... args) noexcept(concepts::NothrowCollectionElement<element_type> &&
                                             (concepts::NothrowElementConstruction<element_type, Args> && ...))
         : storage_{}, logical_size_{0} {
         static_assert(sizeof...(Args) <= capacity_value, "Vector constructor requires initializer count to be less "
@@ -1919,7 +1922,7 @@ class Vector {
 
     template <typename... Args>
     static constexpr bool constructor_arguments_valid =
-        sizeof...(Args) <= capacity_value && concepts::NothrowCopyableElement<element_type> &&
+        sizeof...(Args) <= capacity_value && concepts::NothrowCollectionElement<element_type> &&
         (concepts::NothrowElementConstruction<element_type, Args> && ...);
 
     template <typename... Args>
