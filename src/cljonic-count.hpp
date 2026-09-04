@@ -32,9 +32,9 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C>
+template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto count(const C& collection) noexcept -> std::size_t {
-    return collection.size();
+    return collection.count();
 }
 
 } // namespace cljonic

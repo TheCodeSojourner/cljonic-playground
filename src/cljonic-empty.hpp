@@ -32,7 +32,7 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C>
+template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto empty(const C&) noexcept -> C {
     return C{};
 }

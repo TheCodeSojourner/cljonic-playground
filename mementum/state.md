@@ -33,29 +33,28 @@ Validation:
 7. Vocabulary weed found no remaining targeted architecture drift after replacing `MembershipOrKeyPresence`; `git diff --check` passed.
 
 Current Increment:
-1. Create `specs/sequences/collection-shaping.allium` as the first-pass domain contract for the REQ-SEQ-022 collection-shaping and traversal family.
-2. Model all 50 listed operations as individually named entities under the new `specs/sequences/` domain, with a shared policy covering input preservation, callback purity, termination, capability gates, nested results, producer behavior, capacity, absence/failure, result status, bounded ownership, unordered map/set semantics, and unsupported transducers/lazy sequences.
-3. Reflect the approved operation inventory in `architecture.md` without duplicating operation-level behavioral detail.
-4. Tighten all 50 operation entities with operation-specific arity, argument roles, callback behavior, termination, result shape, capacity or ordering policy, absence/failure behavior, and input-preservation constraints; representative contracts include `take`, `drop`, `nth`, predicate traversal, partitioning, grouping, transformation, and ordering operations.
+1. Complete concrete result, capacity, and typed failure refinement for all 50 REQ-SEQ-022 operation entities.
+2. Hand off to implementation-readiness review and production propagation planning.
 
 Current Increment Validation:
-1. `allium check specs` passed with zero diagnostics.
-2. `allium analyse specs` passed with zero findings.
-3. `allium plan specs/sequences/collection-shaping.allium` passed with zero diagnostics.
-4. Architecture/spec inventory synchronization found all 50 operation entities reflected in `architecture.md`.
-5. `git diff --check` passed for the increment.
-6. The tightened operation slices passed focused and full Allium check/analyse validation with zero diagnostics and findings.
-7. The completed 50-operation contract file passed full `allium check specs` and `allium analyse specs` with zero diagnostics and findings.
-8. Architecture synchronization found all 50 unique operation contracts reflected in `architecture.md`.
-9. The `gybis-arch-weed` convergence pass found one architecture/spec directive gap: the shared sequence policy dimensions were present in the spec but not named explicitly in architecture; adding the family-level policy resolved it.
-10. Final architecture/spec convergence has zero remaining targeted divergences; the five-layer order remains `S5 S4 S3 S2 S1`.
-11. The consolidated requirements/vocabulary/architecture/specifications quality pass found no genuine vocabulary drift, no missing authority references, no missing sequence policy dimensions, and no missing operation directives.
-12. Final quality pass: all 26 Allium files passed check/analyse, core authority terms are present in requirements and vocabulary, architecture references resolve, and `git diff --check` passed.
+1. All 50 refined REQ-SEQ-022 operation contracts pass `allium check specs` and `allium analyse specs` with zero diagnostics and findings.
+2. Focused collection-shaping tests pass all 108 assertions in nine test cases after trace-ID propagation.
+3. `make traceability-spec-to-code-update-snapshot` and `make traceability-spec-to-code` pass after the obligation replacement.
+4. `Take` and `TakeWhile` are specified as explicit bounded producers materialized into caller-supplied destination capacity.
+5. `Drop`, `DropWhile`, `TakeLast`, `DropLast`, `Keep`, `KeepIndexed`, `Remove`, `Replace`, `Mapv`, `Filterv`, `Subvec`, `Sort`, `SortBy`, `TakeNth`, `NthNext`, `NthRest`, `ButLast`, `MapIndexed`, `Rseq`, `Fnext`, and `Nnext` are specified as bounded owning results using a source-capacity bound; callback transformations declare result element-type constraints and typed failure-policy obligations.
+6. `Find` is specified as an optional `MapEntry` result with typed missing-key absence; `ReduceKv` is specified as a single accumulator value; `Nth`, `Second`, `Ffirst`, and `Nfirst` are specified as scalar element-or-fallback results; `Some` is specified as an optional matching element; `IsEvery`, `NotAny`, and `NotEvery` are typed boolean results; `Distinct` and `Dedupe` return source-element owning collections; `Frequencies` returns a bounded count map; `Reductions` returns accumulator values with source-cardinality-plus-initial capacity; and the split, partition, grouping, flattening, and tree families specify concrete bounded owning result capacities.
+
+Implementation-Readiness Review:
+1. The active implementation surface remains limited to stored collections and primitive free functions; no sequence-shaping production API exists yet.
+2. Module 5 requires concrete result capacity derivation, nested result representation, producer behavior, typed absence/failure behavior, and complete-versus-bounded result classification before implementation readiness.
+3. The current operation entities assert that those policy dimensions are declared but do not yet name the concrete C++ result types, capacity formulas, or typed failure forms required for implementation.
+4. All 50 REQ-SEQ-022 operation entities now have concrete first-pass result, capacity, and typed failure representations.
+5. Implementation remains deferred until the refined result contracts are reviewed against the active C++ API surface and approved for production propagation.
+5. Next decision: refine the remaining sequence contracts with concrete result and failure representations before adding production sequence algorithms.
 
 Next:
-1. Propagate approved specifications into focused executable specification tests.
-2. Update spec-to-code traceability from those tests.
-3. Implement only after tests and traceability establish the required behavior.
+1. Refine implementation-readiness details for the remaining sequence contracts and propagate any resulting authority changes.
+2. Implement only after result representations and failure behavior are explicit.
 
 ## Historical Session Records
 

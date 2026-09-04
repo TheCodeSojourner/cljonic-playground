@@ -128,6 +128,14 @@ concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, st
     { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 
+/** Requires an admitted sequenceable collection to expose a named lookup
+ * domain, callable lookup, and matching membership predicate. */
+template <typename C>
+concept LookupCollection = SequenceableCollection<C> && requires(const C& c, const typename C::lookup_type& key) {
+    { c(key) } noexcept;
+    { c.contains(key) } noexcept -> std::same_as<bool>;
+};
+
 /** Requires that a sequenceable collection provides callable key lookup
  *  c(key) and the contains(key) key-presence membership test. */
 template <typename C>

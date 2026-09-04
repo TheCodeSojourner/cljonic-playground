@@ -24,8 +24,7 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr String<8> s_const{"Hello"};
- *   static_assert(s_const.size() == 5U);
- *   static_assert(s_const[0] == 'H');
+ *   static_assert(s_const.count() == 5U);
  *   static_assert(s_const(0) == 'H');
  *   static_assert(s_const(99, 'Z') == 'Z');
  *   static_assert(s_const.contains(0));
@@ -35,7 +34,7 @@ namespace cljonic {
  *   auto s1 = s_runtime.append('!');
  *   auto s2 = s1.put(0, 'h');
  *
- *   return (s1.size() == 3U && s2[0] == 'h') ? 0 : 1;
+ *   return (s1.count() == 3U && s2(0) == 'h') ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -67,11 +66,11 @@ class String {
         return CapacityValue;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -79,11 +78,6 @@ class String {
      * terminator). Mirrors Clojure contains? over string indices. */
     [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
         return index < logical_size_;
-    }
-
-    /** Index access: returns '\\0' for out-of-bounds indices. */
-    [[nodiscard]] constexpr auto operator[](std::size_t index) const noexcept -> char {
-        return (index < logical_size_) ? data_[index] : '\0';
     }
 
     /** Callable index access returning default-constructed char ('\\0') on
@@ -126,3 +120,13 @@ class String {
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <std::size_t CapacityValue>
+struct collection_traits<String<CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::string;
+};
+
+} // namespace cljonic::concepts_detail

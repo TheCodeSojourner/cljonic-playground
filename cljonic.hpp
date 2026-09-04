@@ -363,6 +363,14 @@ concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, st
     { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 
+/** Requires an admitted sequenceable collection to expose a named lookup
+ * domain, callable lookup, and matching membership predicate. */
+template <typename C>
+concept LookupCollection = SequenceableCollection<C> && requires(const C& c, const typename C::lookup_type& key) {
+    { c(key) } noexcept;
+    { c.contains(key) } noexcept -> std::same_as<bool>;
+};
+
 /** Requires that a sequenceable collection provides callable key lookup
  *  c(key) and the contains(key) key-presence membership test. */
 template <typename C>
@@ -651,9 +659,9 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C>
+template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto count(const C& collection) noexcept -> std::size_t {
-    return collection.size();
+    return collection.count();
 }
 
 } // namespace cljonic
@@ -686,7 +694,7 @@ namespace cljonic {
  *   auto s0_runtime = conj(Set<int, 4>{}, 99);
  *   auto s1_runtime = disj(s0_runtime, 99);
  *
- *   return (!s1_runtime.contains(99) && s1_runtime.empty()) ? 0 : 1;
+ *   return (!s1_runtime.contains(99) && s1_runtime.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -726,7 +734,7 @@ namespace cljonic {
  *   auto m0_runtime = assoc(Map<int, int, 4>{}, 2, 200);
  *   auto m1_runtime = dissoc(m0_runtime, 2);
  *
- *   return (!m1_runtime.contains(2) && m1_runtime.empty()) ? 0 : 1;
+ *   return (!m1_runtime.contains(2) && m1_runtime.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -773,7 +781,7 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C>
+template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto empty(const C&) noexcept -> C {
     return C{};
 }
@@ -868,7 +876,7 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr auto m_const = Map<int, int, 4>{}.assoc(1, 10).assoc(2, 20);
- *   static_assert(m_const.size() == 2U);
+ *   static_assert(m_const.count() == 2U);
  *   static_assert(m_const.contains(1));
  *   static_assert(m_const(1) == 10);
  *   static_assert(m_const(99, -1) == -1);
@@ -879,19 +887,20 @@ namespace cljonic {
  *   auto m1 = m_runtime.assoc(10, 100);
  *   auto m2 = m1.dissoc(10);
  *
- *   return (m1.contains(10) && !m2.contains(10) && m2.empty()) ? 0 : 1;
+ *   return (m1.contains(10) && !m2.contains(10) && m2.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
-template <concepts::VectorElement KeyType, concepts::VectorElement ValueType, std::size_t CapacityValue>
+template <concepts::StableEqualityComparable KeyType, concepts::CopyableElement ValueType, std::size_t CapacityValue>
 class Map {
   public:
     using key_type = KeyType;
+    using lookup_type = key_type;
     using mapped_type = ValueType;
     using value_type = MapEntry<KeyType, ValueType>;
 
-    static_assert(concepts::NothrowVectorElement<KeyType>, "Map key type operations must not throw");
-    static_assert(concepts::NothrowVectorElement<ValueType>, "Map value type operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<KeyType>, "Map key type operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<ValueType>, "Map value type operations must not throw");
     static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
                   "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
@@ -902,11 +911,11 @@ class Map {
         return CapacityValue;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -971,6 +980,16 @@ class Map {
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct collection_traits<Map<KeyType, ValueType, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::map;
+};
+
+} // namespace cljonic::concepts_detail
 // End cljonic-map.hpp
 
 namespace cljonic {
@@ -1009,7 +1028,7 @@ template <typename KeyType, typename ValueType>
 }
 
 /** Returns the element at index zero of the sequenceable collection. */
-template <typename C>
+template <concepts::IndexedCollection C>
 [[nodiscard]] constexpr auto first(const C& collection) noexcept -> decltype(collection(0U)) {
     return collection(0U);
 }
@@ -1059,12 +1078,16 @@ namespace cljonic {
  * ~~~~~
  */
 template <typename C, typename K>
+    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
+            requires(const C& collection, const K& key) { collection(key); }
 [[nodiscard]] constexpr auto get(const C& collection, const K& key) noexcept -> decltype(collection(key)) {
     return collection(key);
 }
 
 /** Returns the stored value when present, otherwise the supplied fallback. */
 template <typename C, typename K, typename V>
+    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
+            requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
 [[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback) noexcept
     -> decltype(collection(key, fallback)) {
     return collection(key, fallback);
@@ -1104,9 +1127,9 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C>
+template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
-    return collection.empty();
+    return collection.is_empty();
 }
 
 } // namespace cljonic
@@ -1189,9 +1212,9 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C>
+template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto not_empty(const C& collection) noexcept -> C {
-    return collection.empty() ? C{} : C{collection};
+    return collection.is_empty() ? C{} : C{collection};
 }
 
 } // namespace cljonic
@@ -1300,7 +1323,7 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr auto q_const = Queue<int, 4>{}.conj(10).conj(20);
- *   static_assert(q_const.size() == 2U);
+ *   static_assert(q_const.count() == 2U);
  *   static_assert(q_const.peek() == 10);
  *   static_assert(q_const.can_conj());
  *
@@ -1309,16 +1332,16 @@ namespace cljonic {
  *   auto q1 = q_runtime.conj(100);
  *   auto q2 = q1.pop();
  *
- *   return (q1.peek() == 100 && q2.empty()) ? 0 : 1;
+ *   return (q1.peek() == 100 && q2.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
-template <concepts::VectorElement T, std::size_t CapacityValue>
+template <concepts::CopyableElement T, std::size_t CapacityValue>
 class Queue {
   public:
     using value_type = T;
 
-    static_assert(concepts::NothrowVectorElement<T>, "Queue element type operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<T>, "Queue element type operations must not throw");
     static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
                   "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
@@ -1329,11 +1352,11 @@ class Queue {
         return CapacityValue;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -1378,6 +1401,16 @@ class Queue {
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename T, std::size_t CapacityValue>
+struct collection_traits<Queue<T, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::queue;
+};
+
+} // namespace cljonic::concepts_detail
 // End cljonic-queue.hpp
 // Begin cljonic-rest.hpp
 #ifndef CLJONIC_REST_HPP
@@ -1498,16 +1531,17 @@ namespace cljonic {
  *   auto s1 = s_runtime.conj(10);
  *   auto s2 = s1.disj(10);
  *
- *   return (s1.contains(10) && !s2.contains(10) && s2.empty()) ? 0 : 1;
+ *   return (s1.contains(10) && !s2.contains(10) && s2.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
-template <concepts::VectorElement T, std::size_t CapacityValue>
+template <concepts::StableEqualityComparable T, std::size_t CapacityValue>
 class Set {
   public:
     using value_type = T;
+    using lookup_type = value_type;
 
-    static_assert(concepts::NothrowVectorElement<T>, "Set element type operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<T>, "Set element type operations must not throw");
     static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
                   "Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
@@ -1518,15 +1552,11 @@ class Set {
         return CapacityValue;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-        return logical_size_;
-    }
-
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -1596,6 +1626,16 @@ class Set {
 
 } // namespace cljonic
 
+namespace cljonic::concepts_detail {
+
+template <typename T, std::size_t CapacityValue>
+struct collection_traits<Set<T, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::set;
+};
+
+} // namespace cljonic::concepts_detail
+
 #endif // CLJONIC_SET_HPP
 // End cljonic-set.hpp
 // Begin cljonic-string.hpp
@@ -1622,8 +1662,7 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr String<8> s_const{"Hello"};
- *   static_assert(s_const.size() == 5U);
- *   static_assert(s_const[0] == 'H');
+ *   static_assert(s_const.count() == 5U);
  *   static_assert(s_const(0) == 'H');
  *   static_assert(s_const(99, 'Z') == 'Z');
  *   static_assert(s_const.contains(0));
@@ -1633,7 +1672,7 @@ namespace cljonic {
  *   auto s1 = s_runtime.append('!');
  *   auto s2 = s1.put(0, 'h');
  *
- *   return (s1.size() == 3U && s2[0] == 'h') ? 0 : 1;
+ *   return (s1.count() == 3U && s2(0) == 'h') ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -1665,11 +1704,11 @@ class String {
         return CapacityValue;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -1677,11 +1716,6 @@ class String {
      * terminator). Mirrors Clojure contains? over string indices. */
     [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
         return index < logical_size_;
-    }
-
-    /** Index access: returns '\\0' for out-of-bounds indices. */
-    [[nodiscard]] constexpr auto operator[](std::size_t index) const noexcept -> char {
-        return (index < logical_size_) ? data_[index] : '\0';
     }
 
     /** Callable index access returning default-constructed char ('\\0') on
@@ -1724,6 +1758,16 @@ class String {
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <std::size_t CapacityValue>
+struct collection_traits<String<CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::string;
+};
+
+} // namespace cljonic::concepts_detail
 // End cljonic-string.hpp
 // Begin cljonic-vector.hpp
 #pragma once
@@ -1808,12 +1852,12 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::VectorElement element_type, std::size_t capacity_value>
+template <concepts::CopyableElement element_type, std::size_t capacity_value>
 class Vector {
   public:
     using value_type = element_type;
 
-    static_assert(concepts::NothrowVectorElement<element_type>, "Vector element storage operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<element_type>, "Vector element storage operations must not throw");
 
     static_assert(
         capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
@@ -1821,7 +1865,7 @@ class Vector {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args... args) noexcept(concepts::NothrowVectorElement<element_type> &&
+    constexpr Vector(Args... args) noexcept(concepts::NothrowCopyableElement<element_type> &&
                                             (concepts::NothrowElementConstruction<element_type, Args> && ...))
         : storage_{}, logical_size_{0} {
         static_assert(sizeof...(Args) <= capacity_value, "Vector constructor requires initializer count to be less "
@@ -1838,7 +1882,7 @@ class Vector {
         return capacity_value;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
@@ -1857,7 +1901,7 @@ class Vector {
         return index_is_valid(index);
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -1875,7 +1919,7 @@ class Vector {
 
     template <typename... Args>
     static constexpr bool constructor_arguments_valid =
-        sizeof...(Args) <= capacity_value && concepts::NothrowVectorElement<element_type> &&
+        sizeof...(Args) <= capacity_value && concepts::NothrowCopyableElement<element_type> &&
         (concepts::NothrowElementConstruction<element_type, Args> && ...);
 
     template <typename... Args>
@@ -1899,6 +1943,16 @@ template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename ElementType, std::size_t CapacityValue>
+struct collection_traits<Vector<ElementType, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::vector;
+};
+
+} // namespace cljonic::concepts_detail
 // End cljonic-vector.hpp
 
 namespace cljonic {

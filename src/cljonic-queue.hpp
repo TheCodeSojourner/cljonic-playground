@@ -24,7 +24,7 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr auto q_const = Queue<int, 4>{}.conj(10).conj(20);
- *   static_assert(q_const.size() == 2U);
+ *   static_assert(q_const.count() == 2U);
  *   static_assert(q_const.peek() == 10);
  *   static_assert(q_const.can_conj());
  *
@@ -33,16 +33,16 @@ namespace cljonic {
  *   auto q1 = q_runtime.conj(100);
  *   auto q2 = q1.pop();
  *
- *   return (q1.peek() == 100 && q2.empty()) ? 0 : 1;
+ *   return (q1.peek() == 100 && q2.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
-template <concepts::VectorElement T, std::size_t CapacityValue>
+template <concepts::CopyableElement T, std::size_t CapacityValue>
 class Queue {
   public:
     using value_type = T;
 
-    static_assert(concepts::NothrowVectorElement<T>, "Queue element type operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<T>, "Queue element type operations must not throw");
     static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
                   "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
@@ -53,11 +53,11 @@ class Queue {
         return CapacityValue;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -102,3 +102,13 @@ class Queue {
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename T, std::size_t CapacityValue>
+struct collection_traits<Queue<T, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::queue;
+};
+
+} // namespace cljonic::concepts_detail

@@ -29,9 +29,9 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C>
+template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
-    return collection.empty();
+    return collection.is_empty();
 }
 
 } // namespace cljonic

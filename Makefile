@@ -241,7 +241,7 @@ _traceability-test-ids-current:
 	@find tests -type f \( -name '*.cpp' -o -name '*.cc' \) -print0 | \
 		xargs -0 -r cat | \
 		sed -E '/^[[:space:]]*#define[[:space:]]+TRACE_ID\(/d' | \
-		perl -0777 -ne 'while(/TRACE_ID\((.*?)\);/sg){@s=($$1 =~ /"([^"]*)"/g); print join("", @s), "\n" if @s;}' | \
+		perl -0777 -ne 'while(/TRACE_ID\((.*?)\);/sg){@s=($$1 =~ /"([^"]*)"/g); $$text=join("", @s); while($$text =~ /((?:entity-fields\.[A-Za-z0-9_]+|invariant\.[A-Za-z0-9_]+\.[A-Za-z0-9_]+))(?=(?:entity-fields|invariant)|$$)/g){print "$$1\n";}}' | \
 		sort -u > $(TRACEABILITY_TEST_IDS_CURRENT)
 
 traceability-spec-to-code:

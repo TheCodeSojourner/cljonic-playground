@@ -25,7 +25,7 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr auto m_const = Map<int, int, 4>{}.assoc(1, 10).assoc(2, 20);
- *   static_assert(m_const.size() == 2U);
+ *   static_assert(m_const.count() == 2U);
  *   static_assert(m_const.contains(1));
  *   static_assert(m_const(1) == 10);
  *   static_assert(m_const(99, -1) == -1);
@@ -36,19 +36,20 @@ namespace cljonic {
  *   auto m1 = m_runtime.assoc(10, 100);
  *   auto m2 = m1.dissoc(10);
  *
- *   return (m1.contains(10) && !m2.contains(10) && m2.empty()) ? 0 : 1;
+ *   return (m1.contains(10) && !m2.contains(10) && m2.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
-template <concepts::VectorElement KeyType, concepts::VectorElement ValueType, std::size_t CapacityValue>
+template <concepts::StableEqualityComparable KeyType, concepts::CopyableElement ValueType, std::size_t CapacityValue>
 class Map {
   public:
     using key_type = KeyType;
+    using lookup_type = key_type;
     using mapped_type = ValueType;
     using value_type = MapEntry<KeyType, ValueType>;
 
-    static_assert(concepts::NothrowVectorElement<KeyType>, "Map key type operations must not throw");
-    static_assert(concepts::NothrowVectorElement<ValueType>, "Map value type operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<KeyType>, "Map key type operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<ValueType>, "Map value type operations must not throw");
     static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
                   "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
@@ -59,11 +60,11 @@ class Map {
         return CapacityValue;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -128,3 +129,13 @@ class Map {
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct collection_traits<Map<KeyType, ValueType, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::map;
+};
+
+} // namespace cljonic::concepts_detail

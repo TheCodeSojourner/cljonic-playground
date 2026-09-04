@@ -83,12 +83,12 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::VectorElement element_type, std::size_t capacity_value>
+template <concepts::CopyableElement element_type, std::size_t capacity_value>
 class Vector {
   public:
     using value_type = element_type;
 
-    static_assert(concepts::NothrowVectorElement<element_type>, "Vector element storage operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<element_type>, "Vector element storage operations must not throw");
 
     static_assert(
         capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
@@ -96,7 +96,7 @@ class Vector {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args... args) noexcept(concepts::NothrowVectorElement<element_type> &&
+    constexpr Vector(Args... args) noexcept(concepts::NothrowCopyableElement<element_type> &&
                                             (concepts::NothrowElementConstruction<element_type, Args> && ...))
         : storage_{}, logical_size_{0} {
         static_assert(sizeof...(Args) <= capacity_value, "Vector constructor requires initializer count to be less "
@@ -113,7 +113,7 @@ class Vector {
         return capacity_value;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
@@ -132,7 +132,7 @@ class Vector {
         return index_is_valid(index);
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -150,7 +150,7 @@ class Vector {
 
     template <typename... Args>
     static constexpr bool constructor_arguments_valid =
-        sizeof...(Args) <= capacity_value && concepts::NothrowVectorElement<element_type> &&
+        sizeof...(Args) <= capacity_value && concepts::NothrowCopyableElement<element_type> &&
         (concepts::NothrowElementConstruction<element_type, Args> && ...);
 
     template <typename... Args>
@@ -174,3 +174,13 @@ template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename ElementType, std::size_t CapacityValue>
+struct collection_traits<Vector<ElementType, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::vector;
+};
+
+} // namespace cljonic::concepts_detail

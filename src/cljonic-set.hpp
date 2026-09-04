@@ -37,16 +37,17 @@ namespace cljonic {
  *   auto s1 = s_runtime.conj(10);
  *   auto s2 = s1.disj(10);
  *
- *   return (s1.contains(10) && !s2.contains(10) && s2.empty()) ? 0 : 1;
+ *   return (s1.contains(10) && !s2.contains(10) && s2.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
-template <concepts::VectorElement T, std::size_t CapacityValue>
+template <concepts::StableEqualityComparable T, std::size_t CapacityValue>
 class Set {
   public:
     using value_type = T;
+    using lookup_type = value_type;
 
-    static_assert(concepts::NothrowVectorElement<T>, "Set element type operations must not throw");
+    static_assert(concepts::NothrowCopyableElement<T>, "Set element type operations must not throw");
     static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
                   "Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
 
@@ -57,15 +58,11 @@ class Set {
         return CapacityValue;
     }
 
-    [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-        return logical_size_;
-    }
-
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto empty() const noexcept -> bool {
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
     }
 
@@ -134,5 +131,15 @@ class Set {
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename T, std::size_t CapacityValue>
+struct collection_traits<Set<T, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::set;
+};
+
+} // namespace cljonic::concepts_detail
 
 #endif // CLJONIC_SET_HPP

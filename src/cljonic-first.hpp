@@ -40,7 +40,7 @@ template <typename KeyType, typename ValueType>
 }
 
 /** Returns the element at index zero of the sequenceable collection. */
-template <typename C>
+template <concepts::IndexedCollection C>
 [[nodiscard]] constexpr auto first(const C& collection) noexcept -> decltype(collection(0U)) {
     return collection(0U);
 }

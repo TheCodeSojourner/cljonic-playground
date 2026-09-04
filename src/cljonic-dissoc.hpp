@@ -25,7 +25,7 @@ namespace cljonic {
  *   auto m0_runtime = assoc(Map<int, int, 4>{}, 2, 200);
  *   auto m1_runtime = dissoc(m0_runtime, 2);
  *
- *   return (!m1_runtime.contains(2) && m1_runtime.empty()) ? 0 : 1;
+ *   return (!m1_runtime.contains(2) && m1_runtime.is_empty()) ? 0 : 1;
  * }
  * ~~~~~
  */
