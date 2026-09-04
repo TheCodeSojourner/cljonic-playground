@@ -25,6 +25,10 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.UpdateReturnsNewValue");
     TRACE_ID("invariant.String.DeepCopyUpdate");
     TRACE_ID("invariant.String.ReferentialTransparency");
+    TRACE_ID("invariant.String.RequiresNothrowDefaultConstruction");
+    TRACE_ID("invariant.String.RequiresNothrowCopyConstruction");
+    TRACE_ID("invariant.String.RequiresNothrowCopyAssignment");
+    TRACE_ID("invariant.String.RequiresNothrowDestruction");
     TRACE_ID("invariant.String.SupportsLiteralDeducedConstruction");
     TRACE_ID("invariant.String.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID("invariant.String.SupportsExplicitCapacityConstruction");

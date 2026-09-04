@@ -24,6 +24,10 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     TRACE_ID("invariant.Vector.DeepCopyUpdate");
     TRACE_ID("invariant.Vector.ReferentialTransparency");
     TRACE_ID("invariant.Vector.RequiresValueSemanticElements");
+    TRACE_ID("invariant.Vector.RequiresNothrowDefaultConstruction");
+    TRACE_ID("invariant.Vector.RequiresNothrowCopyConstruction");
+    TRACE_ID("invariant.Vector.RequiresNothrowCopyAssignment");
+    TRACE_ID("invariant.Vector.RequiresNothrowDestruction");
     TRACE_ID("invariant.Vector.SupportsLiteralDeducedConstruction");
     TRACE_ID("invariant.Vector.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID("invariant.Vector.SupportsExplicitCapacityConstruction");

@@ -26,6 +26,10 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     TRACE_ID("invariant.Map.DeepCopyUpdate");
     TRACE_ID("invariant.Map.ReferentialTransparency");
     TRACE_ID("invariant.Map.RequiresValueSemanticElements");
+    TRACE_ID("invariant.Map.RequiresNothrowDefaultConstruction");
+    TRACE_ID("invariant.Map.RequiresNothrowCopyConstruction");
+    TRACE_ID("invariant.Map.RequiresNothrowCopyAssignment");
+    TRACE_ID("invariant.Map.RequiresNothrowDestruction");
     TRACE_ID("invariant.Map.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID("invariant.Map.SupportsExplicitCapacityConstruction");
     TRACE_ID("invariant.Map.CapacityExceedsMaximumIsCompileTimeFailure");

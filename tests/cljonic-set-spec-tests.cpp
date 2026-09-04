@@ -26,6 +26,10 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     TRACE_ID("invariant.Set.DeepCopyUpdate");
     TRACE_ID("invariant.Set.ReferentialTransparency");
     TRACE_ID("invariant.Set.RequiresValueSemanticElements");
+    TRACE_ID("invariant.Set.RequiresNothrowDefaultConstruction");
+    TRACE_ID("invariant.Set.RequiresNothrowCopyConstruction");
+    TRACE_ID("invariant.Set.RequiresNothrowCopyAssignment");
+    TRACE_ID("invariant.Set.RequiresNothrowDestruction");
     TRACE_ID("invariant.Set.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID("invariant.Set.SupportsExplicitCapacityConstruction");
     TRACE_ID("invariant.Set.CapacityExceedsMaximumIsCompileTimeFailure");

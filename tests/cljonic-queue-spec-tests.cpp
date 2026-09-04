@@ -24,6 +24,10 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     TRACE_ID("invariant.Queue.DeepCopyUpdate");
     TRACE_ID("invariant.Queue.ReferentialTransparency");
     TRACE_ID("invariant.Queue.RequiresValueSemanticElements");
+    TRACE_ID("invariant.Queue.RequiresNothrowDefaultConstruction");
+    TRACE_ID("invariant.Queue.RequiresNothrowCopyConstruction");
+    TRACE_ID("invariant.Queue.RequiresNothrowCopyAssignment");
+    TRACE_ID("invariant.Queue.RequiresNothrowDestruction");
     TRACE_ID("invariant.Queue.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID("invariant.Queue.SupportsExplicitCapacityConstruction");
     TRACE_ID("invariant.Queue.CapacityExceedsMaximumIsCompileTimeFailure");

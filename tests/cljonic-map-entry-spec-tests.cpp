@@ -18,6 +18,10 @@ TEST_CASE("MapEntry holds value-semantic key/value pair", "[map-entry]") {
     TRACE_ID("invariant.MapEntry.ImmutablePublicApi");
     TRACE_ID("invariant.MapEntry.ReferentialTransparency");
     TRACE_ID("invariant.MapEntry.RequiresValueSemanticElements");
+    TRACE_ID("invariant.MapEntry.RequiresNothrowDefaultConstruction");
+    TRACE_ID("invariant.MapEntry.RequiresNothrowCopyConstruction");
+    TRACE_ID("invariant.MapEntry.RequiresNothrowCopyAssignment");
+    TRACE_ID("invariant.MapEntry.RequiresNothrowDestruction");
     TRACE_ID("invariant.MapEntry.IsSequenceableTwoElementSequence");
     TRACE_ID("invariant.MapEntry.SupportsIndexedLookup");
     TRACE_ID("invariant.MapEntry.SupportsKeyObservation");
