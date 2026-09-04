@@ -16,6 +16,10 @@ entity Queue {
     deep_copy_update: Boolean
     referential_transparency: Boolean
     requires_value_semantic_elements: Boolean
+    requires_nothrow_default_construction: Boolean
+    requires_nothrow_copy_construction: Boolean
+    requires_nothrow_copy_assignment: Boolean
+    requires_nothrow_destruction: Boolean
     supports_empty_explicit_capacity_construction: Boolean
     supports_explicit_capacity_construction: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
@@ -100,6 +104,22 @@ entity Queue {
 
     invariant RequiresValueSemanticElements {
         this.requires_value_semantic_elements = true
+    }
+
+    invariant RequiresNothrowDefaultConstruction {
+        this.requires_nothrow_default_construction = true
+    }
+
+    invariant RequiresNothrowCopyConstruction {
+        this.requires_nothrow_copy_construction = true
+    }
+
+    invariant RequiresNothrowCopyAssignment {
+        this.requires_nothrow_copy_assignment = true
+    }
+
+    invariant RequiresNothrowDestruction {
+        this.requires_nothrow_destruction = true
     }
 
     invariant SupportsEmptyExplicitCapacityConstruction {

@@ -7,6 +7,10 @@ entity String {
     supports_static_or_automatic_storage: Boolean
     supports_contiguous_storage: Boolean
     supports_ordered_ascii_storage: Boolean
+    requires_nothrow_default_construction: Boolean
+    requires_nothrow_copy_construction: Boolean
+    requires_nothrow_copy_assignment: Boolean
+    requires_nothrow_destruction: Boolean
     null_terminator_is_uncounted: Boolean
     invalid_bytes_rejected_at_compile_time: Boolean
     no_heap_allocation: Boolean
@@ -66,6 +70,22 @@ entity String {
 
     invariant OrderedAsciiStorage {
         this.supports_ordered_ascii_storage = true
+    }
+
+    invariant RequiresNothrowDefaultConstruction {
+        this.requires_nothrow_default_construction = true
+    }
+
+    invariant RequiresNothrowCopyConstruction {
+        this.requires_nothrow_copy_construction = true
+    }
+
+    invariant RequiresNothrowCopyAssignment {
+        this.requires_nothrow_copy_assignment = true
+    }
+
+    invariant RequiresNothrowDestruction {
+        this.requires_nothrow_destruction = true
     }
 
     invariant NullTerminatorIsUncounted {
