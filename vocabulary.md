@@ -383,6 +383,14 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** Mapping reports invalid, missing, or duplicate names through its documented non-throwing policy.
 
+### NothrowCollectionElement
+- **Definition:** A user-defined type admissible for storage in a cljonic collection because its default construction, copy construction, copy assignment, and destruction are all non-throwing. This storage-admission capability is independent of equality, ordering, hashing, parsing, traversal, and other operation-specific capabilities.
+- **Deprecated Synonyms:** nothrow collection element, non-throwing collection element
+- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A `Vector<T, N>`, `Set<T, N>`, or `Queue<T, N>` element, and a `Map<K, V, N>` key or value, must satisfy `NothrowCollectionElement` before storage admission.
+
+
 ### CopyOnModifyCollection
 - **Definition:** A fixed-capacity value type backed by statically inspectable storage that returns a modified copy instead of mutating in place. Its observable contract is PersistentValueSemantics; Module 1 realizes updates through DeepCopyUpdate without structural sharing. In this repo, Vector, Map, Set, Queue, and String follow this model.
 - **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection, deep copy on write, deep copying on write
