@@ -10,20 +10,9 @@
 
 namespace cljonic {
 
-// Spec obligations: Vector and its invariants are implemented by this type
-// and covered by the corresponding traceable tests.
-// entity-fields.Vector
-// invariant.Vector.CapacityIsNonNegative
-// invariant.Vector.LogicalSizeIsNonNegative
-// invariant.Vector.LogicalSizeDoesNotExceedCapacity
-// invariant.Vector.SupportsLiteralDeducedConstruction
-// invariant.Vector.SupportsEmptyExplicitCapacityConstruction
-// invariant.Vector.OversizedInitializerIsCompileTimeFailure
-// invariant.Vector.OversizedInitializerDiagnosticIdentifiesCapacity
-// invariant.Vector.SupportsIndexedLookup
-// invariant.Vector.SupportsIndexedFallbackLookup
-// invariant.Vector.InvalidIndexReturnsDefaultElement
-// invariant.Vector.InvalidIndexReturnsSuppliedFallback
+// Traceability: entity-fields.Vector.
+// The complete obligation set is defined in specs/collections/vector.allium,
+// covered by matching TRACE_ID tests, and recorded in the traceability snapshot.
 
 /** \anchor Vector
  * \b Vector is a CopyOnModifyCollection with fixed-capacity storage.
