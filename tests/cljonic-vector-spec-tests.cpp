@@ -44,6 +44,26 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     constexpr auto inferred = Vector{1, 2, 3};
     constexpr Vector<int, 3> explicit_inferred_equivalent{1, 2, 3};
 
+    struct CategoryArgument {};
+
+    struct CategoryElement {
+        int category = 0;
+
+        constexpr CategoryElement() noexcept = default;
+        constexpr explicit CategoryElement(int category_value) noexcept : category(category_value) {
+        }
+        constexpr CategoryElement(const CategoryArgument&) noexcept : category(1) {
+        }
+        constexpr CategoryElement(CategoryArgument&&) noexcept : category(2) {
+        }
+        constexpr CategoryElement(const CategoryElement&) noexcept = default;
+        constexpr auto operator=(const CategoryElement&) noexcept -> CategoryElement& = default;
+    };
+
+    constexpr CategoryArgument category_argument{};
+    constexpr Vector<CategoryElement, 1> lvalue_category_vector{category_argument};
+    constexpr Vector<CategoryElement, 1> rvalue_category_vector{CategoryArgument{}};
+
     STATIC_REQUIRE(empty.count() == 0U);
     STATIC_REQUIRE(populated.count() == 2U);
     STATIC_REQUIRE(full.count() == 2U);
@@ -61,6 +81,8 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     STATIC_REQUIRE(inferred(0U) == explicit_inferred_equivalent(0U));
     STATIC_REQUIRE(inferred(1U) == explicit_inferred_equivalent(1U));
     STATIC_REQUIRE(inferred(2U) == explicit_inferred_equivalent(2U));
+    STATIC_REQUIRE(lvalue_category_vector(0U).category == 1);
+    STATIC_REQUIRE(rvalue_category_vector(0U).category == 2);
 
     const auto runtime_values = Vector<int, 4>{1, 2};
     CHECK(runtime_values.count() == 2U);
@@ -69,6 +91,8 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     CHECK_FALSE(zero_capacity.contains(0U));
     CHECK(inferred.count() == explicit_inferred_equivalent.count());
     CHECK(inferred(2U) == explicit_inferred_equivalent(2U));
+    CHECK(lvalue_category_vector(0U).category == 1);
+    CHECK(rvalue_category_vector(0U).category == 2);
 }
 
 TEST_CASE("Vector canonical preflight predicates model index validity and emptiness", "[vector][preflight]") {
