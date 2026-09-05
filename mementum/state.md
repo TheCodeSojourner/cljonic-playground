@@ -1,56 +1,50 @@
 ## Session State
 
-- last_session_id: 2026-09-04-sequence-readiness
+- last_session_id: 2026-09-04-vector-review
 - current_timestamp: 2026-09-04
 - recover: 1
 - session_complete: true
 
 Task:
-1. Complete REQ-SEQ-022 specification-test propagation and implementation-readiness review against the active C++ API surface.
-2. Preserve the architecture > specifications > tests > code authority order and do not implement sequence algorithms before their supporting API contracts exist.
+1. Complete the staged review of the Vector implementation against the approved requirements, architecture, specifications, tests, and no-heap constraints.
+2. Resolve the Vector storage-admission, forwarding-construction, capacity, diagnostic, and test-coverage review items without expanding scope to other collections.
 
 Questions:
-1. No user questions unresolved; implementation readiness has four technical blockers.
+1. No user questions unresolved.
 
 Decisions:
-1. All 50 REQ-SEQ-022 operation entities have concrete first-pass result, capacity, and typed-failure representations.
-2. `Take` and `TakeWhile` use explicit bounded producers materialized into caller-supplied destination capacity.
-3. Stored-result operations use bounded owning collections with source-derived capacity bounds; scalar, optional, map, nested, accumulator, boolean, and grouped-result shapes are explicit in the sequence specification.
-4. Keep the architecture boundary unchanged: the active implementation surface remains stored collections and primitive free functions; sequence algorithms remain outside it until the supporting API is approved.
-5. The active C++ surface has no producer/materialization API, optional or typed-failure result abstraction, common traversal/source capability, or nested-result construction surface.
+1. All user-defined stored collection types follow the `NothrowCollectionElement` contract: nothrow default construction, copy construction, copy assignment, and destruction.
+2. Vector enforces `NothrowCollectionElement` at the template admission boundary; the redundant class-body assertion was removed.
+3. Vector construction uses forwarding references so lvalue/rvalue argument categories are preserved through element construction.
+4. `NothrowElementConstruction` uses `std::forward`; standard concepts are preferred, including `std::destructible` rather than the equivalent type trait.
+5. Assignment-based `std::array` storage remains accepted by design; direct emplacement is deferred because it would change the storage model and approved contract.
+6. Vector capacity, zero-capacity behavior, CTAD equivalence, default/fallback access, logical-size tracking, and compile-time diagnostics are covered by the current specifications and tests.
+7. Vector traceability comments are compact and explicitly non-exhaustive; the specification, `TRACE_ID` tests, and snapshot remain authoritative.
 
 Validation:
-1. All 50 refined sequence contracts pass `allium check specs` and `allium analyse specs` with zero diagnostics and findings.
-2. Focused collection-shaping tests pass 108 assertions in 9 test cases.
-3. `make traceability-spec-to-code-update-snapshot` and `make traceability-spec-to-code` pass.
-4. Repeated full modular and single-header regression runs pass: 100/100 tests.
-5. The active API review found no producer, `into`, `fits_into`, `std::optional`, traversal, or nested-result abstraction in `src/`; `Vector`/`Map` use fixed non-type-template capacities and `std::array` storage.
-6. No files were modified during the final readiness review; the fini update is limited to this state record.
+1. `allium check specs` and `allium analyse specs`: zero diagnostics and findings across all 26 specifications.
+2. Normalized specification planning: 1,031 unique obligations with zero planner diagnostics.
+3. `make traceability-spec-to-code`: passed.
+4. Repeated modular and single-header regression runs pass: 102/102 tests.
+5. `make no-heap`: passed, including source and symbol scans.
+6. `make cljonic`: passed and regenerated the synchronized single header.
+7. Intentional compiler probes confirm capacity diagnostics identify the configured maximum and compiler-resolved declared capacity.
+8. Vocabulary, architecture, and spec-weed checks report no active-scope divergence.
 
 Current Increment:
-1. Complete implementation-readiness review against the active C++ API surface.
-2. Hand off to design of the producer/materialization, result-status, and traversal foundations.
+1. Complete Vector review and hand off to the next collection review.
 
 Current Increment Validation:
-1. `allium check specs` and `allium analyse specs`: zero diagnostics and findings across all specifications.
-2. Focused collection-shaping tests: 108 assertions, 9 test cases passed.
-3. Traceability snapshot regeneration and strict traceability: passed.
-4. Full regression: 100/100 tests passed.
-5. Implementation-readiness blockers are documented below.
-
-Implementation-Readiness Review:
-1. The active implementation surface remains limited to stored collections and primitive free functions; no sequence-shaping production API exists yet.
-2. Module 5 requires concrete result capacity derivation, nested result representation, producer behavior, typed absence/failure behavior, and complete-versus-bounded result classification before implementation readiness.
-3. Blocker: no producer, `into`, or `fits_into` abstraction exists for explicit bounded producer materialization.
-4. Blocker: no optional/default/checked-failure result representation exists for scalar absence, `Find`, `Some`, or operation failures.
-5. Blocker: no common traversal/source capability exists for element, map-entry, nested, or tree traversal.
-6. Blocker: fixed non-type-template capacities and `std::array` storage cannot directly represent runtime-derived result capacities without an approved destination/materialization design.
-7. The declaration-oriented propagation tests establish traceability but do not yet execute sequence behavior; behavioral tests depend on the missing API foundations.
+1. `allium check specs` and `allium analyse specs`: zero diagnostics and findings.
+2. `make traceability-spec-to-code`: passed.
+3. `make test`: 102/102 passed.
+4. `make no-heap`: passed.
+5. No unresolved Vector implementation divergence remains.
 
 Next:
-1. Design and approve the producer/materialization foundation, result-status/absence types, and common traversal/source capability.
-2. Add focused compile-time and runtime tests for those foundations.
-3. Replace declaration-only sequence propagation tests with behavioral tests, then implement sequence algorithms.
+1. Begin the Map review using the same staged process, starting with baseline and implementation surface.
+2. Verify Map key and value admission against `NothrowCollectionElement`, while keeping key equality as a separate operation-specific capability.
+3. Review Map storage, association, dissociation, lookup/default semantics, capacity, diagnostics, tests, no-heap probes, and traceability before any edits.
 
 ## Historical Session Records
 
