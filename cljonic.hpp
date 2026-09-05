@@ -1850,14 +1850,13 @@ class Vector {
 
     static_assert(
         capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Vector capacity exceeds "
+        "Vector capacity_value exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
     constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<element_type, Args> && ...))
         : storage_{}, logical_size_{0} {
-        static_assert(sizeof...(Args) <= capacity_value, "Vector constructor requires initializer count to be less "
-                                                         "than or equal to capacity");
+        static_assert(sizeof...(Args) <= capacity_value, "Vector initializer count exceeds Vector capacity_value");
         static_assert((concepts::NothrowElementConstruction<element_type, Args> && ...),
                       "Vector constructor requires all arguments to construct "
                       "element_type without throwing and be implicitly "
