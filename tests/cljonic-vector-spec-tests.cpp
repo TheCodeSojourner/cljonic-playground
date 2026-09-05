@@ -40,12 +40,14 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     constexpr Vector<int, 4> populated{1, 2};
     constexpr Vector<int, 2> full{1, 2};
     constexpr Vector<int, 0> zero_capacity{};
+    constexpr Vector<int, 4> capacity_boundary{1, 2, 3, 4};
     constexpr auto inferred = Vector{1, 2, 3};
     constexpr Vector<int, 3> explicit_inferred_equivalent{1, 2, 3};
 
     STATIC_REQUIRE(empty.count() == 0U);
     STATIC_REQUIRE(populated.count() == 2U);
     STATIC_REQUIRE(full.count() == 2U);
+    STATIC_REQUIRE(capacity_boundary.count() == capacity_boundary.capacity());
     STATIC_REQUIRE(Vector<int, 4>::capacity() == 4U);
     STATIC_REQUIRE(zero_capacity.capacity() == 0U);
     STATIC_REQUIRE(zero_capacity.count() == 0U);
