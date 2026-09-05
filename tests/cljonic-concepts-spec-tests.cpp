@@ -560,10 +560,25 @@ TEST_CASE("Element construction requires non-throwing value copies", "[concepts]
         ThrowingCopy() noexcept = default;
         ThrowingCopy(const ThrowingCopy&) noexcept(false) {
         }
-        operator int() const noexcept {
+        operator int() && noexcept(false) {
             return 1;
         }
     } argument;
 
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowElementConstruction<int, decltype(argument)>);
+}
+
+TEST_CASE("Element construction preserves argument value category", "[concepts]") {
+    struct CategorySensitive {
+        constexpr operator int() & noexcept {
+            return 1;
+        }
+
+        constexpr operator int() && noexcept(false) {
+            return 1;
+        }
+    };
+
+    STATIC_REQUIRE(cljonic::concepts::NothrowElementConstruction<int, CategorySensitive&>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowElementConstruction<int, CategorySensitive>);
 }
