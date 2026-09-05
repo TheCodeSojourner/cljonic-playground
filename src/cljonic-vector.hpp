@@ -72,12 +72,10 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::CopyableElement element_type, std::size_t capacity_value>
+template <concepts::NothrowCollectionElement element_type, std::size_t capacity_value>
 class Vector {
   public:
     using value_type = element_type;
-
-    static_assert(concepts::NothrowCollectionElement<element_type>, "Vector element storage operations must not throw");
 
     static_assert(
         capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
@@ -85,8 +83,7 @@ class Vector {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args... args) noexcept(concepts::NothrowCollectionElement<element_type> &&
-                                            (concepts::NothrowElementConstruction<element_type, Args> && ...))
+    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<element_type, Args> && ...))
         : storage_{}, logical_size_{0} {
         static_assert(sizeof...(Args) <= capacity_value, "Vector constructor requires initializer count to be less "
                                                          "than or equal to capacity");
@@ -95,7 +92,7 @@ class Vector {
                       "element_type without throwing and be implicitly "
                       "convertible to element_type");
 
-        initialize_storage_if_valid(args...);
+        initialize_storage_if_valid(std::forward<Args>(args)...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -139,20 +136,19 @@ class Vector {
 
     template <typename... Args>
     static constexpr bool constructor_arguments_valid =
-        sizeof...(Args) <= capacity_value && concepts::NothrowCollectionElement<element_type> &&
-        (concepts::NothrowElementConstruction<element_type, Args> && ...);
+        sizeof...(Args) <= capacity_value && (concepts::NothrowElementConstruction<element_type, Args> && ...);
 
     template <typename... Args>
-    constexpr void initialize_storage_if_valid(Args... args) noexcept {
+    constexpr void initialize_storage_if_valid(Args&&... args) noexcept {
         if constexpr (constructor_arguments_valid<Args...>) {
-            initialize_storage(std::index_sequence_for<Args...>{}, args...);
+            initialize_storage(std::index_sequence_for<Args...>{}, std::forward<Args>(args)...);
             logical_size_ = sizeof...(Args);
         }
     }
 
     template <std::size_t... Indices, typename... Args>
-    constexpr void initialize_storage(std::index_sequence<Indices...>, Args... args) noexcept {
-        ((storage_[Indices] = element_type{args}), ...);
+    constexpr void initialize_storage(std::index_sequence<Indices...>, Args&&... args) noexcept {
+        ((storage_[Indices] = element_type{std::forward<Args>(args)}), ...);
     }
 
     std::array<value_type, capacity_value> storage_{};

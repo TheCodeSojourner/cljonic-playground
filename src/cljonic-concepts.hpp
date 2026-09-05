@@ -4,6 +4,7 @@
 #include <concepts>
 #include <cstddef>
 #include <type_traits>
+#include <utility>
 
 namespace cljonic {
 
@@ -37,12 +38,11 @@ concept CopyableElement = std::default_initializable<T> && std::copyable<T>;
 
 /** Requires that all collection storage lifetime and copy operations do not throw. */
 template <typename T>
-concept NothrowCollectionElement =
-    CopyableElement<T> && std::is_nothrow_destructible_v<T> && requires(T value, const T& other) {
-        { T{} } noexcept;
-        { T{other} } noexcept;
-        { value = other } noexcept;
-    };
+concept NothrowCollectionElement = CopyableElement<T> && std::destructible<T> && requires(T value, const T& other) {
+    { T{} } noexcept;
+    { T{other} } noexcept;
+    { value = other } noexcept;
+};
 
 template <typename T>
 concept NothrowCopyableElement = NothrowCollectionElement<T>;
@@ -50,9 +50,8 @@ concept NothrowCopyableElement = NothrowCollectionElement<T>;
 /** Requires that an argument is convertible to and can construct an element
  *  without throwing. */
 template <typename T, typename Arg>
-concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg argument) {
-    { Arg{argument} } noexcept;
-    { T{argument} } noexcept;
+concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg&& argument) {
+    { T{std::forward<Arg>(argument)} } noexcept;
 };
 
 // Backward-compatible aliases for existing container templates during Phase C.
