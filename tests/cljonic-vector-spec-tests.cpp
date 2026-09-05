@@ -39,15 +39,34 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     constexpr Vector<int, 4> empty{};
     constexpr Vector<int, 4> populated{1, 2};
     constexpr Vector<int, 2> full{1, 2};
+    constexpr Vector<int, 0> zero_capacity{};
+    constexpr auto inferred = Vector{1, 2, 3};
+    constexpr Vector<int, 3> explicit_inferred_equivalent{1, 2, 3};
 
     STATIC_REQUIRE(empty.count() == 0U);
     STATIC_REQUIRE(populated.count() == 2U);
     STATIC_REQUIRE(full.count() == 2U);
     STATIC_REQUIRE(Vector<int, 4>::capacity() == 4U);
+    STATIC_REQUIRE(zero_capacity.capacity() == 0U);
+    STATIC_REQUIRE(zero_capacity.count() == 0U);
+    STATIC_REQUIRE(zero_capacity.is_empty());
+    STATIC_REQUIRE(zero_capacity(0U) == 0);
+    STATIC_REQUIRE(zero_capacity(0U, 99) == 99);
+    STATIC_REQUIRE_FALSE(zero_capacity.contains(0U));
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(inferred)>, Vector<int, 3>>);
+    STATIC_REQUIRE(inferred.capacity() == explicit_inferred_equivalent.capacity());
+    STATIC_REQUIRE(inferred.count() == explicit_inferred_equivalent.count());
+    STATIC_REQUIRE(inferred(0U) == explicit_inferred_equivalent(0U));
+    STATIC_REQUIRE(inferred(1U) == explicit_inferred_equivalent(1U));
+    STATIC_REQUIRE(inferred(2U) == explicit_inferred_equivalent(2U));
 
     const auto runtime_values = Vector<int, 4>{1, 2};
     CHECK(runtime_values.count() == 2U);
     CHECK(runtime_values.capacity() == 4U);
+    CHECK(zero_capacity.is_empty());
+    CHECK_FALSE(zero_capacity.contains(0U));
+    CHECK(inferred.count() == explicit_inferred_equivalent.count());
+    CHECK(inferred(2U) == explicit_inferred_equivalent(2U));
 }
 
 TEST_CASE("Vector canonical preflight predicates model index validity and emptiness", "[vector][preflight]") {
