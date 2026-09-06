@@ -1808,53 +1808,71 @@ namespace cljonic {
  struct CategoryArgument {};
 
  struct CategoryElement {
-     int category = 0;
+   int category = 0;
 
-     constexpr CategoryElement() noexcept = default;
-     constexpr CategoryElement(const CategoryArgument&) noexcept : category(1) {}
-     constexpr CategoryElement(CategoryArgument&&) noexcept : category(2) {}
-     constexpr CategoryElement(const CategoryElement&) noexcept = default;
-     constexpr auto operator=(const CategoryElement&) noexcept -> CategoryElement& = default;
+   constexpr CategoryElement() noexcept = default;
+   constexpr CategoryElement(const CategoryArgument &) noexcept : category(1) {}
+   constexpr CategoryElement(CategoryArgument &&) noexcept : category(2) {}
+   constexpr CategoryElement(const CategoryElement &) noexcept = default;
+   constexpr auto operator=(const CategoryElement &) noexcept
+       -> CategoryElement & = default;
  };
 
  using Inner = Vector<int, 2>;
 
  int main() {
-   // Compile-time / constexpr demonstration.
+   // CTAD infers Vector<int, 3> from the initializer count.
    [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
+
+   // Explicit capacity permits a partially populated Vector and an empty Vector.
    [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
    [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
+
+   // Vector values can be nested, including through an explicit type alias.
    [[maybe_unused]] constexpr auto nested_int_vectors =
        Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
    [[maybe_unused]] constexpr auto nested_alias_vectors =
        Vector{Inner{4, 5}, Inner{6}};
 
+   // User-defined values and constructor argument categories are supported.
    constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
    constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
    constexpr Vector<int, 4> values{10, 20};
-    constexpr CategoryArgument category_argument{};
-    constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
-    constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
+   constexpr CategoryArgument category_argument{};
+   constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
+   constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
 
-   static_assert(values(0U) == 10);
-   static_assert(values(2U) == 0);
-   static_assert(values(2U, 99) == 99);
-   static_assert(std::same_as<decltype(doubles_populated(0U)), double>);
-   static_assert(pixels_populated(0U).x == 1);
-   static_assert(pixels_populated(1U).y == 4);
-    static_assert(lvalue_constructed(0U).category == 1);
-    static_assert(rvalue_constructed(0U).category == 2);
+   static_assert(values(0) == 10);
+   static_assert(values(2) == 0);
+   static_assert(values(2, 99) == 99);
+   static_assert(values(-1) == 0);
+   static_assert(values(-1, 99) == 99);
+   static_assert(std::same_as<decltype(doubles_populated(0)), double>);
+   static_assert(pixels_populated(0).x == 1);
+   static_assert(pixels_populated(1).y == 4);
+   static_assert(lvalue_constructed(0).category == 1);
+   static_assert(rvalue_constructed(0).category == 2);
 
-   // Runtime demonstration.
+   // Without a fallback, an invalid lookup returns value_type{}; Pixel's
+   // default-constructed int members are zero.
+   static_assert(pixels_populated(-1).x == 0);
+   static_assert(pixels_populated(-1).y == 0);
+
+   // A Vector is callable with an index: valid indices select stored values;
+   // an invalid index, including a negative signed index, returns the default
+   // value_type{} or the supplied fallback. For int, value_type{} is zero.
    auto runtime_values = Vector<int, 4>{7, 9};
-   const auto fallback = runtime_values(4U, -1);
+   const auto fallback = runtime_values(4, -1);
+   const auto negative_default = runtime_values(-1);
+   const auto negative_fallback = runtime_values(-1, 99);
 
+   // Pixel equality validates the runtime result for a user-defined value type.
    auto runtime_pixels = Vector<Pixel, 4>{Pixel{1, 2}, Pixel{3, 4}};
-   const auto pixel_value = runtime_pixels(1U);
-   const auto pixel_fallback = runtime_pixels(4U, Pixel{99, 99});
+   const auto pixel_value = runtime_pixels(1);
+   const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
 
-   return (fallback == -1 && pixel_value == Pixel{3, 4} &&
-           pixel_fallback == Pixel{99, 99})
+   return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
+           pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99})
               ? 0
               : 1;
  }
