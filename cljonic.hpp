@@ -1786,7 +1786,7 @@ namespace cljonic {
 // covered by matching TRACE_ID tests, and recorded in the traceability snapshot.
 
 /** \anchor Vector
- * \b Vector is a CopyOnModifyCollection with fixed-capacity storage.
+ * \b Vector is a fixed-capacity collection backed by static storage.
  * Construction with more initializers than capacity is a compile-time error.
  *
  * This example covers bounded construction and direct member observation.
@@ -1805,6 +1805,18 @@ namespace cljonic {
    }
  };
 
+ struct CategoryArgument {};
+
+ struct CategoryElement {
+     int category = 0;
+
+     constexpr CategoryElement() noexcept = default;
+     constexpr CategoryElement(const CategoryArgument&) noexcept : category(1) {}
+     constexpr CategoryElement(CategoryArgument&&) noexcept : category(2) {}
+     constexpr CategoryElement(const CategoryElement&) noexcept = default;
+     constexpr auto operator=(const CategoryElement&) noexcept -> CategoryElement& = default;
+ };
+
  using Inner = Vector<int, 2>;
 
  int main() {
@@ -1820,6 +1832,9 @@ namespace cljonic {
    constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
    constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
    constexpr Vector<int, 4> values{10, 20};
+    constexpr CategoryArgument category_argument{};
+    constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
+    constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
 
    static_assert(values(0U) == 10);
    static_assert(values(2U) == 0);
@@ -1827,6 +1842,8 @@ namespace cljonic {
    static_assert(std::same_as<decltype(doubles_populated(0U)), double>);
    static_assert(pixels_populated(0U).x == 1);
    static_assert(pixels_populated(1U).y == 4);
+    static_assert(lvalue_constructed(0U).category == 1);
+    static_assert(rvalue_constructed(0U).category == 2);
 
    // Runtime demonstration.
    auto runtime_values = Vector<int, 4>{7, 9};
