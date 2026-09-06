@@ -1,4 +1,8 @@
 var searchData=
 [
-  ['queue_0',['queue',['../classcljonic_1_1_queue.html',1,'cljonic::Queue&lt; T, CapacityValue &gt;'],['../classcljonic_1_1_queue.html#a31559309eb2c223649263def193e98ef',1,'cljonic::Queue::Queue()'],['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122aa9d1cbf71942327e98b40cf5ef38a960',1,'cljonic::concepts_detail::queue']]]
+  ['peek_0',['peek',['../classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b',1,'cljonic::Queue::peek()'],['../namespacecljonic.html#a154b02fc5978c390177002efc2458ecb',1,'cljonic::peek()']]],
+  ['pop_1',['pop',['../classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c',1,'cljonic::Queue::pop()'],['../namespacecljonic.html#ae5dbb35c399af69858bad79bc26a8d01',1,'cljonic::pop()']]],
+  ['predicate_2',['Predicate',['../index.html#autotoc_md6',1,'']]],
+  ['primitive_3',['Primitive',['../index.html#autotoc_md7',1,'']]],
+  ['put_4',['put',['../classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585',1,'cljonic::String']]]
 ];

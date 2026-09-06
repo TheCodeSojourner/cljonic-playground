@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: /home/pauwhi/Downloads/junk/cljonic-playground/src/cljonic-core-collection-maximum-element-count.hpp File Reference</title>
+<title>cljonic: cljonic::concepts::LookupCollection Concept Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,32 +71,28 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a class="el" href="namespacecljonic_1_1concepts.html">concepts</a></li><li class="navelem"><a class="el" href="conceptcljonic_1_1concepts_1_1_lookup_collection.html">LookupCollection</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#var-members">Variables</a>  </div>
-  <div class="headertitle"><div class="title">cljonic-core-collection-maximum-element-count.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic::concepts::LookupCollection Concept Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;cstddef&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-config_8hpp_source.html">cljonic-config.hpp</a>&gt;</code><br />
-</div>
-<p><a href="cljonic-core-collection-maximum-element-count_8hpp_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
-Namespaces</h2></td></tr>
-<tr class="memitem:namespacecljonic" id="r_namespacecljonic"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a41fa65c16edb0a95aa942c48307777d6" id="r_a41fa65c16edb0a95aa942c48307777d6"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a> = <a class="el" href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a></td></tr>
-<tr class="separator:a41fa65c16edb0a95aa942c48307777d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-</div><!-- contents -->
+
+<p><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code></p>
+<h2 class="groupheader">Concept definition</h2>
+<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C&gt;</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_lookup_collection.html">cljonic::concepts::LookupCollection</a> =  <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">SequenceableCollection&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; c, <span class="keyword">const</span> <span class="keyword">typename</span> C::lookup_type&amp; key) {</div>
+<div class="line">    { c(key) } <span class="keyword">noexcept</span>;</div>
+<div class="line">    { c.contains(key) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
+<div class="line">}</div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_lookup_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_lookup_collection.html">cljonic::concepts::LookupCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00136">cljonic-concepts.hpp:136</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_sequenceable_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">cljonic::concepts::SequenceableCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00119">cljonic-concepts.hpp:119</a></div></div>
+</div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Requires an admitted sequenceable collection to expose a named lookup domain, callable lookup, and matching membership predicate. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00136">136</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated on Sun Sep 6 2026 14:45:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8

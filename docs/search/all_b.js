@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['peek_0',['peek',['../classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b',1,'cljonic::Queue::peek()'],['../namespacecljonic.html#a154b02fc5978c390177002efc2458ecb',1,'cljonic::peek()']]],
-  ['pop_1',['pop',['../classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c',1,'cljonic::Queue::pop()'],['../namespacecljonic.html#ae5dbb35c399af69858bad79bc26a8d01',1,'cljonic::pop()']]],
-  ['predicate_2',['Predicate',['../index.html#autotoc_md6',1,'']]],
-  ['primitive_3',['Primitive',['../index.html#autotoc_md7',1,'']]],
-  ['put_4',['put',['../classcljonic_1_1_string.html#a063bd56b0efea34aaf6c0fbb2a9d1585',1,'cljonic::String']]]
+  ['operator_28_29_0',['operator()',['../classcljonic_1_1_map.html#a686047fcb3020aa6f42045209d68d1f2',1,'cljonic::Map::operator()(const KeyType &amp;key) const noexcept -&gt; ValueType'],['../classcljonic_1_1_map.html#a84dd7a321a635edd8916beb6a97c4627',1,'cljonic::Map::operator()(const KeyType &amp;key, const ValueType &amp;fallback) const noexcept -&gt; ValueType'],['../classcljonic_1_1_set.html#ac24cca6416aa9251f9522134da35b191',1,'cljonic::Set::operator()(const T &amp;element) const noexcept -&gt; T'],['../classcljonic_1_1_set.html#ab032633488431b868af84e40fa834910',1,'cljonic::Set::operator()(const T &amp;element, const T &amp;fallback) const noexcept -&gt; T'],['../classcljonic_1_1_string.html#aebb69bf0bad5e54de804ceb7fb8c3c69',1,'cljonic::String::operator()(std::size_t index) const noexcept -&gt; char'],['../classcljonic_1_1_string.html#a63d48eecddaa77c7e74326b53cb490c0',1,'cljonic::String::operator()(std::size_t index, char fallback) const noexcept -&gt; char'],['../classcljonic_1_1_vector.html#ac9d734359176ff713076045ca91c88ab',1,'cljonic::Vector::operator()(index_type index) const noexcept -&gt; value_type'],['../classcljonic_1_1_vector.html#a57f3f9d3631de23142403c7284edea04',1,'cljonic::Vector::operator()(index_type index, const value_type &amp;fallback) const noexcept -&gt; value_type']]],
+  ['operator_3d_3d_1',['operator==',['../structcljonic_1_1_map_entry.html#af8a6e59c3c457862ffe4b959fbc3676d',1,'cljonic::MapEntry']]]
 ];

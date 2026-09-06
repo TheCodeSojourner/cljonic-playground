@@ -93,18 +93,20 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a84410b2eb652f696f8a8bc9656e07208" id="r_a84410b2eb652f696f8a8bc9656e07208"><td class="memTemplParams" colspan="2">template&lt;typename C , typename K &gt; </td></tr>
-<tr class="memitem:a84410b2eb652f696f8a8bc9656e07208"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a84410b2eb652f696f8a8bc9656e07208">cljonic::get</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; decltype(collection(key))</td></tr>
-<tr class="memdesc:a84410b2eb652f696f8a8bc9656e07208"><td class="mdescLeft">&#160;</td><td class="mdescRight">Looks up an element by a key or index, returning the default or supplied fallback when absent.  <br /></td></tr>
-<tr class="separator:a84410b2eb652f696f8a8bc9656e07208"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5247ce9f0e562cb836651927ce19aec4" id="r_a5247ce9f0e562cb836651927ce19aec4"><td class="memTemplParams" colspan="2">template&lt;typename C , typename K , typename V &gt; </td></tr>
-<tr class="memitem:a5247ce9f0e562cb836651927ce19aec4"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a5247ce9f0e562cb836651927ce19aec4">cljonic::get</a> (const C &amp;collection, const K &amp;key, const V &amp;fallback) noexcept -&gt; decltype(collection(key, fallback))</td></tr>
-<tr class="separator:a5247ce9f0e562cb836651927ce19aec4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdac28f51feb6ae08a7cb43f39e68e02" id="r_abdac28f51feb6ae08a7cb43f39e68e02"><td class="memTemplParams" colspan="2">template&lt;typename C , typename K &gt; <br />
+requires (concepts::LookupCollection&lt;C&gt; || concepts::IndexedCollection&lt;C&gt;) &amp;&amp; requires(const C&amp; collection, const K&amp; key) { collection(key); }</td></tr>
+<tr class="memitem:abdac28f51feb6ae08a7cb43f39e68e02"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#abdac28f51feb6ae08a7cb43f39e68e02">cljonic::get</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; decltype(collection(key))</td></tr>
+<tr class="memdesc:abdac28f51feb6ae08a7cb43f39e68e02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Looks up an element by a key or index, returning the default or supplied fallback when absent.  <br /></td></tr>
+<tr class="separator:abdac28f51feb6ae08a7cb43f39e68e02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52f18313932d99688d352d903d30b7cd" id="r_a52f18313932d99688d352d903d30b7cd"><td class="memTemplParams" colspan="2">template&lt;typename C , typename K , typename V &gt; <br />
+requires (concepts::LookupCollection&lt;C&gt; || concepts::IndexedCollection&lt;C&gt;) &amp;&amp; requires(const C&amp; collection, const K&amp; key, const V&amp; fallback) { collection(key, fallback); }</td></tr>
+<tr class="memitem:a52f18313932d99688d352d903d30b7cd"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a52f18313932d99688d352d903d30b7cd">cljonic::get</a> (const C &amp;collection, const K &amp;key, const V &amp;fallback) noexcept -&gt; decltype(collection(key, fallback))</td></tr>
+<tr class="separator:a52f18313932d99688d352d903d30b7cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 28 2026 18:21:37 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Sun Sep 6 2026 14:45:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
