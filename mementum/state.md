@@ -1,25 +1,28 @@
 ## Session State
 
-- last_session_id: 2026-09-04-vector-review
-- current_timestamp: 2026-09-04
+- last_session_id: 2026-09-06-vector-doxygen-template
+- current_timestamp: 2026-09-06
 - recover: 1
 - session_complete: true
 
 Task:
-1. Complete the staged review of the Vector implementation against the approved requirements, architecture, specifications, tests, and no-heap constraints.
-2. Resolve the Vector storage-admission, forwarding-construction, capacity, diagnostic, and test-coverage review items without expanding scope to other collections.
+1. Refine the Vector Doxygen example into a clear template for the remaining collection documentation.
+2. Demonstrate Vector construction, callable indexed lookup, signed and negative indices, forwarding categories, and default/fallback results without adding invalid compile-failure snippets.
 
 Questions:
 1. No user questions unresolved.
 
 Decisions:
 1. All user-defined stored collection types follow the `NothrowCollectionElement` contract: nothrow default construction, copy construction, copy assignment, and destruction.
-2. Vector enforces `NothrowCollectionElement` at the template admission boundary; the redundant class-body assertion was removed.
-3. Vector construction uses forwarding references so lvalue/rvalue argument categories are preserved through element construction.
-4. `NothrowElementConstruction` uses `std::forward`; standard concepts are preferred, including `std::destructible` rather than the equivalent type trait.
-5. Assignment-based `std::array` storage remains accepted by design; direct emplacement is deferred because it would change the storage model and approved contract.
-6. Vector capacity, zero-capacity behavior, CTAD equivalence, default/fallback access, logical-size tracking, and compile-time diagnostics are covered by the current specifications and tests.
-7. Vector traceability comments are compact and explicitly non-exhaustive; the specification, `TRACE_ID` tests, and snapshot remain authoritative.
+2. Vector enforces `NothrowCollectionElement` at the template admission boundary; invalid element-type and constructor-argument examples remain in tests rather than the runnable Doxygen program.
+3. Vector construction uses forwarding references so lvalue/rvalue argument categories are preserved through element construction; the Doxygen example demonstrates both with `CategoryElement`.
+4. `NothrowElementConstruction` uses `std::forward`; the category demonstration retains nothrow copy assignment because it is part of the storage contract. `operator<=>` is unrelated and unnecessary.
+5. The Doxygen example uses ordinary signed integer indices for readability, includes a negative-index example, and explains that invalid lookup returns `value_type{}` or the supplied fallback.
+6. The `Pixel` equality operator stays because the runtime return expression uses it to validate a user-defined element result; default `Pixel{}` lookup demonstrates value initialization.
+7. The example comments explain CTAD, explicit capacity, nesting, user-defined values, forwarding categories, callable lookup, and fallback behavior while remaining a runnable program.
+8. Assignment-based `std::array` storage remains accepted by design; direct emplacement is deferred because it would change the storage model and approved contract.
+9. Vector capacity, zero-capacity behavior, CTAD equivalence, default/fallback access, logical-size tracking, and compile-time diagnostics are covered by the current specifications and tests.
+10. Vector traceability comments are compact and explicitly non-exhaustive; the specification, `TRACE_ID` tests, and snapshot remain authoritative.
 
 Validation:
 1. `allium check specs` and `allium analyse specs`: zero diagnostics and findings across all 26 specifications.
@@ -32,19 +35,20 @@ Validation:
 8. Vocabulary, architecture, and spec-weed checks report no active-scope divergence.
 
 Current Increment:
-1. Complete Vector review and hand off to the next collection review.
+1. Complete Vector Doxygen-example refinement and establish the documentation pattern for Map, Set, Queue, and String.
 
 Current Increment Validation:
-1. `allium check specs` and `allium analyse specs`: zero diagnostics and findings.
-2. `make traceability-spec-to-code`: passed.
-3. `make test`: 102/102 passed.
-4. `make no-heap`: passed.
-5. No unresolved Vector implementation divergence remains.
+1. `make docs-examples`: passed after the Vector example edits.
+2. `make format`: passed after formatting the source and embedded example.
+3. `make all`: passed before final documentation-example validation.
+4. `make test`: previously passed with 102/102 tests.
+5. No unresolved Vector implementation or documentation divergence remains.
 
 Next:
 1. Begin the Map review using the same staged process, starting with baseline and implementation surface.
-2. Verify Map key and value admission against `NothrowCollectionElement`, while keeping key equality as a separate operation-specific capability.
-3. Review Map storage, association, dissociation, lookup/default semantics, capacity, diagnostics, tests, no-heap probes, and traceability before any edits.
+2. Use the Vector Doxygen example as the template for Map, Set, Queue, and String: runnable compile-time and runtime sections, concise human comments, and no intentionally failing snippets.
+3. Verify Map key and value admission against `NothrowCollectionElement`, while keeping key equality as a separate operation-specific capability.
+4. Review Map storage, association, dissociation, lookup/default semantics, capacity, diagnostics, tests, no-heap probes, and traceability before any edits.
 
 ## Historical Session Records
 
