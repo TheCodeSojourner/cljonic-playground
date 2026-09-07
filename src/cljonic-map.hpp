@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <concepts>
 #include <cstddef>
 #include <utility>
 
@@ -14,9 +13,8 @@ namespace cljonic {
 
 /** \anchor Map
  * \b Map is a fixed-capacity associative collection backed by contiguous array
- * storage and linear scan lookup with copy-on-modify updates. Keys and values
- * satisfy the non-throwing collection storage contract; keys additionally
- * provide stable equality for lookup.
+ * storage and linear scan lookup with copy-on-modify updates. Keys satisfy
+ * `NothrowStableEqualityComparable`; values satisfy `NothrowCollectionElement`.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -47,6 +45,13 @@ namespace cljonic {
  *   static_assert(replaced(Key{2}, Value{99}).amount == 99);
  *   static_assert(replaced.can_assoc(Key{2}));
  *
+ *   // Pack-literal construction folds assoc over each entry in argument
+ *   // order; CTAD deduces Map<Key, Value, 2>. A later duplicate key
+ *   // replaces an earlier one, matching explicit assoc semantics.
+ *   constexpr auto literal = Map{MapEntry<Key, Value>{Key{1}, Value{10}}, MapEntry<Key, Value>{Key{1}, Value{20}}};
+ *   static_assert(literal.count() == 1U);
+ *   static_assert(literal(Key{1}).amount == 20);
+ *
  *   // Map lookup is callable and missing-key access does not insert.
  *   auto runtime = replaced.assoc(Key{2}, Value{30});
  *   const auto missing = runtime(Key{3}, Value{77});
@@ -57,8 +62,8 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename KeyType, concepts::NothrowCollectionElement ValueType, std::size_t CapacityValue>
-    requires concepts::StableEqualityComparable<KeyType> && concepts::NothrowCollectionElement<KeyType>
+template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType,
+          std::size_t CapacityValue>
 class Map {
   public:
     using key_type = KeyType;
@@ -66,12 +71,20 @@ class Map {
     using mapped_type = ValueType;
     using value_type = MapEntry<KeyType, ValueType>;
 
-    static_assert(concepts::NothrowCopyableElement<KeyType>, "Map key type operations must not throw");
-    static_assert(concepts::NothrowCopyableElement<ValueType>, "Map value type operations must not throw");
-    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                  "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Map CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr Map() noexcept : entries_{}, logical_size_{0} {
+    template <typename... Args>
+    constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<value_type, Args> && ...),
+                      "Map constructor requires all arguments to construct "
+                      "MapEntry<KeyType, ValueType> without throwing and be "
+                      "implicitly convertible to MapEntry<KeyType, ValueType>");
+
+        ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -142,9 +155,16 @@ class Map {
         return logical_size_;
     }
 
+    [[nodiscard]] constexpr auto assoc_entry(const value_type& entry) const noexcept -> Map {
+        return assoc(entry.key, entry.value);
+    }
+
     std::array<value_type, CapacityValue> entries_{};
     std::size_t logical_size_{0};
 };
+
+template <typename KeyType, typename ValueType, typename... Rest>
+Map(MapEntry<KeyType, ValueType>, Rest...) -> Map<KeyType, ValueType, 1 + sizeof...(Rest)>;
 
 } // namespace cljonic
 

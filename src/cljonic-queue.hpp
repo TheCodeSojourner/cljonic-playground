@@ -28,6 +28,12 @@ namespace cljonic {
  *   static_assert(q_const.peek() == 10);
  *   static_assert(q_const.can_conj());
  *
+ *   // Pack-literal construction folds conj over each argument in order; CTAD
+ *   // deduces Queue<int, 3>. Argument order establishes FIFO order.
+ *   constexpr auto literal = Queue{10, 20, 30};
+ *   static_assert(literal.count() == 3U);
+ *   static_assert(literal.peek() == 10);
+ *
  *   // Runtime demonstration.
  *   auto q_runtime = Queue<int, 4>{};
  *   auto q1 = q_runtime.conj(100);
@@ -43,10 +49,19 @@ class Queue {
     using value_type = T;
 
     static_assert(concepts::NothrowCopyableElement<T>, "Queue element type operations must not throw");
-    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                  "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Queue CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr Queue() noexcept : elements_{}, head_{0}, logical_size_{0} {
+    template <typename... Args>
+    constexpr Queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Queue initializer count exceeds Queue CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
+                      "Queue constructor requires all arguments to construct "
+                      "T without throwing and be implicitly convertible to T");
+
+        ((*this = conj(T{std::forward<Args>(args)})), ...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -100,6 +115,9 @@ class Queue {
     std::size_t head_{0};
     std::size_t logical_size_{0};
 };
+
+template <typename First, typename... Rest>
+Queue(First, Rest...) -> Queue<First, 1 + sizeof...(Rest)>;
 
 } // namespace cljonic
 

@@ -43,17 +43,19 @@ class String {
   public:
     using value_type = char;
 
-    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                  "String capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "String CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr String() noexcept : data_{}, logical_size_{0} {
+    constexpr String() noexcept {
         data_[0] = '\0';
     }
 
     /** Construct from character array literal. Capacity must accommodate N-1
      * chars plus null terminator. */
     template <std::size_t N>
-    constexpr String(const char (&arr)[N]) noexcept : data_{}, logical_size_{0} {
+    constexpr String(const char (&arr)[N]) noexcept {
         static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
         logical_size_ = N - 1U;
         for (std::size_t i = 0; i < logical_size_; ++i) {

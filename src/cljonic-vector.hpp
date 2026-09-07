@@ -107,48 +107,47 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::NothrowCollectionElement element_type, std::size_t capacity_value>
+template <concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue>
 class Vector {
   public:
-    using value_type = element_type;
+    using value_type = ElementType;
 
     static_assert(
-        capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Vector capacity_value exceeds "
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Vector CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<element_type, Args> && ...))
-        : storage_{}, logical_size_{0} {
-        static_assert(sizeof...(Args) <= capacity_value, "Vector initializer count exceeds Vector capacity_value");
-        static_assert((concepts::NothrowElementConstruction<element_type, Args> && ...),
+    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<ElementType, Args> && ...),
                       "Vector constructor requires all arguments to construct "
-                      "element_type without throwing and be implicitly "
-                      "convertible to element_type");
+                      "ElementType without throwing and be implicitly "
+                      "convertible to ElementType");
 
         initialize_storage_if_valid(std::forward<Args>(args)...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-        return capacity_value;
+        return CapacityValue;
     }
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    template <std::integral index_type>
-    [[nodiscard]] constexpr auto operator()(index_type index) const noexcept -> value_type {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index) const noexcept -> value_type {
         return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : value_type{};
     }
 
-    template <std::integral index_type>
-    [[nodiscard]] constexpr auto operator()(index_type index, const value_type& fallback) const noexcept -> value_type {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback) const noexcept -> value_type {
         return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : fallback;
     }
 
-    template <std::integral index_type>
-    [[nodiscard]] constexpr auto contains(index_type index) const noexcept -> bool {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
         return index_is_valid(index);
     }
 
@@ -157,9 +156,9 @@ class Vector {
     }
 
   private:
-    template <std::integral index_type>
-    [[nodiscard]] constexpr auto index_is_valid(index_type index) const noexcept -> bool {
-        if constexpr (std::signed_integral<index_type>) {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto index_is_valid(IndexType index) const noexcept -> bool {
+        if constexpr (std::signed_integral<IndexType>) {
             if (index < 0) {
                 return false;
             }
@@ -170,7 +169,7 @@ class Vector {
 
     template <typename... Args>
     static constexpr bool constructor_arguments_valid =
-        sizeof...(Args) <= capacity_value && (concepts::NothrowElementConstruction<element_type, Args> && ...);
+        sizeof...(Args) <= CapacityValue && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
 
     template <typename... Args>
     constexpr void initialize_storage_if_valid(Args&&... args) noexcept {
@@ -182,10 +181,10 @@ class Vector {
 
     template <std::size_t... Indices, typename... Args>
     constexpr void initialize_storage(std::index_sequence<Indices...>, Args&&... args) noexcept {
-        ((storage_[Indices] = element_type{std::forward<Args>(args)}), ...);
+        ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
     }
 
-    std::array<value_type, capacity_value> storage_{};
+    std::array<value_type, CapacityValue> storage_{};
     std::size_t logical_size_ = 0;
 };
 

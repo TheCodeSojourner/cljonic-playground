@@ -54,13 +54,6 @@ concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg
     { T{std::forward<Arg>(argument)} } noexcept;
 };
 
-// Backward-compatible aliases for existing container templates during Phase C.
-template <typename T>
-concept VectorElement = CopyableElement<T>;
-
-template <typename T>
-concept NothrowVectorElement = NothrowCopyableElement<T>;
-
 // ============================================================================
 // Value Capability Concepts
 // ============================================================================
@@ -74,6 +67,11 @@ concept StableEqualityComparable = std::equality_comparable<T> && !std::floating
 /** Requires a strict total ordering layered on stable equality. */
 template <typename T>
 concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
+
+/** Requires stable equality combined with non-throwing collection storage,
+ *  the admission contract shared by map keys and set elements. */
+template <typename T>
+concept NothrowStableEqualityComparable = StableEqualityComparable<T> && NothrowCollectionElement<T>;
 
 // ============================================================================
 // Level 1: CollectionConcept (Nominal Collection Admission)

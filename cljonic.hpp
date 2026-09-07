@@ -289,13 +289,6 @@ concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg
     { T{std::forward<Arg>(argument)} } noexcept;
 };
 
-// Backward-compatible aliases for existing container templates during Phase C.
-template <typename T>
-concept VectorElement = CopyableElement<T>;
-
-template <typename T>
-concept NothrowVectorElement = NothrowCopyableElement<T>;
-
 // ============================================================================
 // Value Capability Concepts
 // ============================================================================
@@ -309,6 +302,11 @@ concept StableEqualityComparable = std::equality_comparable<T> && !std::floating
 /** Requires a strict total ordering layered on stable equality. */
 template <typename T>
 concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
+
+/** Requires stable equality combined with non-throwing collection storage,
+ *  the admission contract shared by map keys and set elements. */
+template <typename T>
+concept NothrowStableEqualityComparable = StableEqualityComparable<T> && NothrowCollectionElement<T>;
 
 // ============================================================================
 // Level 1: CollectionConcept (Nominal Collection Admission)
@@ -799,7 +797,6 @@ template <concepts::SequenceableCollection C>
 #pragma once
 
 #include <array>
-#include <concepts>
 #include <cstddef>
 #include <utility>
 
@@ -867,9 +864,8 @@ namespace cljonic {
 
 /** \anchor Map
  * \b Map is a fixed-capacity associative collection backed by contiguous array
- * storage and linear scan lookup with copy-on-modify updates. Keys and values
- * satisfy the non-throwing collection storage contract; keys additionally
- * provide stable equality for lookup.
+ * storage and linear scan lookup with copy-on-modify updates. Keys satisfy
+ * `NothrowStableEqualityComparable`; values satisfy `NothrowCollectionElement`.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -900,6 +896,13 @@ namespace cljonic {
  *   static_assert(replaced(Key{2}, Value{99}).amount == 99);
  *   static_assert(replaced.can_assoc(Key{2}));
  *
+ *   // Pack-literal construction folds assoc over each entry in argument
+ *   // order; CTAD deduces Map<Key, Value, 2>. A later duplicate key
+ *   // replaces an earlier one, matching explicit assoc semantics.
+ *   constexpr auto literal = Map{MapEntry<Key, Value>{Key{1}, Value{10}}, MapEntry<Key, Value>{Key{1}, Value{20}}};
+ *   static_assert(literal.count() == 1U);
+ *   static_assert(literal(Key{1}).amount == 20);
+ *
  *   // Map lookup is callable and missing-key access does not insert.
  *   auto runtime = replaced.assoc(Key{2}, Value{30});
  *   const auto missing = runtime(Key{3}, Value{77});
@@ -910,8 +913,8 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename KeyType, concepts::NothrowCollectionElement ValueType, std::size_t CapacityValue>
-    requires concepts::StableEqualityComparable<KeyType> && concepts::NothrowCollectionElement<KeyType>
+template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType,
+          std::size_t CapacityValue>
 class Map {
   public:
     using key_type = KeyType;
@@ -919,12 +922,20 @@ class Map {
     using mapped_type = ValueType;
     using value_type = MapEntry<KeyType, ValueType>;
 
-    static_assert(concepts::NothrowCopyableElement<KeyType>, "Map key type operations must not throw");
-    static_assert(concepts::NothrowCopyableElement<ValueType>, "Map value type operations must not throw");
-    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                  "Map capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Map CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr Map() noexcept : entries_{}, logical_size_{0} {
+    template <typename... Args>
+    constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<value_type, Args> && ...),
+                      "Map constructor requires all arguments to construct "
+                      "MapEntry<KeyType, ValueType> without throwing and be "
+                      "implicitly convertible to MapEntry<KeyType, ValueType>");
+
+        ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -995,9 +1006,16 @@ class Map {
         return logical_size_;
     }
 
+    [[nodiscard]] constexpr auto assoc_entry(const value_type& entry) const noexcept -> Map {
+        return assoc(entry.key, entry.value);
+    }
+
     std::array<value_type, CapacityValue> entries_{};
     std::size_t logical_size_{0};
 };
+
+template <typename KeyType, typename ValueType, typename... Rest>
+Map(MapEntry<KeyType, ValueType>, Rest...) -> Map<KeyType, ValueType, 1 + sizeof...(Rest)>;
 
 } // namespace cljonic
 
@@ -1347,6 +1365,12 @@ namespace cljonic {
  *   static_assert(q_const.peek() == 10);
  *   static_assert(q_const.can_conj());
  *
+ *   // Pack-literal construction folds conj over each argument in order; CTAD
+ *   // deduces Queue<int, 3>. Argument order establishes FIFO order.
+ *   constexpr auto literal = Queue{10, 20, 30};
+ *   static_assert(literal.count() == 3U);
+ *   static_assert(literal.peek() == 10);
+ *
  *   // Runtime demonstration.
  *   auto q_runtime = Queue<int, 4>{};
  *   auto q1 = q_runtime.conj(100);
@@ -1362,10 +1386,19 @@ class Queue {
     using value_type = T;
 
     static_assert(concepts::NothrowCopyableElement<T>, "Queue element type operations must not throw");
-    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                  "Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Queue CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr Queue() noexcept : elements_{}, head_{0}, logical_size_{0} {
+    template <typename... Args>
+    constexpr Queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Queue initializer count exceeds Queue CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
+                      "Queue constructor requires all arguments to construct "
+                      "T without throwing and be implicitly convertible to T");
+
+        ((*this = conj(T{std::forward<Args>(args)})), ...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -1419,6 +1452,9 @@ class Queue {
     std::size_t head_{0};
     std::size_t logical_size_{0};
 };
+
+template <typename First, typename... Rest>
+Queue(First, Rest...) -> Queue<First, 1 + sizeof...(Rest)>;
 
 } // namespace cljonic
 
@@ -1546,6 +1582,13 @@ namespace cljonic {
  *   static_assert(s_const(99, -1) == -1);
  *   static_assert(s_const.can_conj(3));
  *
+ *   // Pack-literal construction folds conj over each argument in order; CTAD
+ *   // deduces Set<int, 4>. A later duplicate value is a no-op, matching
+ *   // explicit conj semantics.
+ *   constexpr auto literal = Set{1, 2, 2, 3};
+ *   static_assert(literal.count() == 3U);
+ *   static_assert(literal.contains(2));
+ *
  *   // Runtime demonstration.
  *   auto s_runtime = Set<int, 4>{};
  *   auto s1 = s_runtime.conj(10);
@@ -1562,10 +1605,19 @@ class Set {
     using lookup_type = value_type;
 
     static_assert(concepts::NothrowCopyableElement<T>, "Set element type operations must not throw");
-    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                  "Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Set CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr Set() noexcept : elements_{}, logical_size_{0} {
+    template <typename... Args>
+    constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Set initializer count exceeds Set CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
+                      "Set constructor requires all arguments to construct "
+                      "T without throwing and be implicitly convertible to T");
+
+        ((*this = conj(T{std::forward<Args>(args)})), ...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -1644,6 +1696,9 @@ class Set {
     std::size_t logical_size_{0};
 };
 
+template <typename First, typename... Rest>
+Set(First, Rest...) -> Set<First, 1 + sizeof...(Rest)>;
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -1701,17 +1756,19 @@ class String {
   public:
     using value_type = char;
 
-    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                  "String capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "String CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr String() noexcept : data_{}, logical_size_{0} {
+    constexpr String() noexcept {
         data_[0] = '\0';
     }
 
     /** Construct from character array literal. Capacity must accommodate N-1
      * chars plus null terminator. */
     template <std::size_t N>
-    constexpr String(const char (&arr)[N]) noexcept : data_{}, logical_size_{0} {
+    constexpr String(const char (&arr)[N]) noexcept {
         static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
         logical_size_ = N - 1U;
         for (std::size_t i = 0; i < logical_size_; ++i) {
@@ -1896,48 +1953,47 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::NothrowCollectionElement element_type, std::size_t capacity_value>
+template <concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue>
 class Vector {
   public:
-    using value_type = element_type;
+    using value_type = ElementType;
 
     static_assert(
-        capacity_value <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Vector capacity_value exceeds "
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Vector CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<element_type, Args> && ...))
-        : storage_{}, logical_size_{0} {
-        static_assert(sizeof...(Args) <= capacity_value, "Vector initializer count exceeds Vector capacity_value");
-        static_assert((concepts::NothrowElementConstruction<element_type, Args> && ...),
+    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<ElementType, Args> && ...),
                       "Vector constructor requires all arguments to construct "
-                      "element_type without throwing and be implicitly "
-                      "convertible to element_type");
+                      "ElementType without throwing and be implicitly "
+                      "convertible to ElementType");
 
         initialize_storage_if_valid(std::forward<Args>(args)...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-        return capacity_value;
+        return CapacityValue;
     }
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
     }
 
-    template <std::integral index_type>
-    [[nodiscard]] constexpr auto operator()(index_type index) const noexcept -> value_type {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index) const noexcept -> value_type {
         return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : value_type{};
     }
 
-    template <std::integral index_type>
-    [[nodiscard]] constexpr auto operator()(index_type index, const value_type& fallback) const noexcept -> value_type {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback) const noexcept -> value_type {
         return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : fallback;
     }
 
-    template <std::integral index_type>
-    [[nodiscard]] constexpr auto contains(index_type index) const noexcept -> bool {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
         return index_is_valid(index);
     }
 
@@ -1946,9 +2002,9 @@ class Vector {
     }
 
   private:
-    template <std::integral index_type>
-    [[nodiscard]] constexpr auto index_is_valid(index_type index) const noexcept -> bool {
-        if constexpr (std::signed_integral<index_type>) {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto index_is_valid(IndexType index) const noexcept -> bool {
+        if constexpr (std::signed_integral<IndexType>) {
             if (index < 0) {
                 return false;
             }
@@ -1959,7 +2015,7 @@ class Vector {
 
     template <typename... Args>
     static constexpr bool constructor_arguments_valid =
-        sizeof...(Args) <= capacity_value && (concepts::NothrowElementConstruction<element_type, Args> && ...);
+        sizeof...(Args) <= CapacityValue && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
 
     template <typename... Args>
     constexpr void initialize_storage_if_valid(Args&&... args) noexcept {
@@ -1971,10 +2027,10 @@ class Vector {
 
     template <std::size_t... Indices, typename... Args>
     constexpr void initialize_storage(std::index_sequence<Indices...>, Args&&... args) noexcept {
-        ((storage_[Indices] = element_type{std::forward<Args>(args)}), ...);
+        ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
     }
 
-    std::array<value_type, capacity_value> storage_{};
+    std::array<value_type, CapacityValue> storage_{};
     std::size_t logical_size_ = 0;
 };
 

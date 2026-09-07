@@ -32,6 +32,13 @@ namespace cljonic {
  *   static_assert(s_const(99, -1) == -1);
  *   static_assert(s_const.can_conj(3));
  *
+ *   // Pack-literal construction folds conj over each argument in order; CTAD
+ *   // deduces Set<int, 4>. A later duplicate value is a no-op, matching
+ *   // explicit conj semantics.
+ *   constexpr auto literal = Set{1, 2, 2, 3};
+ *   static_assert(literal.count() == 3U);
+ *   static_assert(literal.contains(2));
+ *
  *   // Runtime demonstration.
  *   auto s_runtime = Set<int, 4>{};
  *   auto s1 = s_runtime.conj(10);
@@ -48,10 +55,19 @@ class Set {
     using lookup_type = value_type;
 
     static_assert(concepts::NothrowCopyableElement<T>, "Set element type operations must not throw");
-    static_assert(CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                  "Set capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT");
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Set CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr Set() noexcept : elements_{}, logical_size_{0} {
+    template <typename... Args>
+    constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Set initializer count exceeds Set CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
+                      "Set constructor requires all arguments to construct "
+                      "T without throwing and be implicitly convertible to T");
+
+        ((*this = conj(T{std::forward<Args>(args)})), ...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -129,6 +145,9 @@ class Set {
     std::array<value_type, CapacityValue> elements_{};
     std::size_t logical_size_{0};
 };
+
+template <typename First, typename... Rest>
+Set(First, Rest...) -> Set<First, 1 + sizeof...(Rest)>;
 
 } // namespace cljonic
 
