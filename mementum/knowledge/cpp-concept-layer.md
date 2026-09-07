@@ -47,12 +47,17 @@ concept model.
     `IndexedCollection` (`operator(i)`/`contains(index)`),
     `AssociativeCollection` (`operator(k)`/`contains`).
   - Value: `StableEqualityComparable` (base, rejects float/double),
-    `TotallyOrdered` (derived).
+    `TotallyOrdered` (derived), `NothrowStableEqualityComparable`
+    (`StableEqualityComparable<T> && NothrowCollectionElement<T>`; the shared
+    admission contract for map keys and set elements, mirroring how
+    `TotallyOrdered` layers onto `StableEqualityComparable`).
   - Capability/value concepts drop the `Cljonic` prefix.
 
 `StableEqualityComparable` is the base value concept; `TotallyOrdered` extends it.
 Both are required because `TotallyOrdered` alone would over-constrain
-equality-only key/element types.
+equality-only key/element types. `NothrowStableEqualityComparable` is a
+separate, storage-admission-focused extension used to constrain `Map`'s
+`KeyType` and `MapEntry`'s `KeyType` directly at the template-parameter level.
 
 ## Container member naming
 

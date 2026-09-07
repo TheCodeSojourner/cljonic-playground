@@ -1,54 +1,61 @@
 ## Session State
 
-- last_session_id: 2026-09-06-vector-doxygen-template
-- current_timestamp: 2026-09-06
+- last_session_id: 2026-09-07-map-mapentry-review-and-tooling-fix
+- current_timestamp: 2026-09-07
 - recover: 1
 - session_complete: true
 
 Task:
-1. Refine the Vector Doxygen example into a clear template for the remaining collection documentation.
-2. Demonstrate Vector construction, callable indexed lookup, signed and negative indices, forwarding categories, and default/fallback results without adding invalid compile-failure snippets.
+1. Complete the Map requirements-to-documentation increment using the Vector contract as the local template.
+2. Add fold-over-assoc/conj pack-literal construction to Map, Set, and Queue (in that order), matching Vector's/String's existing CTAD-deducible pack-construction pattern.
+3. Reduce `can_assoc` from a 3-argument free function (`can_assoc(collection, key, value)`) to a 2-argument form (`can_assoc(collection, key)`), removing the value parameter entirely since it never affects the result.
+4. Constrain `MapEntry`'s template parameters to match `Map`'s own admission contract.
+5. Fix `scripts/spec_weed_check.py`'s stale `expected_ops` table and the deeper bugs discovered alongside it.
 
 Questions:
 1. No user questions unresolved.
 
 Decisions:
 1. All user-defined stored collection types follow the `NothrowCollectionElement` contract: nothrow default construction, copy construction, copy assignment, and destruction.
-2. Vector enforces `NothrowCollectionElement` at the template admission boundary; invalid element-type and constructor-argument examples remain in tests rather than the runnable Doxygen program.
-3. Vector construction uses forwarding references so lvalue/rvalue argument categories are preserved through element construction; the Doxygen example demonstrates both with `CategoryElement`.
-4. `NothrowElementConstruction` uses `std::forward`; the category demonstration retains nothrow copy assignment because it is part of the storage contract. `operator<=>` is unrelated and unnecessary.
-5. The Doxygen example uses ordinary signed integer indices for readability, includes a negative-index example, and explains that invalid lookup returns `value_type{}` or the supplied fallback.
-6. The `Pixel` equality operator stays because the runtime return expression uses it to validate a user-defined element result; default `Pixel{}` lookup demonstrates value initialization.
-7. The example comments explain CTAD, explicit capacity, nesting, user-defined values, forwarding categories, callable lookup, and fallback behavior while remaining a runnable program.
-8. Assignment-based `std::array` storage remains accepted by design; direct emplacement is deferred because it would change the storage model and approved contract.
-9. Vector capacity, zero-capacity behavior, CTAD equivalence, default/fallback access, logical-size tracking, and compile-time diagnostics are covered by the current specifications and tests.
-10. Vector traceability comments are compact and explicitly non-exhaustive; the specification, `TRACE_ID` tests, and snapshot remain authoritative.
+2. `Map`'s `KeyType`/`ValueType` template parameters are constrained directly by `concepts::NothrowStableEqualityComparable`/`concepts::NothrowCollectionElement`; the now-redundant `NothrowCopyableElement` `static_assert`s were removed since the template constraints already enforce them.
+3. `NothrowStableEqualityComparable` (`StableEqualityComparable<T> && NothrowCollectionElement<T>`) was added to `cljonic-concepts.hpp` as the shared map-key/set-element admission concept, mirroring how `TotallyOrdered` layers onto `StableEqualityComparable`.
+4. Dead `VectorElement`/`NothrowVectorElement` backward-compatibility aliases were removed; no source template used them.
+5. Vector's template parameters were renamed to PascalCase (`ElementType`, `CapacityValue`, `IndexType`) for consistency with Map/Set/Queue/String/MapEntry and Vector's own `collection_traits` specialization.
+6. Capacity-overflow `static_assert` messages were standardized across Map/Set/Queue/String to Vector's `CLJONIC_STRINGIFY`-interpolated form.
+7. Redundant constructor member-initializer lists (`: storage_{}, logical_size_{0}` etc.) were removed from Vector/Map/Set/Queue/String since every member already has a matching in-class default member initializer.
+8. Map, Set, and Queue previously had no pack-literal/CTAD construction (only `<Type,N>{}` + builder chains); Vector and String already had it. This was a real spec gap, not an oversight — closed by adding `REQ-COLL-018/018A` (Map), `019/019A` (Set), `020/020A` (Queue) and matching `.allium` invariants (`SupportsLiteralDeducedConstruction`, `SupportsCapacityInferredLiteralEquivalentSemantics`, `OversizedInitializerIsCompileTimeFailure`, `PackConstructionFoldsOverAssoc`/`PackConstructionFoldsOverConj`).
+9. Pack construction folds the collection's own approved primitive over the argument pack in order: `assoc` for Map (pack elements are `MapEntry<K,V>`; later duplicate key replaces, per `REQ-COLL-004A`), `conj` for Set (later duplicate value is a no-op, per `REQ-COLL-005A`) and Queue (FIFO order matches argument order, no dedup).
+10. The oversized-pack compile-time check uses `sizeof...(Args) <= CapacityValue` (pack size, not post-fold deduplicated count) for all three, matching Vector's/String's existing "content length" wording in `REQ-VAL-011`; this is conservative but never allows a real overflow.
+11. Map/Set/Queue's separate no-argument default constructor was removed in favor of a single variadic pack constructor accepting zero or more arguments, exactly matching Vector's design (no ambiguity, no separate ctor needed).
+12. CTAD deduction guides added: `Map(MapEntry<K,V>, Rest...) -> Map<K,V,1+sizeof...(Rest)>`; `Set(First, Rest...) -> Set<First,...>`; `Queue(First, Rest...) -> Queue<First,...>` (Set/Queue mirror Vector's guide exactly).
+13. `Map`'s single unified pack constructor was replaced with two constructors: `constexpr Map() noexcept = default;` for the empty case, and a separate `template <std::same_as<value_type>... Entries> requires(sizeof...(Entries) >= 1) constexpr Map(const Entries&... entries) noexcept`. Unlike Set/Queue/Vector (which legitimately accept any type convertible to their element type), Map's pack elements must be *exactly* `MapEntry<KeyType, ValueType>` (nominal `same_as`, not structural `convertible_to`) and pack-literal construction now requires at least one argument — the empty case is handled only by the separate default constructor, never by this one. Verified empirically that this closes even the hypothetical loophole of a user-defined implicit-conversion type satisfying the old `convertible_to`-based check, that it never competes with copy construction in overload resolution (a `Map` argument doesn't satisfy `same_as<Map<...>, MapEntry<...>>`), and that a bare-scalar pack (`Map<int,int,4>{1,2,3}`) is rejected at compile time with a clear diagnostic. Added `REQ-COLL-018` wording tightening and a new `PackConstructionRequiresAtLeastOneEntry` invariant in `map.allium`.
+14. GCC does not reliably treat `requires{ expr; }` as SFINAE-friendly when `expr` involves overload resolution against a constrained template/constructor selected via brace-init; recorded in `mementum/memories/requires-expression-constrained-template-sfinae-limitation.md`. Negative compile-time-failure checks in this repo are documented via `TRACE_ID` only, never via an actual negative-compile assertion.
+15. `can_assoc` was reduced from `can_assoc(collection, key, value)` (3 args) to `can_assoc(collection, key)` (2 args), and `Map`'s corresponding 2-arg member `can_assoc(key, value)` was deleted, keeping only the 1-arg `can_assoc(key)` member. Rationale: `assoc`'s success/failure never depends on the value being associated (only on whether the key already exists or capacity remains), so the value parameter was pure noise — confirmed by the fact the old 2-arg member already ignored it (`/*value*/`). This is a real, deliberate API-shape change (not a dead-code cleanup), requiring `REQ-FN-002M` wording revision, the architecture preflight-signature table, and the `CanAssoc` vocabulary example, propagated alongside code/tests.
+16. `MapEntry<KeyType, ValueType>`'s template parameters were unconstrained (`template <typename KeyType, typename ValueType>`) despite `REQ-COLL-001A` already requiring "map-entry fields" to satisfy `NothrowCollectionElement`, and `map-entry.allium` already declaring `RequiresNothrowDefaultConstruction`/`CopyConstruction`/`CopyAssignment`/`Destruction` invariants — none of it was actually enforced by the code. Fixed by constraining `MapEntry` with the exact same concepts Map already requires of its own `KeyType`/`ValueType`: `concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType`. Fully backward-compatible (every existing `Map<K,V,N>` already satisfies this on its own template parameters); additionally closes a real gap where a standalone `MapEntry<double, int>{...}` could previously be constructed with a floating-point key despite `REQ-NUM-002` prohibiting floating-point map keys. Added a clarifying sentence to `REQ-COLL-001A` and a new `RequiresNothrowCollectionElementKeyAndValueAdmission` invariant in `map-entry.allium`, mirroring Map's own invariant name.
+17. `scripts/spec_weed_check.py` (the `/gybis-spec-weed` support tool) had four real bugs, not just a stale `expected_ops` table: (a) the invariant-extraction regex expected `invariant.Name {` but actual `.allium` syntax is `invariant Name {`, silently producing 0 invariants for every entity and making the spec→test coverage check permanently, vacuously "converged"; (b) `MapEntry` (a `struct` with no explicit `public:` label) was invisible to the method-detection logic, which required literally finding `public:` in the file; (c) class-name extraction grabbed the *first* `class`/`struct` keyword anywhere in the raw file, including inside Doxygen-comment example code (`struct Key`/`struct Pixel` in Map's/Vector's own doc examples), misidentifying the real class; (d) `"map-entry".capitalize()` produced `"Map-entry"` instead of `"MapEntry"`, never matching real trace IDs (a dormant `IndexError` crash, unreachable until bug (a) was fixed). All four fixed; script now reports accurate, clean, zero-divergence output across all 6 collection entities.
 
 Validation:
-1. `allium check specs` and `allium analyse specs`: zero diagnostics and findings across all 26 specifications.
-2. Normalized specification planning: 1,031 unique obligations with zero planner diagnostics.
-3. `make traceability-spec-to-code`: passed.
-4. Repeated modular and single-header regression runs pass: 102/102 tests.
-5. `make no-heap`: passed, including source and symbol scans.
-6. `make cljonic`: passed and regenerated the synchronized single header.
-7. Intentional compiler probes confirm capacity diagnostics identify the configured maximum and compiler-resolved declared capacity.
-8. Vocabulary, architecture, and spec-weed checks report no active-scope divergence.
+1. `allium check specs` and `allium analyse specs`: zero diagnostics and findings across all specifications.
+2. `make traceability-spec-to-code-update-snapshot` and `make traceability-spec-to-code`: passed.
+3. `make no-heap`: passed, including source and symbol scans.
+4. `make docs-examples`: passed for all updated runnable examples.
+5. `make cljonic`: passed and regenerated the synchronized single header.
+6. `make docs`: passed and regenerated the Doxygen site.
+7. `make format`: passed.
+8. `make all`: passed, 104/104 tests throughout. Map spec-test assertions: 49→58 (pack construction) → 57 (after removing the deleted 2-arg `can_assoc(key,value)` member test line).
+9. `python3 scripts/spec_weed_check.py`: now reports 48/48, 21/21, 45/45, 46/46, 43/43, 43/43 invariants traced (Map, MapEntry, Queue, Set, String, Vector) and zero method-surface divergences, replacing a previously always-vacuously-passing check.
 
 Current Increment:
-1. Complete Vector Doxygen-example refinement and establish the documentation pattern for Map, Set, Queue, and String.
+1. None open; this session's tasks are complete.
 
 Current Increment Validation:
-1. `make docs-examples`: passed after the Vector example edits.
-2. `make format`: passed after formatting the source and embedded example.
-3. `make all`: passed before final documentation-example validation.
-4. `make test`: previously passed with 102/102 tests.
-5. No unresolved Vector implementation or documentation divergence remains.
+1. See Validation above; all gates green after the full Map → Set → Queue propagation, the subsequent Map constructor tightening, the MapEntry admission fix, and the weed-check tooling repair.
 
 Next:
-1. Begin the Map review using the same staged process, starting with baseline and implementation surface.
-2. Use the Vector Doxygen example as the template for Map, Set, Queue, and String: runnable compile-time and runtime sections, concise human comments, and no intentionally failing snippets.
-3. Verify Map key and value admission against `NothrowCollectionElement`, while keeping key equality as a separate operation-specific capability.
-4. Review Map storage, association, dissociation, lookup/default semantics, capacity, diagnostics, tests, no-heap probes, and traceability before any edits.
+1. `Set`'s element template parameter (`concepts::StableEqualityComparable T`) should be tightened to `concepts::NothrowStableEqualityComparable` for full consistency with Map's `KeyType`, when Set next gets a dedicated review pass (recorded previously in `mementum/memories/nothrow-stable-equality-comparable-concept.md`).
+2. Consider whether Vector deserves its own dedicated `REQ-COLL-0xx` pack-construction requirement (it currently relies only on the generic `REQ-VAL-011/012/013`), for parity with String/Map/Set/Queue's dedicated requirements — noted but not actioned since it wasn't requested.
+3. `MapEntry::contains(index)` is formally specified (`REQ-SEQ-013`, `SupportsIndexedLookup` invariant) but has zero callers anywhere in the codebase outside its own test — flagged as a candidate for a future spec-simplification decision, not resolved.
+4. Continue the Map/Vector-style staged review for any remaining collection-family gaps (Set, Queue, String) as directed.
 
 ## Historical Session Records
 
