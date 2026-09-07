@@ -22,6 +22,10 @@ entity Queue {
     requires_nothrow_destruction: Boolean
     supports_empty_explicit_capacity_construction: Boolean
     supports_explicit_capacity_construction: Boolean
+    supports_literal_deduced_construction: Boolean
+    supports_capacity_inferred_literal_equivalent_semantics: Boolean
+    oversized_initializer_is_compile_time_failure: Boolean
+    pack_construction_folds_over_conj: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_peek_operation: Boolean
     supports_pop_operation: Boolean
@@ -128,6 +132,22 @@ entity Queue {
 
     invariant SupportsExplicitCapacityConstruction {
         this.supports_explicit_capacity_construction = true
+    }
+
+    invariant SupportsLiteralDeducedConstruction {
+        this.supports_literal_deduced_construction = true
+    }
+
+    invariant SupportsCapacityInferredLiteralEquivalentSemantics {
+        this.supports_capacity_inferred_literal_equivalent_semantics = true
+    }
+
+    invariant OversizedInitializerIsCompileTimeFailure {
+        this.oversized_initializer_is_compile_time_failure = true
+    }
+
+    invariant PackConstructionFoldsOverConj {
+        this.pack_construction_folds_over_conj = true
     }
 
     invariant CapacityExceedsMaximumIsCompileTimeFailure {

@@ -211,6 +211,19 @@ entity TotallyOrdered {
     }
 }
 
+entity NothrowStableEqualityComparable {
+    extends_stable_equality: Boolean
+    extends_nothrow_collection_element: Boolean
+
+    invariant ExtendsStableEquality {
+        this.extends_stable_equality = true
+    }
+
+    invariant ExtendsNothrowCollectionElement {
+        this.extends_nothrow_collection_element = true
+    }
+}
+
 entity ConceptMemberNaming {
     uses_count_is_empty_members: Boolean
     omits_index_bracket_lookup: Boolean
@@ -241,4 +254,5 @@ actor LookupCollectionOperator { identified_by: LookupCollection }
 actor AssociativeCollectionOperator { identified_by: AssociativeCollection }
 actor StableEqualityComparableOperator { identified_by: StableEqualityComparable }
 actor TotallyOrderedOperator { identified_by: TotallyOrdered }
+actor NothrowStableEqualityComparableOperator { identified_by: NothrowStableEqualityComparable }
 actor ConceptMemberNamingOperator { identified_by: ConceptMemberNaming }

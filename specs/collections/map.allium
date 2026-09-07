@@ -25,6 +25,10 @@ entity Map {
     requires_nothrow_destruction: Boolean
     supports_empty_explicit_capacity_construction: Boolean
     supports_explicit_capacity_construction: Boolean
+    supports_literal_deduced_construction: Boolean
+    supports_capacity_inferred_literal_equivalent_semantics: Boolean
+    oversized_initializer_is_compile_time_failure: Boolean
+    pack_construction_folds_over_assoc: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_associative_lookup: Boolean
     supports_associative_fallback_lookup: Boolean
@@ -142,6 +146,22 @@ entity Map {
 
     invariant SupportsExplicitCapacityConstruction {
         this.supports_explicit_capacity_construction = true
+    }
+
+    invariant SupportsLiteralDeducedConstruction {
+        this.supports_literal_deduced_construction = true
+    }
+
+    invariant SupportsCapacityInferredLiteralEquivalentSemantics {
+        this.supports_capacity_inferred_literal_equivalent_semantics = true
+    }
+
+    invariant OversizedInitializerIsCompileTimeFailure {
+        this.oversized_initializer_is_compile_time_failure = true
+    }
+
+    invariant PackConstructionFoldsOverAssoc {
+        this.pack_construction_folds_over_assoc = true
     }
 
     invariant CapacityExceedsMaximumIsCompileTimeFailure {
