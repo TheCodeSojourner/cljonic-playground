@@ -96,106 +96,121 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">template</span> &lt;concepts::CopyableElement T, std::<span class="keywordtype">size_t</span> CapacityValue&gt;</div>
-<div class="foldopen" id="foldopen00041" data-start="{" data-end="};">
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html">   41</a></span><span class="keyword">class </span><a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> {</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a4f7ab05a1116c878fb3eb1ff346534e8">   43</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="classcljonic_1_1_queue.html#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a> = T;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">static_assert</span>(<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_copyable_element.html">concepts::NothrowCopyableElement&lt;T&gt;</a>, <span class="stringliteral">&quot;Queue element type operations must not throw&quot;</span>);</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">static_assert</span>(CapacityValue &lt;= <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                  <span class="stringliteral">&quot;Queue capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT&quot;</span>);</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="foldopen" id="foldopen00049" data-start="{" data-end="}">
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a31559309eb2c223649263def193e98ef">   49</a></span>    <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a31559309eb2c223649263def193e98ef">Queue</a>() noexcept : elements_{}, head_{0}, logical_size_{0} {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    }</div>
-</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="foldopen" id="foldopen00052" data-start="{" data-end="}">
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#aa0f76c954887926d7066589eeb3851ee">   52</a></span>    [[nodiscard]] <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#aa0f76c954887926d7066589eeb3851ee">capacity</a>() noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="keywordflow">return</span> CapacityValue;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    }</div>
-</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="foldopen" id="foldopen00056" data-start="{" data-end="}">
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#add8227bce3ff33890e2bce09c35b6244">   56</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#add8227bce3ff33890e2bce09c35b6244">count</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <span class="keywordflow">return</span> logical_size_;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    }</div>
-</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="foldopen" id="foldopen00060" data-start="{" data-end="}">
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a2663ea00782f7664e15bba3f90dcce94">   60</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a2663ea00782f7664e15bba3f90dcce94">is_empty</a>() const noexcept -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keywordflow">return</span> logical_size_ == 0U;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    }</div>
-</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="keyword">template</span> &lt;concepts::CopyableElement T, std::<span class="keywordtype">size_t</span> CapacityValue&gt;</div>
+<div class="foldopen" id="foldopen00047" data-start="{" data-end="};">
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html">   47</a></span><span class="keyword">class </span><a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> {</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a4f7ab05a1116c878fb3eb1ff346534e8">   49</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="classcljonic_1_1_queue.html#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a> = T;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keyword">static_assert</span>(<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_copyable_element.html">concepts::NothrowCopyableElement&lt;T&gt;</a>, <span class="stringliteral">&quot;Queue element type operations must not throw&quot;</span>);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">static_assert</span>(</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        CapacityValue &lt;= <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="stringliteral">&quot;Queue CapacityValue exceeds &quot;</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="stringliteral">&quot;CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=&quot;</span> <a class="code hl_define" href="cljonic-config_8hpp.html#a79e6d0db8a00de83923cebef40296dab">CLJONIC_STRINGIFY</a>(<a class="code hl_define" href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a>));</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
+<div class="foldopen" id="foldopen00058" data-start="{" data-end="}">
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#acf3e2037031663681f0b8a33d3e261d2">   58</a></span>    <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#acf3e2037031663681f0b8a33d3e261d2">Queue</a>(Args&amp;&amp;... args) <span class="keyword">noexcept</span>((<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html">concepts::NothrowElementConstruction&lt;T, Args&gt;</a> &amp;&amp; ...)) {</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keyword">static_assert</span>(<span class="keyword">sizeof</span>...(Args) &lt;= CapacityValue, <span class="stringliteral">&quot;Queue initializer count exceeds Queue CapacityValue&quot;</span>);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keyword">static_assert</span>((<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html">concepts::NothrowElementConstruction&lt;T, Args&gt;</a> &amp;&amp; ...),</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>                      <span class="stringliteral">&quot;Queue constructor requires all arguments to construct &quot;</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                      <span class="stringliteral">&quot;T without throwing and be implicitly convertible to T&quot;</span>);</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="foldopen" id="foldopen00065" data-start="{" data-end="}">
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a7bc3d9162166aac4fb948c54a7709d9e">   65</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a7bc3d9162166aac4fb948c54a7709d9e">can_conj</a>() const noexcept -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordflow">return</span> logical_size_ &lt; CapacityValue;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    }</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        ((*<span class="keyword">this</span> = <a class="code hl_function" href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">conj</a>(T{std::forward&lt;Args&gt;(args)})), ...);</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    }</div>
 </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="foldopen" id="foldopen00067" data-start="{" data-end="}">
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#aa0f76c954887926d7066589eeb3851ee">   67</a></span>    [[nodiscard]] <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#aa0f76c954887926d7066589eeb3851ee">capacity</a>() noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">return</span> CapacityValue;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
+</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="foldopen" id="foldopen00071" data-start="{" data-end="}">
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">   71</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">conj</a>(<span class="keyword">const</span> T&amp; element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> result = *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keywordflow">if</span> (result.logical_size_ &lt; CapacityValue) {</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            <span class="keyword">const</span> <span class="keyword">auto</span> tail = (result.head_ + result.logical_size_) % CapacityValue;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            result.elements_[tail] = element;</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>            ++result.logical_size_;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        }</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    }</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#add8227bce3ff33890e2bce09c35b6244">   71</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#add8227bce3ff33890e2bce09c35b6244">count</a>() const noexcept -&gt; std::<span class="keywordtype">size_t</span> {</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="keywordflow">return</span> logical_size_;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    }</div>
 </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="foldopen" id="foldopen00083" data-start="{" data-end="}">
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b">   83</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b">peek</a>() const noexcept -&gt; T {</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="keywordflow">return</span> (logical_size_ &gt; 0) ? elements_[head_] : T{};</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    }</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="foldopen" id="foldopen00075" data-start="{" data-end="}">
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a2663ea00782f7664e15bba3f90dcce94">   75</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a2663ea00782f7664e15bba3f90dcce94">is_empty</a>() const noexcept -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordflow">return</span> logical_size_ == 0U;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    }</div>
 </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="foldopen" id="foldopen00089" data-start="{" data-end="}">
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c">   89</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c">pop</a>() const noexcept -&gt; <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> {</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> result = *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keywordflow">if</span> (result.logical_size_ &gt; 0) {</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            result.head_ = (result.head_ + 1) % CapacityValue;</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>            --result.logical_size_;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        }</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    }</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="foldopen" id="foldopen00080" data-start="{" data-end="}">
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a7bc3d9162166aac4fb948c54a7709d9e">   80</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a7bc3d9162166aac4fb948c54a7709d9e">can_conj</a>() const noexcept -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordflow">return</span> logical_size_ &lt; CapacityValue;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    }</div>
 </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    std::array&lt;value_type, CapacityValue&gt; elements_{};</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    std::size_t head_{0};</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    std::size_t logical_size_{0};</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>};</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="foldopen" id="foldopen00086" data-start="{" data-end="}">
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">   86</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">conj</a>(<span class="keyword">const</span> T&amp; element) <span class="keyword">const</span> <span class="keyword">noexcept</span> -&gt; <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> result = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <span class="keywordflow">if</span> (result.logical_size_ &lt; CapacityValue) {</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            <span class="keyword">const</span> <span class="keyword">auto</span> tail = (result.head_ + result.logical_size_) % CapacityValue;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            result.elements_[tail] = element;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            ++result.logical_size_;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        }</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    }</div>
 </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>} <span class="comment">// namespace cljonic</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a> {</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, std::<span class="keywordtype">size_t</span> CapacityValue&gt;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keyword">struct </span>collection_traits&lt;Queue&lt;<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">T</a>, <a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">CapacityValue</a>&gt;&gt; {</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="structcljonic_1_1concepts__detail_1_1collection__traits.html#aafcd8321760c7020fd4dc6e7da13297d">is_cljonic_collection</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <a class="code hl_enumeration" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122">collection_kind</a> <a class="code hl_variable" href="structcljonic_1_1concepts__detail_1_1collection__traits.html#a5f3da6c6002ddf98a31dfe409c5f91f6">kind</a> = <a class="code hl_enumvalue" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122aa9d1cbf71942327e98b40cf5ef38a960">collection_kind::queue</a>;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>};</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>} <span class="comment">// namespace cljonic::concepts_detail</span></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00041">cljonic-queue.hpp:41</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_a2663ea00782f7664e15bba3f90dcce94"><div class="ttname"><a href="classcljonic_1_1_queue.html#a2663ea00782f7664e15bba3f90dcce94">cljonic::Queue::is_empty</a></div><div class="ttdeci">constexpr auto is_empty() const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00060">cljonic-queue.hpp:60</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_a31559309eb2c223649263def193e98ef"><div class="ttname"><a href="classcljonic_1_1_queue.html#a31559309eb2c223649263def193e98ef">cljonic::Queue::Queue</a></div><div class="ttdeci">constexpr Queue() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00049">cljonic-queue.hpp:49</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_a32407b5e0f44ef39bf07b5c18fee3c9c"><div class="ttname"><a href="classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c">cljonic::Queue::pop</a></div><div class="ttdeci">constexpr auto pop() const noexcept -&gt; Queue</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00089">cljonic-queue.hpp:89</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_a351e7be209764b31bd4fd0c350225ee1"><div class="ttname"><a href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">cljonic::Queue::conj</a></div><div class="ttdeci">constexpr auto conj(const T &amp;element) const noexcept -&gt; Queue</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00071">cljonic-queue.hpp:71</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_a4f7ab05a1116c878fb3eb1ff346534e8"><div class="ttname"><a href="classcljonic_1_1_queue.html#a4f7ab05a1116c878fb3eb1ff346534e8">cljonic::Queue::value_type</a></div><div class="ttdeci">T value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00043">cljonic-queue.hpp:43</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_a5f306ec2a9ba4a3cb703289b4162eb4b"><div class="ttname"><a href="classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b">cljonic::Queue::peek</a></div><div class="ttdeci">constexpr auto peek() const noexcept -&gt; T</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00083">cljonic-queue.hpp:83</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_a7bc3d9162166aac4fb948c54a7709d9e"><div class="ttname"><a href="classcljonic_1_1_queue.html#a7bc3d9162166aac4fb948c54a7709d9e">cljonic::Queue::can_conj</a></div><div class="ttdeci">constexpr auto can_conj() const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00065">cljonic-queue.hpp:65</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_aa0f76c954887926d7066589eeb3851ee"><div class="ttname"><a href="classcljonic_1_1_queue.html#aa0f76c954887926d7066589eeb3851ee">cljonic::Queue::capacity</a></div><div class="ttdeci">static constexpr auto capacity() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00052">cljonic-queue.hpp:52</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_add8227bce3ff33890e2bce09c35b6244"><div class="ttname"><a href="classcljonic_1_1_queue.html#add8227bce3ff33890e2bce09c35b6244">cljonic::Queue::count</a></div><div class="ttdeci">constexpr auto count() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00056">cljonic-queue.hpp:56</a></div></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="foldopen" id="foldopen00098" data-start="{" data-end="}">
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b">   98</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b">peek</a>() const noexcept -&gt; T {</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        <span class="keywordflow">return</span> (logical_size_ &gt; 0) ? elements_[head_] : T{};</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    }</div>
+</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
+<div class="foldopen" id="foldopen00104" data-start="{" data-end="}">
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c">  104</a></span>    [[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c">pop</a>() const noexcept -&gt; <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> {</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a> result = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        <span class="keywordflow">if</span> (result.logical_size_ &gt; 0) {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            result.head_ = (result.head_ + 1) % CapacityValue;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>            --result.logical_size_;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        }</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    }</div>
+</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    std::array&lt;value_type, CapacityValue&gt; elements_{};</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    std::size_t head_{0};</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    std::size_t logical_size_{0};</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>};</div>
+</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> First, <span class="keyword">typename</span>... Rest&gt;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a1ccca56ddfbbc85bcfba4064a08761d3">  120</a></span><a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>(First, Rest...) -&gt; <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>&lt;First, 1 + <span class="keyword">sizeof</span>...(Rest)&gt;;</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a> {</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, std::<span class="keywordtype">size_t</span> CapacityValue&gt;</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span><span class="keyword">struct </span>collection_traits&lt;Queue&lt;<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">T</a>, <a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">CapacityValue</a>&gt;&gt; {</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="structcljonic_1_1concepts__detail_1_1collection__traits.html#aafcd8321760c7020fd4dc6e7da13297d">is_cljonic_collection</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <a class="code hl_enumeration" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122">collection_kind</a> <a class="code hl_variable" href="structcljonic_1_1concepts__detail_1_1collection__traits.html#a5f3da6c6002ddf98a31dfe409c5f91f6">kind</a> = <a class="code hl_enumvalue" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122aa9d1cbf71942327e98b40cf5ef38a960">collection_kind::queue</a>;</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>};</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>} <span class="comment">// namespace cljonic::concepts_detail</span></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00047">cljonic-queue.hpp:47</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_a2663ea00782f7664e15bba3f90dcce94"><div class="ttname"><a href="classcljonic_1_1_queue.html#a2663ea00782f7664e15bba3f90dcce94">cljonic::Queue::is_empty</a></div><div class="ttdeci">constexpr auto is_empty() const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00075">cljonic-queue.hpp:75</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_a32407b5e0f44ef39bf07b5c18fee3c9c"><div class="ttname"><a href="classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c">cljonic::Queue::pop</a></div><div class="ttdeci">constexpr auto pop() const noexcept -&gt; Queue</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00104">cljonic-queue.hpp:104</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_a351e7be209764b31bd4fd0c350225ee1"><div class="ttname"><a href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">cljonic::Queue::conj</a></div><div class="ttdeci">constexpr auto conj(const T &amp;element) const noexcept -&gt; Queue</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00086">cljonic-queue.hpp:86</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_a4f7ab05a1116c878fb3eb1ff346534e8"><div class="ttname"><a href="classcljonic_1_1_queue.html#a4f7ab05a1116c878fb3eb1ff346534e8">cljonic::Queue::value_type</a></div><div class="ttdeci">T value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00049">cljonic-queue.hpp:49</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_a5f306ec2a9ba4a3cb703289b4162eb4b"><div class="ttname"><a href="classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b">cljonic::Queue::peek</a></div><div class="ttdeci">constexpr auto peek() const noexcept -&gt; T</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00098">cljonic-queue.hpp:98</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_a7bc3d9162166aac4fb948c54a7709d9e"><div class="ttname"><a href="classcljonic_1_1_queue.html#a7bc3d9162166aac4fb948c54a7709d9e">cljonic::Queue::can_conj</a></div><div class="ttdeci">constexpr auto can_conj() const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00080">cljonic-queue.hpp:80</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_aa0f76c954887926d7066589eeb3851ee"><div class="ttname"><a href="classcljonic_1_1_queue.html#aa0f76c954887926d7066589eeb3851ee">cljonic::Queue::capacity</a></div><div class="ttdeci">static constexpr auto capacity() noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00067">cljonic-queue.hpp:67</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_acf3e2037031663681f0b8a33d3e261d2"><div class="ttname"><a href="classcljonic_1_1_queue.html#acf3e2037031663681f0b8a33d3e261d2">cljonic::Queue::Queue</a></div><div class="ttdeci">constexpr Queue(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; T, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00058">cljonic-queue.hpp:58</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_add8227bce3ff33890e2bce09c35b6244"><div class="ttname"><a href="classcljonic_1_1_queue.html#add8227bce3ff33890e2bce09c35b6244">cljonic::Queue::count</a></div><div class="ttdeci">constexpr auto count() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00071">cljonic-queue.hpp:71</a></div></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
 <div class="ttc" id="acljonic-config_8hpp_html"><div class="ttname"><a href="cljonic-config_8hpp.html">cljonic-config.hpp</a></div></div>
+<div class="ttc" id="acljonic-config_8hpp_html_a3de5728cfb3d964bf6b7c08224c174ad"><div class="ttname"><a href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a></div><div class="ttdeci">#define CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</div><div class="ttdef"><b>Definition</b> <a href="cljonic-config_8hpp_source.html#l00004">cljonic-config.hpp:4</a></div></div>
+<div class="ttc" id="acljonic-config_8hpp_html_a79e6d0db8a00de83923cebef40296dab"><div class="ttname"><a href="cljonic-config_8hpp.html#a79e6d0db8a00de83923cebef40296dab">CLJONIC_STRINGIFY</a></div><div class="ttdeci">#define CLJONIC_STRINGIFY(x)</div><div class="ttdef"><b>Definition</b> <a href="cljonic-config_8hpp_source.html#l00008">cljonic-config.hpp:8</a></div></div>
 <div class="ttc" id="acljonic-core-collection-maximum-element-count_8hpp_html"><div class="ttname"><a href="cljonic-core-collection-maximum-element-count_8hpp.html">cljonic-core-collection-maximum-element-count.hpp</a></div></div>
 <div class="ttc" id="aconceptcljonic_1_1concepts_1_1_nothrow_copyable_element_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_nothrow_copyable_element.html">cljonic::concepts::NothrowCopyableElement</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00048">cljonic-concepts.hpp:48</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_nothrow_element_construction_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html">cljonic::concepts::NothrowElementConstruction</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00053">cljonic-concepts.hpp:53</a></div></div>
 <div class="ttc" id="anamespacecljonic_1_1concepts__detail_html"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00011">cljonic-concepts.hpp:11</a></div></div>
 <div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a2e9b3e27bfcfd4e694144ca6f355b122"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122">cljonic::concepts_detail::collection_kind</a></div><div class="ttdeci">collection_kind</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00013">cljonic-concepts.hpp:13</a></div></div>
 <div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a2e9b3e27bfcfd4e694144ca6f355b122aa9d1cbf71942327e98b40cf5ef38a960"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122aa9d1cbf71942327e98b40cf5ef38a960">cljonic::concepts_detail::collection_kind::queue</a></div><div class="ttdeci">@ queue</div></div>
@@ -207,7 +222,7 @@ $(document).ready(function() { init_codefold(0); });
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Sep 6 2026 14:45:19 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Mon Sep 7 2026 17:10:21 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

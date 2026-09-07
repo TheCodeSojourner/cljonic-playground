@@ -13,9 +13,8 @@ var searchData=
   ['cljonic_3a_3aconcepts_3a_3anothrowcollectionelement_10',['NothrowCollectionElement',['../conceptcljonic_1_1concepts_1_1_nothrow_collection_element.html',1,'cljonic::concepts']]],
   ['cljonic_3a_3aconcepts_3a_3anothrowcopyableelement_11',['NothrowCopyableElement',['../conceptcljonic_1_1concepts_1_1_nothrow_copyable_element.html',1,'cljonic::concepts']]],
   ['cljonic_3a_3aconcepts_3a_3anothrowelementconstruction_12',['NothrowElementConstruction',['../conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html',1,'cljonic::concepts']]],
-  ['cljonic_3a_3aconcepts_3a_3anothrowvectorelement_13',['NothrowVectorElement',['../conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html',1,'cljonic::concepts']]],
+  ['cljonic_3a_3aconcepts_3a_3anothrowstableequalitycomparable_13',['NothrowStableEqualityComparable',['../conceptcljonic_1_1concepts_1_1_nothrow_stable_equality_comparable.html',1,'cljonic::concepts']]],
   ['cljonic_3a_3aconcepts_3a_3asequenceablecollection_14',['SequenceableCollection',['../conceptcljonic_1_1concepts_1_1_sequenceable_collection.html',1,'cljonic::concepts']]],
   ['cljonic_3a_3aconcepts_3a_3astableequalitycomparable_15',['StableEqualityComparable',['../conceptcljonic_1_1concepts_1_1_stable_equality_comparable.html',1,'cljonic::concepts']]],
-  ['cljonic_3a_3aconcepts_3a_3atotallyordered_16',['TotallyOrdered',['../conceptcljonic_1_1concepts_1_1_totally_ordered.html',1,'cljonic::concepts']]],
-  ['cljonic_3a_3aconcepts_3a_3avectorelement_17',['VectorElement',['../conceptcljonic_1_1concepts_1_1_vector_element.html',1,'cljonic::concepts']]]
+  ['cljonic_3a_3aconcepts_3a_3atotallyordered_16',['TotallyOrdered',['../conceptcljonic_1_1concepts_1_1_totally_ordered.html',1,'cljonic::concepts']]]
 ];
