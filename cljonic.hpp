@@ -442,19 +442,19 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr Map<int, int, 4> m_const{};
- *   static_assert(can_assoc(m_const, 1, 100));
+ *   static_assert(can_assoc(m_const, 1));
  *
  *   // Runtime demonstration.
  *   auto m_runtime = Map<int, int, 4>{};
- *   const auto ok = can_assoc(m_runtime, 2, 200);
+ *   const auto ok = can_assoc(m_runtime, 2);
  *
  *   return ok ? 0 : 1;
  * }
  * ~~~~~
  */
-template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key, const V& value) noexcept -> bool {
-    return collection.can_assoc(key, value);
+template <typename C, typename K>
+[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key) noexcept -> bool {
+    return collection.can_assoc(key);
 }
 
 } // namespace cljonic
@@ -797,8 +797,8 @@ template <concepts::SequenceableCollection C>
 #pragma once
 
 #include <array>
+#include <concepts>
 #include <cstddef>
-#include <utility>
 
 // Begin cljonic-map-entry.hpp
 #pragma once
@@ -810,7 +810,8 @@ namespace cljonic {
 
 /** \anchor MapEntry
  * \b MapEntry is a value-semantic pair representing a single key-value
- * association.
+ * association. Its key satisfies `NothrowStableEqualityComparable`; its value
+ * satisfies `NothrowCollectionElement`.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -837,7 +838,7 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename KeyType, typename ValueType>
+template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType>
 struct MapEntry {
     KeyType key{};
     ValueType value{};
@@ -896,9 +897,10 @@ namespace cljonic {
  *   static_assert(replaced(Key{2}, Value{99}).amount == 99);
  *   static_assert(replaced.can_assoc(Key{2}));
  *
- *   // Pack-literal construction folds assoc over each entry in argument
- *   // order; CTAD deduces Map<Key, Value, 2>. A later duplicate key
- *   // replaces an earlier one, matching explicit assoc semantics.
+ *   // Pack-literal construction requires one or more MapEntry<Key, Value>
+ *   // arguments (no implicit conversion from other types); it folds assoc
+ *   // over each entry in argument order. CTAD deduces Map<Key, Value, 2>. A
+ *   // later duplicate key replaces an earlier one, matching explicit assoc.
  *   constexpr auto literal = Map{MapEntry<Key, Value>{Key{1}, Value{10}}, MapEntry<Key, Value>{Key{1}, Value{20}}};
  *   static_assert(literal.count() == 1U);
  *   static_assert(literal(Key{1}).amount == 20);
@@ -927,15 +929,14 @@ class Map {
         "Map CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    template <typename... Args>
-    constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
-        static_assert((concepts::NothrowElementConstruction<value_type, Args> && ...),
-                      "Map constructor requires all arguments to construct "
-                      "MapEntry<KeyType, ValueType> without throwing and be "
-                      "implicitly convertible to MapEntry<KeyType, ValueType>");
+    constexpr Map() noexcept = default;
 
-        ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
+    template <std::same_as<value_type>... Entries>
+        requires(sizeof...(Entries) >= 1)
+    constexpr Map(const Entries&... entries) noexcept {
+        static_assert(sizeof...(Entries) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
+
+        ((*this = assoc_entry(entries)), ...);
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -966,10 +967,6 @@ class Map {
 
     [[nodiscard]] constexpr auto can_assoc(const KeyType& key) const noexcept -> bool {
         return contains(key) || (logical_size_ < CapacityValue);
-    }
-
-    [[nodiscard]] constexpr auto can_assoc(const KeyType& key, const ValueType& /*value*/) const noexcept -> bool {
-        return can_assoc(key);
     }
 
     [[nodiscard]] constexpr auto assoc(const KeyType& key, const ValueType& value) const noexcept -> Map {

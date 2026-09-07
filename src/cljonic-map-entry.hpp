@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cljonic-concepts.hpp>
 #include <concepts>
 #include <cstddef>
 
@@ -7,7 +8,8 @@ namespace cljonic {
 
 /** \anchor MapEntry
  * \b MapEntry is a value-semantic pair representing a single key-value
- * association.
+ * association. Its key satisfies `NothrowStableEqualityComparable`; its value
+ * satisfies `NothrowCollectionElement`.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -34,7 +36,7 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename KeyType, typename ValueType>
+template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType>
 struct MapEntry {
     KeyType key{};
     ValueType value{};

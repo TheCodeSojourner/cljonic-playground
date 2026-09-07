@@ -18,19 +18,19 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr Map<int, int, 4> m_const{};
- *   static_assert(can_assoc(m_const, 1, 100));
+ *   static_assert(can_assoc(m_const, 1));
  *
  *   // Runtime demonstration.
  *   auto m_runtime = Map<int, int, 4>{};
- *   const auto ok = can_assoc(m_runtime, 2, 200);
+ *   const auto ok = can_assoc(m_runtime, 2);
  *
  *   return ok ? 0 : 1;
  * }
  * ~~~~~
  */
-template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key, const V& value) noexcept -> bool {
-    return collection.can_assoc(key, value);
+template <typename C, typename K>
+[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key) noexcept -> bool {
+    return collection.can_assoc(key);
 }
 
 } // namespace cljonic
