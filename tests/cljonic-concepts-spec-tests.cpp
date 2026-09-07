@@ -552,6 +552,9 @@ TEST_CASE("Vector element storage requires non-throwing operations", "[vector][c
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowVectorElement<ThrowingDestruction>);
     STATIC_REQUIRE(cljonic::concepts::NothrowCollectionElement<int>);
     STATIC_REQUIRE(cljonic::concepts::NothrowVectorElement<int>);
+    STATIC_REQUIRE(cljonic::concepts::NothrowCollectionElement<int>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingDefault>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingAssignment>);
     STATIC_REQUIRE(noexcept(cljonic::Vector<int, 4>{1, 2}));
 }
 

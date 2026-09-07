@@ -26,6 +26,7 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     TRACE_ID("invariant.Map.DeepCopyUpdate");
     TRACE_ID("invariant.Map.ReferentialTransparency");
     TRACE_ID("invariant.Map.RequiresValueSemanticElements");
+    TRACE_ID("invariant.Map.RequiresNothrowCollectionElementKeyAndValueAdmission");
     TRACE_ID("invariant.Map.RequiresNothrowDefaultConstruction");
     TRACE_ID("invariant.Map.RequiresNothrowCopyConstruction");
     TRACE_ID("invariant.Map.RequiresNothrowCopyAssignment");
@@ -55,6 +56,13 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     STATIC_REQUIRE(m.is_empty());
     STATIC_REQUIRE(m.count() == 0U);
     STATIC_REQUIRE(m.capacity() == 4U);
+
+    constexpr Map<int, int, 0> zero_capacity{};
+    STATIC_REQUIRE(zero_capacity.is_empty());
+    STATIC_REQUIRE(zero_capacity.count() == 0U);
+    STATIC_REQUIRE(zero_capacity(1) == 0);
+    STATIC_REQUIRE(zero_capacity(1, -1) == -1);
+    STATIC_REQUIRE_FALSE(zero_capacity.can_assoc(1));
 
     constexpr auto m1 = m.assoc(10, 100);
     STATIC_REQUIRE_FALSE(m1.is_empty());
@@ -126,4 +134,10 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
 
     auto rm_dissoc_absent = rm1.dissoc(999);
     REQUIRE(rm_dissoc_absent.count() == 1U);
+
+    volatile int missing_key_raw = 999;
+    const int missing_key = missing_key_raw;
+    REQUIRE_FALSE(rm1.contains(missing_key));
+    REQUIRE(rm1(missing_key) == 0);
+    REQUIRE(rm1(missing_key, -7) == -7);
 }
