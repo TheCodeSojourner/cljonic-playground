@@ -85,6 +85,15 @@ Collection types overload `operator()` to provide convenience lookup:
 
 Map keys and values are admitted only when they satisfy `NothrowCollectionElement`; key lookup additionally requires stable equality. This storage boundary does not imply ordering, hashing, or parsing capabilities.
 
+## Pack-Literal Construction Architecture
+
+`Map<K, V, N>`, `Set<T, N>`, and `Queue<T, N>` each provide a single variadic constructor, mirroring `Vector`'s CTAD-deducible pack constructor, instead of a separate no-argument default constructor:
+- `Map{entries...}` default-constructs an empty map, then folds `assoc(entry.key, entry.value)` over each `MapEntry<K, V>`-constructible argument in order, so a later duplicate key replaces an earlier one.
+- `Set{values...}` folds `conj(value)` over each argument in order, so a later duplicate value is a no-op.
+- `Queue{values...}` folds `conj(value)` over each argument in order, establishing FIFO order matching argument order.
+
+Each constructor rejects an oversized argument pack (`sizeof...(Args) > N`) at compile time, mirroring `Vector`'s oversized-initializer diagnostic, even when duplicate keys or values would have produced a smaller final count.
+
 `operator[]` is explicitly omitted to prevent accidental unchecked access or insertion syntax.
 
 ## Primitive Free Function Layer Architecture

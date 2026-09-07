@@ -60,6 +60,18 @@ REQ-COLL-016. An explicit-capacity string-literal construction whose literal con
 
 REQ-COLL-017. The API MUST support capacity-inferred string-literal construction such that `cljonic::String{literal}` has the same semantics and type as `cljonic::String<content_length>{literal}`, where `content_length` excludes the literal's null terminator.
 
+REQ-COLL-018. The API MUST support pack-literal construction for `Map<K, V, N>` such that `cljonic::Map<K, V, N>{entries...}` is equivalent to default-constructing an empty map and folding `assoc` over each `MapEntry<K, V>`-constructible argument in argument order. A later argument whose key matches an earlier argument's key MUST replace the earlier argument's value, consistent with `REQ-COLL-004A`.
+
+REQ-COLL-018A. A `Map<K, V, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time, regardless of whether duplicate keys would have produced a smaller final count. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Map{entries...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
+
+REQ-COLL-019. The API MUST support pack-literal construction for `Set<T, N>` such that `cljonic::Set<T, N>{values...}` is equivalent to default-constructing an empty set and folding `conj` over each `T`-constructible argument in argument order, consistent with the no-op-on-duplicate semantics of `REQ-COLL-005A`.
+
+REQ-COLL-019A. A `Set<T, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time, regardless of whether duplicate values would have produced a smaller final count. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Set{values...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
+
+REQ-COLL-020. The API MUST support pack-literal construction for `Queue<T, N>` such that `cljonic::Queue<T, N>{values...}` is equivalent to default-constructing an empty queue and folding `conj` over each `T`-constructible argument in argument order, producing FIFO order matching argument order.
+
+REQ-COLL-020A. A `Queue<T, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Queue{values...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
+
 ## Sequence Traversal Mechanics
 
 REQ-SEQ-001. The library MUST define sequence as a traversal behavior over immutable values in the cljonic collection family, not as a separate owning collection type.
