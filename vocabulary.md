@@ -436,7 +436,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
 - **Related:** MapEntry, AssociativeAccess, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback.
+- **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback. `Map{MapEntry{1, 10}, MapEntry{2, 20}}` deduces `Map<int, int, 2>` and folds `assoc` over each entry in argument order.
 
 
 ### Set
@@ -452,7 +452,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** bounded queue, fixed-capacity queue, FIFO queue
 - **Related:** Sequence, CopyOnModifyCollection, Traversal, ConstRangeTraversal, LogicalTraversalOrder, ContiguousStorage, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front).
+- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order.
 
 
 ### String
@@ -964,6 +964,14 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Related:** TotalOrder, StableEqualityComparable, StableEquality, NumericPolicy
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `TotallyOrdered<T>` requires `a < b` in addition to stable equality.
+
+
+### NothrowStableEqualityComparable
+- **Definition:** The C++ concept identifier combining StableEqualityComparable with NothrowCollectionElement, the shared admission contract for map keys and set elements.
+- **Deprecated Synonyms:** nothrow_stable_equality_comparable, map key concept, set element concept
+- **Related:** StableEqualityComparable, NothrowCollectionElement, Map, Set
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `NothrowStableEqualityComparable<int>` is satisfied; a type with a throwing copy assignment is rejected even if it defines `operator==`.
 
 
 ### StaticInspectableStorage
