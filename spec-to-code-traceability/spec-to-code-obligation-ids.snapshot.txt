@@ -50,6 +50,7 @@ entity-fields.Nnext
 entity-fields.NotAny
 entity-fields.NotEmpty
 entity-fields.NotEvery
+entity-fields.NothrowStableEqualityComparable
 entity-fields.Nth
 entity-fields.NthNext
 entity-fields.NthRest
@@ -476,6 +477,8 @@ invariant.Map.MissingKeyReturnsSuppliedFallback
 invariant.Map.NoExceptions
 invariant.Map.NoHeapAllocation
 invariant.Map.NoRtti
+invariant.Map.OversizedInitializerIsCompileTimeFailure
+invariant.Map.PackConstructionFoldsOverAssoc
 invariant.Map.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Map.ProducerOnlyResultStatusDeclared
 invariant.Map.ReferentialTransparency
@@ -490,8 +493,10 @@ invariant.Map.SingleThreadedExecutionModel
 invariant.Map.StaticOrAutomaticStorageOnly
 invariant.Map.SupportsAssociativeFallbackLookup
 invariant.Map.SupportsAssociativeLookup
+invariant.Map.SupportsCapacityInferredLiteralEquivalentSemantics
 invariant.Map.SupportsEmptyExplicitCapacityConstruction
 invariant.Map.SupportsExplicitCapacityConstruction
+invariant.Map.SupportsLiteralDeducedConstruction
 invariant.Map.SwapAndRemove
 invariant.Map.UpdateReturnsNewValue
 invariant.Mapv.CallbackIsFirstArgument
@@ -556,6 +561,8 @@ invariant.NotEvery.ResultIsBoolean
 invariant.NotEvery.ReturnsBoolean
 invariant.NotEvery.ShortCircuitIsDeclared
 invariant.NotEvery.SourceIsSecondArgument
+invariant.NothrowStableEqualityComparable.ExtendsNothrowCollectionElement
+invariant.NothrowStableEqualityComparable.ExtendsStableEquality
 invariant.Nth.ContainsIsPreflight
 invariant.Nth.FailurePolicyIsTyped
 invariant.Nth.FallbackIsOptional
@@ -684,6 +691,8 @@ invariant.Queue.LogicalSizeIsNonNegative
 invariant.Queue.NoExceptions
 invariant.Queue.NoHeapAllocation
 invariant.Queue.NoRtti
+invariant.Queue.OversizedInitializerIsCompileTimeFailure
+invariant.Queue.PackConstructionFoldsOverConj
 invariant.Queue.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Queue.ProducerOnlyResultStatusDeclared
 invariant.Queue.ReferentialTransparency
@@ -695,9 +704,11 @@ invariant.Queue.RequiresValueSemanticElements
 invariant.Queue.RuntimeCapacityFailuresHaveDocumentedPolicy
 invariant.Queue.SingleThreadedExecutionModel
 invariant.Queue.StaticOrAutomaticStorageOnly
+invariant.Queue.SupportsCapacityInferredLiteralEquivalentSemantics
 invariant.Queue.SupportsConjOperation
 invariant.Queue.SupportsEmptyExplicitCapacityConstruction
 invariant.Queue.SupportsExplicitCapacityConstruction
+invariant.Queue.SupportsLiteralDeducedConstruction
 invariant.Queue.SupportsPeekOperation
 invariant.Queue.SupportsPopOperation
 invariant.Queue.UpdateReturnsNewValue
@@ -805,6 +816,8 @@ invariant.Set.MissingValueReturnsSuppliedFallback
 invariant.Set.NoExceptions
 invariant.Set.NoHeapAllocation
 invariant.Set.NoRtti
+invariant.Set.OversizedInitializerIsCompileTimeFailure
+invariant.Set.PackConstructionFoldsOverConj
 invariant.Set.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Set.ProducerOnlyResultStatusDeclared
 invariant.Set.ReferentialTransparency
@@ -816,8 +829,10 @@ invariant.Set.RequiresValueSemanticElements
 invariant.Set.RuntimeCapacityFailuresHaveDocumentedPolicy
 invariant.Set.SingleThreadedExecutionModel
 invariant.Set.StaticOrAutomaticStorageOnly
+invariant.Set.SupportsCapacityInferredLiteralEquivalentSemantics
 invariant.Set.SupportsEmptyExplicitCapacityConstruction
 invariant.Set.SupportsExplicitCapacityConstruction
+invariant.Set.SupportsLiteralDeducedConstruction
 invariant.Set.SupportsMembershipFallbackLookup
 invariant.Set.SupportsMembershipLookup
 invariant.Set.SwapAndRemove
