@@ -29,6 +29,7 @@ entity Map {
     supports_capacity_inferred_literal_equivalent_semantics: Boolean
     oversized_initializer_is_compile_time_failure: Boolean
     pack_construction_folds_over_assoc: Boolean
+    pack_construction_requires_at_least_one_entry: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_associative_lookup: Boolean
     supports_associative_fallback_lookup: Boolean
@@ -162,6 +163,10 @@ entity Map {
 
     invariant PackConstructionFoldsOverAssoc {
         this.pack_construction_folds_over_assoc = true
+    }
+
+    invariant PackConstructionRequiresAtLeastOneEntry {
+        this.pack_construction_requires_at_least_one_entry = true
     }
 
     invariant CapacityExceedsMaximumIsCompileTimeFailure {

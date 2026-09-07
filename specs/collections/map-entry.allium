@@ -11,6 +11,7 @@ entity MapEntry {
     immutable_public_api: Boolean
     referential_transparency: Boolean
     requires_value_semantic_elements: Boolean
+    requires_nothrow_collection_element_key_and_value_admission: Boolean
     requires_nothrow_default_construction: Boolean
     requires_nothrow_copy_construction: Boolean
     requires_nothrow_copy_assignment: Boolean
@@ -60,6 +61,10 @@ entity MapEntry {
 
     invariant RequiresValueSemanticElements {
         this.requires_value_semantic_elements = true
+    }
+
+    invariant RequiresNothrowCollectionElementKeyAndValueAdmission {
+        this.requires_nothrow_collection_element_key_and_value_admission = true
     }
 
     invariant RequiresNothrowDefaultConstruction {
