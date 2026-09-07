@@ -383,10 +383,26 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** Mapping reports invalid, missing, or duplicate names through its documented non-throwing policy.
 
+### CopyableElement
+- **Definition:** A user-defined type admissible to a cljonic storage boundary when it is default-initializable and copyable, without requiring the copy operations to be non-throwing. This is the broader storage-admission gate that underpins the stricter non-throwing form used by bounded collections.
+- **Deprecated Synonyms:** copyable collection element, default-initializable copyable type
+- **Related:** NothrowCollectionElement, NothrowCopyableElement, CopyOnModifyCollection, NoExceptionConstraint
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `CopyableElement<int>` is satisfied, and a user-defined type with a throwing copy constructor does not satisfy the stricter `NothrowCollectionElement` rule even if it remains copyable.
+
+
+### NothrowCopyableElement
+- **Definition:** The non-throwing specialization of `CopyableElement`, requiring a type to be copyable and to provide default construction, copy construction, copy assignment, and destruction all as `noexcept`. This is the storage-admission concept used when a collection guarantees non-throwing lifetime and copy semantics.
+- **Deprecated Synonyms:** nothrow copyable element, non-throwing copyable element
+- **Related:** CopyableElement, NothrowCollectionElement, CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `NothrowCopyableElement<int>` is satisfied, while a type with a throwing copy assignment is rejected even if it remains structurally copyable.
+
+
 ### NothrowCollectionElement
 - **Definition:** A user-defined type admissible for storage in a cljonic collection because its default construction, copy construction, copy assignment, and destruction are all non-throwing. This storage-admission capability is independent of equality, ordering, hashing, parsing, traversal, and other operation-specific capabilities.
 - **Deprecated Synonyms:** nothrow collection element, non-throwing collection element
-- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct
+- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct, CopyableElement, NothrowCopyableElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Vector<T, N>`, `Set<T, N>`, or `Queue<T, N>` element, and a `Map<K, V, N>` key or value, must satisfy `NothrowCollectionElement` before storage admission.
 
