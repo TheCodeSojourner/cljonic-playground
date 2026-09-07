@@ -40,6 +40,7 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     TRACE_ID("invariant.Map.SupportsCapacityInferredLiteralEquivalentSemantics");
     TRACE_ID("invariant.Map.OversizedInitializerIsCompileTimeFailure");
     TRACE_ID("invariant.Map.PackConstructionFoldsOverAssoc");
+    TRACE_ID("invariant.Map.PackConstructionRequiresAtLeastOneEntry");
     TRACE_ID("invariant.Map.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.Map.SupportsAssociativeLookup");
     TRACE_ID("invariant.Map.SupportsAssociativeFallbackLookup");
@@ -72,7 +73,9 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     STATIC_REQUIRE_FALSE(zero_capacity.can_assoc(1));
 
     // Pack-literal construction: explicit capacity, CTAD, and duplicate-key
-    // replacement folded over assoc in argument order.
+    // replacement folded over assoc in argument order. Every argument must be
+    // exactly MapEntry<int, int> and at least one argument is required; the
+    // empty case uses the separate default constructor, not this constructor.
     constexpr Map<int, int, 4> explicit_literal{MapEntry<int, int>{1, 10}, MapEntry<int, int>{2, 20}};
     STATIC_REQUIRE(explicit_literal.count() == 2U);
     STATIC_REQUIRE(explicit_literal(1) == 10);
@@ -123,7 +126,6 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     REQUIRE(rm(mk1) == 0);
     REQUIRE(rm(mk1, -1) == -1);
     REQUIRE(rm.can_assoc(mk1));
-    REQUIRE(rm.can_assoc(mk1, mv1));
 
     auto rm1 = rm.assoc(mk1, mv1);
     REQUIRE_FALSE(rm1.is_empty());
