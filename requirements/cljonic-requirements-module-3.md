@@ -8,7 +8,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 REQ-COLL-001. The supported collection family MUST include vector, map, set, queue, and string.
 
-REQ-COLL-001A. Vector elements, set elements, queue elements, map keys, map values, and map-entry fields MUST satisfy the `NothrowCollectionElement` storage contract defined by `REQ-VAL-007A`. String storage uses its separately defined bounded ASCII-byte representation and MUST preserve the same non-throwing storage and destruction guarantees.
+REQ-COLL-001A. Vector elements, set elements, queue elements, map keys, map values, and map-entry fields MUST satisfy the `NothrowCollectionElement` storage contract defined by `REQ-VAL-007A`. String storage uses its separately defined bounded ASCII-byte representation and MUST preserve the same non-throwing storage and destruction guarantees. A `MapEntry<K, V>`'s key field MUST additionally satisfy the stable equality capability required for map key admission, whether the `MapEntry` is embedded in a `Map` or instantiated standalone.
 
 REQ-COLL-002. The library MUST provide a bounded vector with indexed lookup, indexed replacement, append, count, sequence conversion, traversal operations, and stack-style pop/peek behavior where applicable.
 
@@ -60,7 +60,7 @@ REQ-COLL-016. An explicit-capacity string-literal construction whose literal con
 
 REQ-COLL-017. The API MUST support capacity-inferred string-literal construction such that `cljonic::String{literal}` has the same semantics and type as `cljonic::String<content_length>{literal}`, where `content_length` excludes the literal's null terminator.
 
-REQ-COLL-018. The API MUST support pack-literal construction for `Map<K, V, N>` such that `cljonic::Map<K, V, N>{entries...}` is equivalent to default-constructing an empty map and folding `assoc` over each `MapEntry<K, V>`-constructible argument in argument order. A later argument whose key matches an earlier argument's key MUST replace the earlier argument's value, consistent with `REQ-COLL-004A`.
+REQ-COLL-018. The API MUST support pack-literal construction for `Map<K, V, N>` such that `cljonic::Map<K, V, N>{entries...}` folds `assoc` over one or more arguments, each of exact type `MapEntry<K, V>`, in argument order; no other argument type MUST be accepted, whether or not it is implicitly convertible to `MapEntry<K, V>`. A later argument whose key matches an earlier argument's key MUST replace the earlier argument's value, consistent with `REQ-COLL-004A`. Pack-literal construction MUST require at least one argument; the zero-argument empty map MUST remain constructible only through ordinary default construction (`REQ-COLL-004`), which MUST NOT be considered pack-literal construction.
 
 REQ-COLL-018A. A `Map<K, V, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time, regardless of whether duplicate keys would have produced a smaller final count. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Map{entries...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
 
@@ -124,7 +124,7 @@ REQ-FN-002E. `equal` MUST represent general value equality, including recursivel
 
 REQ-FN-002F. Clojure's `=` MUST map conceptually to cljonic general equality, while Clojure's numeric `==` MUST map conceptually to a separately specified numeric-equality operation. The C++ spelling `=` MUST NOT be introduced as a cljonic function because it is assignment syntax.
 
-REQ-FN-002M. `can_conj(collection, value)` MUST return true when `conj` can produce its documented result without capacity failure, including when a set already contains the value. `can_assoc(map, key, value)` MUST return true when the key already exists because `assoc` replaces its value without consuming capacity, and MUST return true for a new key only when capacity is available.
+REQ-FN-002M. `can_conj(collection, value)` MUST return true when `conj` can produce its documented result without capacity failure, including when a set already contains the value. `can_assoc(map, key)` MUST return true when the key already exists because `assoc` replaces its value without consuming capacity, and MUST return true for a new key only when capacity is available. `can_assoc` MUST NOT accept a value argument, because the value being associated never affects whether `assoc` can succeed.
 
 REQ-FN-002P. The callable `Map<K, V, N>` lookup forms specified by `REQ-COLL-004B` MUST be equivalent to the corresponding `get` overloads for the same map, key, value, and fallback arguments. `operator[]` MUST NOT be required or provided as the map lookup syntax because its conventional insertion semantics conflict with cljonic's immutable bounded-map contract.
 

@@ -63,7 +63,7 @@ For every operation whose complete result can fail or truncate, a non-throwing p
 | `get(vector, index)`   | `contains`                    | `contains(vector, index) -> bool`   |
 | `get(map, key)`        | `contains`                    | `contains(map, key) -> bool`        |
 | `conj(set, val)`       | `can_conj`                    | `can_conj(set, val) -> bool`        |
-| `assoc(map, k, v)`     | `can_assoc`                   | `can_assoc(map, k, v) -> bool`      |
+| `assoc(map, k, v)`     | `can_assoc`                   | `can_assoc(map, k) -> bool`         |
 | `add(a, b)`            | `can_add`                     | `can_add(a, b) -> bool`             |
 
 ## Diagnostic Strategy
