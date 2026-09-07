@@ -14,33 +14,51 @@ namespace cljonic {
 
 /** \anchor Map
  * \b Map is a fixed-capacity associative collection backed by contiguous array
- * storage and linear scan lookup with copy-on-modify updates.
+ * storage and linear scan lookup with copy-on-modify updates. Keys and values
+ * satisfy the non-throwing collection storage contract; keys additionally
+ * provide stable equality for lookup.
  *
  * \b Examples
  * ~~~~~{.cpp}
  * #include <cljonic.hpp>
  *
+ * struct Key {
+ *   int id;
+ *   friend constexpr bool operator==(const Key&, const Key&) noexcept = default;
+ * };
+ *
+ * struct Value {
+ *   int amount = 0;
+ *   friend constexpr bool operator==(const Value&, const Value&) noexcept = default;
+ * };
+ *
  * int main() {
  *   using namespace cljonic;
  *
- *   // Compile-time demonstration.
- *   constexpr auto m_const = Map<int, int, 4>{}.assoc(1, 10).assoc(2, 20);
- *   static_assert(m_const.count() == 2U);
- *   static_assert(m_const.contains(1));
- *   static_assert(m_const(1) == 10);
- *   static_assert(m_const(99, -1) == -1);
- *   static_assert(m_const.can_assoc(3));
+ *   // An explicit capacity creates an empty bounded map.
+ *   constexpr Map<Key, Value, 4> empty{};
+ *   constexpr auto first = empty.assoc(Key{1}, Value{10});
+ *   constexpr auto replaced = first.assoc(Key{1}, Value{20});
+ *   static_assert(first.count() == 1U);
+ *   static_assert(replaced.count() == 1U);
+ *   static_assert(replaced(Key{1}).amount == 20);
+ *   static_assert(!replaced.contains(Key{2}));
+ *   static_assert(replaced(Key{2}).amount == 0);
+ *   static_assert(replaced(Key{2}, Value{99}).amount == 99);
+ *   static_assert(replaced.can_assoc(Key{2}));
  *
- *   // Runtime demonstration.
- *   auto m_runtime = Map<int, int, 4>{};
- *   auto m1 = m_runtime.assoc(10, 100);
- *   auto m2 = m1.dissoc(10);
+ *   // Map lookup is callable and missing-key access does not insert.
+ *   auto runtime = replaced.assoc(Key{2}, Value{30});
+ *   const auto missing = runtime(Key{3}, Value{77});
+ *   const auto removed = runtime.dissoc(Key{1});
  *
- *   return (m1.contains(10) && !m2.contains(10) && m2.is_empty()) ? 0 : 1;
+ *   return (runtime.count() == 2U && missing.amount == 77 &&
+ *           !removed.contains(Key{1}) && removed.contains(Key{2})) ? 0 : 1;
  * }
  * ~~~~~
  */
-template <concepts::StableEqualityComparable KeyType, concepts::CopyableElement ValueType, std::size_t CapacityValue>
+template <typename KeyType, concepts::NothrowCollectionElement ValueType, std::size_t CapacityValue>
+    requires concepts::StableEqualityComparable<KeyType> && concepts::NothrowCollectionElement<KeyType>
 class Map {
   public:
     using key_type = KeyType;
