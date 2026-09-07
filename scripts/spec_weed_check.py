@@ -13,11 +13,11 @@ for fname in sorted(os.listdir(spec_dir)):
     if not fname.endswith(".allium"):
         continue
     entity_name = fname[:-7]  # strip .allium
-    cap_name = entity_name.capitalize()
+    cap_name = "".join(part.capitalize() for part in entity_name.split("-"))
     invariants = []
     with open(f"{spec_dir}/{fname}") as fh:
         for line in fh:
-            m = re.match(r'^( +)invariant\.([A-Za-z]+)\s*\{', line)
+            m = re.match(r'^( +)invariant\s+([A-Za-z0-9]+)\s*\{', line)
             if m:
                 invariants.append(m.group(2))
     entities[entity_name] = (cap_name, invariants)
@@ -88,12 +88,12 @@ for entity_name in sorted(entities.keys()):
 # 4. Check code methods vs spec operations
 print("\n--- Code Methods (public API) ---")
 expected_ops = {
-    "Vector": {"capacity", "size", "empty", "valid_index", "operator()", "operator[]"},
-    "MapEntry": {"key", "value", "valid_index", "operator=="},
-    "Map": {"capacity", "size", "empty", "contains", "operator()", "assoc", "dissoc"},
-    "Set": {"capacity", "size", "count", "empty", "contains", "operator()", "can_conj", "conj", "disj"},
-    "Queue": {"capacity", "size", "empty", "can_conj", "conj", "peek", "pop"},
-    "String": {"capacity", "size", "empty", "valid", "operator[]", "operator()", "put", "append"},
+    "Vector": {"capacity", "count", "is_empty", "contains", "operator"},
+    "MapEntry": {"contains"},  # key/value are data members and operator== is filtered; not detectable by this method regex
+    "Map": {"capacity", "count", "is_empty", "contains", "operator", "can_assoc", "assoc", "dissoc"},
+    "Set": {"capacity", "count", "is_empty", "contains", "operator", "can_conj", "conj", "disj"},
+    "Queue": {"capacity", "count", "is_empty", "can_conj", "conj", "peek", "pop"},
+    "String": {"capacity", "count", "is_empty", "contains", "operator", "put", "append"},
 }
 
 for fname in sorted(os.listdir(src_dir)):
@@ -102,7 +102,12 @@ for fname in sorted(os.listdir(src_dir)):
     
     with open(f"{src_dir}/{fname}") as fh:
         content = fh.read()
-    
+
+    # Strip block comments (Doxygen examples may define illustrative structs
+    # like `struct Key { ... }` whose names would otherwise be mistaken for
+    # the real class/struct being documented).
+    content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+
     # Extract class/struct name
     class_match = re.search(r'(?:class|struct)\s+(\w+)', content)
     if not class_match:
@@ -110,9 +115,20 @@ for fname in sorted(os.listdir(src_dir)):
     class_name = class_match.group(1)
     
     # Find public methods (inside public section, before private)
-    public_section = re.search(r'public:(.*?)(?:private:|$)', content, re.DOTALL)
-    if public_section:
-        methods = re.findall(r'\[\[nodiscard\]\].*?(\w+)\s*\(', public_section.group(1))
+    class_body_start = content.find('{', class_match.end())
+    class_body = content[class_body_start + 1:] if class_body_start != -1 else ""
+
+    if 'public:' in class_body:
+        public_text = class_body.split('public:', 1)[1].split('private:', 1)[0]
+    elif 'private:' in class_body:
+        # No explicit public: label; members before private: are implicitly public.
+        public_text = class_body.split('private:', 1)[0]
+    else:
+        # No access-specifier labels at all (e.g. a plain struct): everything is public.
+        public_text = class_body
+
+    if public_text:
+        methods = re.findall(r'\[\[nodiscard\]\].*?(\w+)\s*\(', public_text)
         methods = sorted(set([m for m in methods if m != 'operator==']))
         
         expected = expected_ops.get(class_name, set())
