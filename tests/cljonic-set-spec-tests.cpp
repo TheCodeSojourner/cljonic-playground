@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <concepts>
+
 #include "cljonic-test-api.hpp"
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
@@ -32,6 +34,10 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     TRACE_ID("invariant.Set.RequiresNothrowDestruction");
     TRACE_ID("invariant.Set.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID("invariant.Set.SupportsExplicitCapacityConstruction");
+    TRACE_ID("invariant.Set.SupportsLiteralDeducedConstruction");
+    TRACE_ID("invariant.Set.SupportsCapacityInferredLiteralEquivalentSemantics");
+    TRACE_ID("invariant.Set.OversizedInitializerIsCompileTimeFailure");
+    TRACE_ID("invariant.Set.PackConstructionFoldsOverConj");
     TRACE_ID("invariant.Set.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.Set.SupportsMembershipLookup");
     TRACE_ID("invariant.Set.SupportsMembershipFallbackLookup");
@@ -55,6 +61,20 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     STATIC_REQUIRE(s.is_empty());
     STATIC_REQUIRE(s.count() == 0U);
     STATIC_REQUIRE(s.capacity() == 4U);
+
+    // Pack-literal construction: explicit capacity, CTAD, and duplicate-value
+    // no-op folded over conj in argument order.
+    constexpr Set<int, 4> explicit_literal{1, 2, 3};
+    STATIC_REQUIRE(explicit_literal.count() == 3U);
+    STATIC_REQUIRE(explicit_literal.contains(2));
+
+    constexpr auto inferred_literal = Set{1, 2, 3};
+    STATIC_REQUIRE(std::same_as<decltype(inferred_literal), const Set<int, 3>>);
+    STATIC_REQUIRE(inferred_literal.count() == 3U);
+
+    constexpr auto duplicate_literal = Set{1, 2, 2, 3};
+    STATIC_REQUIRE(duplicate_literal.count() == 3U);
+    STATIC_REQUIRE(duplicate_literal.contains(2));
 
     // conj adds elements (copy-on-modify semantics)
     constexpr auto s1 = s.conj(10);
@@ -153,4 +173,12 @@ TEST_CASE("Set construction and basic operations", "[set]") {
 
     auto rs_disj_absent = rs1.disj(999);
     REQUIRE(rs_disj_absent.count() == 1U);
+
+    volatile int literal_v1_raw = 1;
+    volatile int literal_v2_raw = 2;
+    volatile int literal_v3_raw = 2;
+    auto runtime_literal = Set{literal_v1_raw, literal_v2_raw, literal_v3_raw};
+    REQUIRE(runtime_literal.count() == 2U);
+    REQUIRE(runtime_literal.contains(1));
+    REQUIRE(runtime_literal.contains(2));
 }

@@ -1,11 +1,14 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <concepts>
+
 #include "cljonic-test-api.hpp"
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
 TEST_CASE("Map construction and basic lookup", "[map]") {
     using cljonic::Map;
+    using cljonic::MapEntry;
 
     TRACE_ID("entity-fields.Map");
     TRACE_ID("invariant.Map.CapacityIsNonNegative");
@@ -33,6 +36,10 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     TRACE_ID("invariant.Map.RequiresNothrowDestruction");
     TRACE_ID("invariant.Map.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID("invariant.Map.SupportsExplicitCapacityConstruction");
+    TRACE_ID("invariant.Map.SupportsLiteralDeducedConstruction");
+    TRACE_ID("invariant.Map.SupportsCapacityInferredLiteralEquivalentSemantics");
+    TRACE_ID("invariant.Map.OversizedInitializerIsCompileTimeFailure");
+    TRACE_ID("invariant.Map.PackConstructionFoldsOverAssoc");
     TRACE_ID("invariant.Map.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.Map.SupportsAssociativeLookup");
     TRACE_ID("invariant.Map.SupportsAssociativeFallbackLookup");
@@ -63,6 +70,21 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     STATIC_REQUIRE(zero_capacity(1) == 0);
     STATIC_REQUIRE(zero_capacity(1, -1) == -1);
     STATIC_REQUIRE_FALSE(zero_capacity.can_assoc(1));
+
+    // Pack-literal construction: explicit capacity, CTAD, and duplicate-key
+    // replacement folded over assoc in argument order.
+    constexpr Map<int, int, 4> explicit_literal{MapEntry<int, int>{1, 10}, MapEntry<int, int>{2, 20}};
+    STATIC_REQUIRE(explicit_literal.count() == 2U);
+    STATIC_REQUIRE(explicit_literal(1) == 10);
+    STATIC_REQUIRE(explicit_literal(2) == 20);
+
+    constexpr auto inferred_literal = Map{MapEntry<int, int>{1, 10}, MapEntry<int, int>{2, 20}};
+    STATIC_REQUIRE(std::same_as<decltype(inferred_literal), const Map<int, int, 2>>);
+    STATIC_REQUIRE(inferred_literal.count() == 2U);
+
+    constexpr auto duplicate_key_literal = Map{MapEntry<int, int>{1, 10}, MapEntry<int, int>{1, 20}};
+    STATIC_REQUIRE(duplicate_key_literal.count() == 1U);
+    STATIC_REQUIRE(duplicate_key_literal(1) == 20);
 
     constexpr auto m1 = m.assoc(10, 100);
     STATIC_REQUIRE_FALSE(m1.is_empty());
@@ -134,6 +156,15 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
 
     auto rm_dissoc_absent = rm1.dissoc(999);
     REQUIRE(rm_dissoc_absent.count() == 1U);
+
+    volatile int literal_key1_raw = 1;
+    volatile int literal_value1_raw = 10;
+    volatile int literal_key2_raw = 1;
+    volatile int literal_value2_raw = 20;
+    auto runtime_literal = Map{MapEntry<int, int>{literal_key1_raw, literal_value1_raw},
+                               MapEntry<int, int>{literal_key2_raw, literal_value2_raw}};
+    REQUIRE(runtime_literal.count() == 1U);
+    REQUIRE(runtime_literal(1) == 20);
 
     volatile int missing_key_raw = 999;
     const int missing_key = missing_key_raw;

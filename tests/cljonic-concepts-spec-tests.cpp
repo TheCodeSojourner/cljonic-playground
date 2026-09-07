@@ -484,6 +484,35 @@ TEST_CASE("TotallyOrdered value capability", "[concepts][value]") {
     STATIC_REQUIRE_FALSE(TotallyOrdered<EqualityOnly>);
 }
 
+TEST_CASE("NothrowStableEqualityComparable value capability", "[concepts][value]") {
+    using namespace cljonic::concepts;
+
+    struct ThrowingEquality {
+        ThrowingEquality() noexcept(false) {
+        }
+        ThrowingEquality(const ThrowingEquality&) noexcept = default;
+        ThrowingEquality& operator=(const ThrowingEquality&) noexcept = default;
+        bool operator==(const ThrowingEquality&) const noexcept = default;
+    };
+
+    TRACE_ID("entity-fields.NothrowStableEqualityComparable");
+    TRACE_ID("invariant.NothrowStableEqualityComparable.ExtendsStableEquality");
+    TRACE_ID("invariant.NothrowStableEqualityComparable.ExtendsNothrowCollectionElement");
+
+    // ExtendsStableEquality and ExtendsNothrowCollectionElement: the map key
+    // and set element admission contract requires both capabilities.
+    STATIC_REQUIRE(NothrowStableEqualityComparable<int>);
+    STATIC_REQUIRE(NothrowStableEqualityComparable<EqualityOnly>);
+
+    // A type with equality but a throwing storage operation is rejected.
+    STATIC_REQUIRE(StableEqualityComparable<ThrowingEquality>);
+    STATIC_REQUIRE_FALSE(NothrowCollectionElement<ThrowingEquality>);
+    STATIC_REQUIRE_FALSE(NothrowStableEqualityComparable<ThrowingEquality>);
+
+    // A stable-equality type may lack ordering yet still satisfy this concept.
+    STATIC_REQUIRE_FALSE(TotallyOrdered<EqualityOnly>);
+}
+
 // ============================================================================
 // ConceptMemberNaming
 // ============================================================================
@@ -542,19 +571,16 @@ TEST_CASE("Vector element storage requires non-throwing operations", "[vector][c
         }
     };
 
-    STATIC_REQUIRE(cljonic::concepts::VectorElement<ThrowingDefault>);
-    STATIC_REQUIRE(cljonic::concepts::VectorElement<ThrowingAssignment>);
+    STATIC_REQUIRE(cljonic::concepts::CopyableElement<ThrowingDefault>);
+    STATIC_REQUIRE(cljonic::concepts::CopyableElement<ThrowingAssignment>);
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingDefault>);
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingAssignment>);
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingDestruction>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowVectorElement<ThrowingDefault>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowVectorElement<ThrowingAssignment>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowVectorElement<ThrowingDestruction>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCopyableElement<ThrowingDefault>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCopyableElement<ThrowingAssignment>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCopyableElement<ThrowingDestruction>);
     STATIC_REQUIRE(cljonic::concepts::NothrowCollectionElement<int>);
-    STATIC_REQUIRE(cljonic::concepts::NothrowVectorElement<int>);
-    STATIC_REQUIRE(cljonic::concepts::NothrowCollectionElement<int>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingDefault>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingAssignment>);
+    STATIC_REQUIRE(cljonic::concepts::NothrowCopyableElement<int>);
     STATIC_REQUIRE(noexcept(cljonic::Vector<int, 4>{1, 2}));
 }
 

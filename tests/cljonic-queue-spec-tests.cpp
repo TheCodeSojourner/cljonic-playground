@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <concepts>
+
 #include "cljonic-test-api.hpp"
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
@@ -30,6 +32,10 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     TRACE_ID("invariant.Queue.RequiresNothrowDestruction");
     TRACE_ID("invariant.Queue.SupportsEmptyExplicitCapacityConstruction");
     TRACE_ID("invariant.Queue.SupportsExplicitCapacityConstruction");
+    TRACE_ID("invariant.Queue.SupportsLiteralDeducedConstruction");
+    TRACE_ID("invariant.Queue.SupportsCapacityInferredLiteralEquivalentSemantics");
+    TRACE_ID("invariant.Queue.OversizedInitializerIsCompileTimeFailure");
+    TRACE_ID("invariant.Queue.PackConstructionFoldsOverConj");
     TRACE_ID("invariant.Queue.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.Queue.SupportsPeekOperation");
     TRACE_ID("invariant.Queue.SupportsPopOperation");
@@ -55,6 +61,17 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     STATIC_REQUIRE(q.count() == 0U);
     STATIC_REQUIRE(q.capacity() == 4U);
     STATIC_REQUIRE(q.can_conj()); // empty → room available
+
+    // Pack-literal construction: explicit capacity, CTAD, and FIFO order
+    // matching argument order, folded over conj.
+    constexpr Queue<int, 4> explicit_literal{10, 20, 30};
+    STATIC_REQUIRE(explicit_literal.count() == 3U);
+    STATIC_REQUIRE(explicit_literal.peek() == 10);
+
+    constexpr auto inferred_literal = Queue{10, 20, 30};
+    STATIC_REQUIRE(std::same_as<decltype(inferred_literal), const Queue<int, 3>>);
+    STATIC_REQUIRE(inferred_literal.count() == 3U);
+    STATIC_REQUIRE(inferred_literal.peek() == 10);
 
     // conj enqueues to back
     constexpr auto q1 = q.conj(1);
@@ -136,4 +153,11 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     REQUIRE(rq_full.count() == 4U);
     REQUIRE_FALSE(rq_full.can_conj());
     REQUIRE(rq_full.conj(60).count() == 4U); // rejected overflow
+
+    volatile int literal_v1_raw = 10;
+    volatile int literal_v2_raw = 20;
+    volatile int literal_v3_raw = 30;
+    auto runtime_literal = Queue{literal_v1_raw, literal_v2_raw, literal_v3_raw};
+    REQUIRE(runtime_literal.count() == 3U);
+    REQUIRE(runtime_literal.peek() == 10);
 }
