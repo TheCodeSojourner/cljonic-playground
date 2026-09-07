@@ -20,6 +20,8 @@ REQ-COLL-004A. Associating an existing map key MUST replace its associated value
 
 REQ-COLL-004B. A `Map<K, V, N>` MUST be callable with `operator()(K)` and `operator()(K, V)` when `K` and `V` satisfy the same capabilities required by map lookup. The one-argument form MUST return the associated value for a present key or `V{}` when the key is absent. The two-argument form MUST return the associated value for a present key or the supplied fallback value when the key is absent. Neither form MUST mutate the map, insert a key, allocate, throw, or change traversal state. `contains(map, key)` MUST remain the authoritative way to distinguish a missing key from a present key whose value equals `V{}`; `get(map, key)` and `get(map, key, fallback)` MUST remain behaviorally equivalent free-function forms.
 
+REQ-COLL-004C. A `Map<K, V, N>` MUST admit both `K` and `V` only when each satisfies `NothrowCollectionElement`. `K` MUST additionally satisfy the stable equality capability required for key lookup. The storage-admission requirement MUST be enforced at the Map template boundary and MUST remain independent of operation-specific capabilities beyond key equality.
+
 REQ-COLL-005. The library MUST provide a bounded set with membership, insertion, removal, count, sequence conversion, and traversal operations.
 
 REQ-COLL-005A. Inserting a set value that is already present MUST be a successful no-op in the returned set, MUST preserve the set count, and MUST NOT require additional capacity.

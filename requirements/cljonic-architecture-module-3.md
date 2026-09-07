@@ -30,8 +30,8 @@ struct MapEntry {
 template<class K, class V, std::size_t N>
 class Map {
 private:
-    std::array<MapEntry<K, V>, N> m_entries{};
-    std::size_t m_count{0};
+    std::array<MapEntry<K, V>, N> entries{};
+    std::size_t logical_size{0};
 public:
     // ...
 };
@@ -82,6 +82,8 @@ Collection types overload `operator()` to provide convenience lookup:
 - `vector(idx)` / `vector(idx, fallback)` $\rightarrow$ delegates to `get(vector, idx)`
 - `map(key)` / `map(key, fallback)` $\rightarrow$ delegates to `get(map, key)`
 - `set(val)` / `set(val, fallback)` $\rightarrow$ delegates to `get(set, val)`
+
+Map keys and values are admitted only when they satisfy `NothrowCollectionElement`; key lookup additionally requires stable equality. This storage boundary does not imply ordering, hashing, or parsing capabilities.
 
 `operator[]` is explicitly omitted to prevent accidental unchecked access or insertion syntax.
 
