@@ -442,6 +442,7 @@ invariant.MapEntry.NoExceptions
 invariant.MapEntry.NoHeapAllocation
 invariant.MapEntry.NoRtti
 invariant.MapEntry.ReferentialTransparency
+invariant.MapEntry.RequiresNothrowCollectionElementKeyAndValueAdmission
 invariant.MapEntry.RequiresNothrowCopyAssignment
 invariant.MapEntry.RequiresNothrowCopyConstruction
 invariant.MapEntry.RequiresNothrowDefaultConstruction
@@ -479,6 +480,7 @@ invariant.Map.NoHeapAllocation
 invariant.Map.NoRtti
 invariant.Map.OversizedInitializerIsCompileTimeFailure
 invariant.Map.PackConstructionFoldsOverAssoc
+invariant.Map.PackConstructionRequiresAtLeastOneEntry
 invariant.Map.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Map.ProducerOnlyResultStatusDeclared
 invariant.Map.ReferentialTransparency
