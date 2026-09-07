@@ -432,11 +432,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Map
-- **Definition:** The cljonic fixed-capacity associative collection type mapping unique keys to values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates.
+- **Definition:** The cljonic fixed-capacity associative collection type mapping unique, stably comparable keys to values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates. Both keys and values satisfy the `NothrowCollectionElement` storage contract at template admission.
 - **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
 - **Related:** MapEntry, AssociativeAccess, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`.
+- **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback.
 
 
 ### Set
