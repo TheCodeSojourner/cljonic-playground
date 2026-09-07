@@ -281,7 +281,7 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### MapEntry
-- **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value. MapEntry is also an explicitly approved fixed two-element sequence: its first element is the key, its second element is the value, and its count is always two.
+- **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value. MapEntry is also an explicitly approved fixed two-element sequence: its first element is the key, its second element is the value, and its count is always two. Its key satisfies `NothrowStableEqualityComparable`; its value satisfies `NothrowCollectionElement`.
 - **Deprecated Synonyms:** map entry, key-value entry
 - **Related:** Map, AssociativeAccess, Sequenceable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -436,7 +436,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
 - **Related:** MapEntry, AssociativeAccess, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback. `Map{MapEntry{1, 10}, MapEntry{2, 20}}` deduces `Map<int, int, 2>` and folds `assoc` over each entry in argument order.
+- **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback. `Map{MapEntry{1, 10}, MapEntry{2, 20}}` deduces `Map<int, int, 2>` and folds `assoc` over each entry in argument order; every argument must be exactly `MapEntry<int, int>`, and at least one argument is required (use `Map<int, int, N>{}` for the empty case).
 
 
 ### Set
@@ -564,7 +564,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** can_assoc, can-assoc predicate
 - **Related:** Assoc, CapabilityPredicate, PreflightPredicate, FullState, Map
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `can_assoc(m, k, v)` returns true if `contains(m, k)` is true or if `m` is not full.
+- **Examples:** `can_assoc(m, k)` returns true if `contains(m, k)` is true or if `m` is not full; `can_assoc` takes no value argument because the associated value never affects whether `assoc` can succeed.
 
 
 ### Iterate
