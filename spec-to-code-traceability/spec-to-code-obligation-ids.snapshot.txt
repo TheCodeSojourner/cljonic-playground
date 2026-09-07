@@ -479,6 +479,7 @@ invariant.Map.NoRtti
 invariant.Map.PreflightPredicatesAreNonThrowingNonAllocating
 invariant.Map.ProducerOnlyResultStatusDeclared
 invariant.Map.ReferentialTransparency
+invariant.Map.RequiresNothrowCollectionElementKeyAndValueAdmission
 invariant.Map.RequiresNothrowCopyAssignment
 invariant.Map.RequiresNothrowCopyConstruction
 invariant.Map.RequiresNothrowDefaultConstruction
