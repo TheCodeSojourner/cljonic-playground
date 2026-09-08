@@ -38,6 +38,8 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     TRACE_ID("invariant.Set.SupportsCapacityInferredLiteralEquivalentSemantics");
     TRACE_ID("invariant.Set.OversizedInitializerIsCompileTimeFailure");
     TRACE_ID("invariant.Set.PackConstructionFoldsOverConj");
+    TRACE_ID("invariant.Set.RuntimeDuplicateConstructionDeduplicates");
+    TRACE_ID("invariant.Set.CompileTimeDuplicateConstructionIsRejected");
     TRACE_ID("invariant.Set.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.Set.SupportsMembershipLookup");
     TRACE_ID("invariant.Set.SupportsMembershipFallbackLookup");
@@ -62,8 +64,18 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     STATIC_REQUIRE(s.count() == 0U);
     STATIC_REQUIRE(s.capacity() == 4U);
 
-    // Pack-literal construction: explicit capacity, CTAD, and duplicate-value
-    // no-op folded over conj in argument order.
+    constexpr Set<int, 0> zero_capacity{};
+    STATIC_REQUIRE(zero_capacity.is_empty());
+    STATIC_REQUIRE(zero_capacity.count() == 0U);
+    STATIC_REQUIRE(zero_capacity.capacity() == 0U);
+    STATIC_REQUIRE_FALSE(zero_capacity.contains(1));
+    STATIC_REQUIRE(zero_capacity(1) == 0);
+    STATIC_REQUIRE(zero_capacity(1, -1) == -1);
+    STATIC_REQUIRE_FALSE(zero_capacity.can_conj(1));
+    STATIC_REQUIRE(zero_capacity.conj(1).is_empty());
+    STATIC_REQUIRE(zero_capacity.disj(1).is_empty());
+
+    // Pack-literal construction: explicit capacity and CTAD for unique values.
     constexpr Set<int, 4> explicit_literal{1, 2, 3};
     STATIC_REQUIRE(explicit_literal.count() == 3U);
     STATIC_REQUIRE(explicit_literal.contains(2));
@@ -72,9 +84,10 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     STATIC_REQUIRE(std::same_as<decltype(inferred_literal), const Set<int, 3>>);
     STATIC_REQUIRE(inferred_literal.count() == 3U);
 
-    constexpr auto duplicate_literal = Set{1, 2, 2, 3};
-    STATIC_REQUIRE(duplicate_literal.count() == 3U);
-    STATIC_REQUIRE(duplicate_literal.contains(2));
+    const auto duplicate_literal = Set{1, 2, 2, 3};
+    REQUIRE(duplicate_literal.count() == 3U);
+    REQUIRE(duplicate_literal.contains(2));
+    // A duplicate pack is rejected when evaluated as a constant expression.
 
     // conj adds elements (copy-on-modify semantics)
     constexpr auto s1 = s.conj(10);
