@@ -1,37 +1,38 @@
 ## Session State
 
-- last_session_id: 2026-09-07-set-runtime-and-constexpr-duplicate-semantics
-- current_timestamp: 2026-09-07
+- last_session_id: 2026-09-08-doxygen-reflow-formatting
+- current_timestamp: 2026-09-08
 - recover: 1
 - session_complete: true
 
 Task:
-1. Complete the Set collection increment and reconcile runtime duplicate construction with Clojure-style compile-time literal rejection.
-2. Refine Map and Set Doxygen examples around named types, callable lookup, and runtime CTAD.
-3. Record the developer preference to defer documentation regeneration until the final `make git`.
+1. Make `make format` reflow Doxygen prose naturally within the 120-character limit.
+2. Preserve Doxygen comment markers and format fenced C++ examples without corrupting source headers.
+3. Apply consistent user-facing descriptions to the finished collection types and retain the next Queue phase for later work.
 
 Questions:
 1. No user questions unresolved.
 
 Decisions:
-1. Set runtime pack construction remains non-throwing and deduplicates duplicate arguments by retaining one stored copy.
-2. `conj` remains a successful no-op when the value is already present.
-3. Set construction evaluated as a constant expression rejects duplicate arguments through an `if consteval` non-constant trap; `constexpr auto invalid = Set{1, 2, 2};` therefore produces a compiler error.
-4. No `can_construct` API was added. Runtime callers use the existing constructor and receive deduplicated values.
-5. Set requirements and Allium obligations distinguish runtime duplicate deduplication from compile-time duplicate rejection; the traceability snapshot was regenerated and Set now reports 48/48 invariant coverage.
-6. Map and Set examples emphasize named collection types, construction, callable lookup, and runtime CTAD rather than free-function calls or broad member-operation tours.
-7. Incremental work should avoid documentation-producing targets and generated `docs/` churn. The developer will run final `make git` when ready to push.
+1. `ReflowComments` remains enabled in the repository policy, but the custom Doxygen pass owns prose wrapping so clang-format does not insert malformed blank lines or concatenate comment markers.
+2. Doxygen prose is wrapped to the 120-character column limit; fenced C++ examples continue through clang-format with their comment prefixes preserved.
+3. Vector, Map, Set, and Queue summaries describe public semantics and the library free-function API without exposing storage or internal concept details.
+4. Queue traversal (`seq`, `first`, `next`, `rest`) and C++ interoperability/range access remain deferred to a subsequent phase.
+5. Documentation generation remains deferred until the final `make git` checkpoint.
 
 Validation:
-1. Modular and single-header Set tests passed: 4/4 focused tests.
-2. Allium check and analyse passed with zero diagnostics and findings.
-3. `make traceability-spec-to-code-update-snapshot` and `make traceability-spec-to-code` passed.
-4. The exact duplicate constant expression was verified to fail compilation with GCC C++23 and `-fno-exceptions`.
-5. `python3 scripts/spec_weed_check.py` reported zero divergences and Set 48/48 invariant traceability.
-6. Final `make git` passed: format, lint, complexity, sanitizers, 100% coverage, traceability, no-heap, docs, documentation examples, and single-header probe.
+1. `make format` passed.
+2. A second `make format` pass produced no additional changes.
+3. Source line-length check found no lines over 120 characters.
+4. Formatter script syntax check passed with `perl -c`.
+5. Full modular suite passed: 616 assertions in 52 test cases.
+6. Modular header smoke compilation passed.
+7. `git diff --check` passed.
 
 Current Increment:
-1. None open; the Set semantic and documentation work is complete.
+1. Doxygen reflow formatting is complete and stable.
+2. The formatter pipeline preserves source validity and the intended collection descriptions.
 
 Next:
-1. Resume with the next explicit collection or free-function increment, or run the final `make git` when ready to publish additional work.
+1. Complete the next Queue phase for logical FIFO traversal, `seq`/`first`/`next`/`rest`, and non-allocating C++ interoperability for physically wrapped storage.
+2. Run the final `make git` when ready to publish the accumulated work.
