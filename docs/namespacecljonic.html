@@ -195,6 +195,9 @@ requires (concepts::LookupCollection&lt;C&gt; || concepts::IndexedCollection&lt;
 <tr class="memitem:af20d169ef36288b54ca608a14eb6b557" id="r_af20d169ef36288b54ca608a14eb6b557"><td class="memTemplParams" colspan="2">template&lt;typename First , typename... Rest&gt; </td></tr>
 <tr class="memitem:af20d169ef36288b54ca608a14eb6b557"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#af20d169ef36288b54ca608a14eb6b557">Set</a> (First, Rest...) -&gt; <a class="el" href="classcljonic_1_1_set.html">Set</a>&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
 <tr class="separator:af20d169ef36288b54ca608a14eb6b557"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21" id="r_ac8f7c83a056ffb2ba64e432680d09b21"><td class="memTemplParams" colspan="2">template&lt;std::size_t N&gt; </td></tr>
+<tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#ac8f7c83a056ffb2ba64e432680d09b21">String</a> (const char(&amp;)[N]) -&gt; <a class="el" href="classcljonic_1_1_string.html">String</a>&lt; N - 1U &gt;</td></tr>
+<tr class="separator:ac8f7c83a056ffb2ba64e432680d09b21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac" id="r_a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplParams" colspan="2">template&lt;typename First , typename... Rest&gt; </td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">Vector</a> (First, Rest...) -&gt; <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
 <tr class="separator:a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -529,8 +532,8 @@ template&lt;typename C , typename K &gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (in_range &amp;&amp; !<a class="code hl_function" href="namespacecljonic.html#a1985f084fdf102fe981bcf4d6a72c124">contains</a>(v_runtime, 9U)) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00041">cljonic-string.hpp:41</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00111">cljonic-vector.hpp:111</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00048">cljonic-string.hpp:48</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00107">cljonic-vector.hpp:107</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a1985f084fdf102fe981bcf4d6a72c124"><div class="ttname"><a href="namespacecljonic.html#a1985f084fdf102fe981bcf4d6a72c124">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept -&gt; bool</div><div class="ttdoc">Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's contains?...</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00051">cljonic-contains.hpp:51</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
@@ -885,7 +888,7 @@ requires (concepts::LookupCollection&lt;C&gt; || concepts::IndexedCollection&lt;
 
 <p>Looks up an element by a key or index, returning the default or supplied fallback when absent. </p>
 <p><a class="anchor" id="Get"></a></p>
-<p>Dispatches to the collection's callable lookup forms, consistent with the <code>operator()</code> behavior of <a class="el" href="classcljonic_1_1_map.html">Map</a>, <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, and <a class="el" href="classcljonic_1_1_set.html">Set</a>.</p>
+<p>Dispatches to the collection's callable lookup forms, consistent with the <code>operator()</code> behavior of <a class="el" href="classcljonic_1_1_map.html">Map</a>, <a class="el" href="classcljonic_1_1_set.html">Set</a>, <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, and <a class="el" href="classcljonic_1_1_string.html">String</a>.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;cljonic.hpp&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -1405,6 +1408,26 @@ template&lt;typename First , typename... Rest&gt; </div>
 
 </div>
 </div>
+<a id="ac8f7c83a056ffb2ba64e432680d09b21" name="ac8f7c83a056ffb2ba64e432680d09b21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8f7c83a056ffb2ba64e432680d09b21">&#9670;&#160;</a></span>String()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t N&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcljonic_1_1_string.html">cljonic::String</a> </td>
+          <td>(</td>
+          <td class="paramtype">const &#160;</td>
+          <td class="paramname"><em>char</em>(&amp;)[N]</td><td>)</td>
+          <td> -&gt;  <a class="el" href="classcljonic_1_1_string.html">String</a>&lt; N - 1U &gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2c1c737c352027b41c8f7a0bbfecc2ac" name="a2c1c737c352027b41c8f7a0bbfecc2ac"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2c1c737c352027b41c8f7a0bbfecc2ac">&#9670;&#160;</a></span>Vector()</h2>
 
@@ -1464,7 +1487,7 @@ template&lt;typename First , typename... Rest&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Sep 8 2026 14:10:00 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Tue Sep 8 2026 16:24:50 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
