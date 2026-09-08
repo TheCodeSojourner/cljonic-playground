@@ -200,8 +200,10 @@
   | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
 
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty
-    ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
+  ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
+  | deferred_empty_operations(x) ≡ empty ∧ not_empty
+    ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | deferred_collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
