@@ -28,6 +28,8 @@ entity Set {
     supports_capacity_inferred_literal_equivalent_semantics: Boolean
     oversized_initializer_is_compile_time_failure: Boolean
     pack_construction_folds_over_conj: Boolean
+    runtime_duplicate_construction_deduplicates: Boolean
+    compile_time_duplicate_construction_is_rejected: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_membership_lookup: Boolean
     supports_membership_fallback_lookup: Boolean
@@ -157,6 +159,14 @@ entity Set {
 
     invariant PackConstructionFoldsOverConj {
         this.pack_construction_folds_over_conj = true
+    }
+
+    invariant RuntimeDuplicateConstructionDeduplicates {
+        this.runtime_duplicate_construction_deduplicates = true
+    }
+
+    invariant CompileTimeDuplicateConstructionIsRejected {
+        this.compile_time_duplicate_construction_is_rejected = true
     }
 
     invariant CapacityExceedsMaximumIsCompileTimeFailure {
