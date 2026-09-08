@@ -29,7 +29,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** ordered sequence, sequential value
 - **Related:** Collection, Sequenceable, Traversal, LogicalTraversalOrder, Producer
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A `Vector` is a sequence; a producer may represent a sequence without owning materialized storage.
+- **Examples:** A `Vector` is a sequence; a producer may represent a sequence without owning materialized storage; a Queue sequence observes elements from front to rear in FIFO order.
 
 
 ### Sequenceable
@@ -53,7 +53,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** const range, read-only range traversal
 - **Related:** Traversal, CapabilityConcept, Sequenceable, SequenceableCollection, MapEntry, ReadOnlyInteropAccessor, LogicalTraversalOrder, NoMutationConstraint
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A `Queue` provides const range traversal in FIFO order even when its physical storage is circular.
+- **Examples:** A `Queue` provides const range traversal in FIFO order even when its physical storage is circular; the traversal is read-only, bounded, non-allocating, and independent of the physical segment layout.
 
 
 ### LogicalTraversalOrder
@@ -464,11 +464,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Queue
-- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates. The current Queue core phase covers bounded construction, `count`, `is_empty`, `can_conj`, `conj`, `peek`, and `pop`; full logical traversal and C++ interoperability remain deferred capabilities.
+- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates. Its approved sequence contract defines `seq`, `first`, `next`, and `rest` over logical front-to-rear FIFO order, and its C++ interoperability contract uses const logical traversal even when circular storage is physically wrapped. The current Queue implementation phase covers bounded construction, `count`, `is_empty`, `can_conj`, `conj`, `peek`, and `pop`; sequence traversal and interoperability remain implementation work.
 - **Deprecated Synonyms:** bounded queue, fixed-capacity queue, FIFO queue
 - **Related:** Sequence, CopyOnModifyCollection, Traversal, ConstRangeTraversal, LogicalTraversalOrder, ContiguousStorage, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `can_conj()` reports whether another value fits, and `conj()` on a full queue returns an unchanged copy. `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order. A later phase will add logical traversal and interoperability for physically wrapped storage.
+- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `can_conj()` reports whether another value fits, and `conj()` on a full queue returns an unchanged copy. `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order. For `Queue{a, b, c}`, `seq` yields an owning sequence of `a, b, c`, `first` yields `a`, and both `next` and `rest` yield the remaining sequence `b, c` without changing the source. These results remain FIFO after a pop-then-conj operation wraps the physical storage, and C++ interoperability observes the same logical order without requiring a contiguous view.
 
 
 ### String
