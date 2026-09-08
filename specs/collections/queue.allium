@@ -32,19 +32,11 @@ entity Queue {
     supports_conj_operation: Boolean
     empty_queue_peek_returns_default_element: Boolean
     empty_queue_pop_returns_empty_queue: Boolean
-    canonical_result_status_model_is_declared: Boolean
-    complete_result_status_declared: Boolean
-    bounded_prefix_result_status_declared: Boolean
-    default_returning_result_status_declared: Boolean
-    checked_failure_result_status_declared: Boolean
-    producer_only_result_status_declared: Boolean
     preflight_predicates_are_non_throwing_non_allocating: Boolean
     is_empty_is_canonical_empty_predicate: Boolean
     can_conj_is_canonical_conj_preflight: Boolean
-    fits_into_is_canonical_materialization_preflight: Boolean
     compile_time_capacity_overflow_is_rejected: Boolean
     runtime_capacity_failures_have_documented_policy: Boolean
-    default_access_has_preflight_predicate: Boolean
 
     invariant CapacityIsNonNegative {
         this.capacity_limit >= 0
@@ -174,30 +166,6 @@ entity Queue {
         this.empty_queue_pop_returns_empty_queue = true
     }
 
-    invariant CanonicalResultStatusModelIsDeclared {
-        this.canonical_result_status_model_is_declared = true
-    }
-
-    invariant CompleteResultStatusDeclared {
-        this.complete_result_status_declared = true
-    }
-
-    invariant BoundedPrefixResultStatusDeclared {
-        this.bounded_prefix_result_status_declared = true
-    }
-
-    invariant DefaultReturningResultStatusDeclared {
-        this.default_returning_result_status_declared = true
-    }
-
-    invariant CheckedFailureResultStatusDeclared {
-        this.checked_failure_result_status_declared = true
-    }
-
-    invariant ProducerOnlyResultStatusDeclared {
-        this.producer_only_result_status_declared = true
-    }
-
     invariant PreflightPredicatesAreNonThrowingNonAllocating {
         this.preflight_predicates_are_non_throwing_non_allocating = true
     }
@@ -210,10 +178,6 @@ entity Queue {
         this.can_conj_is_canonical_conj_preflight = true
     }
 
-    invariant FitsIntoIsCanonicalMaterializationPreflight {
-        this.fits_into_is_canonical_materialization_preflight = true
-    }
-
     invariant CompileTimeCapacityOverflowIsRejected {
         this.compile_time_capacity_overflow_is_rejected = true
     }
@@ -222,9 +186,6 @@ entity Queue {
         this.runtime_capacity_failures_have_documented_policy = true
     }
 
-    invariant DefaultAccessHasPreflightPredicate {
-        this.default_access_has_preflight_predicate = true
-    }
 }
 
 actor QueueOperator { identified_by: Queue }
