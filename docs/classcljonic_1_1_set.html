@@ -121,40 +121,36 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a7a8276d296c565b851dac2b6c5561007"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt;<br />
-class cljonic::Set&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Set"></a><b><a class="el" href="classcljonic_1_1_set.html">Set</a></b> is a fixed-capacity associative sequence collection backed by contiguous array storage with linear-scan lookup and copy-on-modify semantics.</p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt;<br />
+class cljonic::Set&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Set"></a> <b><a class="el" href="classcljonic_1_1_set.html">Set</a></b> is a fixed-capacity associative sequence collection backed by contiguous array storage with linear-scan lookup and copy-on-modify semantics.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;cljonic.hpp&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{}.<a class="code hl_function" href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">conj</a>(1).conj(2);</div>
-<div class="line">  <span class="keyword">static_assert</span>(s_const.count() == 2U);</div>
-<div class="line">  <span class="keyword">static_assert</span>(s_const.contains(1));</div>
-<div class="line">  <span class="keyword">static_assert</span>(s_const(1) == 1);</div>
-<div class="line">  <span class="keyword">static_assert</span>(s_const(99, -1) == -1);</div>
-<div class="line">  <span class="keyword">static_assert</span>(s_const.can_conj(3));</div>
+<div class="line">  <span class="keyword">using </span>AccountId = int;</div>
+<div class="line">  <span class="keyword">using </span>AccountSet = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;AccountId, 4&gt;</a>;</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Pack-literal construction folds conj over each argument in order; CTAD</span></div>
-<div class="line">  <span class="comment">// deduces Set&lt;int, 4&gt;. A later duplicate value is a no-op, matching</span></div>
-<div class="line">  <span class="comment">// explicit conj semantics.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> literal = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{1, 2, 2, 3};</div>
-<div class="line">  <span class="keyword">static_assert</span>(literal.count() == 3U);</div>
-<div class="line">  <span class="keyword">static_assert</span>(literal.contains(2));</div>
+<div class="line">  <span class="comment">// A named set type makes the element and capacity contract explicit.</span></div>
+<div class="line">  <span class="comment">// Runtime pack construction folds conj over the arguments; a duplicate</span></div>
+<div class="line">  <span class="comment">// value is a no-op. Constant-evaluated duplicate construction is rejected.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> literal = AccountSet{1, 2, 3};</div>
+<div class="line">  <span class="keyword">static_assert</span>(literal(2) == 2);</div>
+<div class="line">  <span class="keyword">static_assert</span>(literal(99) == 0);</div>
+<div class="line">  <span class="keyword">static_assert</span>(literal(99, -1) == -1);</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> s_runtime = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{};</div>
-<div class="line">  <span class="keyword">auto</span> s1 = s_runtime.<a class="code hl_function" href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">conj</a>(10);</div>
-<div class="line">  <span class="keyword">auto</span> s2 = s1.disj(10);</div>
+<div class="line">  <span class="comment">// Runtime CTAD deduces Set&lt;int, 3&gt; from the argument count and keeps one</span></div>
+<div class="line">  <span class="comment">// copy when duplicate values are present.</span></div>
+<div class="line">  <span class="keyword">auto</span> runtime = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{10, 20, 20};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> present = runtime(10);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> missing = runtime(30, -1);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (s1.contains(10) &amp;&amp; !s2.contains(10) &amp;&amp; s2.is_empty()) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (present == 10 &amp;&amp; missing == -1) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00052">cljonic-set.hpp:52</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html_a3d2368c95f9a3abd37b0db3279c3fb16"><div class="ttname"><a href="classcljonic_1_1_set.html#a3d2368c95f9a3abd37b0db3279c3fb16">cljonic::Set::conj</a></div><div class="ttdeci">constexpr auto conj(const T &amp;element) const noexcept -&gt; Set</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00111">cljonic-set.hpp:111</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00049">cljonic-set.hpp:49</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00052">52</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00049">49</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="acaac1e8264f0ca9b2c5b0ef58aad57e7" name="acaac1e8264f0ca9b2c5b0ef58aad57e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acaac1e8264f0ca9b2c5b0ef58aad57e7">&#9670;&#160;</a></span>lookup_type</h2>
@@ -162,7 +158,7 @@ class cljonic::Set&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Set">
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="classcljonic_1_1_set.html">cljonic::Set</a>&lt; T, CapacityValue &gt;::lookup_type =  <a class="el" href="classcljonic_1_1_set.html#a056a1615008a05f29b4acfe2d5e56f99">value_type</a></td>
@@ -170,7 +166,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00055">55</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00052">52</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -180,7 +176,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="classcljonic_1_1_set.html">cljonic::Set</a>&lt; T, CapacityValue &gt;::value_type =  T</td>
@@ -188,7 +184,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00054">54</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -199,7 +195,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <div class="memtemplate">
 template&lt;typename... Args&gt; </div>
 <table class="mlabels">
@@ -221,7 +217,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00064">64</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00060">60</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -232,7 +228,7 @@ template&lt;typename... Args&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -253,7 +249,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Returns true when the element is already present or the set has room for one more. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00105">105</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00107">107</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -263,7 +259,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -282,7 +278,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00073">73</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00075">75</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -292,7 +288,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -313,7 +309,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Adds an element to a copy of the set. If the element is already present or capacity is full, returns an unchanged copy. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00111">111</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00113">113</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -323,7 +319,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -343,7 +339,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00085">85</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00087">87</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +349,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -372,7 +368,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00077">77</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00079">79</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -382,7 +378,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -403,7 +399,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Removes an element via swap-and-remove if present; always returns a valid copy. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00122">122</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00124">124</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -413,7 +409,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -432,7 +428,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00081">81</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00083">83</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -442,7 +438,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -463,7 +459,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Returns the stored element value when present; otherwise returns a default-constructed value. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00091">91</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00093">93</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -473,7 +469,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -504,7 +500,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Returns the stored element value when present; otherwise returns the supplied fallback. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00098">98</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00100">100</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -514,7 +510,7 @@ template&lt;concepts::StableEqualityComparable T, std::size_t CapacityValue&gt; 
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 7 2026 17:10:21 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Mon Sep 7 2026 18:18:07 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
