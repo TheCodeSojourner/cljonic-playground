@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <concepts>
 #include <cstddef>
 #include <utility>
 
@@ -22,33 +21,22 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   // Compile-time demonstration.
- *   constexpr auto q_const = Queue<int, 4>{}.conj(10).conj(20);
- *   static_assert(q_const.count() == 2U);
- *   static_assert(q_const.peek() == 10);
- *   static_assert(q_const.can_conj());
+ *   // CTAD infers Queue<int, 3> from the initializer count.
+ *   [[maybe_unused]] constexpr auto ints_at_capacity = Queue{1, 2, 3};
  *
- *   // Pack-literal construction folds conj over each argument in order; CTAD
- *   // deduces Queue<int, 3>. Argument order establishes FIFO order.
- *   constexpr auto literal = Queue{10, 20, 30};
- *   static_assert(literal.count() == 3U);
- *   static_assert(literal.peek() == 10);
+ *   // Explicit capacity permits a partially populated Queue and an empty Queue.
+ *   [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
+ *   [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
  *
- *   // Runtime demonstration.
- *   auto q_runtime = Queue<int, 4>{};
- *   auto q1 = q_runtime.conj(100);
- *   auto q2 = q1.pop();
- *
- *   return (q1.peek() == 100 && q2.is_empty()) ? 0 : 1;
+ *   return 0;
  * }
  * ~~~~~
  */
-template <concepts::CopyableElement T, std::size_t CapacityValue>
+template <concepts::NothrowCollectionElement T, std::size_t CapacityValue>
 class Queue {
   public:
     using value_type = T;
 
-    static_assert(concepts::NothrowCopyableElement<T>, "Queue element type operations must not throw");
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
         "Queue CapacityValue exceeds "
