@@ -10,6 +10,7 @@ TEST_CASE("Get free function operations", "[get]") {
     using cljonic::get;
     using cljonic::Map;
     using cljonic::Set;
+    using cljonic::String;
     using cljonic::Vector;
 
     TRACE_ID("entity-fields.Get");
@@ -41,6 +42,12 @@ TEST_CASE("Get free function operations", "[get]") {
     STATIC_REQUIRE(get(s1, 8) == 0);
     STATIC_REQUIRE(get(s1, 8, -1) == -1);
 
+    // String indexed lookup + fallback
+    constexpr String<4> text{"ab"};
+    STATIC_REQUIRE(get(text, 0U) == 'a');
+    STATIC_REQUIRE(get(text, 9U) == '\0');
+    STATIC_REQUIRE(get(text, 9U, 'x') == 'x');
+
     // Runtime tests for code coverage instrumentation
     volatile int idx_raw = 0;
     int idx = idx_raw;
@@ -57,4 +64,8 @@ TEST_CASE("Get free function operations", "[get]") {
     auto rs1 = conj(rs, 5);
     REQUIRE(get(rs1, 5) == 5);
     REQUIRE(get(rs1, 8, -1) == -1);
+
+    auto rtext = String<4>{"ab"};
+    REQUIRE(get(rtext, 0U) == 'a');
+    REQUIRE(get(rtext, 9U, 'x') == 'x');
 }

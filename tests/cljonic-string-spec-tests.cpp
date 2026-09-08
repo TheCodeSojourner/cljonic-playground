@@ -5,6 +5,7 @@
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
 TEST_CASE("String construction and indexed operations", "[string]") {
+    using cljonic::get;
     using cljonic::String;
 
     TRACE_ID("entity-fields.String");
@@ -17,6 +18,7 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.OrderedAsciiStorage");
     TRACE_ID("invariant.String.NullTerminatorIsUncounted");
     TRACE_ID("invariant.String.InvalidBytesRejectedAtCompileTime");
+    TRACE_ID("invariant.String.RuntimeInvalidBytesReplacedWithPeriod");
     TRACE_ID("invariant.String.NoHeapAllocation");
     TRACE_ID("invariant.String.NoRtti");
     TRACE_ID("invariant.String.NoExceptions");
@@ -37,6 +39,7 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.String.SupportsIndexedLookup");
     TRACE_ID("invariant.String.SupportsIndexedFallbackLookup");
+    TRACE_ID("invariant.String.SupportsGetFreeFunction");
     TRACE_ID("invariant.String.InvalidIndexReturnsDefaultElement");
     TRACE_ID("invariant.String.InvalidIndexReturnsSuppliedFallback");
     TRACE_ID("invariant.String.CanonicalResultStatusModelIsDeclared");
@@ -70,6 +73,13 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     STATIC_REQUIRE(s1.contains(0)); // valid indices 0..4
     STATIC_REQUIRE(s1.contains(4));
     STATIC_REQUIRE_FALSE(s1.contains(5)); // null terminator position is invalid
+    STATIC_REQUIRE(get(s1, 0U) == 'H');
+    STATIC_REQUIRE(get(s1, 99U) == '\0');
+    STATIC_REQUIRE(get(s1, 99U, 'X') == 'X');
+
+    constexpr String<1> ascii_limit{"\x7F"};
+    STATIC_REQUIRE(ascii_limit.count() == 1U);
+    STATIC_REQUIRE(ascii_limit(0) == '\x7F');
 
     // Callable index access: present element
     STATIC_REQUIRE(s1(0) == 'H');
@@ -126,4 +136,11 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     auto rs_put_oob = rs1.put(99, 'X');
     REQUIRE(rs_put_oob.count() == 2U);
+
+    const char invalid_runtime_bytes[] = {'A', '\0', static_cast<char>(0x80), '\0'};
+    auto rs_invalid = String<3>{invalid_runtime_bytes};
+    REQUIRE(rs_invalid.count() == 3U);
+    REQUIRE(rs_invalid(0) == 'A');
+    REQUIRE(rs_invalid(1) == '.');
+    REQUIRE(rs_invalid(2) == '.');
 }
