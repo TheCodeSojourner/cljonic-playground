@@ -64,9 +64,11 @@ REQ-COLL-018. The API MUST support pack-literal construction for `Map<K, V, N>` 
 
 REQ-COLL-018A. A `Map<K, V, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time, regardless of whether duplicate keys would have produced a smaller final count. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Map{entries...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
 
-REQ-COLL-019. The API MUST support pack-literal construction for `Set<T, N>` such that `cljonic::Set<T, N>{values...}` is equivalent to default-constructing an empty set and folding `conj` over each `T`-constructible argument in argument order, consistent with the no-op-on-duplicate semantics of `REQ-COLL-005A`.
+REQ-COLL-019. The API MUST support pack-literal construction for `Set<T, N>` such that runtime `cljonic::Set<T, N>{values...}` is equivalent to default-constructing an empty set and folding `conj` over each `T`-constructible argument in argument order, consistent with the no-op-on-duplicate semantics of `REQ-COLL-005A`. A duplicate argument MUST therefore produce one stored copy at runtime.
 
 REQ-COLL-019A. A `Set<T, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time, regardless of whether duplicate values would have produced a smaller final count. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Set{values...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
+
+REQ-COLL-019B. A `Set<T, N>{values...}` construction evaluated as a constant expression MUST fail at compile time when two arguments compare equal. This compile-time duplicate rejection MUST preserve the runtime no-op-on-duplicate behavior required by `REQ-COLL-019` and MUST NOT require a runtime exception.
 
 REQ-COLL-020. The API MUST support pack-literal construction for `Queue<T, N>` such that `cljonic::Queue<T, N>{values...}` is equivalent to default-constructing an empty queue and folding `conj` over each `T`-constructible argument in argument order, producing FIFO order matching argument order.
 
