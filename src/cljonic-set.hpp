@@ -2,8 +2,8 @@
 #define CLJONIC_SET_HPP
 
 #include <array>
-#include <concepts>
 #include <cstddef>
+#include <cstdlib>
 #include <utility>
 
 #include <cljonic-concepts.hpp>
@@ -17,44 +17,40 @@ namespace cljonic {
  * contiguous array storage with linear-scan lookup and copy-on-modify
  * semantics.
  *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto s_const = Set<int, 4>{}.conj(1).conj(2);
- *   static_assert(s_const.count() == 2U);
- *   static_assert(s_const.contains(1));
- *   static_assert(s_const(1) == 1);
- *   static_assert(s_const(99, -1) == -1);
- *   static_assert(s_const.can_conj(3));
- *
- *   // Pack-literal construction folds conj over each argument in order; CTAD
- *   // deduces Set<int, 4>. A later duplicate value is a no-op, matching
- *   // explicit conj semantics.
- *   constexpr auto literal = Set{1, 2, 2, 3};
- *   static_assert(literal.count() == 3U);
- *   static_assert(literal.contains(2));
- *
- *   // Runtime demonstration.
- *   auto s_runtime = Set<int, 4>{};
- *   auto s1 = s_runtime.conj(10);
- *   auto s2 = s1.disj(10);
- *
- *   return (s1.contains(10) && !s2.contains(10) && s2.is_empty()) ? 0 : 1;
- * }
- * ~~~~~
+ \b Examples
+ ~~~~~{.cpp}
+ #include <cljonic.hpp>
+
+ int main() {
+   using namespace cljonic;
+
+   using AccountId = int;
+   using AccountSet = Set<AccountId, 4>;
+
+   // A named set type makes the element and capacity contract explicit.
+   // Runtime pack construction folds conj over the arguments; a duplicate
+   // value is a no-op. Constant-evaluated duplicate construction is rejected.
+   constexpr auto literal = AccountSet{1, 2, 3};
+   static_assert(literal(2) == 2);
+   static_assert(literal(99) == 0);
+   static_assert(literal(99, -1) == -1);
+
+   // Runtime CTAD deduces Set<int, 3> from the argument count and keeps one
+   // copy when duplicate values are present.
+   auto runtime = Set{10, 20, 20};
+   const auto present = runtime(10);
+   const auto missing = runtime(30, -1);
+
+   return (present == 10 && missing == -1) ? 0 : 1;
+ }
+ ~~~~~
  */
-template <concepts::StableEqualityComparable T, std::size_t CapacityValue>
+template <concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue>
 class Set {
   public:
     using value_type = T;
     using lookup_type = value_type;
 
-    static_assert(concepts::NothrowCopyableElement<T>, "Set element type operations must not throw");
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
         "Set CapacityValue exceeds "
@@ -67,7 +63,13 @@ class Set {
                       "Set constructor requires all arguments to construct "
                       "T without throwing and be implicitly convertible to T");
 
-        ((*this = conj(T{std::forward<Args>(args)})), ...);
+        const auto duplicate = append_constructed(std::forward<Args>(args)...);
+
+        if consteval {
+            if (duplicate) {
+                std::abort();
+            }
+        }
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -132,6 +134,23 @@ class Set {
     }
 
   private:
+    template <typename Arg>
+    constexpr auto append_constructed(Arg&& arg) noexcept -> bool {
+        T value{std::forward<Arg>(arg)};
+        if (contains(value)) {
+            return true;
+        }
+        *this = conj(value);
+        return false;
+    }
+
+    template <typename... Args>
+    constexpr auto append_constructed(Args&&... args) noexcept -> bool {
+        bool duplicate = false;
+        ((duplicate = append_constructed(std::forward<Args>(args)) || duplicate), ...);
+        return duplicate;
+    }
+
     /** Returns `logical_size_` when the element is absent. */
     [[nodiscard]] constexpr auto find_index(const T& element) const noexcept -> std::size_t {
         for (std::size_t i = 0; i < logical_size_; ++i) {

@@ -16,52 +16,46 @@ namespace cljonic {
  * storage and linear scan lookup with copy-on-modify updates. Keys satisfy
  * `NothrowStableEqualityComparable`; values satisfy `NothrowCollectionElement`.
  *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * struct Key {
- *   int id;
- *   friend constexpr bool operator==(const Key&, const Key&) noexcept = default;
- * };
- *
- * struct Value {
- *   int amount = 0;
- *   friend constexpr bool operator==(const Value&, const Value&) noexcept = default;
- * };
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // An explicit capacity creates an empty bounded map.
- *   constexpr Map<Key, Value, 4> empty{};
- *   constexpr auto first = empty.assoc(Key{1}, Value{10});
- *   constexpr auto replaced = first.assoc(Key{1}, Value{20});
- *   static_assert(first.count() == 1U);
- *   static_assert(replaced.count() == 1U);
- *   static_assert(replaced(Key{1}).amount == 20);
- *   static_assert(!replaced.contains(Key{2}));
- *   static_assert(replaced(Key{2}).amount == 0);
- *   static_assert(replaced(Key{2}, Value{99}).amount == 99);
- *   static_assert(replaced.can_assoc(Key{2}));
- *
- *   // Pack-literal construction requires one or more MapEntry<Key, Value>
- *   // arguments (no implicit conversion from other types); it folds assoc
- *   // over each entry in argument order. CTAD deduces Map<Key, Value, 2>. A
- *   // later duplicate key replaces an earlier one, matching explicit assoc.
- *   constexpr auto literal = Map{MapEntry<Key, Value>{Key{1}, Value{10}}, MapEntry<Key, Value>{Key{1}, Value{20}}};
- *   static_assert(literal.count() == 1U);
- *   static_assert(literal(Key{1}).amount == 20);
- *
- *   // Map lookup is callable and missing-key access does not insert.
- *   auto runtime = replaced.assoc(Key{2}, Value{30});
- *   const auto missing = runtime(Key{3}, Value{77});
- *   const auto removed = runtime.dissoc(Key{1});
- *
- *   return (runtime.count() == 2U && missing.amount == 77 &&
- *           !removed.contains(Key{1}) && removed.contains(Key{2})) ? 0 : 1;
- * }
- * ~~~~~
+ \b Examples
+ ~~~~~{.cpp}
+ #include <cljonic.hpp>
+
+ struct Key {
+   int id;
+   friend constexpr bool operator==(const Key &, const Key &) noexcept = default;
+ };
+
+ struct Value {
+   int amount = 0;
+   friend constexpr bool operator==(const Value &,
+                                    const Value &) noexcept = default;
+ };
+
+ int main() {
+   using namespace cljonic;
+
+   using AccountEntry = MapEntry<Key, Value>;
+   using AccountMap = Map<Key, Value, 2>;
+
+   // A named map type and its named entry type make the intended value model
+   // explicit. Pack construction folds over entries; a later duplicate key
+   // replaces the earlier value.
+   constexpr auto literal = AccountMap{AccountEntry{Key{1}, Value{10}},
+                                       AccountEntry{Key{1}, Value{20}}};
+
+   // A Map is callable for present-key lookup and missing-key fallback.
+   static_assert(literal(Key{1}).amount == 20);
+   static_assert(literal(Key{2}).amount == 0);
+   static_assert(literal(Key{2}, Value{99}).amount == 99);
+
+   // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
+   auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
+   const auto present = runtime(Key{3});
+   const auto missing = runtime(Key{4}, Value{77});
+
+   return (present.amount == 30 && missing.amount == 77) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType,
           std::size_t CapacityValue>
