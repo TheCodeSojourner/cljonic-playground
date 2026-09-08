@@ -42,19 +42,11 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     TRACE_ID("invariant.Queue.SupportsConjOperation");
     TRACE_ID("invariant.Queue.EmptyQueuePeekReturnsDefaultElement");
     TRACE_ID("invariant.Queue.EmptyQueuePopReturnsEmptyQueue");
-    TRACE_ID("invariant.Queue.CanonicalResultStatusModelIsDeclared");
-    TRACE_ID("invariant.Queue.CompleteResultStatusDeclared");
-    TRACE_ID("invariant.Queue.BoundedPrefixResultStatusDeclared");
-    TRACE_ID("invariant.Queue.DefaultReturningResultStatusDeclared");
-    TRACE_ID("invariant.Queue.CheckedFailureResultStatusDeclared");
-    TRACE_ID("invariant.Queue.ProducerOnlyResultStatusDeclared");
     TRACE_ID("invariant.Queue.PreflightPredicatesAreNonThrowingNonAllocating");
     TRACE_ID("invariant.Queue.IsEmptyIsCanonicalEmptyPredicate");
     TRACE_ID("invariant.Queue.CanConjIsCanonicalConjPreflight");
-    TRACE_ID("invariant.Queue.FitsIntoIsCanonicalMaterializationPreflight");
     TRACE_ID("invariant.Queue.CompileTimeCapacityOverflowIsRejected");
     TRACE_ID("invariant.Queue.RuntimeCapacityFailuresHaveDocumentedPolicy");
-    TRACE_ID("invariant.Queue.DefaultAccessHasPreflightPredicate");
 
     constexpr Queue<int, 4> q{};
     STATIC_REQUIRE(q.is_empty());
@@ -122,6 +114,14 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     // Pop on empty returns identical state
     constexpr auto q_pop_again = q_empty_pop.pop();
     STATIC_REQUIRE(q_pop_again.count() == 0U);
+
+    // Pop followed by conj reuses the vacated physical slot while preserving
+    // logical FIFO order.
+    constexpr auto wrapped = q3.pop().conj(4);
+    STATIC_REQUIRE(wrapped.count() == 3U);
+    STATIC_REQUIRE(wrapped.peek() == 2);
+    STATIC_REQUIRE(wrapped.pop().peek() == 3);
+    STATIC_REQUIRE(wrapped.pop().pop().peek() == 4);
 
     // Runtime tests for code coverage instrumentation
     volatile int v1_raw = 10;
