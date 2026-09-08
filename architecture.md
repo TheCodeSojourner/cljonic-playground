@@ -204,14 +204,15 @@
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
-  | collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
+  | deferred_collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
     ∧ take_nth ∧ nth ∧ nthnext ∧ nthrest ∧ butlast ∧ map_indexed ∧ rseq ∧ second ∧ ffirst ∧ fnext
     ∧ nfirst ∧ nnext ∧ some ∧ is_every ∧ not_any ∧ not_every ∧ distinct ∧ dedupe ∧ frequencies
     ∧ reductions ∧ split_at ∧ split_with ∧ mapcat ∧ interleave ∧ interpose ∧ partition ∧ partition_all
     ∧ partition_by ∧ partitionv ∧ partitionv_all ∧ group_by ∧ flatten ∧ tree_seq ∧ keep ∧ keep_indexed
     ∧ remove ∧ replace ∧ mapv ∧ filterv ∧ subvec ∧ find ∧ reduce_kv ∧ sort ∧ sort_by
-  | collection_shaping_traversal_family(x) → require(individually_named_behavioral_specification(x))
-  | collection_shaping_traversal_family(x) → require(preserves_input_values(x)
+  | deferred_collection_shaping_traversal_family(x) → remain_outside(current_collection_api(x))
+  | deferred_collection_shaping_traversal_family(x) → require(individually_named_behavioral_specification(x))
+  | deferred_collection_shaping_traversal_family(x) → require(preserves_input_values(x)
     ∧ callbacks_are_pure_and_non_allocating(x) ∧ termination_policy_is_declared(x)
     ∧ equality_and_ordering_gates_are_declared(x) ∧ nested_result_representation_is_declared(x)
     ∧ producer_behavior_is_declared(x) ∧ result_capacity_policy_is_declared(x)
@@ -367,14 +368,14 @@ concept AssociativeCollection =
   | MapEntry(x) → ContiguousStorage(x) ∧ value_semantics(x)
   | search_algorithm(x) ≡ LinearScan
   | unsorted_removal(Map ∨ Set) ≡ SwapAndRemove
-  | sequence_representation(seq) ≡ OwningValue(Vector)
+  | future_sequence_representation(seq) ≡ OwningValue(Vector)
   | string_storage(String) ≡ ContiguousStorage(ASCII_bytes) ∧ uncounted_null_terminator
 
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
   | collection_updates(x) → realize(PersistentValueSemantics ∧ DeepCopyUpdate)
   | public_operations(x) → preserve(ReferentialTransparency)
   | read_only_observation(x) → defer(ReadOnlyInteropAccessor ∧ ConstRangeTraversal)
-  | contiguous_observation(x) → use(ContiguousConstView) when(complete_active_logical_range_is_contiguous(x))
+  | future_contiguous_observation(x) → use(ContiguousConstView) when(complete_active_logical_range_is_contiguous(x))
   | view_lifetime(x) → source_lifetime_bounded(x)
 
 λ S1_sequence_guidance(x). sequence_and_materialization_rules(x) → active_for(approved_operations_and_producers)
