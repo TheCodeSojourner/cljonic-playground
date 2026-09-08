@@ -40,6 +40,17 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     TRACE_ID("invariant.Queue.SupportsPeekOperation");
     TRACE_ID("invariant.Queue.SupportsPopOperation");
     TRACE_ID("invariant.Queue.SupportsConjOperation");
+    TRACE_ID("invariant.Queue.SupportsSeqOperation");
+    TRACE_ID("invariant.Queue.SupportsFirstOperation");
+    TRACE_ID("invariant.Queue.SupportsNextOperation");
+    TRACE_ID("invariant.Queue.SupportsRestOperation");
+    TRACE_ID("invariant.Queue.SequenceResultIsOwningVector");
+    TRACE_ID("invariant.Queue.SequenceTraversalIsFrontToRearFifo");
+    TRACE_ID("invariant.Queue.SequenceTraversalPreservesSource");
+    TRACE_ID("invariant.Queue.ConstRangeTraversalIsNonAllocating");
+    TRACE_ID("invariant.Queue.ConstRangeTraversalIsNonThrowing");
+    TRACE_ID("invariant.Queue.WrappedStorageDoesNotChangeLogicalOrder");
+    TRACE_ID("invariant.Queue.ContiguousInteroperabilityViewIsNotRequired");
     TRACE_ID("invariant.Queue.EmptyQueuePeekReturnsDefaultElement");
     TRACE_ID("invariant.Queue.EmptyQueuePopReturnsEmptyQueue");
     TRACE_ID("invariant.Queue.PreflightPredicatesAreNonThrowingNonAllocating");
@@ -123,6 +134,37 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     STATIC_REQUIRE(wrapped.pop().peek() == 3);
     STATIC_REQUIRE(wrapped.pop().pop().peek() == 4);
 
+    // Sequence behavior follows logical FIFO order and preserves the source.
+    constexpr auto sequence = cljonic::seq(q3);
+    STATIC_REQUIRE(sequence.count() == 3U);
+    STATIC_REQUIRE(sequence(0U) == 1);
+    STATIC_REQUIRE(sequence(1U) == 2);
+    STATIC_REQUIRE(sequence(2U) == 3);
+    STATIC_REQUIRE(cljonic::first(q3) == 1);
+    constexpr auto sequence_next = cljonic::next(q3);
+    constexpr auto sequence_rest = cljonic::rest(q3);
+    STATIC_REQUIRE(sequence_next.count() == 2U);
+    STATIC_REQUIRE(sequence_next(0U) == 2);
+    STATIC_REQUIRE(sequence_next(1U) == 3);
+    STATIC_REQUIRE(sequence_rest.count() == 2U);
+    STATIC_REQUIRE(sequence_rest(0U) == 2);
+    STATIC_REQUIRE(sequence_rest(1U) == 3);
+    STATIC_REQUIRE(q3.peek() == 1);
+
+    // Sequence behavior remains FIFO after the physical storage wraps.
+    constexpr auto wrapped_sequence = cljonic::seq(wrapped);
+    STATIC_REQUIRE(wrapped_sequence.count() == 3U);
+    STATIC_REQUIRE(wrapped_sequence(0U) == 2);
+    STATIC_REQUIRE(wrapped_sequence(1U) == 3);
+    STATIC_REQUIRE(wrapped_sequence(2U) == 4);
+    STATIC_REQUIRE(cljonic::first(wrapped) == 2);
+    constexpr auto wrapped_next = cljonic::next(wrapped);
+    constexpr auto wrapped_rest = cljonic::rest(wrapped);
+    STATIC_REQUIRE(wrapped_next(0U) == 3);
+    STATIC_REQUIRE(wrapped_next(1U) == 4);
+    STATIC_REQUIRE(wrapped_rest(0U) == 3);
+    STATIC_REQUIRE(wrapped_rest(1U) == 4);
+
     // Runtime tests for code coverage instrumentation
     volatile int v1_raw = 10;
     volatile int v2_raw = 20;
@@ -160,4 +202,10 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     auto runtime_literal = Queue{literal_v1_raw, literal_v2_raw, literal_v3_raw};
     REQUIRE(runtime_literal.count() == 3U);
     REQUIRE(runtime_literal.peek() == 10);
+
+    auto runtime_sequence = cljonic::seq(runtime_literal);
+    REQUIRE(runtime_sequence.count() == 3U);
+    REQUIRE(runtime_sequence(0U) == 10);
+    REQUIRE(runtime_sequence(1U) == 20);
+    REQUIRE(runtime_sequence(2U) == 30);
 }
