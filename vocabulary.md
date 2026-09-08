@@ -10,8 +10,9 @@ status: draft
 
 The current implementation and tests cover the core collection types (`Vector`,
 `Map`, `Set`, `Queue`, and `String`), their direct construction, member-observation,
-callable forms, sequence traversal interfaces, and primitive free-function
-operations defined in Module 3. Module 3 establishes the concrete, array-backed,
+callable forms, and current primitive free-function operations defined in Module 3.
+Sequence traversal interfaces remain deferred future work for every collection.
+Module 3 establishes the concrete, array-backed,
 bounded collection types, their contiguous storage strategies, linear scan lookup
 algorithms, swap-and-remove policies, and primitive free functions. These terms
 govern stored collection building blocks used across all higher-order algorithms.
