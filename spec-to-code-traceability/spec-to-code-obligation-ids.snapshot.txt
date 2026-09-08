@@ -21,7 +21,6 @@ entity-fields.Distinct
 entity-fields.Drop
 entity-fields.DropLast
 entity-fields.DropWhile
-entity-fields.Empty
 entity-fields.Ffirst
 entity-fields.Filterv
 entity-fields.Find
@@ -46,7 +45,6 @@ entity-fields.Mapv
 entity-fields.Nfirst
 entity-fields.Nnext
 entity-fields.NotAny
-entity-fields.NotEmpty
 entity-fields.NotEvery
 entity-fields.NothrowStableEqualityComparable
 entity-fields.Nth
@@ -243,14 +241,6 @@ invariant.DropWhile.ResultIsBoundedOwningCollection
 invariant.DropWhile.ReturnsRemainingResult
 invariant.DropWhile.SourceIsSecondArgument
 invariant.DropWhile.TerminationIsDeclared
-invariant.Empty.EmptyFreeFunctionSupported
-invariant.Empty.NoExceptions
-invariant.Empty.NoHeapAllocation
-invariant.Empty.NoRtti
-invariant.Empty.PreservesInput
-invariant.Empty.ReferentialTransparency
-invariant.Empty.ReturnsEmptySameType
-invariant.Empty.SingleThreadedExecutionModel
 invariant.Ffirst.FailurePolicyIsTyped
 invariant.Ffirst.InputIsPreserved
 invariant.Ffirst.MaximumArityIsOne
@@ -529,14 +519,6 @@ invariant.NotAny.ResultIsBoolean
 invariant.NotAny.ReturnsBoolean
 invariant.NotAny.ShortCircuitIsDeclared
 invariant.NotAny.SourceIsSecondArgument
-invariant.NotEmpty.NoExceptions
-invariant.NotEmpty.NoHeapAllocation
-invariant.NotEmpty.NoRtti
-invariant.NotEmpty.NotEmptyFreeFunctionSupported
-invariant.NotEmpty.PreservesInput
-invariant.NotEmpty.ReferentialTransparency
-invariant.NotEmpty.ReturnsOwningCopy
-invariant.NotEmpty.SingleThreadedExecutionModel
 invariant.NotEvery.CallbackIsFirstArgument
 invariant.NotEvery.CallbackIsPureAndNonAllocating
 invariant.NotEvery.FailurePolicyIsTyped
