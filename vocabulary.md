@@ -514,7 +514,7 @@ govern stored collection building blocks used across all higher-order algorithms
 
 ### Conj
 - **Definition:** The primitive collection free function that returns a new collection with one or more elements added according to the target collection's type conventions (rear for `Vector` and `Queue`, membership insertion for `Set`).
-- **Deprecated Synonyms:** conjoin, append, insert element
+- **Deprecated Synonyms:** conjoin, insert element
 - **Related:** CopyOnModifyCollection, CanConj, PreflightPredicate, Vector, Set, Queue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `conj(xs, 4)` appends 4 to a Vector; `conj(s, 4)` adds 4 to a Set if not already present.
@@ -522,7 +522,7 @@ govern stored collection building blocks used across all higher-order algorithms
 
 ### Assoc
 - **Definition:** The primitive associative free function that returns a new `Map` with the supplied key-value association added or replaced.
-- **Deprecated Synonyms:** associate, map assoc, put
+- **Deprecated Synonyms:** associate, map assoc
 - **Related:** Map, MapEntry, CanAssoc, Dissoc, CopyOnModifyCollection
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `assoc(m, key, val)` updates the value if `key` exists (without consuming extra capacity) or inserts the new pair if capacity remains.
