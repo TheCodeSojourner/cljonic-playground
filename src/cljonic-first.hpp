@@ -10,8 +10,8 @@ namespace cljonic {
  * \brief Returns the first element of a sequenceable collection, or the key of
  *        a MapEntry.
  *
- * For a MapEntry value, `first` returns its key. For a sequenceable collection,
- * `first` returns the element at index zero.
+ * For a MapEntry value, `first` returns its key. For a sequenceable collection, `first` returns the element at index
+ * zero.
  *
  * \b Examples
  * ~~~~~{.cpp}

@@ -11,8 +11,9 @@
 namespace cljonic {
 
 /** \anchor Queue
- * \b Queue is a fixed-capacity FIFO sequence collection backed by contiguous
- * array storage with copy-on-modify semantics.
+ * \b Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
+ * way to operate on the collection is through the library's free-function API. Construction with more values than the
+ * available capacity is rejected at compile time.
  *
  * \b Examples
  * ~~~~~{.cpp}

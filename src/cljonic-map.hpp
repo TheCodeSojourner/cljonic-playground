@@ -12,9 +12,10 @@
 namespace cljonic {
 
 /** \anchor Map
- * \b Map is a fixed-capacity associative collection backed by contiguous array
- * storage and linear scan lookup with copy-on-modify updates. Keys satisfy
- * `NothrowStableEqualityComparable`; values satisfy `NothrowCollectionElement`.
+ * \b Map is a bounded, associative collection that maps unique keys to values. It provides callable lookup with
+ * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
+ * return a modified copy without changing the original collection. Construction with more entries than the available
+ * capacity is rejected at compile time.
  *
  \b Examples
  ~~~~~{.cpp}

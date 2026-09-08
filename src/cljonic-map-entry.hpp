@@ -7,9 +7,8 @@
 namespace cljonic {
 
 /** \anchor MapEntry
- * \b MapEntry is a value-semantic pair representing a single key-value
- * association. Its key satisfies `NothrowStableEqualityComparable`; its value
- * satisfies `NothrowCollectionElement`.
+ * \b MapEntry is a value-semantic pair representing a single key-value association. Its key satisfies
+ * `NothrowStableEqualityComparable`; its value satisfies `NothrowCollectionElement`.
  *
  * \b Examples
  * ~~~~~{.cpp}

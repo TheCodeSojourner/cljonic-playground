@@ -10,8 +10,8 @@ namespace cljonic {
  * \brief Looks up an element by a key or index, returning the default or
  *        supplied fallback when absent.
  *
- * Dispatches to the collection's callable lookup forms, consistent with the
- * `operator()` behavior of Map, Vector, and Set.
+ * Dispatches to the collection's callable lookup forms, consistent with the `operator()` behavior of Map, Vector, and
+ * Set.
  *
  * \b Examples
  * ~~~~~{.cpp}

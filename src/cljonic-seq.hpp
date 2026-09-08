@@ -8,8 +8,8 @@ namespace cljonic {
 /** \anchor Seq
  * \brief Converts a collection into an owning, value-semantic sequence.
  *
- * For a Vector this returns the owning vector itself; for other sequenceable
- * collections it produces an owning Vector of their traversal elements.
+ * For a Vector this returns the owning vector itself; for other sequenceable collections it produces an owning Vector
+ * of their traversal elements.
  *
  * \b Examples
  * ~~~~~{.cpp}

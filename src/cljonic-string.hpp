@@ -12,8 +12,8 @@
 namespace cljonic {
 
 /** \anchor String
- * \b String is a fixed-capacity ASCII string backed by contiguous array storage
- * with automatic null termination and copy-on-modify semantics.
+ * \b String is a fixed-capacity ASCII string backed by contiguous array storage with automatic null termination and
+ * copy-on-modify semantics.
  *
  * \b Examples
  * ~~~~~{.cpp}

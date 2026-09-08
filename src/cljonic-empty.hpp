@@ -6,11 +6,9 @@
 namespace cljonic {
 
 /** \anchor Empty
- * \brief Returns an empty owning value of the same collection type as the
- * input.
+ * \brief Returns an empty owning value of the same collection type as the input.
  *
- * Per REQ-FN-026, `empty` produces an empty owning value of the same supported
- * collection type as its input.
+ * Per REQ-FN-026, `empty` produces an empty owning value of the same supported collection type as its input.
  *
  * \b Examples
  * ~~~~~{.cpp}

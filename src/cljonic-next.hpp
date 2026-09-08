@@ -8,8 +8,7 @@ namespace cljonic {
 /** \anchor Next
  * \brief Returns a collection without its first element.
  *
- * For a Queue, `next` dequeues the front element (the accessible element) and
- * returns the remaining collection.
+ * For a Queue, `next` dequeues the front element (the accessible element) and returns the remaining collection.
  *
  * \b Examples
  * ~~~~~{.cpp}

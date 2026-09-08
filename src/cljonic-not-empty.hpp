@@ -6,12 +6,10 @@
 namespace cljonic {
 
 /** \anchor NotEmpty
- * \brief Returns an owning copy of the input when nonempty, otherwise the
- * corresponding empty owning value.
+ * \brief Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value.
  *
- * Per REQ-FN-026, `not_empty` preserves the input collection type and capacity
- * and returns an owning copy of the input when nonempty or the corresponding
- * empty value when empty.
+ * Per REQ-FN-026, `not_empty` preserves the input collection type and capacity and returns an owning copy of the input
+ * when nonempty or the corresponding empty value when empty.
  *
  * \b Examples
  * ~~~~~{.cpp}

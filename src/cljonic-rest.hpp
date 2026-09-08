@@ -8,8 +8,8 @@ namespace cljonic {
 /** \anchor Rest
  * \brief Returns a collection without its first/accessible element.
  *
- * For a Queue, this removes the front element. Unlike `next`, `rest` returns an
- * empty collection rather than signaling absence on an empty input.
+ * For a Queue, this removes the front element. Unlike `next`, `rest` returns an empty collection rather than signaling
+ * absence on an empty input.
  *
  * \b Examples
  * ~~~~~{.cpp}

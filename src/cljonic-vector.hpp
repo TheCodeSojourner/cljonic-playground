@@ -15,10 +15,10 @@ namespace cljonic {
 // covered by matching TRACE_ID tests, and recorded in the traceability snapshot.
 
 /** \anchor Vector
- * \b Vector is a fixed-capacity collection backed by static storage.
- * Construction with more initializers than capacity is a compile-time error.
- *
- * This example covers bounded construction and direct member observation.
+ * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
+ * operate on the collection is through the library's free-function API. Updates return a modified copy without
+ * changing the original collection. Construction with more initializers than the available capacity is rejected at
+ * compile time.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

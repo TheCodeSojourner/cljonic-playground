@@ -7,8 +7,7 @@
 namespace cljonic {
 
 /** \anchor Assoc
- * \brief Associates a key and value in an associative collection or index in a
- * vector.
+ * \brief Associates a key and value in an associative collection or index in a vector.
  *
  * \b Examples
  * ~~~~~{.cpp}

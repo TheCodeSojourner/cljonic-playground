@@ -6,19 +6,18 @@
 namespace cljonic {
 
 /** \anchor Contains
- * \brief Tests whether its argument belongs to a collection's lookup domain,
- * mirroring Clojure's `contains?` predicate.
+ * \brief Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's `contains?`
+ * predicate.
  *
- * The meaning of the argument follows the collection kind:
- * - Map: tests key presence (`contains(m, key)` is true when key is present).
- * - Set: tests element presence (`contains(s, value)` is true when value is a
+ * The meaning of the argument follows the collection kind: - Map: tests key presence (`contains(m, key)` is true when
+ * key is present). - Set: tests element presence (`contains(s, value)` is true when value is a
  *   member).
  * - Vector / String: tests whether a numeric index is in range
  *   (`contains(xs, index)` is true when index is valid, like Clojure's
  *   `contains?` over vector/string indices).
  *
- * `contains` never performs a default-returning access; it only answers the
- * membership question for the collection's lookup domain.
+ * `contains` never performs a default-returning access; it only answers the membership question for the collection's
+ * lookup domain.
  *
  * \b Examples
  * ~~~~~{.cpp}

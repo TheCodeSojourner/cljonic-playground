@@ -13,9 +13,10 @@
 namespace cljonic {
 
 /** \anchor Set
- * \b Set is a fixed-capacity associative sequence collection backed by
- * contiguous array storage with linear-scan lookup and copy-on-modify
- * semantics.
+ * \b Set is a bounded, unordered collection of unique values. It provides callable lookup with optional fallback
+ * values. The way to operate on the collection is through the library's free-function API. Updates return a modified
+ * copy without changing the original collection. Construction with more values than the available capacity is rejected
+ * at compile time.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -27,9 +28,9 @@ namespace cljonic {
    using AccountId = int;
    using AccountSet = Set<AccountId, 4>;
 
-   // A named set type makes the element and capacity contract explicit.
-   // Runtime pack construction folds conj over the arguments; a duplicate
-   // value is a no-op. Constant-evaluated duplicate construction is rejected.
+   // A named set type makes the element and capacity contract explicit. Runtime
+   // pack construction folds conj over the arguments; a duplicate value is a
+   // no-op. Constant-evaluated duplicate construction is rejected.
    constexpr auto literal = AccountSet{1, 2, 3};
    static_assert(literal(2) == 2);
    static_assert(literal(99) == 0);
