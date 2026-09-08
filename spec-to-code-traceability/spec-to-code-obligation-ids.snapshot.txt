@@ -801,6 +801,7 @@ invariant.Set.CapacityExceedsMaximumIsCompileTimeFailure
 invariant.Set.CapacityIsNonNegative
 invariant.Set.CheckedFailureResultStatusDeclared
 invariant.Set.CompileTimeCapacityOverflowIsRejected
+invariant.Set.CompileTimeDuplicateConstructionIsRejected
 invariant.Set.CompleteResultStatusDeclared
 invariant.Set.ContainsIsCanonicalMembershipPredicate
 invariant.Set.ContiguousStorage
@@ -829,6 +830,7 @@ invariant.Set.RequiresNothrowDefaultConstruction
 invariant.Set.RequiresNothrowDestruction
 invariant.Set.RequiresValueSemanticElements
 invariant.Set.RuntimeCapacityFailuresHaveDocumentedPolicy
+invariant.Set.RuntimeDuplicateConstructionDeduplicates
 invariant.Set.SingleThreadedExecutionModel
 invariant.Set.StaticOrAutomaticStorageOnly
 invariant.Set.SupportsCapacityInferredLiteralEquivalentSemantics
