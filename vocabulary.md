@@ -475,9 +475,9 @@ govern stored collection building blocks used across all higher-order algorithms
 ### String
 - **Definition:** The cljonic fixed-capacity array-backed collection type with ordered ASCII byte storage (range `0x01`–`0x7F`) and an uncounted null terminator immediately following its content.
 - **Deprecated Synonyms:** bounded string, fixed-capacity string, cljonic string
-- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, IndexedAccess, CallableLookup, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length.
+- **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length. `s(2)` and `get(s, 2)` return the byte at content index two; invalid indices return `char{}` or a supplied fallback, while `contains(s, index)` distinguishes valid content indices from the terminator and out-of-range indices.
 
 
 ### SwapAndRemove
@@ -501,7 +501,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** callable collection, functional lookup syntax, operator() lookup
 - **Related:** SentinelBasedAccess, DefaultElement, IndexedAccess, AssociativeAccess
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `xs(2)` on a Vector, `m(key)` on a Map, and `s(val)` on a Set invoke callable lookup without mutating the collection.
+- **Examples:** `xs(2)` on a Vector, `m(key)` on a Map, `s(val)` on a Set, and `text(2)` on a String invoke callable lookup without mutating the collection; each is behaviorally equivalent to the corresponding `get` overload.
 
 
 ### LinearScan
