@@ -66,6 +66,9 @@ public:
 } // namespace cljonic
 ```
 
+For runtime raw character-array construction, `String<N>` replaces embedded null bytes and bytes above `0x7F` with
+`'.'`. Constant-evaluated construction rejects those bytes instead.
+
 ## Linear Scan & Swap-and-Remove Architecture
 
 1. **Unordered Map & Set Search**:
@@ -82,6 +85,10 @@ Collection types overload `operator()` to provide convenience lookup:
 - `vector(idx)` / `vector(idx, fallback)` $\rightarrow$ delegates to `get(vector, idx)`
 - `map(key)` / `map(key, fallback)` $\rightarrow$ delegates to `get(map, key)`
 - `set(val)` / `set(val, fallback)` $\rightarrow$ delegates to `get(set, val)`
+- `string(index)` / `string(index, fallback)` $\rightarrow$ delegates to `get(string, index)`
+
+`String<N>` uses the same indexed callable lookup contract as `Vector<T, N>`; its logical index domain contains only
+stored content bytes and excludes the automatic null terminator.
 
 Map keys and values are admitted only when they satisfy `NothrowCollectionElement`; key lookup additionally requires stable equality. This storage boundary does not imply ordering, hashing, or parsing capabilities.
 

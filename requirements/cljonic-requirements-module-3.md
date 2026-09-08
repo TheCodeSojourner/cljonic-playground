@@ -28,6 +28,8 @@ REQ-COLL-005A. Inserting a set value that is already present MUST be a successfu
 
 REQ-COLL-005B. A `Set<T, N>` MUST be callable with `operator()(T)` and `operator()(T, T)` when `T` satisfies the stable equality capability required by set membership. The one-argument form MUST return the matching stored element for a present value or `T{}` when the value is absent. The two-argument form MUST return the matching stored element for a present value or the supplied fallback value when the value is absent. Neither form MUST mutate the set, insert a value, allocate, throw, reorder elements, or change traversal state. `contains(set, value)` MUST remain the authoritative boolean membership predicate and MUST distinguish an absent value from a present value equal to `T{}`; `get(set, value)` and `get(set, value, fallback)` MUST remain behaviorally equivalent free-function forms.
 
+REQ-COLL-012A. A `String<N>` MUST be callable with `operator()(Index)` and `operator()(Index, char)` for indexed lookup. The one-argument form MUST return the stored ASCII byte at a valid content index or `char{}` when the index is invalid. The two-argument form MUST return the stored ASCII byte at a valid content index or the supplied fallback character when the index is invalid. Neither form MUST expose the null terminator as a content element, mutate the string, allocate, or throw. `contains(string, index)` MUST remain the authoritative way to distinguish an invalid index from a valid index whose byte equals `char{}`.
+
 REQ-COLL-006. The library MUST provide a bounded FIFO queue with insertion at the rear, removal at the front, peek, and count. Sequence conversion and traversal remain deferred future capabilities.
 
 REQ-COLL-007. Collection capacity MUST be encoded in each collection type and bounded by a documented configuration-time limit.
@@ -51,6 +53,8 @@ REQ-COLL-012. The string MUST be a bounded, array-backed collection with ordered
 REQ-COLL-013. A string MUST accept only ASCII bytes in the range `0x01` through `0x7F`. Embedded null bytes and bytes above `0x7F` MUST be handled according to the documented deterministic failure policy.
 
 REQ-COLL-013A. The runtime `'.'` replacement policy for invalid bytes defined by `REQ-FN-027` MUST apply to external `std::string_view` imports only. Direct `String` construction from compile-time literals MUST reject invalid bytes at compile time. Any public runtime constructor or operation that accepts raw byte input MUST define an explicit checked-failure or replacement policy for invalid bytes; it MUST NOT inherit the `std::string_view` import policy implicitly. Operations that receive an existing `String` MAY assume that its stored content has already passed the string byte-validity rules and MUST operate only on valid stored bytes.
+
+REQ-COLL-013B. A runtime `String<N>` construction from a raw character array MUST replace each embedded null byte or byte above `0x7F` with the ASCII period character `'.'`. The runtime replacement MUST preserve the input content length, remain non-throwing and non-allocating, and MUST NOT alter the compile-time rejection policy for constant-evaluated construction.
 
 REQ-COLL-014. The public C++ string type MUST be named `cljonic::String<N>`, where `N` is the maximum content length in bytes and excludes the null terminator.
 
@@ -135,6 +139,8 @@ REQ-FN-002P. The callable `Map<K, V, N>` lookup forms specified by `REQ-COLL-004
 REQ-FN-002Q. The callable `Vector<T, N>` lookup forms specified by `REQ-COLL-002A` MUST be equivalent to the corresponding `get` overloads for the same vector, index, element type, and fallback arguments. `contains(vector, index)` MUST be non-throwing, non-allocating, and consistent with both callable lookup forms and indexed access. `operator[]` MUST NOT be required or provided as the vector lookup syntax because its conventional unchecked-access semantics conflict with cljonic's bounds-checked contract.
 
 REQ-FN-002R. The callable `Set<T, N>` lookup forms specified by `REQ-COLL-005B` MUST be equivalent to the corresponding `get` overloads for the same set, value, and fallback arguments. Set callable lookup MUST use the same stable equality capability and bounded linear scan as `contains`; it MUST NOT provide a boolean-returning `operator()` overload because `contains(set, value)` is the canonical membership predicate.
+
+REQ-FN-002S. The callable `String<N>` lookup forms specified by `REQ-COLL-012A` MUST be equivalent to `get(string, index)` and `get(string, index, fallback)`. `contains(string, index)` MUST be non-throwing, non-allocating, and consistent with both callable lookup forms; the null terminator MUST remain outside the lookup domain.
 
 REQ-FN-003. Generic free functions MUST be constrained by explicit concepts or equivalent compile-time requirements.
 
