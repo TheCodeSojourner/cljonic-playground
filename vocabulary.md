@@ -464,11 +464,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Queue
-- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates. Queue traversal observes elements from front to back in FIFO `LogicalTraversalOrder` regardless of whether its physical backing storage is linear or circular. Queue interoperability uses this FIFO `ConstRangeTraversal`; a single `ContiguousConstView` is available only when the complete active logical range is physically contiguous without allocation or normalization.
+- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates. The current Queue core phase covers bounded construction, `count`, `is_empty`, `can_conj`, `conj`, `peek`, and `pop`; full logical traversal and C++ interoperability remain deferred capabilities.
 - **Deprecated Synonyms:** bounded queue, fixed-capacity queue, FIFO queue
 - **Related:** Sequence, CopyOnModifyCollection, Traversal, ConstRangeTraversal, LogicalTraversalOrder, ContiguousStorage, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order.
+- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `can_conj()` reports whether another value fits, and `conj()` on a full queue returns an unchanged copy. `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order. A later phase will add logical traversal and interoperability for physically wrapped storage.
 
 
 ### String
