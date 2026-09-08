@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their primitive member and free-function operations, sequence traversal interfaces, and callable lookup forms. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
+This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their current primitive member and free-function operations, and callable lookup forms. Sequence traversal interfaces are approved future work and are not part of the current collection API. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
 
 ## Collection Family Requirements
 
@@ -10,11 +10,11 @@ REQ-COLL-001. The supported collection family MUST include vector, map, set, que
 
 REQ-COLL-001A. Vector elements, set elements, queue elements, map keys, map values, and map-entry fields MUST satisfy the `NothrowCollectionElement` storage contract defined by `REQ-VAL-007A`. String storage uses its separately defined bounded ASCII-byte representation and MUST preserve the same non-throwing storage and destruction guarantees. A `MapEntry<K, V>`'s key field MUST additionally satisfy the stable equality capability required for map key admission, whether the `MapEntry` is embedded in a `Map` or instantiated standalone.
 
-REQ-COLL-002. The library MUST provide a bounded vector with indexed lookup, indexed replacement, append, count, sequence conversion, traversal operations, and stack-style pop/peek behavior where applicable.
+REQ-COLL-002. The library MUST provide a bounded vector with indexed lookup, indexed replacement, append, count, and stack-style pop/peek behavior where applicable. Sequence conversion and traversal remain deferred future capabilities.
 
 REQ-COLL-002A. A `Vector<T, N>` MUST be callable with `operator()(Index)` and `operator()(Index, T)` when `Index` and `T` satisfy the same capabilities required by bounded indexed lookup. The one-argument form MUST return the element at a valid index or `T{}` when the index is invalid. The two-argument form MUST return the element at a valid index or the supplied fallback value when the index is invalid. Neither form MUST mutate the vector, allocate, throw, or change vector order or traversal state. `contains(vector, index)` MUST remain the authoritative way to distinguish an invalid index from a valid index whose element equals `T{}`; `get(vector, index)` and `get(vector, index, fallback)` MUST remain behaviorally equivalent free-function forms. Negative indexes, when representable by the accepted index type, MUST be invalid.
 
-REQ-COLL-004. The library MUST provide a bounded map with key/value association, lookup, association, removal, membership, count, sequence conversion, and traversal operations.
+REQ-COLL-004. The library MUST provide a bounded map with key/value association, lookup, association, removal, membership, and count. Sequence conversion and traversal remain deferred future capabilities.
 
 REQ-COLL-004A. Associating an existing map key MUST replace its associated value in the returned map without increasing the map count or requiring additional capacity. Associating a new key MUST add a key/value pair only when capacity is available.
 
@@ -22,23 +22,23 @@ REQ-COLL-004B. A `Map<K, V, N>` MUST be callable with `operator()(K)` and `opera
 
 REQ-COLL-004C. A `Map<K, V, N>` MUST admit both `K` and `V` only when each satisfies `NothrowCollectionElement`. `K` MUST additionally satisfy the stable equality capability required for key lookup. The storage-admission requirement MUST be enforced at the Map template boundary and MUST remain independent of operation-specific capabilities beyond key equality.
 
-REQ-COLL-005. The library MUST provide a bounded set with membership, insertion, removal, count, sequence conversion, and traversal operations.
+REQ-COLL-005. The library MUST provide a bounded set with membership, insertion, removal, and count. Sequence conversion and traversal remain deferred future capabilities.
 
 REQ-COLL-005A. Inserting a set value that is already present MUST be a successful no-op in the returned set, MUST preserve the set count, and MUST NOT require additional capacity.
 
 REQ-COLL-005B. A `Set<T, N>` MUST be callable with `operator()(T)` and `operator()(T, T)` when `T` satisfies the stable equality capability required by set membership. The one-argument form MUST return the matching stored element for a present value or `T{}` when the value is absent. The two-argument form MUST return the matching stored element for a present value or the supplied fallback value when the value is absent. Neither form MUST mutate the set, insert a value, allocate, throw, reorder elements, or change traversal state. `contains(set, value)` MUST remain the authoritative boolean membership predicate and MUST distinguish an absent value from a present value equal to `T{}`; `get(set, value)` and `get(set, value, fallback)` MUST remain behaviorally equivalent free-function forms.
 
-REQ-COLL-006. The library MUST provide a bounded FIFO queue with insertion at the rear, removal at the front, peek, count, sequence conversion, and traversal operations.
+REQ-COLL-006. The library MUST provide a bounded FIFO queue with insertion at the rear, removal at the front, peek, and count. Sequence conversion and traversal remain deferred future capabilities.
 
 REQ-COLL-007. Collection capacity MUST be encoded in each collection type and bounded by a documented configuration-time limit.
 
-REQ-COLL-007A. A collection capacity MAY be zero. A zero-capacity collection MUST be a valid empty owning value, MUST report `count() == 0` and `is_empty() == true`, MUST return documented default or fallback values for access, and MUST preserve its value when an insertion operation cannot add an element. It MUST support empty const traversal without accessing element storage, allocating, throwing, or invoking capacity-dependent arithmetic with zero as a divisor. A zero-capacity collection MUST fail any compile-time construction that would require stored elements.
+REQ-COLL-007A. A collection capacity MAY be zero. A zero-capacity collection MUST be a valid empty owning value, MUST report `count() == 0` and `is_empty() == true`, MUST return documented default or fallback values for access, and MUST preserve its value when an insertion operation cannot add an element. Future traversal work MUST support empty const traversal without accessing element storage, allocating, throwing, or invoking capacity-dependent arithmetic with zero as a divisor. A zero-capacity collection MUST fail any compile-time construction that would require stored elements.
 
 REQ-COLL-008. `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` MUST supply the default and maximum permitted collection element count and MUST default to 1000 unless a later approved requirement changes it.
 
 REQ-COLL-009. The public API MUST distinguish collection behavior from storage strategy. Users MUST be able to use the collection contracts without depending on a particular internal representation.
 
-REQ-COLL-010. Map lookup, association, removal, membership, and traversal, and set membership, insertion, removal, and traversal MUST use bounded linear scans over their stored elements. Linear scanning MUST be the only search strategy in the supported collection family.
+REQ-COLL-010. Map lookup, association, and removal, and set membership, insertion, and removal MUST use bounded linear scans over their stored elements. Future traversal work MAY use the same bounded storage inspection without changing the only-search-strategy rule for lookup and membership.
 
 REQ-COLL-010A. Removal from unsorted `Map` and `Set` MUST use swap-and-remove after the target has been found: the final stored element, or final map key/value pair, MUST be copied into the removed position before the count is decremented. This optimization MUST preserve membership and association semantics while allowing implementation traversal order to change.
 
@@ -74,7 +74,9 @@ REQ-COLL-020. The API MUST support pack-literal construction for `Queue<T, N>` s
 
 REQ-COLL-020A. A `Queue<T, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Queue{values...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
 
-## Sequence Traversal Mechanics
+## Deferred Sequence Traversal Mechanics
+
+The sequence traversal contracts below are approved future-work behavior, not current collection APIs. No supported collection currently exposes `seq`, `first`, `next`, `rest`, a collection-owned logical range, or a C++ interoperability traversal accessor. These contracts MUST remain deferred until a later increment separately propagates their implementation and tests for every collection family. Their presence here records the intended future behavior without making it implementation-ready now.
 
 REQ-SEQ-001. The library MUST define sequence as a traversal behavior over immutable values in the cljonic collection family, not as a separate owning collection type.
 
