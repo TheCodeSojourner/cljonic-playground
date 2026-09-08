@@ -29,7 +29,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** ordered sequence, sequential value
 - **Related:** Collection, Sequenceable, Traversal, LogicalTraversalOrder, Producer
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A `Vector` is a sequence; a producer may represent a sequence without owning materialized storage; a Queue sequence observes elements from front to rear in FIFO order.
+- **Examples:** A future traversal increment may define a `Vector` sequence; a producer may represent a sequence without owning materialized storage. No current collection exposes this traversal interface.
 
 
 ### Sequenceable
@@ -37,7 +37,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** sequence capability
 - **Related:** Sequence, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A sequenceable collection supports the applicable `first`, `next`, `rest`, `seq`, `is_empty`, and `count` operations under its documented contract.
+- **Examples:** `Sequenceable` is a deferred capability for future collection traversal; current collections expose `is_empty` and `count` without claiming the full sequence interface.
 
 
 ### Traversal
@@ -45,7 +45,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** sequence traversal, iteration
 - **Related:** Sequence, ProducerIteration, BoundedInspection, LogicalTraversalOrder
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `first`, `next`, and `rest` are traversal operations when supported by the applicable sequence contract.
+- **Examples:** `first`, `next`, and `rest` are deferred traversal operations whose behavior will be implemented for all collections in a future increment.
 
 
 ### ConstRangeTraversal
@@ -53,7 +53,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** const range, read-only range traversal
 - **Related:** Traversal, CapabilityConcept, Sequenceable, SequenceableCollection, MapEntry, ReadOnlyInteropAccessor, LogicalTraversalOrder, NoMutationConstraint
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A `Queue` provides const range traversal in FIFO order even when its physical storage is circular; the traversal is read-only, bounded, non-allocating, and independent of the physical segment layout.
+- **Examples:** Future Queue traversal will provide FIFO const range observation even when physical storage is circular; no current collection exposes this boundary.
 
 
 ### LogicalTraversalOrder
@@ -61,7 +61,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** logical iteration order, traversal order
 - **Related:** Traversal, ConstRangeTraversal, Vector, Map, Set, Queue, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** Queue traversal is front-to-back FIFO; map and set traversal may be repeatable but is semantically unordered.
+- **Examples:** Future Queue traversal is intended to be front-to-back FIFO; future map and set traversal may be repeatable but semantically unordered.
 
 
 ### ReadOnlyInteropAccessor
@@ -69,7 +69,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** interoperability view accessor, const interop view
 - **Related:** PlatformInteroperability, NonOwningView, StandardViewType, ContiguousConstView, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A collection may provide a `std::span<const T>`-like accessor when its active logical elements form one contiguous range; a `Queue` may satisfy the same boundary through FIFO `ConstRangeTraversal` when circular storage prevents one contiguous standard view.
+- **Examples:** A future collection increment may provide a `std::span<const T>`-like accessor for contiguous active elements; wrapped Queue storage will require a later logical traversal design.
 
 
 ### ContiguousConstView
@@ -464,11 +464,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Queue
-- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates. Its approved sequence contract defines `seq`, `first`, `next`, and `rest` over logical front-to-rear FIFO order, and its C++ interoperability contract uses const logical traversal even when circular storage is physically wrapped. The current Queue implementation phase covers bounded construction, `count`, `is_empty`, `can_conj`, `conj`, `peek`, and `pop`; sequence traversal and interoperability remain implementation work.
+- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, and peek/pop observation with immutable copy-on-modify updates. The current Queue API covers bounded construction, `count`, `is_empty`, `can_conj`, `conj`, `peek`, and `pop`; sequence traversal and C++ interoperability are deferred future capabilities shared with all other collections.
 - **Deprecated Synonyms:** bounded queue, fixed-capacity queue, FIFO queue
 - **Related:** Sequence, CopyOnModifyCollection, Traversal, ConstRangeTraversal, LogicalTraversalOrder, ContiguousStorage, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `can_conj()` reports whether another value fits, and `conj()` on a full queue returns an unchanged copy. `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order. For `Queue{a, b, c}`, `seq` yields an owning sequence of `a, b, c`, `first` yields `a`, and both `next` and `rest` yield the remaining sequence `b, c` without changing the source. These results remain FIFO after a pop-then-conj operation wraps the physical storage, and C++ interoperability observes the same logical order without requiring a contiguous view.
+- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `can_conj()` reports whether another value fits, and `conj()` on a full queue returns an unchanged copy. `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order. A future traversal increment will define how Queue exposes FIFO sequence observation after physical storage wraps, alongside equivalent interfaces for the other collections.
 
 
 ### String
