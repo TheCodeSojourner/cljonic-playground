@@ -31,10 +31,9 @@ namespace cljonic {
  *
  *   // Runtime demonstration.
  *   auto s_runtime = String<8>{"Hi"};
- *   auto s1 = s_runtime.append('!');
- *   auto s2 = s1.put(0, 'h');
+ *   auto s1 = s_runtime.put(0, 'h');
  *
- *   return (s1.count() == 3U && s2(0) == 'h') ? 0 : 1;
+ *   return (s1.count() == 2U && s1(0) == 'h') ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -99,18 +98,6 @@ class String {
         String result = *this;
         if (index < logical_size_) {
             result.data_[index] = c;
-        }
-        return result;
-    }
-
-    /** Appends a character to the end of a copy of the string if room is
-     * available. */
-    [[nodiscard]] constexpr auto append(char c) const noexcept -> String {
-        String result = *this;
-        if (result.logical_size_ < CapacityValue) {
-            result.data_[result.logical_size_] = c;
-            ++result.logical_size_;
-            result.data_[result.logical_size_] = '\0';
         }
         return result;
     }

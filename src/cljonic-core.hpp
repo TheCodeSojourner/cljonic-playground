@@ -159,11 +159,9 @@
 #include <cljonic-count.hpp>
 #include <cljonic-disj.hpp>
 #include <cljonic-dissoc.hpp>
-#include <cljonic-empty.hpp>
 #include <cljonic-get.hpp>
 #include <cljonic-is-empty.hpp>
 #include <cljonic-map.hpp>
-#include <cljonic-not-empty.hpp>
 #include <cljonic-peek.hpp>
 #include <cljonic-pop.hpp>
 #include <cljonic-queue.hpp>

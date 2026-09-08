@@ -92,34 +92,14 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     STATIC_REQUIRE(s3(0) == 'H');
     STATIC_REQUIRE(s3.count() == 5U);
 
-    // append adds character to end (if room available)
-    constexpr auto s4 = s1.append('!');
-    STATIC_REQUIRE(s4.count() == 6U);
-    STATIC_REQUIRE(s4(5) == '!');
-    STATIC_REQUIRE(s4(6) == '\0'); // new null terminator
-
-    // append on full string returns unchanged copy
-    constexpr String<5> s_full{"Hello"}; // exactly at capacity
-    STATIC_REQUIRE(s_full.count() == 5U);
-    constexpr auto s_n_append = s_full.append('!');
-    STATIC_REQUIRE(s_n_append.count() == 5U); // unchanged — no room
-
     // Capacity zero: can only hold empty/null
     constexpr String<0> s_empty_cap{};
     STATIC_REQUIRE(s_empty_cap.is_empty());
     STATIC_REQUIRE(s_empty_cap.count() == 0U);
     STATIC_REQUIRE(s_empty_cap(0) == '\0');
 
-    // Append to zero-capacity string is a no-op
-    constexpr auto s_zero_appended = s_empty_cap.append('A');
-    STATIC_REQUIRE(s_zero_appended.is_empty());
-
     // Runtime tests for code coverage instrumentation
-    volatile char c1_raw = 'A';
-    volatile char c2_raw = 'B';
     volatile std::size_t idx0_raw = 0;
-    char c1 = c1_raw;
-    char c2 = c2_raw;
     std::size_t idx0 = idx0_raw;
     auto rs = String<8>{};
     REQUIRE(rs.is_empty());
@@ -128,7 +108,7 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     REQUIRE(rs(idx0) == '\0');
     REQUIRE_FALSE(rs.contains(idx0));
 
-    auto rs1 = rs.append(c1).append(c2);
+    auto rs1 = String<8>{"AB"};
     REQUIRE_FALSE(rs1.is_empty());
     REQUIRE(rs1.count() == 2U);
     REQUIRE(rs1(idx0) == 'A');
@@ -146,7 +126,4 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     auto rs_put_oob = rs1.put(99, 'X');
     REQUIRE(rs_put_oob.count() == 2U);
-
-    auto rs_full = String<2>{"AB"};
-    REQUIRE(rs_full.append('C').count() == 2U);
 }
