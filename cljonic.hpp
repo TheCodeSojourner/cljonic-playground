@@ -15,45 +15,34 @@
 #define CLJONIC_STRINGIFY(x) CLJONIC_STRINGIFY_INNER(x)// End cljonic-config.hpp
 
 /** \mainpage
- * \b cljonic is a \b header-only C++ library designed to allow an \b embedded
- * \b systems C++ developer to program in a \b Functional \b Programming \b
- * Style using a set of functions \b similar in \b name and \b function to \b
- * Clojure. To address the embedded systems focus, \b cljonic \b DOES \b NOT use
- * the heap or exceptions, and uses \b Modern \b C++ features to \b protect , \b
- * guide , and \b teach C++ developers. Finally, \b cljonic is a library that
- * includes unit tests with nearly <b>100% coverage</b>, and is designed to be
- * efficiently maintained.
+ * \b cljonic is a \b header-only C++ library designed to allow an \b embedded \b systems C++ developer to program in a
+ * \b Functional \b Programming \b Style using a set of functions \b similar in \b name and \b function to \b Clojure.
+ * To address the embedded systems focus, \b cljonic \b DOES \b NOT use the heap or exceptions, and uses \b Modern \b
+ * C++ features to \b protect , \b guide , and \b teach C++ developers. Finally, \b cljonic is a library that includes
+ * unit tests with nearly <b>100% coverage</b>, and is designed to be efficiently maintained.
  *
- * The motivation for \b cljonic comes from observations made about the
- * pragmatic use of C++ for embedded systems software development, the
- * progression of the C++ language (e.g., C++11, C++14, C++17, C++20, C++23),
- * and the counsel of software development "experts", in many different
- * programming languages, that <b>a functional programming style should be
- * eagerly embraced by all developers</b>.
+ * The motivation for \b cljonic comes from observations made about the pragmatic use of C++ for embedded systems
+ * software development, the progression of the C++ language (e.g., C++11, C++14, C++17, C++20, C++23), and the counsel
+ * of software development "experts", in many different programming languages, that <b>a functional programming style
+ * should be eagerly embraced by all developers</b>.
  *
- * Many embedded systems C++ developers are <b>not academic programming language
- * experts</b> with in-depth knowledge of every C++ feature, and many <b>may not
- * have time</b> to follow the progression of the language.  Rather, many
- * embedded systems C++ developers have <b>strong hardware backgrounds</B>, and
- * <B>know a pragmatic specific subset of C++</B> that is often sufficient to
- * deliver reasonably good software in a predictable amount of time, though this
- * is often <b>not optimized for minimal long term cost of ownership</b>.
- * Generally speaking, many C++ developers use a subset of the \b C programming
- * language with some of C++'s <b>Object Oriented</b> capabilities.  This begs a
+ * Many embedded systems C++ developers are <b>not academic programming language experts</b> with in-depth knowledge of
+ * every C++ feature, and many <b>may not have time</b> to follow the progression of the language.  Rather, many
+ * embedded systems C++ developers have <b>strong hardware backgrounds</B>, and <B>know a pragmatic specific subset of
+ * C++</B> that is often sufficient to deliver reasonably good software in a predictable amount of time, though this is
+ * often <b>not optimized for minimal long term cost of ownership</b>. Generally speaking, many C++ developers use a
+ * subset of the \b C programming language with some of C++'s <b>Object Oriented</b> capabilities.  This begs a
  * question:
  *
- * <b>Is there a pragmatic subset of Modern C++ that enables embedded systems
- * developers to produce higher-quality, more efficient, and more maintainable
- * code?</b>
+ * <b>Is there a pragmatic subset of Modern C++ that enables embedded systems developers to produce higher-quality,
+ * more efficient, and more maintainable code?</b>
  *
- * Changes to C++ have provided valuable capabilities that are time consuming to
- * master, hence it is both <b> valuable to development organizations</b> for
- * their developers to use modern C++ capabilities, and <b> too expensive to
- * train</b> all of their developers to be experts in their use.  This, too,
- * begs a question:
+ * Changes to C++ have provided valuable capabilities that are time consuming to master, hence it is both <b> valuable
+ * to development organizations</b> for their developers to use modern C++ capabilities, and <b> too expensive to
+ * train</b> all of their developers to be experts in their use.  This, too, begs a question:
  *
- * <b>Can one or two embedded systems software developers cost-effectively
- * introduce modern C++ capabilities to the entire team?</b>
+ * <b>Can one or two embedded systems software developers cost-effectively introduce modern C++ capabilities to the
+ * entire team?</b>
  *
  * In this post:
  *
@@ -61,45 +50,34 @@
  *
  * the author makes the following statements:
  *
- * <b>"A large fraction of the flaws in software development are due to
- * programmers not fully understanding all the possible states their code may
- * execute in. In a multithreaded environment, the lack of understanding and the
+ * <b>"A large fraction of the flaws in software development are due to programmers not fully understanding all the
+ * possible states their code may execute in. In a multithreaded environment, the lack of understanding and the
  *  resulting problems are greatly amplified, almost to the point of panic if
- * you are paying attention. Programming in a functional style makes the state
- * presented to your code explicit, which makes it much easier to reason about
+ * you are paying attention. Programming in a functional style makes the state presented to your code explicit, which
+ * makes it much easier to reason about
  *  [(i.e., Fewer mistakes, and less debugging)], and, in a completely pure
  * system, makes thread race conditions impossible."
  *
- * "No matter what language you work in, programming in a functional style
- * provides benefits. You should do it whenever it is convenient, and you should
- * think hard about the decision when it isn't convenient."</b>
+ * "No matter what language you work in, programming in a functional style provides benefits. You should do it whenever
+ * it is convenient, and you should think hard about the decision when it isn't convenient."</b>
  *
- * \b cljonic is a \b header-only library that utilizes \b Modern \b C++
- * capabilities to provide a functional style C++ \b Clojure subset to \b
- * embedded \b systems developers, promotes the \b predictable \b development of
- * \b higher \b quality code \b faster, and can be \b cost-effectively \b
- * maintained over time.
+ * \b cljonic is a \b header-only library that utilizes \b Modern \b C++ capabilities to provide a functional style C++
+ * \b Clojure subset to \b embedded \b systems developers, promotes the \b predictable \b development of \b higher \b
+ * quality code \b faster, and can be \b cost-effectively \b maintained over time.
  *
  * \anchor Core_Cheatsheet
- * ___
- * # Cheatsheet
+ * ___ # Cheatsheet
  *
  * ## Aliases
  *
- * | Namespace | "using" C++ Statement |
- * |-----------|-------------------------|
- * | \ref Namespace_Core "core" | using **core** = cljonic::core; |
- * | \ref Namespace_Set "set" | using **set** = cljonic::set; |
- * | \ref Namespace_String "string" | using **string** = cljonic::string; |
+ * | Namespace | "using" C++ Statement | |-----------|-------------------------| | \ref Namespace_Core "core" | using
+ * **core** = cljonic::core; | | \ref Namespace_Set "set" | using **set** = cljonic::set; | | \ref Namespace_String
+ * "string" | using **string** = cljonic::string; |
  *
  * ## Collection Types
  *
- * - \ref Map "cljonic::Map"
- * - \ref MapEntry "cljonic::MapEntry"
- * - \ref Queue "cljonic::Queue"
- * - \ref Set "cljonic::Set"
- * - \ref String "cljonic::String"
- * - \ref Vector "cljonic::Vector"
+ * - \ref Map "cljonic::Map" - \ref MapEntry "cljonic::MapEntry" - \ref Queue "cljonic::Queue" - \ref Set
+ * "cljonic::Set" - \ref String "cljonic::String" - \ref Vector "cljonic::Vector"
  *
  * ## Core Functions
  *
@@ -109,123 +87,77 @@
  *
  * ### Control
  *
- * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes", \ref Core_If "If",
- * \ref Core_Unless "Unless", \ref Core_When "When", \ref Core_WhenNot "WhenNot"
+ * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes", \ref Core_If "If", \ref Core_Unless "Unless", \ref Core_When
+ * "When", \ref Core_WhenNot "WhenNot"
  *
  * ### Predicate
  *
- * - \ref Core_Compare "Compare"
- * - \ref Core_EQ "EQ"
- * - \ref Core_GE "GE", \ref Core_GT "GT"
- * - \ref Core_IsAlpha "IsAlpha", \ref Core_IsAlphanumeric "IsAlphanumeric",
- * \ref Core_IsBlank "IsBlank", \ref Core_IsControl "IsControl", \ref
- * Core_IsDigit "IsDigit", \ref Core_IsEven "IsEven", \ref Core_IsGraphical
- * "IsGraphical", \ref Core_IsHexDigit "IsHexDigit", \ref Core_IsLowercase
- * "IsLowercase", \ref Core_IsNatural "IsNatural", \ref Core_IsNegative
- * "IsNegative", \ref Core_IsOdd "IsOdd", \ref Core_IsPositive "IsPositive",
- * \ref Core_IsPrintable "IsPrintable", \ref Core_IsPunctuation "IsPunctuation",
- * \ref Core_IsSpace "IsSpace", \ref Core_IsUppercase "IsUppercase", \ref
- * Core_IsZero "IsZero"
- * - \ref Core_LE "LE", \ref Core_LT "LT"
- * - \ref Core_NE "NE"
+ * - \ref Core_Compare "Compare" - \ref Core_EQ "EQ" - \ref Core_GE "GE", \ref Core_GT "GT" - \ref Core_IsAlpha
+ * "IsAlpha", \ref Core_IsAlphanumeric "IsAlphanumeric", \ref Core_IsBlank "IsBlank", \ref Core_IsControl "IsControl",
+ * \ref Core_IsDigit "IsDigit", \ref Core_IsEven "IsEven", \ref Core_IsGraphical "IsGraphical", \ref Core_IsHexDigit
+ * "IsHexDigit", \ref Core_IsLowercase "IsLowercase", \ref Core_IsNatural "IsNatural", \ref Core_IsNegative
+ * "IsNegative", \ref Core_IsOdd "IsOdd", \ref Core_IsPositive "IsPositive", \ref Core_IsPrintable "IsPrintable", \ref
+ * Core_IsPunctuation "IsPunctuation", \ref Core_IsSpace "IsSpace", \ref Core_IsUppercase "IsUppercase", \ref
+ * Core_IsZero "IsZero" - \ref Core_LE "LE", \ref Core_LT "LT" - \ref Core_NE "NE"
  *
  * ### Primitive
  *
- * - \ref Core_Abs "Abs", \ref Core_Add "Add"
- * - \ref Core_Char "Char", \ref Core_Combinations "Combinations", \ref
- * Core_CString "CString"
- * - \ref Core_Dec "Dec", \ref Core_Div "Div"
- * - \ref Core_Factorial "Factorial"
- * - \ref Core_Inc "Inc"
- * - \ref Core_Lowercase "Lowercase"
- * - \ref Core_Max "Max", \ref Core_Min "Min", \ref Core_Mod "Mod", \ref
- * Core_Mul "Mul"
- * - \ref Core_Ord "Ord"
- * - \ref Core_Permutations "Permutations"
- * - \ref Core_Sub "Sub",
- * - \ref Core_Uppercase "Uppercase"
+ * - \ref Core_Abs "Abs", \ref Core_Add "Add" - \ref Core_Char "Char", \ref Core_Combinations "Combinations", \ref
+ * Core_CString "CString" - \ref Core_Dec "Dec", \ref Core_Div "Div" - \ref Core_Factorial "Factorial" - \ref Core_Inc
+ * "Inc" - \ref Core_Lowercase "Lowercase" - \ref Core_Max "Max", \ref Core_Min "Min", \ref Core_Mod "Mod", \ref
+ * Core_Mul "Mul" - \ref Core_Ord "Ord" - \ref Core_Permutations "Permutations" - \ref Core_Sub "Sub", - \ref
+ * Core_Uppercase "Uppercase"
  *
- * ### Seq (i.e., Sequence: Vector)
+ * ### Deferred sequence traversal
  *
- * Implemented free functions link to their documentation. Remaining entries
- * are planned and will be introduced only when their requirements are
- * approved.
- * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj",
- * \ref Conj "conj", \ref Contains "contains", \ref Count "count"
- * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref
- * Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M
- * "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref
- * Dissoc "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy
- * "DistinctBy", \ref Core_Drop "Drop", \ref Core_DropLast "DropLast", \ref
- * Core_DropWhile "DropWhile"
- * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal",
- * \ref Core_EqualBy "EqualBy", \ref Core_Every "Every"
- * - \ref Core_Filter "Filter", \ref First "first", \ref Core_Flatten
- * "Flatten", \ref Core_FlattenSize "FlattenSize", \ref Core_Frequencies
- * "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy"
- * - \ref Get "get"
- * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref
- * Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref Core_Interleave
- * "Interleave", \ref Core_Interpose "Interpose", \ref Core_IsDistinct
- * "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty
- * "is_empty", \ref Core_IsFull "IsFull", \ref Core_Iterate "Iterate"
- * - \ref Core_Juxt "Juxt"
- * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref
- * Core_LastIndexOfBy "LastIndexOfBy"
- * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref
- * Core_Min "Min", \ref Core_MinBy "MinBy"
- * - \ref Next "next", \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty",
- * \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
- * - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
- * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop"
- * - \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref
- * Core_Remove "Remove", \ref Core_Replace "Replace", \ref Rest "rest", \ref
- * Core_Reverse "Reverse"
- * - \ref Core_Second "Second", \ref Seq "seq", \ref Core_Size "Size", \ref
- * Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref
- * Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs
- * "Subs"
- * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth
- * "TakeNth", \ref Core_TakeWhile "TakeWhile"
+ * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
+ * when their requirements are approved. - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref
+ * Conj "conj", \ref Contains "contains", \ref Count "count" - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy
+ * "DedupeBy", \ref Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M "DefaultElement_M", \ref
+ * Core_Different "Different", \ref Disj "disj", \ref Dissoc "dissoc", \ref Core_Distinct "Distinct", \ref
+ * Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
+ * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy "EqualBy", \ref
+ * Core_Every "Every" - \ref Core_Filter "Filter", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize",
+ * \ref Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy" - \ref Get "get" - \ref Core_Identical
+ * "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref
+ * Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Core_IsDistinct "IsDistinct", \ref
+ * Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull "IsFull", \ref Core_Iterate "Iterate" -
+ * \ref Core_Juxt "Juxt" - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy
+ * "LastIndexOfBy" - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref
+ * Core_MinBy "MinBy" - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref Core_NotEvery "NotEvery", \ref
+ * Core_Nth "Nth", \ref Core_Nth_M "Nth_M" - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
+ * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop" - \ref Core_Reduce "Reduce", \ref
+ * Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse" -
+ * \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy
+ * "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs "Subs" - \ref Core_Take
+ * "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
  * ## Set Functions
  *
- * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy"
- * - \ref Set_Difference "Difference", \ref Set_DifferenceBy "DifferenceBy",
- * \ref Set_Disj "Disj", \ref Set_DisjBy "DisjBy"
- * - \ref Set_IndexOf "IndexOf", \ref Set_IndexOfBy "IndexOfBy", \ref
- * Set_Intersection "Intersection", \ref Set_IntersectionBy "IntersectionBy"
- * - \ref Set_ToSet "ToSet", \ref Set_ToSetBy "ToSetBy"
- * - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
+ * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy" - \ref Set_Difference "Difference", \ref Set_DifferenceBy
+ * "DifferenceBy", \ref Set_Disj "Disj", \ref Set_DisjBy "DisjBy" - \ref Set_IndexOf "IndexOf", \ref Set_IndexOfBy
+ * "IndexOfBy", \ref Set_Intersection "Intersection", \ref Set_IntersectionBy "IntersectionBy" - \ref Set_ToSet
+ * "ToSet", \ref Set_ToSetBy "ToSetBy" - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
  *
  * ## String Functions
  *
- * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref
- * String_Concat "Concat"
- * - \ref String_EndsWith "EndsWith"
- * - \ref String_FloatToString "FloatToString", \ref String_Format "Format"
- * - \ref String_Includes "Includes", \ref String_IndexOf "IndexOf", \ref
- * String_Interpose "Interpose", \ref String_IntToString "IntToString", \ref
- * String_IntToStringHex "IntToStringHex", \ref String_IsBlank "IsBlank"
- * - \ref String_LastIndexOf "LastIndexOf", \ref String_Lowercase "Lowercase"
- * - \ref String_Partition "Partition", \ref String_PartitionAll "PartitionAll",
- * \ref String_PartitionBy "PartitionBy"
- * - \ref String_Replace "Replace", \ref String_ReplaceFirst "ReplaceFirst"
- * - \ref String_Split "Split", \ref String_SplitCount "SplitCount", \ref
- * String_SplitLine "SplitLine", \ref String_StartsWith "StartsWith", \ref
- * String_StrLen "StrLen", \ref String_StrOfChar "StrOfChar", \ref
- * String_StrToFloat "StrToFloat", \ref String_StrToIntDecimal
- * "StrToIntDecimal", \ref String_StrToIntHex "StrToIntHex", \ref String_Subs
- * "Subs"
- * - \ref String_Trim "Trim", \ref String_TrimLeft "TrimLeft", \ref
- * String_TrimNewLine "TrimNewLine", \ref String_TrimRight "TrimRight"
- * - \ref String_Uppercase "Uppercase"
+ * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref String_Concat "Concat" - \ref
+ * String_EndsWith "EndsWith" - \ref String_FloatToString "FloatToString", \ref String_Format "Format" - \ref
+ * String_Includes "Includes", \ref String_IndexOf "IndexOf", \ref String_Interpose "Interpose", \ref
+ * String_IntToString "IntToString", \ref String_IntToStringHex "IntToStringHex", \ref String_IsBlank "IsBlank" - \ref
+ * String_LastIndexOf "LastIndexOf", \ref String_Lowercase "Lowercase" - \ref String_Partition "Partition", \ref
+ * String_PartitionAll "PartitionAll", \ref String_PartitionBy "PartitionBy" - \ref String_Replace "Replace", \ref
+ * String_ReplaceFirst "ReplaceFirst" - \ref String_Split "Split", \ref String_SplitCount "SplitCount", \ref
+ * String_SplitLine "SplitLine", \ref String_StartsWith "StartsWith", \ref String_StrLen "StrLen", \ref
+ * String_StrOfChar "StrOfChar", \ref String_StrToFloat "StrToFloat", \ref String_StrToIntDecimal "StrToIntDecimal",
+ * \ref String_StrToIntHex "StrToIntHex", \ref String_Subs "Subs" - \ref String_Trim "Trim", \ref String_TrimLeft
+ * "TrimLeft", \ref String_TrimNewLine "TrimNewLine", \ref String_TrimRight "TrimRight" - \ref String_Uppercase
+ * "Uppercase"
  */
 
 /** \anchor Namespace_Core
- * The \b Core namespace provides the vast majority of \b cljonic functions.
- * The current Core surface starts with the Vector collection. Free-function
- * collection operations are planned for later requirements modules.
+ * The \b Core namespace provides the vast majority of \b cljonic functions. The current Core surface starts with the
+ * Vector collection. Free-function collection operations are planned for later requirements modules.
  */
 
 // Begin cljonic-assoc.hpp
@@ -390,8 +322,7 @@ concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c
 namespace cljonic {
 
 /** \anchor Assoc
- * \brief Associates a key and value in an associative collection or index in a
- * vector.
+ * \brief Associates a key and value in an associative collection or index in a vector.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -555,19 +486,18 @@ template <typename C, typename T>
 namespace cljonic {
 
 /** \anchor Contains
- * \brief Tests whether its argument belongs to a collection's lookup domain,
- * mirroring Clojure's `contains?` predicate.
+ * \brief Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's `contains?`
+ * predicate.
  *
- * The meaning of the argument follows the collection kind:
- * - Map: tests key presence (`contains(m, key)` is true when key is present).
- * - Set: tests element presence (`contains(s, value)` is true when value is a
+ * The meaning of the argument follows the collection kind: - Map: tests key presence (`contains(m, key)` is true when
+ * key is present). - Set: tests element presence (`contains(s, value)` is true when value is a
  *   member).
  * - Vector / String: tests whether a numeric index is in range
  *   (`contains(xs, index)` is true when index is valid, like Clojure's
  *   `contains?` over vector/string indices).
  *
- * `contains` never performs a default-returning access; it only answers the
- * membership question for the collection's lookup domain.
+ * `contains` never performs a default-returning access; it only answers the membership question for the collection's
+ * lookup domain.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -614,11 +544,9 @@ template <typename C, typename K>
 namespace cljonic {
 
 /** \anchor CollectionMaximumElementCountValue
- * \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE is a constexpr constant
- * that captures the configured synthesis ceiling for bounded cljonic
- * collections and semantically infinite producers. This type-safe constant
- * can be used in compile-time expressions, static assertions, and constexpr
- * functions while remaining fully overridable via the
+ * \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE is a constexpr constant that captures the configured synthesis
+ * ceiling for bounded cljonic collections and semantically infinite producers. This type-safe constant can be used in
+ * compile-time expressions, static assertions, and constexpr functions while remaining fully overridable via the
  * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro.
  */
 constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE = CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
@@ -747,19 +675,20 @@ template <typename C, typename K>
 
 #endif // CLJONIC_DISSOC_HPP
 // End cljonic-dissoc.hpp
-// Begin cljonic-empty.hpp
-#ifndef CLJONIC_EMPTY_HPP
-#define CLJONIC_EMPTY_HPP
+// Begin cljonic-get.hpp
+#ifndef CLJONIC_GET_HPP
+#define CLJONIC_GET_HPP
 
+#include <utility>
 
 namespace cljonic {
 
-/** \anchor Empty
- * \brief Returns an empty owning value of the same collection type as the
- * input.
+/** \anchor Get
+ * \brief Looks up an element by a key or index, returning the default or
+ *        supplied fallback when absent.
  *
- * Per REQ-FN-026, `empty` produces an empty owning value of the same supported
- * collection type as its input.
+ * Dispatches to the collection's callable lookup forms, consistent with the `operator()` behavior of Map, Vector, and
+ * Set.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -769,30 +698,82 @@ namespace cljonic {
  *   using namespace cljonic;
  *
  *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
- *   [[maybe_unused]] constexpr auto e_const = empty(v_const);
- *   static_assert(is_empty(e_const));
+ *   constexpr auto v_const = Vector<int, 4>{10, 20};
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+ *   static_assert(get(v_const, 0U) == 10);
+ *   static_assert(get(v_const, 9U, -1) == -1);
+ *   static_assert(get(m_const, 1) == 100);
+ *   static_assert(get(m_const, 2, -1) == -1);
+ *   static_assert(get(s_const, 5) == 5);
+ *   static_assert(get(s_const, 8, -1) == -1);
  *
  *   // Runtime demonstration.
  *   auto v_runtime = Vector<int, 4>{10, 20};
- *   auto e_runtime = empty(v_runtime);
+ *   const auto val = get(v_runtime, 0U);
  *
- *   return (is_empty(e_runtime) && count(v_runtime) == 2U) ? 0 : 1;
+ *   return (val == 10) ? 0 : 1;
  * }
  * ~~~~~
  */
-template <concepts::SequenceableCollection C>
-[[nodiscard]] constexpr auto empty(const C&) noexcept -> C {
-    return C{};
+template <typename C, typename K>
+    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
+            requires(const C& collection, const K& key) { collection(key); }
+[[nodiscard]] constexpr auto get(const C& collection, const K& key) noexcept -> decltype(collection(key)) {
+    return collection(key);
+}
+
+/** Returns the stored value when present, otherwise the supplied fallback. */
+template <typename C, typename K, typename V>
+    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
+            requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
+[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback) noexcept
+    -> decltype(collection(key, fallback)) {
+    return collection(key, fallback);
 }
 
 } // namespace cljonic
 
-#endif // CLJONIC_EMPTY_HPP// End cljonic-empty.hpp
-// Begin cljonic-first.hpp
-#ifndef CLJONIC_FIRST_HPP
-#define CLJONIC_FIRST_HPP
+#endif // CLJONIC_GET_HPP// End cljonic-get.hpp
+// Begin cljonic-is-empty.hpp
+#ifndef CLJONIC_IS_EMPTY_HPP
+#define CLJONIC_IS_EMPTY_HPP
 
+
+namespace cljonic {
+
+/** \anchor IsEmpty
+ * \brief Returns true when the collection has no active elements.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include <cljonic.hpp>
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto e_const = Vector<int, 4>{};
+ *   constexpr auto v_const = Vector<int, 4>{1};
+ *   static_assert(is_empty(e_const));
+ *   static_assert(!is_empty(v_const));
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10};
+ *   const auto empty_res = is_empty(v_runtime);
+ *
+ *   return (!empty_res) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <concepts::SequenceableCollection C>
+[[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
+    return collection.is_empty();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_IS_EMPTY_HPP// End cljonic-is-empty.hpp
 // Begin cljonic-map.hpp
 #pragma once
 
@@ -809,9 +790,8 @@ template <concepts::SequenceableCollection C>
 namespace cljonic {
 
 /** \anchor MapEntry
- * \b MapEntry is a value-semantic pair representing a single key-value
- * association. Its key satisfies `NothrowStableEqualityComparable`; its value
- * satisfies `NothrowCollectionElement`.
+ * \b MapEntry is a value-semantic pair representing a single key-value association. Its key satisfies
+ * `NothrowStableEqualityComparable`; its value satisfies `NothrowCollectionElement`.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -864,9 +844,10 @@ struct MapEntry {
 namespace cljonic {
 
 /** \anchor Map
- * \b Map is a fixed-capacity associative collection backed by contiguous array
- * storage and linear scan lookup with copy-on-modify updates. Keys satisfy
- * `NothrowStableEqualityComparable`; values satisfy `NothrowCollectionElement`.
+ * \b Map is a bounded, associative collection that maps unique keys to values. It provides callable lookup with
+ * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
+ * return a modified copy without changing the original collection. Construction with more entries than the available
+ * capacity is rejected at compile time.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -1020,235 +1001,6 @@ struct collection_traits<Map<KeyType, ValueType, CapacityValue>> {
 
 } // namespace cljonic::concepts_detail
 // End cljonic-map.hpp
-
-namespace cljonic {
-
-/** \anchor First
- * \brief Returns the first element of a sequenceable collection, or the key of
- *        a MapEntry.
- *
- * For a MapEntry value, `first` returns its key. For a sequenceable collection,
- * `first` returns the element at index zero.
- *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
- *   constexpr MapEntry<int, int> e_const{1, 100};
- *   static_assert(first(v_const) == 10);
- *   static_assert(first(e_const) == 1);
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{100, 200};
- *   const auto fst = first(v_runtime);
- *
- *   return (fst == 100) ? 0 : 1;
- * }
- * ~~~~~
- */
-template <typename KeyType, typename ValueType>
-[[nodiscard]] constexpr auto first(const MapEntry<KeyType, ValueType>& entry) noexcept -> const KeyType& {
-    return entry.key;
-}
-
-/** Returns the element at index zero of the sequenceable collection. */
-template <concepts::IndexedCollection C>
-[[nodiscard]] constexpr auto first(const C& collection) noexcept -> decltype(collection(0U)) {
-    return collection(0U);
-}
-
-} // namespace cljonic
-
-#endif // CLJONIC_FIRST_HPP// End cljonic-first.hpp
-// Begin cljonic-get.hpp
-#ifndef CLJONIC_GET_HPP
-#define CLJONIC_GET_HPP
-
-#include <utility>
-
-namespace cljonic {
-
-/** \anchor Get
- * \brief Looks up an element by a key or index, returning the default or
- *        supplied fallback when absent.
- *
- * Dispatches to the collection's callable lookup forms, consistent with the
- * `operator()` behavior of Map, Vector, and Set.
- *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{10, 20};
- *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
- *   static_assert(get(v_const, 0U) == 10);
- *   static_assert(get(v_const, 9U, -1) == -1);
- *   static_assert(get(m_const, 1) == 100);
- *   static_assert(get(m_const, 2, -1) == -1);
- *   static_assert(get(s_const, 5) == 5);
- *   static_assert(get(s_const, 8, -1) == -1);
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10, 20};
- *   const auto val = get(v_runtime, 0U);
- *
- *   return (val == 10) ? 0 : 1;
- * }
- * ~~~~~
- */
-template <typename C, typename K>
-    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
-            requires(const C& collection, const K& key) { collection(key); }
-[[nodiscard]] constexpr auto get(const C& collection, const K& key) noexcept -> decltype(collection(key)) {
-    return collection(key);
-}
-
-/** Returns the stored value when present, otherwise the supplied fallback. */
-template <typename C, typename K, typename V>
-    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
-            requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
-[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback) noexcept
-    -> decltype(collection(key, fallback)) {
-    return collection(key, fallback);
-}
-
-} // namespace cljonic
-
-#endif // CLJONIC_GET_HPP// End cljonic-get.hpp
-// Begin cljonic-is-empty.hpp
-#ifndef CLJONIC_IS_EMPTY_HPP
-#define CLJONIC_IS_EMPTY_HPP
-
-
-namespace cljonic {
-
-/** \anchor IsEmpty
- * \brief Returns true when the collection has no active elements.
- *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto e_const = Vector<int, 4>{};
- *   constexpr auto v_const = Vector<int, 4>{1};
- *   static_assert(is_empty(e_const));
- *   static_assert(!is_empty(v_const));
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10};
- *   const auto empty_res = is_empty(v_runtime);
- *
- *   return (!empty_res) ? 0 : 1;
- * }
- * ~~~~~
- */
-template <concepts::SequenceableCollection C>
-[[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
-    return collection.is_empty();
-}
-
-} // namespace cljonic
-
-#endif // CLJONIC_IS_EMPTY_HPP// End cljonic-is-empty.hpp
-// Begin cljonic-next.hpp
-#ifndef CLJONIC_NEXT_HPP
-#define CLJONIC_NEXT_HPP
-
-
-namespace cljonic {
-
-/** \anchor Next
- * \brief Returns a collection without its first element.
- *
- * For a Queue, `next` dequeues the front element (the accessible element) and
- * returns the remaining collection.
- *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto q0_const = conj(conj(conj(Queue<int, 4>{}, 1), 2), 3);
- *   constexpr auto q1_const = next(q0_const);
- *   static_assert(peek(q1_const) == 2);
- *
- *   // Runtime demonstration.
- *   auto q0_runtime = conj(conj(Queue<int, 4>{}, 10), 20);
- *   auto q1_runtime = next(q0_runtime);
- *
- *   return (peek(q1_runtime) == 20) ? 0 : 1;
- * }
- * ~~~~~
- */
-template <typename C>
-[[nodiscard]] constexpr auto next(const C& collection) noexcept -> decltype(collection.pop()) {
-    return collection.pop();
-}
-
-} // namespace cljonic
-
-#endif // CLJONIC_NEXT_HPP// End cljonic-next.hpp
-// Begin cljonic-not-empty.hpp
-#ifndef CLJONIC_NOT_EMPTY_HPP
-#define CLJONIC_NOT_EMPTY_HPP
-
-
-namespace cljonic {
-
-/** \anchor NotEmpty
- * \brief Returns an owning copy of the input when nonempty, otherwise the
- * corresponding empty owning value.
- *
- * Per REQ-FN-026, `not_empty` preserves the input collection type and capacity
- * and returns an owning copy of the input when nonempty or the corresponding
- * empty value when empty.
- *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{1};
- *   constexpr auto e_const = Vector<int, 4>{};
- *   static_assert(count(not_empty(v_const)) == 1U);
- *   static_assert(count(not_empty(e_const)) == 0U);
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10};
- *   auto nv_runtime = not_empty(v_runtime);
- *
- *   return (count(nv_runtime) == 1U) ? 0 : 1;
- * }
- * ~~~~~
- */
-template <concepts::SequenceableCollection C>
-[[nodiscard]] constexpr auto not_empty(const C& collection) noexcept -> C {
-    return collection.is_empty() ? C{} : C{collection};
-}
-
-} // namespace cljonic
-
-#endif // CLJONIC_NOT_EMPTY_HPP// End cljonic-not-empty.hpp
 // Begin cljonic-peek.hpp
 #ifndef CLJONIC_PEEK_HPP
 #define CLJONIC_PEEK_HPP
@@ -1332,7 +1084,6 @@ template <typename C>
 #pragma once
 
 #include <array>
-#include <concepts>
 #include <cstddef>
 #include <utility>
 
@@ -1340,8 +1091,9 @@ template <typename C>
 namespace cljonic {
 
 /** \anchor Queue
- * \b Queue is a fixed-capacity FIFO sequence collection backed by contiguous
- * array storage with copy-on-modify semantics.
+ * \b Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
+ * way to operate on the collection is through the library's free-function API. Construction with more values than the
+ * available capacity is rejected at compile time.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -1350,33 +1102,22 @@ namespace cljonic {
  * int main() {
  *   using namespace cljonic;
  *
- *   // Compile-time demonstration.
- *   constexpr auto q_const = Queue<int, 4>{}.conj(10).conj(20);
- *   static_assert(q_const.count() == 2U);
- *   static_assert(q_const.peek() == 10);
- *   static_assert(q_const.can_conj());
+ *   // CTAD infers Queue<int, 3> from the initializer count.
+ *   [[maybe_unused]] constexpr auto ints_at_capacity = Queue{1, 2, 3};
  *
- *   // Pack-literal construction folds conj over each argument in order; CTAD
- *   // deduces Queue<int, 3>. Argument order establishes FIFO order.
- *   constexpr auto literal = Queue{10, 20, 30};
- *   static_assert(literal.count() == 3U);
- *   static_assert(literal.peek() == 10);
+ *   // Explicit capacity permits a partially populated Queue and an empty Queue.
+ *   [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
+ *   [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
  *
- *   // Runtime demonstration.
- *   auto q_runtime = Queue<int, 4>{};
- *   auto q1 = q_runtime.conj(100);
- *   auto q2 = q1.pop();
- *
- *   return (q1.peek() == 100 && q2.is_empty()) ? 0 : 1;
+ *   return 0;
  * }
  * ~~~~~
  */
-template <concepts::CopyableElement T, std::size_t CapacityValue>
+template <concepts::NothrowCollectionElement T, std::size_t CapacityValue>
 class Queue {
   public:
     using value_type = T;
 
-    static_assert(concepts::NothrowCopyableElement<T>, "Queue element type operations must not throw");
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
         "Queue CapacityValue exceeds "
@@ -1459,88 +1200,6 @@ struct collection_traits<Queue<T, CapacityValue>> {
 
 } // namespace cljonic::concepts_detail
 // End cljonic-queue.hpp
-// Begin cljonic-rest.hpp
-#ifndef CLJONIC_REST_HPP
-#define CLJONIC_REST_HPP
-
-
-namespace cljonic {
-
-/** \anchor Rest
- * \brief Returns a collection without its first/accessible element.
- *
- * For a Queue, this removes the front element. Unlike `next`, `rest` returns an
- * empty collection rather than signaling absence on an empty input.
- *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
- *   constexpr auto q1_const = rest(q0_const);
- *   static_assert(peek(q1_const) == 2);
- *
- *   // Runtime demonstration.
- *   auto q0_runtime = conj(conj(Queue<int, 4>{}, 100), 200);
- *   auto q1_runtime = rest(q0_runtime);
- *
- *   return (peek(q1_runtime) == 200) ? 0 : 1;
- * }
- * ~~~~~
- */
-template <typename C>
-[[nodiscard]] constexpr auto rest(const C& collection) noexcept -> decltype(collection.pop()) {
-    return collection.pop();
-}
-
-} // namespace cljonic
-
-#endif // CLJONIC_REST_HPP// End cljonic-rest.hpp
-// Begin cljonic-seq.hpp
-#ifndef CLJONIC_SEQ_HPP
-#define CLJONIC_SEQ_HPP
-
-
-namespace cljonic {
-
-/** \anchor Seq
- * \brief Converts a collection into an owning, value-semantic sequence.
- *
- * For a Vector this returns the owning vector itself; for other sequenceable
- * collections it produces an owning Vector of their traversal elements.
- *
- * \b Examples
- * ~~~~~{.cpp}
- * #include <cljonic.hpp>
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
- *   constexpr auto s_const = seq(v_const);
- *   static_assert(count(s_const) == 3U);
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10, 20};
- *   auto s_runtime = seq(v_runtime);
- *
- *   return (count(s_runtime) == 2U) ? 0 : 1;
- * }
- * ~~~~~
- */
-template <typename C>
-[[nodiscard]] constexpr auto seq(const C& collection) noexcept -> C {
-    return collection;
-}
-
-} // namespace cljonic
-
-#endif // CLJONIC_SEQ_HPP// End cljonic-seq.hpp
 // Begin cljonic-set.hpp
 #ifndef CLJONIC_SET_HPP
 #define CLJONIC_SET_HPP
@@ -1554,9 +1213,10 @@ template <typename C>
 namespace cljonic {
 
 /** \anchor Set
- * \b Set is a fixed-capacity associative sequence collection backed by
- * contiguous array storage with linear-scan lookup and copy-on-modify
- * semantics.
+ * \b Set is a bounded, unordered collection of unique values. It provides callable lookup with optional fallback
+ * values. The way to operate on the collection is through the library's free-function API. Updates return a modified
+ * copy without changing the original collection. Construction with more values than the available capacity is rejected
+ * at compile time.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -1568,9 +1228,9 @@ namespace cljonic {
    using AccountId = int;
    using AccountSet = Set<AccountId, 4>;
 
-   // A named set type makes the element and capacity contract explicit.
-   // Runtime pack construction folds conj over the arguments; a duplicate
-   // value is a no-op. Constant-evaluated duplicate construction is rejected.
+   // A named set type makes the element and capacity contract explicit. Runtime
+   // pack construction folds conj over the arguments; a duplicate value is a
+   // no-op. Constant-evaluated duplicate construction is rejected.
    constexpr auto literal = AccountSet{1, 2, 3};
    static_assert(literal(2) == 2);
    static_assert(literal(99) == 0);
@@ -1735,8 +1395,8 @@ struct collection_traits<Set<T, CapacityValue>> {
 namespace cljonic {
 
 /** \anchor String
- * \b String is a fixed-capacity ASCII string backed by contiguous array storage
- * with automatic null termination and copy-on-modify semantics.
+ * \b String is a fixed-capacity ASCII string backed by contiguous array storage with automatic null termination and
+ * copy-on-modify semantics.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -1754,10 +1414,9 @@ namespace cljonic {
  *
  *   // Runtime demonstration.
  *   auto s_runtime = String<8>{"Hi"};
- *   auto s1 = s_runtime.append('!');
- *   auto s2 = s1.put(0, 'h');
+ *   auto s1 = s_runtime.put(0, 'h');
  *
- *   return (s1.count() == 3U && s2(0) == 'h') ? 0 : 1;
+ *   return (s1.count() == 2U && s1(0) == 'h') ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -1826,18 +1485,6 @@ class String {
         return result;
     }
 
-    /** Appends a character to the end of a copy of the string if room is
-     * available. */
-    [[nodiscard]] constexpr auto append(char c) const noexcept -> String {
-        String result = *this;
-        if (result.logical_size_ < CapacityValue) {
-            result.data_[result.logical_size_] = c;
-            ++result.logical_size_;
-            result.data_[result.logical_size_] = '\0';
-        }
-        return result;
-    }
-
   private:
     // Internal array is CapacityValue+1 to hold null terminator
     std::array<char, CapacityValue + 1> data_{};
@@ -1871,10 +1518,10 @@ namespace cljonic {
 // covered by matching TRACE_ID tests, and recorded in the traceability snapshot.
 
 /** \anchor Vector
- * \b Vector is a fixed-capacity collection backed by static storage.
- * Construction with more initializers than capacity is a compile-time error.
- *
- * This example covers bounded construction and direct member observation.
+ * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
+ * operate on the collection is through the library's free-function API. Updates return a modified copy without
+ * changing the original collection. Construction with more initializers than the available capacity is rejected at
+ * compile time.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
