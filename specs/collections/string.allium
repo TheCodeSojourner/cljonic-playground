@@ -13,6 +13,7 @@ entity String {
     requires_nothrow_destruction: Boolean
     null_terminator_is_uncounted: Boolean
     invalid_bytes_rejected_at_compile_time: Boolean
+    runtime_invalid_bytes_replaced_with_period: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -29,6 +30,7 @@ entity String {
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_indexed_lookup: Boolean
     supports_indexed_fallback_lookup: Boolean
+    supports_get_free_function: Boolean
     invalid_index_returns_default_element: Boolean
     invalid_index_returns_supplied_fallback: Boolean
     canonical_result_status_model_is_declared: Boolean
@@ -96,6 +98,10 @@ entity String {
         this.invalid_bytes_rejected_at_compile_time = true
     }
 
+    invariant RuntimeInvalidBytesReplacedWithPeriod {
+        this.runtime_invalid_bytes_replaced_with_period = true
+    }
+
     invariant NoHeapAllocation {
         this.no_heap_allocation = true
     }
@@ -158,6 +164,10 @@ entity String {
 
     invariant SupportsIndexedFallbackLookup {
         this.supports_indexed_fallback_lookup = true
+    }
+
+    invariant SupportsGetFreeFunction {
+        this.supports_get_free_function = true
     }
 
     invariant InvalidIndexReturnsDefaultElement {
