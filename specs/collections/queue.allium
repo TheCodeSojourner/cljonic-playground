@@ -30,17 +30,6 @@ entity Queue {
     supports_peek_operation: Boolean
     supports_pop_operation: Boolean
     supports_conj_operation: Boolean
-    supports_seq_operation: Boolean
-    supports_first_operation: Boolean
-    supports_next_operation: Boolean
-    supports_rest_operation: Boolean
-    sequence_result_is_owning_vector: Boolean
-    sequence_traversal_is_front_to_rear_fifo: Boolean
-    sequence_traversal_preserves_source: Boolean
-    const_range_traversal_is_non_allocating: Boolean
-    const_range_traversal_is_non_throwing: Boolean
-    wrapped_storage_does_not_change_logical_order: Boolean
-    contiguous_interoperability_view_is_not_required: Boolean
     empty_queue_peek_returns_default_element: Boolean
     empty_queue_pop_returns_empty_queue: Boolean
     preflight_predicates_are_non_throwing_non_allocating: Boolean
@@ -167,50 +156,6 @@ entity Queue {
 
     invariant SupportsConjOperation {
         this.supports_conj_operation = true
-    }
-
-    invariant SupportsSeqOperation {
-        this.supports_seq_operation = true
-    }
-
-    invariant SupportsFirstOperation {
-        this.supports_first_operation = true
-    }
-
-    invariant SupportsNextOperation {
-        this.supports_next_operation = true
-    }
-
-    invariant SupportsRestOperation {
-        this.supports_rest_operation = true
-    }
-
-    invariant SequenceResultIsOwningVector {
-        this.sequence_result_is_owning_vector = true
-    }
-
-    invariant SequenceTraversalIsFrontToRearFifo {
-        this.sequence_traversal_is_front_to_rear_fifo = true
-    }
-
-    invariant SequenceTraversalPreservesSource {
-        this.sequence_traversal_preserves_source = true
-    }
-
-    invariant ConstRangeTraversalIsNonAllocating {
-        this.const_range_traversal_is_non_allocating = true
-    }
-
-    invariant ConstRangeTraversalIsNonThrowing {
-        this.const_range_traversal_is_non_throwing = true
-    }
-
-    invariant WrappedStorageDoesNotChangeLogicalOrder {
-        this.wrapped_storage_does_not_change_logical_order = true
-    }
-
-    invariant ContiguousInteroperabilityViewIsNotRequired {
-        this.contiguous_interoperability_view_is_not_required = true
     }
 
     invariant EmptyQueuePeekReturnsDefaultElement {
