@@ -4,10 +4,11 @@
 
 λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
   ∧ direct_construction(x) ∧ member_observation(x) ∧ callable_lookup(x)
-  ∧ sequence_traversal_interfaces(x) ∧ primitive_free_functions(x)
+  ∧ primitive_free_functions(x)
   | module3(x) → concrete_array_backed_bounded_types(x)
     ∧ contiguous_storage_strategies(x) ∧ linear_scan_lookup(x)
     ∧ swap_and_remove_policies(x) ∧ primitive_free_functions(x)
+  | approved_sequence_contracts(x) → govern(sequence_traversal_interfaces(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
   | future_expansion(unbounded_producers ∨ transformations ∨ regexes ∨ relational_models)
     → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
@@ -198,9 +199,12 @@
   | complete_materialization_into(destination, producer) → use(fits_into)
   | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty
     ∧ full ∧ contains ∧ fits_into ∧ into ∧ count ∧ first ∧ next ∧ rest ∧ seq
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
+  | Queue(x) → sequence_traversal_interfaces(x) ≡ ConstRangeTraversal(x)
+    ∧ LogicalTraversalOrder(x) ∧ fifo_front_to_rear(x)
+    ∧ preserve_input_values(x) ∧ ¬require(contiguous_observation(x))
   | collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
     ∧ take_nth ∧ nth ∧ nthnext ∧ nthrest ∧ butlast ∧ map_indexed ∧ rseq ∧ second ∧ ffirst ∧ fnext
     ∧ nfirst ∧ nnext ∧ some ∧ is_every ∧ not_any ∧ not_every ∧ distinct ∧ dedupe ∧ frequencies
