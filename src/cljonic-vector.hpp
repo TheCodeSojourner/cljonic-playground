@@ -10,10 +10,6 @@
 
 namespace cljonic {
 
-// Traceability: entity-fields.Vector.
-// The complete obligation set is defined in specs/collections/vector.allium,
-// covered by matching TRACE_ID tests, and recorded in the traceability snapshot.
-
 /** \anchor Vector
  * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
