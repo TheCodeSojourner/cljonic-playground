@@ -8,14 +8,14 @@
   | module3(x) → concrete_array_backed_bounded_types(x)
     ∧ contiguous_storage_strategies(x) ∧ linear_scan_lookup(x)
     ∧ swap_and_remove_policies(x) ∧ primitive_free_functions(x)
-  | approved_sequence_contracts(x) → govern(sequence_traversal_interfaces(x))
+  | deferred_sequence_contracts(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
   | future_expansion(unbounded_producers ∨ transformations ∨ regexes ∨ relational_models)
     → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
 
-λ current_concept_model(x). two_level_concept_model(x) → gate(public_collection_surface ∧ free_function_surface)
+λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_free_function_surface)
   | CollectionConcept_layer(x) → admit(ClosedNominalCollectionDomain)
-  | CapabilityConcept_layer(x) → express(sequenceable ∨ indexed ∨ associative semantic_capability)
+  | CapabilityConcept_layer(x) → express(indexed ∨ associative semantic_capability)
   | model_active(x) → true_for(current_stored_collection_surface(x))
 
 ## S5 - Identity
@@ -200,11 +200,10 @@
   | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
 
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty
-    ∧ full ∧ contains ∧ fits_into ∧ into ∧ count ∧ first ∧ next ∧ rest ∧ seq
+    ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | Queue(x) → sequence_traversal_interfaces(x) ≡ ConstRangeTraversal(x)
-    ∧ LogicalTraversalOrder(x) ∧ fifo_front_to_rear(x)
-    ∧ preserve_input_values(x) ∧ ¬require(contiguous_observation(x))
+  | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
+    ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
     ∧ take_nth ∧ nth ∧ nthnext ∧ nthrest ∧ butlast ∧ map_indexed ∧ rseq ∧ second ∧ ffirst ∧ fnext
     ∧ nfirst ∧ nnext ∧ some ∧ is_every ∧ not_any ∧ not_every ∧ distinct ∧ dedupe ∧ frequencies
@@ -374,7 +373,7 @@ concept AssociativeCollection =
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
   | collection_updates(x) → realize(PersistentValueSemantics ∧ DeepCopyUpdate)
   | public_operations(x) → preserve(ReferentialTransparency)
-  | read_only_observation(x) → use(ReadOnlyInteropAccessor ∧ ConstRangeTraversal)
+  | read_only_observation(x) → defer(ReadOnlyInteropAccessor ∧ ConstRangeTraversal)
   | contiguous_observation(x) → use(ContiguousConstView) when(complete_active_logical_range_is_contiguous(x))
   | view_lifetime(x) → source_lifetime_bounded(x)
 
