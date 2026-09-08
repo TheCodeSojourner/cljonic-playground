@@ -97,7 +97,7 @@
  * Core_Mul "Mul" - \ref Core_Ord "Ord" - \ref Core_Permutations "Permutations" - \ref Core_Sub "Sub", - \ref
  * Core_Uppercase "Uppercase"
  *
- * ### Seq (i.e., Sequence: Vector)
+ * ### Deferred sequence traversal
  *
  * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
  * when their requirements are approved. - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref
@@ -106,21 +106,20 @@
  * Core_Different "Different", \ref Disj "disj", \ref Dissoc "dissoc", \ref Core_Distinct "Distinct", \ref
  * Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
  * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy "EqualBy", \ref
- * Core_Every "Every" - \ref Core_Filter "Filter", \ref First "first", \ref Core_Flatten "Flatten", \ref
- * Core_FlattenSize "FlattenSize", \ref Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy" - \ref
- * Get "get" - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref
- * Core_IndexOfBy "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Core_IsDistinct
- * "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull "IsFull", \ref
- * Core_Iterate "Iterate" - \ref Core_Juxt "Juxt" - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref
- * Core_LastIndexOfBy "LastIndexOfBy" - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref
- * Core_Min "Min", \ref Core_MinBy "MinBy" - \ref Next "next", \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty",
- * \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M" - \ref Core_Partition "Partition", \ref
- * Core_PartitionAll "PartitionAll", \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop" - \ref
- * Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace "Replace",
- * \ref Rest "rest", \ref Core_Reverse "Reverse" - \ref Core_Second "Second", \ref Seq "seq", \ref Core_Size "Size",
- * \ref Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref
- * Core_SplitWith "SplitWith", \ref Core_Subs "Subs" - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref
- * Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
+ * Core_Every "Every" - \ref Core_Filter "Filter", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize",
+ * \ref Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy" - \ref Get "get" - \ref Core_Identical
+ * "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref
+ * Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Core_IsDistinct "IsDistinct", \ref
+ * Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull "IsFull", \ref Core_Iterate "Iterate" -
+ * \ref Core_Juxt "Juxt" - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy
+ * "LastIndexOfBy" - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref
+ * Core_MinBy "MinBy" - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref Core_NotEvery "NotEvery", \ref
+ * Core_Nth "Nth", \ref Core_Nth_M "Nth_M" - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
+ * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop" - \ref Core_Reduce "Reduce", \ref
+ * Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse" -
+ * \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy
+ * "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs "Subs" - \ref Core_Take
+ * "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
  * ## Set Functions
  *
@@ -161,17 +160,13 @@
 #include <cljonic-disj.hpp>
 #include <cljonic-dissoc.hpp>
 #include <cljonic-empty.hpp>
-#include <cljonic-first.hpp>
 #include <cljonic-get.hpp>
 #include <cljonic-is-empty.hpp>
 #include <cljonic-map.hpp>
-#include <cljonic-next.hpp>
 #include <cljonic-not-empty.hpp>
 #include <cljonic-peek.hpp>
 #include <cljonic-pop.hpp>
 #include <cljonic-queue.hpp>
-#include <cljonic-rest.hpp>
-#include <cljonic-seq.hpp>
 #include <cljonic-set.hpp>
 #include <cljonic-string.hpp>
 #include <cljonic-vector.hpp>
