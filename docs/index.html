@@ -82,126 +82,67 @@ $(function() {
 <p><b>Can one or two embedded systems software developers cost-effectively introduce modern C++ capabilities to the entire team?</b></p>
 <p>In this post: </p><pre class="fragment">https://www.gamedeveloper.com/programming/in-depth-functional-programming-in-c-
 </pre><p> the author makes the following statements:</p>
-<p><b>"A large fraction of the flaws in software development are due to
-programmers not fully understanding all the possible states their code may
-execute in. In a multithreaded environment, the lack of understanding and the
+<p><b>"A large fraction of the flaws in software development are due to programmers not fully understanding all the
+possible states their code may execute in. In a multithreaded environment, the lack of understanding and the
  resulting problems are greatly amplified, almost to the point of panic if
-you are paying attention. Programming in a functional style makes the state
-presented to your code explicit, which makes it much easier to reason about
+you are paying attention. Programming in a functional style makes the state presented to your code explicit, which
+makes it much easier to reason about
  [(i.e., Fewer mistakes, and less debugging)], and, in a completely pure
 system, makes thread race conditions impossible."</b></p>
-<p><b>"No matter what language you work in, programming in a functional style
-provides benefits. You should do it whenever it is convenient, and you should
-think hard about the decision when it isn't convenient."</b></p>
+<p><b>"No matter what language you work in, programming in a functional style provides benefits. You should do it whenever
+it is convenient, and you should think hard about the decision when it isn't convenient."</b></p>
 <p><b>cljonic</b> is a <b>header-only</b> library that utilizes <b>Modern</b> <b>C++</b> capabilities to provide a functional style C++ <b>Clojure</b> subset to <b>embedded</b> <b>systems</b> developers, promotes the <b>predictable</b> <b>development</b> of <b>higher</b> <b>quality</b> code <b>faster</b>, and can be <b>cost-effectively</b> <b>maintained</b> over time.</p>
-<p><a class="anchor" id="Core_Cheatsheet"></a></p><hr  />
- <h1><a class="anchor" id="autotoc_md0"></a>
-Cheatsheet</h1>
-<h2><a class="anchor" id="autotoc_md1"></a>
+<p><a class="anchor" id="Core_Cheatsheet"></a>___ # Cheatsheet</p>
+<h2><a class="anchor" id="autotoc_md0"></a>
 Aliases</h2>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Namespace   </th><th class="markdownTableHeadNone">"using" C++ Statement    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="namespacecljonic.html#Namespace_Core">core</a>   </td><td class="markdownTableBodyNone">using <b>core</b> = <a class="el" href="namespacecljonic_1_1core.html">cljonic::core</a>;    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">set   </td><td class="markdownTableBodyNone">using <b>set</b> = cljonic::set;    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">string   </td><td class="markdownTableBodyNone">using <b>string</b> = cljonic::string;   </td></tr>
-</table>
-<h2><a class="anchor" id="autotoc_md2"></a>
+<p>| Namespace | "using" C++ Statement | |--------&mdash;|----------------------&mdash;| | <a class="el" href="namespacecljonic.html#Namespace_Core">core</a> | using <b>core</b> = <a class="el" href="namespacecljonic_1_1core.html">cljonic::core</a>; | | set | using <b>set</b> = cljonic::set; | | string | using <b>string</b> = cljonic::string; |</p>
+<h2><a class="anchor" id="autotoc_md1"></a>
 Collection Types</h2>
 <ul>
-<li><a class="el" href="classcljonic_1_1_map.html#Map">cljonic::Map</a></li>
-<li><a class="el" href="structcljonic_1_1_map_entry.html#MapEntry">cljonic::MapEntry</a></li>
-<li><a class="el" href="classcljonic_1_1_queue.html#Queue">cljonic::Queue</a></li>
-<li><a class="el" href="classcljonic_1_1_set.html#Set">cljonic::Set</a></li>
-<li><a class="el" href="classcljonic_1_1_string.html#String">cljonic::String</a></li>
-<li><a class="el" href="classcljonic_1_1_vector.html#Vector">cljonic::Vector</a></li>
+<li><a class="el" href="classcljonic_1_1_map.html#Map">cljonic::Map</a> - <a class="el" href="structcljonic_1_1_map_entry.html#MapEntry">cljonic::MapEntry</a> - <a class="el" href="classcljonic_1_1_queue.html#Queue">cljonic::Queue</a> - <a class="el" href="classcljonic_1_1_set.html#Set">cljonic::Set</a> - <a class="el" href="classcljonic_1_1_string.html#String">cljonic::String</a> - <a class="el" href="classcljonic_1_1_vector.html#Vector">cljonic::Vector</a></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md3"></a>
+<h2><a class="anchor" id="autotoc_md2"></a>
 Core Functions</h2>
-<h3><a class="anchor" id="autotoc_md4"></a>
+<h3><a class="anchor" id="autotoc_md3"></a>
 Composition</h3>
 <ul>
 <li>Partial</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md5"></a>
+<h3><a class="anchor" id="autotoc_md4"></a>
 Control</h3>
 <ul>
 <li>DoSeq, DoTimes, If, Unless, When, WhenNot</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md6"></a>
+<h3><a class="anchor" id="autotoc_md5"></a>
 Predicate</h3>
 <ul>
-<li>Compare</li>
-<li>EQ</li>
-<li>GE, GT</li>
-<li>IsAlpha, IsAlphanumeric, IsBlank, IsControl, IsDigit, IsEven, IsGraphical, IsHexDigit, IsLowercase, IsNatural, IsNegative, IsOdd, IsPositive, IsPrintable, IsPunctuation, IsSpace, IsUppercase, IsZero</li>
-<li>LE, LT</li>
-<li>NE</li>
+<li>Compare - EQ - GE, GT - IsAlpha, IsAlphanumeric, IsBlank, IsControl, IsDigit, IsEven, IsGraphical, IsHexDigit, IsLowercase, IsNatural, IsNegative, IsOdd, IsPositive, IsPrintable, IsPunctuation, IsSpace, IsUppercase, IsZero - LE, LT - NE</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md7"></a>
+<h3><a class="anchor" id="autotoc_md6"></a>
 Primitive</h3>
 <ul>
-<li>Abs, Add</li>
-<li>Char, Combinations, CString</li>
-<li>Dec, Div</li>
-<li>Factorial</li>
-<li>Inc</li>
-<li>Lowercase</li>
-<li>Max, Min, Mod, Mul</li>
-<li>Ord</li>
-<li>Permutations</li>
-<li>Sub,</li>
-<li>Uppercase</li>
+<li>Abs, Add - Char, Combinations, CString - Dec, Div - Factorial - Inc - Lowercase - Max, Min, Mod, Mul - Ord - Permutations - Sub, - Uppercase</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md8"></a>
-Seq (i.e., Sequence: Vector)</h3>
-<p>Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only when their requirements are approved.</p><ul>
-<li><a class="el" href="namespacecljonic.html#Assoc">assoc</a>, <a class="el" href="namespacecljonic.html#CanAssoc">can_assoc</a>, <a class="el" href="namespacecljonic.html#CanConj">can_conj</a>, <a class="el" href="namespacecljonic.html#Conj">conj</a>, <a class="el" href="namespacecljonic.html#Contains">contains</a>, <a class="el" href="namespacecljonic.html#Count">count</a></li>
-<li>Dedupe, DedupeBy, DefaultElement, DefaultElement_M, Different, <a class="el" href="namespacecljonic.html#Disj">disj</a>, <a class="el" href="namespacecljonic.html#Dissoc">dissoc</a>, Distinct, DistinctBy, Drop, DropLast, DropWhile</li>
-<li><a class="el" href="namespacecljonic.html#Empty">empty</a>, Empty_M, Equal, EqualBy, Every</li>
-<li>Filter, <a class="el" href="namespacecljonic.html#First">first</a>, Flatten, FlattenSize, Frequencies, FrequenciesBy</li>
-<li><a class="el" href="namespacecljonic.html#Get">get</a></li>
-<li>Identical, Identity, IndexOf, IndexOfBy, Interleave, Interpose, IsDistinct, IsDistinctBy, <a class="el" href="namespacecljonic.html#IsEmpty">is_empty</a>, IsFull, Iterate</li>
-<li>Juxt</li>
-<li>Last, LastIndexOf, LastIndexOfBy</li>
-<li>Map, Max, MaxBy, Min, MinBy</li>
-<li><a class="el" href="namespacecljonic.html#Next">next</a>, NotAny, <a class="el" href="namespacecljonic.html#NotEmpty">not_empty</a>, NotEvery, Nth, Nth_M</li>
-<li>Partition, PartitionAll, PartitionBy, <a class="el" href="namespacecljonic.html#Peek">peek</a>, <a class="el" href="namespacecljonic.html#Pop">pop</a></li>
-<li>Reduce, Reductions, Remove, Replace, <a class="el" href="namespacecljonic.html#Rest">rest</a>, Reverse</li>
-<li>Second, <a class="el" href="namespacecljonic.html#Seq">seq</a>, Size, Some, Sort, SortBy, SplitAt, SplitWith, Subs</li>
-<li>Take, TakeLast, TakeNth, TakeWhile</li>
+<h3><a class="anchor" id="autotoc_md7"></a>
+Deferred sequence traversal</h3>
+<p>Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only when their requirements are approved. - <a class="el" href="namespacecljonic.html#Assoc">assoc</a>, <a class="el" href="namespacecljonic.html#CanAssoc">can_assoc</a>, <a class="el" href="namespacecljonic.html#CanConj">can_conj</a>, <a class="el" href="namespacecljonic.html#Conj">conj</a>, <a class="el" href="namespacecljonic.html#Contains">contains</a>, <a class="el" href="namespacecljonic.html#Count">count</a> - Dedupe, DedupeBy, DefaultElement, DefaultElement_M, Different, <a class="el" href="namespacecljonic.html#Disj">disj</a>, <a class="el" href="namespacecljonic.html#Dissoc">dissoc</a>, Distinct, DistinctBy, Drop, DropLast, DropWhile</p><ul>
+<li><a class="el" href="namespacecljonic.html#Empty">empty</a>, Empty_M, Equal, EqualBy, Every - Filter, Flatten, FlattenSize, Frequencies, FrequenciesBy - <a class="el" href="namespacecljonic.html#Get">get</a> - Identical, Identity, IndexOf, IndexOfBy, Interleave, Interpose, IsDistinct, IsDistinctBy, <a class="el" href="namespacecljonic.html#IsEmpty">is_empty</a>, IsFull, Iterate - Juxt - Last, LastIndexOf, LastIndexOfBy - Map, Max, MaxBy, Min, MinBy - NotAny, <a class="el" href="namespacecljonic.html#NotEmpty">not_empty</a>, NotEvery, Nth, Nth_M - Partition, PartitionAll, PartitionBy, <a class="el" href="namespacecljonic.html#Peek">peek</a>, <a class="el" href="namespacecljonic.html#Pop">pop</a> - Reduce, Reductions, Remove, Replace, Reverse - Second, Size, Some, Sort, SortBy, SplitAt, SplitWith, Subs - Take, TakeLast, TakeNth, TakeWhile</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md9"></a>
+<h2><a class="anchor" id="autotoc_md8"></a>
 Set Functions</h2>
 <ul>
-<li>Conj, ConjBy</li>
-<li>Difference, DifferenceBy, Disj, DisjBy</li>
-<li>IndexOf, IndexOfBy, Intersection, IntersectionBy</li>
-<li>ToSet, ToSetBy</li>
-<li>Union, UnionBy</li>
+<li>Conj, ConjBy - Difference, DifferenceBy, Disj, DisjBy - IndexOf, IndexOfBy, Intersection, IntersectionBy - ToSet, ToSetBy - Union, UnionBy</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 String Functions</h2>
 <ul>
-<li>Capitalize, Compare, Concat</li>
-<li>EndsWith</li>
-<li>FloatToString, Format</li>
-<li>Includes, IndexOf, Interpose, IntToString, IntToStringHex, IsBlank</li>
-<li>LastIndexOf, Lowercase</li>
-<li>Partition, PartitionAll, PartitionBy</li>
-<li>Replace, ReplaceFirst</li>
-<li>Split, SplitCount, SplitLine, StartsWith, StrLen, StrOfChar, StrToFloat, StrToIntDecimal, StrToIntHex, Subs</li>
-<li>Trim, TrimLeft, TrimNewLine, TrimRight</li>
-<li>Uppercase </li>
+<li>Capitalize, Compare, Concat - EndsWith - FloatToString, Format - Includes, IndexOf, Interpose, IntToString, IntToStringHex, IsBlank - LastIndexOf, Lowercase - Partition, PartitionAll, PartitionBy - Replace, ReplaceFirst - Split, SplitCount, SplitLine, StartsWith, StrLen, StrOfChar, StrToFloat, StrToIntDecimal, StrToIntHex, Subs - Trim, TrimLeft, TrimNewLine, TrimRight - Uppercase </li>
 </ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 7 2026 18:18:07 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Tue Sep 8 2026 14:10:00 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

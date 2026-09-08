@@ -115,37 +115,26 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:aa0f76c954887926d7066589eeb3851ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt;<br />
-class cljonic::Queue&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Queue"></a><b><a class="el" href="classcljonic_1_1_queue.html">Queue</a></b> is a fixed-capacity FIFO sequence collection backed by contiguous array storage with copy-on-modify semantics.</p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt;<br />
+class cljonic::Queue&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Queue"></a><b><a class="el" href="classcljonic_1_1_queue.html">Queue</a></b> is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The way to operate on the collection is through the library's free-function API. Construction with more values than the available capacity is rejected at compile time.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;cljonic.hpp&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}.<a class="code hl_function" href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">conj</a>(10).conj(20);</div>
-<div class="line">  <span class="keyword">static_assert</span>(q_const.count() == 2U);</div>
-<div class="line">  <span class="keyword">static_assert</span>(q_const.peek() == 10);</div>
-<div class="line">  <span class="keyword">static_assert</span>(q_const.can_conj());</div>
+<div class="line">  <span class="comment">// CTAD infers Queue&lt;int, 3&gt; from the initializer count.</span></div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> ints_at_capacity = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{1, 2, 3};</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Pack-literal construction folds conj over each argument in order; CTAD</span></div>
-<div class="line">  <span class="comment">// deduces Queue&lt;int, 3&gt;. Argument order establishes FIFO order.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> literal = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{10, 20, 30};</div>
-<div class="line">  <span class="keyword">static_assert</span>(literal.count() == 3U);</div>
-<div class="line">  <span class="keyword">static_assert</span>(literal.peek() == 10);</div>
+<div class="line">  <span class="comment">// Explicit capacity permits a partially populated Queue and an empty Queue.</span></div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> ints_populated = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{1, 2};</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> ints_empty = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{};</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> q_runtime = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{};</div>
-<div class="line">  <span class="keyword">auto</span> q1 = q_runtime.<a class="code hl_function" href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">conj</a>(100);</div>
-<div class="line">  <span class="keyword">auto</span> q2 = q1.pop();</div>
-<div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (q1.peek() == 100 &amp;&amp; q2.is_empty()) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00047">cljonic-queue.hpp:47</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html_a351e7be209764b31bd4fd0c350225ee1"><div class="ttname"><a href="classcljonic_1_1_queue.html#a351e7be209764b31bd4fd0c350225ee1">cljonic::Queue::conj</a></div><div class="ttdeci">constexpr auto conj(const T &amp;element) const noexcept -&gt; Queue</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00086">cljonic-queue.hpp:86</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00037">cljonic-queue.hpp:37</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00047">47</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00037">37</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a4f7ab05a1116c878fb3eb1ff346534e8" name="a4f7ab05a1116c878fb3eb1ff346534e8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4f7ab05a1116c878fb3eb1ff346534e8">&#9670;&#160;</a></span>value_type</h2>
@@ -153,7 +142,7 @@ class cljonic::Queue&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Que
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="classcljonic_1_1_queue.html">cljonic::Queue</a>&lt; T, CapacityValue &gt;::value_type =  T</td>
@@ -161,7 +150,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00049">49</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00039">39</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -172,7 +161,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <div class="memtemplate">
 template&lt;typename... Args&gt; </div>
 <table class="mlabels">
@@ -194,7 +183,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00058">58</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00047">47</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -205,7 +194,7 @@ template&lt;typename... Args&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -225,7 +214,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Returns true when there is room for at least one more element. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00080">80</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00069">69</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -235,7 +224,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -254,7 +243,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00067">67</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00056">56</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -264,7 +253,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -285,7 +274,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Adds an element to the back of a copy of the queue (enqueue). Returns an unchanged copy when full. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00086">86</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00075">75</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -295,7 +284,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -314,7 +303,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00071">71</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00060">60</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -324,7 +313,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -343,7 +332,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00075">75</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00064">64</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +342,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -373,7 +362,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Peeks at the front element without removing it. Returns default-constructed value when empty. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00098">98</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00087">87</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -383,7 +372,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -403,7 +392,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Removes the front element from a copy of the queue (dequeue). Returns an unchanged copy when empty. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00104">104</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00093">93</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -413,7 +402,7 @@ template&lt;concepts::CopyableElement T, std::size_t CapacityValue&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 7 2026 18:18:07 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Tue Sep 8 2026 14:10:00 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

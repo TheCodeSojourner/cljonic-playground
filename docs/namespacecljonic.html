@@ -267,11 +267,11 @@ template&lt;typename C , typename K , typename V &gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (m1.contains(2) &amp;&amp; m1(2) == 200) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00062">cljonic-map.hpp:62</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00063">cljonic-map.hpp:63</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ab8272bbb9a27e6139cbfb276fb8b317f"><div class="ttname"><a href="namespacecljonic.html#ab8272bbb9a27e6139cbfb276fb8b317f">cljonic::assoc</a></div><div class="ttdeci">constexpr auto assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept</div><div class="ttdoc">Associates a key and value in an associative collection or index in a vector.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00034">cljonic-assoc.hpp:34</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_ab8272bbb9a27e6139cbfb276fb8b317f"><div class="ttname"><a href="namespacecljonic.html#ab8272bbb9a27e6139cbfb276fb8b317f">cljonic::assoc</a></div><div class="ttdeci">constexpr auto assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept</div><div class="ttdoc">Associates a key and value in an associative collection or index in a vector.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00033">cljonic-assoc.hpp:33</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-assoc_8hpp_source.html#l00034">34</a> of file <a class="el" href="cljonic-assoc_8hpp_source.html">cljonic-assoc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-assoc_8hpp_source.html#l00033">33</a> of file <a class="el" href="cljonic-assoc_8hpp_source.html">cljonic-assoc.hpp</a>.</p>
 
 </div>
 </div>
@@ -391,8 +391,8 @@ template&lt;typename C , typename... Args&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (q_ok &amp;&amp; s_ok) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00047">cljonic-queue.hpp:47</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00049">cljonic-set.hpp:49</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00037">cljonic-queue.hpp:37</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00050">cljonic-set.hpp:50</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_affd9a34d9568a940de23e1b3cbe619e9"><div class="ttname"><a href="namespacecljonic.html#affd9a34d9568a940de23e1b3cbe619e9">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection, Args &amp;&amp;... args) noexcept -&gt; bool</div><div class="ttdoc">Checks if conj can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00036">cljonic-can-conj.hpp:36</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00036">36</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
@@ -501,9 +501,7 @@ template&lt;typename C , typename K &gt; </div>
 
 <p>Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's <code>contains?</code> predicate. </p>
 <p><a class="anchor" id="Contains"></a></p>
-<p>The meaning of the argument follows the collection kind:</p><ul>
-<li><a class="el" href="classcljonic_1_1_map.html">Map</a>: tests key presence (<code>contains(m, key)</code> is true when key is present).</li>
-<li><a class="el" href="classcljonic_1_1_set.html">Set</a>: tests element presence (<code>contains(s, value)</code> is true when value is a member).</li>
+<p>The meaning of the argument follows the collection kind: - <a class="el" href="classcljonic_1_1_map.html">Map</a>: tests key presence (<code>contains(m, key)</code> is true when key is present). - <a class="el" href="classcljonic_1_1_set.html">Set</a>: tests element presence (<code>contains(s, value)</code> is true when value is a member).</p><ul>
 <li><a class="el" href="classcljonic_1_1_vector.html">Vector</a> / <a class="el" href="classcljonic_1_1_string.html">String</a>: tests whether a numeric index is in range (<code>contains(xs, index)</code> is true when index is valid, like Clojure's <code>contains?</code> over vector/string indices).</li>
 </ul>
 <p><code>contains</code> never performs a default-returning access; it only answers the membership question for the collection's lookup domain.</p>
@@ -531,11 +529,11 @@ template&lt;typename C , typename K &gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (in_range &amp;&amp; !<a class="code hl_function" href="namespacecljonic.html#a1985f084fdf102fe981bcf4d6a72c124">contains</a>(v_runtime, 9U)) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00042">cljonic-string.hpp:42</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00041">cljonic-string.hpp:41</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00111">cljonic-vector.hpp:111</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a1985f084fdf102fe981bcf4d6a72c124"><div class="ttname"><a href="namespacecljonic.html#a1985f084fdf102fe981bcf4d6a72c124">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept -&gt; bool</div><div class="ttdoc">Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's contains?...</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00052">cljonic-contains.hpp:52</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a1985f084fdf102fe981bcf4d6a72c124"><div class="ttname"><a href="namespacecljonic.html#a1985f084fdf102fe981bcf4d6a72c124">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept -&gt; bool</div><div class="ttdoc">Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's contains?...</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00051">cljonic-contains.hpp:51</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00052">52</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
 
 </div>
 </div>
@@ -757,10 +755,10 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(e_runtime) &amp;&amp; <a class="code hl_function" href="namespacecljonic.html#a33ef3cad32c48f7b361f8c9a9e554e67">count</a>(v_runtime) == 2U) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a2936b6921ca67e4b8ae5f221c095bde0"><div class="ttname"><a href="namespacecljonic.html#a2936b6921ca67e4b8ae5f221c095bde0">cljonic::empty</a></div><div class="ttdeci">constexpr auto empty(const C &amp;) noexcept -&gt; C</div><div class="ttdoc">Returns an empty owning value of the same collection type as the input.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-empty_8hpp_source.html#l00036">cljonic-empty.hpp:36</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a2936b6921ca67e4b8ae5f221c095bde0"><div class="ttname"><a href="namespacecljonic.html#a2936b6921ca67e4b8ae5f221c095bde0">cljonic::empty</a></div><div class="ttdeci">constexpr auto empty(const C &amp;) noexcept -&gt; C</div><div class="ttdoc">Returns an empty owning value of the same collection type as the input.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-empty_8hpp_source.html#l00034">cljonic-empty.hpp:34</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_ad637ffe5ee8423fa106fbdfdb9ce9529"><div class="ttname"><a href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">cljonic::is_empty</a></div><div class="ttdeci">constexpr auto is_empty(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdoc">Returns true when the collection has no active elements.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-is-empty_8hpp_source.html#l00033">cljonic-is-empty.hpp:33</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-empty_8hpp_source.html#l00036">36</a> of file <a class="el" href="cljonic-empty_8hpp_source.html">cljonic-empty.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-empty_8hpp_source.html#l00034">34</a> of file <a class="el" href="cljonic-empty_8hpp_source.html">cljonic-empty.hpp</a>.</p>
 
 </div>
 </div>
@@ -842,7 +840,7 @@ template&lt;typename KeyType , typename ValueType &gt; </div>
 <div class="line">  <span class="keywordflow">return</span> (fst == 100) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html_a873d28380c259fbc2ee183eb7d0c7328"><div class="ttname"><a href="namespacecljonic.html#a873d28380c259fbc2ee183eb7d0c7328">cljonic::first</a></div><div class="ttdeci">constexpr auto first(const MapEntry&lt; KeyType, ValueType &gt; &amp;entry) noexcept -&gt; const KeyType &amp;</div><div class="ttdoc">Returns the first element of a sequenceable collection, or the key of a MapEntry.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-first_8hpp_source.html#l00038">cljonic-first.hpp:38</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00040">cljonic-map-entry.hpp:40</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00039">cljonic-map-entry.hpp:39</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-first_8hpp_source.html#l00038">38</a> of file <a class="el" href="cljonic-first_8hpp_source.html">cljonic-first.hpp</a>.</p>
 
@@ -1089,9 +1087,9 @@ template&lt;typename C &gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="namespacecljonic.html#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_runtime) == 20) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a375ca6d156afd5ac8cd31bae763d4062"><div class="ttname"><a href="namespacecljonic.html#a375ca6d156afd5ac8cd31bae763d4062">cljonic::next</a></div><div class="ttdeci">constexpr auto next(const C &amp;collection) noexcept -&gt; decltype(collection.pop())</div><div class="ttdoc">Returns a collection without its first element.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-next_8hpp_source.html#l00035">cljonic-next.hpp:35</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a375ca6d156afd5ac8cd31bae763d4062"><div class="ttname"><a href="namespacecljonic.html#a375ca6d156afd5ac8cd31bae763d4062">cljonic::next</a></div><div class="ttdeci">constexpr auto next(const C &amp;collection) noexcept -&gt; decltype(collection.pop())</div><div class="ttdoc">Returns a collection without its first element.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-next_8hpp_source.html#l00034">cljonic-next.hpp:34</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00035">35</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00034">34</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
 
 </div>
 </div>
@@ -1141,9 +1139,9 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="namespacecljonic.html#a33ef3cad32c48f7b361f8c9a9e554e67">count</a>(nv_runtime) == 1U) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a8180deddc8b1aa7386990604604648f0"><div class="ttname"><a href="namespacecljonic.html#a8180deddc8b1aa7386990604604648f0">cljonic::not_empty</a></div><div class="ttdeci">constexpr auto not_empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdoc">Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-empty_8hpp_source.html#l00038">cljonic-not-empty.hpp:38</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a8180deddc8b1aa7386990604604648f0"><div class="ttname"><a href="namespacecljonic.html#a8180deddc8b1aa7386990604604648f0">cljonic::not_empty</a></div><div class="ttdeci">constexpr auto not_empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdoc">Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-empty_8hpp_source.html#l00036">cljonic-not-empty.hpp:36</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00038">38</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00036">36</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
 
 </div>
 </div>
@@ -1459,14 +1457,14 @@ template&lt;typename First , typename... Rest&gt; </div>
 </div><div class="memdoc">
 <p><a class="anchor" id="CollectionMaximumElementCountValue"></a><b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b> is a constexpr constant that captures the configured synthesis ceiling for bounded cljonic collections and semantically infinite producers. This type-safe constant can be used in compile-time expressions, static assertions, and constexpr functions while remaining fully overridable via the CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-core-collection-maximum-element-count_8hpp_source.html#l00017">17</a> of file <a class="el" href="cljonic-core-collection-maximum-element-count_8hpp_source.html">cljonic-core-collection-maximum-element-count.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-core-collection-maximum-element-count_8hpp_source.html#l00015">15</a> of file <a class="el" href="cljonic-core-collection-maximum-element-count_8hpp_source.html">cljonic-core-collection-maximum-element-count.hpp</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 7 2026 18:18:07 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Tue Sep 8 2026 14:10:00 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

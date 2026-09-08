@@ -117,8 +117,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt;<br />
-class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anchor" id="Vector"></a> <b><a class="el" href="classcljonic_1_1_vector.html">Vector</a></b> is a fixed-capacity collection backed by static storage. Construction with more initializers than capacity is a compile-time error.</p>
-<p>This example covers bounded construction and direct member observation.</p>
+class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anchor" id="Vector"></a> <b><a class="el" href="classcljonic_1_1_vector.html">Vector</a></b> is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to operate on the collection is through the library's free-function API. Updates return a modified copy without changing the original collection. Construction with more initializers than the available capacity is rejected at compile time.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -459,7 +458,7 @@ template&lt;std::integral IndexType&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 7 2026 18:18:07 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Tue Sep 8 2026 14:10:00 for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>
