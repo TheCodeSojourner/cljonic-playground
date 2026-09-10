@@ -7,7 +7,7 @@
 // Begin cljonic-config.hpp
 #pragma once
 
-#if !defined(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT)
+#ifndef CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT
 #define CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT 1000
 #endif
 
@@ -298,7 +298,7 @@ concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, st
 /** Requires an admitted sequenceable collection to expose a named lookup
  * domain, callable lookup, and matching membership predicate. */
 template <typename C>
-concept LookupCollection = SequenceableCollection<C> && requires(const C& c, const typename C::lookup_type& key) {
+concept LookupCollection = SequenceableCollection<C> && requires(const C& c, const C::lookup_type& key) {
     { c(key) } noexcept;
     { c.contains(key) } noexcept -> std::same_as<bool>;
 };
@@ -306,7 +306,7 @@ concept LookupCollection = SequenceableCollection<C> && requires(const C& c, con
 /** Requires that a sequenceable collection provides callable key lookup
  *  c(key) and the contains(key) key-presence membership test. */
 template <typename C>
-concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c, const typename C::key_type& k) {
+concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c, const C::key_type& k) {
     { c(k) } noexcept;
     { c.contains(k) } noexcept -> std::same_as<bool>;
 };
@@ -326,7 +326,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -366,7 +366,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -405,7 +405,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -448,7 +448,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -501,7 +501,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -566,7 +566,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -608,7 +608,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -648,7 +648,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -692,7 +692,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -747,7 +747,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -795,7 +795,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -851,7 +851,7 @@ namespace cljonic {
  *
  \b Examples
  ~~~~~{.cpp}
- #include <cljonic.hpp>
+ #include "cljonic.hpp"
 
  struct Key {
    int id;
@@ -1014,7 +1014,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -1053,7 +1053,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -1097,7 +1097,7 @@ namespace cljonic {
  *
  * \b Examples
  * ~~~~~{.cpp}
- * #include <cljonic.hpp>
+ * #include "cljonic.hpp"
  *
  * int main() {
  *   using namespace cljonic;
@@ -1220,7 +1220,7 @@ namespace cljonic {
  *
  \b Examples
  ~~~~~{.cpp}
- #include <cljonic.hpp>
+ #include "cljonic.hpp"
 
  int main() {
    using namespace cljonic;
@@ -1400,7 +1400,7 @@ namespace cljonic {
  *
  \b Examples
  ~~~~~{.cpp}
- #include <cljonic.hpp>
+ #include "cljonic.hpp"
 
  int main() {
    using namespace cljonic;
@@ -1701,7 +1701,8 @@ class Vector {
     }
 
     template <std::size_t... Indices, typename... Args>
-    constexpr void initialize_storage(std::index_sequence<Indices...>, Args&&... args) noexcept {
+    constexpr void initialize_storage(std::index_sequence<Indices...> indices, Args&&... args) noexcept {
+        (void)indices;
         ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
     }
 
@@ -1725,11 +1726,7 @@ struct collection_traits<Vector<ElementType, CapacityValue>> {
 } // namespace cljonic::concepts_detail
 // End cljonic-vector.hpp
 
-namespace cljonic {
-
-namespace core {} // namespace core
-
-} // namespace cljonic
+namespace cljonic::core {}
 
 #endif // CLJONIC_CORE_HPP
 // End cljonic-core.hpp

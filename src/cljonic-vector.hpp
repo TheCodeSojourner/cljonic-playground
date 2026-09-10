@@ -176,7 +176,8 @@ class Vector {
     }
 
     template <std::size_t... Indices, typename... Args>
-    constexpr void initialize_storage(std::index_sequence<Indices...>, Args&&... args) noexcept {
+    constexpr void initialize_storage(std::index_sequence<Indices...> indices, Args&&... args) noexcept {
+        (void)indices;
         ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
     }
 

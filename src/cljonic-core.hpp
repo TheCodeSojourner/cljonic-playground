@@ -169,10 +169,6 @@
 #include <cljonic-string.hpp>
 #include <cljonic-vector.hpp>
 
-namespace cljonic {
-
-namespace core {} // namespace core
-
-} // namespace cljonic
+namespace cljonic::core {}
 
 #endif // CLJONIC_CORE_HPP

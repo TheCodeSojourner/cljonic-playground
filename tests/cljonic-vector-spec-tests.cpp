@@ -52,9 +52,11 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
         constexpr CategoryElement() noexcept = default;
         constexpr explicit CategoryElement(int category_value) noexcept : category(category_value) {
         }
-        constexpr CategoryElement(const CategoryArgument&) noexcept : category(1) {
+        constexpr CategoryElement(const CategoryArgument& argument) noexcept : category(1) {
+            (void)argument;
         }
-        constexpr CategoryElement(CategoryArgument&&) noexcept : category(2) {
+        constexpr CategoryElement(CategoryArgument&& argument) noexcept : category(2) {
+            (void)argument;
         }
         constexpr CategoryElement(const CategoryElement&) noexcept = default;
         constexpr auto operator=(const CategoryElement&) noexcept -> CategoryElement& = default;
