@@ -8,6 +8,8 @@
   | module3(x) → concrete_array_backed_bounded_types(x)
     ∧ contiguous_storage_strategies(x) ∧ linear_scan_lookup(x)
     ∧ swap_and_remove_policies(x) ∧ primitive_free_functions(x)
+  | cpp_interoperability(x) → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
+    | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
   | deferred_sequence_contracts(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
   | future_expansion(unbounded_producers ∨ transformations ∨ regexes ∨ relational_models)
@@ -105,6 +107,10 @@
   | storage_admission(x) → not_imply(StableEquality ∨ TotalOrder ∨ hashing ∨ parsing ∨ traversal)
   | collection_storage_position(x) ≡ element ∨ map_key ∨ map_value
   | String(x) → apply(non_throwing_storage_and_destruction(x))
+
+λ S3_cpp_interoperability(x). supported_collection(x)
+  → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
+  | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
 
 λ S3_value_policy(x). PersistentValueSemantics(x) ∧ DeepCopyUpdate(x)
   | ReferentialTransparency(x)
@@ -376,8 +382,8 @@ concept AssociativeCollection =
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
   | collection_updates(x) → realize(PersistentValueSemantics ∧ DeepCopyUpdate)
   | public_operations(x) → preserve(ReferentialTransparency)
-  | read_only_observation(x) → defer(ReadOnlyInteropAccessor ∧ ConstRangeTraversal)
-  | future_contiguous_observation(x) → use(ContiguousConstView) when(complete_active_logical_range_is_contiguous(x))
+  | read_only_observation(x) → require(ReadOnlyInteropAccessor ∧ ConstRangeTraversal)
+  | contiguous_observation(x) → use(ContiguousConstView) when(complete_active_logical_range_is_contiguous(x))
   | view_lifetime(x) → source_lifetime_bounded(x)
 
 λ S1_sequence_guidance(x). sequence_and_materialization_rules(x) → active_for(approved_operations_and_producers)
