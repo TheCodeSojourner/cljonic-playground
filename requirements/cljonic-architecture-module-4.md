@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-This document specifies the implementation architecture for Module 4 of `cljonic`. It translates sequence producer types, materialization logic (`into`, `fits_into`), C++ standard view imports (`std::span`, `std::string_view`), and non-owning observation views (`view(collection)`) from `cljonic-requirements-module-4.md` into C++ template structures.
+This document specifies the implementation architecture for Module 4 of `cljonic`. It translates sequence producer types, materialization logic (`into`, `fits_into`), C++ standard view imports (`std::span`, `std::string_view`), and collection-owned non-owning observation views from `cljonic-requirements-module-4.md` into C++ template structures.
 
 ## `cljonic_source` Design Rule & Producer Architecture
 
@@ -60,12 +60,12 @@ constexpr Dest into(const Dest& dest, const Source& source) {
 
 ## Standard View Interoperability Architecture (`view`)
 
-The `view(collection)` free function returns non-owning, read-only standard views:
-- `view(Vector<T, N>)` $\rightarrow$ `std::span<const T>`
-- `view(Set<T, N>)` $\rightarrow$ `std::span<const T>`
-- `view(Queue<T, N>)` $\rightarrow$ `std::span<const T>`
-- `view(Map<K, V, N>)` $\rightarrow$ `std::span<const MapEntry<K, V>>`
-- `view(String<N>)` $\rightarrow$ `std::string_view`
+Collection-owned `view()` member accessors return non-owning, read-only standard views:
+- `Vector<T, N>::view()` $\rightarrow$ `std::span<const T>`
+- `Set<T, N>::view()` $\rightarrow$ `std::span<const T>`
+- `Queue<T, N>` $\rightarrow$ const logical traversal through `begin()`/`end()`; no contiguous `view` is required
+- `Map<K, V, N>::view()` $\rightarrow$ `std::span<const MapEntry<K, V>>`
+- `String<N>::view()` $\rightarrow$ `std::string_view`
 
 Views do NOT extend source lifetime and do NOT admit external types into the nominal collection domain.
 
