@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['get_0',['get',['../namespacecljonic.html#abdac28f51feb6ae08a7cb43f39e68e02',1,'cljonic::get(const C &amp;collection, const K &amp;key) noexcept -&gt; decltype(collection(key))'],['../namespacecljonic.html#a52f18313932d99688d352d903d30b7cd',1,'cljonic::get(const C &amp;collection, const K &amp;key, const V &amp;fallback) noexcept -&gt; decltype(collection(key, fallback))']]]
+  ['first_0',['first',['../namespacecljonic.html#a873d28380c259fbc2ee183eb7d0c7328',1,'cljonic::first(const MapEntry&lt; KeyType, ValueType &gt; &amp;entry) noexcept -&gt; const KeyType &amp;'],['../namespacecljonic.html#a92c155f28b9e35b6a3e54a3b91c8cf5d',1,'cljonic::first(const C &amp;collection) noexcept -&gt; decltype(collection(0U))']]],
+  ['functions_1',['Functions',['../index.html#autotoc_md2',1,'Core Functions'],['../index.html#autotoc_md8',1,'Set Functions'],['../index.html#autotoc_md9',1,'String Functions']]]
 ];

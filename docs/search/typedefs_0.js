@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['key_5ftype_0',['key_type',['../classcljonic_1_1_map.html#abbeea97f83441d303186b7949fe63f78',1,'cljonic::Map']]]
+  ['difference_5ftype_0',['difference_type',['../classcljonic_1_1_queue_1_1const__iterator.html#a5a858949fd0abf4030e0933525aa9236',1,'cljonic::Queue::const_iterator']]]
 ];

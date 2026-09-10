@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rest_0',['rest',['../namespacecljonic.html#abf6c2fa3e470e828b91b5bb6a12afba7',1,'cljonic']]]
+  ['queue_0',['Queue',['../classcljonic_1_1_queue.html#acf3e2037031663681f0b8a33d3e261d2',1,'cljonic::Queue::Queue()'],['../namespacecljonic.html#a1ccca56ddfbbc85bcfba4064a08761d3',1,'cljonic::Queue()']]]
 ];

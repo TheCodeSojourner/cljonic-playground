@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['lookup_5ftype_0',['lookup_type',['../classcljonic_1_1_map.html#aed498d46cc72ae513d9d25b41b02fa45',1,'cljonic::Map::lookup_type'],['../classcljonic_1_1_set.html#acaac1e8264f0ca9b2c5b0ef58aad57e7',1,'cljonic::Set::lookup_type']]]
+  ['iterator_5fcategory_0',['iterator_category',['../classcljonic_1_1_queue_1_1const__iterator.html#ad38ae7388be751510b105cb6619c5b0f',1,'cljonic::Queue::const_iterator']]],
+  ['iterator_5fconcept_1',['iterator_concept',['../classcljonic_1_1_queue_1_1const__iterator.html#a481607d9ff3032f1352461fea07be6b5',1,'cljonic::Queue::const_iterator']]]
 ];

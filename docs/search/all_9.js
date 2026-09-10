@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['map_0',['map',['../classcljonic_1_1_map.html',1,'cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;'],['../classcljonic_1_1_map.html#adfaeb98084498ae92d63ab3136e5736e',1,'cljonic::Map::Map() noexcept=default'],['../classcljonic_1_1_map.html#a936f9781d97ec3b0355c2711c9a3f02a',1,'cljonic::Map::Map(const Entries &amp;... entries) noexcept'],['../namespacecljonic.html#a3d0418044393656d692cccbab2756b80',1,'cljonic::Map()'],['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a1d78dc8ed51214e518b5114fe24490ae',1,'cljonic::concepts_detail::map']]],
-  ['mapentry_1',['MapEntry',['../structcljonic_1_1_map_entry.html',1,'cljonic']]],
-  ['mapped_5ftype_2',['mapped_type',['../classcljonic_1_1_map.html#a3d2118cb518b23a5daff9b08d6bafc77',1,'cljonic::Map']]]
+  ['lookup_5ftype_0',['lookup_type',['../classcljonic_1_1_map.html#aed498d46cc72ae513d9d25b41b02fa45',1,'cljonic::Map::lookup_type'],['../classcljonic_1_1_set.html#acaac1e8264f0ca9b2c5b0ef58aad57e7',1,'cljonic::Set::lookup_type']]],
+  ['lookupcollection_1',['LookupCollection',['../conceptcljonic_1_1concepts_1_1_lookup_collection.html',1,'cljonic::concepts']]]
 ];

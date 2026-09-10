@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['is_5fcljonic_5fcollection_0',['is_cljonic_collection',['../structcljonic_1_1concepts__detail_1_1collection__traits.html#aafcd8321760c7020fd4dc6e7da13297d',1,'cljonic::concepts_detail::collection_traits']]],
-  ['is_5fcljonic_5fcollection_5fv_1',['is_cljonic_collection_v',['../namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1',1,'cljonic::concepts_detail']]],
-  ['is_5fempty_2',['is_empty',['../classcljonic_1_1_map.html#a67342c7dcf1d75bba479468427574b6d',1,'cljonic::Map::is_empty()'],['../classcljonic_1_1_queue.html#a2663ea00782f7664e15bba3f90dcce94',1,'cljonic::Queue::is_empty()'],['../classcljonic_1_1_set.html#ab27672b5f6d1f5a18b637f66815eb9d8',1,'cljonic::Set::is_empty()'],['../classcljonic_1_1_string.html#a190fa72953a5d1af8b352e8976118351',1,'cljonic::String::is_empty()'],['../classcljonic_1_1_vector.html#a730e43d7e4a97a924084b5921dc47ba1',1,'cljonic::Vector::is_empty()'],['../namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529',1,'cljonic::is_empty()']]]
+  ['get_0',['get',['../namespacecljonic.html#abdac28f51feb6ae08a7cb43f39e68e02',1,'cljonic::get(const C &amp;collection, const K &amp;key) noexcept -&gt; decltype(collection(key))'],['../namespacecljonic.html#a52f18313932d99688d352d903d30b7cd',1,'cljonic::get(const C &amp;collection, const K &amp;key, const V &amp;fallback) noexcept -&gt; decltype(collection(key, fallback))']]]
 ];

@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['operator_28_29_0',['operator()',['../classcljonic_1_1_map.html#a686047fcb3020aa6f42045209d68d1f2',1,'cljonic::Map::operator()(const KeyType &amp;key) const noexcept -&gt; ValueType'],['../classcljonic_1_1_map.html#a84dd7a321a635edd8916beb6a97c4627',1,'cljonic::Map::operator()(const KeyType &amp;key, const ValueType &amp;fallback) const noexcept -&gt; ValueType'],['../classcljonic_1_1_set.html#ac24cca6416aa9251f9522134da35b191',1,'cljonic::Set::operator()(const T &amp;element) const noexcept -&gt; T'],['../classcljonic_1_1_set.html#ab032633488431b868af84e40fa834910',1,'cljonic::Set::operator()(const T &amp;element, const T &amp;fallback) const noexcept -&gt; T'],['../classcljonic_1_1_string.html#aebb69bf0bad5e54de804ceb7fb8c3c69',1,'cljonic::String::operator()(std::size_t index) const noexcept -&gt; char'],['../classcljonic_1_1_string.html#a63d48eecddaa77c7e74326b53cb490c0',1,'cljonic::String::operator()(std::size_t index, char fallback) const noexcept -&gt; char'],['../classcljonic_1_1_vector.html#ad1002c3b40154458d2a1e7571595e2ee',1,'cljonic::Vector::operator()(IndexType index) const noexcept -&gt; value_type'],['../classcljonic_1_1_vector.html#a33a427e1d1876be43f6b0215ff3334d8',1,'cljonic::Vector::operator()(IndexType index, const value_type &amp;fallback) const noexcept -&gt; value_type']]],
-  ['operator_3d_3d_1',['operator==',['../structcljonic_1_1_map_entry.html#af8a6e59c3c457862ffe4b959fbc3676d',1,'cljonic::MapEntry']]]
+  ['next_0',['next',['../namespacecljonic.html#a375ca6d156afd5ac8cd31bae763d4062',1,'cljonic']]],
+  ['none_1',['none',['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a334c4a4c42fdb79d7ebc3e73b517e6f8',1,'cljonic::concepts_detail']]],
+  ['not_5fempty_2',['not_empty',['../namespacecljonic.html#a8180deddc8b1aa7386990604604648f0',1,'cljonic']]],
+  ['nothrowcollectionelement_3',['NothrowCollectionElement',['../conceptcljonic_1_1concepts_1_1_nothrow_collection_element.html',1,'cljonic::concepts']]],
+  ['nothrowcopyableelement_4',['NothrowCopyableElement',['../conceptcljonic_1_1concepts_1_1_nothrow_copyable_element.html',1,'cljonic::concepts']]],
+  ['nothrowelementconstruction_5',['NothrowElementConstruction',['../conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html',1,'cljonic::concepts']]],
+  ['nothrowstableequalitycomparable_6',['NothrowStableEqualityComparable',['../conceptcljonic_1_1concepts_1_1_nothrow_stable_equality_comparable.html',1,'cljonic::concepts']]]
 ];
