@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstddef>
+#include <string_view>
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-config.hpp>
@@ -28,6 +29,10 @@ namespace cljonic {
    static_assert(literal(0) == 'H');
    static_assert(literal(99, 'Z') == 'Z');
 
+   // Const C++ interoperability exposes content-only range traversal and a
+   // non-owning string view that excludes the null terminator.
+   static_assert(literal.view() == std::string_view{"Hello"});
+
    // Out-of-bounds access returns char{} (the ASCII NUL character).
    static_assert(literal(5) == '\0');
 
@@ -40,7 +45,18 @@ namespace cljonic {
    const auto first = runtime(0);
    const auto missing = runtime(9, '!');
 
-   return (first == 'H' && missing == '!') ? 0 : 1;
+   // Use C++ interoperability to sum the bytes of a string
+   int byte_sum = 0;
+   for (const auto byte : runtime) {
+     byte_sum += byte;
+   }
+
+   const auto runtime_view = runtime.view();
+
+   return (first == 'H' && missing == '!' && byte_sum == 'H' + 'i' &&
+           runtime_view == std::string_view{"Hi"})
+              ? 0
+              : 1;
  }
  ~~~~~
  */
@@ -80,6 +96,18 @@ class String {
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return data_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return data_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::string_view {
+        return {data_.data(), logical_size_};
     }
 
     /** Returns true when index falls within logical bounds (not counting null

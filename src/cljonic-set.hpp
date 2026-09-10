@@ -4,6 +4,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdlib>
+#include <span>
 #include <utility>
 
 #include <cljonic-concepts.hpp>
@@ -36,13 +37,29 @@ namespace cljonic {
    static_assert(literal(99) == 0);
    static_assert(literal(99, -1) == -1);
 
+   // Const C++ interoperability exposes the active elements as a range and
+   // as a non-owning contiguous standard view. Set traversal order is not
+   // semantically ordered.
+   static_assert(literal.view().size() == 3);
+
    // Runtime CTAD deduces Set<int, 3> from the argument count and keeps one
    // copy when duplicate values are present.
    auto runtime = Set{10, 20, 20};
    const auto present = runtime(10);
    const auto missing = runtime(30, -1);
 
-   return (present == 10 && missing == -1) ? 0 : 1;
+   // Use C++ interoperability to sum the values in a set
+   int observed_sum = 0;
+   for (const auto value : runtime) {
+     observed_sum += value;
+   }
+
+   const auto runtime_view = runtime.view();
+
+   return (present == 10 && missing == -1 && observed_sum == 30 &&
+           runtime_view.size() == 2 && runtime_view[0] == 10)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
@@ -83,6 +100,18 @@ class Set {
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return elements_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return elements_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {elements_.data(), logical_size_};
     }
 
     [[nodiscard]] constexpr auto contains(const T& element) const noexcept -> bool {

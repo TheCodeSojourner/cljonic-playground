@@ -3,6 +3,7 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
+#include <span>
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-config.hpp>
@@ -49,12 +50,28 @@ namespace cljonic {
    static_assert(literal(Key{2}).amount == 0);
    static_assert(literal(Key{2}, Value{99}).amount == 99);
 
+   // Const C++ interoperability exposes MapEntry values through a range and
+   // a non-owning contiguous standard view.
+   static_assert(literal.begin()->value.amount == 20);
+   static_assert(literal.view().size() == 1);
+
    // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
    auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
    const auto present = runtime(Key{3});
    const auto missing = runtime(Key{4}, Value{77});
 
-   return (present.amount == 30 && missing.amount == 77) ? 0 : 1;
+   // Use C++ interoperability to sum the values in a map
+   int value_sum = 0;
+   for (const auto &entry : runtime) {
+     value_sum += entry.value.amount;
+   }
+
+   const auto runtime_view = runtime.view();
+
+   return (present.amount == 30 && missing.amount == 77 && value_sum == 30 &&
+           runtime_view.size() == 1 && runtime_view[0].value.amount == 30)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
@@ -73,6 +90,18 @@ class Map {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     constexpr Map() noexcept = default;
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return entries_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return entries_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {entries_.data(), logical_size_};
+    }
 
     template <std::same_as<value_type>... Entries>
         requires(sizeof...(Entries) >= 1)

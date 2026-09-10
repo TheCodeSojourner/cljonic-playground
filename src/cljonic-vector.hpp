@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 #include <utility>
 
 #include <cljonic-concepts.hpp>
@@ -67,6 +68,12 @@ namespace cljonic {
    constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
    constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
 
+   // Const C++ interoperability exposes the active elements as a range and
+   // as a non-owning contiguous standard view.
+   constexpr auto interop_values = Vector<int, 4>{10, 20, 30};
+   static_assert(interop_values.begin()[1] == 20);
+   static_assert(interop_values.view().size() == 3);
+
    static_assert(values(0) == 10);
    static_assert(values(2) == 0);
    static_assert(values(2, 99) == 99);
@@ -96,8 +103,17 @@ namespace cljonic {
    const auto pixel_value = runtime_pixels(1);
    const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
 
+   // Use C++ interoperability to sum the values in a vector
+   int range_sum = 0;
+   for (const auto value : runtime_values) {
+     range_sum += value;
+   }
+
+   const auto runtime_view = runtime_values.view();
+
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
-           pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99})
+           pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
+           range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7)
               ? 0
               : 1;
  }
@@ -149,6 +165,18 @@ class Vector {
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return storage_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return storage_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {storage_.data(), logical_size_};
     }
 
   private:
