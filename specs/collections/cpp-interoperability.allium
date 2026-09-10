@@ -1,0 +1,27 @@
+-- allium: 3
+
+entity CollectionCppInteroperability {
+    supports_const_traversal: Boolean
+    traversal_is_read_only: Boolean
+    traversal_is_non_allocating: Boolean
+    traversal_is_non_throwing: Boolean
+    traversal_exposes_active_elements_only: Boolean
+    vector_map_set_preserve_storage_order: Boolean
+    queue_preserves_fifo_order: Boolean
+    queue_uses_logical_traversal: Boolean
+    string_excludes_null_terminator: Boolean
+    views_are_const_and_non_owning: Boolean
+
+    invariant SupportsConstTraversal { this.supports_const_traversal = true }
+    invariant TraversalIsReadOnly { this.traversal_is_read_only = true }
+    invariant TraversalIsNonAllocating { this.traversal_is_non_allocating = true }
+    invariant TraversalIsNonThrowing { this.traversal_is_non_throwing = true }
+    invariant TraversalExposesActiveElementsOnly { this.traversal_exposes_active_elements_only = true }
+    invariant VectorMapSetPreserveStorageOrder { this.vector_map_set_preserve_storage_order = true }
+    invariant QueuePreservesFifoOrder { this.queue_preserves_fifo_order = true }
+    invariant QueueUsesLogicalTraversal { this.queue_uses_logical_traversal = true }
+    invariant StringExcludesNullTerminator { this.string_excludes_null_terminator = true }
+    invariant ViewsAreConstAndNonOwning { this.views_are_const_and_non_owning = true }
+}
+
+actor CollectionCppInteroperabilityOperator { identified_by: CollectionCppInteroperability }
