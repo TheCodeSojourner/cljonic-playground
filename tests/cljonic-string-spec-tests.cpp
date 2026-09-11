@@ -1,5 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <span>
+#include <string_view>
+
 #include "cljonic-test-api.hpp"
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
@@ -19,6 +22,23 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.NullTerminatorIsUncounted");
     TRACE_ID("invariant.String.InvalidBytesRejectedAtCompileTime");
     TRACE_ID("invariant.String.RuntimeInvalidBytesReplacedWithPeriod");
+    TRACE_ID("invariant.String.ConstCharSpanInvalidBytesAreReplacedWithPeriod");
+    TRACE_ID("invariant.String.ConstCharSpanRuntimeExtentOverflowUsesBoundedPrefix");
+    TRACE_ID("invariant.String.ConstCharSpanSourceCopyIsOwned");
+    TRACE_ID("invariant.String.ConstCharSpanSourceDoesNotBorrowLifetime");
+    TRACE_ID("invariant.String.ConstCharSpanSourceIsNonAllocating");
+    TRACE_ID("invariant.String.ConstCharSpanSourceIsNonThrowing");
+    TRACE_ID("invariant.String.ConstCharSpanStaticExtentOverflowIsCompileTimeFailure");
+    TRACE_ID("invariant.String.RuntimeNullByteIsInvalidInStringViewSource");
+    TRACE_ID("invariant.String.StringViewCompileTimeOverflowIsRejected");
+    TRACE_ID("invariant.String.StringViewImportExcludesNullTerminator");
+    TRACE_ID("invariant.String.StringViewRuntimeOverflowUsesBoundedPrefix");
+    TRACE_ID("invariant.String.StringViewSourceCopyIsOwned");
+    TRACE_ID("invariant.String.StringViewSourceDoesNotBorrowLifetime");
+    TRACE_ID("invariant.String.StringViewSourceIsNonAllocating");
+    TRACE_ID("invariant.String.StringViewSourceIsNonThrowing");
+    TRACE_ID("invariant.String.SupportsConstCharSpanSourceConstruction");
+    TRACE_ID("invariant.String.SupportsStdStringViewSourceConstruction");
     TRACE_ID("invariant.String.NoHeapAllocation");
     TRACE_ID("invariant.String.NoRtti");
     TRACE_ID("invariant.String.NoExceptions");
@@ -143,4 +163,59 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     REQUIRE(rs_invalid(0) == 'A');
     REQUIRE(rs_invalid(1) == '.');
     REQUIRE(rs_invalid(2) == '.');
+}
+
+TEST_CASE("String imports from std::string_view without allocating or mutating the source", "[string][interop]") {
+    using cljonic::String;
+
+    static constexpr std::string_view static_source{"ABCD"};
+    constexpr auto from_static_view = String<8>{static_source};
+    STATIC_REQUIRE(from_static_view.count() == 4U);
+    STATIC_REQUIRE(from_static_view(0) == 'A');
+    STATIC_REQUIRE(from_static_view(3) == 'D');
+
+    const std::string_view runtime_source{"XYZ"};
+    const auto from_runtime_view = String<2>{runtime_source};
+    REQUIRE(from_runtime_view.count() == 2U);
+    REQUIRE(from_runtime_view(0) == 'X');
+    REQUIRE(from_runtime_view(1) == 'Y');
+    REQUIRE(runtime_source[0] == 'X');
+    REQUIRE(runtime_source[2] == 'Z');
+
+    const auto bounded_prefix = String<3>{std::string_view{"ABCD"}};
+    REQUIRE(bounded_prefix.count() == 3U);
+    REQUIRE(bounded_prefix(0) == 'A');
+    REQUIRE(bounded_prefix(1) == 'B');
+    REQUIRE(bounded_prefix(2) == 'C');
+
+    const char invalid_bytes[] = {'A', '\0', static_cast<char>(0x80), 'B'};
+    const std::string_view invalid_source{invalid_bytes, 4U};
+    const auto normalized = String<4>{invalid_source};
+    REQUIRE(normalized.count() == 4U);
+    REQUIRE(normalized(0) == 'A');
+    REQUIRE(normalized(1) == '.');
+    REQUIRE(normalized(2) == '.');
+    REQUIRE(normalized(3) == 'B');
+}
+
+TEST_CASE("String imports from const char spans without allocating or mutating the source", "[string][interop]") {
+    using cljonic::String;
+
+    static constexpr char static_bytes[] = {'A', 'B', 'C', 'D'};
+    constexpr std::span<const char, 4> static_source{static_bytes};
+    constexpr auto from_static_span = String{static_source};
+    STATIC_REQUIRE(std::same_as<decltype(from_static_span), const String<4>>);
+    STATIC_REQUIRE(from_static_span.view() == std::string_view{"ABCD"});
+
+    char runtime_bytes[] = {'X', 'Y', 'Z', 'W'};
+    const std::span<const char> runtime_source{runtime_bytes, 4U};
+    const auto from_runtime_span = String<2>{runtime_source};
+    REQUIRE(from_runtime_span.view() == std::string_view{"XY"});
+    REQUIRE(runtime_source[0] == 'X');
+    REQUIRE(runtime_source[3] == 'W');
+
+    const char invalid_bytes[] = {'A', '\0', static_cast<char>(0x80), 'B'};
+    const std::span<const char> invalid_source{invalid_bytes, 4U};
+    const auto normalized = String<4>{invalid_source};
+    REQUIRE(normalized.view() == std::string_view{"A..B"});
 }
