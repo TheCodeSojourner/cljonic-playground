@@ -58,6 +58,8 @@ constexpr Dest into(const Dest& dest, const Source& source) {
 } // namespace cljonic
 ```
 
+Direct construction from an explicitly supported bounded C++ source is a separate bounded-construction path. It copies into owned destination storage and does not retain the source lifetime. A compile-time-known source extent greater than destination capacity is rejected at compile time; a runtime-sized source that exceeds capacity produces the deterministic bounded prefix. Direct construction does not expose a checked-constructor result channel. Complete source materialization uses `fits_into` before `into` when completeness matters.
+
 ## Standard View Interoperability Architecture (`view`)
 
 Collection-owned `view()` member accessors return non-owning, read-only standard views:
@@ -71,5 +73,5 @@ Views do NOT extend source lifetime and do NOT admit external types into the nom
 
 ## Traceability
 
-- Governed Requirements: `cljonic-requirements-module-4.md` (`REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, `REQ-FN-027`, `REQ-PLAT-017`–`023`).
+- Governed Requirements: `cljonic-requirements-module-4.md` (`REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, `REQ-FN-027`–`027A`, `REQ-PLAT-017`–`023`).
 - Downstream Modules: Module 5 (Higher-Order Algorithms), Module 7 (Specialized Domains).
