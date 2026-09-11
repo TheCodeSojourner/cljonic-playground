@@ -478,7 +478,7 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Deprecated Synonyms:** bounded string, fixed-capacity string, cljonic string
 - **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, IndexedAccess, CallableLookup, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length. `s(2)` and `get(s, 2)` return the byte at content index two; invalid indices return `char{}` or a supplied fallback, while `contains(s, index)` distinguishes valid content indices from the terminator and out-of-range indices.
+- **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length. A fixed-extent `std::span<const char, N>` can use `String{span}` to deduce `String<N>`, while a dynamic-extent span uses an explicit destination capacity and bounded-prefix construction. `s(2)` and `get(s, 2)` return the byte at content index two; invalid indices return `char{}` or a supplied fallback, while `contains(s, index)` distinguishes valid content indices from the terminator and out-of-range indices.
 
 
 ### SwapAndRemove
