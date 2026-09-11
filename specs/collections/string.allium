@@ -14,6 +14,23 @@ entity String {
     null_terminator_is_uncounted: Boolean
     invalid_bytes_rejected_at_compile_time: Boolean
     runtime_invalid_bytes_replaced_with_period: Boolean
+    supports_std_string_view_source_construction: Boolean
+    string_view_source_copy_is_owned: Boolean
+    string_view_source_is_non_allocating: Boolean
+    string_view_source_is_non_throwing: Boolean
+    string_view_source_does_not_borrow_lifetime: Boolean
+    string_view_compile_time_overflow_is_rejected: Boolean
+    string_view_runtime_overflow_uses_bounded_prefix: Boolean
+    string_view_import_excludes_null_terminator: Boolean
+    runtime_null_byte_is_invalid_in_string_view_source: Boolean
+    supports_const_char_span_source_construction: Boolean
+    const_char_span_source_copy_is_owned: Boolean
+    const_char_span_source_is_non_allocating: Boolean
+    const_char_span_source_is_non_throwing: Boolean
+    const_char_span_source_does_not_borrow_lifetime: Boolean
+    const_char_span_static_extent_overflow_is_compile_time_failure: Boolean
+    const_char_span_runtime_extent_overflow_uses_bounded_prefix: Boolean
+    const_char_span_invalid_bytes_are_replaced_with_period: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -100,6 +117,74 @@ entity String {
 
     invariant RuntimeInvalidBytesReplacedWithPeriod {
         this.runtime_invalid_bytes_replaced_with_period = true
+    }
+
+    invariant SupportsStdStringViewSourceConstruction {
+        this.supports_std_string_view_source_construction = true
+    }
+
+    invariant StringViewSourceCopyIsOwned {
+        this.string_view_source_copy_is_owned = true
+    }
+
+    invariant StringViewSourceIsNonAllocating {
+        this.string_view_source_is_non_allocating = true
+    }
+
+    invariant StringViewSourceIsNonThrowing {
+        this.string_view_source_is_non_throwing = true
+    }
+
+    invariant StringViewSourceDoesNotBorrowLifetime {
+        this.string_view_source_does_not_borrow_lifetime = true
+    }
+
+    invariant StringViewCompileTimeOverflowIsRejected {
+        this.string_view_compile_time_overflow_is_rejected = true
+    }
+
+    invariant StringViewRuntimeOverflowUsesBoundedPrefix {
+        this.string_view_runtime_overflow_uses_bounded_prefix = true
+    }
+
+    invariant StringViewImportExcludesNullTerminator {
+        this.string_view_import_excludes_null_terminator = true
+    }
+
+    invariant RuntimeNullByteIsInvalidInStringViewSource {
+        this.runtime_null_byte_is_invalid_in_string_view_source = true
+    }
+
+    invariant SupportsConstCharSpanSourceConstruction {
+        this.supports_const_char_span_source_construction = true
+    }
+
+    invariant ConstCharSpanSourceCopyIsOwned {
+        this.const_char_span_source_copy_is_owned = true
+    }
+
+    invariant ConstCharSpanSourceIsNonAllocating {
+        this.const_char_span_source_is_non_allocating = true
+    }
+
+    invariant ConstCharSpanSourceIsNonThrowing {
+        this.const_char_span_source_is_non_throwing = true
+    }
+
+    invariant ConstCharSpanSourceDoesNotBorrowLifetime {
+        this.const_char_span_source_does_not_borrow_lifetime = true
+    }
+
+    invariant ConstCharSpanStaticExtentOverflowIsCompileTimeFailure {
+        this.const_char_span_static_extent_overflow_is_compile_time_failure = true
+    }
+
+    invariant ConstCharSpanRuntimeExtentOverflowUsesBoundedPrefix {
+        this.const_char_span_runtime_extent_overflow_uses_bounded_prefix = true
+    }
+
+    invariant ConstCharSpanInvalidBytesAreReplacedWithPeriod {
+        this.const_char_span_invalid_bytes_are_replaced_with_period = true
     }
 
     invariant NoHeapAllocation {
