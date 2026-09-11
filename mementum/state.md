@@ -1,6 +1,6 @@
 ## Session State
 
-- last_session_id: 2026-09-11-source-construction-propagation
+- last_session_id: 2026-09-11-string-span-source-construction
 - current_timestamp: 2026-09-11
 - recover: 1
 - session_complete: true
@@ -10,7 +10,7 @@ Task:
 2. Preserve bounded, non-allocating, non-throwing, owning semantics and keep unresolved cross-collection source policy approval-gated.
 
 Questions:
-1. Cross-collection source support, accepted range forms, and String invalid-byte import policy remain open for the next design increment.
+1. Cross-collection source support and accepted range forms remain open for the next design increment; String's approved `std::string_view` and `std::span<const char>` import policies are now implemented and recorded.
 
 Decisions:
 1. C++ interoperability is implemented as const range-compatible traversal plus collection-owned `.view()` members where contiguous views exist; `seq`, `first`, `next`, `rest`, `into`, and `fits_into` remain outside this increment.
@@ -30,6 +30,10 @@ Decisions:
 15. Collection Doxygen examples use starless fenced code blocks for copy/paste ergonomics; Queue was normalized to match Vector, String, and Set.
 16. The Map documentation example demonstrates const `MapEntry` range traversal and `Map::view()` member interoperability.
 17. Direct source construction remains a total bounded operation: compile-time-known static-span overflow is rejected, runtime-sized dynamic-span overflow materializes a bounded prefix.
+20. String accepts `std::string_view` and `std::span<const char, Extent>` sources, owns copied content, normalizes invalid imported bytes to `.`, and excludes the terminator from logical content.
+21. Fixed-extent const-char spans support CTAD through `String(std::span<const char, Extent>) -> String<Extent>`; dynamic-extent spans require explicit destination capacity.
+22. String source copying is centralized in a private helper that accepts the source and bounded copy count; literal, string-view, and span constructors share normalization and terminator handling.
+23. String compile-time failure hook names are `rejected_invalid_string_byte_at_compile_time` and `rejected_oversized_string_source_at_compile_time`.
 18. Complete-fit source semantics belong to the preflight/materialization pair: `fits_into` reports whether the complete source fits, while `into` performs bounded-prefix materialization when it does not; no checked constructor is planned.
 19. The approved source-construction policy is propagated through requirements, vocabulary, architecture, a shared `CollectionSourceConstruction` Allium contract, and a focused traceability test; implementation behavior remains unchanged.
 2. `WarningsAsErrors: '*'` is enabled after the curated clang-tidy set reached a clean baseline.
@@ -56,14 +60,14 @@ Validation:
 Current Increment:
 1. The collection C++ interoperability increment is implemented, specified, tested, traceable, documented with copy-paste-friendly examples, and generated into the public header.
 2. The lint-policy increment is implemented and validated.
-3. The String increment is implemented, specified, tested, traceable, documented, and published.
+3. The String increment is implemented, specified, tested, traceable, documented, and published, including const-char span construction and fixed-extent CTAD.
 4. Semantic traversal (`seq`, `first`, `next`, `rest`) remains deferred for all collections.
 5. `empty` and `not_empty` remain deferred value-producing operations; `is_empty` remains the active boolean predicate.
 6. The active vocabulary and API surface retain the requirements-first boundary: construction, observation, lookup, mutation-copy, capacity, and C++ interoperability are active; unresolved future operation families remain out of scope.
 7. Source-construction propagation is now specified and traceable; cross-collection source support remains a designing increment.
 
 Next:
-1. Generalize and approve the source construction/materialization contract across collections, including `std::string_view` and compatible span/range sources, with the Vector constructor policy as the baseline.
+1. Generalize and approve the source construction/materialization contract across Map, Set, and Queue, including accepted span/range forms, logical order, and complete-fit semantics, with the Vector and String constructor policies as baselines.
 2. Keep `collection-source-interoperability.md` in designing status until the cross-collection source and invalid-byte policies are approved.
 3. Keep the clang-tidy suppression list narrow; newly introduced unsuppressed diagnostics now fail `make lint`.
 4. Design and approve the all-collection semantic traversal increment before implementing `seq`/`first`/`next`/`rest` behavior.
