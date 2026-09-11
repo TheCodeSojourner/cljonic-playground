@@ -60,6 +60,8 @@ constexpr Dest into(const Dest& dest, const Source& source) {
 
 Direct construction from an explicitly supported bounded C++ source is a separate bounded-construction path. It copies into owned destination storage and does not retain the source lifetime. A compile-time-known source extent greater than destination capacity is rejected at compile time; a runtime-sized source that exceeds capacity produces the deterministic bounded prefix. Direct construction does not expose a checked-constructor result channel. Complete source materialization uses `fits_into` before `into` when completeness matters.
 
+`String<N>` additionally accepts `std::span<const char, Extent>` as a direct source. Fixed extents use the Vector-style compile-time capacity assertion; dynamic extents use runtime bounded-prefix copying. Span imports normalize invalid String bytes in the same way as external runtime text imports.
+
 ## Standard View Interoperability Architecture (`view`)
 
 Collection-owned `view()` member accessors return non-owning, read-only standard views:

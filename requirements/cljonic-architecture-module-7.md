@@ -38,7 +38,7 @@ Binary set algebra (`union`, `intersection`, `difference`) operates on `Set<T, N
 
 ## Text & Regex Architecture
 
-1. **`String<N>` Invariants**: ASCII bytes (`0x01`–`0x7F`) with trailing null terminator. `std::string_view` runtime imports convert invalid bytes to `0x2E` (`.`).
+1. **`String<N>` Invariants**: ASCII bytes (`0x01`–`0x7F`) with trailing null terminator. Runtime imports from `std::string_view` and `std::span<const char>` convert invalid bytes to `0x2E` (`.`). Fixed-extent const-char spans support capacity deduction; dynamic-extent spans require an explicit destination capacity.
 2. **Regex Domain**: Root types `Regex`, `RegexMatcher`, `RegexMatch`, `RegexGroup` are self-contained bounded values. Compile-time patterns use CTRE integration; runtime patterns use bounded `re_pattern`.
 
 ## Debug Formatting & Keyword Enum Mapping Architecture
