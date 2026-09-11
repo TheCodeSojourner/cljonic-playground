@@ -187,11 +187,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### FitsInto
-- **Definition:** The canonical materialization-completeness preflight predicate; its C++ free-function spelling is `fits_into`. It returns a non-throwing, non-allocating boolean indicating whether the complete producer result fits within the destination under the same cardinality, matching, filtering, transformation, capacity, representability, and overflow semantics as `into`.
+- **Definition:** The canonical materialization-completeness preflight predicate; its C++ free-function spelling is `fits_into`. It returns a non-throwing, non-allocating boolean indicating whether the complete producer or explicitly supported external source result fits within the destination under the same cardinality, matching, filtering, transformation, capacity, representability, and overflow semantics as `into`.
 - **Deprecated Synonyms:** `fits_into`, materialization-fit check, capacity-fit predicate
 - **Related:** FreeFunction, ProducerMaterialization, CompleteResult, BoundedPrefixResult, PreflightPredicate, CapabilityPredicate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `fits_into(destination, producer)` is checked before `into(destination, producer)` when complete materialization matters.
+- **Examples:** `fits_into(destination, producer)` or `fits_into(destination, source)` is checked before `into(destination, producer)` or `into(destination, source)` when complete materialization matters.
 
 
 ### BoundedResult
@@ -203,7 +203,7 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### PartialResult
-- **Definition:** A result that does not contain the operation's complete result because a documented capacity or result policy limits what can be represented; the canonical cljonic term is `BoundedPrefixResult`.
+- **Definition:** A result that does not contain the operation's complete result because a documented capacity or result policy limits what can be represented; the canonical cljonic term is `BoundedPrefixResult`. Direct source construction may intentionally produce this bounded result, while complete source materialization uses `fits_into` and `into`.
 - **Deprecated Synonyms:** partial output, truncated result
 - **Related:** BoundedPrefixResult, CompleteResult, FitsInto
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
