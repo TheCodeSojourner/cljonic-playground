@@ -191,6 +191,9 @@ fallback) { collection(key, fallback); }</td></tr>
 <tr class="memitem:af20d169ef36288b54ca608a14eb6b557 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#af20d169ef36288b54ca608a14eb6b557">Set</a> (First, Rest...) -&gt; Set&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
 <tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21" id="r_ac8f7c83a056ffb2ba64e432680d09b21"><td class="memTemplParams" colspan="2">template&lt;std::size_t N&gt; </td></tr>
 <tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ac8f7c83a056ffb2ba64e432680d09b21">String</a> (const char(&amp;)[N]) -&gt; String&lt; N - 1U &gt;</td></tr>
+<tr class="memitem:ab3b333a967f0cc6bd35e3711db6e77cc" id="r_ab3b333a967f0cc6bd35e3711db6e77cc"><td class="memTemplParams" colspan="2">template&lt;std::size_t Extent&gt; <br />
+requires (Extent != std::dynamic_extent)</td></tr>
+<tr class="memitem:ab3b333a967f0cc6bd35e3711db6e77cc template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ab3b333a967f0cc6bd35e3711db6e77cc">String</a> (std::span&lt; const char, Extent &gt;) -&gt; String&lt; Extent &gt;</td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac" id="r_a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplParams" colspan="2">template&lt;typename First, typename... Rest&gt; </td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a2c1c737c352027b41c8f7a0bbfecc2ac">Vector</a> (First, Rest...) -&gt; Vector&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
 <tr class="memitem:a0ca7a047063bf0835784fc1a265a4a8f" id="r_a0ca7a047063bf0835784fc1a265a4a8f"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; </td></tr>
@@ -487,7 +490,7 @@ template&lt;typename C, typename K&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (in_range &amp;&amp; !<a class="code hl_function" href="#a1985f084fdf102fe981bcf4d6a72c124">contains</a>(v_runtime, 9U)) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00064">cljonic-string.hpp:64</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00085">cljonic-string.hpp:85</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00143">cljonic-vector.hpp:143</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a1985f084fdf102fe981bcf4d6a72c124"><div class="ttname"><a href="#a1985f084fdf102fe981bcf4d6a72c124">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept -&gt; bool</div><div class="ttdoc">Tests whether its argument belongs to a collection&#39;s lookup domain, mirroring Clojure&#39;s contains?...</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00051">cljonic-contains.hpp:51</a></div></div>
 </div><!-- fragment --> 
@@ -1305,7 +1308,7 @@ template&lt;typename First, typename... Rest&gt; </div>
 </div>
 </div>
 <a id="ac8f7c83a056ffb2ba64e432680d09b21" name="ac8f7c83a056ffb2ba64e432680d09b21"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8f7c83a056ffb2ba64e432680d09b21">&#9670;&#160;</a></span>String()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8f7c83a056ffb2ba64e432680d09b21">&#9670;&#160;</a></span>String() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1317,6 +1320,26 @@ template&lt;std::size_t N&gt; </div>
           <td>(</td>
           <td class="paramtype">const </td>          <td class="paramname"><span class="paramname"><em>char</em></span>(&amp;)[N]</td><td>)</td>
           <td> -&gt;  String&lt; N - 1U &gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab3b333a967f0cc6bd35e3711db6e77cc" name="ab3b333a967f0cc6bd35e3711db6e77cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3b333a967f0cc6bd35e3711db6e77cc">&#9670;&#160;</a></span>String() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t Extent&gt; <br />
+requires (Extent != std::dynamic_extent)</div>
+      <table class="memname">
+        <tr>
+          <td class="memname">cljonic::String </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; const char, Extent &gt;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt;  String&lt; Extent &gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">

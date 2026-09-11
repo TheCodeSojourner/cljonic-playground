@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="contents">
 <div class="textblock"><code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;span&gt;</code><br />
 <code>#include &lt;string_view&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-config_8hpp_source.html">cljonic-config.hpp</a>&gt;</code><br />
@@ -129,6 +130,9 @@ Namespaces</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21" id="r_ac8f7c83a056ffb2ba64e432680d09b21"><td class="memTemplParams" colspan="2">template&lt;std::size_t N&gt; </td></tr>
 <tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ac8f7c83a056ffb2ba64e432680d09b21">cljonic::String</a> (const char(&amp;)[N]) -&gt; String&lt; N - 1U &gt;</td></tr>
+<tr class="memitem:ab3b333a967f0cc6bd35e3711db6e77cc" id="r_ab3b333a967f0cc6bd35e3711db6e77cc"><td class="memTemplParams" colspan="2">template&lt;std::size_t Extent&gt; <br />
+requires (Extent != std::dynamic_extent)</td></tr>
+<tr class="memitem:ab3b333a967f0cc6bd35e3711db6e77cc template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ab3b333a967f0cc6bd35e3711db6e77cc">cljonic::String</a> (std::span&lt; const char, Extent &gt;) -&gt; String&lt; Extent &gt;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
