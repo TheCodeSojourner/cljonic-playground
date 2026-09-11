@@ -1,0 +1,51 @@
+-- allium: 3
+
+entity CollectionSourceConstruction {
+    direct_source_construction_is_owned: Boolean
+    direct_source_construction_is_non_allocating: Boolean
+    direct_source_construction_is_non_throwing: Boolean
+    direct_source_construction_does_not_borrow_source: Boolean
+    static_extent_overflow_is_compile_time_failure: Boolean
+    runtime_extent_overflow_returns_bounded_prefix: Boolean
+    complete_materialization_uses_fits_into: Boolean
+    complete_materialization_uses_into: Boolean
+    checked_constructor_is_not_required: Boolean
+
+    invariant DirectSourceConstructionIsOwned {
+        this.direct_source_construction_is_owned = true
+    }
+
+    invariant DirectSourceConstructionIsNonAllocating {
+        this.direct_source_construction_is_non_allocating = true
+    }
+
+    invariant DirectSourceConstructionIsNonThrowing {
+        this.direct_source_construction_is_non_throwing = true
+    }
+
+    invariant DirectSourceConstructionDoesNotBorrowSource {
+        this.direct_source_construction_does_not_borrow_source = true
+    }
+
+    invariant StaticExtentOverflowIsCompileTimeFailure {
+        this.static_extent_overflow_is_compile_time_failure = true
+    }
+
+    invariant RuntimeExtentOverflowReturnsBoundedPrefix {
+        this.runtime_extent_overflow_returns_bounded_prefix = true
+    }
+
+    invariant CompleteMaterializationUsesFitsInto {
+        this.complete_materialization_uses_fits_into = true
+    }
+
+    invariant CompleteMaterializationUsesInto {
+        this.complete_materialization_uses_into = true
+    }
+
+    invariant CheckedConstructorIsNotRequired {
+        this.checked_constructor_is_not_required = true
+    }
+}
+
+actor CollectionSourceConstructionOperator { identified_by: CollectionSourceConstruction }
