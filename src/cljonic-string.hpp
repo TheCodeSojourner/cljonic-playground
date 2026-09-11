@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 #include <string_view>
 
 #include <cljonic-concepts.hpp>
@@ -25,13 +26,10 @@ namespace cljonic {
 
    // Explicit capacity permits an empty String and a partially populated String.
    [[maybe_unused]] constexpr auto empty = String<8>{};
-   constexpr auto literal = String<8>{"Hello"};
+
+   constexpr auto literal = String<10>{"Hello"};
    static_assert(literal(0) == 'H');
    static_assert(literal(99, 'Z') == 'Z');
-
-   // Const C++ interoperability exposes content-only range traversal and a
-   // non-owning string view that excludes the null terminator.
-   static_assert(literal.view() == std::string_view{"Hello"});
 
    // Out-of-bounds access returns char{} (the ASCII NUL character).
    static_assert(literal(5) == '\0');
@@ -45,7 +43,29 @@ namespace cljonic {
    const auto first = runtime(0);
    const auto missing = runtime(9, '!');
 
-   // Use C++ interoperability to sum the bytes of a string
+   // ---------------------------------------------------------------------
+   // C++ interoperability: a String exposes const content traversal, a
+   // non-owning string view, and owned construction from std::string_view
+   // or a const-char span.  Literal construction supports capacity
+   // deduction, but a string_view's size is not part of its type, so view
+   // construction requires capacity.
+   // ---------------------------------------------------------------------
+   static constexpr std::string_view static_source{"from view"};
+   constexpr auto from_static_view = String<16>{static_source};
+   static_assert(from_static_view.view() == static_source);
+
+   const std::string_view runtime_source{"runtime view"};
+   const auto from_runtime_view = String<16>{runtime_source};
+   const auto runtime_view_copy = from_runtime_view.view();
+
+   static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
+   static constexpr auto span_source{std::span<const char, 4>{char_source}};
+   constexpr auto from_char_span = String{span_source};
+   static_assert(from_char_span.view() == std::string_view{"span"});
+
+   static_assert(literal.view() == std::string_view{"Hello"});
+
+   // Use C++ interoperability to sum the bytes in a String.
    int byte_sum = 0;
    for (const auto byte : runtime) {
      byte_sum += byte;
@@ -54,7 +74,8 @@ namespace cljonic {
    const auto runtime_view = runtime.view();
 
    return (first == 'H' && missing == '!' && byte_sum == 'H' + 'i' &&
-           runtime_view == std::string_view{"Hi"})
+           runtime_view == std::string_view{"Hi"} &&
+           runtime_view_copy == runtime_source)
               ? 0
               : 1;
  }
@@ -79,11 +100,25 @@ class String {
     template <std::size_t N>
     constexpr String(const char (&arr)[N]) noexcept {
         static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
-        logical_size_ = N - 1U;
-        for (std::size_t i = 0; i < logical_size_; ++i) {
-            data_[i] = normalize_byte(arr[i]);
+        copy_from_source(arr, N - 1U);
+    }
+
+    constexpr String(std::string_view source) noexcept {
+        if consteval {
+            if (source.size() > CapacityValue) {
+                rejected_oversized_string_source_at_compile_time();
+            }
         }
-        data_[logical_size_] = '\0';
+        copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
+    }
+
+    template <std::size_t Extent>
+    constexpr String(std::span<const char, Extent> source) noexcept {
+        if constexpr (Extent != std::dynamic_extent) {
+            static_assert(Extent <= CapacityValue, "String span source exceeds String CapacityValue");
+        }
+
+        copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -138,17 +173,27 @@ class String {
     }
 
   private:
+    template <typename Source>
+    constexpr void copy_from_source(const Source& source, std::size_t copy_count) noexcept {
+        logical_size_ = copy_count;
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            data_[i] = normalize_byte(source[i]);
+        }
+        data_[logical_size_] = '\0';
+    }
+
     [[nodiscard]] static constexpr auto normalize_byte(char byte) noexcept -> char {
         if (byte == '\0' || static_cast<unsigned char>(byte) > 0x7FU) {
             if consteval {
-                reject_invalid_literal_byte();
+                rejected_invalid_string_byte_at_compile_time();
             }
             return '.';
         }
         return byte;
     }
 
-    static void reject_invalid_literal_byte() noexcept;
+    static void rejected_invalid_string_byte_at_compile_time() noexcept;
+    static void rejected_oversized_string_source_at_compile_time() noexcept;
 
     // Internal array is CapacityValue+1 to hold null terminator
     std::array<char, CapacityValue + 1> data_{};
@@ -157,6 +202,10 @@ class String {
 
 template <std::size_t N>
 String(const char (&)[N]) -> String<N - 1U>;
+
+template <std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+String(std::span<const char, Extent>) -> String<Extent>;
 
 } // namespace cljonic
 
