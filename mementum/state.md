@@ -29,6 +29,8 @@ Decisions:
 14. Queue's const iterator now supports logical `operator[]` indexing, making wrapped FIFO examples clearer while retaining forward-range semantics.
 15. Collection Doxygen examples use starless fenced code blocks for copy/paste ergonomics; Queue was normalized to match Vector, String, and Set.
 16. The Map documentation example demonstrates const `MapEntry` range traversal and `Map::view()` member interoperability.
+17. Direct source construction remains a total bounded operation: compile-time-known static-span overflow is rejected, runtime-sized dynamic-span overflow materializes a bounded prefix.
+18. Complete-fit source semantics belong to the preflight/materialization pair: `fits_into` reports whether the complete source fits, while `into` performs bounded-prefix materialization when it does not; no checked constructor is planned.
 2. `WarningsAsErrors: '*'` is enabled after the curated clang-tidy set reached a clean baseline.
 3. Low-risk lint fixes removed redundant `typename`, simplified preprocessor conditions, concatenated an empty nested namespace, and named previously unnamed parameters.
 4. `ReflowComments` remains enabled in the repository policy, but the custom Doxygen pass owns prose wrapping so clang-format does not insert malformed blank lines or concatenate comment markers.
@@ -57,7 +59,7 @@ Current Increment:
 6. The active vocabulary and API surface retain the requirements-first boundary: construction, observation, lookup, mutation-copy, capacity, and C++ interoperability are active; unresolved future operation families remain out of scope.
 
 Next:
-1. Design and approve standard read-only source interoperability for collection construction/materialization, including `std::string_view` and compatible span/range sources, before implementation.
+1. Generalize and approve the source construction/materialization contract across collections, including `std::string_view` and compatible span/range sources, with the Vector constructor policy as the baseline.
 2. Keep the clang-tidy suppression list narrow; newly introduced unsuppressed diagnostics now fail `make lint`.
 3. Design and approve the all-collection semantic traversal increment before implementing `seq`/`first`/`next`/`rest` behavior.
 4. Design and approve the deferred `empty`/`not_empty` increment before restoring their specs, tests, and public umbrella exposure.
