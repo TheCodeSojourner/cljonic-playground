@@ -164,3 +164,43 @@ TEST_CASE("Vector indexed access handles valid and invalid indexes", "[vector][i
     CHECK(runtime_values(neg, 99) == 99);
     CHECK_FALSE(runtime_values.contains(neg));
 }
+
+TEST_CASE("Vector imports from std::span without allocating or mutating the source", "[vector][interop]") {
+    using cljonic::Vector;
+
+    static constexpr int static_source_values[] = {11, 22, 33, 44, 55};
+    constexpr std::span static_source_span{static_source_values};
+    constexpr auto ctad_from_static_span = Vector{static_source_span};
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(ctad_from_static_span)>, Vector<int, 5>>);
+    STATIC_REQUIRE(ctad_from_static_span.count() == 5U);
+    STATIC_REQUIRE(ctad_from_static_span.capacity() == 5U);
+    STATIC_REQUIRE(ctad_from_static_span(0) == 11);
+    STATIC_REQUIRE(ctad_from_static_span(4) == 55);
+
+    int mutable_source_values[] = {10, 20, 30};
+    std::span mutable_source_span{mutable_source_values};
+    auto ctad_from_mutable_span = Vector{mutable_source_span};
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(ctad_from_mutable_span)>, Vector<int, 3>>);
+    CHECK(ctad_from_mutable_span.count() == 3U);
+    CHECK(ctad_from_mutable_span(0) == 10);
+    CHECK(ctad_from_mutable_span(2) == 30);
+
+    const std::array<int, 5> source_values = {11, 22, 33, 44, 55};
+    const std::span<const int> source{source_values.data(), 5U};
+
+    static constexpr std::array<int, 5> constexpr_source_values = {11, 22, 33, 44, 55};
+    constexpr auto from_span = Vector<int, 4>{std::span<const int>{constexpr_source_values.data(), 3U}};
+    STATIC_REQUIRE(from_span.count() == 3U);
+    STATIC_REQUIRE(from_span(0) == 11);
+    STATIC_REQUIRE(from_span(2) == 33);
+
+    const auto runtime_vector = Vector<int, 4>{source};
+    CHECK(runtime_vector.count() == 4U);
+    CHECK(runtime_vector(0) == 11);
+    CHECK(runtime_vector(1) == 22);
+    CHECK(runtime_vector(2) == 33);
+    CHECK(runtime_vector(3) == 44);
+    CHECK(runtime_vector(4) == 0);
+    CHECK(source[0] == 11);
+    CHECK(source[4] == 55);
+}
