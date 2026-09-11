@@ -193,6 +193,8 @@ fallback) { collection(key, fallback); }</td></tr>
 <tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ac8f7c83a056ffb2ba64e432680d09b21">String</a> (const char(&amp;)[N]) -&gt; String&lt; N - 1U &gt;</td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac" id="r_a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplParams" colspan="2">template&lt;typename First, typename... Rest&gt; </td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a2c1c737c352027b41c8f7a0bbfecc2ac">Vector</a> (First, Rest...) -&gt; Vector&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
+<tr class="memitem:a0ca7a047063bf0835784fc1a265a4a8f" id="r_a0ca7a047063bf0835784fc1a265a4a8f"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; </td></tr>
+<tr class="memitem:a0ca7a047063bf0835784fc1a265a4a8f template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a0ca7a047063bf0835784fc1a265a4a8f">Vector</a> (std::span&lt; SourceElement, Extent &gt;) -&gt; Vector&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -486,7 +488,7 @@ template&lt;typename C, typename K&gt; </div>
 <div class="line">  <span class="keywordflow">return</span> (in_range &amp;&amp; !<a class="code hl_function" href="#a1985f084fdf102fe981bcf4d6a72c124">contains</a>(v_runtime, 9U)) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00064">cljonic-string.hpp:64</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00123">cljonic-vector.hpp:123</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00143">cljonic-vector.hpp:143</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a1985f084fdf102fe981bcf4d6a72c124"><div class="ttname"><a href="#a1985f084fdf102fe981bcf4d6a72c124">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept -&gt; bool</div><div class="ttdoc">Tests whether its argument belongs to a collection&#39;s lookup domain, mirroring Clojure&#39;s contains?...</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00051">cljonic-contains.hpp:51</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
@@ -1322,7 +1324,7 @@ template&lt;std::size_t N&gt; </div>
 </div>
 </div>
 <a id="a2c1c737c352027b41c8f7a0bbfecc2ac" name="a2c1c737c352027b41c8f7a0bbfecc2ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c1c737c352027b41c8f7a0bbfecc2ac">&#9670;&#160;</a></span>Vector()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c1c737c352027b41c8f7a0bbfecc2ac">&#9670;&#160;</a></span>Vector() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1338,6 +1340,25 @@ template&lt;typename First, typename... Rest&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Rest...</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;) -&gt;  Vector&lt; First, 1+sizeof...(Rest)&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0ca7a047063bf0835784fc1a265a4a8f" name="a0ca7a047063bf0835784fc1a265a4a8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ca7a047063bf0835784fc1a265a4a8f">&#9670;&#160;</a></span>Vector() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename SourceElement, std::size_t Extent&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">cljonic::Vector </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; SourceElement, Extent &gt;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt;  Vector&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
