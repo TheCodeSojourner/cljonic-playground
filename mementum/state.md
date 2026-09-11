@@ -1,16 +1,16 @@
 ## Session State
 
-- last_session_id: 2026-09-11-gybis-fini-recovery
+- last_session_id: 2026-09-11-source-construction-propagation
 - current_timestamp: 2026-09-11
 - recover: 1
 - session_complete: true
 
 Task:
-1. Implement const C++ interoperability for Vector, Map, Set, Queue, and String.
-2. Preserve bounded, non-allocating, read-only semantics and collection-specific logical order.
+1. Propagate the approved bounded source-construction and preflight/materialization policy through requirements, vocabulary, architecture, specifications, tests, and repository memory.
+2. Preserve bounded, non-allocating, non-throwing, owning semantics and keep unresolved cross-collection source policy approval-gated.
 
 Questions:
-1. No user questions unresolved.
+1. Cross-collection source support, accepted range forms, and String invalid-byte import policy remain open for the next design increment.
 
 Decisions:
 1. C++ interoperability is implemented as const range-compatible traversal plus collection-owned `.view()` members where contiguous views exist; `seq`, `first`, `next`, `rest`, `into`, and `fits_into` remain outside this increment.
@@ -31,6 +31,7 @@ Decisions:
 16. The Map documentation example demonstrates const `MapEntry` range traversal and `Map::view()` member interoperability.
 17. Direct source construction remains a total bounded operation: compile-time-known static-span overflow is rejected, runtime-sized dynamic-span overflow materializes a bounded prefix.
 18. Complete-fit source semantics belong to the preflight/materialization pair: `fits_into` reports whether the complete source fits, while `into` performs bounded-prefix materialization when it does not; no checked constructor is planned.
+19. The approved source-construction policy is propagated through requirements, vocabulary, architecture, a shared `CollectionSourceConstruction` Allium contract, and a focused traceability test; implementation behavior remains unchanged.
 2. `WarningsAsErrors: '*'` is enabled after the curated clang-tidy set reached a clean baseline.
 3. Low-risk lint fixes removed redundant `typename`, simplified preprocessor conditions, concatenated an empty nested namespace, and named previously unnamed parameters.
 4. `ReflowComments` remains enabled in the repository policy, but the custom Doxygen pass owns prose wrapping so clang-format does not insert malformed blank lines or concatenate comment markers.
@@ -49,6 +50,8 @@ Validation:
 5. Architecture structure and interoperability coherence checks pass.
 6. Canonical vocabulary references replace interoperability shorthand in the architecture summary.
 7. `git diff --check` passes.
+8. Full modular and single-header CTest suites pass with 98/98 tests, including the Vector source-construction policy test.
+9. Strict spec-to-code traceability passes after regenerating the obligation snapshot for `CollectionSourceConstruction`.
 
 Current Increment:
 1. The collection C++ interoperability increment is implemented, specified, tested, traceable, documented with copy-paste-friendly examples, and generated into the public header.
@@ -57,10 +60,12 @@ Current Increment:
 4. Semantic traversal (`seq`, `first`, `next`, `rest`) remains deferred for all collections.
 5. `empty` and `not_empty` remain deferred value-producing operations; `is_empty` remains the active boolean predicate.
 6. The active vocabulary and API surface retain the requirements-first boundary: construction, observation, lookup, mutation-copy, capacity, and C++ interoperability are active; unresolved future operation families remain out of scope.
+7. Source-construction propagation is now specified and traceable; cross-collection source support remains a designing increment.
 
 Next:
 1. Generalize and approve the source construction/materialization contract across collections, including `std::string_view` and compatible span/range sources, with the Vector constructor policy as the baseline.
-2. Keep the clang-tidy suppression list narrow; newly introduced unsuppressed diagnostics now fail `make lint`.
-3. Design and approve the all-collection semantic traversal increment before implementing `seq`/`first`/`next`/`rest` behavior.
-4. Design and approve the deferred `empty`/`not_empty` increment before restoring their specs, tests, and public umbrella exposure.
-5. Re-run the relevant requirements, architecture, vocabulary, specification, test, traceability, no-heap, and publication gates after the next approved increment.
+2. Keep `collection-source-interoperability.md` in designing status until the cross-collection source and invalid-byte policies are approved.
+3. Keep the clang-tidy suppression list narrow; newly introduced unsuppressed diagnostics now fail `make lint`.
+4. Design and approve the all-collection semantic traversal increment before implementing `seq`/`first`/`next`/`rest` behavior.
+5. Design and approve the deferred `empty`/`not_empty` increment before restoring their specs, tests, and public umbrella exposure.
+6. Re-run the relevant requirements, architecture, vocabulary, specification, test, traceability, no-heap, and publication gates after the next approved increment.
