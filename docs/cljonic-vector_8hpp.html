@@ -130,8 +130,12 @@ Namespaces</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac" id="r_a2c1c737c352027b41c8f7a0bbfecc2ac"><td class="memTemplParams" colspan="2">template&lt;typename First, typename... Rest&gt; </td></tr>
 <tr class="memitem:a2c1c737c352027b41c8f7a0bbfecc2ac template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">cljonic::Vector</a> (First, Rest...) -&gt; Vector&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
-<tr class="memitem:a0ca7a047063bf0835784fc1a265a4a8f" id="r_a0ca7a047063bf0835784fc1a265a4a8f"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; </td></tr>
-<tr class="memitem:a0ca7a047063bf0835784fc1a265a4a8f template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a0ca7a047063bf0835784fc1a265a4a8f">cljonic::Vector</a> (std::span&lt; SourceElement, Extent &gt;) -&gt; Vector&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td></tr>
+<tr class="memitem:a01fa7a0970d1fd36190a716a8bd18268" id="r_a01fa7a0970d1fd36190a716a8bd18268"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; <br />
+requires (Extent != std::dynamic_extent)</td></tr>
+<tr class="memitem:a01fa7a0970d1fd36190a716a8bd18268 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a01fa7a0970d1fd36190a716a8bd18268">cljonic::Vector</a> (std::span&lt; SourceElement, Extent &gt;) -&gt; Vector&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td></tr>
+<tr class="memitem:a586dd803a80214601e1be8dbe75d515b" id="r_a586dd803a80214601e1be8dbe75d515b"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; <br />
+requires (Extent != std::dynamic_extent)</td></tr>
+<tr class="memitem:a586dd803a80214601e1be8dbe75d515b template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a586dd803a80214601e1be8dbe75d515b">cljonic::Vector</a> (std::span&lt; const SourceElement, Extent &gt;) -&gt; Vector&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

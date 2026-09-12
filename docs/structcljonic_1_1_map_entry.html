@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structcljonic_1_1_map_entry-members.html">List of all members</a>  </div>
@@ -109,6 +110,12 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <p><code>#include &lt;<a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-types" class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:ac1bfaaaefa6b3d353623552ae78589a9" id="r_ac1bfaaaefa6b3d353623552ae78589a9"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#ac1bfaaaefa6b3d353623552ae78589a9">key_type</a> = KeyType</td></tr>
+<tr class="memitem:aa262c578490bed485aa8021da72a54fb" id="r_aa262c578490bed485aa8021da72a54fb"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#aa262c578490bed485aa8021da72a54fb">value_type</a> = ValueType</td></tr>
+<tr class="memitem:a1171413d130888c56d97b922516c0bf3" id="r_a1171413d130888c56d97b922516c0bf3"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#a1171413d130888c56d97b922516c0bf3">mapped_type</a> = ValueType</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af8a6e59c3c457862ffe4b959fbc3676d" id="r_af8a6e59c3c457862ffe4b959fbc3676d"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af8a6e59c3c457862ffe4b959fbc3676d">operator==</a> (const <a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a> &amp;other) const noexcept -&gt; bool</td></tr>
@@ -146,12 +153,67 @@ struct cljonic::MapEntry&lt; KeyType, ValueType &gt;</div><p><a class="anchor" i
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
 <div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00039">cljonic-map-entry.hpp:39</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html_a83603835c380c14d13c252cf99b11c23"><div class="ttname"><a href="#a83603835c380c14d13c252cf99b11c23">cljonic::MapEntry::value</a></div><div class="ttdeci">ValueType value</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00041">cljonic-map-entry.hpp:41</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html_ad6ce6bddae994010ca731229636d3d95"><div class="ttname"><a href="#ad6ce6bddae994010ca731229636d3d95">cljonic::MapEntry::key</a></div><div class="ttdeci">KeyType key</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00040">cljonic-map-entry.hpp:40</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html_adf7b06e3813881f5333389c629baa97a"><div class="ttname"><a href="#adf7b06e3813881f5333389c629baa97a">cljonic::MapEntry::contains</a></div><div class="ttdeci">constexpr auto contains(IndexType index) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00048">cljonic-map-entry.hpp:48</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html_a83603835c380c14d13c252cf99b11c23"><div class="ttname"><a href="#a83603835c380c14d13c252cf99b11c23">cljonic::MapEntry::value</a></div><div class="ttdeci">ValueType value</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00045">cljonic-map-entry.hpp:45</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html_ad6ce6bddae994010ca731229636d3d95"><div class="ttname"><a href="#ad6ce6bddae994010ca731229636d3d95">cljonic::MapEntry::key</a></div><div class="ttdeci">KeyType key</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00044">cljonic-map-entry.hpp:44</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html_adf7b06e3813881f5333389c629baa97a"><div class="ttname"><a href="#adf7b06e3813881f5333389c629baa97a">cljonic::MapEntry::contains</a></div><div class="ttdeci">constexpr auto contains(IndexType index) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00052">cljonic-map-entry.hpp:52</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00039">39</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+</div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
+<a id="ac1bfaaaefa6b3d353623552ae78589a9" name="ac1bfaaaefa6b3d353623552ae78589a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1bfaaaefa6b3d353623552ae78589a9">&#9670;&#160;</a></span>key_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a>&lt; KeyType, ValueType &gt;::key_type = KeyType</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00040">40</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1171413d130888c56d97b922516c0bf3" name="a1171413d130888c56d97b922516c0bf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1171413d130888c56d97b922516c0bf3">&#9670;&#160;</a></span>mapped_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a>&lt; KeyType, ValueType &gt;::mapped_type = ValueType</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00042">42</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa262c578490bed485aa8021da72a54fb" name="aa262c578490bed485aa8021da72a54fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa262c578490bed485aa8021da72a54fb">&#9670;&#160;</a></span>value_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a>&lt; KeyType, ValueType &gt;::value_type = ValueType</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00041">41</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="adf7b06e3813881f5333389c629baa97a" name="adf7b06e3813881f5333389c629baa97a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adf7b06e3813881f5333389c629baa97a">&#9670;&#160;</a></span>contains()</h2>
 
@@ -179,7 +241,7 @@ template&lt;std::integral IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00048">48</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00052">52</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 
 </div>
 </div>
@@ -208,7 +270,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00043">43</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00047">47</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 
 </div>
 </div>
@@ -227,7 +289,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00040">40</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00044">44</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 
 </div>
 </div>
@@ -245,7 +307,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00041">41</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map-entry_8hpp_source.html#l00045">45</a> of file <a class="el" href="cljonic-map-entry_8hpp_source.html">cljonic-map-entry.hpp</a>.</p>
 
 </div>
 </div>

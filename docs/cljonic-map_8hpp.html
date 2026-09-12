@@ -106,8 +106,8 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="headertitle"><div class="title">cljonic-map.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;array&gt;</code><br />
-<code>#include &lt;concepts&gt;</code><br />
+<div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;span&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
@@ -131,6 +131,12 @@ Namespaces</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a3d0418044393656d692cccbab2756b80" id="r_a3d0418044393656d692cccbab2756b80"><td class="memTemplParams" colspan="2">template&lt;typename KeyType, typename ValueType, typename... Rest&gt; </td></tr>
 <tr class="memitem:a3d0418044393656d692cccbab2756b80 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a3d0418044393656d692cccbab2756b80">cljonic::Map</a> (<a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a>&lt; KeyType, ValueType &gt;, Rest...) -&gt; Map&lt; KeyType, ValueType, 1+sizeof...(Rest)&gt;</td></tr>
+<tr class="memitem:a95868dde22b2951086145a4881852d69" id="r_a95868dde22b2951086145a4881852d69"><td class="memTemplParams" colspan="2">template&lt;typename KeyType, typename ValueType, std::size_t Extent&gt; <br />
+requires (Extent != std::dynamic_extent)</td></tr>
+<tr class="memitem:a95868dde22b2951086145a4881852d69 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a95868dde22b2951086145a4881852d69">cljonic::Map</a> (std::span&lt; const <a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a>&lt; KeyType, ValueType &gt;, Extent &gt;) -&gt; Map&lt; KeyType, ValueType, Extent &gt;</td></tr>
+<tr class="memitem:a9cc0a7fa8f1730e90fc012c5a4483b64" id="r_a9cc0a7fa8f1730e90fc012c5a4483b64"><td class="memTemplParams" colspan="2">template&lt;typename KeyType, typename ValueType, std::size_t Extent&gt; <br />
+requires (Extent != std::dynamic_extent)</td></tr>
+<tr class="memitem:a9cc0a7fa8f1730e90fc012c5a4483b64 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a9cc0a7fa8f1730e90fc012c5a4483b64">cljonic::Map</a> (std::span&lt; <a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a>&lt; KeyType, ValueType &gt;, Extent &gt;) -&gt; Map&lt; KeyType, ValueType, Extent &gt;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

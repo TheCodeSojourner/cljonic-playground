@@ -254,7 +254,7 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="keywordflow">return</span> (fallback == -1 &amp;&amp; negative_default == 0 &amp;&amp; negative_fallback == 99 &amp;&amp;</div>
 <div class="line">          pixel_value == Pixel{3, 4} &amp;&amp; pixel_fallback == Pixel{99, 99} &amp;&amp;</div>
 <div class="line">          range_sum == 16 &amp;&amp; runtime_view.size() == 2 &amp;&amp; runtime_view[0] == 7 &amp;&amp;</div>
-<div class="line">          runtime_from_span.count() == 3 &amp;&amp; runtime_from_span(1) == 200)</div>
+<div class="line">          runtime_from_span(0) == 100 &amp;&amp; runtime_from_span(1) == 200)</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
