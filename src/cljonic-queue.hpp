@@ -4,6 +4,7 @@
 #include <array>
 #include <cstddef>
 #include <iterator>
+#include <ranges>
 #include <type_traits>
 #include <utility>
 
@@ -32,8 +33,8 @@ namespace cljonic {
    [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
 
    // --------------------------------------------------------------------------
-   // C++ interoperability: a Queue exposes const content traversal, and can be
-   // constructed from a read-only std::span without mutating the source data.
+   // C++ interoperability: a Queue supports const traversal and accepts owned
+   // materialization from bounded range/view sources without mutating them.
    // --------------------------------------------------------------------------
    static constexpr int source_values[] = {10, 20, 30};
    constexpr std::span source_span{source_values};
@@ -43,6 +44,14 @@ namespace cljonic {
 
    constexpr auto from_span_ctad = Queue{source_span};
    static_assert(from_span_ctad.begin()[1] == 20);
+
+   // A standard view pipeline can use an existing Queue as its source and
+   // materialize transformed values into another Queue.
+   const auto pipeline_source = Queue<int, 4>{1, 2, 3};
+   const auto shifted_view =
+       pipeline_source |
+       std::views::transform([](int value) { return value + 10; });
+   const auto from_pipeline = Queue<int, 4>{shifted_view};
 
    // Constructing a Queue from a runtime C++ array/span
    int runtime_buffer[] = {100, 200, 300};
@@ -66,7 +75,7 @@ namespace cljonic {
    }
 
    return (fifo_sum == 600 && from_span_sum == 60 &&
-           runtime_from_span_sum == 600)
+           runtime_from_span_sum == 600 && from_pipeline.peek() == 11)
               ? 0
               : 1;
  }
@@ -133,17 +142,22 @@ class Queue {
         ((*this = conj(T{std::forward<Args>(args)})), ...);
     }
 
-    template <typename SourceElement, std::size_t Extent>
-    constexpr Queue(std::span<const SourceElement, Extent> source) noexcept {
-        static_assert(std::same_as<std::remove_cvref_t<SourceElement>, value_type>,
-                      "Queue span constructor requires a matching element type");
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "Queue span source exceeds Queue CapacityValue");
-        }
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Queue>)
+    constexpr Queue(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(std::same_as<std::remove_cvref_t<source_value_type>, value_type>,
+                      "Queue range/view constructor requires a matching element type");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Queue static-extent range source exceeds Queue CapacityValue");
 
-        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
-        for (std::size_t index = 0; index < copy_count; ++index) {
-            *this = conj(value_type{source[index]});
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = conj(value_type{std::forward<decltype(item)>(item)});
         }
     }
 
@@ -213,10 +227,6 @@ class Queue {
 
 template <typename First, typename... Rest>
 Queue(First, Rest...) -> Queue<First, 1 + sizeof...(Rest)>;
-
-template <typename SourceElement, std::size_t Extent>
-    requires(Extent != std::dynamic_extent)
-Queue(std::span<const SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
 
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)

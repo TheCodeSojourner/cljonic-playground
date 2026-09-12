@@ -168,8 +168,10 @@
 #ifndef CLJONIC_CONCEPTS_HPP
 #define CLJONIC_CONCEPTS_HPP
 
+#include <array>
 #include <concepts>
 #include <cstddef>
+#include <span>
 #include <type_traits>
 #include <utility>
 
@@ -190,6 +192,25 @@ inline constexpr bool is_cljonic_collection_v = collection_traits<std::remove_cv
 
 template <typename T>
 inline constexpr collection_kind collection_kind_of_v = collection_traits<std::remove_cvref_t<T>>::kind;
+
+template <typename T>
+struct static_extent : std::integral_constant<std::size_t, std::dynamic_extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<std::span<ElementType, Extent>> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<std::array<ElementType, Extent>> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<ElementType[Extent]> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename T>
+inline constexpr std::size_t static_extent_v = static_extent<std::remove_cvref_t<T>>::value;
+
+template <typename T, std::size_t CapacityValue>
+inline constexpr bool static_extent_fits_v =
+    static_extent_v<T> == std::dynamic_extent || static_extent_v<T> <= CapacityValue;
 
 } // namespace concepts_detail
 
@@ -780,6 +801,7 @@ template <concepts::SequenceableCollection C>
 #include <algorithm>
 #include <array>
 #include <cstddef>
+#include <ranges>
 #include <span>
 
 // Begin cljonic-map-entry.hpp
@@ -879,6 +901,14 @@ namespace cljonic {
    const auto present = runtime(Key{3});
    const auto missing = runtime(Key{4}, Value{77});
 
+   // A standard view pipeline can use an existing Map as its source and
+   // materialize the transformed entries into another Map.
+   const auto copied_view =
+       runtime | std::views::transform([](const AccountEntry &entry) {
+         return AccountEntry{entry.key, Value{entry.value.amount * 2}};
+       });
+   const auto from_pipeline = AccountMap{copied_view};
+
    // A named map type and its named entry type make the intended value model
    // explicit. A later duplicate key replaces the earlier value (i.e., the
    // right-most value associated with a duplicate key).
@@ -891,9 +921,9 @@ namespace cljonic {
    static_assert(literal(Key{2}, Value{99}).amount == 99);
 
    // ---------------------------------------------------------------------------
-   // C++ interoperability: a Map exposes const logical traversal, a non-owning
-   // std::span, and can be constructed from a read-only std::span without
-   // mutating the source data.
+   // C++ interoperability: a Map supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
    // ---------------------------------------------------------------------------
    static constexpr AccountEntry source_entries[] = {
        AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
@@ -923,6 +953,7 @@ namespace cljonic {
    return (present.amount == 30 && missing.amount == 77 && value_sum == 30 &&
            runtime_view.size() == 1 && runtime_view[0].value.amount == 30 &&
            from_span(Key{10}).amount == 100 &&
+           from_pipeline(Key{3}).amount == 60 &&
            runtime_from_span(Key{100}).amount == 1000)
               ? 0
               : 1;
@@ -953,18 +984,23 @@ class Map {
         ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
     }
 
-    template <typename SourceElement, std::size_t Extent>
-    constexpr Map(std::span<const SourceElement, Extent> source) noexcept {
-        static_assert(concepts::NothrowElementConstruction<value_type, SourceElement>,
-                      "Map span constructor requires SourceElement to construct "
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Map>)
+    constexpr Map(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+                      "Map range/view constructor requires each source element to construct "
                       "MapEntry without throwing and be implicitly convertible to MapEntry");
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "Map span source exceeds Map CapacityValue");
-        }
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Map static-extent range source exceeds Map CapacityValue");
 
-        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
-        for (std::size_t index = 0; index < copy_count; ++index) {
-            *this = assoc_entry(value_type{source[index]});
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = assoc_entry(value_type{std::forward<decltype(item)>(item)});
         }
     }
 
@@ -1161,6 +1197,7 @@ template <typename C>
 #include <array>
 #include <cstddef>
 #include <iterator>
+#include <ranges>
 #include <type_traits>
 #include <utility>
 
@@ -1186,8 +1223,8 @@ namespace cljonic {
    [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
 
    // --------------------------------------------------------------------------
-   // C++ interoperability: a Queue exposes const content traversal, and can be
-   // constructed from a read-only std::span without mutating the source data.
+   // C++ interoperability: a Queue supports const traversal and accepts owned
+   // materialization from bounded range/view sources without mutating them.
    // --------------------------------------------------------------------------
    static constexpr int source_values[] = {10, 20, 30};
    constexpr std::span source_span{source_values};
@@ -1197,6 +1234,14 @@ namespace cljonic {
 
    constexpr auto from_span_ctad = Queue{source_span};
    static_assert(from_span_ctad.begin()[1] == 20);
+
+   // A standard view pipeline can use an existing Queue as its source and
+   // materialize transformed values into another Queue.
+   const auto pipeline_source = Queue<int, 4>{1, 2, 3};
+   const auto shifted_view =
+       pipeline_source |
+       std::views::transform([](int value) { return value + 10; });
+   const auto from_pipeline = Queue<int, 4>{shifted_view};
 
    // Constructing a Queue from a runtime C++ array/span
    int runtime_buffer[] = {100, 200, 300};
@@ -1220,7 +1265,7 @@ namespace cljonic {
    }
 
    return (fifo_sum == 600 && from_span_sum == 60 &&
-           runtime_from_span_sum == 600)
+           runtime_from_span_sum == 600 && from_pipeline.peek() == 11)
               ? 0
               : 1;
  }
@@ -1287,17 +1332,22 @@ class Queue {
         ((*this = conj(T{std::forward<Args>(args)})), ...);
     }
 
-    template <typename SourceElement, std::size_t Extent>
-    constexpr Queue(std::span<const SourceElement, Extent> source) noexcept {
-        static_assert(std::same_as<std::remove_cvref_t<SourceElement>, value_type>,
-                      "Queue span constructor requires a matching element type");
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "Queue span source exceeds Queue CapacityValue");
-        }
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Queue>)
+    constexpr Queue(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(std::same_as<std::remove_cvref_t<source_value_type>, value_type>,
+                      "Queue range/view constructor requires a matching element type");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Queue static-extent range source exceeds Queue CapacityValue");
 
-        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
-        for (std::size_t index = 0; index < copy_count; ++index) {
-            *this = conj(value_type{source[index]});
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = conj(value_type{std::forward<decltype(item)>(item)});
         }
     }
 
@@ -1370,10 +1420,6 @@ Queue(First, Rest...) -> Queue<First, 1 + sizeof...(Rest)>;
 
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
-Queue(std::span<const SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
-
-template <typename SourceElement, std::size_t Extent>
-    requires(Extent != std::dynamic_extent)
 Queue(std::span<SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
@@ -1396,6 +1442,7 @@ struct collection_traits<Queue<T, CapacityValue>> {
 #include <array>
 #include <cstddef>
 #include <cstdlib>
+#include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
@@ -1432,10 +1479,16 @@ namespace cljonic {
    const auto present = runtime(10);
    const auto missing = runtime(30, -1);
 
+   // A standard view pipeline can use an existing Set as its source and
+   // materialize transformed values into another Set.
+   const auto doubled_view =
+       runtime | std::views::transform([](int value) { return value * 2; });
+   const auto from_pipeline = AccountSet{doubled_view};
+
    // -------------------------------------------------------------------------
-   // C++ interoperability: a Set exposes const content traversal, a non-owning
-   // std::span, and can be constructed from a read-only std::span without
-   // mutating the source data.
+   // C++ interoperability: a Set supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
    // -------------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 11, 33};
    constexpr std::span source_span{source_values};
@@ -1467,8 +1520,8 @@ namespace cljonic {
    const auto runtime_view = runtime.view();
 
    return (present == 10 && missing == -1 && observed_sum == 30 &&
-           runtime_view.size() == 2 && runtime_from_span(100) == 100 &&
-           runtime_from_span(300) == 300)
+           from_pipeline(20) == 20 && runtime_view.size() == 2 &&
+           runtime_from_span(100) == 100 && runtime_from_span(300) == 300)
               ? 0
               : 1;
  }
@@ -1501,17 +1554,23 @@ class Set {
         }
     }
 
-    template <typename SourceElement, std::size_t Extent>
-    constexpr Set(std::span<const SourceElement, Extent> source) noexcept {
-        static_assert(std::convertible_to<SourceElement, value_type>,
-                      "Set span constructor requires SourceElement to be implicitly convertible to T without throwing");
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "Set span source exceeds Set CapacityValue");
-        }
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Set>)
+    constexpr Set(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+                      "Set range/view constructor requires each source element to construct "
+                      "T without throwing and be implicitly convertible to T");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Set static-extent range source exceeds Set CapacityValue");
 
-        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
-        for (std::size_t index = 0; index < copy_count; ++index) {
-            *this = conj(value_type{source[index]});
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = conj(value_type{std::forward<decltype(item)>(item)});
         }
     }
 
@@ -1625,10 +1684,6 @@ Set(First, Rest...) -> Set<First, 1 + sizeof...(Rest)>;
 
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
-Set(std::span<const SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
-
-template <typename SourceElement, std::size_t Extent>
-    requires(Extent != std::dynamic_extent)
 Set(std::span<SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
@@ -1650,6 +1705,7 @@ struct collection_traits<Set<T, CapacityValue>> {
 
 #include <array>
 #include <cstddef>
+#include <ranges>
 #include <span>
 #include <string_view>
 
@@ -1690,11 +1746,11 @@ namespace cljonic {
    const auto missing = runtime(9, '!');
 
    // -------------------------------------------------------------------------
-   // C++ interoperability: a String exposes const content traversal, a
-   // non-owning std::string_view, and can be constructed from std::string_view
-   // or read-only std::span without mutating the source data.  Literal
-   // construction supports capacity deduction, but a string_view's size is not
-   // part of its type, so view construction requires capacity.
+   // C++ interoperability: a String supports const traversal and exposes a
+   // non-owning std::string_view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity. A
+   // string_view's size is not part of its type, so view construction requires
+   // an explicit capacity.
    // -------------------------------------------------------------------------
    static constexpr std::string_view static_source{"from view"};
    constexpr auto from_static_view = String<16>{static_source};
@@ -1703,6 +1759,13 @@ namespace cljonic {
    const std::string_view runtime_source{"runtime view"};
    const auto from_runtime_view = String<16>{runtime_source};
    const auto runtime_view_copy = from_runtime_view.view();
+
+   // A standard view pipeline can use an existing String as its source and
+   // materialize transformed characters into another String.
+   const auto uppercase_view = runtime | std::views::transform([](char byte) {
+                                 return byte == 'i' ? 'I' : byte;
+                               });
+   const auto from_pipeline = String<8>{uppercase_view};
 
    static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
    static constexpr auto span_source{std::span<const char, 4>{char_source}};
@@ -1721,7 +1784,8 @@ namespace cljonic {
 
    return (first == 'H' && missing == '!' && byte_sum == 'H' + 'i' &&
            runtime_view == std::string_view{"Hi"} &&
-           runtime_view_copy == runtime_source)
+           runtime_view_copy == runtime_source &&
+           from_pipeline.view() == std::string_view{"HI"})
               ? 0
               : 1;
  }
@@ -1758,13 +1822,22 @@ class String {
         copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
     }
 
-    template <std::size_t Extent>
-    constexpr String(std::span<const char, Extent> source) noexcept {
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "String span source exceeds String CapacityValue");
-        }
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, String> &&
+                 std::same_as<std::remove_cv_t<std::ranges::range_value_t<SourceRange>>, char>)
+    constexpr String(SourceRange&& source) noexcept {
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "String static-extent range source exceeds String CapacityValue");
 
-        copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
+        std::size_t copy_count = 0;
+        for (auto&& byte : std::forward<SourceRange>(source)) {
+            if (copy_count >= CapacityValue) {
+                break;
+            }
+            data_[copy_count++] = normalize_byte(static_cast<char>(byte));
+        }
+        logical_size_ = copy_count;
+        data_[logical_size_] = '\0';
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -1849,9 +1922,9 @@ class String {
 template <std::size_t N>
 String(const char (&)[N]) -> String<N - 1U>;
 
-template <std::size_t Extent>
+template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
-String(std::span<const char, Extent>) -> String<Extent>;
+String(std::span<SourceElement, Extent>) -> String<Extent>;
 
 } // namespace cljonic
 
@@ -1870,6 +1943,7 @@ struct collection_traits<String<CapacityValue>> {
 
 #include <array>
 #include <cstddef>
+#include <ranges>
 #include <span>
 #include <utility>
 
@@ -1963,10 +2037,17 @@ namespace cljonic {
    const auto negative_default = runtime_values(-1);
    const auto negative_fallback = runtime_values(-1, 99);
 
+   // A standard view pipeline can use an existing Vector as its source and
+   // materialize transformed values into another Vector.
+   const auto doubled_view =
+       runtime_values |
+       std::views::transform([](int value) { return value * 2; });
+   const auto from_pipeline = Vector<int, 4>{doubled_view};
+
    // -----------------------------------------------------------------------
-   // C++ interoperability: a Vector exposes const content traversal, a
-   // non-owning std::span, and can be constructed from a read-only std::span
-   // without mutating the source data.
+   // C++ interoperability: a Vector supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
    // -----------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 33, 44};
    constexpr std::span source_span{source_values};
@@ -1997,6 +2078,7 @@ namespace cljonic {
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
            pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
            range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
+           from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
            runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
               ? 0
               : 1;
@@ -2024,21 +2106,26 @@ class Vector {
         initialize_storage_if_valid(std::forward<Args>(args)...);
     }
 
-    template <typename SourceElement, std::size_t Extent>
-    constexpr Vector(std::span<SourceElement, Extent> source) noexcept {
-        static_assert(concepts::NothrowElementConstruction<ElementType, SourceElement>,
-                      "Vector span constructor requires SourceElement to construct "
-                      "ElementType without throwing and be implicitly convertible to ElementType");
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Vector>)
+    constexpr Vector(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<ElementType, source_value_type>,
+                      "Vector range/view constructor requires each source element to "
+                      "construct ElementType without throwing and be implicitly "
+                      "convertible to ElementType");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Vector static-extent range source exceeds Vector CapacityValue");
 
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "Vector span source exceeds Vector CapacityValue");
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count >= CapacityValue) {
+                break;
+            }
+            storage_[copy_count++] = value_type{std::forward<decltype(item)>(item)};
         }
-
-        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
         logical_size_ = copy_count;
-        for (std::size_t index = 0; index < logical_size_; ++index) {
-            storage_[index] = value_type{source[index]};
-        }
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2120,10 +2207,6 @@ Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
 Vector(std::span<SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
-
-template <typename SourceElement, std::size_t Extent>
-    requires(Extent != std::dynamic_extent)
-Vector(std::span<const SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
 

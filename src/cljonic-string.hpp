@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstddef>
+#include <ranges>
 #include <span>
 #include <string_view>
 
@@ -45,11 +46,11 @@ namespace cljonic {
    const auto missing = runtime(9, '!');
 
    // -------------------------------------------------------------------------
-   // C++ interoperability: a String exposes const content traversal, a
-   // non-owning std::string_view, and can be constructed from std::string_view
-   // or read-only std::span without mutating the source data.  Literal
-   // construction supports capacity deduction, but a string_view's size is not
-   // part of its type, so view construction requires capacity.
+   // C++ interoperability: a String supports const traversal and exposes a
+   // non-owning std::string_view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity. A
+   // string_view's size is not part of its type, so view construction requires
+   // an explicit capacity.
    // -------------------------------------------------------------------------
    static constexpr std::string_view static_source{"from view"};
    constexpr auto from_static_view = String<16>{static_source};
@@ -58,6 +59,13 @@ namespace cljonic {
    const std::string_view runtime_source{"runtime view"};
    const auto from_runtime_view = String<16>{runtime_source};
    const auto runtime_view_copy = from_runtime_view.view();
+
+   // A standard view pipeline can use an existing String as its source and
+   // materialize transformed characters into another String.
+   const auto uppercase_view = runtime | std::views::transform([](char byte) {
+                                 return byte == 'i' ? 'I' : byte;
+                               });
+   const auto from_pipeline = String<8>{uppercase_view};
 
    static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
    static constexpr auto span_source{std::span<const char, 4>{char_source}};
@@ -76,7 +84,8 @@ namespace cljonic {
 
    return (first == 'H' && missing == '!' && byte_sum == 'H' + 'i' &&
            runtime_view == std::string_view{"Hi"} &&
-           runtime_view_copy == runtime_source)
+           runtime_view_copy == runtime_source &&
+           from_pipeline.view() == std::string_view{"HI"})
               ? 0
               : 1;
  }
@@ -113,13 +122,22 @@ class String {
         copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
     }
 
-    template <std::size_t Extent>
-    constexpr String(std::span<const char, Extent> source) noexcept {
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "String span source exceeds String CapacityValue");
-        }
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, String> &&
+                 std::same_as<std::remove_cv_t<std::ranges::range_value_t<SourceRange>>, char>)
+    constexpr String(SourceRange&& source) noexcept {
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "String static-extent range source exceeds String CapacityValue");
 
-        copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
+        std::size_t copy_count = 0;
+        for (auto&& byte : std::forward<SourceRange>(source)) {
+            if (copy_count >= CapacityValue) {
+                break;
+            }
+            data_[copy_count++] = normalize_byte(static_cast<char>(byte));
+        }
+        logical_size_ = copy_count;
+        data_[logical_size_] = '\0';
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -204,9 +222,9 @@ class String {
 template <std::size_t N>
 String(const char (&)[N]) -> String<N - 1U>;
 
-template <std::size_t Extent>
+template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
-String(std::span<const char, Extent>) -> String<Extent>;
+String(std::span<SourceElement, Extent>) -> String<Extent>;
 
 } // namespace cljonic
 

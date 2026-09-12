@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
+#include <ranges>
 #include <span>
 
 #include <cljonic-concepts.hpp>
@@ -43,6 +44,14 @@ namespace cljonic {
    const auto present = runtime(Key{3});
    const auto missing = runtime(Key{4}, Value{77});
 
+   // A standard view pipeline can use an existing Map as its source and
+   // materialize the transformed entries into another Map.
+   const auto copied_view =
+       runtime | std::views::transform([](const AccountEntry &entry) {
+         return AccountEntry{entry.key, Value{entry.value.amount * 2}};
+       });
+   const auto from_pipeline = AccountMap{copied_view};
+
    // A named map type and its named entry type make the intended value model
    // explicit. A later duplicate key replaces the earlier value (i.e., the
    // right-most value associated with a duplicate key).
@@ -55,9 +64,9 @@ namespace cljonic {
    static_assert(literal(Key{2}, Value{99}).amount == 99);
 
    // ---------------------------------------------------------------------------
-   // C++ interoperability: a Map exposes const logical traversal, a non-owning
-   // std::span, and can be constructed from a read-only std::span without
-   // mutating the source data.
+   // C++ interoperability: a Map supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
    // ---------------------------------------------------------------------------
    static constexpr AccountEntry source_entries[] = {
        AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
@@ -87,6 +96,7 @@ namespace cljonic {
    return (present.amount == 30 && missing.amount == 77 && value_sum == 30 &&
            runtime_view.size() == 1 && runtime_view[0].value.amount == 30 &&
            from_span(Key{10}).amount == 100 &&
+           from_pipeline(Key{3}).amount == 60 &&
            runtime_from_span(Key{100}).amount == 1000)
               ? 0
               : 1;
@@ -117,18 +127,23 @@ class Map {
         ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
     }
 
-    template <typename SourceElement, std::size_t Extent>
-    constexpr Map(std::span<const SourceElement, Extent> source) noexcept {
-        static_assert(concepts::NothrowElementConstruction<value_type, SourceElement>,
-                      "Map span constructor requires SourceElement to construct "
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Map>)
+    constexpr Map(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+                      "Map range/view constructor requires each source element to construct "
                       "MapEntry without throwing and be implicitly convertible to MapEntry");
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "Map span source exceeds Map CapacityValue");
-        }
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Map static-extent range source exceeds Map CapacityValue");
 
-        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
-        for (std::size_t index = 0; index < copy_count; ++index) {
-            *this = assoc_entry(value_type{source[index]});
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = assoc_entry(value_type{std::forward<decltype(item)>(item)});
         }
     }
 

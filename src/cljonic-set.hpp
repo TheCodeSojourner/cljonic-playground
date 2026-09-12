@@ -5,6 +5,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdlib>
+#include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
@@ -44,10 +45,16 @@ namespace cljonic {
    const auto present = runtime(10);
    const auto missing = runtime(30, -1);
 
+   // A standard view pipeline can use an existing Set as its source and
+   // materialize transformed values into another Set.
+   const auto doubled_view =
+       runtime | std::views::transform([](int value) { return value * 2; });
+   const auto from_pipeline = AccountSet{doubled_view};
+
    // -------------------------------------------------------------------------
-   // C++ interoperability: a Set exposes const content traversal, a non-owning
-   // std::span, and can be constructed from a read-only std::span without
-   // mutating the source data.
+   // C++ interoperability: a Set supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
    // -------------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 11, 33};
    constexpr std::span source_span{source_values};
@@ -79,8 +86,8 @@ namespace cljonic {
    const auto runtime_view = runtime.view();
 
    return (present == 10 && missing == -1 && observed_sum == 30 &&
-           runtime_view.size() == 2 && runtime_from_span(100) == 100 &&
-           runtime_from_span(300) == 300)
+           from_pipeline(20) == 20 && runtime_view.size() == 2 &&
+           runtime_from_span(100) == 100 && runtime_from_span(300) == 300)
               ? 0
               : 1;
  }
@@ -113,17 +120,23 @@ class Set {
         }
     }
 
-    template <typename SourceElement, std::size_t Extent>
-    constexpr Set(std::span<const SourceElement, Extent> source) noexcept {
-        static_assert(std::convertible_to<SourceElement, value_type>,
-                      "Set span constructor requires SourceElement to be implicitly convertible to T without throwing");
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "Set span source exceeds Set CapacityValue");
-        }
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Set>)
+    constexpr Set(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+                      "Set range/view constructor requires each source element to construct "
+                      "T without throwing and be implicitly convertible to T");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Set static-extent range source exceeds Set CapacityValue");
 
-        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
-        for (std::size_t index = 0; index < copy_count; ++index) {
-            *this = conj(value_type{source[index]});
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = conj(value_type{std::forward<decltype(item)>(item)});
         }
     }
 
@@ -234,10 +247,6 @@ class Set {
 
 template <typename First, typename... Rest>
 Set(First, Rest...) -> Set<First, 1 + sizeof...(Rest)>;
-
-template <typename SourceElement, std::size_t Extent>
-    requires(Extent != std::dynamic_extent)
-Set(std::span<const SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
 
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)

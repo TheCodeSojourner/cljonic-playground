@@ -1,8 +1,10 @@
 #ifndef CLJONIC_CONCEPTS_HPP
 #define CLJONIC_CONCEPTS_HPP
 
+#include <array>
 #include <concepts>
 #include <cstddef>
+#include <span>
 #include <type_traits>
 #include <utility>
 
@@ -23,6 +25,25 @@ inline constexpr bool is_cljonic_collection_v = collection_traits<std::remove_cv
 
 template <typename T>
 inline constexpr collection_kind collection_kind_of_v = collection_traits<std::remove_cvref_t<T>>::kind;
+
+template <typename T>
+struct static_extent : std::integral_constant<std::size_t, std::dynamic_extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<std::span<ElementType, Extent>> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<std::array<ElementType, Extent>> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<ElementType[Extent]> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename T>
+inline constexpr std::size_t static_extent_v = static_extent<std::remove_cvref_t<T>>::value;
+
+template <typename T, std::size_t CapacityValue>
+inline constexpr bool static_extent_fits_v =
+    static_extent_v<T> == std::dynamic_extent || static_extent_v<T> <= CapacityValue;
 
 } // namespace concepts_detail
 

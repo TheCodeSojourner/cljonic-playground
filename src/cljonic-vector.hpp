@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstddef>
+#include <ranges>
 #include <span>
 #include <utility>
 
@@ -98,10 +99,17 @@ namespace cljonic {
    const auto negative_default = runtime_values(-1);
    const auto negative_fallback = runtime_values(-1, 99);
 
+   // A standard view pipeline can use an existing Vector as its source and
+   // materialize transformed values into another Vector.
+   const auto doubled_view =
+       runtime_values |
+       std::views::transform([](int value) { return value * 2; });
+   const auto from_pipeline = Vector<int, 4>{doubled_view};
+
    // -----------------------------------------------------------------------
-   // C++ interoperability: a Vector exposes const content traversal, a
-   // non-owning std::span, and can be constructed from a read-only std::span
-   // without mutating the source data.
+   // C++ interoperability: a Vector supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
    // -----------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 33, 44};
    constexpr std::span source_span{source_values};
@@ -132,6 +140,7 @@ namespace cljonic {
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
            pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
            range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
+           from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
            runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
               ? 0
               : 1;
@@ -159,21 +168,26 @@ class Vector {
         initialize_storage_if_valid(std::forward<Args>(args)...);
     }
 
-    template <typename SourceElement, std::size_t Extent>
-    constexpr Vector(std::span<SourceElement, Extent> source) noexcept {
-        static_assert(concepts::NothrowElementConstruction<ElementType, SourceElement>,
-                      "Vector span constructor requires SourceElement to construct "
-                      "ElementType without throwing and be implicitly convertible to ElementType");
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Vector>)
+    constexpr Vector(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<ElementType, source_value_type>,
+                      "Vector range/view constructor requires each source element to "
+                      "construct ElementType without throwing and be implicitly "
+                      "convertible to ElementType");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Vector static-extent range source exceeds Vector CapacityValue");
 
-        if constexpr (Extent != std::dynamic_extent) {
-            static_assert(Extent <= CapacityValue, "Vector span source exceeds Vector CapacityValue");
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count >= CapacityValue) {
+                break;
+            }
+            storage_[copy_count++] = value_type{std::forward<decltype(item)>(item)};
         }
-
-        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
         logical_size_ = copy_count;
-        for (std::size_t index = 0; index < logical_size_; ++index) {
-            storage_[index] = value_type{source[index]};
-        }
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -255,10 +269,6 @@ Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
 Vector(std::span<SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
-
-template <typename SourceElement, std::size_t Extent>
-    requires(Extent != std::dynamic_extent)
-Vector(std::span<const SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
 
