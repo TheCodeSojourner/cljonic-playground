@@ -37,6 +37,10 @@ namespace cljonic {
  */
 template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType>
 struct MapEntry {
+    using key_type = KeyType;
+    using value_type = ValueType;
+    using mapped_type = ValueType;
+
     KeyType key{};
     ValueType value{};
 

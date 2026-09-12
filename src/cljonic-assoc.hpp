@@ -18,14 +18,14 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   static_assert(m_const.contains(1));
+ *   static_assert(contains(m_const, 1));
  *   static_assert(m_const(1) == 100);
  *
  *   // Runtime demonstration.
  *   auto m_runtime = Map<int, int, 4>{};
  *   auto m1 = assoc(m_runtime, 2, 200);
  *
- *   return (m1.contains(2) && m1(2) == 200) ? 0 : 1;
+ *   return (contains(m1, 2) && m1(2) == 200) ? 0 : 1;
  * }
  * ~~~~~
  */

@@ -1,8 +1,10 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <iterator>
+#include <type_traits>
 #include <utility>
 
 #include <cljonic-concepts.hpp>
@@ -30,8 +32,27 @@ namespace cljonic {
    [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
    [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
 
+   // ---------------------------------------------------------------------
+   // C++ interoperability: a Queue exposes const logical traversal, and
+   // can be constructed from a read-only std::span without mutating the
+   // source data.
+   // ---------------------------------------------------------------------
+   static constexpr int source_values[] = {10, 20, 30};
+   constexpr std::span source_span{source_values};
+   constexpr auto from_span = Queue<int, 4>{source_span};
+   static_assert(from_span.begin()[0] == 10);
+   static_assert(from_span.begin()[2] == 30);
+
+   constexpr auto from_span_ctad = Queue{source_span};
+   static_assert(from_span_ctad.begin()[1] == 20);
+
+   // Constructing a Queue from a runtime C++ array/span
+   int runtime_buffer[] = {100, 200, 300};
+   const auto runtime_from_span =
+       Queue<int, 4>{std::span<const int>{runtime_buffer, 3}};
+
    // Const C++ interoperability uses begin()/end() for logical FIFO traversal.
-   constexpr auto wrapped = Queue<int, 4>{1, 2, 3, 4}.pop().conj(5);
+   constexpr auto wrapped = Queue<int, 4>{2, 3, 4, 5};
    static_assert(wrapped.begin()[0] == 2);
    static_assert(wrapped.begin()[1] == 3);
    static_assert(wrapped.begin()[2] == 4);
@@ -43,7 +64,19 @@ namespace cljonic {
      fifo_sum += value;
    }
 
-   return (wrapped.count() == 4 && fifo_sum == 14) ? 0 : 1;
+   int from_span_sum = 0;
+   for (const auto value : from_span) {
+     from_span_sum += value;
+   }
+
+   int runtime_from_span_sum = 0;
+   for (const auto value : runtime_from_span) {
+     runtime_from_span_sum += value;
+   }
+
+   return (fifo_sum == 14 && from_span_sum == 60 && runtime_from_span_sum == 600)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
@@ -106,6 +139,20 @@ class Queue {
                       "T without throwing and be implicitly convertible to T");
 
         ((*this = conj(T{std::forward<Args>(args)})), ...);
+    }
+
+    template <typename SourceElement, std::size_t Extent>
+    constexpr Queue(std::span<const SourceElement, Extent> source) noexcept {
+        static_assert(std::same_as<std::remove_cvref_t<SourceElement>, value_type>,
+                      "Queue span constructor requires a matching element type");
+        if constexpr (Extent != std::dynamic_extent) {
+            static_assert(Extent <= CapacityValue, "Queue span source exceeds Queue CapacityValue");
+        }
+
+        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
+        for (std::size_t index = 0; index < copy_count; ++index) {
+            *this = conj(value_type{source[index]});
+        }
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -174,6 +221,14 @@ class Queue {
 
 template <typename First, typename... Rest>
 Queue(First, Rest...) -> Queue<First, 1 + sizeof...(Rest)>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Queue(std::span<const SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Queue(std::span<SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
 

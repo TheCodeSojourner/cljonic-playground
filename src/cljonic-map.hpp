@@ -1,7 +1,7 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
-#include <concepts>
 #include <cstddef>
 #include <span>
 
@@ -40,8 +40,8 @@ namespace cljonic {
    using AccountMap = Map<Key, Value, 2>;
 
    // A named map type and its named entry type make the intended value model
-   // explicit. Pack construction folds over entries; a later duplicate key
-   // replaces the earlier value.
+   // explicit. A later duplicate key replaces the earlier value (i.e., the
+   // right-most value associated with a duplicate key).
    constexpr auto literal = AccountMap{AccountEntry{Key{1}, Value{10}},
                                        AccountEntry{Key{1}, Value{20}}};
 
@@ -50,17 +50,39 @@ namespace cljonic {
    static_assert(literal(Key{2}).amount == 0);
    static_assert(literal(Key{2}, Value{99}).amount == 99);
 
-   // Const C++ interoperability exposes MapEntry values through a range and
-   // a non-owning contiguous standard view.
-   static_assert(literal.begin()->value.amount == 20);
-   static_assert(literal.view().size() == 1);
-
    // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
    auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
    const auto present = runtime(Key{3});
    const auto missing = runtime(Key{4}, Value{77});
 
-   // Use C++ interoperability to sum the values in a map
+   // ---------------------------------------------------------------------
+   // C++ interoperability: a Map exposes const logical traversal, a
+   // non-owning contiguous standard view, and can be constructed from a
+   // read-only std::span without mutating the source data.
+   // ---------------------------------------------------------------------
+   static constexpr AccountEntry source_entries[] = {
+       AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
+   constexpr std::span source_span{source_entries};
+   constexpr auto from_span = AccountMap{source_span};
+   static_assert(from_span(Key{10}).amount == 100);
+   static_assert(from_span(Key{20}).amount == 200);
+
+   constexpr auto from_span_ctad = Map{source_span};
+   static_assert(from_span_ctad(Key{10}).amount == 100);
+   static_assert(from_span_ctad.view().size() == 2);
+
+   // Constructing a Map from a runtime C++ array/span
+   AccountEntry runtime_buffer[] = {AccountEntry{Key{100}, Value{1000}},
+                                    AccountEntry{Key{200}, Value{2000}}};
+   const auto runtime_from_span =
+       Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
+
+   // Const C++ interoperability exposes MapEntry values through a range and
+   // a non-owning contiguous standard view.
+   static_assert(literal.begin()->value.amount == 20);
+   static_assert(literal.view().size() == 1);
+
+   // Use C++ interoperability to sum the values in a map.
    int value_sum = 0;
    for (const auto &entry : runtime) {
      value_sum += entry.value.amount;
@@ -69,7 +91,9 @@ namespace cljonic {
    const auto runtime_view = runtime.view();
 
    return (present.amount == 30 && missing.amount == 77 && value_sum == 30 &&
-           runtime_view.size() == 1 && runtime_view[0].value.amount == 30)
+           runtime_view.size() == 1 && runtime_view[0].value.amount == 30 &&
+           from_span(Key{10}).amount == 100 &&
+           runtime_from_span(Key{100}).amount == 1000)
               ? 0
               : 1;
  }
@@ -89,26 +113,29 @@ class Map {
         "Map CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr Map() noexcept = default;
+    template <typename... Args>
+    constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<value_type, Args> && ...),
+                      "Map constructor requires all arguments to construct "
+                      "MapEntry without throwing and be implicitly convertible to MapEntry");
 
-    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
-        return entries_.data();
+        ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
     }
 
-    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
-        return entries_.data() + logical_size_;
-    }
+    template <typename SourceElement, std::size_t Extent>
+    constexpr Map(std::span<const SourceElement, Extent> source) noexcept {
+        static_assert(concepts::NothrowElementConstruction<value_type, SourceElement>,
+                      "Map span constructor requires SourceElement to construct "
+                      "MapEntry without throwing and be implicitly convertible to MapEntry");
+        if constexpr (Extent != std::dynamic_extent) {
+            static_assert(Extent <= CapacityValue, "Map span source exceeds Map CapacityValue");
+        }
 
-    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
-        return {entries_.data(), logical_size_};
-    }
-
-    template <std::same_as<value_type>... Entries>
-        requires(sizeof...(Entries) >= 1)
-    constexpr Map(const Entries&... entries) noexcept {
-        static_assert(sizeof...(Entries) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
-
-        ((*this = assoc_entry(entries)), ...);
+        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
+        for (std::size_t index = 0; index < copy_count; ++index) {
+            *this = assoc_entry(value_type{source[index]});
+        }
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -165,6 +192,18 @@ class Map {
         return result;
     }
 
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return entries_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return entries_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {entries_.data(), logical_size_};
+    }
+
   private:
     [[nodiscard]] constexpr auto find_index(const KeyType& key) const noexcept -> std::size_t {
         for (std::size_t i = 0; i < logical_size_; ++i) {
@@ -185,6 +224,14 @@ class Map {
 
 template <typename KeyType, typename ValueType, typename... Rest>
 Map(MapEntry<KeyType, ValueType>, Rest...) -> Map<KeyType, ValueType, 1 + sizeof...(Rest)>;
+
+template <typename KeyType, typename ValueType, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Map(std::span<const MapEntry<KeyType, ValueType>, Extent>) -> Map<KeyType, ValueType, Extent>;
+
+template <typename KeyType, typename ValueType, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Map(std::span<MapEntry<KeyType, ValueType>, Extent>) -> Map<KeyType, ValueType, Extent>;
 
 } // namespace cljonic
 

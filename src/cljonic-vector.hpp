@@ -133,7 +133,7 @@ namespace cljonic {
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
            pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
            range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
-           runtime_from_span.count() == 3 && runtime_from_span(1) == 200)
+           runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
               ? 0
               : 1;
  }
@@ -254,7 +254,12 @@ template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 
 template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
 Vector(std::span<SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Vector(std::span<const SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
 

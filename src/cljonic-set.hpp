@@ -1,10 +1,12 @@
 #ifndef CLJONIC_SET_HPP
 #define CLJONIC_SET_HPP
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdlib>
 #include <span>
+#include <type_traits>
 #include <utility>
 
 #include <cljonic-concepts.hpp>
@@ -29,18 +31,13 @@ namespace cljonic {
    using AccountId = int;
    using AccountSet = Set<AccountId, 4>;
 
-   // A named set type makes the element and capacity contract explicit. Runtime
-   // pack construction folds conj over the arguments; a duplicate value is a
-   // no-op. Constant-evaluated duplicate construction is rejected.
+   // A named set type makes the element and capacity contract explicit. A
+   // duplicate value is a no-op. Constant-evaluated duplicate construction is
+   // rejected.
    constexpr auto literal = AccountSet{1, 2, 3};
    static_assert(literal(2) == 2);
    static_assert(literal(99) == 0);
    static_assert(literal(99, -1) == -1);
-
-   // Const C++ interoperability exposes the active elements as a range and
-   // as a non-owning contiguous standard view. Set traversal order is not
-   // semantically ordered.
-   static_assert(literal.view().size() == 3);
 
    // Runtime CTAD deduces Set<int, 3> from the argument count and keeps one
    // copy when duplicate values are present.
@@ -48,7 +45,33 @@ namespace cljonic {
    const auto present = runtime(10);
    const auto missing = runtime(30, -1);
 
-   // Use C++ interoperability to sum the values in a set
+   // ---------------------------------------------------------------------
+   // C++ interoperability: a Set exposes const logical traversal, a
+   // non-owning contiguous standard view, and can be constructed from a
+   // read-only std::span without mutating the source data.
+   // ---------------------------------------------------------------------
+   static constexpr int source_values[] = {11, 22, 11, 33};
+   constexpr std::span source_span{source_values};
+   constexpr auto from_span = AccountSet{source_span};
+   static_assert(from_span(11) == 11);
+   static_assert(from_span(22) == 22);
+   static_assert(from_span(33) == 33);
+   static_assert(from_span(99) == 0);
+
+   constexpr auto from_span_ctad = Set{source_span};
+   static_assert(from_span_ctad(22) == 22);
+   static_assert(from_span_ctad.view().size() == 3);
+
+   int runtime_buffer[] = {100, 200, 300};
+   const auto runtime_from_span =
+       Set<int, 4>{std::span<const int>{runtime_buffer, 3}};
+
+   // Const C++ interoperability exposes the active elements as a range and
+   // as a non-owning contiguous standard view. Set traversal order is not
+   // semantically ordered.
+   static_assert(literal.view().size() == 3);
+
+   // Use C++ interoperability to sum the values in a set.
    int observed_sum = 0;
    for (const auto value : runtime) {
      observed_sum += value;
@@ -57,7 +80,8 @@ namespace cljonic {
    const auto runtime_view = runtime.view();
 
    return (present == 10 && missing == -1 && observed_sum == 30 &&
-           runtime_view.size() == 2 && runtime_view[0] == 10)
+           runtime_view.size() == 2 && runtime_from_span(100) == 100 &&
+           runtime_from_span(300) == 300)
               ? 0
               : 1;
  }
@@ -87,6 +111,20 @@ class Set {
             if (duplicate) {
                 std::abort();
             }
+        }
+    }
+
+    template <typename SourceElement, std::size_t Extent>
+    constexpr Set(std::span<const SourceElement, Extent> source) noexcept {
+        static_assert(std::convertible_to<SourceElement, value_type>,
+                      "Set span constructor requires SourceElement to be implicitly convertible to T without throwing");
+        if constexpr (Extent != std::dynamic_extent) {
+            static_assert(Extent <= CapacityValue, "Set span source exceeds Set CapacityValue");
+        }
+
+        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
+        for (std::size_t index = 0; index < copy_count; ++index) {
+            *this = conj(value_type{source[index]});
         }
     }
 
@@ -197,6 +235,14 @@ class Set {
 
 template <typename First, typename... Rest>
 Set(First, Rest...) -> Set<First, 1 + sizeof...(Rest)>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Set(std::span<const SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Set(std::span<SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
 

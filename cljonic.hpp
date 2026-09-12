@@ -333,14 +333,14 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   static_assert(m_const.contains(1));
+ *   static_assert(contains(m_const, 1));
  *   static_assert(m_const(1) == 100);
  *
  *   // Runtime demonstration.
  *   auto m_runtime = Map<int, int, 4>{};
  *   auto m1 = assoc(m_runtime, 2, 200);
  *
- *   return (m1.contains(2) && m1(2) == 200) ? 0 : 1;
+ *   return (contains(m1, 2) && m1(2) == 200) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -457,7 +457,7 @@ namespace cljonic {
  *   constexpr auto q_const = conj(Queue<int, 4>{}, 10);
  *   constexpr auto s_const = conj(Set<int, 4>{}, 20);
  *   static_assert(peek(q_const) == 10);
- *   static_assert(s_const.contains(20));
+ *   static_assert(contains(s_const, 20));
  *
  *   // Runtime demonstration.
  *   auto q_runtime = Queue<int, 4>{};
@@ -465,7 +465,7 @@ namespace cljonic {
  *   auto s_runtime = Set<int, 4>{};
  *   auto s1 = conj(s_runtime, 200);
  *
- *   return (peek(q1) == 100 && s1.contains(200)) ? 0 : 1;
+ *   return (peek(q1) == 100 && contains(s1, 200)) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -616,13 +616,13 @@ namespace cljonic {
  *   // Compile-time demonstration.
  *   constexpr auto s0_const = conj(Set<int, 4>{}, 42);
  *   constexpr auto s1_const = disj(s0_const, 42);
- *   static_assert(!s1_const.contains(42));
+ *   static_assert(!contains(s1_const, 42));
  *
  *   // Runtime demonstration.
  *   auto s0_runtime = conj(Set<int, 4>{}, 99);
  *   auto s1_runtime = disj(s0_runtime, 99);
  *
- *   return (!s1_runtime.contains(99) && s1_runtime.is_empty()) ? 0 : 1;
+ *   return (!contains(s1_runtime, 99) && is_empty(s1_runtime)) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -656,13 +656,13 @@ namespace cljonic {
  *   // Compile-time demonstration.
  *   constexpr auto m0_const = assoc(Map<int, int, 4>{}, 1, 100);
  *   constexpr auto m1_const = dissoc(m0_const, 1);
- *   static_assert(!m1_const.contains(1));
+ *   static_assert(!contains(m1_const, 1));
  *
  *   // Runtime demonstration.
  *   auto m0_runtime = assoc(Map<int, int, 4>{}, 2, 200);
  *   auto m1_runtime = dissoc(m0_runtime, 2);
  *
- *   return (!m1_runtime.contains(2) && m1_runtime.is_empty()) ? 0 : 1;
+ *   return (!contains(m1_runtime, 2) && is_empty(m1_runtime)) ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -777,8 +777,8 @@ template <concepts::SequenceableCollection C>
 // Begin cljonic-map.hpp
 #pragma once
 
+#include <algorithm>
 #include <array>
-#include <concepts>
 #include <cstddef>
 #include <span>
 
@@ -821,6 +821,10 @@ namespace cljonic {
  */
 template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType>
 struct MapEntry {
+    using key_type = KeyType;
+    using value_type = ValueType;
+    using mapped_type = ValueType;
+
     KeyType key{};
     ValueType value{};
 
@@ -872,8 +876,8 @@ namespace cljonic {
    using AccountMap = Map<Key, Value, 2>;
 
    // A named map type and its named entry type make the intended value model
-   // explicit. Pack construction folds over entries; a later duplicate key
-   // replaces the earlier value.
+   // explicit. A later duplicate key replaces the earlier value (i.e., the
+   // right-most value associated with a duplicate key).
    constexpr auto literal = AccountMap{AccountEntry{Key{1}, Value{10}},
                                        AccountEntry{Key{1}, Value{20}}};
 
@@ -882,17 +886,39 @@ namespace cljonic {
    static_assert(literal(Key{2}).amount == 0);
    static_assert(literal(Key{2}, Value{99}).amount == 99);
 
-   // Const C++ interoperability exposes MapEntry values through a range and
-   // a non-owning contiguous standard view.
-   static_assert(literal.begin()->value.amount == 20);
-   static_assert(literal.view().size() == 1);
-
    // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
    auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
    const auto present = runtime(Key{3});
    const auto missing = runtime(Key{4}, Value{77});
 
-   // Use C++ interoperability to sum the values in a map
+   // ---------------------------------------------------------------------
+   // C++ interoperability: a Map exposes const logical traversal, a
+   // non-owning contiguous standard view, and can be constructed from a
+   // read-only std::span without mutating the source data.
+   // ---------------------------------------------------------------------
+   static constexpr AccountEntry source_entries[] = {
+       AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
+   constexpr std::span source_span{source_entries};
+   constexpr auto from_span = AccountMap{source_span};
+   static_assert(from_span(Key{10}).amount == 100);
+   static_assert(from_span(Key{20}).amount == 200);
+
+   constexpr auto from_span_ctad = Map{source_span};
+   static_assert(from_span_ctad(Key{10}).amount == 100);
+   static_assert(from_span_ctad.view().size() == 2);
+
+   // Constructing a Map from a runtime C++ array/span
+   AccountEntry runtime_buffer[] = {AccountEntry{Key{100}, Value{1000}},
+                                    AccountEntry{Key{200}, Value{2000}}};
+   const auto runtime_from_span =
+       Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
+
+   // Const C++ interoperability exposes MapEntry values through a range and
+   // a non-owning contiguous standard view.
+   static_assert(literal.begin()->value.amount == 20);
+   static_assert(literal.view().size() == 1);
+
+   // Use C++ interoperability to sum the values in a map.
    int value_sum = 0;
    for (const auto &entry : runtime) {
      value_sum += entry.value.amount;
@@ -901,7 +927,9 @@ namespace cljonic {
    const auto runtime_view = runtime.view();
 
    return (present.amount == 30 && missing.amount == 77 && value_sum == 30 &&
-           runtime_view.size() == 1 && runtime_view[0].value.amount == 30)
+           runtime_view.size() == 1 && runtime_view[0].value.amount == 30 &&
+           from_span(Key{10}).amount == 100 &&
+           runtime_from_span(Key{100}).amount == 1000)
               ? 0
               : 1;
  }
@@ -921,26 +949,29 @@ class Map {
         "Map CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    constexpr Map() noexcept = default;
+    template <typename... Args>
+    constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<value_type, Args> && ...),
+                      "Map constructor requires all arguments to construct "
+                      "MapEntry without throwing and be implicitly convertible to MapEntry");
 
-    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
-        return entries_.data();
+        ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
     }
 
-    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
-        return entries_.data() + logical_size_;
-    }
+    template <typename SourceElement, std::size_t Extent>
+    constexpr Map(std::span<const SourceElement, Extent> source) noexcept {
+        static_assert(concepts::NothrowElementConstruction<value_type, SourceElement>,
+                      "Map span constructor requires SourceElement to construct "
+                      "MapEntry without throwing and be implicitly convertible to MapEntry");
+        if constexpr (Extent != std::dynamic_extent) {
+            static_assert(Extent <= CapacityValue, "Map span source exceeds Map CapacityValue");
+        }
 
-    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
-        return {entries_.data(), logical_size_};
-    }
-
-    template <std::same_as<value_type>... Entries>
-        requires(sizeof...(Entries) >= 1)
-    constexpr Map(const Entries&... entries) noexcept {
-        static_assert(sizeof...(Entries) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
-
-        ((*this = assoc_entry(entries)), ...);
+        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
+        for (std::size_t index = 0; index < copy_count; ++index) {
+            *this = assoc_entry(value_type{source[index]});
+        }
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -997,6 +1028,18 @@ class Map {
         return result;
     }
 
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return entries_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return entries_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {entries_.data(), logical_size_};
+    }
+
   private:
     [[nodiscard]] constexpr auto find_index(const KeyType& key) const noexcept -> std::size_t {
         for (std::size_t i = 0; i < logical_size_; ++i) {
@@ -1017,6 +1060,14 @@ class Map {
 
 template <typename KeyType, typename ValueType, typename... Rest>
 Map(MapEntry<KeyType, ValueType>, Rest...) -> Map<KeyType, ValueType, 1 + sizeof...(Rest)>;
+
+template <typename KeyType, typename ValueType, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Map(std::span<const MapEntry<KeyType, ValueType>, Extent>) -> Map<KeyType, ValueType, Extent>;
+
+template <typename KeyType, typename ValueType, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Map(std::span<MapEntry<KeyType, ValueType>, Extent>) -> Map<KeyType, ValueType, Extent>;
 
 } // namespace cljonic
 
@@ -1112,9 +1163,11 @@ template <typename C>
 // Begin cljonic-queue.hpp
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <iterator>
+#include <type_traits>
 #include <utility>
 
 
@@ -1139,8 +1192,27 @@ namespace cljonic {
    [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
    [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
 
+   // ---------------------------------------------------------------------
+   // C++ interoperability: a Queue exposes const logical traversal, and
+   // can be constructed from a read-only std::span without mutating the
+   // source data.
+   // ---------------------------------------------------------------------
+   static constexpr int source_values[] = {10, 20, 30};
+   constexpr std::span source_span{source_values};
+   constexpr auto from_span = Queue<int, 4>{source_span};
+   static_assert(from_span.begin()[0] == 10);
+   static_assert(from_span.begin()[2] == 30);
+
+   constexpr auto from_span_ctad = Queue{source_span};
+   static_assert(from_span_ctad.begin()[1] == 20);
+
+   // Constructing a Queue from a runtime C++ array/span
+   int runtime_buffer[] = {100, 200, 300};
+   const auto runtime_from_span =
+       Queue<int, 4>{std::span<const int>{runtime_buffer, 3}};
+
    // Const C++ interoperability uses begin()/end() for logical FIFO traversal.
-   constexpr auto wrapped = Queue<int, 4>{1, 2, 3, 4}.pop().conj(5);
+   constexpr auto wrapped = Queue<int, 4>{2, 3, 4, 5};
    static_assert(wrapped.begin()[0] == 2);
    static_assert(wrapped.begin()[1] == 3);
    static_assert(wrapped.begin()[2] == 4);
@@ -1152,7 +1224,19 @@ namespace cljonic {
      fifo_sum += value;
    }
 
-   return (wrapped.count() == 4 && fifo_sum == 14) ? 0 : 1;
+   int from_span_sum = 0;
+   for (const auto value : from_span) {
+     from_span_sum += value;
+   }
+
+   int runtime_from_span_sum = 0;
+   for (const auto value : runtime_from_span) {
+     runtime_from_span_sum += value;
+   }
+
+   return (fifo_sum == 14 && from_span_sum == 60 && runtime_from_span_sum == 600)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
@@ -1215,6 +1299,20 @@ class Queue {
                       "T without throwing and be implicitly convertible to T");
 
         ((*this = conj(T{std::forward<Args>(args)})), ...);
+    }
+
+    template <typename SourceElement, std::size_t Extent>
+    constexpr Queue(std::span<const SourceElement, Extent> source) noexcept {
+        static_assert(std::same_as<std::remove_cvref_t<SourceElement>, value_type>,
+                      "Queue span constructor requires a matching element type");
+        if constexpr (Extent != std::dynamic_extent) {
+            static_assert(Extent <= CapacityValue, "Queue span source exceeds Queue CapacityValue");
+        }
+
+        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
+        for (std::size_t index = 0; index < copy_count; ++index) {
+            *this = conj(value_type{source[index]});
+        }
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -1284,6 +1382,14 @@ class Queue {
 template <typename First, typename... Rest>
 Queue(First, Rest...) -> Queue<First, 1 + sizeof...(Rest)>;
 
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Queue(std::span<const SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Queue(std::span<SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -1300,10 +1406,12 @@ struct collection_traits<Queue<T, CapacityValue>> {
 #ifndef CLJONIC_SET_HPP
 #define CLJONIC_SET_HPP
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdlib>
 #include <span>
+#include <type_traits>
 #include <utility>
 
 
@@ -1325,18 +1433,13 @@ namespace cljonic {
    using AccountId = int;
    using AccountSet = Set<AccountId, 4>;
 
-   // A named set type makes the element and capacity contract explicit. Runtime
-   // pack construction folds conj over the arguments; a duplicate value is a
-   // no-op. Constant-evaluated duplicate construction is rejected.
+   // A named set type makes the element and capacity contract explicit. A
+   // duplicate value is a no-op. Constant-evaluated duplicate construction is
+   // rejected.
    constexpr auto literal = AccountSet{1, 2, 3};
    static_assert(literal(2) == 2);
    static_assert(literal(99) == 0);
    static_assert(literal(99, -1) == -1);
-
-   // Const C++ interoperability exposes the active elements as a range and
-   // as a non-owning contiguous standard view. Set traversal order is not
-   // semantically ordered.
-   static_assert(literal.view().size() == 3);
 
    // Runtime CTAD deduces Set<int, 3> from the argument count and keeps one
    // copy when duplicate values are present.
@@ -1344,7 +1447,33 @@ namespace cljonic {
    const auto present = runtime(10);
    const auto missing = runtime(30, -1);
 
-   // Use C++ interoperability to sum the values in a set
+   // ---------------------------------------------------------------------
+   // C++ interoperability: a Set exposes const logical traversal, a
+   // non-owning contiguous standard view, and can be constructed from a
+   // read-only std::span without mutating the source data.
+   // ---------------------------------------------------------------------
+   static constexpr int source_values[] = {11, 22, 11, 33};
+   constexpr std::span source_span{source_values};
+   constexpr auto from_span = AccountSet{source_span};
+   static_assert(from_span(11) == 11);
+   static_assert(from_span(22) == 22);
+   static_assert(from_span(33) == 33);
+   static_assert(from_span(99) == 0);
+
+   constexpr auto from_span_ctad = Set{source_span};
+   static_assert(from_span_ctad(22) == 22);
+   static_assert(from_span_ctad.view().size() == 3);
+
+   int runtime_buffer[] = {100, 200, 300};
+   const auto runtime_from_span =
+       Set<int, 4>{std::span<const int>{runtime_buffer, 3}};
+
+   // Const C++ interoperability exposes the active elements as a range and
+   // as a non-owning contiguous standard view. Set traversal order is not
+   // semantically ordered.
+   static_assert(literal.view().size() == 3);
+
+   // Use C++ interoperability to sum the values in a set.
    int observed_sum = 0;
    for (const auto value : runtime) {
      observed_sum += value;
@@ -1353,7 +1482,8 @@ namespace cljonic {
    const auto runtime_view = runtime.view();
 
    return (present == 10 && missing == -1 && observed_sum == 30 &&
-           runtime_view.size() == 2 && runtime_view[0] == 10)
+           runtime_view.size() == 2 && runtime_from_span(100) == 100 &&
+           runtime_from_span(300) == 300)
               ? 0
               : 1;
  }
@@ -1383,6 +1513,20 @@ class Set {
             if (duplicate) {
                 std::abort();
             }
+        }
+    }
+
+    template <typename SourceElement, std::size_t Extent>
+    constexpr Set(std::span<const SourceElement, Extent> source) noexcept {
+        static_assert(std::convertible_to<SourceElement, value_type>,
+                      "Set span constructor requires SourceElement to be implicitly convertible to T without throwing");
+        if constexpr (Extent != std::dynamic_extent) {
+            static_assert(Extent <= CapacityValue, "Set span source exceeds Set CapacityValue");
+        }
+
+        const auto copy_count = std::min<std::size_t>(source.size(), CapacityValue);
+        for (std::size_t index = 0; index < copy_count; ++index) {
+            *this = conj(value_type{source[index]});
         }
     }
 
@@ -1493,6 +1637,14 @@ class Set {
 
 template <typename First, typename... Rest>
 Set(First, Rest...) -> Set<First, 1 + sizeof...(Rest)>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Set(std::span<const SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Set(std::span<SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
 
@@ -1860,7 +2012,7 @@ namespace cljonic {
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
            pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
            range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
-           runtime_from_span.count() == 3 && runtime_from_span(1) == 200)
+           runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
               ? 0
               : 1;
  }
@@ -1981,7 +2133,12 @@ template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 
 template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
 Vector(std::span<SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Vector(std::span<const SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
 
