@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <array>
+#include <ranges>
 #include <span>
 #include <string_view>
 
@@ -208,7 +210,14 @@ TEST_CASE("String imports from const char spans without allocating or mutating t
     STATIC_REQUIRE(from_static_span.view() == std::string_view{"ABCD"});
 
     char runtime_bytes[] = {'X', 'Y', 'Z', 'W'};
+    std::span mutable_source{runtime_bytes};
+    const auto ctad_from_mutable_span = String{mutable_source};
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(ctad_from_mutable_span)>, String<4>>);
+    REQUIRE(ctad_from_mutable_span.view() == std::string_view{"XYZW"});
+
     const std::span<const char> runtime_source{runtime_bytes, 4U};
+    const auto from_runtime_span_fit = String<4>{runtime_source};
+    REQUIRE(from_runtime_span_fit.view() == std::string_view{"XYZW"});
     const auto from_runtime_span = String<2>{runtime_source};
     REQUIRE(from_runtime_span.view() == std::string_view{"XY"});
     REQUIRE(runtime_source[0] == 'X');
@@ -218,4 +227,25 @@ TEST_CASE("String imports from const char spans without allocating or mutating t
     const std::span<const char> invalid_source{invalid_bytes, 4U};
     const auto normalized = String<4>{invalid_source};
     REQUIRE(normalized.view() == std::string_view{"A..B"});
+}
+
+TEST_CASE("String accepts bounded character ranges and views", "[string][interop][range]") {
+    using cljonic::String;
+
+    const std::array<char, 4> source{{'A', 'B', 'C', 'D'}};
+    const auto from_static_array = String<4>{source};
+    const auto from_static_span = String<4>{std::span<const char, 4>{source}};
+    REQUIRE(from_static_array.view() == std::string_view{"ABCD"});
+    REQUIRE(from_static_span.view() == std::string_view{"ABCD"});
+
+    const std::span<const char> dynamic_source{source};
+    const auto copied = String<3>{dynamic_source};
+    REQUIRE(copied.view() == std::string_view{"ABC"});
+
+    const auto mapped =
+        std::views::transform(source, [](char byte) { return byte == 'B' ? static_cast<char>(0x80) : byte; });
+    const auto normalized = String<4>{mapped};
+    REQUIRE(normalized.view() == std::string_view{"A.CD"});
+    const auto normalized_bounded = String<3>{mapped};
+    REQUIRE(normalized_bounded.view() == std::string_view{"A.CD"}.substr(0, 3));
 }

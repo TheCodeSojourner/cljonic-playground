@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <array>
 #include <concepts>
 #include <ranges>
 #include <string_view>
@@ -63,4 +64,33 @@ TEST_CASE("Collection C++ interoperability exposes const logical traversal and v
     REQUIRE(empty_map.view().empty());
     REQUIRE(empty_set.view().empty());
     REQUIRE(empty_string.view().empty());
+}
+
+TEST_CASE("Vector accepts bounded range and view source imports", "[interop][vector][range]") {
+    using cljonic::Vector;
+
+    std::array<int, 5> values{10, 20, 30, 40, 50};
+    constexpr std::array<int, 3> static_values{{1, 2, 3}};
+    const auto from_static_array = Vector<int, 3>{static_values};
+    const auto from_static_span = Vector<int, 3>{std::span<const int, 3>{static_values}};
+    REQUIRE(from_static_array.count() == 3U);
+    REQUIRE(from_static_span.count() == 3U);
+
+    const std::span<const int> dynamic_source{values};
+    const auto from_array = Vector<int, 3>{dynamic_source};
+    REQUIRE(from_array.count() == 3U);
+    REQUIRE(from_array.view()[0] == 10);
+    REQUIRE(from_array.view()[1] == 20);
+    REQUIRE(from_array.view()[2] == 30);
+
+    const auto mapped = std::views::transform(values, [](int value) { return value * 2; });
+    const auto from_view = Vector<int, 4>{mapped};
+    REQUIRE(from_view.count() == 4U);
+    REQUIRE(from_view.view()[0] == 20);
+    REQUIRE(from_view.view()[1] == 40);
+    REQUIRE(from_view.view()[2] == 60);
+    REQUIRE(from_view.view()[3] == 80);
+
+    const auto from_view_fit = Vector<int, 5>{mapped};
+    REQUIRE(from_view_fit.count() == 5U);
 }
