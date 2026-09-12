@@ -5,6 +5,7 @@ entity CollectionSourceConstruction {
     direct_source_construction_is_non_allocating: Boolean
     direct_source_construction_is_non_throwing: Boolean
     direct_source_construction_does_not_borrow_source: Boolean
+    range_or_view_source_is_accepted: Boolean
     static_extent_overflow_is_compile_time_failure: Boolean
     runtime_extent_overflow_returns_bounded_prefix: Boolean
     complete_materialization_uses_fits_into: Boolean
@@ -25,6 +26,10 @@ entity CollectionSourceConstruction {
 
     invariant DirectSourceConstructionDoesNotBorrowSource {
         this.direct_source_construction_does_not_borrow_source = true
+    }
+
+    invariant RangeOrViewSourceIsAccepted {
+        this.range_or_view_source_is_accepted = true
     }
 
     invariant StaticExtentOverflowIsCompileTimeFailure {
