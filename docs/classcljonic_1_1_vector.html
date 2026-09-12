@@ -118,8 +118,9 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae20df8cbc8d873f43c22e5e7d9a522dc" id="r_ae20df8cbc8d873f43c22e5e7d9a522dc"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:ae20df8cbc8d873f43c22e5e7d9a522dc template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector</a> (Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; ElementType, Args &gt; &amp;&amp;...))</td></tr>
-<tr class="memitem:ab602bb2643c4b89f332094c6c1f6290b" id="r_ab602bb2643c4b89f332094c6c1f6290b"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; </td></tr>
-<tr class="memitem:ab602bb2643c4b89f332094c6c1f6290b template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ab602bb2643c4b89f332094c6c1f6290b">Vector</a> (std::span&lt; SourceElement, Extent &gt; source) noexcept</td></tr>
+<tr class="memitem:a18cce75e603f9869618f8b4a5af9c109" id="r_a18cce75e603f9869618f8b4a5af9c109"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range SourceRange&gt; <br />
+requires (!std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, Vector&gt;)</td></tr>
+<tr class="memitem:a18cce75e603f9869618f8b4a5af9c109 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a18cce75e603f9869618f8b4a5af9c109">Vector</a> (SourceRange &amp;&amp;source) noexcept((concepts::NothrowElementConstruction&lt; ElementType, std::ranges::range_value_t&lt; SourceRange &gt; &gt;))</td></tr>
 <tr class="memitem:af3a8f9df8505364d41714f6806f3b673" id="r_af3a8f9df8505364d41714f6806f3b673"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af3a8f9df8505364d41714f6806f3b673">count</a> () const noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:ad1002c3b40154458d2a1e7571595e2ee" id="r_ad1002c3b40154458d2a1e7571595e2ee"><td class="memTemplParams" colspan="2">template&lt;std::integral IndexType&gt; </td></tr>
 <tr class="memitem:ad1002c3b40154458d2a1e7571595e2ee template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ad1002c3b40154458d2a1e7571595e2ee">operator()</a> (IndexType index) const noexcept -&gt; <a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a></td></tr>
@@ -219,10 +220,17 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> negative_default = runtime_values(-1);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> negative_fallback = runtime_values(-1, 99);</div>
 <div class="line"> </div>
+<div class="line">  <span class="comment">// A standard view pipeline can use an existing Vector as its source and</span></div>
+<div class="line">  <span class="comment">// materialize transformed values into another Vector.</span></div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> doubled_view =</div>
+<div class="line">      runtime_values |</div>
+<div class="line">      std::views::transform([](<span class="keywordtype">int</span> value) { <span class="keywordflow">return</span> value * 2; });</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> from_pipeline = <a class="code hl_function" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector&lt;int, 4&gt;</a>{doubled_view};</div>
+<div class="line"> </div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="comment">// C++ interoperability: a Vector exposes const content traversal, a</span></div>
-<div class="line">  <span class="comment">// non-owning std::span, and can be constructed from a read-only std::span</span></div>
-<div class="line">  <span class="comment">// without mutating the source data.</span></div>
+<div class="line">  <span class="comment">// C++ interoperability: a Vector supports const traversal and exposes a</span></div>
+<div class="line">  <span class="comment">// non-owning std::span view. Range/view sources are copied into owned</span></div>
+<div class="line">  <span class="comment">// storage, retaining only the bounded prefix that fits the capacity.</span></div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
 <div class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> source_values[] = {11, 22, 33, 44};</div>
 <div class="line">  <span class="keyword">constexpr</span> std::span source_span{source_values};</div>
@@ -253,14 +261,15 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="keywordflow">return</span> (fallback == -1 &amp;&amp; negative_default == 0 &amp;&amp; negative_fallback == 99 &amp;&amp;</div>
 <div class="line">          pixel_value == Pixel{3, 4} &amp;&amp; pixel_fallback == Pixel{99, 99} &amp;&amp;</div>
 <div class="line">          range_sum == 16 &amp;&amp; runtime_view.size() == 2 &amp;&amp; runtime_view[0] == 7 &amp;&amp;</div>
+<div class="line">          from_pipeline(0) == 14 &amp;&amp; from_pipeline(1) == 18 &amp;&amp;</div>
 <div class="line">          runtime_from_span(0) == 100 &amp;&amp; runtime_from_span(1) == 200)</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_ae20df8cbc8d873f43c22e5e7d9a522dc"><div class="ttname"><a href="#ae20df8cbc8d873f43c22e5e7d9a522dc">cljonic::Vector::Vector</a></div><div class="ttdeci">constexpr Vector(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; ElementType, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00152">cljonic-vector.hpp:152</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html_ae20df8cbc8d873f43c22e5e7d9a522dc"><div class="ttname"><a href="#ae20df8cbc8d873f43c22e5e7d9a522dc">cljonic::Vector::Vector</a></div><div class="ttdeci">constexpr Vector(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; ElementType, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00161">cljonic-vector.hpp:161</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00142">142</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00151">151</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a0c0629be3dc07d0e27e94774cbb1c90d" name="a0c0629be3dc07d0e27e94774cbb1c90d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0c0629be3dc07d0e27e94774cbb1c90d">&#9670;&#160;</a></span>value_type</h2>
@@ -276,7 +285,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00144">144</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00153">153</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -308,19 +317,20 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00152">152</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00161">161</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
-<a id="ab602bb2643c4b89f332094c6c1f6290b" name="ab602bb2643c4b89f332094c6c1f6290b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab602bb2643c4b89f332094c6c1f6290b">&#9670;&#160;</a></span>Vector() <span class="overload">[2/2]</span></h2>
+<a id="a18cce75e603f9869618f8b4a5af9c109" name="a18cce75e603f9869618f8b4a5af9c109"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18cce75e603f9869618f8b4a5af9c109">&#9670;&#160;</a></span>Vector() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt; </div>
 <div class="memtemplate">
-template&lt;typename SourceElement, std::size_t Extent&gt; </div>
+template&lt;std::ranges::input_range SourceRange&gt; <br />
+requires (!std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, Vector&gt;)</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -328,7 +338,7 @@ template&lt;typename SourceElement, std::size_t Extent&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector</a>&lt; ElementType, CapacityValue &gt;::Vector </td>
           <td>(</td>
-          <td class="paramtype">std::span&lt; SourceElement, Extent &gt;</td>          <td class="paramname"><span class="paramname"><em>source</em></span></td><td>)</td>
+          <td class="paramtype">SourceRange &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -339,7 +349,7 @@ template&lt;typename SourceElement, std::size_t Extent&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00163">163</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00173">173</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -369,7 +379,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00206">206</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00220">220</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -398,7 +408,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00179">179</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00193">193</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -429,7 +439,7 @@ template&lt;std::integral IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00198">198</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00212">212</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -458,7 +468,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00183">183</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00197">197</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -487,7 +497,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00210">210</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00224">224</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -516,7 +526,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00202">202</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00216">216</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -547,7 +557,7 @@ template&lt;std::integral IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00188">188</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00202">202</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -582,7 +592,7 @@ template&lt;std::integral IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00193">193</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00207">207</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -611,7 +621,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00214">214</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00228">228</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>

@@ -108,8 +108,10 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="headertitle"><div class="title">cljonic-concepts.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;concepts&gt;</code><br />
+<div class="textblock"><code>#include &lt;array&gt;</code><br />
+<code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;span&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 </div>
@@ -118,6 +120,10 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acollection_5Ftraits_3C_20T_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acollection_5Ftraits_3C_20T_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1collection__traits.html">cljonic::concepts_detail::collection_traits&lt; T &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Astatic_5Fextent_3C_20T_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Astatic_5Fextent_3C_20T_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1static__extent.html">cljonic::concepts_detail::static_extent&lt; T &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Astatic_5Fextent_3C_20std_3A_3Aspan_3C_20ElementType_2C_20Extent_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Astatic_5Fextent_3C_20std_3A_3Aspan_3C_20ElementType_2C_20Extent_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1static__extent_3_01std_1_1span_3_01_element_type_00_01_extent_01_4_01_4.html">cljonic::concepts_detail::static_extent&lt; std::span&lt; ElementType, Extent &gt; &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Astatic_5Fextent_3C_20std_3A_3Aarray_3C_20ElementType_2C_20Extent_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Astatic_5Fextent_3C_20std_3A_3Aarray_3C_20ElementType_2C_20Extent_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1static__extent_3_01std_1_1array_3_01_element_type_00_01_extent_01_4_01_4.html">cljonic::concepts_detail::static_extent&lt; std::array&lt; ElementType, Extent &gt; &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Astatic_5Fextent_3C_20ElementType_5BExtent_5D_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Astatic_5Fextent_3C_20ElementType_5BExtent_5D_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1static__extent_3_01_element_type_0f_extent_0e_4.html">cljonic::concepts_detail::static_extent&lt; ElementType[Extent]&gt;</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
@@ -164,6 +170,10 @@ Variables</h2></td></tr>
 <tr class="memitem:a73f7ff005d9e039617b5e5cebc565db1 template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">cljonic::concepts_detail::is_cljonic_collection_v</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1collection__traits.html">collection_traits</a>&lt;std::remove_cvref_t&lt;T&gt;&gt;::is_cljonic_collection</td></tr>
 <tr class="memitem:aa28e715182329ded226fe9e4779dd265" id="r_aa28e715182329ded226fe9e4779dd265"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:aa28e715182329ded226fe9e4779dd265 template"><td class="memItemLeft">constexpr <a class="el" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122">collection_kind</a>&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#aa28e715182329ded226fe9e4779dd265">cljonic::concepts_detail::collection_kind_of_v</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1collection__traits.html">collection_traits</a>&lt;std::remove_cvref_t&lt;T&gt;&gt;::kind</td></tr>
+<tr class="memitem:a29e1da7a418720132814cc4045837614" id="r_a29e1da7a418720132814cc4045837614"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a29e1da7a418720132814cc4045837614 template"><td class="memItemLeft">constexpr std::size_t&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a29e1da7a418720132814cc4045837614">cljonic::concepts_detail::static_extent_v</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1static__extent.html">static_extent</a>&lt;std::remove_cvref_t&lt;T&gt;&gt;::value</td></tr>
+<tr class="memitem:ac4bb744bda73962104f419d622a023f0" id="r_ac4bb744bda73962104f419d622a023f0"><td class="memTemplParams" colspan="2">template&lt;typename T, std::size_t CapacityValue&gt; </td></tr>
+<tr class="memitem:ac4bb744bda73962104f419d622a023f0 template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#ac4bb744bda73962104f419d622a023f0">cljonic::concepts_detail::static_extent_fits_v</a></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
