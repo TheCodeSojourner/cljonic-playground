@@ -1,31 +1,4 @@
 var searchData=
 [
-  ['capacity_0',['capacity',['../classcljonic_1_1_vector.html#a3751464b19a9a970946e9607248c7463',1,'cljonic::Vector']]],
-  ['cheatsheet_1',['Cheatsheet',['../index.html#autotoc_md0',1,'']]],
-  ['cljonic_2',['cljonic',['../namespacecljonic.html',1,'cljonic'],['../index.html',1,'cljonic']]],
-  ['cljonic_2dconcepts_2ehpp_3',['cljonic-concepts.hpp',['../cljonic-concepts_8hpp.html',1,'']]],
-  ['cljonic_2dconfig_2ehpp_4',['cljonic-config.hpp',['../cljonic-config_8hpp.html',1,'']]],
-  ['cljonic_2dcore_2dcollection_2dmaximum_2delement_2dcount_2ehpp_5',['cljonic-core-collection-maximum-element-count.hpp',['../cljonic-core-collection-maximum-element-count_8hpp.html',1,'']]],
-  ['cljonic_2dcore_2dcount_2ehpp_6',['cljonic-core-count.hpp',['../cljonic-core-count_8hpp.html',1,'']]],
-  ['cljonic_2dcore_2dget_2ehpp_7',['cljonic-core-get.hpp',['../cljonic-core-get_8hpp.html',1,'']]],
-  ['cljonic_2dcore_2dvalid_2dindex_2ehpp_8',['cljonic-core-valid-index.hpp',['../cljonic-core-valid-index_8hpp.html',1,'']]],
-  ['cljonic_2dcore_2ehpp_9',['cljonic-core.hpp',['../cljonic-core_8hpp.html',1,'']]],
-  ['cljonic_2drange_2ehpp_10',['cljonic-range.hpp',['../cljonic-range_8hpp.html',1,'']]],
-  ['cljonic_2dvector_2ehpp_11',['cljonic-vector.hpp',['../cljonic-vector_8hpp.html',1,'']]],
-  ['cljonic_3a_3aconcepts_12',['concepts',['../namespacecljonic_1_1concepts.html',1,'cljonic']]],
-  ['cljonic_3a_3aconcepts_3a_3acollection_13',['Collection',['../conceptcljonic_1_1concepts_1_1_collection.html',1,'cljonic::concepts']]],
-  ['cljonic_3a_3aconcepts_3a_3anothrowelementconstruction_14',['NothrowElementConstruction',['../conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html',1,'cljonic::concepts']]],
-  ['cljonic_3a_3aconcepts_3a_3anothrowvectorelement_15',['NothrowVectorElement',['../conceptcljonic_1_1concepts_1_1_nothrow_vector_element.html',1,'cljonic::concepts']]],
-  ['cljonic_3a_3aconcepts_3a_3avectorelement_16',['VectorElement',['../conceptcljonic_1_1concepts_1_1_vector_element.html',1,'cljonic::concepts']]],
-  ['cljonic_3a_3acore_17',['core',['../namespacecljonic_1_1core.html',1,'cljonic']]],
-  ['cljonic_5fcollection_5fmaximum_5felement_5fcount_18',['CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT',['../cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad',1,'cljonic-config.hpp']]],
-  ['cljonic_5fcollection_5fmaximum_5felement_5fcount_5fvalue_19',['CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE',['../namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6',1,'cljonic']]],
-  ['cljonic_5fstringify_20',['CLJONIC_STRINGIFY',['../cljonic-config_8hpp.html#a79e6d0db8a00de83923cebef40296dab',1,'cljonic-config.hpp']]],
-  ['cljonic_5fstringify_5finner_21',['CLJONIC_STRINGIFY_INNER',['../cljonic-config_8hpp.html#a3ccee2b1e01650766a2f03a218937d78',1,'cljonic-config.hpp']]],
-  ['collection_20types_22',['Collection Types',['../index.html#autotoc_md2',1,'']]],
-  ['collection_5fmaximum_5felement_5fcount_23',['collection_maximum_element_count',['../namespacecljonic.html#a591193c4ffd57fbcab1db9e3bcc1b78f',1,'cljonic']]],
-  ['composition_24',['Composition',['../index.html#autotoc_md4',1,'']]],
-  ['control_25',['Control',['../index.html#autotoc_md5',1,'']]],
-  ['core_20functions_26',['Core Functions',['../index.html#autotoc_md3',1,'']]],
-  ['count_27',['count',['../namespacecljonic.html#acbdaef8bdea2d7e22e36c8914ac52751',1,'cljonic']]]
+  ['begin_0',['begin',['../classcljonic_1_1_map.html#afd9ec2fa068d1883890abe0d2b0e6978',1,'cljonic::Map::begin()'],['../classcljonic_1_1_queue.html#a7cf92cc69c5da81bd041f50d2c3e7810',1,'cljonic::Queue::begin()'],['../classcljonic_1_1_set.html#ae362cf5366884b4ae9d1ce5a2c110e6e',1,'cljonic::Set::begin()'],['../classcljonic_1_1_string.html#ab0d6cad61c03e3fed4f8b98fc973cce3',1,'cljonic::String::begin()'],['../classcljonic_1_1_vector.html#a5e4292e09c0bf523ade8df97f96c845d',1,'cljonic::Vector::begin()']]]
 ];

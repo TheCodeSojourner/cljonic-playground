@@ -4,12 +4,12 @@
 
 // Intentionally remap common heap APIs so strict no-heap checks fail fast.
 extern "C" {
-void *cljonic_forbidden_malloc(std::size_t);
-void *cljonic_forbidden_calloc(std::size_t, std::size_t);
-void *cljonic_forbidden_realloc(void *, std::size_t);
-void cljonic_forbidden_free(void *);
-void *cljonic_forbidden_aligned_alloc(std::size_t, std::size_t);
-int cljonic_forbidden_posix_memalign(void **, std::size_t, std::size_t);
+void* cljonic_forbidden_malloc(std::size_t);
+void* cljonic_forbidden_calloc(std::size_t, std::size_t);
+void* cljonic_forbidden_realloc(void*, std::size_t);
+void cljonic_forbidden_free(void*);
+void* cljonic_forbidden_aligned_alloc(std::size_t, std::size_t);
+int cljonic_forbidden_posix_memalign(void**, std::size_t, std::size_t);
 }
 
 #define malloc cljonic_forbidden_malloc

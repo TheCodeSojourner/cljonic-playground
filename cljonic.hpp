@@ -7,7 +7,7 @@
 // Begin cljonic-config.hpp
 #pragma once
 
-#if !defined(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT)
+#ifndef CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT
 #define CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT 1000
 #endif
 
@@ -15,45 +15,34 @@
 #define CLJONIC_STRINGIFY(x) CLJONIC_STRINGIFY_INNER(x)// End cljonic-config.hpp
 
 /** \mainpage
- * \b cljonic is a \b header-only C++ library designed to allow an \b embedded
- * \b systems C++ developer to program in a \b Functional \b Programming \b
- * Style using a set of functions \b similar in \b name and \b function to \b
- * Clojure. To address the embedded systems focus, \b cljonic \b DOES \b NOT use
- * the heap or exceptions, and uses \b Modern \b C++ features to \b protect , \b
- * guide , and \b teach C++ developers. Finally, \b cljonic is a library that
- * includes unit tests with nearly <b>100% coverage</b>, and is designed to be
- * efficiently maintained.
+ * \b cljonic is a \b header-only C++ library designed to allow an \b embedded \b systems C++ developer to program in a
+ * \b Functional \b Programming \b Style using a set of functions \b similar in \b name and \b function to \b Clojure.
+ * To address the embedded systems focus, \b cljonic \b DOES \b NOT use the heap or exceptions, and uses \b Modern \b
+ * C++ features to \b protect , \b guide , and \b teach C++ developers. Finally, \b cljonic is a library that includes
+ * unit tests with nearly <b>100% coverage</b>, and is designed to be efficiently maintained.
  *
- * The motivation for \b cljonic comes from observations made about the
- * pragmatic use of C++ for embedded systems software development, the
- * progression of the C++ language (e.g., C++11, C++14, C++17, C++20, C++23),
- * and the counsel of software development "experts", in many different
- * programming languages, that <b>a functional programming style should be
- * eagerly embraced by all developers</b>.
+ * The motivation for \b cljonic comes from observations made about the pragmatic use of C++ for embedded systems
+ * software development, the progression of the C++ language (e.g., C++11, C++14, C++17, C++20, C++23), and the counsel
+ * of software development "experts", in many different programming languages, that <b>a functional programming style
+ * should be eagerly embraced by all developers</b>.
  *
- * Many embedded systems C++ developers are <b>not academic programming language
- * experts</b> with in-depth knowledge of every C++ feature, and many <b>may not
- * have time</b> to follow the progression of the language.  Rather, many
- * embedded systems C++ developers have <b>strong hardware backgrounds</B>, and
- * <B>know a pragmatic specific subset of C++</B> that is often sufficient to
- * deliver reasonably good software in a predictable amount of time, though this
- * is often <b>not optimized for minimal long term cost of ownership</b>.
- * Generally speaking, many C++ developers use a subset of the \b C programming
- * language with some of C++'s <b>Object Oriented</b> capabilities.  This begs a
+ * Many embedded systems C++ developers are <b>not academic programming language experts</b> with in-depth knowledge of
+ * every C++ feature, and many <b>may not have time</b> to follow the progression of the language.  Rather, many
+ * embedded systems C++ developers have <b>strong hardware backgrounds</B>, and <B>know a pragmatic specific subset of
+ * C++</B> that is often sufficient to deliver reasonably good software in a predictable amount of time, though this is
+ * often <b>not optimized for minimal long term cost of ownership</b>. Generally speaking, many C++ developers use a
+ * subset of the \b C programming language with some of C++'s <b>Object Oriented</b> capabilities.  This begs a
  * question:
  *
- * <b>Is there a pragmatic subset of Modern C++ that enables embedded systems
- * developers to produce higher-quality, more efficient, and more maintainable
- * code?</b>
+ * <b>Is there a pragmatic subset of Modern C++ that enables embedded systems developers to produce higher-quality,
+ * more efficient, and more maintainable code?</b>
  *
- * Changes to C++ have provided valuable capabilities that are time consuming to
- * master, hence it is both <b> valuable to development organizations</b> for
- * their developers to use modern C++ capabilities, and <b> too expensive to
- * train</b> all of their developers to be experts in their use.  This, too,
- * begs a question:
+ * Changes to C++ have provided valuable capabilities that are time consuming to master, hence it is both <b> valuable
+ * to development organizations</b> for their developers to use modern C++ capabilities, and <b> too expensive to
+ * train</b> all of their developers to be experts in their use.  This, too, begs a question:
  *
- * <b>Can one or two embedded systems software developers cost-effectively
- * introduce modern C++ capabilities to the entire team?</b>
+ * <b>Can one or two embedded systems software developers cost-effectively introduce modern C++ capabilities to the
+ * entire team?</b>
  *
  * In this post:
  *
@@ -61,45 +50,34 @@
  *
  * the author makes the following statements:
  *
- * <b>"A large fraction of the flaws in software development are due to
- * programmers not fully understanding all the possible states their code may
- * execute in. In a multithreaded environment, the lack of understanding and the
+ * <b>"A large fraction of the flaws in software development are due to programmers not fully understanding all the
+ * possible states their code may execute in. In a multithreaded environment, the lack of understanding and the
  *  resulting problems are greatly amplified, almost to the point of panic if
- * you are paying attention. Programming in a functional style makes the state
- * presented to your code explicit, which makes it much easier to reason about
+ * you are paying attention. Programming in a functional style makes the state presented to your code explicit, which
+ * makes it much easier to reason about
  *  [(i.e., Fewer mistakes, and less debugging)], and, in a completely pure
  * system, makes thread race conditions impossible."
  *
- * "No matter what language you work in, programming in a functional style
- * provides benefits. You should do it whenever it is convenient, and you should
- * think hard about the decision when it isn't convenient."</b>
+ * "No matter what language you work in, programming in a functional style provides benefits. You should do it whenever
+ * it is convenient, and you should think hard about the decision when it isn't convenient."</b>
  *
- * \b cljonic is a \b header-only library that utilizes \b Modern \b C++
- * capabilities to provide a functional style C++ \b Clojure subset to \b
- * embedded \b systems developers, promotes the \b predictable \b development of
- * \b higher \b quality code \b faster, and can be \b cost-effectively \b
- * maintained over time.
+ * \b cljonic is a \b header-only library that utilizes \b Modern \b C++ capabilities to provide a functional style C++
+ * \b Clojure subset to \b embedded \b systems developers, promotes the \b predictable \b development of \b higher \b
+ * quality code \b faster, and can be \b cost-effectively \b maintained over time.
  *
  * \anchor Core_Cheatsheet
- * ___
- * # Cheatsheet
+ * ___ # Cheatsheet
  *
  * ## Aliases
  *
- * | Namespace | "using" C++ Statement |
- * |-----------|-------------------------|
- * | \ref Namespace_Core "core" | using **core** = cljonic::core; |
- * | \ref Namespace_Regex "regex" | using **regex** = cljonic::regex; |
- * | \ref Namespace_Set "set" | using **set** = cljonic::set; |
- * | \ref Namespace_String "string" | using **string** = cljonic::string; |
+ * | Namespace | "using" C++ Statement | |-----------|-------------------------| | \ref Namespace_Core "core" | using
+ * **core** = cljonic::core; | | \ref Namespace_Set "set" | using **set** = cljonic::set; | | \ref Namespace_String
+ * "string" | using **string** = cljonic::string; |
  *
  * ## Collection Types
  *
- * - \ref Vector "cljonic::Vector"
- * - \ref Range  "cljonic::Range"
- * - \ref Repeat "cljonic::Repeat"
- * - \ref Set    "cljonic::Set"
- * - \ref String "cljonic::String"
+ * - \ref Map "cljonic::Map" - \ref MapEntry "cljonic::MapEntry" - \ref Queue "cljonic::Queue" - \ref Set
+ * "cljonic::Set" - \ref String "cljonic::String" - \ref Vector "cljonic::Vector"
  *
  * ## Core Functions
  *
@@ -109,177 +87,475 @@
  *
  * ### Control
  *
- * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes", \ref Core_If "If",
- * \ref Core_Unless "Unless", \ref Core_When "When", \ref Core_WhenNot "WhenNot"
+ * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes", \ref Core_If "If", \ref Core_Unless "Unless", \ref Core_When
+ * "When", \ref Core_WhenNot "WhenNot"
  *
  * ### Predicate
  *
- * - \ref Core_Compare "Compare"
- * - \ref Core_EQ "EQ"
- * - \ref Core_GE "GE", \ref Core_GT "GT"
- * - \ref Core_IsAlpha "IsAlpha", \ref Core_IsAlphanumeric "IsAlphanumeric",
- * \ref Core_IsBlank "IsBlank", \ref Core_IsControl "IsControl", \ref
- * Core_IsDigit "IsDigit", \ref Core_IsEven "IsEven", \ref Core_IsGraphical
- * "IsGraphical", \ref Core_IsHexDigit "IsHexDigit", \ref Core_IsLowercase
- * "IsLowercase", \ref Core_IsNatural "IsNatural", \ref Core_IsNegative
- * "IsNegative", \ref Core_IsOdd "IsOdd", \ref Core_IsPositive "IsPositive",
- * \ref Core_IsPrintable "IsPrintable", \ref Core_IsPunctuation "IsPunctuation",
- * \ref Core_IsSpace "IsSpace", \ref Core_IsUppercase "IsUppercase", \ref
- * Core_IsZero "IsZero"
- * - \ref Core_LE "LE", \ref Core_LT "LT"
- * - \ref Core_NE "NE"
+ * - \ref Core_Compare "Compare" - \ref Core_EQ "EQ" - \ref Core_GE "GE", \ref Core_GT "GT" - \ref Core_IsAlpha
+ * "IsAlpha", \ref Core_IsAlphanumeric "IsAlphanumeric", \ref Core_IsBlank "IsBlank", \ref Core_IsControl "IsControl",
+ * \ref Core_IsDigit "IsDigit", \ref Core_IsEven "IsEven", \ref Core_IsGraphical "IsGraphical", \ref Core_IsHexDigit
+ * "IsHexDigit", \ref Core_IsLowercase "IsLowercase", \ref Core_IsNatural "IsNatural", \ref Core_IsNegative
+ * "IsNegative", \ref Core_IsOdd "IsOdd", \ref Core_IsPositive "IsPositive", \ref Core_IsPrintable "IsPrintable", \ref
+ * Core_IsPunctuation "IsPunctuation", \ref Core_IsSpace "IsSpace", \ref Core_IsUppercase "IsUppercase", \ref
+ * Core_IsZero "IsZero" - \ref Core_LE "LE", \ref Core_LT "LT" - \ref Core_NE "NE"
  *
  * ### Primitive
  *
- * - \ref Core_Abs "Abs", \ref Core_Add "Add"
- * - \ref Core_Char "Char", \ref Core_Combinations "Combinations", \ref
- * Core_CString "CString"
- * - \ref Core_Dec "Dec", \ref Core_Div "Div"
- * - \ref Core_Factorial "Factorial"
- * - \ref Core_Inc "Inc"
- * - \ref Core_Lowercase "Lowercase"
- * - \ref Core_Max "Max", \ref Core_Min "Min", \ref Core_Mod "Mod", \ref
- * Core_Mul "Mul"
- * - \ref Core_Ord "Ord"
- * - \ref Core_Permutations "Permutations"
- * - \ref Core_Sub "Sub",
- * - \ref Core_Uppercase "Uppercase"
+ * - \ref Core_Abs "Abs", \ref Core_Add "Add" - \ref Core_Char "Char", \ref Core_Combinations "Combinations", \ref
+ * Core_CString "CString" - \ref Core_Dec "Dec", \ref Core_Div "Div" - \ref Core_Factorial "Factorial" - \ref Core_Inc
+ * "Inc" - \ref Core_Lowercase "Lowercase" - \ref Core_Max "Max", \ref Core_Min "Min", \ref Core_Mod "Mod", \ref
+ * Core_Mul "Mul" - \ref Core_Ord "Ord" - \ref Core_Permutations "Permutations" - \ref Core_Sub "Sub", - \ref
+ * Core_Uppercase "Uppercase"
  *
- * ### Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)
+ * ### Deferred sequence traversal
  *
- * - \ref Core_Compose "Compose", \ref Core_Concat "Concat", \ref Core_Conj
- * "Conj", \ref Core_Conj_M "Conj_M", \ref Core_Count "Count", \ref Core_Count_M
- * "Count_M", \ref Core_Cycle "Cycle"
- * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref
- * Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M
- * "DefaultElement_M", \ref Core_Different "Different", \ref Core_Distinct
- * "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
- * Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
- * - \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy
- * "EqualBy", \ref Core_Every "Every"
- * - \ref Core_Filter "Filter", \ref Core_First "First", \ref Core_Flatten
- * "Flatten", \ref Core_FlattenSize "FlattenSize", \ref Core_Frequencies
- * "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy"
- * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref
- * Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref Core_Interleave
- * "Interleave", \ref Core_Interpose "Interpose", \ref Core_IsDistinct
- * "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref Core_IsEmpty
- * "IsEmpty", \ref Core_IsFull "IsFull", \ref Core_Iterate "Iterate"
- * - \ref Core_Juxt "Juxt"
- * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref
- * Core_LastIndexOfBy "LastIndexOfBy"
- * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref
- * Core_Min "Min", \ref Core_MinBy "MinBy"
- * - \ref Core_NotAny "NotAny", \ref Core_NotEvery "NotEvery", \ref Core_Nth
- * "Nth", \ref Core_Nth_M "Nth_M"
- * - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
- * \ref Core_PartitionBy "PartitionBy"
- * - \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref
- * Core_Remove "Remove", \ref Core_Replace "Replace", \ref Core_Reverse
- * "Reverse"
- * - \ref Core_Second "Second", \ref Core_Seq "Seq", \ref Core_Size "Size", \ref
- * Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref
- * Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs
- * "Subs"
- * - \ref Core_ValidIndex "valid_index"
- * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth
- * "TakeNth", \ref Core_TakeWhile "TakeWhile"
- *
- * ## Regex Functions
- *
- * - \ref Regex_ReFind "ReFind", \ref Regex_ReSeq "ReSeq"
+ * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
+ * when their requirements are approved. - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref
+ * Conj "conj", \ref Contains "contains", \ref Count "count" - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy
+ * "DedupeBy", \ref Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M "DefaultElement_M", \ref
+ * Core_Different "Different", \ref Disj "disj", \ref Dissoc "dissoc", \ref Core_Distinct "Distinct", \ref
+ * Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
+ * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy "EqualBy", \ref
+ * Core_Every "Every" - \ref Core_Filter "Filter", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize",
+ * \ref Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy" - \ref Get "get" - \ref Core_Identical
+ * "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref
+ * Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Core_IsDistinct "IsDistinct", \ref
+ * Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull "IsFull", \ref Core_Iterate "Iterate" -
+ * \ref Core_Juxt "Juxt" - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy
+ * "LastIndexOfBy" - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref
+ * Core_MinBy "MinBy" - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref Core_NotEvery "NotEvery", \ref
+ * Core_Nth "Nth", \ref Core_Nth_M "Nth_M" - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
+ * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop" - \ref Core_Reduce "Reduce", \ref
+ * Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse" -
+ * \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy
+ * "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs "Subs" - \ref Core_Take
+ * "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
  * ## Set Functions
  *
- * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy", \ref Set_Contains
- * "Contains", \ref Set_ContainsBy "ContainsBy"
- * - \ref Set_Difference "Difference", \ref Set_DifferenceBy "DifferenceBy",
- * \ref Set_Disj "Disj", \ref Set_DisjBy "DisjBy"
- * - \ref Set_IndexOf "IndexOf", \ref Set_IndexOfBy "IndexOfBy", \ref
- * Set_Intersection "Intersection", \ref Set_IntersectionBy "IntersectionBy"
- * - \ref Set_ToSet "ToSet", \ref Set_ToSetBy "ToSetBy"
- * - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
+ * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy" - \ref Set_Difference "Difference", \ref Set_DifferenceBy
+ * "DifferenceBy", \ref Set_Disj "Disj", \ref Set_DisjBy "DisjBy" - \ref Set_IndexOf "IndexOf", \ref Set_IndexOfBy
+ * "IndexOfBy", \ref Set_Intersection "Intersection", \ref Set_IntersectionBy "IntersectionBy" - \ref Set_ToSet
+ * "ToSet", \ref Set_ToSetBy "ToSetBy" - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
  *
  * ## String Functions
  *
- * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref
- * String_Concat "Concat"
- * - \ref String_EndsWith "EndsWith"
- * - \ref String_FloatToString "FloatToString", \ref String_Format "Format"
- * - \ref String_Includes "Includes", \ref String_IndexOf "IndexOf", \ref
- * String_Interpose "Interpose", \ref String_IntToString "IntToString", \ref
- * String_IntToStringHex "IntToStringHex", \ref String_IsBlank "IsBlank"
- * - \ref String_LastIndexOf "LastIndexOf", \ref String_Lowercase "Lowercase"
- * - \ref String_Partition "Partition", \ref String_PartitionAll "PartitionAll",
- * \ref String_PartitionBy "PartitionBy"
- * - \ref String_Replace "Replace", \ref String_ReplaceFirst "ReplaceFirst"
- * - \ref String_Split "Split", \ref String_SplitCount "SplitCount", \ref
- * String_SplitLine "SplitLine", \ref String_StartsWith "StartsWith", \ref
- * String_StrLen "StrLen", \ref String_StrOfChar "StrOfChar", \ref
- * String_StrToFloat "StrToFloat", \ref String_StrToIntDecimal
- * "StrToIntDecimal", \ref String_StrToIntHex "StrToIntHex", \ref String_Subs
- * "Subs"
- * - \ref String_Trim "Trim", \ref String_TrimLeft "TrimLeft", \ref
- * String_TrimNewLine "TrimNewLine", \ref String_TrimRight "TrimRight"
- * - \ref String_Uppercase "Uppercase"
+ * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref String_Concat "Concat" - \ref
+ * String_EndsWith "EndsWith" - \ref String_FloatToString "FloatToString", \ref String_Format "Format" - \ref
+ * String_Includes "Includes", \ref String_IndexOf "IndexOf", \ref String_Interpose "Interpose", \ref
+ * String_IntToString "IntToString", \ref String_IntToStringHex "IntToStringHex", \ref String_IsBlank "IsBlank" - \ref
+ * String_LastIndexOf "LastIndexOf", \ref String_Lowercase "Lowercase" - \ref String_Partition "Partition", \ref
+ * String_PartitionAll "PartitionAll", \ref String_PartitionBy "PartitionBy" - \ref String_Replace "Replace", \ref
+ * String_ReplaceFirst "ReplaceFirst" - \ref String_Split "Split", \ref String_SplitCount "SplitCount", \ref
+ * String_SplitLine "SplitLine", \ref String_StartsWith "StartsWith", \ref String_StrLen "StrLen", \ref
+ * String_StrOfChar "StrOfChar", \ref String_StrToFloat "StrToFloat", \ref String_StrToIntDecimal "StrToIntDecimal",
+ * \ref String_StrToIntHex "StrToIntHex", \ref String_Subs "Subs" - \ref String_Trim "Trim", \ref String_TrimLeft
+ * "TrimLeft", \ref String_TrimNewLine "TrimNewLine", \ref String_TrimRight "TrimRight" - \ref String_Uppercase
+ * "Uppercase"
  */
 
 /** \anchor Namespace_Core
- * The \b Core namespace provides the vast majority of \b cljonic functions.
- * Many \b Core functions deal with \ref Array, \ref Range, \ref Repeat, \ref
- * Set, and \ref String, collections. The variety and capability of the \b Core
- * functions provide much of the overall value of the <b>cljonic functional
- * style of programming</b>.
+ * The \b Core namespace provides the vast majority of \b cljonic functions. The current Core surface starts with the
+ * Vector collection. Free-function collection operations are planned for later requirements modules.
  */
+
+// Begin cljonic-assoc.hpp
+#ifndef CLJONIC_ASSOC_HPP
+#define CLJONIC_ASSOC_HPP
 
 // Begin cljonic-concepts.hpp
-#pragma once
+#ifndef CLJONIC_CONCEPTS_HPP
+#define CLJONIC_CONCEPTS_HPP
 
+#include <array>
 #include <concepts>
 #include <cstddef>
+#include <span>
+#include <type_traits>
+#include <utility>
 
-namespace cljonic::concepts {
+namespace cljonic {
 
-/** Requires that \p value_type is default-initializable and copyable - the
- * minimum contract for current Vector element storage semantics.
- */
-template <typename value_type>
-concept VectorElement =
-    std::default_initializable<value_type> && std::copyable<value_type>;
+namespace concepts_detail {
 
-/** Requires that Vector storage can be initialized and assigned without
- * throwing.
- */
-template <typename value_type>
-concept NothrowVectorElement =
-    VectorElement<value_type> &&
-    requires(value_type value, const value_type &other) {
-      { value_type{} } noexcept;
-      { value_type{other} } noexcept;
-      { value = other } noexcept;
-    };
+enum class collection_kind { none, vector, map, set, queue, string };
 
-/** Requires that an argument is implicitly convertible to and can construct a
- * Vector element without throwing.
- */
-template <typename value_type, typename argument_type>
-concept NothrowElementConstruction =
-    std::convertible_to<argument_type, value_type> &&
-    requires(argument_type argument) {
-      { argument_type{argument} } noexcept;
-      { value_type{argument} } noexcept;
-    };
-
-/** Requires that \p collection_type exposes a \c size() member returning a
- * count of logical elements.
- */
-template <typename collection_type>
-concept Collection = requires(const collection_type &c) {
-  { c.size() } -> std::same_as<std::size_t>;
+template <typename T>
+struct collection_traits {
+    static constexpr bool is_cljonic_collection = false;
+    static constexpr collection_kind kind = collection_kind::none;
 };
 
-} // namespace cljonic::concepts
+template <typename T>
+inline constexpr bool is_cljonic_collection_v = collection_traits<std::remove_cvref_t<T>>::is_cljonic_collection;
+
+template <typename T>
+inline constexpr collection_kind collection_kind_of_v = collection_traits<std::remove_cvref_t<T>>::kind;
+
+template <typename T>
+struct static_extent : std::integral_constant<std::size_t, std::dynamic_extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<std::span<ElementType, Extent>> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<std::array<ElementType, Extent>> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<ElementType[Extent]> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename T>
+inline constexpr std::size_t static_extent_v = static_extent<std::remove_cvref_t<T>>::value;
+
+template <typename T, std::size_t CapacityValue>
+inline constexpr bool static_extent_fits_v =
+    static_extent_v<T> == std::dynamic_extent || static_extent_v<T> <= CapacityValue;
+
+} // namespace concepts_detail
+
+namespace concepts {
+
+// ============================================================================
+// Storage & Element Capability Concepts
+// ============================================================================
+
+/** Requires that \p T is default-initializable and copyable. */
+template <typename T>
+concept CopyableElement = std::default_initializable<T> && std::copyable<T>;
+
+/** Requires that all collection storage lifetime and copy operations do not throw. */
+template <typename T>
+concept NothrowCollectionElement = CopyableElement<T> && std::destructible<T> && requires(T value, const T& other) {
+    { T{} } noexcept;
+    { T{other} } noexcept;
+    { value = other } noexcept;
+};
+
+template <typename T>
+concept NothrowCopyableElement = NothrowCollectionElement<T>;
+
+/** Requires that an argument is convertible to and can construct an element
+ *  without throwing. */
+template <typename T, typename Arg>
+concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg&& argument) {
+    { T{std::forward<Arg>(argument)} } noexcept;
+};
+
+// ============================================================================
+// Value Capability Concepts
+// ============================================================================
+
+/** Requires stable value equality comparison, explicitly rejecting
+ *  floating-point types to prevent NaN/precision instabilities in map keys
+ *  and set elements. */
+template <typename T>
+concept StableEqualityComparable = std::equality_comparable<T> && !std::floating_point<std::remove_cvref_t<T>>;
+
+/** Requires a strict total ordering layered on stable equality. */
+template <typename T>
+concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
+
+/** Requires stable equality combined with non-throwing collection storage,
+ *  the admission contract shared by map keys and set elements. */
+template <typename T>
+concept NothrowStableEqualityComparable = StableEqualityComparable<T> && NothrowCollectionElement<T>;
+
+// ============================================================================
+// Level 1: CollectionConcept (Nominal Collection Admission)
+// ============================================================================
+
+/** Gates types admitted to the closed nominal cljonic collection domain
+ *  through cljonic-owned trait specialization. */
+template <typename T>
+concept CljonicCollection = concepts_detail::is_cljonic_collection_v<T>;
+
+/** Nominal identity gate for Vector collection types. */
+template <typename T>
+concept CljonicVector =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::vector);
+
+/** Nominal identity gate for Map collection types. */
+template <typename T>
+concept CljonicMap =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::map);
+
+/** Nominal identity gate for Set collection types. */
+template <typename T>
+concept CljonicSet =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::set);
+
+/** Nominal identity gate for Queue collection types. */
+template <typename T>
+concept CljonicQueue =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::queue);
+
+/** Nominal identity gate for String collection types. */
+template <typename T>
+concept CljonicString =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::string);
+
+// ============================================================================
+// Level 2: CapabilityConcept (Structural Collection Capabilities)
+// ============================================================================
+
+/** Requires that an admitted nominal collection provides non-throwing
+ * is_empty() and count() sequence observation. */
+template <typename C>
+concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
+    { c.is_empty() } noexcept -> std::same_as<bool>;
+    { c.count() } noexcept -> std::integral;
+};
+
+/** Requires that a sequenceable collection provides callable indexed lookup
+ *  c(index) and the contains(index) index-in-range membership test (Clojure
+ *  contains? over vector/string indices). */
+template <typename C>
+concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, std::size_t i) {
+    { c(i) } noexcept;
+    { c.contains(i) } noexcept -> std::same_as<bool>;
+};
+
+/** Requires an admitted sequenceable collection to expose a named lookup
+ * domain, callable lookup, and matching membership predicate. */
+template <typename C>
+concept LookupCollection = SequenceableCollection<C> && requires(const C& c, const C::lookup_type& key) {
+    { c(key) } noexcept;
+    { c.contains(key) } noexcept -> std::same_as<bool>;
+};
+
+/** Requires that a sequenceable collection provides callable key lookup
+ *  c(key) and the contains(key) key-presence membership test. */
+template <typename C>
+concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c, const C::key_type& k) {
+    { c(k) } noexcept;
+    { c.contains(k) } noexcept -> std::same_as<bool>;
+};
+
+} // namespace concepts
+
+} // namespace cljonic
+
+#endif // CLJONIC_CONCEPTS_HPP
 // End cljonic-concepts.hpp
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Assoc
+ * \brief Associates a key and value in an associative collection or index in a vector.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   static_assert(contains(m_const, 1));
+ *   static_assert(m_const(1) == 100);
+ *
+ *   // Runtime demonstration.
+ *   auto m_runtime = Map<int, int, 4>{};
+ *   auto m1 = assoc(m_runtime, 2, 200);
+ *
+ *   return (contains(m1, 2) && m1(2) == 200) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K, typename V>
+[[nodiscard]] constexpr auto assoc(const C& collection, const K& key, const V& value) noexcept {
+    return collection.assoc(key, value);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_ASSOC_HPP
+// End cljonic-assoc.hpp
+// Begin cljonic-can-assoc.hpp
+#ifndef CLJONIC_CAN_ASSOC_HPP
+#define CLJONIC_CAN_ASSOC_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor CanAssoc
+ * \brief Checks if assoc can succeed without capacity overflow.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr Map<int, int, 4> m_const{};
+ *   static_assert(can_assoc(m_const, 1));
+ *
+ *   // Runtime demonstration.
+ *   auto m_runtime = Map<int, int, 4>{};
+ *   const auto ok = can_assoc(m_runtime, 2);
+ *
+ *   return ok ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K>
+[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key) noexcept -> bool {
+    return collection.can_assoc(key);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_CAN_ASSOC_HPP
+// End cljonic-can-assoc.hpp
+// Begin cljonic-can-conj.hpp
+#ifndef CLJONIC_CAN_CONJ_HPP
+#define CLJONIC_CAN_CONJ_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor CanConj
+ * \brief Checks if conj can succeed without capacity overflow.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr Queue<int, 4> q_const{};
+ *   static_assert(can_conj(q_const));
+ *   constexpr Set<int, 4> s_const{};
+ *   static_assert(can_conj(s_const, 1));
+ *
+ *   // Runtime demonstration.
+ *   auto q_runtime = Queue<int, 4>{};
+ *   auto s_runtime = Set<int, 4>{};
+ *   const auto q_ok = can_conj(q_runtime);
+ *   const auto s_ok = can_conj(s_runtime, 10);
+ *
+ *   return (q_ok && s_ok) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename... Args>
+[[nodiscard]] constexpr auto can_conj(const C& collection, Args&&... args) noexcept -> bool {
+    return collection.can_conj(std::forward<Args>(args)...);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_CAN_CONJ_HPP
+// End cljonic-can-conj.hpp
+// Begin cljonic-conj.hpp
+#ifndef CLJONIC_CONJ_HPP
+#define CLJONIC_CONJ_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Conj
+ * \brief Adds an element to a collection according to its type conventions.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto q_const = conj(Queue<int, 4>{}, 10);
+ *   constexpr auto s_const = conj(Set<int, 4>{}, 20);
+ *   static_assert(peek(q_const) == 10);
+ *   static_assert(contains(s_const, 20));
+ *
+ *   // Runtime demonstration.
+ *   auto q_runtime = Queue<int, 4>{};
+ *   auto q1 = conj(q_runtime, 100);
+ *   auto s_runtime = Set<int, 4>{};
+ *   auto s1 = conj(s_runtime, 200);
+ *
+ *   return (peek(q1) == 100 && contains(s1, 200)) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename T>
+[[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept {
+    return collection.conj(value);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_CONJ_HPP
+// End cljonic-conj.hpp
+// Begin cljonic-contains.hpp
+#ifndef CLJONIC_CONTAINS_HPP
+#define CLJONIC_CONTAINS_HPP
+
+
+namespace cljonic {
+
+/** \anchor Contains
+ * \brief Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's `contains?`
+ * predicate.
+ *
+ * The meaning of the argument follows the collection kind: - Map: tests key presence (`contains(m, key)` is true when
+ * key is present). - Set: tests element presence (`contains(s, value)` is true when value is a
+ *   member).
+ * - Vector / String: tests whether a numeric index is in range
+ *   (`contains(xs, index)` is true when index is valid, like Clojure's
+ *   `contains?` over vector/string indices).
+ *
+ * `contains` never performs a default-returning access; it only answers the membership question for the collection's
+ * lookup domain.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+ *   constexpr auto st_const = String<8>{"abc"};
+ *   static_assert(contains(v_const, 0U));
+ *   static_assert(!contains(v_const, 9U));
+ *   static_assert(contains(m_const, 1));
+ *   static_assert(!contains(m_const, 2));
+ *   static_assert(contains(s_const, 5));
+ *   static_assert(!contains(s_const, 8));
+ *   static_assert(contains(st_const, 1U));
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10, 20};
+ *   const auto in_range = contains(v_runtime, 0U);
+ *
+ *   return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K>
+[[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept -> bool {
+    return collection.contains(key);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_CONTAINS_HPP// End cljonic-contains.hpp
 // Begin cljonic-core-collection-maximum-element-count.hpp
 #pragma once
 
@@ -289,263 +565,1396 @@ concept Collection = requires(const collection_type &c) {
 namespace cljonic {
 
 /** \anchor CollectionMaximumElementCountValue
- * \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE is a constexpr constant
- * that captures the configured synthesis ceiling for bounded cljonic
- * collections and semantically infinite producers. This type-safe constant
- * can be used in compile-time expressions, static assertions, and constexpr
- * functions while remaining fully overridable via the
+ * \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE is a constexpr constant that captures the configured synthesis
+ * ceiling for bounded cljonic collections and semantically infinite producers. This type-safe constant can be used in
+ * compile-time expressions, static assertions, and constexpr functions while remaining fully overridable via the
  * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro.
  */
-constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE =
-    CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
-
-/** \anchor Core_CollectionMaximumElementCount
- * \b collection_maximum_element_count returns the configured synthesis
- * ceiling for bounded cljonic collections and semantically infinite
- * producers.
- */
-[[nodiscard]] constexpr auto
-collection_maximum_element_count() noexcept -> std::size_t {
-  return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
-}
+constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE = CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
 
 } // namespace cljonic
 // End cljonic-core-collection-maximum-element-count.hpp
-// Begin cljonic-core-count.hpp
-#pragma once
+// Begin cljonic-count.hpp
+#ifndef CLJONIC_COUNT_HPP
+#define CLJONIC_COUNT_HPP
 
+#include <cstddef>
 
 namespace cljonic {
 
-/** \anchor Core_Count
- * \b count returns the number of logical elements in \p collection.
+/** \anchor Count
+ * \brief Returns the logical size (number of active elements) of a collection.
  *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   const auto empty = Vector<int, 4>{};
-   const auto populated = Vector{1, 2};
-
-   const auto n0 = count(empty);     // 0
-   const auto n1 = count(populated); // 2
-
-   return (n0 == 0 && n1 == 2) ? 0 : 1;
- }
- ~~~~~
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto q_const = conj(Queue<int, 4>{}, 9);
+ *   static_assert(count(v_const) == 3U);
+ *   static_assert(count(m_const) == 1U);
+ *   static_assert(count(q_const) == 1U);
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10, 20};
+ *   const auto sz = count(v_runtime);
+ *
+ *   return (sz == 2U) ? 0 : 1;
+ * }
+ * ~~~~~
  */
-template <concepts::Collection collection_type>
-[[nodiscard]] constexpr auto
-count(const collection_type &collection) noexcept -> std::size_t {
-  return collection.size();
+template <concepts::SequenceableCollection C>
+[[nodiscard]] constexpr auto count(const C& collection) noexcept -> std::size_t {
+    return collection.count();
 }
 
 } // namespace cljonic
-// End cljonic-core-count.hpp
-// Begin cljonic-core-get.hpp
-#pragma once
 
-// Begin cljonic-core-valid-index.hpp
-#pragma once
+#endif // CLJONIC_COUNT_HPP// End cljonic-count.hpp
+// Begin cljonic-disj.hpp
+#ifndef CLJONIC_DISJ_HPP
+#define CLJONIC_DISJ_HPP
 
-#include <concepts>
-#include <cstddef>
+#include <utility>
 
-// Begin cljonic-range.hpp
-#pragma once
+namespace cljonic {
 
-#include <concepts>
-#include <cstddef>
-#include <type_traits>
+/** \anchor Disj
+ * \brief Disjoins an element from a set.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto s0_const = conj(Set<int, 4>{}, 42);
+ *   constexpr auto s1_const = disj(s0_const, 42);
+ *   static_assert(!contains(s1_const, 42));
+ *
+ *   // Runtime demonstration.
+ *   auto s0_runtime = conj(Set<int, 4>{}, 99);
+ *   auto s1_runtime = disj(s0_runtime, 99);
+ *
+ *   return (!contains(s1_runtime, 99) && is_empty(s1_runtime)) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename T>
+[[nodiscard]] constexpr auto disj(const C& collection, const T& value) noexcept {
+    return collection.disj(value);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_DISJ_HPP
+// End cljonic-disj.hpp
+// Begin cljonic-dissoc.hpp
+#ifndef CLJONIC_DISSOC_HPP
+#define CLJONIC_DISSOC_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Dissoc
+ * \brief Disassociates a key from a map.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto m0_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto m1_const = dissoc(m0_const, 1);
+ *   static_assert(!contains(m1_const, 1));
+ *
+ *   // Runtime demonstration.
+ *   auto m0_runtime = assoc(Map<int, int, 4>{}, 2, 200);
+ *   auto m1_runtime = dissoc(m0_runtime, 2);
+ *
+ *   return (!contains(m1_runtime, 2) && is_empty(m1_runtime)) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K>
+[[nodiscard]] constexpr auto dissoc(const C& collection, const K& key) noexcept {
+    return collection.dissoc(key);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_DISSOC_HPP
+// End cljonic-dissoc.hpp
+// Begin cljonic-get.hpp
+#ifndef CLJONIC_GET_HPP
+#define CLJONIC_GET_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Get
+ * \brief Looks up an element by a key or index, returning the default or
+ *        supplied fallback when absent.
+ *
+ * Dispatches to the collection's callable lookup forms, consistent with the `operator()` behavior of Map, Set, Vector,
+ * and String.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto v_const = Vector<int, 4>{10, 20};
+ *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+ *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+ *   static_assert(get(v_const, 0U) == 10);
+ *   static_assert(get(v_const, 9U, -1) == -1);
+ *   static_assert(get(m_const, 1) == 100);
+ *   static_assert(get(m_const, 2, -1) == -1);
+ *   static_assert(get(s_const, 5) == 5);
+ *   static_assert(get(s_const, 8, -1) == -1);
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10, 20};
+ *   const auto val = get(v_runtime, 0U);
+ *
+ *   return (val == 10) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C, typename K>
+    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
+            requires(const C& collection, const K& key) { collection(key); }
+[[nodiscard]] constexpr auto get(const C& collection, const K& key) noexcept -> decltype(collection(key)) {
+    return collection(key);
+}
+
+/** Returns the stored value when present, otherwise the supplied fallback. */
+template <typename C, typename K, typename V>
+    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
+            requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
+[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback) noexcept
+    -> decltype(collection(key, fallback)) {
+    return collection(key, fallback);
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_GET_HPP// End cljonic-get.hpp
+// Begin cljonic-is-empty.hpp
+#ifndef CLJONIC_IS_EMPTY_HPP
+#define CLJONIC_IS_EMPTY_HPP
 
 
 namespace cljonic {
 
-/** \anchor Range
- * \b Range is a bounded integer producer that represents a sequence from
- * \p start up to but excluding \p end, advancing by \p step. The supported
- * subset is intentionally limited to integral types with explicit defaulting
- * and bounded materialization. \p value_type defaults to \c int, so
- * \c Range{} is equivalent to Clojure's <tt>(range)</tt>.
+/** \anchor IsEmpty
+ * \brief Returns true when the collection has no active elements.
  *
- * This example covers the supported construction forms and free-function
- * observation. Range has no member accessors for start, end, or step, and
- * canonical observation is free-function-first via \c count and \c empty.
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
  *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto e_const = Vector<int, 4>{};
+ *   constexpr auto v_const = Vector<int, 4>{1};
+ *   static_assert(is_empty(e_const));
+ *   static_assert(!is_empty(v_const));
+ *
+ *   // Runtime demonstration.
+ *   auto v_runtime = Vector<int, 4>{10};
+ *   const auto empty_res = is_empty(v_runtime);
+ *
+ *   return (!empty_res) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <concepts::SequenceableCollection C>
+[[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
+    return collection.is_empty();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_IS_EMPTY_HPP// End cljonic-is-empty.hpp
+// Begin cljonic-map.hpp
+#pragma once
+
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <ranges>
+#include <span>
+
+// Begin cljonic-map-entry.hpp
+#pragma once
+
+#include <concepts>
+#include <cstddef>
+
+namespace cljonic {
+
+/** \anchor MapEntry
+ * \b MapEntry is a value-semantic pair representing a single key-value association. Its key satisfies
+ * `NothrowStableEqualityComparable`; its value satisfies `NothrowCollectionElement`.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr MapEntry<int, int> e_const{1, 100};
+ *   static_assert(e_const.key == 1);
+ *   static_assert(e_const.value == 100);
+ *   static_assert(e_const.contains(0));
+ *   static_assert(e_const.contains(1));
+ *   static_assert(!e_const.contains(2));
+ *
+ *   // Runtime demonstration.
+ *   auto e_runtime = MapEntry<int, int>{2, 200};
+ *   const auto k = e_runtime.key;
+ *   const auto v = e_runtime.value;
+ *   const auto ok = e_runtime.contains(0);
+ *
+ *   return (k == 2 && v == 200 && ok) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType>
+struct MapEntry {
+    using key_type = KeyType;
+    using value_type = ValueType;
+    using mapped_type = ValueType;
+
+    KeyType key{};
+    ValueType value{};
+
+    [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool {
+        return key == other.key && value == other.value;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
+        if constexpr (std::signed_integral<IndexType>) {
+            if (index < 0) {
+                return false;
+            }
+        }
+        return static_cast<std::size_t>(index) < 2U;
+    }
+};
+
+} // namespace cljonic
+// End cljonic-map-entry.hpp
+
+namespace cljonic {
+
+/** \anchor Map
+ * \b Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
+ * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
+ * return a modified copy without changing the original collection. Construction with more entries than the available
+ * capacity is rejected at compile time.
+ *
+ \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ struct Key {
+   int id;
+   friend constexpr bool operator==(const Key &, const Key &) noexcept = default;
+ };
+
+ struct Value {
+   int amount = 0;
+   friend constexpr bool operator==(const Value &,
+                                    const Value &) noexcept = default;
+ };
+
+ using AccountEntry = MapEntry<Key, Value>;
+ using AccountMap = Map<Key, Value, 2>;
+
+ int main() {
+   // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
+   auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
+   const auto present = runtime(Key{3});
+   const auto missing = runtime(Key{4}, Value{77});
+
+   // A standard view pipeline can use an existing Map as its source and
+   // materialize the transformed entries into another Map.
+   const auto copied_view =
+       runtime | std::views::transform([](const AccountEntry &entry) {
+         return AccountEntry{entry.key, Value{entry.value.amount * 2}};
+       });
+   const auto from_pipeline = AccountMap{copied_view};
+
+   // A named map type and its named entry type make the intended value model
+   // explicit. A later duplicate key replaces the earlier value (i.e., the
+   // right-most value associated with a duplicate key).
+   constexpr auto literal = AccountMap{AccountEntry{Key{1}, Value{10}},
+                                       AccountEntry{Key{1}, Value{20}}};
+
+   // A Map is callable for present-key lookup and missing-key fallback.
+   static_assert(literal(Key{1}).amount == 20);
+   static_assert(literal(Key{2}).amount == 0);
+   static_assert(literal(Key{2}, Value{99}).amount == 99);
+
+   // ---------------------------------------------------------------------------
+   // C++ interoperability: a Map supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
+   // ---------------------------------------------------------------------------
+   static constexpr AccountEntry source_entries[] = {
+       AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
+   constexpr std::span source_span{source_entries};
+   constexpr auto from_span = AccountMap{source_span};
+   static_assert(from_span(Key{10}).amount == 100);
+   static_assert(from_span(Key{20}).amount == 200);
+
+   constexpr auto from_span_ctad = Map{source_span};
+   static_assert(from_span_ctad(Key{10}).amount == 100);
+   static_assert(from_span_ctad.view().size() == 2);
+
+   // Constructing a Map from a runtime C++ array/span
+   AccountEntry runtime_buffer[] = {AccountEntry{Key{100}, Value{1000}},
+                                    AccountEntry{Key{200}, Value{2000}}};
+   const auto runtime_from_span =
+       Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
+
+   // Use C++ interoperability to sum the values in a map.
+   int value_sum = 0;
+   for (const auto &entry : runtime) {
+     value_sum += entry.value.amount;
+   }
+
+   const auto runtime_view = runtime.view();
+
+   return (present.amount == 30 && missing.amount == 77 && value_sum == 30 &&
+           runtime_view.size() == 1 && runtime_view[0].value.amount == 30 &&
+           from_span(Key{10}).amount == 100 &&
+           from_pipeline(Key{3}).amount == 60 &&
+           runtime_from_span(Key{100}).amount == 1000)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType,
+          std::size_t CapacityValue>
+class Map {
+  public:
+    using key_type = KeyType;
+    using lookup_type = key_type;
+    using mapped_type = ValueType;
+    using value_type = MapEntry<KeyType, ValueType>;
+
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Map CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
+
+    template <typename... Args>
+    constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<value_type, Args> && ...),
+                      "Map constructor requires all arguments to construct "
+                      "MapEntry without throwing and be implicitly convertible to MapEntry");
+
+        ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
+    }
+
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Map>)
+    constexpr Map(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+                      "Map range/view constructor requires each source element to construct "
+                      "MapEntry without throwing and be implicitly convertible to MapEntry");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Map static-extent range source exceeds Map CapacityValue");
+
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = assoc_entry(value_type{std::forward<decltype(item)>(item)});
+        }
+    }
+
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
+    }
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto contains(const KeyType& key) const noexcept -> bool {
+        return find_index(key) < logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto operator()(const KeyType& key) const noexcept -> ValueType {
+        const auto idx = find_index(key);
+        return (idx < logical_size_) ? entries_[idx].value : ValueType{};
+    }
+
+    [[nodiscard]] constexpr auto operator()(const KeyType& key, const ValueType& fallback) const noexcept -> ValueType {
+        const auto idx = find_index(key);
+        return (idx < logical_size_) ? entries_[idx].value : fallback;
+    }
+
+    [[nodiscard]] constexpr auto can_assoc(const KeyType& key) const noexcept -> bool {
+        return contains(key) || (logical_size_ < CapacityValue);
+    }
+
+    [[nodiscard]] constexpr auto assoc(const KeyType& key, const ValueType& value) const noexcept -> Map {
+        Map result = *this;
+        const auto idx = result.find_index(key);
+        if (idx < result.logical_size_) {
+            result.entries_[idx].value = value;
+        } else if (result.logical_size_ < CapacityValue) {
+            result.entries_[result.logical_size_] = value_type{key, value};
+            ++result.logical_size_;
+        }
+        return result;
+    }
+
+    [[nodiscard]] constexpr auto dissoc(const KeyType& key) const noexcept -> Map {
+        Map result = *this;
+        const auto idx = result.find_index(key);
+        if (idx < result.logical_size_) {
+            if (idx + 1U < result.logical_size_) {
+                result.entries_[idx] = result.entries_[result.logical_size_ - 1U];
+            }
+            --result.logical_size_;
+        }
+        return result;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return entries_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return entries_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {entries_.data(), logical_size_};
+    }
+
+  private:
+    [[nodiscard]] constexpr auto find_index(const KeyType& key) const noexcept -> std::size_t {
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (entries_[i].key == key) {
+                return i;
+            }
+        }
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto assoc_entry(const value_type& entry) const noexcept -> Map {
+        return assoc(entry.key, entry.value);
+    }
+
+    std::array<value_type, CapacityValue> entries_{};
+    std::size_t logical_size_{0};
+};
+
+template <typename KeyType, typename ValueType, typename... Rest>
+Map(MapEntry<KeyType, ValueType>, Rest...) -> Map<KeyType, ValueType, 1 + sizeof...(Rest)>;
+
+template <typename KeyType, typename ValueType, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Map(std::span<const MapEntry<KeyType, ValueType>, Extent>) -> Map<KeyType, ValueType, Extent>;
+
+template <typename KeyType, typename ValueType, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Map(std::span<MapEntry<KeyType, ValueType>, Extent>) -> Map<KeyType, ValueType, Extent>;
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct collection_traits<Map<KeyType, ValueType, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::map;
+};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-map.hpp
+// Begin cljonic-peek.hpp
+#ifndef CLJONIC_PEEK_HPP
+#define CLJONIC_PEEK_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Peek
+ * \brief Observes the accessible element without removal.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto q_const = conj(Queue<int, 4>{}, 99);
+ *   static_assert(peek(q_const) == 99);
+ *
+ *   // Runtime demonstration.
+ *   auto q_runtime = conj(Queue<int, 4>{}, 77);
+ *   const auto v = peek(q_runtime);
+ *
+ *   return (v == 77) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto peek(const C& collection) noexcept {
+    return collection.peek();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_PEEK_HPP
+// End cljonic-peek.hpp
+// Begin cljonic-pop.hpp
+#ifndef CLJONIC_POP_HPP
+#define CLJONIC_POP_HPP
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Pop
+ * \brief Yields an updated collection with the accessible element removed.
+ *
+ * \b Examples
+ * ~~~~~{.cpp}
+ * #include "cljonic.hpp"
+ *
+ * int main() {
+ *   using namespace cljonic;
+ *
+ *   // Compile-time demonstration.
+ *   constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
+ *   constexpr auto q1_const = pop(q0_const);
+ *   static_assert(peek(q1_const) == 2);
+ *
+ *   // Runtime demonstration.
+ *   auto q0_runtime = conj(conj(Queue<int, 4>{}, 10), 20);
+ *   auto q1_runtime = pop(q0_runtime);
+ *
+ *   return (peek(q1_runtime) == 20) ? 0 : 1;
+ * }
+ * ~~~~~
+ */
+template <typename C>
+[[nodiscard]] constexpr auto pop(const C& collection) noexcept {
+    return collection.pop();
+}
+
+} // namespace cljonic
+
+#endif // CLJONIC_POP_HPP
+// End cljonic-pop.hpp
+// Begin cljonic-queue.hpp
+#pragma once
+
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <iterator>
+#include <ranges>
+#include <type_traits>
+#include <utility>
+
+
+namespace cljonic {
+
+/** \anchor Queue
+ * \b Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
+ * way to operate on the collection is through the library's free-function API. Construction with more values than the
+ * available capacity is rejected at compile time.
+ *
+ \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
  using namespace cljonic;
 
  int main() {
-   constexpr Range zero_start_unit_step{};
-   constexpr Range ascending{0, 10};
-   constexpr Range descending{10, 0, -2};
-   constexpr Range empty_range{5, 5, 1};
-   constexpr Range zero_step{3, 9, 0};
+   // CTAD infers Queue<int, 3> from the initializer count.
+   [[maybe_unused]] constexpr auto ints_at_capacity = Queue{1, 2, 3};
 
-   static_assert(count(zero_start_unit_step) ==
-                 collection_maximum_element_count());
-   static_assert(count(ascending) == 10U);
-   static_assert(count(descending) == 5U);
-   static_assert(empty_range.empty());
-   static_assert(valid_index(ascending, 9));
-   static_assert(!valid_index(ascending, 10));
-   // A zero step is semantically infinite: it repeats start and is bounded
-   // by the synthesis cap rather than reporting a true finite cardinality.
-   static_assert(count(zero_step) == collection_maximum_element_count());
+   // Explicit capacity permits a partially populated Queue and an empty Queue.
+   [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
+   [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
 
-   return 0;
+   // --------------------------------------------------------------------------
+   // C++ interoperability: a Queue supports const traversal and accepts owned
+   // materialization from bounded range/view sources without mutating them.
+   // --------------------------------------------------------------------------
+   static constexpr int source_values[] = {10, 20, 30};
+   constexpr std::span source_span{source_values};
+   constexpr auto from_span = Queue<int, 4>{source_span};
+   static_assert(from_span.begin()[0] == 10);
+   static_assert(from_span.begin()[2] == 30);
+
+   constexpr auto from_span_ctad = Queue{source_span};
+   static_assert(from_span_ctad.begin()[1] == 20);
+
+   // A standard view pipeline can use an existing Queue as its source and
+   // materialize transformed values into another Queue.
+   const auto pipeline_source = Queue<int, 4>{1, 2, 3};
+   const auto shifted_view =
+       pipeline_source |
+       std::views::transform([](int value) { return value + 10; });
+   const auto from_pipeline = Queue<int, 4>{shifted_view};
+
+   // Constructing a Queue from a runtime C++ array/span
+   int runtime_buffer[] = {100, 200, 300};
+   const auto runtime_from_span =
+       Queue<int, 4>{std::span<const int>{runtime_buffer, 3}};
+
+   // Use C++ interoperability to sum the elements of the queue.
+   int fifo_sum = 0;
+   for (const auto value : runtime_buffer) {
+     fifo_sum += value;
+   }
+
+   int from_span_sum = 0;
+   for (const auto value : from_span) {
+     from_span_sum += value;
+   }
+
+   int runtime_from_span_sum = 0;
+   for (const auto value : runtime_from_span) {
+     runtime_from_span_sum += value;
+   }
+
+   return (fifo_sum == 600 && from_span_sum == 60 &&
+           runtime_from_span_sum == 600 && from_pipeline.peek() == 11)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
-template <std::integral value_type = int> class Range {
-public:
-  using element_type = value_type;
+template <concepts::NothrowCollectionElement T, std::size_t CapacityValue>
+class Queue {
+  public:
+    using value_type = T;
 
-  static_assert(std::integral<value_type>,
-                "Range requires an integral element type");
+    class const_iterator {
+      public:
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+        using iterator_category = std::forward_iterator_tag;
+        using iterator_concept = std::forward_iterator_tag;
 
-  constexpr Range() noexcept
-      : start_{0}, end_{collection_maximum_element_count()}, step_{1},
-        size_{collection_maximum_element_count()} {}
+        constexpr const_iterator() noexcept = default;
 
-  constexpr explicit Range(value_type end) noexcept
-    requires std::integral<value_type>
-      : Range(value_type{0}, end, value_type{1}) {}
+        [[nodiscard]] constexpr auto operator*() const noexcept -> const value_type& {
+            return queue_->elements_[(queue_->head_ + offset_) % CapacityValue];
+        }
 
-  constexpr Range(value_type start, value_type end) noexcept
-    requires std::integral<value_type>
-      : Range(start, end, value_type{1}) {}
+        [[nodiscard]] constexpr auto operator[](difference_type index) const noexcept -> const value_type& {
+            return queue_->elements_[(queue_->head_ + offset_ + static_cast<std::size_t>(index)) % CapacityValue];
+        }
 
-  constexpr Range(value_type start, value_type end, value_type step) noexcept
-    requires std::integral<value_type>
-      : start_{start}, end_{end}, step_{step},
-        size_{compute_size(start, end, step)} {
-    if (step == value_type{0}) {
-      start_ = start;
-      end_ = end;
-      step_ = step;
-      size_ = collection_maximum_element_count();
-    }
-  }
+        constexpr auto operator++() noexcept -> const_iterator& {
+            ++offset_;
+            return *this;
+        }
 
-  // Reject construction from any argument type that isn't exactly value_type,
-  // so mismatched integral/floating-point arguments fail to compile instead
-  // of silently truncating via implicit conversion.
-  template <typename T>
-    requires(!std::same_as<T, value_type>)
-  constexpr Range(T) noexcept = delete;
+        constexpr auto operator++(int) noexcept -> const_iterator {
+            const_iterator result = *this;
+            ++(*this);
+            return result;
+        }
 
-  template <typename T, typename U>
-    requires(!std::same_as<T, value_type> || !std::same_as<U, value_type>)
-  constexpr Range(T, U) noexcept = delete;
+        [[nodiscard]] friend constexpr auto operator==(const const_iterator&, const const_iterator&) noexcept
+            -> bool = default;
 
-  template <typename T, typename U, typename V>
-    requires(!std::same_as<T, value_type> || !std::same_as<U, value_type> ||
-             !std::same_as<V, value_type>)
-  constexpr Range(T, U, V) noexcept = delete;
+      private:
+        friend class Queue;
 
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return size_;
-  }
+        constexpr const_iterator(const Queue* queue, std::size_t offset) noexcept : queue_(queue), offset_(offset) {
+        }
 
-  [[nodiscard]] constexpr auto empty() const noexcept -> bool {
-    return size_ == 0U;
-  }
+        const Queue* queue_{nullptr};
+        std::size_t offset_{0};
+    };
 
-private:
-  // Deliberately not defined: calling this during constant evaluation makes
-  // that evaluation ill-formed, turning an oversized constexpr Range into a
-  // compile-time error instead of a silently clamped bounded prefix. This
-  // path is unreachable at runtime, so it is never actually linked.
-  static void reject_oversized_range_in_constant_expression() noexcept;
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Queue CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-  [[nodiscard]] static constexpr auto
-  clamp_to_synthesis_cap(std::size_t computed_size) noexcept -> std::size_t {
-    if (computed_size > collection_maximum_element_count()) {
-      if consteval {
-        reject_oversized_range_in_constant_expression();
-      }
-      return collection_maximum_element_count();
-    }
-    return computed_size;
-  }
+    template <typename... Args>
+    constexpr Queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Queue initializer count exceeds Queue CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
+                      "Queue constructor requires all arguments to construct "
+                      "T without throwing and be implicitly convertible to T");
 
-  [[nodiscard]] static constexpr auto
-  compute_positive_step_size(value_type start, value_type end,
-                             value_type step) noexcept -> std::size_t {
-    if (start >= end) {
-      return 0U;
-    }
-    using unsigned_type = std::make_unsigned_t<value_type>;
-    const auto delta =
-        static_cast<unsigned_type>(end) - static_cast<unsigned_type>(start);
-    const auto positive_step = static_cast<unsigned_type>(step);
-    const auto computed_size = static_cast<std::size_t>(delta / positive_step) +
-                               (delta % positive_step == 0U ? 0U : 1U);
-    return clamp_to_synthesis_cap(computed_size);
-  }
-
-  [[nodiscard]] static constexpr auto
-  compute_negative_step_size(value_type start, value_type end,
-                             value_type step) noexcept -> std::size_t {
-    if (start <= end) {
-      return 0U;
-    }
-    using unsigned_type = std::make_unsigned_t<value_type>;
-    const auto magnitude =
-        static_cast<unsigned_type>(0) - static_cast<unsigned_type>(step);
-    const auto delta =
-        static_cast<unsigned_type>(start) - static_cast<unsigned_type>(end);
-    const auto computed_size = static_cast<std::size_t>(delta / magnitude) +
-                               (delta % magnitude == 0U ? 0U : 1U);
-    return clamp_to_synthesis_cap(computed_size);
-  }
-
-  static constexpr auto compute_size(value_type start, value_type end,
-                                     value_type step) noexcept -> std::size_t {
-    if (step == value_type{0}) {
-      return collection_maximum_element_count();
+        ((*this = conj(T{std::forward<Args>(args)})), ...);
     }
 
-    return step > value_type{0} ? compute_positive_step_size(start, end, step)
-                                : compute_negative_step_size(start, end, step);
-  }
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Queue>)
+    constexpr Queue(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(std::same_as<std::remove_cvref_t<source_value_type>, value_type>,
+                      "Queue range/view constructor requires a matching element type");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Queue static-extent range source exceeds Queue CapacityValue");
 
-  value_type start_;
-  value_type end_;
-  value_type step_;
-  std::size_t size_;
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = conj(value_type{std::forward<decltype(item)>(item)});
+        }
+    }
+
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
+    }
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+        return {this, 0U};
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+        return {this, logical_size_};
+    }
+
+    /** Returns true when there is room for at least one more element. */
+    [[nodiscard]] constexpr auto can_conj() const noexcept -> bool {
+        return logical_size_ < CapacityValue;
+    }
+
+    /** Adds an element to the back of a copy of the queue (enqueue). Returns an
+     * unchanged copy when full. */
+    [[nodiscard]] constexpr auto conj(const T& element) const noexcept -> Queue {
+        Queue result = *this;
+        if constexpr (CapacityValue > 0U) {
+            if (result.logical_size_ < CapacityValue) {
+                const auto tail = (result.head_ + result.logical_size_) % CapacityValue;
+                result.elements_[tail] = element;
+                ++result.logical_size_;
+            }
+        }
+        return result;
+    }
+
+    /** Peeks at the front element without removing it. Returns
+     * default-constructed value when empty. */
+    [[nodiscard]] constexpr auto peek() const noexcept -> T {
+        return (logical_size_ > 0) ? elements_[head_] : T{};
+    }
+
+    /** Removes the front element from a copy of the queue (dequeue). Returns an
+     * unchanged copy when empty. */
+    [[nodiscard]] constexpr auto pop() const noexcept -> Queue {
+        Queue result = *this;
+        if constexpr (CapacityValue > 0U) {
+            if (result.logical_size_ > 0) {
+                result.head_ = (result.head_ + 1) % CapacityValue;
+                --result.logical_size_;
+            }
+        }
+        return result;
+    }
+
+  private:
+    std::array<value_type, CapacityValue> elements_{};
+    std::size_t head_{0};
+    std::size_t logical_size_{0};
 };
 
-template <std::integral integer_type>
-Range(integer_type) -> Range<integer_type>;
+template <typename First, typename... Rest>
+Queue(First, Rest...) -> Queue<First, 1 + sizeof...(Rest)>;
 
-template <std::integral integer_type>
-Range(integer_type, integer_type) -> Range<integer_type>;
-
-template <std::integral integer_type>
-Range(integer_type, integer_type, integer_type) -> Range<integer_type>;
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Queue(std::span<SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
 
 } // namespace cljonic
-// End cljonic-range.hpp
+
+namespace cljonic::concepts_detail {
+
+template <typename T, std::size_t CapacityValue>
+struct collection_traits<Queue<T, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::queue;
+};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-queue.hpp
+// Begin cljonic-set.hpp
+#ifndef CLJONIC_SET_HPP
+#define CLJONIC_SET_HPP
+
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdlib>
+#include <ranges>
+#include <span>
+#include <type_traits>
+#include <utility>
+
+
+namespace cljonic {
+
+/** \anchor Set
+ * \b Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
+ * operate on the collection is through the library's free-function API. Updates return a modified copy without
+ * changing the original collection. Construction with more values than the available capacity is rejected at compile
+ * time.
+ *
+ \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ using AccountId = int;
+ using AccountSet = Set<AccountId, 4>;
+
+ int main() {
+   // A named set type makes the element and capacity contract explicit. A
+   // duplicate value is a no-op. Constant-evaluated duplicate construction is
+   // rejected at compile time.
+   constexpr auto literal = AccountSet{1, 2, 3};
+   static_assert(literal(2) == 2);
+   static_assert(literal(99) == 0);
+   static_assert(literal(99, -1) == -1);
+
+   // Runtime CTAD deduces Set<int, 3> from the argument count and keeps one
+   // copy when duplicate values are present.
+   auto runtime = Set{10, 20, 20};
+   const auto present = runtime(10);
+   const auto missing = runtime(30, -1);
+
+   // A standard view pipeline can use an existing Set as its source and
+   // materialize transformed values into another Set.
+   const auto doubled_view =
+       runtime | std::views::transform([](int value) { return value * 2; });
+   const auto from_pipeline = AccountSet{doubled_view};
+
+   // -------------------------------------------------------------------------
+   // C++ interoperability: a Set supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
+   // -------------------------------------------------------------------------
+   static constexpr int source_values[] = {11, 22, 11, 33};
+   constexpr std::span source_span{source_values};
+   constexpr auto from_span = AccountSet{source_span};
+   static_assert(from_span(11) == 11);
+   static_assert(from_span(22) == 22);
+   static_assert(from_span(33) == 33);
+   static_assert(from_span(99) == 0);
+
+   constexpr auto from_span_ctad = Set{source_span};
+   static_assert(from_span_ctad(22) == 22);
+   static_assert(from_span_ctad.view().size() == 3);
+
+   int runtime_buffer[] = {100, 200, 300};
+   const auto runtime_from_span =
+       Set<int, 4>{std::span<const int>{runtime_buffer, 3}};
+
+   // Const C++ interoperability exposes the active elements as a range and
+   // as a non-owning contiguous standard view. Set traversal order is not
+   // semantically ordered.
+   static_assert(literal.view().size() == 3);
+
+   // Use C++ interoperability to sum the values in a set.
+   int observed_sum = 0;
+   for (const auto value : runtime) {
+     observed_sum += value;
+   }
+
+   const auto runtime_view = runtime.view();
+
+   return (present == 10 && missing == -1 && observed_sum == 30 &&
+           from_pipeline(20) == 20 && runtime_view.size() == 2 &&
+           runtime_from_span(100) == 100 && runtime_from_span(300) == 300)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue>
+class Set {
+  public:
+    using value_type = T;
+    using lookup_type = value_type;
+
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Set CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
+
+    template <typename... Args>
+    constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Set initializer count exceeds Set CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
+                      "Set constructor requires all arguments to construct "
+                      "T without throwing and be implicitly convertible to T");
+
+        const auto duplicate = append_constructed(std::forward<Args>(args)...);
+
+        if consteval {
+            if (duplicate) {
+                std::abort();
+            }
+        }
+    }
+
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Set>)
+    constexpr Set(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+                      "Set range/view constructor requires each source element to construct "
+                      "T without throwing and be implicitly convertible to T");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Set static-extent range source exceeds Set CapacityValue");
+
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count++ >= CapacityValue) {
+                break;
+            }
+            *this = conj(value_type{std::forward<decltype(item)>(item)});
+        }
+    }
+
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
+    }
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return elements_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return elements_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {elements_.data(), logical_size_};
+    }
+
+    [[nodiscard]] constexpr auto contains(const T& element) const noexcept -> bool {
+        return find_index(element) < logical_size_;
+    }
+
+    /** Returns the stored element value when present; otherwise returns a
+     * default-constructed value. */
+    [[nodiscard]] constexpr auto operator()(const T& element) const noexcept -> T {
+        const auto idx = find_index(element);
+        return (idx < logical_size_) ? elements_[idx] : T{};
+    }
+
+    /** Returns the stored element value when present; otherwise returns the
+     * supplied fallback. */
+    [[nodiscard]] constexpr auto operator()(const T& element, const T& fallback) const noexcept -> T {
+        const auto idx = find_index(element);
+        return (idx < logical_size_) ? elements_[idx] : fallback;
+    }
+
+    /** Returns true when the element is already present or the set has room for
+     * one more. */
+    [[nodiscard]] constexpr auto can_conj(const T& element) const noexcept -> bool {
+        return contains(element) || (logical_size_ < CapacityValue);
+    }
+
+    /** Adds an element to a copy of the set. If the element is already present or
+     * capacity is full, returns an unchanged copy. */
+    [[nodiscard]] constexpr auto conj(const T& element) const noexcept -> Set {
+        Set result = *this;
+        if (!result.contains(element) && result.logical_size_ < CapacityValue) {
+            result.elements_[result.logical_size_] = element;
+            ++result.logical_size_;
+        }
+        return result;
+    }
+
+    /** Removes an element via swap-and-remove if present; always returns a valid
+     * copy. */
+    [[nodiscard]] constexpr auto disj(const T& element) const noexcept -> Set {
+        Set result = *this;
+        const auto idx = result.find_index(element);
+        if (idx < result.logical_size_) {
+            if (idx + 1U < result.logical_size_) {
+                result.elements_[idx] = result.elements_[result.logical_size_ - 1U];
+            }
+            --result.logical_size_;
+        }
+        return result;
+    }
+
+  private:
+    template <typename Arg>
+    constexpr auto append_constructed(Arg&& arg) noexcept -> bool {
+        T value{std::forward<Arg>(arg)};
+        if (contains(value)) {
+            return true;
+        }
+        *this = conj(value);
+        return false;
+    }
+
+    template <typename... Args>
+    constexpr auto append_constructed(Args&&... args) noexcept -> bool {
+        bool duplicate = false;
+        ((duplicate = append_constructed(std::forward<Args>(args)) || duplicate), ...);
+        return duplicate;
+    }
+
+    /** Returns `logical_size_` when the element is absent. */
+    [[nodiscard]] constexpr auto find_index(const T& element) const noexcept -> std::size_t {
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (elements_[i] == element) {
+                return i;
+            }
+        }
+        return logical_size_;
+    }
+
+    std::array<value_type, CapacityValue> elements_{};
+    std::size_t logical_size_{0};
+};
+
+template <typename First, typename... Rest>
+Set(First, Rest...) -> Set<First, 1 + sizeof...(Rest)>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Set(std::span<SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename T, std::size_t CapacityValue>
+struct collection_traits<Set<T, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::set;
+};
+
+} // namespace cljonic::concepts_detail
+
+#endif // CLJONIC_SET_HPP
+// End cljonic-set.hpp
+// Begin cljonic-string.hpp
+#pragma once
+
+#include <array>
+#include <cstddef>
+#include <ranges>
+#include <span>
+#include <string_view>
+
+
+namespace cljonic {
+
+/** \anchor String
+ * \b String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
+ * callable lookup with optional fallback values. The way to operate on the collection is through the library's
+ * free-function API. Updates return a modified copy without changing the original collection. Construction with
+ * content longer than the available capacity is rejected at compile time.
+ *
+ \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // CTAD infers String<3> from the initializer count.
+   [[maybe_unused]] constexpr auto inferred = String{"Hi"};
+
+   // Explicit capacity permits a partially populated String and an empty String.
+   constexpr auto literal = String<10>{"Hello"};
+   [[maybe_unused]] constexpr auto empty = String<8>{};
+
+   // String values can be used as a callable function, returning a default-
+   // value for invalid indexes or a supplied fallback when provided.
+   static_assert(literal(0) == 'H');
+   static_assert(literal(99, 'Z') == 'Z');
+
+   // Without a fallback, an invalid lookup returns '\0'.
+   static_assert(literal(5) == '\0');
+
+   // Runtime construction supports the same callable lookup and fallback
+   // behavior.
+   auto runtime = String<8>{"Hi"};
+   const auto first = runtime(0);
+   const auto missing = runtime(9, '!');
+
+   // -------------------------------------------------------------------------
+   // C++ interoperability: a String supports const traversal and exposes a
+   // non-owning std::string_view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity. A
+   // string_view's size is not part of its type, so view construction requires
+   // an explicit capacity.
+   // -------------------------------------------------------------------------
+   static constexpr std::string_view static_source{"from view"};
+   constexpr auto from_static_view = String<16>{static_source};
+   static_assert(from_static_view.view() == static_source);
+
+   const std::string_view runtime_source{"runtime view"};
+   const auto from_runtime_view = String<16>{runtime_source};
+   const auto runtime_view_copy = from_runtime_view.view();
+
+   // A standard view pipeline can use an existing String as its source and
+   // materialize transformed characters into another String.
+   const auto uppercase_view = runtime | std::views::transform([](char byte) {
+                                 return byte == 'i' ? 'I' : byte;
+                               });
+   const auto from_pipeline = String<8>{uppercase_view};
+
+   static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
+   static constexpr auto span_source{std::span<const char, 4>{char_source}};
+   constexpr auto from_char_span = String{span_source};
+   static_assert(from_char_span.view() == std::string_view{"span"});
+
+   static_assert(literal.view() == std::string_view{"Hello"});
+
+   // Use C++ interoperability to sum the bytes in a String.
+   int byte_sum = 0;
+   for (const auto byte : runtime) {
+     byte_sum += byte;
+   }
+
+   const auto runtime_view = runtime.view();
+
+   return (first == 'H' && missing == '!' && byte_sum == 'H' + 'i' &&
+           runtime_view == std::string_view{"Hi"} &&
+           runtime_view_copy == runtime_source &&
+           from_pipeline.view() == std::string_view{"HI"})
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <std::size_t CapacityValue>
+class String {
+  public:
+    using value_type = char;
+
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "String CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
+
+    constexpr String() noexcept {
+        data_[0] = '\0';
+    }
+
+    /** Construct from a character array literal. CapacityValue counts content
+     * characters; the null terminator is managed separately. */
+    template <std::size_t N>
+    constexpr String(const char (&arr)[N]) noexcept {
+        static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
+        copy_from_source(arr, N - 1U);
+    }
+
+    constexpr String(std::string_view source) noexcept {
+        if consteval {
+            if (source.size() > CapacityValue) {
+                rejected_oversized_string_source_at_compile_time();
+            }
+        }
+        copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
+    }
+
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, String> &&
+                 std::same_as<std::remove_cv_t<std::ranges::range_value_t<SourceRange>>, char>)
+    constexpr String(SourceRange&& source) noexcept {
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "String static-extent range source exceeds String CapacityValue");
+
+        std::size_t copy_count = 0;
+        for (auto&& byte : std::forward<SourceRange>(source)) {
+            if (copy_count >= CapacityValue) {
+                break;
+            }
+            data_[copy_count++] = normalize_byte(static_cast<char>(byte));
+        }
+        logical_size_ = copy_count;
+        data_[logical_size_] = '\0';
+    }
+
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
+    }
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return data_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return data_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::string_view {
+        return {data_.data(), logical_size_};
+    }
+
+    /** Returns true when index falls within logical bounds (not counting null
+     * terminator). Mirrors Clojure contains? over string indices. */
+    [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
+        return index < logical_size_;
+    }
+
+    /** Callable index access returning default-constructed char ('\\0') on
+     * invalid index. */
+    [[nodiscard]] constexpr auto operator()(std::size_t index) const noexcept -> char {
+        return (index < logical_size_) ? data_[index] : '\0';
+    }
+
+    /** Callable index access with custom fallback value on invalid index. */
+    [[nodiscard]] constexpr auto operator()(std::size_t index, char fallback) const noexcept -> char {
+        return (index < logical_size_) ? data_[index] : fallback;
+    }
+
+    /** Returns a fresh String with the character at index replaced. Out-of-bounds
+     * indices leave copy unchanged. */
+    [[nodiscard]] constexpr auto put(std::size_t index, char c) const noexcept -> String {
+        String result = *this;
+        if (index < logical_size_) {
+            result.data_[index] = c;
+        }
+        return result;
+    }
+
+  private:
+    template <typename Source>
+    constexpr void copy_from_source(const Source& source, std::size_t copy_count) noexcept {
+        logical_size_ = copy_count;
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            data_[i] = normalize_byte(source[i]);
+        }
+        data_[logical_size_] = '\0';
+    }
+
+    [[nodiscard]] static constexpr auto normalize_byte(char byte) noexcept -> char {
+        if (byte == '\0' || static_cast<unsigned char>(byte) > 0x7FU) {
+            if consteval {
+                rejected_invalid_string_byte_at_compile_time();
+            }
+            return '.';
+        }
+        return byte;
+    }
+
+    static void rejected_invalid_string_byte_at_compile_time() noexcept;
+    static void rejected_oversized_string_source_at_compile_time() noexcept;
+
+    // Internal array is CapacityValue+1 to hold null terminator
+    std::array<char, CapacityValue + 1> data_{};
+    std::size_t logical_size_{0};
+};
+
+template <std::size_t N>
+String(const char (&)[N]) -> String<N - 1U>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+String(std::span<SourceElement, Extent>) -> String<Extent>;
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <std::size_t CapacityValue>
+struct collection_traits<String<CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::string;
+};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-string.hpp
 // Begin cljonic-vector.hpp
 #pragma once
 
 #include <array>
 #include <cstddef>
+#include <ranges>
+#include <span>
 #include <utility>
 
 
 namespace cljonic {
 
 /** \anchor Vector
- * \b Vector is a CopyOnModifyCollection with fixed-capacity storage.
- * Construction with more initializers than capacity is a compile-time error.
- *
- * This example covers bounded construction and indexed observation. Free
- * functions that operate on collections are documented with their own headers.
+ * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
+ * operate on the collection is through the library's free-function API. Updates return a modified copy without
+ * changing the original collection. Construction with more initializers than the available capacity is rejected at
+ * compile time.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -554,235 +1963,265 @@ namespace cljonic {
  struct Pixel {
    int x;
    int y;
+
+   friend constexpr bool operator==(const Pixel &lhs,
+                                    const Pixel &rhs) noexcept {
+     return lhs.x == rhs.x && lhs.y == rhs.y;
+   }
+ };
+
+ struct CategoryArgument {};
+
+ struct CategoryElement {
+   int category = 0;
+
+   constexpr CategoryElement() noexcept = default;
+   constexpr CategoryElement(const CategoryArgument &) noexcept : category(1) {}
+   constexpr CategoryElement(CategoryArgument &&) noexcept : category(2) {}
+   constexpr CategoryElement(const CategoryElement &) noexcept = default;
+   constexpr auto operator=(const CategoryElement &) noexcept
+       -> CategoryElement & = default;
  };
 
  using Inner = Vector<int, 2>;
 
  int main() {
+   // CTAD infers Vector<int, 3> from the initializer count.
    [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
+
+   // Explicit capacity permits a partially populated Vector and an empty Vector.
    [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
    [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
-   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
-   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
+
+   // Vector values can be nested, including through an explicit type alias.
    [[maybe_unused]] constexpr auto nested_int_vectors =
        Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
    [[maybe_unused]] constexpr auto nested_alias_vectors =
        Vector{Inner{4, 5}, Inner{6}};
 
+   // User-defined values and constructor argument categories are supported.
+   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
+   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
    constexpr Vector<int, 4> values{10, 20};
-   static_assert(values(0U) == 10);
-   static_assert(values(2U) == 0);
-   static_assert(values(2U, 99) == 99);
-   static_assert(std::same_as<decltype(doubles_populated(0U)), double>);
-   static_assert(pixels_populated(0U).x == 1);
-   static_assert(pixels_populated(1U).y == 4);
+   constexpr CategoryArgument category_argument{};
+   constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
+   constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
 
-   return 0;
+   // Vector values can be used as a callable function, returning a default-
+   // value for invalid indexes or a supplied fallback when provided.
+   static_assert(values(0) == 10);
+   static_assert(values(2) == 0);
+   static_assert(values(2, 99) == 99);
+   static_assert(values(-1) == 0);
+   static_assert(values(-1, 99) == 99);
+   static_assert(std::same_as<decltype(doubles_populated(0)), double>);
+   static_assert(pixels_populated(0).x == 1);
+   static_assert(pixels_populated(1).y == 4);
+   static_assert(lvalue_constructed(0).category == 1);
+   static_assert(rvalue_constructed(0).category == 2);
+
+   // Without a fallback, an invalid lookup returns value_type{}; Pixel's
+   // default-constructed int members are zero.
+   static_assert(pixels_populated(-1).x == 0);
+   static_assert(pixels_populated(-1).y == 0);
+
+   // Pixel equality validates the runtime result for a user-defined value type.
+   auto runtime_pixels = Vector<Pixel, 4>{Pixel{1, 2}, Pixel{3, 4}};
+   const auto pixel_value = runtime_pixels(1);
+   const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
+
+   // Runtime construction supports the same callable lookup and fallback
+   // behavior.
+   auto runtime_values = Vector<int, 4>{7, 9};
+   const auto fallback = runtime_values(4, -1);
+   const auto negative_default = runtime_values(-1);
+   const auto negative_fallback = runtime_values(-1, 99);
+
+   // A standard view pipeline can use an existing Vector as its source and
+   // materialize transformed values into another Vector.
+   const auto doubled_view =
+       runtime_values |
+       std::views::transform([](int value) { return value * 2; });
+   const auto from_pipeline = Vector<int, 4>{doubled_view};
+
+   // -----------------------------------------------------------------------
+   // C++ interoperability: a Vector supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
+   // -----------------------------------------------------------------------
+   static constexpr int source_values[] = {11, 22, 33, 44};
+   constexpr std::span source_span{source_values};
+   constexpr auto from_span = Vector<int, 4>{source_span};
+   static_assert(from_span(1) == 22);
+   constexpr auto from_span_ctad = Vector{source_span};
+   static_assert(from_span_ctad(2) == 33);
+   constexpr auto from_span_overallocated = Vector<int, 40>{source_span};
+   static_assert(from_span_overallocated(20, -11) == -11);
+
+   // Constructing a Vector from a runtime C++ array/span
+   int runtime_buffer[] = {100, 200, 300};
+   const auto runtime_from_span =
+       Vector<int, 4>{std::span<const int>{runtime_buffer, 3}};
+
+   constexpr auto interop_values = Vector<int, 4>{10, 20, 30};
+   static_assert(interop_values.begin()[1] == 20);
+   static_assert(interop_values.view().size() == 3);
+
+   // Use C++ interoperability to sum the values in a vector
+   int range_sum = 0;
+   for (const auto value : runtime_values) {
+     range_sum += value;
+   }
+
+   const auto runtime_view = runtime_values.view();
+
+   return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
+           pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
+           range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
+           from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
+           runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
-template <concepts::VectorElement element_type, std::size_t capacity_value>
+template <concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue>
 class Vector {
-public:
-  using value_type = element_type;
+  public:
+    using value_type = ElementType;
 
-  static_assert(concepts::NothrowVectorElement<element_type>,
-                "Vector element storage operations must not throw");
-
-  static_assert(capacity_value <=
-                    cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-                "Vector capacity exceeds "
-                "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(
-                    CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
-
-  template <typename... Args>
-  constexpr Vector(Args... args) noexcept(
-      concepts::NothrowVectorElement<element_type> &&
-      (concepts::NothrowElementConstruction<element_type, Args> && ...))
-      : storage_{}, logical_size_{0} {
-    static_assert(sizeof...(Args) <= capacity_value,
-                  "Vector constructor requires initializer count to be less "
-                  "than or equal to capacity");
     static_assert(
-        (concepts::NothrowElementConstruction<element_type, Args> && ...),
-        "Vector constructor requires all arguments to construct "
-        "element_type without throwing and be implicitly "
-        "convertible to element_type");
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Vector CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
-    initialize_storage_if_valid(args...);
-  }
+    template <typename... Args>
+    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<ElementType, Args> && ...),
+                      "Vector constructor requires all arguments to construct "
+                      "ElementType without throwing and be implicitly "
+                      "convertible to ElementType");
 
-  [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-    return capacity_value;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> std::size_t {
-    return logical_size_;
-  }
-
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  operator()(index_type index) const noexcept -> value_type {
-    return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)]
-                                 : value_type{};
-  }
-
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  operator()(index_type index,
-             const value_type &fallback) const noexcept -> value_type {
-    return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)]
-                                 : fallback;
-  }
-
-private:
-  template <std::integral index_type>
-  [[nodiscard]] constexpr auto
-  index_is_valid(index_type index) const noexcept -> bool {
-    if constexpr (std::signed_integral<index_type>) {
-      if (index < 0) {
-        return false;
-      }
+        initialize_storage_if_valid(std::forward<Args>(args)...);
     }
 
-    return static_cast<std::size_t>(index) < logical_size_;
-  }
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Vector>)
+    constexpr Vector(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<ElementType, source_value_type>,
+                      "Vector range/view constructor requires each source element to "
+                      "construct ElementType without throwing and be implicitly "
+                      "convertible to ElementType");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Vector static-extent range source exceeds Vector CapacityValue");
 
-  template <typename... Args>
-  static constexpr bool constructor_arguments_valid =
-      sizeof...(Args) <= capacity_value &&
-      concepts::NothrowVectorElement<element_type> &&
-      (concepts::NothrowElementConstruction<element_type, Args> && ...);
-
-  template <typename... Args>
-  constexpr void initialize_storage_if_valid(Args... args) noexcept {
-    if constexpr (constructor_arguments_valid<Args...>) {
-      initialize_storage(std::index_sequence_for<Args...>{}, args...);
-      logical_size_ = sizeof...(Args);
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count >= CapacityValue) {
+                break;
+            }
+            storage_[copy_count++] = value_type{std::forward<decltype(item)>(item)};
+        }
+        logical_size_ = copy_count;
     }
-  }
 
-  template <std::size_t... Indices, typename... Args>
-  constexpr void initialize_storage(std::index_sequence<Indices...>,
-                                    Args... args) noexcept {
-    ((storage_[Indices] = element_type{args}), ...);
-  }
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
+    }
 
-  std::array<value_type, capacity_value> storage_{};
-  std::size_t logical_size_ = 0;
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index) const noexcept -> value_type {
+        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : value_type{};
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback) const noexcept -> value_type {
+        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : fallback;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
+        return index_is_valid(index);
+    }
+
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return storage_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return storage_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {storage_.data(), logical_size_};
+    }
+
+  private:
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto index_is_valid(IndexType index) const noexcept -> bool {
+        if constexpr (std::signed_integral<IndexType>) {
+            if (index < 0) {
+                return false;
+            }
+        }
+
+        return static_cast<std::size_t>(index) < logical_size_;
+    }
+
+    template <typename... Args>
+    static constexpr bool constructor_arguments_valid =
+        sizeof...(Args) <= CapacityValue && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
+
+    template <typename... Args>
+    constexpr void initialize_storage_if_valid(Args&&... args) noexcept {
+        if constexpr (constructor_arguments_valid<Args...>) {
+            initialize_storage(std::index_sequence_for<Args...>{}, std::forward<Args>(args)...);
+            logical_size_ = sizeof...(Args);
+        }
+    }
+
+    template <std::size_t... Indices, typename... Args>
+    constexpr void initialize_storage(std::index_sequence<Indices...> indices, Args&&... args) noexcept {
+        (void)indices;
+        ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
+    }
+
+    std::array<value_type, CapacityValue> storage_{};
+    std::size_t logical_size_ = 0;
 };
 
 template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Vector(std::span<SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
+
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename ElementType, std::size_t CapacityValue>
+struct collection_traits<Vector<ElementType, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::vector;
+};
+
+} // namespace cljonic::concepts_detail
 // End cljonic-vector.hpp
 
-namespace cljonic {
-
-/** \anchor Core_ValidIndex
- * \b valid_index reports whether an integral index addresses a logical
- * element in a Vector or Range without inspecting the produced value.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   constexpr Vector<int, 4> values{10, 20};
-
-   static_assert(valid_index(values, 1U));
-   static_assert(!valid_index(values, 2U));
-   static_assert(!valid_index(values, -1));
-
-   constexpr Range<int> range{0, 10};
-
-   static_assert(valid_index(range, 9));
-   static_assert(!valid_index(range, 10));
-   static_assert(!valid_index(range, -1));
-
-   return 0;
- }
- ~~~~~
- */
-template <typename element_type, std::size_t capacity_value,
-          std::integral index_type>
-[[nodiscard]] constexpr auto
-valid_index(const Vector<element_type, capacity_value> &vector,
-            index_type index) noexcept -> bool {
-  if constexpr (std::signed_integral<index_type>) {
-    if (index < 0) {
-      return false;
-    }
-  }
-
-  return static_cast<std::size_t>(index) < vector.size();
-}
-
-template <std::integral value_type, std::integral index_type>
-[[nodiscard]] constexpr auto valid_index(const Range<value_type> &range,
-                                         index_type index) noexcept -> bool {
-  if constexpr (std::signed_integral<index_type>) {
-    if (index < 0) {
-      return false;
-    }
-  }
-
-  return static_cast<std::size_t>(index) < range.size();
-}
-
-} // namespace cljonic
-// End cljonic-core-valid-index.hpp
-
-namespace cljonic {
-
-/** \anchor Core_Get
- * \b get returns the logical element at \p index when the index is valid.
- * When the index is invalid, the default element is returned.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   const auto values = Vector<int, 4>{10, 20};
-
-   const auto v0 = get(values, 0U);     // 10
-   const auto v1 = get(values, 2U);     // 0
-   const auto v2 = get(values, 2U, 99); // 99
-
-   return (v0 == 10 && v1 == 0 && v2 == 99) ? 0 : 1;
- }
- ~~~~~
- */
-template <typename element_type, std::size_t capacity_value,
-          std::integral index_type>
-[[nodiscard]] constexpr auto
-get(const Vector<element_type, capacity_value> &vector,
-    index_type index) noexcept -> element_type {
-  return valid_index(vector, index) ? vector(index) : element_type{};
-}
-
-/** \anchor Core_Get_Fallback
- * \b get returns the logical element at \p index when the index is valid.
- * When the index is invalid, \p fallback is returned.
- */
-template <typename element_type, std::size_t capacity_value,
-          std::integral index_type>
-[[nodiscard]] constexpr auto
-get(const Vector<element_type, capacity_value> &vector, index_type index,
-    const element_type &fallback) noexcept -> element_type {
-  return valid_index(vector, index) ? vector(index) : fallback;
-}
-
-} // namespace cljonic
-// End cljonic-core-get.hpp
-
-namespace cljonic {
-
-namespace core {} // namespace core
-
-} // namespace cljonic
+namespace cljonic::core {}
 
 #endif // CLJONIC_CORE_HPP
 // End cljonic-core.hpp

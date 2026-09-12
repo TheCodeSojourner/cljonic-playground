@@ -23,17 +23,17 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples docs-examples lint no-heap-src no-heap-symbols no-heap _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
 	@printf '%-12s %s\n' 'clean' 'Remove generated local build output'
+	@printf '%-12s %s\n' 'cljonic' 'Generate the single public header at $(CLJONIC_HEADER)'
+	@printf '%-12s %s\n' 'cljonic-test' 'Compile and run the standalone single-header probe'
 	@printf '%-12s %s\n' 'complexity' 'Run lizard on COMPLEXITY_PATH (default src); set CYCLOMATIC_COMPLEXITY_THRESHOLD and FUNCTION_LENGTH_THRESHOLD'
 	@printf '%-12s %s\n' 'complexity-cli' 'Quiet lizard warning-only check on COMPLEXITY_PATH; fails if thresholds are exceeded'
 	@printf '%-12s %s\n' 'coverage' 'Build with instrumentation, run tests, enforce $(COVERAGE_THRESHOLD)% line coverage'
 	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
-	@printf '%-12s %s\n' 'cljonic' 'Generate the single public header at $(CLJONIC_HEADER)'
-	@printf '%-12s %s\n' 'cljonic-test' 'Compile and run the standalone single-header probe'
 	@printf '%-12s %s\n' 'docs' 'Generate Doxygen HTML documentation to docs/'
 	@printf '%-12s %s\n' 'docs-examples' 'Compile Doxygen C++ sample blocks against generated $(CLJONIC_HEADER)'
 	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
@@ -44,6 +44,7 @@ help:
 	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate for modular/generated headers: source check, harness build, and symbol scan'
 	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
 	@printf '%-12s %s\n' 'no-heap-symbols' 'Fail if compiled artifact contains forbidden allocator symbols'
+	@printf '%-12s %s\n' 'range-compile-fail' 'Verify statically oversized range sources fail for all collections and header variants'
 	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
 	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
 	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and modular/generated parallel test run'
@@ -53,6 +54,7 @@ help:
 	@printf '%-12s %s\n' 'upsert-fast' 'Fast scoped loop: lint and complexity-cli for UPSERT_FAST_FILE'
 	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
 	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict spec-to-code traceability and no-heap verification'
+	@printf '%-12s %s\n' 'validate' 'Non-mutating green-state validation: format, lint, complexity, sanitizers, coverage, traceability, and no-heap without doc regeneration'
 
 all: clean test
 
@@ -130,6 +132,9 @@ complexity-cli:
 	@command -v lizard > /dev/null 2>&1 || (echo "missing required tool: lizard" >&2; exit 1)
 	@lizard -C $(CYCLOMATIC_COMPLEXITY_THRESHOLD) -L $(FUNCTION_LENGTH_THRESHOLD) -w $(COMPLEXITY_PATH)
 	@echo "complexity:ok"
+
+range-compile-fail: cljonic scripts/check-range-compile-failures.py
+	@python3 scripts/check-range-compile-failures.py
 
 format:
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
@@ -240,7 +245,7 @@ _traceability-test-ids-current:
 	@find tests -type f \( -name '*.cpp' -o -name '*.cc' \) -print0 | \
 		xargs -0 -r cat | \
 		sed -E '/^[[:space:]]*#define[[:space:]]+TRACE_ID\(/d' | \
-		perl -0777 -ne 'while(/TRACE_ID\((.*?)\);/sg){@s=($$1 =~ /"([^"]*)"/g); print join("", @s), "\n" if @s;}' | \
+		perl -0777 -ne 'while(/TRACE_ID\((.*?)\);/sg){@s=($$1 =~ /"([^"]*)"/g); $$text=join("", @s); while($$text =~ /((?:entity-fields\.[A-Za-z0-9_]+|invariant\.[A-Za-z0-9_]+\.[A-Za-z0-9_]+))(?=(?:entity-fields|invariant)|$$)/g){print "$$1\n";}}' | \
 		sort -u > $(TRACEABILITY_TEST_IDS_CURRENT)
 
 traceability-spec-to-code:
@@ -297,6 +302,7 @@ upsert-fast:
 upsert-gate:
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
+	@$(MAKE) --no-print-directory -s range-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
 
@@ -305,10 +311,22 @@ upsert-gate-strict:
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
 	@$(MAKE) --no-print-directory -s no-heap
 
+validate:
+	@$(MAKE) --no-print-directory -s format
+	@$(MAKE) --no-print-directory -s lint
+	@$(MAKE) --no-print-directory -s complexity-cli
+	@$(MAKE) --no-print-directory -s range-compile-fail
+	@$(MAKE) --no-print-directory -s sanitizer-cli
+	@$(MAKE) --no-print-directory -s coverage-cli
+	@$(MAKE) --no-print-directory -s traceability-spec-to-code
+	@$(MAKE) --no-print-directory -s no-heap
+	@echo "validate:ok"
+
 git:
 	@$(MAKE) --no-print-directory -s format
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
+	@$(MAKE) --no-print-directory -s range-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code

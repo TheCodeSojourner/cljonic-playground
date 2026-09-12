@@ -1,10 +1,5 @@
 var searchData=
 [
-  ['seq_20i_20e_20sequence_3a_20array_20range_20repeat_20set_20and_20or_20string_0',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]],
-  ['sequence_3a_20array_20range_20repeat_20set_20and_20or_20string_1',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]],
-  ['set_20and_20or_20string_2',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]],
-  ['set_20functions_3',['Set Functions',['../index.html#autotoc_md10',1,'']]],
-  ['size_4',['size',['../classcljonic_1_1_range.html#a44a6abd6025e0615ea8038a836b017a9',1,'cljonic::Range::size()'],['../classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101',1,'cljonic::Vector::size()']]],
-  ['string_5',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]],
-  ['string_20functions_6',['String Functions',['../index.html#autotoc_md11',1,'']]]
+  ['lookup_5ftype_0',['lookup_type',['../classcljonic_1_1_map.html#aed498d46cc72ae513d9d25b41b02fa45',1,'cljonic::Map::lookup_type'],['../classcljonic_1_1_set.html#acaac1e8264f0ca9b2c5b0ef58aad57e7',1,'cljonic::Set::lookup_type']]],
+  ['lookupcollection_1',['LookupCollection',['../conceptcljonic_1_1concepts_1_1_lookup_collection.html',1,'cljonic::concepts']]]
 ];

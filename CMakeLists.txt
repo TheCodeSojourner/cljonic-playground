@@ -19,13 +19,8 @@ if(BUILD_TESTING)
     )
     FetchContent_MakeAvailable(Catch2)
 
-    set(CLJONIC_SPEC_TEST_SOURCES
-        tests/cljonic-concepts-spec-tests.cpp
-        tests/cljonic-vector-spec-tests.cpp
-        tests/cljonic-core-count-spec-tests.cpp
-        tests/cljonic-core-get-spec-tests.cpp
-        tests/cljonic-core-valid-index-spec-tests.cpp
-        tests/cljonic-range-spec-tests.cpp
+    file(GLOB CLJONIC_SPEC_TEST_SOURCES CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/cljonic-*-spec-tests.cpp"
     )
     add_library(cljonic_modular_header_smoke OBJECT tests/cljonic-modular-header-smoke.cpp)
     target_compile_features(cljonic_modular_header_smoke PRIVATE cxx_std_23)
@@ -98,10 +93,8 @@ if(BUILD_TESTING)
     catch_discover_tests(cljonic_tests)
     catch_discover_tests(cljonic_single_header_tests)
 
-    set(CLJONIC_NO_HEAP_SOURCES
-        tests/no_heap/harness_main.cpp
-        tests/no_heap/cljonic-vector-probes.cpp
-        tests/no_heap/cljonic-core-count-probes.cpp
+    file(GLOB CLJONIC_NO_HEAP_SOURCES CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/no_heap/*.cpp"
     )
 
     function(configure_cljonic_no_heap_probe target_name use_single_header)

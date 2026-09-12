@@ -4,7 +4,7 @@
   <img src="logo.png" width="200" height="200" alt="cljonic" />
 </p>
 
-<p align="center"><strong>Header-Only Embedded-Systems C++ Clojure-esque Functional Programming Library</strong></p>
+<p align="center"><strong>Header-Only Embedded-System C++ Clojure-esque Functional Programming Library</strong></p>
 
 > **Note**
 > If you are interested in a "big-machine" **C++ Clojure** implementation see the [Jank](https://github.com/jank-lang/jank) project.
@@ -75,7 +75,7 @@ The value of a collection's **default element** is a default initialized instanc
 
 > **Note**
 > The design choice to use a **default element** means that **cljonic** users must take care to ensure that they know
-> when a **default element** can be returned (e.g., Asking for the First element of an empty collection), and to handle things appropriately.
+> when a **default element** can be returned (e.g., Asking for the First element of an empty collection), and to handle things appropriately. For this reason **cljonic** provides "**preflight preicates**".
 
 ### C++ constexpr and consteval
 

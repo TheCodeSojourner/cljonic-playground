@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['queue_0',['Queue',['../classcljonic_1_1_queue.html#acf3e2037031663681f0b8a33d3e261d2',1,'cljonic::Queue::Queue(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; T, Args &gt; &amp;&amp;...))'],['../classcljonic_1_1_queue.html#ada4a74d920902b3b8f49cd6577fe4c2e',1,'cljonic::Queue::Queue(SourceRange &amp;&amp;source) noexcept((concepts::NothrowElementConstruction&lt; value_type, std::ranges::range_value_t&lt; SourceRange &gt; &gt;))'],['../namespacecljonic.html#a1ccca56ddfbbc85bcfba4064a08761d3',1,'cljonic::Queue(First, Rest...) -&gt; Queue&lt; First, 1+sizeof...(Rest)&gt;'],['../namespacecljonic.html#a55bddea4174ca0026b4178b2623c67ef',1,'cljonic::Queue(std::span&lt; SourceElement, Extent &gt;) -&gt; Queue&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;']]]
+];

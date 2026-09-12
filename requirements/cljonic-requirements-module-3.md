@@ -1,0 +1,164 @@
+# cljonic Requirements - Module 3: Core Collection Types & Primitive Free Functions
+
+## Purpose and Scope
+
+This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their current primitive member and free-function operations, and callable lookup forms. Sequence traversal interfaces are approved future work and are not part of the current collection API. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
+
+## Collection Family Requirements
+
+REQ-COLL-001. The supported collection family MUST include vector, map, set, queue, and string.
+
+REQ-COLL-001A. Vector elements, set elements, queue elements, map keys, map values, and map-entry fields MUST satisfy the `NothrowCollectionElement` storage contract defined by `REQ-VAL-007A`. String storage uses its separately defined bounded ASCII-byte representation and MUST preserve the same non-throwing storage and destruction guarantees. A `MapEntry<K, V>`'s key field MUST additionally satisfy the stable equality capability required for map key admission, whether the `MapEntry` is embedded in a `Map` or instantiated standalone.
+
+REQ-COLL-002. The library MUST provide a bounded vector with indexed lookup, indexed replacement, append, count, and stack-style pop/peek behavior where applicable. Sequence conversion and traversal remain deferred future capabilities.
+
+REQ-COLL-002A. A `Vector<T, N>` MUST be callable with `operator()(Index)` and `operator()(Index, T)` when `Index` and `T` satisfy the same capabilities required by bounded indexed lookup. The one-argument form MUST return the element at a valid index or `T{}` when the index is invalid. The two-argument form MUST return the element at a valid index or the supplied fallback value when the index is invalid. Neither form MUST mutate the vector, allocate, throw, or change vector order or traversal state. `contains(vector, index)` MUST remain the authoritative way to distinguish an invalid index from a valid index whose element equals `T{}`; `get(vector, index)` and `get(vector, index, fallback)` MUST remain behaviorally equivalent free-function forms. Negative indexes, when representable by the accepted index type, MUST be invalid.
+
+REQ-COLL-004. The library MUST provide a bounded map with key/value association, lookup, association, removal, membership, and count. Sequence conversion and traversal remain deferred future capabilities.
+
+REQ-COLL-004A. Associating an existing map key MUST replace its associated value in the returned map without increasing the map count or requiring additional capacity. Associating a new key MUST add a key/value pair only when capacity is available.
+
+REQ-COLL-004B. A `Map<K, V, N>` MUST be callable with `operator()(K)` and `operator()(K, V)` when `K` and `V` satisfy the same capabilities required by map lookup. The one-argument form MUST return the associated value for a present key or `V{}` when the key is absent. The two-argument form MUST return the associated value for a present key or the supplied fallback value when the key is absent. Neither form MUST mutate the map, insert a key, allocate, throw, or change traversal state. `contains(map, key)` MUST remain the authoritative way to distinguish a missing key from a present key whose value equals `V{}`; `get(map, key)` and `get(map, key, fallback)` MUST remain behaviorally equivalent free-function forms.
+
+REQ-COLL-004C. A `Map<K, V, N>` MUST admit both `K` and `V` only when each satisfies `NothrowCollectionElement`. `K` MUST additionally satisfy the stable equality capability required for key lookup. The storage-admission requirement MUST be enforced at the Map template boundary and MUST remain independent of operation-specific capabilities beyond key equality.
+
+REQ-COLL-005. The library MUST provide a bounded set with membership, insertion, removal, and count. Sequence conversion and traversal remain deferred future capabilities.
+
+REQ-COLL-005A. Inserting a set value that is already present MUST be a successful no-op in the returned set, MUST preserve the set count, and MUST NOT require additional capacity.
+
+REQ-COLL-005B. A `Set<T, N>` MUST be callable with `operator()(T)` and `operator()(T, T)` when `T` satisfies the stable equality capability required by set membership. The one-argument form MUST return the matching stored element for a present value or `T{}` when the value is absent. The two-argument form MUST return the matching stored element for a present value or the supplied fallback value when the value is absent. Neither form MUST mutate the set, insert a value, allocate, throw, reorder elements, or change traversal state. `contains(set, value)` MUST remain the authoritative boolean membership predicate and MUST distinguish an absent value from a present value equal to `T{}`; `get(set, value)` and `get(set, value, fallback)` MUST remain behaviorally equivalent free-function forms.
+
+REQ-COLL-012A. A `String<N>` MUST be callable with `operator()(Index)` and `operator()(Index, char)` for indexed lookup. The one-argument form MUST return the stored ASCII byte at a valid content index or `char{}` when the index is invalid. The two-argument form MUST return the stored ASCII byte at a valid content index or the supplied fallback character when the index is invalid. Neither form MUST expose the null terminator as a content element, mutate the string, allocate, or throw. `contains(string, index)` MUST remain the authoritative way to distinguish an invalid index from a valid index whose byte equals `char{}`.
+
+REQ-COLL-006. The library MUST provide a bounded FIFO queue with insertion at the rear, removal at the front, peek, and count. Sequence conversion and traversal remain deferred future capabilities.
+
+REQ-COLL-007. Collection capacity MUST be encoded in each collection type and bounded by a documented configuration-time limit.
+
+REQ-COLL-007A. A collection capacity MAY be zero. A zero-capacity collection MUST be a valid empty owning value, MUST report `count() == 0` and `is_empty() == true`, MUST return documented default or fallback values for access, and MUST preserve its value when an insertion operation cannot add an element. Future traversal work MUST support empty const traversal without accessing element storage, allocating, throwing, or invoking capacity-dependent arithmetic with zero as a divisor. A zero-capacity collection MUST fail any compile-time construction that would require stored elements.
+
+REQ-COLL-008. `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` MUST supply the default and maximum permitted collection element count and MUST default to 1000 unless a later approved requirement changes it.
+
+REQ-COLL-009. The public API MUST distinguish collection behavior from storage strategy. Users MUST be able to use the collection contracts without depending on a particular internal representation.
+
+REQ-COLL-010. Map lookup, association, and removal, and set membership, insertion, and removal MUST use bounded linear scans over their stored elements. Future traversal work MAY use the same bounded storage inspection without changing the only-search-strategy rule for lookup and membership.
+
+REQ-COLL-010A. Removal from unsorted `Map` and `Set` MUST use swap-and-remove after the target has been found: the final stored element, or final map key/value pair, MUST be copied into the removed position before the count is decremented. This optimization MUST preserve membership and association semantics while allowing implementation traversal order to change.
+
+REQ-COLL-010B. The supported `Map`, `Set`, and `Queue` implementations MUST use flat bounded array-backed storage. A `Map` MUST store its active key/value pairs within its bounded array, and a `Set` MUST store its active values within its bounded array. A `Queue` MAY use circular physical storage; its const traversal and any interoperability accessor MUST expose active elements in logical FIFO order. The implementation MUST preserve collection semantics while maintaining bounded storage and a defined logical traversal range.
+
+REQ-COLL-011. Map and set iteration order MUST be semantically unordered, consistent with their Clojure counterparts. Implementations MAY exhibit a repeatable order, but callers MUST NOT rely on any particular order.
+
+REQ-COLL-012. The string MUST be a bounded, array-backed collection with ordered ASCII byte storage and a null terminator immediately after its content. The terminator MUST NOT count as an element, and string capacity MUST be measured in content bytes excluding the terminator.
+
+REQ-COLL-013. A string MUST accept only ASCII bytes in the range `0x01` through `0x7F`. Embedded null bytes and bytes above `0x7F` MUST be handled according to the documented deterministic failure policy.
+
+REQ-COLL-013A. The runtime `'.'` replacement policy for invalid bytes defined by `REQ-FN-027` MUST apply to external `std::string_view` and `std::span<const char>` imports. Direct `String` construction from compile-time literals MUST reject invalid bytes at compile time. Any public runtime constructor or operation that accepts raw byte input MUST define an explicit checked-failure or replacement policy for invalid bytes; it MUST NOT inherit the external-source import policy implicitly. Operations that receive an existing `String` MAY assume that its stored content has already passed the string byte-validity rules and MUST operate only on valid stored bytes.
+
+REQ-COLL-013B. A runtime `String<N>` construction from a raw character array MUST replace each embedded null byte or byte above `0x7F` with the ASCII period character `'.'`. The runtime replacement MUST preserve the input content length, remain non-throwing and non-allocating, and MUST NOT alter the compile-time rejection policy for constant-evaluated construction.
+
+REQ-COLL-014. The public C++ string type MUST be named `cljonic::String<N>`, where `N` is the maximum content length in bytes and excludes the null terminator.
+
+REQ-COLL-015. The API MUST support explicit-capacity string-literal construction such that `cljonic::String<N>{literal}` is valid only when the literal's content length is no greater than `N`.
+
+REQ-COLL-016. An explicit-capacity string-literal construction whose literal content length exceeds `N` MUST fail at compile time.
+
+REQ-COLL-017. The API MUST support capacity-inferred string-literal construction such that `cljonic::String{literal}` has the same semantics and type as `cljonic::String<content_length>{literal}`, where `content_length` excludes the literal's null terminator.
+
+REQ-COLL-018. The API MUST support pack-literal construction for `Map<K, V, N>` such that `cljonic::Map<K, V, N>{entries...}` folds `assoc` over one or more arguments, each of exact type `MapEntry<K, V>`, in argument order; no other argument type MUST be accepted, whether or not it is implicitly convertible to `MapEntry<K, V>`. A later argument whose key matches an earlier argument's key MUST replace the earlier argument's value, consistent with `REQ-COLL-004A`. Pack-literal construction MUST require at least one argument; the zero-argument empty map MUST remain constructible only through ordinary default construction (`REQ-COLL-004`), which MUST NOT be considered pack-literal construction.
+
+REQ-COLL-018A. A `Map<K, V, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time, regardless of whether duplicate keys would have produced a smaller final count. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Map{entries...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
+
+REQ-COLL-019. The API MUST support pack-literal construction for `Set<T, N>` such that runtime `cljonic::Set<T, N>{values...}` is equivalent to default-constructing an empty set and folding `conj` over each `T`-constructible argument in argument order, consistent with the no-op-on-duplicate semantics of `REQ-COLL-005A`. A duplicate argument MUST therefore produce one stored copy at runtime.
+
+REQ-COLL-019A. A `Set<T, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time, regardless of whether duplicate values would have produced a smaller final count. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Set{values...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
+
+REQ-COLL-019B. A `Set<T, N>{values...}` construction evaluated as a constant expression MUST fail at compile time when two arguments compare equal. This compile-time duplicate rejection MUST preserve the runtime no-op-on-duplicate behavior required by `REQ-COLL-019` and MUST NOT require a runtime exception.
+
+REQ-COLL-020. The API MUST support pack-literal construction for `Queue<T, N>` such that `cljonic::Queue<T, N>{values...}` is equivalent to default-constructing an empty queue and folding `conj` over each `T`-constructible argument in argument order, producing FIFO order matching argument order.
+
+REQ-COLL-020A. A `Queue<T, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Queue{values...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
+
+## Deferred Sequence Traversal Mechanics
+
+The sequence traversal contracts below are approved future-work behavior, not current collection APIs. No supported collection currently exposes `seq`, `first`, `next`, `rest`, a collection-owned logical range, or a C++ interoperability traversal accessor. These contracts MUST remain deferred until a later increment separately propagates their implementation and tests for every collection family. Their presence here records the intended future behavior without making it implementation-ready now.
+
+REQ-SEQ-001. The library MUST define sequence as a traversal behavior over immutable values in the cljonic collection family, not as a separate owning collection type.
+
+REQ-SEQ-002. A sequence MUST support determining emptiness, obtaining the first value, and obtaining the remainder.
+
+REQ-SEQ-002A. `next` and `rest` MUST operate on the collection's documented logical traversal order. For a nonempty sequence, both operations MUST produce an owning bounded result containing every logical element after the first; for an empty sequence, both operations MUST produce the documented empty owning result. `next` and `rest` MUST NOT derive their semantics from `pop()` because `pop()` MAY remove a different logical end for different collection kinds, including the last element of a vector and the first element of a queue.
+
+REQ-SEQ-002B. `next` and `rest` MUST preserve the source collection, MUST preserve the relative logical order of all retained elements, and MUST apply the same element representation and capacity policy as `seq`. For maps, retained elements MUST be value-semantic `MapEntry` values; for sets and maps, implementation traversal order MAY be repeatable but MUST remain semantically unordered; for queues, retained elements MUST remain in FIFO order.
+
+REQ-SEQ-003. A collection that can be traversed as a sequence MUST expose a sequence conversion operation and the common traversal operations directly.
+
+REQ-SEQ-004. `seq`, `first`, `next`, `rest`, and `count` MUST be available as generic free functions where the required traversal capability exists. Direct collection calls and calls on sequence values MUST be behaviorally equivalent where both apply.
+
+REQ-SEQ-005. Sequence traversal MUST NOT mutate the source collection.
+
+REQ-SEQ-006. Sequence traversal MUST be bounded or otherwise guaranteed not to allocate dynamically on supported embedded paths.
+
+REQ-SEQ-007. The sequence API MUST support vector, map, set, queue, and string input from the cljonic collection family.
+
+REQ-SEQ-008. The sequence API MUST NOT require support for arbitrary external arrays, ranges, iterables, or user-defined container types. Supported sequence inputs MUST belong to the cljonic collection family or be explicitly added by an approved requirement.
+
+REQ-SEQ-009. Empty-sequence behavior MUST be consistent across all sequenceable collection types.
+
+REQ-SEQ-010. `seq` MUST return an immutable, value-semantic bounded vector containing the sequence elements of its input.
+
+REQ-SEQ-011. The vector returned by `seq` MUST be independently valid, use bounded automatic or static storage, and MUST NOT perform dynamic allocation or retain a dependency on the source collection.
+
+REQ-SEQ-012. Each element produced by sequencing a map MUST be a value-semantic map-entry value containing exactly one key and its associated value. The map-entry value MUST be independently valid and MUST NOT retain a dependency on the source map.
+
+REQ-SEQ-013. A map-entry value MUST be sequenceable as a fixed two-element sequence whose first element is the key and whose last element is the value. Its count MUST be two, and indexed access at zero and one MUST return the key and value respectively.
+
+REQ-SEQ-014. `seq` applied to a map MUST return an owning bounded vector of map-entry values. The returned vector MUST preserve the map's traversal results without making the traversal order semantically significant.
+
+## Primitive Free Functions & General Comparisons
+
+REQ-FN-001. The primary user-facing operations MUST be free functions rather than requiring users to learn collection-specific member APIs.
+
+REQ-FN-002. The supported free-function vocabulary MUST include at least the functions listed in the API Vocabulary Inventories, subject to each entry's lifecycle status and the capabilities of each input. Only entries classified as `requirements-backed` constitute supported behavior.
+
+REQ-FN-002A. For a nonempty map, `first` MUST return one map-entry value. For a map-entry value, `first` MUST return its key, `last` MUST return its value, `key` MUST return its key, and `val` MUST return its value. These operations MUST compose so that `first(first(map))` returns the key and `last(first(map))` returns the value.
+
+REQ-FN-002B. `last` applied to a map MAY return the final map-entry value in the implementation's traversal order, but callers MUST NOT rely on which entry is returned because ordinary map traversal order is semantically unordered.
+
+REQ-FN-002C. The canonical named comparison functions MUST use full descriptive names: `equal`, `not_equal`, `less`, `less_equal`, `greater`, and `greater_equal`. Short aliases such as `eq`, `neq`, `lt`, `lte`, `gt`, or `gte` MUST NOT be required by the supported API.
+
+REQ-FN-002D. Where the semantics and capabilities permit, binary comparisons SHOULD also be exposed through the corresponding native C++ operators `==`, `!=`, `<`, `<=`, `>`, and `>=`. Named functions MUST remain available for generic, constrained, or variadic use.
+
+REQ-FN-002E. `equal` MUST represent general value equality, including recursively defined finite collection equality. Numeric equality MUST be a separately specified capability or operation and MUST NOT be inferred solely from the existence of general value equality.
+
+REQ-FN-002F. Clojure's `=` MUST map conceptually to cljonic general equality, while Clojure's numeric `==` MUST map conceptually to a separately specified numeric-equality operation. The C++ spelling `=` MUST NOT be introduced as a cljonic function because it is assignment syntax.
+
+REQ-FN-002M. `can_conj(collection, value)` MUST return true when `conj` can produce its documented result without capacity failure, including when a set already contains the value. `can_assoc(map, key)` MUST return true when the key already exists because `assoc` replaces its value without consuming capacity, and MUST return true for a new key only when capacity is available. `can_assoc` MUST NOT accept a value argument, because the value being associated never affects whether `assoc` can succeed.
+
+REQ-FN-002P. The callable `Map<K, V, N>` lookup forms specified by `REQ-COLL-004B` MUST be equivalent to the corresponding `get` overloads for the same map, key, value, and fallback arguments. `operator[]` MUST NOT be required or provided as the map lookup syntax because its conventional insertion semantics conflict with cljonic's immutable bounded-map contract.
+
+REQ-FN-002Q. The callable `Vector<T, N>` lookup forms specified by `REQ-COLL-002A` MUST be equivalent to the corresponding `get` overloads for the same vector, index, element type, and fallback arguments. `contains(vector, index)` MUST be non-throwing, non-allocating, and consistent with both callable lookup forms and indexed access. `operator[]` MUST NOT be required or provided as the vector lookup syntax because its conventional unchecked-access semantics conflict with cljonic's bounds-checked contract.
+
+REQ-FN-002R. The callable `Set<T, N>` lookup forms specified by `REQ-COLL-005B` MUST be equivalent to the corresponding `get` overloads for the same set, value, and fallback arguments. Set callable lookup MUST use the same stable equality capability and bounded linear scan as `contains`; it MUST NOT provide a boolean-returning `operator()` overload because `contains(set, value)` is the canonical membership predicate.
+
+REQ-FN-002S. The callable `String<N>` lookup forms specified by `REQ-COLL-012A` MUST be equivalent to `get(string, index)` and `get(string, index, fallback)`. `contains(string, index)` MUST be non-throwing, non-allocating, and consistent with both callable lookup forms; the null terminator MUST remain outside the lookup domain.
+
+REQ-FN-003. Generic free functions MUST be constrained by explicit concepts or equivalent compile-time requirements.
+
+REQ-FN-004. Unsupported operations MUST fail at compile time with useful diagnostics where the limitation is knowable from the types.
+
+REQ-FN-005. Functional operations MUST preserve input values.
+
+REQ-FN-006. `map`, `filter`, and similar transformations MUST have a documented capacity policy when the result can exceed its target capacity.
+
+REQ-FN-007. Functions MUST be composable across compatible collection and sequence types.
+
+REQ-FN-008. `map`, `filter`, `reduce`, and similar higher-order operations MUST preserve the purity and input-preservation guarantees of the library. Supported callbacks MUST be non-throwing, non-allocating, non-mutating with respect to operation inputs, and deterministic for equal arguments. The library and its supported callbacks MUST NOT perform I/O, mutate input collections or their elements, depend on hidden mutable state or mutable global state, or introduce side effects independently of an explicitly approved effectful API contract. The library MUST reject standard-library facilities and callback forms when their use would violate the bounded, deterministic, no-heap, no-exception, input-preservation, or owning-result contracts.
+
+REQ-FN-008A. Higher-order operation constraints MUST enforce at the public API boundary every callable property that can be expressed portably in the C++ type system, including invocability with the documented arguments, compatible result types, required `noexcept` behavior, and required `constexpr` capability. Non-allocating behavior, absence of I/O, absence of hidden mutable-state dependence, input preservation, and semantic determinism MUST be treated as behavioral contract obligations and MUST be verified by implementation review, focused tests, no-heap checks, or other applicable quality gates rather than assumed from callable syntax or a concept name.
+
+REQ-FN-026. The core vocabulary MUST include `empty`, `is_empty`, and `not_empty` with the semantics defined by `REQ-BOUNDS-010A`. `empty` MUST produce an empty owning value of the same supported collection type as its input. `is_empty` MUST return a boolean predicate result. `not_empty` MUST preserve the input collection type and capacity and MUST return an owning copy of the input when nonempty or the corresponding empty value when empty. These operations MUST preserve their inputs and require no dynamic allocation or exceptions.
+
+## Traceability and Related Requirements
+
+- **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
+- **Governed REQs**: `REQ-COLL-001`–`017`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`.

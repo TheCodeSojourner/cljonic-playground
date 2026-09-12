@@ -5,44 +5,202 @@
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
 TEST_CASE("Vector construction establishes logical size", "[vector]") {
-  using cljonic::Vector;
+    using cljonic::Vector;
 
-  TRACE_ID("entity-fields.VectorCollection");
-  TRACE_ID("invariant.VectorCollection.CapacityIsNonNegative");
-  TRACE_ID("invariant.VectorCollection.LogicalSizeIsNonNegative");
-  TRACE_ID("invariant.VectorCollection.LogicalSizeDoesNotExceedCapacity");
-  TRACE_ID("invariant.VectorCollection.SupportsLiteralDeducedConstruction");
-  TRACE_ID(
-      "invariant.VectorCollection.SupportsEmptyExplicitCapacityConstruction");
-  TRACE_ID(
-      "invariant.VectorCollection.OversizedInitializerIsCompileTimeFailure");
-  TRACE_ID("invariant.VectorCollection."
-           "OversizedInitializerDiagnosticIdentifiesCapacity");
+    TRACE_ID("entity-fields.Vector");
+    TRACE_ID("invariant.Vector.CapacityIsNonNegative");
+    TRACE_ID("invariant.Vector.LogicalSizeIsNonNegative");
+    TRACE_ID("invariant.Vector.LogicalSizeDoesNotExceedCapacity");
+    TRACE_ID("invariant.Vector.HeaderOnlyDistribution");
+    TRACE_ID("invariant.Vector.StaticOrAutomaticStorageOnly");
+    TRACE_ID("invariant.Vector.ContiguousStorage");
+    TRACE_ID("invariant.Vector.CallableLookup");
+    TRACE_ID("invariant.Vector.NoHeapAllocation");
+    TRACE_ID("invariant.Vector.NoRtti");
+    TRACE_ID("invariant.Vector.NoExceptions");
+    TRACE_ID("invariant.Vector.SingleThreadedExecutionModel");
+    TRACE_ID("invariant.Vector.ImmutablePublicApi");
+    TRACE_ID("invariant.Vector.UpdateReturnsNewValue");
+    TRACE_ID("invariant.Vector.DeepCopyUpdate");
+    TRACE_ID("invariant.Vector.ReferentialTransparency");
+    TRACE_ID("invariant.Vector.RequiresValueSemanticElements");
+    TRACE_ID("invariant.Vector.RequiresNothrowDefaultConstruction");
+    TRACE_ID("invariant.Vector.RequiresNothrowCopyConstruction");
+    TRACE_ID("invariant.Vector.RequiresNothrowCopyAssignment");
+    TRACE_ID("invariant.Vector.RequiresNothrowDestruction");
+    TRACE_ID("invariant.Vector.SupportsLiteralDeducedConstruction");
+    TRACE_ID("invariant.Vector.SupportsEmptyExplicitCapacityConstruction");
+    TRACE_ID("invariant.Vector.SupportsExplicitCapacityConstruction");
+    TRACE_ID("invariant.Vector.SupportsCapacityInferredLiteralEquivalentSemantics");
+    TRACE_ID("invariant.Vector.OversizedInitializerIsCompileTimeFailure");
+    TRACE_ID("invariant.Vector.OversizedInitializerDiagnosticIdentifiesCapacity");
+    TRACE_ID("invariant.Vector.CapacityExceedsMaximumIsCompileTimeFailure");
 
-  constexpr Vector<int, 4> empty{};
-  constexpr Vector<int, 4> populated{1, 2};
-  constexpr Vector<int, 2> full{1, 2};
+    constexpr Vector<int, 4> empty{};
+    constexpr Vector<int, 4> populated{1, 2};
+    constexpr Vector<int, 2> full{1, 2};
+    constexpr Vector<int, 0> zero_capacity{};
+    constexpr Vector<int, 4> capacity_boundary{1, 2, 3, 4};
+    constexpr auto inferred = Vector{1, 2, 3};
+    constexpr Vector<int, 3> explicit_inferred_equivalent{1, 2, 3};
 
-  STATIC_REQUIRE(empty.size() == 0U);
-  STATIC_REQUIRE(populated.size() == 2U);
-  STATIC_REQUIRE(full.size() == 2U);
-  STATIC_REQUIRE(Vector<int, 4>::capacity() == 4U);
+    struct CategoryArgument {};
+
+    struct CategoryElement {
+        int category = 0;
+
+        constexpr CategoryElement() noexcept = default;
+        constexpr explicit CategoryElement(int category_value) noexcept : category(category_value) {
+        }
+        constexpr CategoryElement(const CategoryArgument& argument) noexcept : category(1) {
+            (void)argument;
+        }
+        constexpr CategoryElement(CategoryArgument&& argument) noexcept : category(2) {
+            (void)argument;
+        }
+        constexpr CategoryElement(const CategoryElement&) noexcept = default;
+        constexpr auto operator=(const CategoryElement&) noexcept -> CategoryElement& = default;
+    };
+
+    constexpr CategoryArgument category_argument{};
+    constexpr Vector<CategoryElement, 1> lvalue_category_vector{category_argument};
+    constexpr Vector<CategoryElement, 1> rvalue_category_vector{CategoryArgument{}};
+
+    STATIC_REQUIRE(empty.count() == 0U);
+    STATIC_REQUIRE(populated.count() == 2U);
+    STATIC_REQUIRE(full.count() == 2U);
+    STATIC_REQUIRE(capacity_boundary.count() == capacity_boundary.capacity());
+    STATIC_REQUIRE(Vector<int, 4>::capacity() == 4U);
+    STATIC_REQUIRE(zero_capacity.capacity() == 0U);
+    STATIC_REQUIRE(zero_capacity.count() == 0U);
+    STATIC_REQUIRE(zero_capacity.is_empty());
+    STATIC_REQUIRE(zero_capacity(0U) == 0);
+    STATIC_REQUIRE(zero_capacity(0U, 99) == 99);
+    STATIC_REQUIRE_FALSE(zero_capacity.contains(0U));
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(inferred)>, Vector<int, 3>>);
+    STATIC_REQUIRE(inferred.capacity() == explicit_inferred_equivalent.capacity());
+    STATIC_REQUIRE(inferred.count() == explicit_inferred_equivalent.count());
+    STATIC_REQUIRE(inferred(0U) == explicit_inferred_equivalent(0U));
+    STATIC_REQUIRE(inferred(1U) == explicit_inferred_equivalent(1U));
+    STATIC_REQUIRE(inferred(2U) == explicit_inferred_equivalent(2U));
+    STATIC_REQUIRE(lvalue_category_vector(0U).category == 1);
+    STATIC_REQUIRE(rvalue_category_vector(0U).category == 2);
+
+    const auto runtime_values = Vector<int, 4>{1, 2};
+    CHECK(runtime_values.count() == 2U);
+    CHECK(runtime_values.capacity() == 4U);
+    CHECK(zero_capacity.is_empty());
+    CHECK_FALSE(zero_capacity.contains(0U));
+    CHECK(inferred.count() == explicit_inferred_equivalent.count());
+    CHECK(inferred(2U) == explicit_inferred_equivalent(2U));
+    CHECK(lvalue_category_vector(0U).category == 1);
+    CHECK(rvalue_category_vector(0U).category == 2);
 }
 
-TEST_CASE("Vector indexed access handles valid and invalid indexes",
-          "[vector][indexed-access]") {
-  using cljonic::Vector;
+TEST_CASE("Vector canonical preflight predicates model index validity and emptiness", "[vector][preflight]") {
+    using cljonic::Vector;
 
-  TRACE_ID("entity-fields.VectorCollection");
-  TRACE_ID("invariant.VectorCollection.SupportsIndexedLookup");
-  TRACE_ID("invariant.VectorCollection.SupportsIndexedFallbackLookup");
-  TRACE_ID("invariant.VectorCollection.InvalidIndexReturnsDefaultElement");
-  TRACE_ID("invariant.VectorCollection.InvalidIndexReturnsSuppliedFallback");
+    TRACE_ID("entity-fields.Vector");
+    TRACE_ID("invariant.Vector.CanonicalResultStatusModelIsDeclared");
+    TRACE_ID("invariant.Vector.CompleteResultStatusDeclared");
+    TRACE_ID("invariant.Vector.BoundedPrefixResultStatusDeclared");
+    TRACE_ID("invariant.Vector.DefaultReturningResultStatusDeclared");
+    TRACE_ID("invariant.Vector.CheckedFailureResultStatusDeclared");
+    TRACE_ID("invariant.Vector.ProducerOnlyResultStatusDeclared");
+    TRACE_ID("invariant.Vector.PreflightPredicatesAreNonThrowingNonAllocating");
+    TRACE_ID("invariant.Vector.ContainsIsCanonicalIndexPredicate");
+    TRACE_ID("invariant.Vector.FitsIntoIsCanonicalMaterializationPreflight");
+    TRACE_ID("invariant.Vector.CompileTimeCapacityOverflowIsRejected");
+    TRACE_ID("invariant.Vector.RuntimeCapacityFailuresHaveDocumentedPolicy");
+    TRACE_ID("invariant.Vector.DefaultAccessHasPreflightPredicate");
+    TRACE_ID("invariant.Vector.SupportsIndexedLookup");
+    TRACE_ID("invariant.Vector.SupportsIndexedFallbackLookup");
+    TRACE_ID("invariant.Vector.InvalidIndexReturnsDefaultElement");
+    TRACE_ID("invariant.Vector.InvalidIndexReturnsSuppliedFallback");
 
-  constexpr Vector<int, 4> values{10, 20};
+    constexpr Vector<int, 4> values{10, 20};
+    constexpr Vector<int, 4> empty_values{};
 
-  STATIC_REQUIRE(values(0U) == 10);
-  STATIC_REQUIRE(values(1U) == 20);
-  STATIC_REQUIRE(values(2U) == 0);
-  STATIC_REQUIRE(values(2U, 99) == 99);
+    STATIC_REQUIRE(values.contains(0U));
+    STATIC_REQUIRE(values.contains(1U));
+    STATIC_REQUIRE_FALSE(values.contains(2U));
+    STATIC_REQUIRE(empty_values.is_empty());
+    STATIC_REQUIRE_FALSE(values.is_empty());
+
+    const auto runtime_values = Vector<int, 4>{10, 20};
+    CHECK(runtime_values.contains(0U));
+    CHECK(runtime_values.contains(1U));
+    CHECK_FALSE(runtime_values.contains(2U));
+    CHECK(Vector<int, 4>{}.is_empty());
+    CHECK_FALSE(runtime_values.is_empty());
+}
+
+TEST_CASE("Vector indexed access handles valid and invalid indexes", "[vector][indexed-access]") {
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.Vector");
+    TRACE_ID("invariant.Vector.SupportsIndexedLookup");
+    TRACE_ID("invariant.Vector.SupportsIndexedFallbackLookup");
+    TRACE_ID("invariant.Vector.InvalidIndexReturnsDefaultElement");
+    TRACE_ID("invariant.Vector.InvalidIndexReturnsSuppliedFallback");
+
+    constexpr Vector<int, 4> values{10, 20};
+
+    STATIC_REQUIRE(values(0U) == 10);
+    STATIC_REQUIRE(values(1U) == 20);
+    STATIC_REQUIRE(values(2U) == 0);
+    STATIC_REQUIRE(values(2U, 99) == 99);
+
+    const auto runtime_values = Vector<int, 4>{10, 20};
+    CHECK(runtime_values(0U) == 10);
+    CHECK(runtime_values(1U) == 20);
+    CHECK(runtime_values(2U) == 0);
+
+    // Runtime signed negative-index guard (defeats constexpr folding so gcov
+    // records the branch).
+    volatile int neg_raw = -1;
+    const int neg = neg_raw;
+    CHECK(runtime_values(neg) == 0);
+    CHECK(runtime_values(neg, 99) == 99);
+    CHECK_FALSE(runtime_values.contains(neg));
+}
+
+TEST_CASE("Vector imports from std::span without allocating or mutating the source", "[vector][interop]") {
+    using cljonic::Vector;
+
+    static constexpr int static_source_values[] = {11, 22, 33, 44, 55};
+    constexpr std::span static_source_span{static_source_values};
+    constexpr auto ctad_from_static_span = Vector{static_source_span};
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(ctad_from_static_span)>, Vector<int, 5>>);
+    STATIC_REQUIRE(ctad_from_static_span.count() == 5U);
+    STATIC_REQUIRE(ctad_from_static_span.capacity() == 5U);
+    STATIC_REQUIRE(ctad_from_static_span(0) == 11);
+    STATIC_REQUIRE(ctad_from_static_span(4) == 55);
+
+    int mutable_source_values[] = {10, 20, 30};
+    std::span mutable_source_span{mutable_source_values};
+    auto ctad_from_mutable_span = Vector{mutable_source_span};
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(ctad_from_mutable_span)>, Vector<int, 3>>);
+    CHECK(ctad_from_mutable_span.count() == 3U);
+    CHECK(ctad_from_mutable_span(0) == 10);
+    CHECK(ctad_from_mutable_span(2) == 30);
+
+    const std::array<int, 5> source_values = {11, 22, 33, 44, 55};
+    const std::span<const int> source{source_values.data(), 5U};
+
+    static constexpr std::array<int, 5> constexpr_source_values = {11, 22, 33, 44, 55};
+    constexpr auto from_span = Vector<int, 4>{std::span<const int>{constexpr_source_values.data(), 3U}};
+    STATIC_REQUIRE(from_span.count() == 3U);
+    STATIC_REQUIRE(from_span(0) == 11);
+    STATIC_REQUIRE(from_span(2) == 33);
+
+    const auto runtime_vector = Vector<int, 4>{source};
+    CHECK(runtime_vector.count() == 4U);
+    CHECK(runtime_vector(0) == 11);
+    CHECK(runtime_vector(1) == 22);
+    CHECK(runtime_vector(2) == 33);
+    CHECK(runtime_vector(3) == 44);
+    CHECK(runtime_vector(4) == 0);
+    CHECK(source[0] == 11);
+    CHECK(source[4] == 55);
 }

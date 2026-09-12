@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['size_0',['size',['../classcljonic_1_1_range.html#a44a6abd6025e0615ea8038a836b017a9',1,'cljonic::Range::size()'],['../classcljonic_1_1_vector.html#a69c97dd083c9284d3db3bdf5c8fa2101',1,'cljonic::Vector::size()']]]
+  ['first_0',['first',['../namespacecljonic.html#a873d28380c259fbc2ee183eb7d0c7328',1,'cljonic::first(const MapEntry&lt; KeyType, ValueType &gt; &amp;entry) noexcept -&gt; const KeyType &amp;'],['../namespacecljonic.html#a92c155f28b9e35b6a3e54a3b91c8cf5d',1,'cljonic::first(const C &amp;collection) noexcept -&gt; decltype(collection(0U))']]]
 ];

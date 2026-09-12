@@ -1,0 +1,245 @@
+-- allium: 3
+
+entity Set {
+    capacity_limit: Integer
+    logical_size: Integer
+    supports_header_only_distribution: Boolean
+    supports_static_or_automatic_storage: Boolean
+    supports_contiguous_storage: Boolean
+    supports_linear_scan_lookup: Boolean
+    supports_swap_and_remove: Boolean
+    supports_callable_lookup: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    immutable_public_api: Boolean
+    update_returns_new_value: Boolean
+    deep_copy_update: Boolean
+    referential_transparency: Boolean
+    requires_value_semantic_elements: Boolean
+    requires_nothrow_default_construction: Boolean
+    requires_nothrow_copy_construction: Boolean
+    requires_nothrow_copy_assignment: Boolean
+    requires_nothrow_destruction: Boolean
+    supports_empty_explicit_capacity_construction: Boolean
+    supports_explicit_capacity_construction: Boolean
+    supports_literal_deduced_construction: Boolean
+    supports_capacity_inferred_literal_equivalent_semantics: Boolean
+    oversized_initializer_is_compile_time_failure: Boolean
+    pack_construction_folds_over_conj: Boolean
+    runtime_duplicate_construction_deduplicates: Boolean
+    compile_time_duplicate_construction_is_rejected: Boolean
+    capacity_exceeds_maximum_is_compile_time_failure: Boolean
+    supports_membership_lookup: Boolean
+    supports_membership_fallback_lookup: Boolean
+    missing_value_returns_default_element: Boolean
+    missing_value_returns_supplied_fallback: Boolean
+    canonical_result_status_model_is_declared: Boolean
+    complete_result_status_declared: Boolean
+    bounded_prefix_result_status_declared: Boolean
+    default_returning_result_status_declared: Boolean
+    checked_failure_result_status_declared: Boolean
+    producer_only_result_status_declared: Boolean
+    preflight_predicates_are_non_throwing_non_allocating: Boolean
+    contains_is_canonical_membership_predicate: Boolean
+    can_conj_is_canonical_conj_preflight: Boolean
+    fits_into_is_canonical_materialization_preflight: Boolean
+    compile_time_capacity_overflow_is_rejected: Boolean
+    runtime_capacity_failures_have_documented_policy: Boolean
+    default_access_has_preflight_predicate: Boolean
+
+    invariant CapacityIsNonNegative {
+        this.capacity_limit >= 0
+    }
+
+    invariant LogicalSizeIsNonNegative {
+        this.logical_size >= 0
+    }
+
+    invariant LogicalSizeDoesNotExceedCapacity {
+        this.logical_size <= this.capacity_limit
+    }
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant StaticOrAutomaticStorageOnly {
+        this.supports_static_or_automatic_storage = true
+    }
+
+    invariant ContiguousStorage {
+        this.supports_contiguous_storage = true
+    }
+
+    invariant LinearScanLookup {
+        this.supports_linear_scan_lookup = true
+    }
+
+    invariant SwapAndRemove {
+        this.supports_swap_and_remove = true
+    }
+
+    invariant CallableLookup {
+        this.supports_callable_lookup = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ImmutablePublicApi {
+        this.immutable_public_api = true
+    }
+
+    invariant UpdateReturnsNewValue {
+        this.update_returns_new_value = true
+    }
+
+    invariant DeepCopyUpdate {
+        this.deep_copy_update = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant RequiresValueSemanticElements {
+        this.requires_value_semantic_elements = true
+    }
+
+    invariant RequiresNothrowDefaultConstruction {
+        this.requires_nothrow_default_construction = true
+    }
+
+    invariant RequiresNothrowCopyConstruction {
+        this.requires_nothrow_copy_construction = true
+    }
+
+    invariant RequiresNothrowCopyAssignment {
+        this.requires_nothrow_copy_assignment = true
+    }
+
+    invariant RequiresNothrowDestruction {
+        this.requires_nothrow_destruction = true
+    }
+
+    invariant SupportsEmptyExplicitCapacityConstruction {
+        this.supports_empty_explicit_capacity_construction = true
+    }
+
+    invariant SupportsExplicitCapacityConstruction {
+        this.supports_explicit_capacity_construction = true
+    }
+
+    invariant SupportsLiteralDeducedConstruction {
+        this.supports_literal_deduced_construction = true
+    }
+
+    invariant SupportsCapacityInferredLiteralEquivalentSemantics {
+        this.supports_capacity_inferred_literal_equivalent_semantics = true
+    }
+
+    invariant OversizedInitializerIsCompileTimeFailure {
+        this.oversized_initializer_is_compile_time_failure = true
+    }
+
+    invariant PackConstructionFoldsOverConj {
+        this.pack_construction_folds_over_conj = true
+    }
+
+    invariant RuntimeDuplicateConstructionDeduplicates {
+        this.runtime_duplicate_construction_deduplicates = true
+    }
+
+    invariant CompileTimeDuplicateConstructionIsRejected {
+        this.compile_time_duplicate_construction_is_rejected = true
+    }
+
+    invariant CapacityExceedsMaximumIsCompileTimeFailure {
+        this.capacity_exceeds_maximum_is_compile_time_failure = true
+    }
+
+    invariant SupportsMembershipLookup {
+        this.supports_membership_lookup = true
+    }
+
+    invariant SupportsMembershipFallbackLookup {
+        this.supports_membership_fallback_lookup = true
+    }
+
+    invariant MissingValueReturnsDefaultElement {
+        this.missing_value_returns_default_element = true
+    }
+
+    invariant MissingValueReturnsSuppliedFallback {
+        this.missing_value_returns_supplied_fallback = true
+    }
+
+    invariant CanonicalResultStatusModelIsDeclared {
+        this.canonical_result_status_model_is_declared = true
+    }
+
+    invariant CompleteResultStatusDeclared {
+        this.complete_result_status_declared = true
+    }
+
+    invariant BoundedPrefixResultStatusDeclared {
+        this.bounded_prefix_result_status_declared = true
+    }
+
+    invariant DefaultReturningResultStatusDeclared {
+        this.default_returning_result_status_declared = true
+    }
+
+    invariant CheckedFailureResultStatusDeclared {
+        this.checked_failure_result_status_declared = true
+    }
+
+    invariant ProducerOnlyResultStatusDeclared {
+        this.producer_only_result_status_declared = true
+    }
+
+    invariant PreflightPredicatesAreNonThrowingNonAllocating {
+        this.preflight_predicates_are_non_throwing_non_allocating = true
+    }
+
+    invariant ContainsIsCanonicalMembershipPredicate {
+        this.contains_is_canonical_membership_predicate = true
+    }
+
+    invariant CanConjIsCanonicalConjPreflight {
+        this.can_conj_is_canonical_conj_preflight = true
+    }
+
+    invariant FitsIntoIsCanonicalMaterializationPreflight {
+        this.fits_into_is_canonical_materialization_preflight = true
+    }
+
+    invariant CompileTimeCapacityOverflowIsRejected {
+        this.compile_time_capacity_overflow_is_rejected = true
+    }
+
+    invariant RuntimeCapacityFailuresHaveDocumentedPolicy {
+        this.runtime_capacity_failures_have_documented_policy = true
+    }
+
+    invariant DefaultAccessHasPreflightPredicate {
+        this.default_access_has_preflight_predicate = true
+    }
+}
+
+actor SetOperator { identified_by: Set }

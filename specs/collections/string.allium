@@ -1,0 +1,315 @@
+-- allium: 3
+
+entity String {
+    capacity_limit: Integer
+    logical_size: Integer
+    supports_header_only_distribution: Boolean
+    supports_static_or_automatic_storage: Boolean
+    supports_contiguous_storage: Boolean
+    supports_ordered_ascii_storage: Boolean
+    requires_nothrow_default_construction: Boolean
+    requires_nothrow_copy_construction: Boolean
+    requires_nothrow_copy_assignment: Boolean
+    requires_nothrow_destruction: Boolean
+    null_terminator_is_uncounted: Boolean
+    invalid_bytes_rejected_at_compile_time: Boolean
+    runtime_invalid_bytes_replaced_with_period: Boolean
+    supports_std_string_view_source_construction: Boolean
+    string_view_source_copy_is_owned: Boolean
+    string_view_source_is_non_allocating: Boolean
+    string_view_source_is_non_throwing: Boolean
+    string_view_source_does_not_borrow_lifetime: Boolean
+    string_view_compile_time_overflow_is_rejected: Boolean
+    string_view_runtime_overflow_uses_bounded_prefix: Boolean
+    string_view_import_excludes_null_terminator: Boolean
+    runtime_null_byte_is_invalid_in_string_view_source: Boolean
+    supports_const_char_span_source_construction: Boolean
+    const_char_span_source_copy_is_owned: Boolean
+    const_char_span_source_is_non_allocating: Boolean
+    const_char_span_source_is_non_throwing: Boolean
+    const_char_span_source_does_not_borrow_lifetime: Boolean
+    const_char_span_static_extent_overflow_is_compile_time_failure: Boolean
+    const_char_span_runtime_extent_overflow_uses_bounded_prefix: Boolean
+    const_char_span_invalid_bytes_are_replaced_with_period: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    immutable_public_api: Boolean
+    update_returns_new_value: Boolean
+    deep_copy_update: Boolean
+    referential_transparency: Boolean
+    supports_literal_deduced_construction: Boolean
+    supports_empty_explicit_capacity_construction: Boolean
+    supports_explicit_capacity_construction: Boolean
+    supports_capacity_inferred_literal_equivalent_semantics: Boolean
+    oversized_initializer_is_compile_time_failure: Boolean
+    capacity_exceeds_maximum_is_compile_time_failure: Boolean
+    supports_indexed_lookup: Boolean
+    supports_indexed_fallback_lookup: Boolean
+    supports_get_free_function: Boolean
+    invalid_index_returns_default_element: Boolean
+    invalid_index_returns_supplied_fallback: Boolean
+    canonical_result_status_model_is_declared: Boolean
+    complete_result_status_declared: Boolean
+    bounded_prefix_result_status_declared: Boolean
+    default_returning_result_status_declared: Boolean
+    checked_failure_result_status_declared: Boolean
+    producer_only_result_status_declared: Boolean
+    preflight_predicates_are_non_throwing_non_allocating: Boolean
+    contains_is_canonical_index_predicate: Boolean
+    fits_into_is_canonical_materialization_preflight: Boolean
+    compile_time_capacity_overflow_is_rejected: Boolean
+    runtime_capacity_failures_have_documented_policy: Boolean
+    default_access_has_preflight_predicate: Boolean
+
+    invariant CapacityIsNonNegative {
+        this.capacity_limit >= 0
+    }
+
+    invariant LogicalSizeIsNonNegative {
+        this.logical_size >= 0
+    }
+
+    invariant LogicalSizeDoesNotExceedCapacity {
+        this.logical_size <= this.capacity_limit
+    }
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant StaticOrAutomaticStorageOnly {
+        this.supports_static_or_automatic_storage = true
+    }
+
+    invariant ContiguousStorage {
+        this.supports_contiguous_storage = true
+    }
+
+    invariant OrderedAsciiStorage {
+        this.supports_ordered_ascii_storage = true
+    }
+
+    invariant RequiresNothrowDefaultConstruction {
+        this.requires_nothrow_default_construction = true
+    }
+
+    invariant RequiresNothrowCopyConstruction {
+        this.requires_nothrow_copy_construction = true
+    }
+
+    invariant RequiresNothrowCopyAssignment {
+        this.requires_nothrow_copy_assignment = true
+    }
+
+    invariant RequiresNothrowDestruction {
+        this.requires_nothrow_destruction = true
+    }
+
+    invariant NullTerminatorIsUncounted {
+        this.null_terminator_is_uncounted = true
+    }
+
+    invariant InvalidBytesRejectedAtCompileTime {
+        this.invalid_bytes_rejected_at_compile_time = true
+    }
+
+    invariant RuntimeInvalidBytesReplacedWithPeriod {
+        this.runtime_invalid_bytes_replaced_with_period = true
+    }
+
+    invariant SupportsStdStringViewSourceConstruction {
+        this.supports_std_string_view_source_construction = true
+    }
+
+    invariant StringViewSourceCopyIsOwned {
+        this.string_view_source_copy_is_owned = true
+    }
+
+    invariant StringViewSourceIsNonAllocating {
+        this.string_view_source_is_non_allocating = true
+    }
+
+    invariant StringViewSourceIsNonThrowing {
+        this.string_view_source_is_non_throwing = true
+    }
+
+    invariant StringViewSourceDoesNotBorrowLifetime {
+        this.string_view_source_does_not_borrow_lifetime = true
+    }
+
+    invariant StringViewCompileTimeOverflowIsRejected {
+        this.string_view_compile_time_overflow_is_rejected = true
+    }
+
+    invariant StringViewRuntimeOverflowUsesBoundedPrefix {
+        this.string_view_runtime_overflow_uses_bounded_prefix = true
+    }
+
+    invariant StringViewImportExcludesNullTerminator {
+        this.string_view_import_excludes_null_terminator = true
+    }
+
+    invariant RuntimeNullByteIsInvalidInStringViewSource {
+        this.runtime_null_byte_is_invalid_in_string_view_source = true
+    }
+
+    invariant SupportsConstCharSpanSourceConstruction {
+        this.supports_const_char_span_source_construction = true
+    }
+
+    invariant ConstCharSpanSourceCopyIsOwned {
+        this.const_char_span_source_copy_is_owned = true
+    }
+
+    invariant ConstCharSpanSourceIsNonAllocating {
+        this.const_char_span_source_is_non_allocating = true
+    }
+
+    invariant ConstCharSpanSourceIsNonThrowing {
+        this.const_char_span_source_is_non_throwing = true
+    }
+
+    invariant ConstCharSpanSourceDoesNotBorrowLifetime {
+        this.const_char_span_source_does_not_borrow_lifetime = true
+    }
+
+    invariant ConstCharSpanStaticExtentOverflowIsCompileTimeFailure {
+        this.const_char_span_static_extent_overflow_is_compile_time_failure = true
+    }
+
+    invariant ConstCharSpanRuntimeExtentOverflowUsesBoundedPrefix {
+        this.const_char_span_runtime_extent_overflow_uses_bounded_prefix = true
+    }
+
+    invariant ConstCharSpanInvalidBytesAreReplacedWithPeriod {
+        this.const_char_span_invalid_bytes_are_replaced_with_period = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ImmutablePublicApi {
+        this.immutable_public_api = true
+    }
+
+    invariant UpdateReturnsNewValue {
+        this.update_returns_new_value = true
+    }
+
+    invariant DeepCopyUpdate {
+        this.deep_copy_update = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant SupportsLiteralDeducedConstruction {
+        this.supports_literal_deduced_construction = true
+    }
+
+    invariant SupportsEmptyExplicitCapacityConstruction {
+        this.supports_empty_explicit_capacity_construction = true
+    }
+
+    invariant SupportsExplicitCapacityConstruction {
+        this.supports_explicit_capacity_construction = true
+    }
+
+    invariant SupportsCapacityInferredLiteralEquivalentSemantics {
+        this.supports_capacity_inferred_literal_equivalent_semantics = true
+    }
+
+    invariant OversizedInitializerIsCompileTimeFailure {
+        this.oversized_initializer_is_compile_time_failure = true
+    }
+
+    invariant CapacityExceedsMaximumIsCompileTimeFailure {
+        this.capacity_exceeds_maximum_is_compile_time_failure = true
+    }
+
+    invariant SupportsIndexedLookup {
+        this.supports_indexed_lookup = true
+    }
+
+    invariant SupportsIndexedFallbackLookup {
+        this.supports_indexed_fallback_lookup = true
+    }
+
+    invariant SupportsGetFreeFunction {
+        this.supports_get_free_function = true
+    }
+
+    invariant InvalidIndexReturnsDefaultElement {
+        this.invalid_index_returns_default_element = true
+    }
+
+    invariant InvalidIndexReturnsSuppliedFallback {
+        this.invalid_index_returns_supplied_fallback = true
+    }
+
+    invariant CanonicalResultStatusModelIsDeclared {
+        this.canonical_result_status_model_is_declared = true
+    }
+
+    invariant CompleteResultStatusDeclared {
+        this.complete_result_status_declared = true
+    }
+
+    invariant BoundedPrefixResultStatusDeclared {
+        this.bounded_prefix_result_status_declared = true
+    }
+
+    invariant DefaultReturningResultStatusDeclared {
+        this.default_returning_result_status_declared = true
+    }
+
+    invariant CheckedFailureResultStatusDeclared {
+        this.checked_failure_result_status_declared = true
+    }
+
+    invariant ProducerOnlyResultStatusDeclared {
+        this.producer_only_result_status_declared = true
+    }
+
+    invariant PreflightPredicatesAreNonThrowingNonAllocating {
+        this.preflight_predicates_are_non_throwing_non_allocating = true
+    }
+
+    invariant ContainsIsCanonicalIndexPredicate {
+        this.contains_is_canonical_index_predicate = true
+    }
+
+    invariant FitsIntoIsCanonicalMaterializationPreflight {
+        this.fits_into_is_canonical_materialization_preflight = true
+    }
+
+    invariant CompileTimeCapacityOverflowIsRejected {
+        this.compile_time_capacity_overflow_is_rejected = true
+    }
+
+    invariant RuntimeCapacityFailuresHaveDocumentedPolicy {
+        this.runtime_capacity_failures_have_documented_policy = true
+    }
+
+    invariant DefaultAccessHasPreflightPredicate {
+        this.default_access_has_preflight_predicate = true
+    }
+}
+
+actor StringOperator { identified_by: String }

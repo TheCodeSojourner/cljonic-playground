@@ -1,0 +1,50 @@
+-- allium: 3
+
+entity Contains {
+    supports_contains_free_function: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+    returns_boolean_membership: Boolean
+    tests_collection_lookup_domain: Boolean
+
+    invariant ContainsFreeFunctionSupported {
+        this.supports_contains_free_function = true
+    }
+
+    invariant ReturnsBooleanMembership {
+        this.returns_boolean_membership = true
+    }
+
+    invariant TestsCollectionLookupDomain {
+        this.tests_collection_lookup_domain = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant ContainsDoesNotPerformDefaultReturningAccess {
+        this.contains_does_not_perform_default_returning_access = true
+    }
+}
+
+actor ContainsOperator { identified_by: Contains }

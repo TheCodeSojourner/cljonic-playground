@@ -1,0 +1,41 @@
+-- allium: 3
+
+entity Get {
+    supports_get_free_function: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+    supports_fallback_argument: Boolean
+
+    invariant GetFreeFunctionSupported {
+        this.supports_get_free_function = true
+    }
+
+    invariant SupportsFallbackArgument {
+        this.supports_fallback_argument = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+actor GetOperator { identified_by: Get }

@@ -1,6 +1,10 @@
 var searchData=
 [
-  ['valid_5findex_0',['valid_index',['../namespacecljonic.html#a88d884853ac261340e02d9c7529349ba',1,'cljonic::valid_index(const Vector&lt; element_type, capacity_value &gt; &amp;vector, index_type index) noexcept -&gt; bool'],['../namespacecljonic.html#a51ff69f2b6d02e1c0a757d126a4431f5',1,'cljonic::valid_index(const Range&lt; value_type &gt; &amp;range, index_type index) noexcept -&gt; bool']]],
-  ['value_5ftype_1',['value_type',['../classcljonic_1_1_vector.html#a5ad495c54aa753463f58b7984aab257c',1,'cljonic::Vector']]],
-  ['vector_2',['vector',['../classcljonic_1_1_vector.html',1,'cljonic::Vector&lt; element_type, capacity_value &gt;'],['../classcljonic_1_1_vector.html#a8fe1189db1370cd0fd7506b6d41f965f',1,'cljonic::Vector::Vector()'],['../namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac',1,'cljonic::Vector()']]]
+  ['next_0',['next',['../namespacecljonic.html#a375ca6d156afd5ac8cd31bae763d4062',1,'cljonic']]],
+  ['none_1',['none',['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a334c4a4c42fdb79d7ebc3e73b517e6f8',1,'cljonic::concepts_detail']]],
+  ['not_5fempty_2',['not_empty',['../namespacecljonic.html#a8180deddc8b1aa7386990604604648f0',1,'cljonic']]],
+  ['nothrowcollectionelement_3',['NothrowCollectionElement',['../conceptcljonic_1_1concepts_1_1_nothrow_collection_element.html',1,'cljonic::concepts']]],
+  ['nothrowcopyableelement_4',['NothrowCopyableElement',['../conceptcljonic_1_1concepts_1_1_nothrow_copyable_element.html',1,'cljonic::concepts']]],
+  ['nothrowelementconstruction_5',['NothrowElementConstruction',['../conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html',1,'cljonic::concepts']]],
+  ['nothrowstableequalitycomparable_6',['NothrowStableEqualityComparable',['../conceptcljonic_1_1concepts_1_1_nothrow_stable_equality_comparable.html',1,'cljonic::concepts']]]
 ];

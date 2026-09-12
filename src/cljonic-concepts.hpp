@@ -1,46 +1,172 @@
-#pragma once
+#ifndef CLJONIC_CONCEPTS_HPP
+#define CLJONIC_CONCEPTS_HPP
 
+#include <array>
 #include <concepts>
 #include <cstddef>
+#include <span>
+#include <type_traits>
+#include <utility>
 
-namespace cljonic::concepts {
+namespace cljonic {
 
-/** Requires that \p value_type is default-initializable and copyable - the
- * minimum contract for current Vector element storage semantics.
- */
-template <typename value_type>
-concept VectorElement =
-    std::default_initializable<value_type> && std::copyable<value_type>;
+namespace concepts_detail {
 
-/** Requires that Vector storage can be initialized and assigned without
- * throwing.
- */
-template <typename value_type>
-concept NothrowVectorElement =
-    VectorElement<value_type> &&
-    requires(value_type value, const value_type &other) {
-      { value_type{} } noexcept;
-      { value_type{other} } noexcept;
-      { value = other } noexcept;
-    };
+enum class collection_kind { none, vector, map, set, queue, string };
 
-/** Requires that an argument is implicitly convertible to and can construct a
- * Vector element without throwing.
- */
-template <typename value_type, typename argument_type>
-concept NothrowElementConstruction =
-    std::convertible_to<argument_type, value_type> &&
-    requires(argument_type argument) {
-      { argument_type{argument} } noexcept;
-      { value_type{argument} } noexcept;
-    };
-
-/** Requires that \p collection_type exposes a \c size() member returning a
- * count of logical elements.
- */
-template <typename collection_type>
-concept Collection = requires(const collection_type &c) {
-  { c.size() } -> std::same_as<std::size_t>;
+template <typename T>
+struct collection_traits {
+    static constexpr bool is_cljonic_collection = false;
+    static constexpr collection_kind kind = collection_kind::none;
 };
 
-} // namespace cljonic::concepts
+template <typename T>
+inline constexpr bool is_cljonic_collection_v = collection_traits<std::remove_cvref_t<T>>::is_cljonic_collection;
+
+template <typename T>
+inline constexpr collection_kind collection_kind_of_v = collection_traits<std::remove_cvref_t<T>>::kind;
+
+template <typename T>
+struct static_extent : std::integral_constant<std::size_t, std::dynamic_extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<std::span<ElementType, Extent>> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<std::array<ElementType, Extent>> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename ElementType, std::size_t Extent>
+struct static_extent<ElementType[Extent]> : std::integral_constant<std::size_t, Extent> {};
+
+template <typename T>
+inline constexpr std::size_t static_extent_v = static_extent<std::remove_cvref_t<T>>::value;
+
+template <typename T, std::size_t CapacityValue>
+inline constexpr bool static_extent_fits_v =
+    static_extent_v<T> == std::dynamic_extent || static_extent_v<T> <= CapacityValue;
+
+} // namespace concepts_detail
+
+namespace concepts {
+
+// ============================================================================
+// Storage & Element Capability Concepts
+// ============================================================================
+
+/** Requires that \p T is default-initializable and copyable. */
+template <typename T>
+concept CopyableElement = std::default_initializable<T> && std::copyable<T>;
+
+/** Requires that all collection storage lifetime and copy operations do not throw. */
+template <typename T>
+concept NothrowCollectionElement = CopyableElement<T> && std::destructible<T> && requires(T value, const T& other) {
+    { T{} } noexcept;
+    { T{other} } noexcept;
+    { value = other } noexcept;
+};
+
+template <typename T>
+concept NothrowCopyableElement = NothrowCollectionElement<T>;
+
+/** Requires that an argument is convertible to and can construct an element
+ *  without throwing. */
+template <typename T, typename Arg>
+concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg&& argument) {
+    { T{std::forward<Arg>(argument)} } noexcept;
+};
+
+// ============================================================================
+// Value Capability Concepts
+// ============================================================================
+
+/** Requires stable value equality comparison, explicitly rejecting
+ *  floating-point types to prevent NaN/precision instabilities in map keys
+ *  and set elements. */
+template <typename T>
+concept StableEqualityComparable = std::equality_comparable<T> && !std::floating_point<std::remove_cvref_t<T>>;
+
+/** Requires a strict total ordering layered on stable equality. */
+template <typename T>
+concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
+
+/** Requires stable equality combined with non-throwing collection storage,
+ *  the admission contract shared by map keys and set elements. */
+template <typename T>
+concept NothrowStableEqualityComparable = StableEqualityComparable<T> && NothrowCollectionElement<T>;
+
+// ============================================================================
+// Level 1: CollectionConcept (Nominal Collection Admission)
+// ============================================================================
+
+/** Gates types admitted to the closed nominal cljonic collection domain
+ *  through cljonic-owned trait specialization. */
+template <typename T>
+concept CljonicCollection = concepts_detail::is_cljonic_collection_v<T>;
+
+/** Nominal identity gate for Vector collection types. */
+template <typename T>
+concept CljonicVector =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::vector);
+
+/** Nominal identity gate for Map collection types. */
+template <typename T>
+concept CljonicMap =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::map);
+
+/** Nominal identity gate for Set collection types. */
+template <typename T>
+concept CljonicSet =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::set);
+
+/** Nominal identity gate for Queue collection types. */
+template <typename T>
+concept CljonicQueue =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::queue);
+
+/** Nominal identity gate for String collection types. */
+template <typename T>
+concept CljonicString =
+    CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::string);
+
+// ============================================================================
+// Level 2: CapabilityConcept (Structural Collection Capabilities)
+// ============================================================================
+
+/** Requires that an admitted nominal collection provides non-throwing
+ * is_empty() and count() sequence observation. */
+template <typename C>
+concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
+    { c.is_empty() } noexcept -> std::same_as<bool>;
+    { c.count() } noexcept -> std::integral;
+};
+
+/** Requires that a sequenceable collection provides callable indexed lookup
+ *  c(index) and the contains(index) index-in-range membership test (Clojure
+ *  contains? over vector/string indices). */
+template <typename C>
+concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, std::size_t i) {
+    { c(i) } noexcept;
+    { c.contains(i) } noexcept -> std::same_as<bool>;
+};
+
+/** Requires an admitted sequenceable collection to expose a named lookup
+ * domain, callable lookup, and matching membership predicate. */
+template <typename C>
+concept LookupCollection = SequenceableCollection<C> && requires(const C& c, const C::lookup_type& key) {
+    { c(key) } noexcept;
+    { c.contains(key) } noexcept -> std::same_as<bool>;
+};
+
+/** Requires that a sequenceable collection provides callable key lookup
+ *  c(key) and the contains(key) key-presence membership test. */
+template <typename C>
+concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c, const C::key_type& k) {
+    { c(k) } noexcept;
+    { c.contains(k) } noexcept -> std::same_as<bool>;
+};
+
+} // namespace concepts
+
+} // namespace cljonic
+
+#endif // CLJONIC_CONCEPTS_HPP

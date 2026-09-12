@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['i_20e_20sequence_3a_20array_20range_20repeat_20set_20and_20or_20string_0',['Seq (i.e., Sequence: Array, Range, Repeat, Set, And/Or String)',['../index.html#autotoc_md8',1,'']]]
+  ['first_0',['first',['../namespacecljonic.html#a873d28380c259fbc2ee183eb7d0c7328',1,'cljonic::first(const MapEntry&lt; KeyType, ValueType &gt; &amp;entry) noexcept -&gt; const KeyType &amp;'],['../namespacecljonic.html#a92c155f28b9e35b6a3e54a3b91c8cf5d',1,'cljonic::first(const C &amp;collection) noexcept -&gt; decltype(collection(0U))']]],
+  ['functions_1',['Functions',['../index.html#autotoc_md2',1,'Core Functions'],['../index.html#autotoc_md8',1,'Set Functions'],['../index.html#autotoc_md9',1,'String Functions']]]
 ];

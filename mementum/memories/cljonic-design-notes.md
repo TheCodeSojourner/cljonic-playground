@@ -13,3 +13,5 @@ cljonic core design decisions:
 - Map keys: may be non-keyword; keyword keys must come from the enum catalog
 - Map internals: linear search, small N assumed
 - Spec-weed traceability: use `allium plan` IDs + `rg -F` matching; bash `while read` produced false uncovered ID in this repo
+- Two-level concept model: `CollectionConcept` (nominal identity, `Cljonic*`) gates admission; `CapabilityConcept` (structural: `SequenceableCollection`, `IndexedCollection`, `AssociativeCollection`; value: `StableEqualityComparable`, `TotallyOrdered`) gates capability on top.
+- Value concepts: `StableEqualityComparable` (base, rejects float/double) and `TotallyOrdered` (derived) both required; cannot use only `TotallyOrdered` because it over-constrains equality-only key/element types.

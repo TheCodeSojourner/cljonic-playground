@@ -1,0 +1,191 @@
+-- allium: 3
+
+entity Queue {
+    capacity_limit: Integer
+    logical_size: Integer
+    supports_header_only_distribution: Boolean
+    supports_static_or_automatic_storage: Boolean
+    supports_contiguous_storage: Boolean
+    supports_fifo_ordering: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    immutable_public_api: Boolean
+    update_returns_new_value: Boolean
+    deep_copy_update: Boolean
+    referential_transparency: Boolean
+    requires_value_semantic_elements: Boolean
+    requires_nothrow_default_construction: Boolean
+    requires_nothrow_copy_construction: Boolean
+    requires_nothrow_copy_assignment: Boolean
+    requires_nothrow_destruction: Boolean
+    supports_empty_explicit_capacity_construction: Boolean
+    supports_explicit_capacity_construction: Boolean
+    supports_literal_deduced_construction: Boolean
+    supports_capacity_inferred_literal_equivalent_semantics: Boolean
+    oversized_initializer_is_compile_time_failure: Boolean
+    pack_construction_folds_over_conj: Boolean
+    capacity_exceeds_maximum_is_compile_time_failure: Boolean
+    supports_peek_operation: Boolean
+    supports_pop_operation: Boolean
+    supports_conj_operation: Boolean
+    empty_queue_peek_returns_default_element: Boolean
+    empty_queue_pop_returns_empty_queue: Boolean
+    preflight_predicates_are_non_throwing_non_allocating: Boolean
+    is_empty_is_canonical_empty_predicate: Boolean
+    can_conj_is_canonical_conj_preflight: Boolean
+    compile_time_capacity_overflow_is_rejected: Boolean
+    runtime_capacity_failures_have_documented_policy: Boolean
+
+    invariant CapacityIsNonNegative {
+        this.capacity_limit >= 0
+    }
+
+    invariant LogicalSizeIsNonNegative {
+        this.logical_size >= 0
+    }
+
+    invariant LogicalSizeDoesNotExceedCapacity {
+        this.logical_size <= this.capacity_limit
+    }
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant StaticOrAutomaticStorageOnly {
+        this.supports_static_or_automatic_storage = true
+    }
+
+    invariant ContiguousStorage {
+        this.supports_contiguous_storage = true
+    }
+
+    invariant FifoOrdering {
+        this.supports_fifo_ordering = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ImmutablePublicApi {
+        this.immutable_public_api = true
+    }
+
+    invariant UpdateReturnsNewValue {
+        this.update_returns_new_value = true
+    }
+
+    invariant DeepCopyUpdate {
+        this.deep_copy_update = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant RequiresValueSemanticElements {
+        this.requires_value_semantic_elements = true
+    }
+
+    invariant RequiresNothrowDefaultConstruction {
+        this.requires_nothrow_default_construction = true
+    }
+
+    invariant RequiresNothrowCopyConstruction {
+        this.requires_nothrow_copy_construction = true
+    }
+
+    invariant RequiresNothrowCopyAssignment {
+        this.requires_nothrow_copy_assignment = true
+    }
+
+    invariant RequiresNothrowDestruction {
+        this.requires_nothrow_destruction = true
+    }
+
+    invariant SupportsEmptyExplicitCapacityConstruction {
+        this.supports_empty_explicit_capacity_construction = true
+    }
+
+    invariant SupportsExplicitCapacityConstruction {
+        this.supports_explicit_capacity_construction = true
+    }
+
+    invariant SupportsLiteralDeducedConstruction {
+        this.supports_literal_deduced_construction = true
+    }
+
+    invariant SupportsCapacityInferredLiteralEquivalentSemantics {
+        this.supports_capacity_inferred_literal_equivalent_semantics = true
+    }
+
+    invariant OversizedInitializerIsCompileTimeFailure {
+        this.oversized_initializer_is_compile_time_failure = true
+    }
+
+    invariant PackConstructionFoldsOverConj {
+        this.pack_construction_folds_over_conj = true
+    }
+
+    invariant CapacityExceedsMaximumIsCompileTimeFailure {
+        this.capacity_exceeds_maximum_is_compile_time_failure = true
+    }
+
+    invariant SupportsPeekOperation {
+        this.supports_peek_operation = true
+    }
+
+    invariant SupportsPopOperation {
+        this.supports_pop_operation = true
+    }
+
+    invariant SupportsConjOperation {
+        this.supports_conj_operation = true
+    }
+
+    invariant EmptyQueuePeekReturnsDefaultElement {
+        this.empty_queue_peek_returns_default_element = true
+    }
+
+    invariant EmptyQueuePopReturnsEmptyQueue {
+        this.empty_queue_pop_returns_empty_queue = true
+    }
+
+    invariant PreflightPredicatesAreNonThrowingNonAllocating {
+        this.preflight_predicates_are_non_throwing_non_allocating = true
+    }
+
+    invariant IsEmptyIsCanonicalEmptyPredicate {
+        this.is_empty_is_canonical_empty_predicate = true
+    }
+
+    invariant CanConjIsCanonicalConjPreflight {
+        this.can_conj_is_canonical_conj_preflight = true
+    }
+
+    invariant CompileTimeCapacityOverflowIsRejected {
+        this.compile_time_capacity_overflow_is_rejected = true
+    }
+
+    invariant RuntimeCapacityFailuresHaveDocumentedPolicy {
+        this.runtime_capacity_failures_have_documented_policy = true
+    }
+
+}
+
+actor QueueOperator { identified_by: Queue }
