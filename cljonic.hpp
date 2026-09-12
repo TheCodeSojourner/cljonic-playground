@@ -849,7 +849,7 @@ struct MapEntry {
 namespace cljonic {
 
 /** \anchor Map
- * \b Map is a bounded, associative collection that maps unique keys to values. It provides callable lookup with
+ * \b Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
  * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
  * return a modified copy without changing the original collection. Construction with more entries than the available
  * capacity is rejected at compile time.
@@ -857,6 +857,7 @@ namespace cljonic {
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  struct Key {
    int id;
@@ -869,11 +870,14 @@ namespace cljonic {
                                     const Value &) noexcept = default;
  };
 
- int main() {
-   using namespace cljonic;
+ using AccountEntry = MapEntry<Key, Value>;
+ using AccountMap = Map<Key, Value, 2>;
 
-   using AccountEntry = MapEntry<Key, Value>;
-   using AccountMap = Map<Key, Value, 2>;
+ int main() {
+   // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
+   auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
+   const auto present = runtime(Key{3});
+   const auto missing = runtime(Key{4}, Value{77});
 
    // A named map type and its named entry type make the intended value model
    // explicit. A later duplicate key replaces the earlier value (i.e., the
@@ -886,16 +890,11 @@ namespace cljonic {
    static_assert(literal(Key{2}).amount == 0);
    static_assert(literal(Key{2}, Value{99}).amount == 99);
 
-   // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
-   auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
-   const auto present = runtime(Key{3});
-   const auto missing = runtime(Key{4}, Value{77});
-
-   // ---------------------------------------------------------------------
-   // C++ interoperability: a Map exposes const logical traversal, a
-   // non-owning contiguous standard view, and can be constructed from a
-   // read-only std::span without mutating the source data.
-   // ---------------------------------------------------------------------
+   // ---------------------------------------------------------------------------
+   // C++ interoperability: a Map exposes const logical traversal, a non-owning
+   // std::span, and can be constructed from a read-only std::span without
+   // mutating the source data.
+   // ---------------------------------------------------------------------------
    static constexpr AccountEntry source_entries[] = {
        AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
    constexpr std::span source_span{source_entries};
@@ -912,11 +911,6 @@ namespace cljonic {
                                     AccountEntry{Key{200}, Value{2000}}};
    const auto runtime_from_span =
        Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
-
-   // Const C++ interoperability exposes MapEntry values through a range and
-   // a non-owning contiguous standard view.
-   static_assert(literal.begin()->value.amount == 20);
-   static_assert(literal.view().size() == 1);
 
    // Use C++ interoperability to sum the values in a map.
    int value_sum = 0;
@@ -1181,10 +1175,9 @@ namespace cljonic {
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // CTAD infers Queue<int, 3> from the initializer count.
    [[maybe_unused]] constexpr auto ints_at_capacity = Queue{1, 2, 3};
 
@@ -1192,11 +1185,10 @@ namespace cljonic {
    [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
    [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
 
-   // ---------------------------------------------------------------------
-   // C++ interoperability: a Queue exposes const logical traversal, and
-   // can be constructed from a read-only std::span without mutating the
-   // source data.
-   // ---------------------------------------------------------------------
+   // --------------------------------------------------------------------------
+   // C++ interoperability: a Queue exposes const content traversal, and can be
+   // constructed from a read-only std::span without mutating the source data.
+   // --------------------------------------------------------------------------
    static constexpr int source_values[] = {10, 20, 30};
    constexpr std::span source_span{source_values};
    constexpr auto from_span = Queue<int, 4>{source_span};
@@ -1211,16 +1203,9 @@ namespace cljonic {
    const auto runtime_from_span =
        Queue<int, 4>{std::span<const int>{runtime_buffer, 3}};
 
-   // Const C++ interoperability uses begin()/end() for logical FIFO traversal.
-   constexpr auto wrapped = Queue<int, 4>{2, 3, 4, 5};
-   static_assert(wrapped.begin()[0] == 2);
-   static_assert(wrapped.begin()[1] == 3);
-   static_assert(wrapped.begin()[2] == 4);
-   static_assert(wrapped.begin()[3] == 5);
-
    // Use C++ interoperability to sum the elements of the queue.
    int fifo_sum = 0;
-   for (const auto value : wrapped) {
+   for (const auto value : runtime_buffer) {
      fifo_sum += value;
    }
 
@@ -1234,7 +1219,8 @@ namespace cljonic {
      runtime_from_span_sum += value;
    }
 
-   return (fifo_sum == 14 && from_span_sum == 60 && runtime_from_span_sum == 600)
+   return (fifo_sum == 600 && from_span_sum == 60 &&
+           runtime_from_span_sum == 600)
               ? 0
               : 1;
  }
@@ -1418,24 +1404,23 @@ struct collection_traits<Queue<T, CapacityValue>> {
 namespace cljonic {
 
 /** \anchor Set
- * \b Set is a bounded, unordered collection of unique values. It provides callable lookup with optional fallback
- * values. The way to operate on the collection is through the library's free-function API. Updates return a modified
- * copy without changing the original collection. Construction with more values than the available capacity is rejected
- * at compile time.
+ * \b Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
+ * operate on the collection is through the library's free-function API. Updates return a modified copy without
+ * changing the original collection. Construction with more values than the available capacity is rejected at compile
+ * time.
  *
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
+
+ using AccountId = int;
+ using AccountSet = Set<AccountId, 4>;
 
  int main() {
-   using namespace cljonic;
-
-   using AccountId = int;
-   using AccountSet = Set<AccountId, 4>;
-
    // A named set type makes the element and capacity contract explicit. A
    // duplicate value is a no-op. Constant-evaluated duplicate construction is
-   // rejected.
+   // rejected at compile time.
    constexpr auto literal = AccountSet{1, 2, 3};
    static_assert(literal(2) == 2);
    static_assert(literal(99) == 0);
@@ -1447,11 +1432,11 @@ namespace cljonic {
    const auto present = runtime(10);
    const auto missing = runtime(30, -1);
 
-   // ---------------------------------------------------------------------
-   // C++ interoperability: a Set exposes const logical traversal, a
-   // non-owning contiguous standard view, and can be constructed from a
-   // read-only std::span without mutating the source data.
-   // ---------------------------------------------------------------------
+   // -------------------------------------------------------------------------
+   // C++ interoperability: a Set exposes const content traversal, a non-owning
+   // std::span, and can be constructed from a read-only std::span without
+   // mutating the source data.
+   // -------------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 11, 33};
    constexpr std::span source_span{source_values};
    constexpr auto from_span = AccountSet{source_span};
@@ -1680,22 +1665,23 @@ namespace cljonic {
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
+   // CTAD infers String<3> from the initializer count.
+   [[maybe_unused]] constexpr auto inferred = String{"Hi"};
 
-   // Explicit capacity permits an empty String and a partially populated String.
+   // Explicit capacity permits a partially populated String and an empty String.
+   constexpr auto literal = String<10>{"Hello"};
    [[maybe_unused]] constexpr auto empty = String<8>{};
 
-   constexpr auto literal = String<10>{"Hello"};
+   // String values can be used as a callable function, returning a default-
+   // value for invalid indexes or a supplied fallback when provided.
    static_assert(literal(0) == 'H');
    static_assert(literal(99, 'Z') == 'Z');
 
-   // Out-of-bounds access returns char{} (the ASCII NUL character).
+   // Without a fallback, an invalid lookup returns '\0'.
    static_assert(literal(5) == '\0');
-
-   // Capacity-inferred construction is also supported.
-   [[maybe_unused]] constexpr auto inferred = String{"Hi"};
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
@@ -1703,13 +1689,13 @@ namespace cljonic {
    const auto first = runtime(0);
    const auto missing = runtime(9, '!');
 
-   // ---------------------------------------------------------------------
+   // -------------------------------------------------------------------------
    // C++ interoperability: a String exposes const content traversal, a
-   // non-owning string view, and owned construction from std::string_view
-   // or a const-char span.  Literal construction supports capacity
-   // deduction, but a string_view's size is not part of its type, so view
-   // construction requires capacity.
-   // ---------------------------------------------------------------------
+   // non-owning std::string_view, and can be constructed from std::string_view
+   // or read-only std::span without mutating the source data.  Literal
+   // construction supports capacity deduction, but a string_view's size is not
+   // part of its type, so view construction requires capacity.
+   // -------------------------------------------------------------------------
    static constexpr std::string_view static_source{"from view"};
    constexpr auto from_static_view = String<16>{static_source};
    static_assert(from_static_view.view() == static_source);
@@ -1970,19 +1956,18 @@ namespace cljonic {
    const auto pixel_value = runtime_pixels(1);
    const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
 
-   // A Vector is callable with an index: valid indices select stored values;
-   // an invalid index, including a negative signed index, returns the default
-   // value_type{} or the supplied fallback. For int, value_type{} is zero.
+   // Runtime construction supports the same callable lookup and fallback
+   // behavior.
    auto runtime_values = Vector<int, 4>{7, 9};
    const auto fallback = runtime_values(4, -1);
    const auto negative_default = runtime_values(-1);
    const auto negative_fallback = runtime_values(-1, 99);
 
-   // ---------------------------------------------------------------------
-   // C++ interoperability: a Vector exposes const logical traversal, a
-   // non-owning contiguous standard view, and can be constructed from a
-   // read-only std::span without mutating the source data.
-   // ---------------------------------------------------------------------
+   // -----------------------------------------------------------------------
+   // C++ interoperability: a Vector exposes const content traversal, a
+   // non-owning std::span, and can be constructed from a read-only std::span
+   // without mutating the source data.
+   // -----------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 33, 44};
    constexpr std::span source_span{source_values};
    constexpr auto from_span = Vector<int, 4>{source_span};

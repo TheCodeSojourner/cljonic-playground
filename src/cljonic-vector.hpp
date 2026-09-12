@@ -91,19 +91,18 @@ namespace cljonic {
    const auto pixel_value = runtime_pixels(1);
    const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
 
-   // A Vector is callable with an index: valid indices select stored values;
-   // an invalid index, including a negative signed index, returns the default
-   // value_type{} or the supplied fallback. For int, value_type{} is zero.
+   // Runtime construction supports the same callable lookup and fallback
+   // behavior.
    auto runtime_values = Vector<int, 4>{7, 9};
    const auto fallback = runtime_values(4, -1);
    const auto negative_default = runtime_values(-1);
    const auto negative_fallback = runtime_values(-1, 99);
 
-   // ---------------------------------------------------------------------
-   // C++ interoperability: a Vector exposes const logical traversal, a
-   // non-owning contiguous standard view, and can be constructed from a
-   // read-only std::span without mutating the source data.
-   // ---------------------------------------------------------------------
+   // -----------------------------------------------------------------------
+   // C++ interoperability: a Vector exposes const content traversal, a
+   // non-owning std::span, and can be constructed from a read-only std::span
+   // without mutating the source data.
+   // -----------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 33, 44};
    constexpr std::span source_span{source_values};
    constexpr auto from_span = Vector<int, 4>{source_span};

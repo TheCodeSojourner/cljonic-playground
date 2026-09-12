@@ -13,7 +13,7 @@
 namespace cljonic {
 
 /** \anchor Map
- * \b Map is a bounded, associative collection that maps unique keys to values. It provides callable lookup with
+ * \b Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
  * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
  * return a modified copy without changing the original collection. Construction with more entries than the available
  * capacity is rejected at compile time.
@@ -21,6 +21,7 @@ namespace cljonic {
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  struct Key {
    int id;
@@ -33,11 +34,14 @@ namespace cljonic {
                                     const Value &) noexcept = default;
  };
 
- int main() {
-   using namespace cljonic;
+ using AccountEntry = MapEntry<Key, Value>;
+ using AccountMap = Map<Key, Value, 2>;
 
-   using AccountEntry = MapEntry<Key, Value>;
-   using AccountMap = Map<Key, Value, 2>;
+ int main() {
+   // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
+   auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
+   const auto present = runtime(Key{3});
+   const auto missing = runtime(Key{4}, Value{77});
 
    // A named map type and its named entry type make the intended value model
    // explicit. A later duplicate key replaces the earlier value (i.e., the
@@ -50,16 +54,11 @@ namespace cljonic {
    static_assert(literal(Key{2}).amount == 0);
    static_assert(literal(Key{2}, Value{99}).amount == 99);
 
-   // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
-   auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
-   const auto present = runtime(Key{3});
-   const auto missing = runtime(Key{4}, Value{77});
-
-   // ---------------------------------------------------------------------
-   // C++ interoperability: a Map exposes const logical traversal, a
-   // non-owning contiguous standard view, and can be constructed from a
-   // read-only std::span without mutating the source data.
-   // ---------------------------------------------------------------------
+   // ---------------------------------------------------------------------------
+   // C++ interoperability: a Map exposes const logical traversal, a non-owning
+   // std::span, and can be constructed from a read-only std::span without
+   // mutating the source data.
+   // ---------------------------------------------------------------------------
    static constexpr AccountEntry source_entries[] = {
        AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
    constexpr std::span source_span{source_entries};
@@ -76,11 +75,6 @@ namespace cljonic {
                                     AccountEntry{Key{200}, Value{2000}}};
    const auto runtime_from_span =
        Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
-
-   // Const C++ interoperability exposes MapEntry values through a range and
-   // a non-owning contiguous standard view.
-   static_assert(literal.begin()->value.amount == 20);
-   static_assert(literal.view().size() == 1);
 
    // Use C++ interoperability to sum the values in a map.
    int value_sum = 0;

@@ -20,22 +20,23 @@ namespace cljonic {
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
+   // CTAD infers String<3> from the initializer count.
+   [[maybe_unused]] constexpr auto inferred = String{"Hi"};
 
-   // Explicit capacity permits an empty String and a partially populated String.
+   // Explicit capacity permits a partially populated String and an empty String.
+   constexpr auto literal = String<10>{"Hello"};
    [[maybe_unused]] constexpr auto empty = String<8>{};
 
-   constexpr auto literal = String<10>{"Hello"};
+   // String values can be used as a callable function, returning a default-
+   // value for invalid indexes or a supplied fallback when provided.
    static_assert(literal(0) == 'H');
    static_assert(literal(99, 'Z') == 'Z');
 
-   // Out-of-bounds access returns char{} (the ASCII NUL character).
+   // Without a fallback, an invalid lookup returns '\0'.
    static_assert(literal(5) == '\0');
-
-   // Capacity-inferred construction is also supported.
-   [[maybe_unused]] constexpr auto inferred = String{"Hi"};
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
@@ -43,13 +44,13 @@ namespace cljonic {
    const auto first = runtime(0);
    const auto missing = runtime(9, '!');
 
-   // ---------------------------------------------------------------------
+   // -------------------------------------------------------------------------
    // C++ interoperability: a String exposes const content traversal, a
-   // non-owning string view, and owned construction from std::string_view
-   // or a const-char span.  Literal construction supports capacity
-   // deduction, but a string_view's size is not part of its type, so view
-   // construction requires capacity.
-   // ---------------------------------------------------------------------
+   // non-owning std::string_view, and can be constructed from std::string_view
+   // or read-only std::span without mutating the source data.  Literal
+   // construction supports capacity deduction, but a string_view's size is not
+   // part of its type, so view construction requires capacity.
+   // -------------------------------------------------------------------------
    static constexpr std::string_view static_source{"from view"};
    constexpr auto from_static_view = String<16>{static_source};
    static_assert(from_static_view.view() == static_source);

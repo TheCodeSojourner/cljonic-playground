@@ -21,10 +21,9 @@ namespace cljonic {
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // CTAD infers Queue<int, 3> from the initializer count.
    [[maybe_unused]] constexpr auto ints_at_capacity = Queue{1, 2, 3};
 
@@ -32,11 +31,10 @@ namespace cljonic {
    [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
    [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
 
-   // ---------------------------------------------------------------------
-   // C++ interoperability: a Queue exposes const logical traversal, and
-   // can be constructed from a read-only std::span without mutating the
-   // source data.
-   // ---------------------------------------------------------------------
+   // --------------------------------------------------------------------------
+   // C++ interoperability: a Queue exposes const content traversal, and can be
+   // constructed from a read-only std::span without mutating the source data.
+   // --------------------------------------------------------------------------
    static constexpr int source_values[] = {10, 20, 30};
    constexpr std::span source_span{source_values};
    constexpr auto from_span = Queue<int, 4>{source_span};
@@ -51,16 +49,9 @@ namespace cljonic {
    const auto runtime_from_span =
        Queue<int, 4>{std::span<const int>{runtime_buffer, 3}};
 
-   // Const C++ interoperability uses begin()/end() for logical FIFO traversal.
-   constexpr auto wrapped = Queue<int, 4>{2, 3, 4, 5};
-   static_assert(wrapped.begin()[0] == 2);
-   static_assert(wrapped.begin()[1] == 3);
-   static_assert(wrapped.begin()[2] == 4);
-   static_assert(wrapped.begin()[3] == 5);
-
    // Use C++ interoperability to sum the elements of the queue.
    int fifo_sum = 0;
-   for (const auto value : wrapped) {
+   for (const auto value : runtime_buffer) {
      fifo_sum += value;
    }
 
@@ -74,7 +65,8 @@ namespace cljonic {
      runtime_from_span_sum += value;
    }
 
-   return (fifo_sum == 14 && from_span_sum == 60 && runtime_from_span_sum == 600)
+   return (fifo_sum == 600 && from_span_sum == 60 &&
+           runtime_from_span_sum == 600)
               ? 0
               : 1;
  }

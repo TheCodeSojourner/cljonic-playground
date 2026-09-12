@@ -16,24 +16,23 @@
 namespace cljonic {
 
 /** \anchor Set
- * \b Set is a bounded, unordered collection of unique values. It provides callable lookup with optional fallback
- * values. The way to operate on the collection is through the library's free-function API. Updates return a modified
- * copy without changing the original collection. Construction with more values than the available capacity is rejected
- * at compile time.
+ * \b Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
+ * operate on the collection is through the library's free-function API. Updates return a modified copy without
+ * changing the original collection. Construction with more values than the available capacity is rejected at compile
+ * time.
  *
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
+
+ using AccountId = int;
+ using AccountSet = Set<AccountId, 4>;
 
  int main() {
-   using namespace cljonic;
-
-   using AccountId = int;
-   using AccountSet = Set<AccountId, 4>;
-
    // A named set type makes the element and capacity contract explicit. A
    // duplicate value is a no-op. Constant-evaluated duplicate construction is
-   // rejected.
+   // rejected at compile time.
    constexpr auto literal = AccountSet{1, 2, 3};
    static_assert(literal(2) == 2);
    static_assert(literal(99) == 0);
@@ -45,11 +44,11 @@ namespace cljonic {
    const auto present = runtime(10);
    const auto missing = runtime(30, -1);
 
-   // ---------------------------------------------------------------------
-   // C++ interoperability: a Set exposes const logical traversal, a
-   // non-owning contiguous standard view, and can be constructed from a
-   // read-only std::span without mutating the source data.
-   // ---------------------------------------------------------------------
+   // -------------------------------------------------------------------------
+   // C++ interoperability: a Set exposes const content traversal, a non-owning
+   // std::span, and can be constructed from a read-only std::span without
+   // mutating the source data.
+   // -------------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 11, 33};
    constexpr std::span source_span{source_values};
    constexpr auto from_span = AccountSet{source_span};
