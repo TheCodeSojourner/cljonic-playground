@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-08-28
+last_updated: 2026-09-12
 status: draft
 ---
 
@@ -104,6 +104,22 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Related:** StaticInspectableStorage, Capacity, NoHeapConstraint, EmbeddedConstraint
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A collection's inline buffer is bounded storage whose capacity is visible from its type or configuration.
+
+
+### SourceConstruction
+- **Definition:** Construction of an owning cljonic collection directly from an external range or view source, copying source elements into the collection's bounded storage without retaining the source or borrowing its lifetime.
+- **Deprecated Synonyms:** direct source import, bounded source import
+- **Related:** Collection, Capacity, BoundedStorage, OwningValue, PlatformInteroperability, RangeViewMaterialization
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector<int, 4>{source_range}`, `Map<Key, Value, 4>{source_view}`, and analogous constructors for `Set`, `Queue`, and `String` perform SourceConstruction.
+
+
+### RangeViewMaterialization
+- **Definition:** The bounded-prefix realization of a range or view source into an owning collection during SourceConstruction. A source with a statically known extent that exceeds the destination capacity is rejected at compile time; a dynamic or otherwise unknown extent is copied until the destination is full and then follows the collection's bounded-prefix policy.
+- **Deprecated Synonyms:** range materialization, view materialization, source range realization
+- **Related:** SourceConstruction, ConstRangeTraversal, NonOwningView, StandardViewType, Capacity, BoundedPrefixResult, ProducerMaterialization
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A `std::span<const int, 3>` can be checked against `Vector<int, 2>` at compile time, while a dynamic `std::span<const int>` is copied only through the destination's available capacity.
 
 
 ### PlatformInteroperability
@@ -587,7 +603,7 @@ govern stored collection building blocks used across all higher-order algorithms
 
 ### Iterate
 - **Definition:** A generated collection type that repeatedly applies a function to produce a sequence. Element at index `i` is computed by applying the function `i` times to a seed value. Iterate is referentially transparent and finite by construction when a finite count is supplied; unbounded or omitted forms use the synthesis cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than a fake finite size.
-- **Deprecated Synonyms:** Iterate collection, iterated sequence
+- **Deprecated Synonyms:** iterated sequence
 - **Related:** CollectionMaximumElementCount
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Iterate(inc, 0, 5)` produces `0, 1, 2, 3, 4` by repeatedly incrementing from `0`; `Iterate(f, seed)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` iterations.
