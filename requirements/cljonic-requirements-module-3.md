@@ -114,6 +114,8 @@ REQ-COLL-020R. The supported generic free-function signatures MUST be: `get(cons
 
 REQ-COLL-020S. The lifecycle classification MUST be `requirements-backed` for `Indexed`, `Lookup`, and `Associative`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, and `pop` over their supported collection inputs. `Seqable`, `seq`, `first`, `next`, and `rest` MUST remain `deferred` until the sequence requirements are implemented for the applicable collection inputs.
 
+REQ-COLL-020T. The lifecycle classification MUST also be `requirements-backed` for `is_empty`, `can_conj`, and the `full` predicate or equivalent capacity inspection over their supported bounded collection inputs. `empty` and `not_empty` MUST remain `deferred` until their owning-value behavior is implementation-backed. The behavioral contracts for `into` and `fits_into` are approved by Module 2 and Module 4, but both operations MUST remain `deferred` until producer and materialization support is implementation-backed.
+
 ## Deferred Sequence Traversal Mechanics
 
 The sequence traversal contracts below are approved future-work behavior, not current collection APIs. No supported collection currently exposes `seq`, `first`, `next`, `rest`, a collection-owned logical range, or a C++ interoperability traversal accessor. These contracts MUST remain deferred until a later increment separately propagates their implementation and tests for every collection family. Their presence here records the intended future behavior without making it implementation-ready now.
