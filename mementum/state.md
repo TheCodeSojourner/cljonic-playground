@@ -1,35 +1,36 @@
 ## Session State
 
-- last_session_id: 2026-09-15-requirements-capability-refinement
+- last_session_id: 49c98398-81ba-49a6-8d64-d4c4fbcea171
 - current_timestamp: 2026-09-15
 - recover: 1
 - session_complete: true
 
 Task:
-1. Refine the collection capability definitions and associative operation requirements in Modules 2 and 3.
-2. Preserve the approval-gated progression from requirements and architecture into specifications, tests, traceability, and implementation.
+1. Audit and synchronize the full requirements vocabulary with `vocabulary.md`.
+2. Preserve the approval-gated progression from requirements and vocabulary into architecture, specifications, tests, traceability, and implementation.
 
 Questions:
-1. None blocking this session; the requirements refinement is committed and the worktree is clean.
-2. The next approval step must confirm the capability participation matrix and the concrete `assoc`/`can_assoc` policies before downstream propagation.
+1. None blocking this session; the requirements-to-vocabulary audit found and resolved one missing canonical term.
+2. Architecture and implementation remain intentionally unpropagated and approval-gated.
 
 Decisions:
 1. The public capability names are `Indexed`, `Lookup`, `Seqable`, and `Associative`; they remain distinct except where an explicit requirement defines refinement.
 2. `Indexed` refines integer-key `Lookup`; `Seqable` remains lifecycle-independent and deferred until sequence requirements are implementation-backed.
 3. Vector satisfies `Indexed`, `Lookup`, and `Associative`; Map satisfies `Lookup` and `Associative`; Set satisfies `Lookup`; String satisfies `Indexed`, `Lookup`, and `Associative`; Queue has none of these access or association capabilities by default.
-4. Free functions are constrained by the capability required by their operation: `assoc` and `can_assoc` require `Associative`, `get` requires `Lookup`, and `seq` requires `Seqable`.
-5. Vector and String association replace an existing indexed value or append at the logical-count index when capacity remains; invalid indexes and full-capacity appends return an unchanged value without mutation, allocation, or exceptions.
-6. Map association replaces an existing value for a key, while String association preserves ASCII validity and immediate null termination.
-7. Compile-time and runtime evaluation may deliberately distinguish compile-time-known invalid inputs from documented deterministic runtime replacement or failure behavior.
+4. The vocabulary now represents the complete canonical vocabulary inventory from `REQ-VOCAB-001`, including `PersistentValue`, and matches the requirements' capability, lifecycle, predicate, result, ownership, and collection terminology.
+5. `Assoc` and `CanAssoc` vocabulary definitions cover Map replacement/insertion, Vector/String replacement/append, invalid-key behavior, capacity policy, immutability, string validity, and null termination.
+6. Supporting terms such as `LinearScan`, `SwapAndRemove`, `CopyOnModifyCollection`, and `DeepCopyUpdate` remain intentional specification/implementation vocabulary and do not contradict the canonical requirements vocabulary.
 
 Validation:
-1. The latest requirements and architecture refinement is committed as `4070042` (`feat: enhance collection capability definitions and refine associative operations in requirements`).
-2. The worktree was clean before this state update; no implementation or test changes are pending.
+1. Full requirements-to-vocabulary audit completed; the only concrete gap was the missing `PersistentValue` entry, which was added.
+2. `git diff --check` passed and the vocabulary file has no diagnostics.
+3. The vocabulary alignment is committed as `46c3d8e` (`fix: update last_updated date and refine vocabulary definitions for collection capabilities`).
+4. The worktree was clean before this state update; no source or test changes are pending.
 
 Current Increment:
-1. Collection capability definitions and associative operation requirements are refined and committed; downstream propagation remains approval-gated.
+1. Requirements and vocabulary are fully synchronized; downstream propagation remains approval-gated.
 
 Next:
-1. Validate and approve the repaired requirements and architecture reference, including the capability participation matrix and associative operation contracts.
+1. Propagate the approved requirements and vocabulary into `architecture.md`, beginning with the capability participation matrix and associative operation contracts.
 2. Reconcile operation-level behavioral specifications required by `REQ-SEQ-022`, starting with collection-shaping and traversal contracts.
-3. Propagate approved contracts into architecture, focused tests, traceability, and implementation in that order, then rerun vocabulary, specification, architecture, build, no-heap, and coverage gates.
+3. Propagate approved architecture contracts into focused tests, traceability, and implementation in that order, then rerun vocabulary, specification, architecture, build, no-heap, and coverage gates.
