@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-09-12
+last_updated: 2026-09-15
 status: draft
 ---
 
@@ -35,11 +35,43 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Sequenceable
-- **Definition:** A semantic capability indicating that a supported cljonic collection, approved producer, or other explicitly approved value participates in the cljonic sequence-operation family, including the applicable emptiness, counting, first-element, remainder, and sequence-conversion contracts. Sequenceable does not by itself imply indexed access, contiguous storage, a particular iterator category, or a standard C++ range representation; the implementation-facing traversal mechanism is named `ConstRangeTraversal`.
+- **Definition:** The descriptive form of the `Seqable` capability: participation in the cljonic sequence-operation family under the applicable lifecycle, emptiness, counting, traversal, and sequence-conversion contracts. Being sequenceable does not by itself imply indexed access, lookup, association, contiguous storage, a particular iterator category, or a standard C++ range representation.
 - **Deprecated Synonyms:** sequence capability
-- **Related:** Sequence, Traversal, ConstRangeTraversal
+- **Related:** Sequence, Seqable, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Sequenceable` is a deferred capability for future collection traversal; current collections expose `is_empty` and `count` without claiming the full sequence interface.
+- **Examples:** A collection may be sequenceable when the deferred `Seqable` capability is implemented; current collections expose `is_empty` and `count` without claiming the full sequence interface.
+
+
+### Indexed
+- **Definition:** A semantic capability for ordered, integer-indexed access to a collection's logical elements. An `Indexed` collection defines a bounded logical index domain, provides non-mutating default-returning access for that domain, and provides `contains` as the non-throwing, non-allocating index-membership predicate. Negative indexes are outside the domain when representable by the accepted index type. `Indexed` refines `Lookup` for the integer lookup domain.
+- **Deprecated Synonyms:** indexed access, indexed collection access, index access capability
+- **Related:** Lookup, Contains, DefaultReturningResult, CapabilityConcept
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector` and `String` are `Indexed`; `contains(xs, i)` distinguishes an invalid index from a valid position whose value equals its default element.
+
+
+### Lookup
+- **Definition:** A semantic capability for non-mutating access through a collection-defined lookup domain. A `Lookup` collection defines its lookup key type, returns the associated value for a present key or the documented default or fallback result when absent, and provides `contains` to distinguish presence without inspecting the returned value. `Lookup` does not imply map-style association or mutation.
+- **Deprecated Synonyms:** lookup access, general lookup capability, associative access
+- **Related:** Indexed, Associative, Contains, DefaultReturningResult, CapabilityConcept
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Map` looks up keys, `Set` looks up values, and `Vector` and `String` look up integer indexes.
+
+
+### Seqable
+- **Definition:** The canonical semantic capability for producing a collection's documented logical traversal representation. A `Seqable` collection provides sequence conversion without mutating the source, dynamic allocation, or exceptions; the result is an independently valid bounded value whose elements and order follow the collection's traversal semantics. `Seqable` remains independent of `Indexed`, `Lookup`, and `Associative` and is deferred until the sequence requirements are implementation-backed.
+- **Deprecated Synonyms:** sequenceable capability, sequence capability
+- **Related:** Sequenceable, Sequence, Traversal, ConstRangeTraversal, CapabilityConcept
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Seqable` is a deferred capability for `Vector`, `Map`, `Set`, `Queue`, and `String`; its presence does not follow merely from `is_empty` or `count`.
+
+
+### Associative
+- **Definition:** A semantic capability for non-mutating association of a key and value into a collection, producing a new collection value. An `Associative` collection defines its key and value types, valid-key and capacity policy, preserves its source, and provides `can_assoc` as a non-throwing, non-allocating preflight predicate that agrees with `assoc` for immutable inputs. `Associative` does not by itself imply `Indexed` or `Lookup`; each concrete collection's lookup relationship is explicit.
+- **Deprecated Synonyms:** associative capability, associative collection access
+- **Related:** Lookup, Assoc, CanAssoc, CopyOnModifyCollection, CapabilityConcept
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Map`, `Vector`, and `String` are `Associative`; `Set` is not associative because its supported update is `conj`, and `Queue` has no access or association capability by default.
 
 
 ### Traversal
@@ -178,26 +210,10 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `full` or an equivalent capacity inspection reports whether a bounded insertion can complete.
 
 
-### IndexedAccess
-- **Definition:** A capability that provides access to a collection element by an index together with a `contains` (index-in-range) predicate for the same logical index domain.
-- **Deprecated Synonyms:** indexed collection access, index access capability
-- **Related:** DefaultReturningResult, Contains
-- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** An indexed collection can use `contains(xs, i)` before a default-returning indexed `get`.
-
-
-### AssociativeAccess
-- **Definition:** A capability that provides key-based lookup over an admitted collection with a documented key type, value type, membership predicate, and missing-key result.
-- **Deprecated Synonyms:** associative collection access, key-based access
-- **Related:** Map, Contains, DefaultReturningResult
-- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A map's associative access uses key presence before relying on a default-returning lookup.
-
-
 ### Contains
 - **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to a collection's lookup domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, and for indexed collections (vector/string) it tests index-in-range.
 - **Deprecated Synonyms:** `contains?`, contains predicate, key-presence check
-- **Related:** FreeFunction, AssociativeAccess, IndexedAccess, PreflightPredicate, VerbPredicate
+- **Related:** FreeFunction, Indexed, Lookup, PreflightPredicate, VerbPredicate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `contains(m, key)` tests a map key, `contains(s, value)` tests set membership, and `contains(xs, index)` tests whether an indexed position is valid.
 
@@ -301,7 +317,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### MapEntry
 - **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value. MapEntry is also an explicitly approved fixed two-element sequence: its first element is the key, its second element is the value, and its count is always two. Its key satisfies `NothrowStableEqualityComparable`; its value satisfies `NothrowCollectionElement`.
 - **Deprecated Synonyms:** map entry, key-value entry
-- **Related:** Map, AssociativeAccess, Sequenceable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue
+- **Related:** Map, Lookup, Seqable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A map-entry result owns its key and value rather than borrowing hidden map storage.
 
@@ -357,7 +373,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### HasPredicatePrefix
 - **Definition:** The canonical `has_` prefix for a presence or possession predicate, including key or member presence where that domain applies.
 - **Deprecated Synonyms:** `has_` predicate, presence predicate prefix
-- **Related:** CapabilityPredicate, AssociativeAccess
+- **Related:** CapabilityPredicate, Associative
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A `has_` predicate may report key presence without performing a default-returning lookup.
 
@@ -381,7 +397,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### KeywordEnumNameMap
 - **Definition:** A bounded map of keyword names to application-defined scoped enumeration values under the supported associative and capacity rules.
 - **Deprecated Synonyms:** keyword-to-enum map, enum name map
-- **Related:** KeywordEnumNameEntry, KeywordEnumNameContext, Map, AssociativeAccess
+- **Related:** KeywordEnumNameEntry, KeywordEnumNameContext, Map, Lookup
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A keyword enum name map provides bounded lookup and documented missing-key behavior.
 
@@ -426,7 +442,7 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### CopyOnModifyCollection
-- **Definition:** A fixed-capacity value type backed by statically inspectable storage that returns a modified copy instead of mutating in place. Its observable contract is PersistentValueSemantics; Module 1 realizes updates through DeepCopyUpdate without structural sharing. In this repo, Vector, Map, Set, Queue, and String follow this model.
+- **Definition:** A fixed-capacity value type backed by statically inspectable storage that returns a modified copy instead of mutating in place. Its observable contract is PersistentValueSemantics for a PersistentValue; Module 1 realizes updates through DeepCopyUpdate without structural sharing. In this repo, Vector, Map, Set, Queue, and String follow this model.
 - **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection, deep copy on write, deep copying on write
 - **Related:** PersistentValueSemantics, DeepCopyUpdate, StaticInspectableStorage, Vector, Map, Set, Queue, String, SentinelBasedAccess
 - **Usage:** Specification and implementation
@@ -460,7 +476,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### Vector
 - **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
-- **Related:** CopyOnModifyCollection, String, CapacityConstruction, IndexedAccess, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** CopyOnModifyCollection, String, CapacityConstruction, Indexed, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `count()`, `capacity()`, `operator()`, and `contains` provide direct member and free-function observation.
 
@@ -468,7 +484,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### Map
 - **Definition:** The cljonic fixed-capacity associative collection type mapping unique, stably comparable keys to values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates. Both keys and values satisfy the `NothrowCollectionElement` storage contract at template admission.
 - **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
-- **Related:** MapEntry, AssociativeAccess, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** MapEntry, Associative, Lookup, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback. `Map{MapEntry{1, 10}, MapEntry{2, 20}}` deduces `Map<int, int, 2>` and folds `assoc` over each entry in argument order; every argument must be exactly `MapEntry<int, int>`, and at least one argument is required (use `Map<int, int, N>{}` for the empty case).
 
@@ -492,7 +508,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### String
 - **Definition:** The cljonic fixed-capacity array-backed collection type with ordered ASCII byte storage (range `0x01`–`0x7F`) and an uncounted null terminator immediately following its content.
 - **Deprecated Synonyms:** bounded string, fixed-capacity string, cljonic string
-- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, IndexedAccess, CallableLookup, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, Indexed, CallableLookup, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length. A fixed-extent `std::span<const char, N>` can use `String{span}` to deduce `String<N>`, while a dynamic-extent span uses an explicit destination capacity and bounded-prefix construction. `s(2)` and `get(s, 2)` return the byte at content index two; invalid indices return `char{}` or a supplied fallback, while `contains(s, index)` distinguishes valid content indices from the terminator and out-of-range indices.
 
@@ -516,7 +532,7 @@ govern stored collection building blocks used across all higher-order algorithms
 ### CallableLookup
 - **Definition:** Invocation of a collection instance via `operator()` providing concise read-only lookup with optional fallback default, behaviorally equivalent to `get`.
 - **Deprecated Synonyms:** callable collection, functional lookup syntax, operator() lookup
-- **Related:** SentinelBasedAccess, DefaultElement, IndexedAccess, AssociativeAccess
+- **Related:** SentinelBasedAccess, DefaultElement, Indexed, Lookup
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `xs(2)` on a Vector, `m(key)` on a Map, `s(val)` on a Set, and `text(2)` on a String invoke callable lookup without mutating the collection; each is behaviorally equivalent to the corresponding `get` overload.
 
@@ -538,11 +554,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Assoc
-- **Definition:** The primitive associative free function that returns a new `Map` with the supplied key-value association added or replaced.
+- **Definition:** The primitive `Associative` free function that returns a new collection with the supplied key-value association added, replaced, or appended according to the collection's key-domain and capacity policy. Existing map keys, vector indexes, and string content indexes are replaced without increasing count; a vector or string key equal to logical count appends when capacity remains. Invalid keys and full-capacity append keys return an unchanged copy without throwing, allocating, or mutating the source. String character validity follows the documented replacement policy at runtime and constant-evaluation rejection policy.
 - **Deprecated Synonyms:** associate, map assoc
-- **Related:** Map, MapEntry, CanAssoc, Dissoc, CopyOnModifyCollection
+- **Related:** Associative, Lookup, Map, Vector, String, MapEntry, CanAssoc, Dissoc, CopyOnModifyCollection
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `assoc(m, key, val)` updates the value if `key` exists (without consuming extra capacity) or inserts the new pair if capacity remains.
+- **Examples:** `assoc(m, key, val)` updates an existing value or inserts a new pair when capacity remains; `assoc(v, i, value)` replaces an existing index or appends at `count(v)`; `assoc(s, i, ch)` applies the same index policy while preserving the null terminator.
 
 
 ### Dissoc
@@ -578,9 +594,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Seq
-- **Definition:** The primitive traversal free function that converts a supported `Sequenceable` collection, explicitly approved sequenceable value such as `MapEntry`, or approved `Producer` into an owning, value-semantic bounded `Vector` of its logical traversal elements, using the applicable `ConstRangeTraversal`, `ProducerIteration`, element representation, and capacity policy. Seq does not imply support for arbitrary external ranges, iterables, arrays, or containers.
+- **Definition:** The primitive traversal free function that converts a supported `Seqable` collection, explicitly approved sequenceable value such as `MapEntry`, or approved `Producer` into an owning, value-semantic bounded `Vector` of its logical traversal elements, using the applicable `ConstRangeTraversal`, `ProducerIteration`, element representation, and capacity policy. Seq does not imply support for arbitrary external ranges, iterables, arrays, or containers.
 - **Deprecated Synonyms:** sequence conversion, to-seq, seq conversion
-- **Related:** Sequenceable, ConstRangeTraversal, ProducerIteration, BoundedResult, Vector, MapEntry, Traversal
+- **Related:** Seqable, ConstRangeTraversal, ProducerIteration, BoundedResult, Vector, MapEntry, Traversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `seq(m)` returns an owning `Vector<MapEntry<K, V>, N>` of map entries.
 
@@ -594,11 +610,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### CanAssoc
-- **Definition:** The canonical preflight capability predicate (`can_assoc`) checking whether `assoc` can succeed without capacity overflow, returning true if the key already exists or if spare capacity remains.
+- **Definition:** The canonical `Associative` preflight predicate (`can_assoc`) checking whether `assoc` can produce its documented result without key-domain or capacity failure. It depends only on the collection and key, not the value. For `Map`, existing keys are valid and new keys require spare capacity; for `Vector` and `String`, existing indexes are valid and the logical-count append index is valid only when capacity remains. Invalid and full-capacity append keys return false.
 - **Deprecated Synonyms:** can_assoc, can-assoc predicate
-- **Related:** Assoc, CapabilityPredicate, PreflightPredicate, FullState, Map
+- **Related:** Assoc, Associative, CapabilityPredicate, PreflightPredicate, FullState, Map, Vector, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `can_assoc(m, k)` returns true if `contains(m, k)` is true or if `m` is not full; `can_assoc` takes no value argument because the associated value never affects whether `assoc` can succeed.
+- **Examples:** `can_assoc(m, k)` is true for an existing key or an insertable new key; `can_assoc(v, count(v))` and `can_assoc(s, count(s))` are true only when capacity remains.
 
 
 ### Iterate
@@ -945,9 +961,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### CapabilityConcept
-- **Definition:** A C++20 concept that expresses a semantic capability a cljonic collection must expose (sequenceable, indexed, or associative observation) in order to participate in an operation, layered on top of nominal collection identity.
+- **Definition:** A C++20 concept that expresses one of the named semantic capabilities a cljonic collection must expose (`Indexed`, `Lookup`, `Seqable`, or `Associative`) in order to participate in an operation, layered on top of nominal collection identity.
 - **Deprecated Synonyms:** capability concept, semantic capability gate
-- **Related:** CollectionConcept, Sequenceable, IndexedAccess, AssociativeAccess, CapabilityPredicate, SequenceableCollection, IndexedCollection, AssociativeCollection
+- **Related:** CollectionConcept, Indexed, Lookup, Seqable, Associative, CapabilityPredicate, SequenceableCollection, IndexedCollection, LookupCollection, AssociativeCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `SequenceableCollection<C>` is a CapabilityConcept requiring non-throwing `is_empty` and `count` observation.
 
@@ -961,15 +977,15 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### IndexedCollection
-- **Definition:** The C++ concept identifier implementing the indexed CapabilityConcept, extending sequenceable observation with callable indexed lookup and the `contains` (index-in-range) predicate.
+- **Definition:** The C++ concept identifier implementing the `Indexed` CapabilityConcept, extending the required lookup observation with callable indexed lookup and the `contains` (index-in-range) predicate.
 - **Deprecated Synonyms:** indexed_cljonic_collection, indexed collection concept
-- **Related:** CapabilityConcept, IndexedAccess, SequenceableCollection, CljonicCollection, Contains
+- **Related:** CapabilityConcept, Indexed, Lookup, SequenceableCollection, CljonicCollection, Contains
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `IndexedCollection<C>` requires `c(i)` and `c.contains(i)`.
 
 
 ### LookupCollection
-- **Definition:** The C++ concept identifier implementing the general lookup CapabilityConcept for an admitted collection, requiring an explicit `lookup_type`, callable lookup, and a matching `contains` predicate without implying map-style key-to-value association.
+- **Definition:** The C++ concept identifier implementing the `Lookup` CapabilityConcept for an admitted collection, requiring an explicit `lookup_type`, callable lookup, and a matching `contains` predicate without implying map-style key-to-value association.
 - **Deprecated Synonyms:** lookup collection concept, general lookup capability
 - **Related:** CapabilityConcept, SequenceableCollection, IndexedCollection, AssociativeCollection, Map, Set, Contains
 - **Usage:** Architecture, specification, implementation, tests, and documentation
@@ -977,9 +993,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### AssociativeCollection
-- **Definition:** The C++ concept identifier implementing the associative CapabilityConcept, extending sequenceable observation with key-based callable lookup and membership testing.
+- **Definition:** The C++ concept identifier implementing the `Associative` CapabilityConcept, requiring key/value association, key-based callable lookup, membership testing, and the collection's immutable association/preflight surface.
 - **Deprecated Synonyms:** associative_cljonic_collection, associative collection concept
-- **Related:** CapabilityConcept, AssociativeAccess, SequenceableCollection, CljonicCollection
+- **Related:** CapabilityConcept, Associative, Lookup, SequenceableCollection, CljonicCollection, Contains, Assoc, CanAssoc
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `AssociativeCollection<C>` requires `c(k)` and `c.contains(k)`.
 
@@ -1019,9 +1035,17 @@ govern stored collection building blocks used across all higher-order algorithms
 ### PersistentValueSemantics
 - **Definition:** The observable rule that an update returns a new independently valid value while leaving the prior value unchanged. This contract does not itself prescribe a storage algorithm.
 - **Deprecated Synonyms:** persistent collection semantics, immutable update semantics
-- **Related:** CopyOnModifyCollection, DeepCopyUpdate, OwningValue
+- **Related:** PersistentValue, CopyOnModifyCollection, DeepCopyUpdate, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** Updating a Vector produces a new value while the original Vector remains valid and unchanged.
+
+
+### PersistentValue
+- **Definition:** An owning value whose updates produce a new independently valid value while preserving the prior value unchanged and valid. PersistentValue names the value property; PersistentValueSemantics names the observable update contract, and DeepCopyUpdate is the current realization strategy for the supported fixed-capacity collections.
+- **Deprecated Synonyms:** persistent collection value, immutable value
+- **Related:** PersistentValueSemantics, OwningValue, CopyOnModifyCollection, DeepCopyUpdate
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** A `Vector`, `Map`, `Set`, `Queue`, or `String` remains a valid PersistentValue when `assoc`, `conj`, `dissoc`, `disj`, `pop`, or another supported update returns a changed copy.
 
 
 ### DeepCopyUpdate
@@ -1086,6 +1110,6 @@ govern stored collection building blocks used across all higher-order algorithms
 - StatePredicate and VerbPredicate define canonical predicate naming constraints.
 - EmbeddedConstraint, StaticInspectableStorage, NoHeapConstraint, NoExceptionConstraint, NoRttiConstraint, NoHiddenGlobalInitialization, SingleThreadedExecutionModel, and DeterministicBehavior define the platform and execution constraints.
 - ClosedNominalCollectionDomain, NominalCollectionRecognition, and CollectionKind define which types may participate as cljonic collections.
-- PersistentValueSemantics defines the public value contract, while DeepCopyUpdate defines Module 1's required realization of that contract.
+- PersistentValue is the public value property; PersistentValueSemantics defines its observable update contract, while DeepCopyUpdate defines Module 1's required realization of that contract.
 - HeaderOnlyDistribution and AmalgamatedHeader define the packaging vocabulary for build and user documentation.
 - CompileTimeFailure and CapacityConstruction define observable construction behavior contracts that should map directly into Allium specs.
