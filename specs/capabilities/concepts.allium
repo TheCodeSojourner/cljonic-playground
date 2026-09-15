@@ -127,12 +127,17 @@ entity SequenceableCollection {
 }
 
 entity IndexedCollection {
-    extends_sequenceable: Boolean
+    sequence_independent: Boolean
+    refines_lookup_capability: Boolean
     requires_callable_indexed_lookup: Boolean
     requires_contains_predicate: Boolean
 
-    invariant ExtendsSequenceable {
-        this.extends_sequenceable = true
+    invariant SequenceIndependent {
+        this.sequence_independent = true
+    }
+
+    invariant RefinesLookupCapability {
+        this.refines_lookup_capability = true
     }
 
     invariant RequiresCallableIndexedLookup {
@@ -145,13 +150,14 @@ entity IndexedCollection {
 }
 
 entity LookupCollection {
-    extends_sequenceable: Boolean
+    sequence_independent: Boolean
     requires_lookup_type: Boolean
     requires_callable_lookup: Boolean
+    requires_default_or_fallback_access: Boolean
     requires_membership_predicate: Boolean
 
-    invariant ExtendsSequenceable {
-        this.extends_sequenceable = true
+    invariant SequenceIndependent {
+        this.sequence_independent = true
     }
 
     invariant RequiresLookupType {
@@ -162,26 +168,65 @@ entity LookupCollection {
         this.requires_callable_lookup = true
     }
 
+    invariant RequiresDefaultOrFallbackAccess {
+        this.requires_default_or_fallback_access = true
+    }
+
     invariant RequiresMembershipPredicate {
         this.requires_membership_predicate = true
     }
 }
 
 entity AssociativeCollection {
-    extends_sequenceable: Boolean
-    requires_callable_key_lookup: Boolean
-    requires_membership_predicate: Boolean
+    sequence_independent: Boolean
+    defines_key_type: Boolean
+    defines_value_type: Boolean
+    defines_capacity_policy: Boolean
+    requires_assoc_operation: Boolean
+    requires_can_assoc_preflight: Boolean
+    returns_new_collection_value: Boolean
+    preserves_source: Boolean
+    requires_non_mutating_assoc_operation: Boolean
+    requires_non_mutating_assoc_preflight: Boolean
 
-    invariant ExtendsSequenceable {
-        this.extends_sequenceable = true
+    invariant SequenceIndependent {
+        this.sequence_independent = true
     }
 
-    invariant RequiresCallableKeyLookup {
-        this.requires_callable_key_lookup = true
+    invariant DefinesKeyType {
+        this.defines_key_type = true
     }
 
-    invariant RequiresMembershipPredicate {
-        this.requires_membership_predicate = true
+    invariant DefinesValueType {
+        this.defines_value_type = true
+    }
+
+    invariant DefinesCapacityPolicy {
+        this.defines_capacity_policy = true
+    }
+
+    invariant RequiresAssocOperation {
+        this.requires_assoc_operation = true
+    }
+
+    invariant RequiresCanAssocPreflight {
+        this.requires_can_assoc_preflight = true
+    }
+
+    invariant ReturnsNewCollectionValue {
+        this.returns_new_collection_value = true
+    }
+
+    invariant PreservesSource {
+        this.preserves_source = true
+    }
+
+    invariant RequiresNonMutatingAssocOperation {
+        this.requires_non_mutating_assoc_operation = true
+    }
+
+    invariant RequiresNonMutatingAssocPreflight {
+        this.requires_non_mutating_assoc_preflight = true
     }
 }
 

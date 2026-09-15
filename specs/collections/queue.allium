@@ -27,6 +27,10 @@ entity Queue {
     oversized_initializer_is_compile_time_failure: Boolean
     pack_construction_folds_over_conj: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
+    rejects_indexed_capability: Boolean
+    rejects_lookup_capability: Boolean
+    rejects_associative_capability: Boolean
+    seqable_lifecycle_is_deferred: Boolean
     supports_peek_operation: Boolean
     supports_pop_operation: Boolean
     supports_conj_operation: Boolean
@@ -144,6 +148,22 @@ entity Queue {
 
     invariant CapacityExceedsMaximumIsCompileTimeFailure {
         this.capacity_exceeds_maximum_is_compile_time_failure = true
+    }
+
+    invariant RejectsIndexedCapability {
+        this.rejects_indexed_capability = true
+    }
+
+    invariant RejectsLookupCapability {
+        this.rejects_lookup_capability = true
+    }
+
+    invariant RejectsAssociativeCapability {
+        this.rejects_associative_capability = true
+    }
+
+    invariant SeqableLifecycleIsDeferred {
+        this.seqable_lifecycle_is_deferred = true
     }
 
     invariant SupportsPeekOperation {

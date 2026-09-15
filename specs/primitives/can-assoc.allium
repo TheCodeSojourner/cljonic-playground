@@ -2,6 +2,19 @@
 
 entity CanAssoc {
     supports_can_assoc_preflight: Boolean
+    depends_only_on_collection_and_key: Boolean
+    supports_map_can_assoc: Boolean
+    supports_vector_can_assoc: Boolean
+    supports_string_can_assoc: Boolean
+    true_for_existing_key_or_index: Boolean
+    true_for_count_append_when_capacity_remains: Boolean
+    false_for_invalid_or_full_capacity_key_or_index: Boolean
+    value_independent_result: Boolean
+    non_throwing_non_allocating_preflight: Boolean
+    constexpr_execution_model: Boolean
+    noexcept_execution_model: Boolean
+    non_mutating_semantics: Boolean
+    non_allocating_semantics: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -10,6 +23,58 @@ entity CanAssoc {
 
     invariant CanAssocPreflightSupported {
         this.supports_can_assoc_preflight = true
+    }
+
+    invariant DependsOnlyOnCollectionAndKey {
+        this.depends_only_on_collection_and_key = true
+    }
+
+    invariant SupportsMapCanAssoc {
+        this.supports_map_can_assoc = true
+    }
+
+    invariant SupportsVectorCanAssoc {
+        this.supports_vector_can_assoc = true
+    }
+
+    invariant SupportsStringCanAssoc {
+        this.supports_string_can_assoc = true
+    }
+
+    invariant TrueForExistingKeyOrIndex {
+        this.true_for_existing_key_or_index = true
+    }
+
+    invariant TrueForCountAppendWhenCapacityRemains {
+        this.true_for_count_append_when_capacity_remains = true
+    }
+
+    invariant FalseForInvalidOrFullCapacityKeyOrIndex {
+        this.false_for_invalid_or_full_capacity_key_or_index = true
+    }
+
+    invariant ValueIndependentResult {
+        this.value_independent_result = true
+    }
+
+    invariant NonThrowingNonAllocatingPreflight {
+        this.non_throwing_non_allocating_preflight = true
+    }
+
+    invariant ConstexprExecutionModel {
+        this.constexpr_execution_model = true
+    }
+
+    invariant NoexceptExecutionModel {
+        this.noexcept_execution_model = true
+    }
+
+    invariant NonMutatingSemantics {
+        this.non_mutating_semantics = true
+    }
+
+    invariant NonAllocatingSemantics {
+        this.non_allocating_semantics = true
     }
 
     invariant NoHeapAllocation {

@@ -47,6 +47,18 @@ entity String {
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_indexed_lookup: Boolean
     supports_indexed_fallback_lookup: Boolean
+    supports_lookup_capability: Boolean
+    supports_associative_capability: Boolean
+    seqable_lifecycle_is_deferred: Boolean
+    supports_assoc_update: Boolean
+    supports_can_assoc_preflight: Boolean
+    assoc_replaces_existing_character: Boolean
+    assoc_appends_at_logical_count: Boolean
+    invalid_assoc_index_returns_unchanged_string: Boolean
+    null_terminator_is_not_association_index: Boolean
+    can_assoc_true_for_existing_or_append_index: Boolean
+    can_assoc_false_for_invalid_or_full_append_index: Boolean
+    assoc_character_value_is_validated: Boolean
     supports_get_free_function: Boolean
     invalid_index_returns_default_element: Boolean
     invalid_index_returns_supplied_fallback: Boolean
@@ -249,6 +261,54 @@ entity String {
 
     invariant SupportsIndexedFallbackLookup {
         this.supports_indexed_fallback_lookup = true
+    }
+
+    invariant SupportsLookupCapability {
+        this.supports_lookup_capability = true
+    }
+
+    invariant SupportsAssociativeCapability {
+        this.supports_associative_capability = true
+    }
+
+    invariant SeqableLifecycleIsDeferred {
+        this.seqable_lifecycle_is_deferred = true
+    }
+
+    invariant SupportsAssocUpdate {
+        this.supports_assoc_update = true
+    }
+
+    invariant SupportsCanAssocPreflight {
+        this.supports_can_assoc_preflight = true
+    }
+
+    invariant AssocReplacesExistingCharacter {
+        this.assoc_replaces_existing_character = true
+    }
+
+    invariant AssocAppendsAtLogicalCount {
+        this.assoc_appends_at_logical_count = true
+    }
+
+    invariant InvalidAssocIndexReturnsUnchangedString {
+        this.invalid_assoc_index_returns_unchanged_string = true
+    }
+
+    invariant NullTerminatorIsNotAssociationIndex {
+        this.null_terminator_is_not_association_index = true
+    }
+
+    invariant CanAssocTrueForExistingOrAppendIndex {
+        this.can_assoc_true_for_existing_or_append_index = true
+    }
+
+    invariant CanAssocFalseForInvalidOrFullAppendIndex {
+        this.can_assoc_false_for_invalid_or_full_append_index = true
+    }
+
+    invariant AssocCharacterValueIsValidated {
+        this.assoc_character_value_is_validated = true
     }
 
     invariant SupportsGetFreeFunction {

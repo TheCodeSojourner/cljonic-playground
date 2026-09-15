@@ -33,6 +33,16 @@ entity Map {
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_associative_lookup: Boolean
     supports_associative_fallback_lookup: Boolean
+    supports_lookup_capability: Boolean
+    supports_associative_capability: Boolean
+    seqable_lifecycle_is_deferred: Boolean
+    supports_assoc_update: Boolean
+    supports_can_assoc_preflight: Boolean
+    assoc_replaces_existing_value: Boolean
+    assoc_inserts_new_key_when_capacity_remains: Boolean
+    invalid_key_or_full_insert_returns_unchanged_map: Boolean
+    can_assoc_true_for_existing_or_insertable_key: Boolean
+    can_assoc_false_for_missing_key_at_capacity: Boolean
     missing_key_returns_default_element: Boolean
     missing_key_returns_supplied_fallback: Boolean
     canonical_result_status_model_is_declared: Boolean
@@ -179,6 +189,46 @@ entity Map {
 
     invariant SupportsAssociativeFallbackLookup {
         this.supports_associative_fallback_lookup = true
+    }
+
+    invariant SupportsLookupCapability {
+        this.supports_lookup_capability = true
+    }
+
+    invariant SupportsAssociativeCapability {
+        this.supports_associative_capability = true
+    }
+
+    invariant SeqableLifecycleIsDeferred {
+        this.seqable_lifecycle_is_deferred = true
+    }
+
+    invariant SupportsAssocUpdate {
+        this.supports_assoc_update = true
+    }
+
+    invariant SupportsCanAssocPreflight {
+        this.supports_can_assoc_preflight = true
+    }
+
+    invariant AssocReplacesExistingValue {
+        this.assoc_replaces_existing_value = true
+    }
+
+    invariant AssocInsertsNewKeyWhenCapacityRemains {
+        this.assoc_inserts_new_key_when_capacity_remains = true
+    }
+
+    invariant InvalidKeyOrFullInsertReturnsUnchangedMap {
+        this.invalid_key_or_full_insert_returns_unchanged_map = true
+    }
+
+    invariant CanAssocTrueForExistingOrInsertableKey {
+        this.can_assoc_true_for_existing_or_insertable_key = true
+    }
+
+    invariant CanAssocFalseForMissingKeyAtCapacity {
+        this.can_assoc_false_for_missing_key_at_capacity = true
     }
 
     invariant MissingKeyReturnsDefaultElement {

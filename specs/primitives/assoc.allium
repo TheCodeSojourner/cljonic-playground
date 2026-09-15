@@ -2,6 +2,22 @@
 
 entity Assoc {
     supports_assoc_free_function: Boolean
+    requires_associative_collection_support: Boolean
+    supports_map_assoc: Boolean
+    supports_vector_assoc: Boolean
+    supports_string_assoc: Boolean
+    key_domain_is_validated: Boolean
+    supports_collection_specific_append_policy: Boolean
+    supports_replace_or_append_policy: Boolean
+    returns_new_collection_value: Boolean
+    preserves_source: Boolean
+    invalid_key_or_index_returns_unchanged_collection: Boolean
+    compile_time_invalid_character_rejected: Boolean
+    runtime_invalid_character_replaced_with_period: Boolean
+    constexpr_execution_model: Boolean
+    noexcept_execution_model: Boolean
+    non_mutating_semantics: Boolean
+    non_allocating_semantics: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -12,6 +28,70 @@ entity Assoc {
 
     invariant AssocFreeFunctionSupported {
         this.supports_assoc_free_function = true
+    }
+
+    invariant RequiresAssociativeCollectionSupport {
+        this.requires_associative_collection_support = true
+    }
+
+    invariant SupportsMapAssoc {
+        this.supports_map_assoc = true
+    }
+
+    invariant SupportsVectorAssoc {
+        this.supports_vector_assoc = true
+    }
+
+    invariant SupportsStringAssoc {
+        this.supports_string_assoc = true
+    }
+
+    invariant KeyDomainIsValidated {
+        this.key_domain_is_validated = true
+    }
+
+    invariant SupportsCollectionSpecificAppendPolicy {
+        this.supports_collection_specific_append_policy = true
+    }
+
+    invariant SupportsReplaceOrAppendPolicy {
+        this.supports_replace_or_append_policy = true
+    }
+
+    invariant ReturnsNewCollectionValue {
+        this.returns_new_collection_value = true
+    }
+
+    invariant PreservesSource {
+        this.preserves_source = true
+    }
+
+    invariant InvalidKeyOrIndexReturnsUnchangedCollection {
+        this.invalid_key_or_index_returns_unchanged_collection = true
+    }
+
+    invariant CompileTimeInvalidCharacterRejected {
+        this.compile_time_invalid_character_rejected = true
+    }
+
+    invariant RuntimeInvalidCharacterReplacedWithPeriod {
+        this.runtime_invalid_character_replaced_with_period = true
+    }
+
+    invariant ConstexprExecutionModel {
+        this.constexpr_execution_model = true
+    }
+
+    invariant NoexceptExecutionModel {
+        this.noexcept_execution_model = true
+    }
+
+    invariant NonMutatingSemantics {
+        this.non_mutating_semantics = true
+    }
+
+    invariant NonAllocatingSemantics {
+        this.non_allocating_semantics = true
     }
 
     invariant NoHeapAllocation {
