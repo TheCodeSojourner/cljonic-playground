@@ -194,6 +194,67 @@
   | public_concept_name(x) → identify(capability_or_constraint)
   | vague_concept_name(x) → reject(x)
 
+λ S2_canonical_capabilities(x). public_capability_names(x) ≡ Indexed ∧ Lookup ∧ Seqable ∧ Associative
+  | Indexed(x) → ordered_integer_access(x) ∧ bounded_logical_index_domain(x)
+    ∧ non_mutating_access(x) ∧ non_throwing_non_allocating_membership_predicate(x)
+    ∧ negative_index_outside_domain_when_representable(x)
+  | Lookup(x) → collection_defined_lookup_domain(x) ∧ non_mutating_access(x)
+    ∧ default_or_fallback_on_absence(x) ∧ non_throwing_non_allocating_membership_predicate(x)
+  | Seqable(x) → documented_logical_traversal_representation(x)
+    ∧ non_mutating_sequence_conversion(x) ∧ bounded_independently_valid_result(x)
+    ∧ deferred_until_sequence_requirements_are_implementation_backed(x)
+  | Associative(x) → non_mutating_key_value_association(x) ∧ return(new_collection_value(x))
+    ∧ preserve_source(x) ∧ define(key_value_and_capacity_policy(x))
+    ∧ non_throwing_non_allocating_preflight(can_assoc(x))
+  | capability_satisfaction(x) → compositional_and_operation_specific(x)
+    ∧ remain_distinct(Indexed ∧ Lookup ∧ Seqable ∧ Associative)
+  | Indexed(x) → refine(Lookup(integer_key_domain(x)))
+  | Associative(x) → not_imply(Indexed ∨ Lookup) unless(concrete_collection_requirement(x))
+  | Seqable(x) → independent_of(Indexed ∧ Lookup ∧ Associative)
+  | public_operation(x) → require(only_capabilities_needed_by(documented_behavior(x)))
+
+λ S2_capability_participation(x). capability_matrix(x) ≡ {
+    Vector: Indexed ∧ Lookup ∧ Associative,
+    Map: Lookup ∧ Associative,
+    Set: Lookup,
+    String: Indexed ∧ Lookup ∧ Associative,
+    Queue: none_of(Indexed ∧ Lookup ∧ Associative)
+  }
+  | Seqable(x) → lifecycle_deferred_for(each_supported_collection(x))
+    ∧ activate_only_when(sequence_requirements_are_implementation_backed(x))
+  | capability_matrix(x) → govern(public_concepts ∧ free_function_constraints ∧ documentation_names)
+
+λ S2_associative_contract(x). Associative(collection) → require(assoc(collection, key, value) ∧ can_assoc(collection, key))
+  | assoc(x) ∧ can_assoc(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | can_assoc(collection, key) ↔ assoc(collection, key, value)_can_produce_documented_result
+    ∧ independent_of(value_argument(x))
+  | assoc(Map, key, value) → replace_existing_value_or_insert_new_key_when_capacity_remains(x)
+  | assoc(Vector, integer_index, value) → replace_existing_index_or_append_at_count_when_capacity_remains(x)
+  | assoc(String, integer_content_index, char_value) → replace_existing_byte_or_append_at_count_when_capacity_remains(x)
+    ∧ preserve_ascii_validity_policy(x) ∧ preserve_null_terminator(x)
+    ∧ reject_invalid_character_at_compile_time_when_known(x)
+    ∧ replace_invalid_runtime_character_with_period(x)
+  | invalid_association_key_or_full_append(x) → return(unchanged_source(x))
+    ∧ not(throw ∨ allocate ∨ mutate_source(x))
+  | associative_operation(x) → classify_as(RequirementsBacked)
+    ∧ trace_to(requirements/cljonic-requirements-module-2.md ∧ requirements/cljonic-requirements-module-3.md)
+
+λ S2_conj_contract(x). conj(collection, value) → return(new_collection_value(x))
+  | conj(x) ∧ can_conj(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | can_conj(collection, value) ↔ conj(collection, value)_can_produce_documented_result
+    ∧ true_when(duplicate_set_value_is_successful_noop(x))
+  | conj(Set, value) → require(StableEquality(x) ∧ LinearScan(x))
+    ∧ insert_when_absent_or_preserve_count_when_present(x)
+    ∧ require(capacity_for_new_value_when_absent(x))
+  | conj(Queue, value) → append_at_rear(x) ∧ preserve_fifo_order(x)
+    ∧ require(capacity_for_new_value(x))
+  | conj(Vector, value) → append_at_logical_count(x)
+    ∧ require(capacity_for_new_value(x))
+  | full_conj_or_invalid_conj(x) → return(unchanged_source(x))
+    ∧ not(throw ∨ allocate ∨ mutate_source(x))
+  | conj_operation(x) ∧ can_conj(x) → classify_as(RequirementsBacked)
+    ∧ trace_to(requirements/cljonic-requirements-module-3.md)
+
 λ S2_result_status_model(x). public_operation(x) → declare(CompleteResult ∨ BoundedPrefixResult
   ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | operation(x) → document(status ∧ preflight ∧ failure_or_default_semantics)
@@ -213,6 +274,13 @@
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
+  | requirements_backed_operations(x) ≡ is_empty ∧ contains ∧ count ∧ get
+    ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
+  | bounded_insertion_capacity_inspection(x) ≡ full ∨ equivalent_capacity_inspection
+  | requirements_backed_operations(x) → classify_as(RequirementsBacked)
+  | bounded_insertion_capacity_inspection(x) → classify_as(RequirementsBacked)
+  | deferred_materialization_operations(x) ≡ fits_into ∧ into
+    ∧ classify_as(DeferredStatus)
   | deferred_empty_operations(x) ≡ empty ∧ not_empty
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
@@ -232,7 +300,7 @@
     ∧ typed_absence_and_failure_policy_is_declared(x) ∧ result_status_is_declared(x)
     ∧ bounded_owning_results_are_preferred(x) ∧ maps_and_sets_are_semantically_unordered(x)
     ∧ transducers_and_hidden_lazy_sequences_are_unsupported(x))
-  | contains(x) → govern(IndexedAccess(x) ∨ AssociativeAccess(x))
+  | contains(x) → govern(Lookup(x))
   | fits_into(x) → govern(complete_producer_materialization(x))
   | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
   | future_operation(x) → require(explicit_requirement_and_specification(x))
@@ -274,7 +342,8 @@ concept StableEqualityComparable =
 template<class T>
 concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
 
-// Structural capabilities (gated by nominal CollectionConcept identity)
+// SequenceableCollection is the current observation baseline; it does not imply
+// the independent Seqable lifecycle capability.
 template<class C>
 concept SequenceableCollection =
     CljonicCollection<C> &&
@@ -285,7 +354,7 @@ concept SequenceableCollection =
 
 template<class C>
 concept IndexedCollection =
-    SequenceableCollection<C> &&
+    CljonicCollection<C> &&
     requires(const C& c, std::size_t i) {
       { c(i) };
       { c.contains(i) } -> std::same_as<bool>;
@@ -293,7 +362,7 @@ concept IndexedCollection =
 
 template<class C>
 concept LookupCollection =
-    SequenceableCollection<C> &&
+    CljonicCollection<C> &&
     requires(const C& c, const typename C::lookup_type& key) {
       { c(key) };
       { c.contains(key) } -> std::same_as<bool>;
@@ -301,10 +370,14 @@ concept LookupCollection =
 
 template<class C>
 concept AssociativeCollection =
-    SequenceableCollection<C> &&
-    requires(const C& c, const typename C::key_type& k) {
-      { c(k) };
-      { c.contains(k) } -> std::same_as<bool>;
+    CljonicCollection<C> &&
+    requires(const C& c,
+             const typename C::key_type& key,
+             const typename C::value_type& value) {
+      typename C::key_type;
+      typename C::value_type;
+      { c.can_assoc(key) } -> std::same_as<bool>;
+      { c.assoc(key, value) } -> std::same_as<C>;
     };
 ```
 
