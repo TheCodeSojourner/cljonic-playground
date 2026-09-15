@@ -90,6 +90,8 @@ Collection types overload `operator()` to provide convenience lookup:
 `String<N>` uses the same indexed callable lookup contract as `Vector<T, N>`; its logical index domain contains only
 stored content bytes and excludes the automatic null terminator.
 
+`String<N>` also satisfies the same associative capability contract as `Vector<T, N>` for integer content indexes. String association replaces an existing content byte or appends at the logical content count when content capacity remains. Association MUST preserve the source value, MUST preserve the automatic null terminator, and MUST reject invalid indexes and invalid ASCII values according to the string requirements.
+
 Map keys and values are admitted only when they satisfy `NothrowCollectionElement`; key lookup additionally requires stable equality. This storage boundary does not imply ordering, hashing, or parsing capabilities.
 
 ## Pack-Literal Construction Architecture
@@ -109,9 +111,11 @@ Each constructor rejects an oversized argument pack (`sizeof...(Args) > N`) at c
 Primitive operations are exposed via free-function templates:
 - `count(c)`, `empty(c)`, `is_empty(c)`, `not_empty(c)`
 - `first(c)`, `next(c)`, `rest(c)`, `seq(c)`
-- `get(c, key/idx, fallback)`, `conj(c, item)`, `assoc(m, k, v)`, `dissoc(m, k)`, `disj(s, v)`, `peek(q)`, `pop(q)`
+- `get(c, key/idx, fallback)`, `conj(c, item)`, `assoc(c, key, value)`, `can_assoc(c, key)`, `dissoc(m, k)`, `disj(s, v)`, `peek(q)`, `pop(q)`
+
+`assoc` and `can_assoc` are constrained by the `Associative` capability. They are valid for `Map`, `Vector`, and `String`; their key and value domains, capacity behavior, invalid-input behavior, and source-preservation guarantees are defined by the corresponding Module 3 requirements. `seq` is constrained by `Seqable` and remains lifecycle-deferred independently of lookup and association capabilities.
 
 ## Traceability
 
-- Governed Requirements: `cljonic-requirements-module-3.md` (`REQ-COLL-001`–`017`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`).
+- Governed Requirements: `cljonic-requirements-module-3.md` (`REQ-COLL-001`–`020P`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`).
 - Downstream Modules: Module 4 (Producers & Materialization), Module 5 (Algorithms).

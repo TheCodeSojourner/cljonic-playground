@@ -30,16 +30,29 @@ concept sequenceable_cljonic_collection = cljonic_collection<C> && requires(cons
 };
 
 template<class C>
-concept indexed_cljonic_collection = sequenceable_cljonic_collection<C> && requires(const C& c, std::size_t i) {
-    { c.get(i) };
+concept indexed_cljonic_collection = cljonic_collection<C> && requires(const C& c, std::size_t i) {
+    { c(i) };
     { c.contains(i) } -> std::same_as<bool>;
 };
 
 template<class C>
-concept associative_cljonic_collection = sequenceable_cljonic_collection<C> && requires(const C& c) {
+concept lookup_cljonic_collection = cljonic_collection<C> && requires(const C& c, const typename C::lookup_type& key) {
+    { c(key) };
+    { c.contains(key) } -> std::same_as<bool>;
+};
+
+template<class C>
+concept associative_cljonic_collection = cljonic_collection<C> && requires(const C& c,
+                                                                            const typename C::key_type& key,
+                                                                            const typename C::value_type& value) {
     typename C::key_type;
     typename C::value_type;
+    { c.can_assoc(key) } -> std::same_as<bool>;
+    { c.assoc(key, value) } -> std::same_as<C>;
 };
+
+// Indexed is the integer-key specialization of Lookup. Seqable is independent
+// and is enabled only when the collection's traversal lifecycle is active.
 
 } // namespace cljonic
 ```
@@ -57,14 +70,15 @@ Public operations return outcomes classified into 5 canonical categories:
 
 For every operation whose complete result can fail or truncate, a non-throwing preflight predicate MUST be provided:
 
-| Operation              | Canonical Preflight Predicate | Preflight Signature                 |
-| :--------------------- | :---------------------------- | :---------------------------------- |
-| `into(dest, producer)` | `fits_into`                   | `fits_into(dest, producer) -> bool` |
-| `get(vector, index)`   | `contains`                    | `contains(vector, index) -> bool`   |
-| `get(map, key)`        | `contains`                    | `contains(map, key) -> bool`        |
-| `conj(set, val)`       | `can_conj`                    | `can_conj(set, val) -> bool`        |
-| `assoc(map, k, v)`     | `can_assoc`                   | `can_assoc(map, k) -> bool`         |
-| `add(a, b)`            | `can_add`                     | `can_add(a, b) -> bool`             |
+| Operation                 | Canonical Preflight Predicate | Preflight Signature                 |
+| :------------------------ | :---------------------------- | :---------------------------------- |
+| `into(dest, producer)`    | `fits_into`                   | `fits_into(dest, producer) -> bool` |
+| `get(vector, index)`      | `contains`                    | `contains(vector, index) -> bool`   |
+| `get(map, key)`           | `contains`                    | `contains(map, key) -> bool`        |
+| `get(string, index)`      | `contains`                    | `contains(string, index) -> bool`   |
+| `conj(set, val)`          | `can_conj`                    | `can_conj(set, val) -> bool`        |
+| `assoc(collection, k, v)` | `can_assoc`                   | `can_assoc(collection, k) -> bool`  |
+| `add(a, b)`               | `can_add`                     | `can_add(a, b) -> bool`             |
 
 ## Diagnostic Strategy
 
@@ -73,5 +87,5 @@ For every operation whose complete result can fail or truncate, a non-throwing p
 
 ## Traceability
 
-- Governed Requirements: `cljonic-requirements-module-2.md` (`REQ-BOUNDS-*`, `REQ-ERR-*`, `REQ-DIAG-*`, `REQ-CONST-*`, `REQ-VOCAB-*`).
+- Governed Requirements: `cljonic-requirements-module-2.md` (`REQ-CAP-*`, `REQ-BOUNDS-*`, `REQ-ERR-*`, `REQ-DIAG-*`, `REQ-CONST-*`, `REQ-VOCAB-*`).
 - Downstream Modules: Module 3 (Core Collections), Module 4 (Producers), Module 5 (Algorithms).

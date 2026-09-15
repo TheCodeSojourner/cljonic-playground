@@ -4,6 +4,26 @@
 
 This module establishes the C++20 concept capability framework, result status outcome classification model, preflight predicate policies, compile-time diagnostic rules, and vocabulary conventions for `cljonic`. Module 2 defines how the type system enforces safety, communicates failure, and governs function preconditions without runtime exceptions or dynamic memory allocations.
 
+## Collection Capability Definitions
+
+REQ-CAP-001. `Indexed` MUST mean a capability for ordered, integer-indexed access to a collection's logical elements. An `Indexed` collection MUST define a bounded logical index domain, MUST provide non-mutating access for an index in that domain, and MUST provide a non-throwing, non-allocating predicate that determines whether an index is in that domain. Negative indexes, when representable by the accepted index type, MUST be outside the domain.
+
+REQ-CAP-002. `Lookup` MUST mean a capability for non-mutating access through a collection-defined lookup domain. A `Lookup` collection MUST define its lookup key type, MUST provide access that returns the associated value for a present key or the documented default or fallback result when the key is absent, and MUST provide a non-throwing, non-allocating predicate that distinguishes a present key from an absent key without inspecting the returned value.
+
+REQ-CAP-003. `Seqable` MUST mean a capability for producing the collection's documented logical traversal representation. A collection satisfies `Seqable` only when its sequence conversion is available under the lifecycle rules for that collection. A `Seqable` collection MUST provide sequence conversion without mutating the source, dynamic allocation, or exceptions. The sequence result MUST be an independently valid bounded value whose elements and order follow the collection's documented traversal semantics. Sequence traversal remains deferred until the requirements in `REQ-SEQ-001` through `REQ-SEQ-014` become implementation-backed.
+
+REQ-CAP-004. `Associative` MUST mean a capability for non-mutating association of a key and value into a collection, producing a new collection value. An `Associative` collection MUST define its key and value types, MUST define the valid-key and capacity policy for association, MUST preserve the source collection, and MUST provide a non-throwing, non-allocating preflight predicate that agrees with the association operation for immutable inputs.
+
+REQ-CAP-005. `Associative` MUST NOT imply that the key domain is string-based, map-specific, or non-indexed. A vector or string MAY satisfy `Associative` by using integer indexes as keys, subject to the collection-specific replacement, append, capacity, and invalid-index requirements defined by Module 3.
+
+REQ-CAP-006. Capability satisfaction MUST be compositional and operation-specific. `Indexed`, `Lookup`, `Seqable`, and `Associative` MUST remain distinct capabilities; satisfying one MUST NOT imply another unless an explicit requirement states that relationship. Public operations MUST require only the capability or combination of capabilities needed by their documented behavior.
+
+REQ-CAP-007. `Indexed` MUST refine `Lookup` for the integer lookup domain: every `Indexed` collection MUST also satisfy `Lookup` with an integer key type, and indexed access and lookup MUST agree for the same valid index. `Associative` MUST NOT generally imply `Indexed` or `Lookup`; its lookup-domain relationship MUST be stated by the concrete collection requirement. `Seqable` MUST remain independent of the other three capabilities.
+
+REQ-CAP-008. The required capability participation for the supported collection family MUST be: `Vector` satisfies `Indexed`, `Lookup`, and `Associative`; `Map` satisfies `Lookup` and `Associative`; `Set` satisfies `Lookup`; `String` satisfies `Indexed`, `Lookup`, and `Associative`; and `Queue` satisfies none of these access or association capabilities by default. Each collection satisfies `Seqable` only when the deferred sequence requirements are implemented for that collection.
+
+REQ-CAP-009. The public capability names MUST be `Indexed`, `Lookup`, `Seqable`, and `Associative`. These names MUST identify the corresponding semantic capabilities in requirements, architecture, specifications, tests, source concepts, and generated documentation. `Seqable` MUST remain lifecycle-independent from `Indexed`, `Lookup`, and `Associative`.
+
 ## Canonical Type, Result, and Status Model
 
 - An owning value is a self-contained cljonic value whose validity does not depend on an external source lifetime, hidden borrowed state, or a hidden result cache.
@@ -120,11 +140,11 @@ REQ-CONST-002. Operations that are required to be compile-time evaluable MUST be
 
 REQ-CONST-003. `consteval` MUST be used only where compile-time execution is semantically required and does not unnecessarily restrict valid embedded use.
 
-REQ-CONST-004. Compile-time and runtime evaluation MUST produce equivalent observable results.
+REQ-CONST-004. Compile-time and runtime evaluation MUST produce equivalent observable results for valid inputs. A requirement MAY define a deliberate invalid-input distinction in which a compile-time-known invalid value is rejected during constant evaluation while the corresponding runtime value follows a documented deterministic replacement or failure policy.
 
 ## Vocabulary and Naming Conventions
 
-REQ-VOCAB-001. The canonical terms MUST include collection, sequence, sequenceable, traversal, `ConstRangeTraversal`, `LogicalTraversalOrder`, `ReadOnlyInteropAccessor`, `ContiguousConstView`, vector, map, set, queue, string, capacity, default element, `contains`, persistent value, free function, bounded storage, platform interoperability, aggregate-like struct, stable equality, total order, discrete numeric type, numeric policy, owning value, non-owning view, standard view type, bounded result, partial result, preflight predicate, exact conversion, checked conversion, lossy conversion, parsing, finite observation, finite deep equality, bounded inspection, unbounded producer, `ProducerOnlyResult`, producer materialization, `NoMutationConstraint`, relation model, `MapEntry`, general equality, numeric equality, semantic predicate name, state predicate, verb predicate, capability predicate, `is_` predicate prefix, `can_` predicate prefix, `has_` predicate prefix, `valid_` predicate prefix, lifecycle classification, `candidate`, `deferred`, `excluded`, `requirements-backed`, `KeywordEnumNameEntry`, `KeywordEnumNameMap`, `KeywordEnumNameContext`, and keyword enum name mapping.
+REQ-VOCAB-001. The canonical terms MUST include collection, sequence, sequenceable, traversal, `Indexed`, `Lookup`, `Seqable`, `Associative`, `ConstRangeTraversal`, `LogicalTraversalOrder`, `ReadOnlyInteropAccessor`, `ContiguousConstView`, vector, map, set, queue, string, capacity, default element, `contains`, persistent value, free function, bounded storage, platform interoperability, aggregate-like struct, stable equality, total order, discrete numeric type, numeric policy, owning value, non-owning view, standard view type, bounded result, partial result, preflight predicate, exact conversion, checked conversion, lossy conversion, parsing, finite observation, finite deep equality, bounded inspection, unbounded producer, `ProducerOnlyResult`, producer materialization, `NoMutationConstraint`, relation model, `MapEntry`, general equality, numeric equality, semantic predicate name, state predicate, verb predicate, capability predicate, `is_` predicate prefix, `can_` predicate prefix, `has_` predicate prefix, `valid_` predicate prefix, lifecycle classification, `candidate`, `deferred`, `excluded`, `requirements-backed`, `KeywordEnumNameEntry`, `KeywordEnumNameMap`, `KeywordEnumNameContext`, and keyword enum name mapping.
 
 REQ-VOCAB-002. Each canonical term MUST have one meaning in public documentation, requirements, tests, and code.
 
@@ -149,4 +169,4 @@ REQ-VOCAB-011. Every public function considered during API-surface review MUST h
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: C++20 concepts, preflight predicates, compile-time assertions, and result status type definitions.
-- **Governed REQs**: `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`008`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.
+- **Governed REQs**: `REQ-CAP-001`–`009`, `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`008`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.

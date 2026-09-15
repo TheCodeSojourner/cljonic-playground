@@ -78,6 +78,42 @@ REQ-COLL-020. The API MUST support pack-literal construction for `Queue<T, N>` s
 
 REQ-COLL-020A. A `Queue<T, N>` pack-literal construction whose argument count exceeds `N` MUST fail at compile time. The API MUST also support capacity-inferred pack-literal construction such that `cljonic::Queue{values...}` has the same semantics and type as the explicitly sized form instantiated with the argument count.
 
+REQ-COLL-020B. The library MUST model collection behavior using the Clojure-style capability definitions in `REQ-CAP-001` through `REQ-CAP-008`, including `Indexed`, `Lookup`, `Seqable`, and `Associative`, while preserving the bounded, non-allocating, value-semantic implementation model. The `Seqable` capability and its traversal operations remain deferred according to the lifecycle rules in this module.
+
+REQ-COLL-020C. A `Vector<T, N>` MUST satisfy the `Indexed`, `Lookup`, and Clojure-style `Associative` capability semantics under the supported bounded model. It MUST satisfy `Seqable` when the deferred sequence capability is implemented for vectors.
+
+REQ-COLL-020D. A `Map<K, V, N>` MUST satisfy the `Associative` and `Lookup` capability semantics under the supported bounded model. It MUST satisfy `Seqable` when the deferred sequence capability is implemented for maps.
+
+REQ-COLL-020E. A `Set<T, N>` MUST satisfy the `Lookup` capability for value-membership lookup, where a present value is the associated lookup result and an absent value follows the documented default or fallback policy. A `Queue<T, N>` MUST NOT be required to satisfy `Indexed`, `Lookup`, or `Associative`; it MUST expose only the sequence and queue operations approved for its lifecycle. Both types MUST satisfy `Seqable` when the deferred sequence capability is implemented for them.
+
+REQ-COLL-020F. Free functions MUST be constrained by the capability required by the operation; `assoc` and `can_assoc` MUST be valid only for collections satisfying `Associative`, `get` only for collections satisfying `Lookup`, and `seq` only for collections satisfying `Seqable`.
+
+REQ-COLL-020G. `assoc` MUST be defined for `Map`, `Vector`, and `String`. For a `Map`, it MUST associate a key with a value and replace the existing value when the key already exists. For a `Vector`, the key MUST be an integer index and the value MUST be the vector's element type. For a `String`, the key MUST be an integer content index and the value MUST be a character subject to the String character-validity policy defined by `REQ-COLL-013` through `REQ-COLL-013B` and `REQ-COLL-020Q`.
+
+REQ-COLL-020H. For `Vector<T, N>`, `assoc(v, i, value)` MUST produce a new vector whose value at an existing logical index `i` is replaced with `value`; the source vector MUST remain unchanged and all other logical elements MUST retain their values and order.
+
+REQ-COLL-020I. For `Vector<T, N>`, `assoc(v, i, value)` MUST append `value` when `i` equals the source vector's logical count and the source vector has available capacity. The resulting vector's logical count MUST increase by one.
+
+REQ-COLL-020J. For `Vector<T, N>`, an `assoc` index MUST be valid only when it is non-negative, no greater than the source vector's logical count, and either less than the logical count or equal to the logical count when capacity remains. An invalid index, including an index beyond the append position or an append index at full capacity, MUST produce an unchanged vector without throwing, allocating, or mutating the source.
+
+REQ-COLL-020K. The collection interface semantics defined above MUST remain consistent with the bounded, non-throwing, non-allocating storage model defined elsewhere in this module and in the architecture requirements.
+
+REQ-COLL-020L. For every `Associative` collection, `can_assoc(collection, key)` MUST determine whether `assoc(collection, key, value)` can produce its documented result without capacity or key-domain failure, independently of the value argument. For a `Vector<T, N>`, it MUST return true for an existing index, for the logical-count append index when capacity remains, and false for every invalid or full-capacity append index.
+
+REQ-COLL-020M. For `String<N>`, `assoc(s, i, value)` MUST produce a new string whose ASCII character at an existing logical content index `i` is replaced with `value`; the source string MUST remain unchanged, all other content characters MUST retain their values and order, and the null terminator MUST remain immediately after the resulting content.
+
+REQ-COLL-020N. For `String<N>`, `assoc(s, i, value)` MUST append `value` when `i` equals the source string's logical content count and the source string has available content capacity. The resulting string's logical content count MUST increase by one, and its null terminator MUST remain immediately after the new content.
+
+REQ-COLL-020O. For `String<N>`, an `assoc` index MUST be valid only when it is non-negative, no greater than the source string's logical content count, and either less than the logical content count or equal to the logical content count when content capacity remains. An invalid index, including an index beyond the append position or an append index at full content capacity, MUST produce an unchanged string without throwing, allocating, or mutating the source. The null terminator MUST NOT be a valid association or lookup index.
+
+REQ-COLL-020P. For `String<N>`, `can_assoc(string, index)` MUST return true for an existing content index, for the logical content-count append index when content capacity remains, and false for every invalid or full-capacity append index. Its result MUST be independent of the character value that would be associated.
+
+REQ-COLL-020Q. For `String<N>`, an `assoc` operation whose character value is known to be invalid during constant evaluation MUST fail at compile time, matching the invalid-character rejection policy for a CTAD-inferred String literal. For a runtime `assoc` operation whose character value is invalid, the operation MUST store `'.'` in place of that value. This replacement MUST preserve the operation's documented index, capacity, immutability, and null-terminator semantics.
+
+REQ-COLL-020R. The supported generic free-function signatures MUST be: `get(const C&, const K&) -> C::value_type`, `get(const C&, const K&, const C::value_type&) -> C::value_type`, and `contains(const C&, const K&) -> bool` for `Lookup` collections; `assoc(const C&, const K&, const C::value_type&) -> C` and `can_assoc(const C&, const K&) -> bool` for `Associative` collections. Each operation MUST be `constexpr`, `noexcept`, non-mutating, non-allocating, and constrained at the public API boundary by the required capability and collection-specific key/value domains. For `Indexed` collections, `K` MUST be an accepted integer index type; for `String`, the value argument MUST be `char`.
+
+REQ-COLL-020S. The lifecycle classification MUST be `requirements-backed` for `Indexed`, `Lookup`, and `Associative`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, and `pop` over their supported collection inputs. `Seqable`, `seq`, `first`, `next`, and `rest` MUST remain `deferred` until the sequence requirements are implemented for the applicable collection inputs.
+
 ## Deferred Sequence Traversal Mechanics
 
 The sequence traversal contracts below are approved future-work behavior, not current collection APIs. No supported collection currently exposes `seq`, `first`, `next`, `rest`, a collection-owned logical range, or a C++ interoperability traversal accessor. These contracts MUST remain deferred until a later increment separately propagates their implementation and tests for every collection family. Their presence here records the intended future behavior without making it implementation-ready now.
@@ -132,7 +168,7 @@ REQ-FN-002E. `equal` MUST represent general value equality, including recursivel
 
 REQ-FN-002F. Clojure's `=` MUST map conceptually to cljonic general equality, while Clojure's numeric `==` MUST map conceptually to a separately specified numeric-equality operation. The C++ spelling `=` MUST NOT be introduced as a cljonic function because it is assignment syntax.
 
-REQ-FN-002M. `can_conj(collection, value)` MUST return true when `conj` can produce its documented result without capacity failure, including when a set already contains the value. `can_assoc(map, key)` MUST return true when the key already exists because `assoc` replaces its value without consuming capacity, and MUST return true for a new key only when capacity is available. `can_assoc` MUST NOT accept a value argument, because the value being associated never affects whether `assoc` can succeed.
+REQ-FN-002M. `can_conj(collection, value)` MUST return true when `conj` can produce its documented result without capacity failure, including when a set already contains the value. `can_assoc(collection, key)` MUST be defined for every `Associative` collection and MUST agree with that collection's `assoc` key-domain and capacity policy. It MUST NOT accept a value argument, because the value being associated never affects whether `assoc` can succeed. For `Map`, an existing key MUST return true and a new key MUST return true only when capacity is available. For `Vector` and `String`, an existing logical index MUST return true and the logical-count append index MUST return true only when capacity remains.
 
 REQ-FN-002P. The callable `Map<K, V, N>` lookup forms specified by `REQ-COLL-004B` MUST be equivalent to the corresponding `get` overloads for the same map, key, value, and fallback arguments. `operator[]` MUST NOT be required or provided as the map lookup syntax because its conventional insertion semantics conflict with cljonic's immutable bounded-map contract.
 
@@ -161,4 +197,4 @@ REQ-FN-026. The core vocabulary MUST include `empty`, `is_empty`, and `not_empty
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
-- **Governed REQs**: `REQ-COLL-001`–`017`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`.
+- **Governed REQs**: `REQ-COLL-001`–`020P`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`.
