@@ -1,17 +1,17 @@
 ## Session State
 
-- last_session_id: 72e7e39b-f91f-4af9-85b3-5228773ae0a1
+- last_session_id: 100e64c9-0db2-49ed-b243-63073653e7e6
 - current_timestamp: 2026-09-15
 - recover: 1
-- session_complete: true
+- session_complete: false
 
 Task:
-1. Reconcile requirements lifecycle authority with the synchronized vocabulary and architecture.
-2. Preserve the approval-gated progression into specifications, tests, traceability, and implementation.
+1. Propagate the synchronized Associative capability, Assoc, and CanAssoc contracts from specifications into tests and implementation.
+2. Preserve traceability and validate modular and single-header behavior.
 
 Questions:
-1. None blocking this session; the requirements, vocabulary, and architecture lifecycle model are reconciled at the current abstraction level.
-2. Specifications, tests, traceability, and implementation remain approval-gated downstream work.
+1. None blocking this session; the requested downstream propagation was explicitly authorized.
+2. Full repository quality gates beyond the focused suite remain for the next increment if required.
 
 Decisions:
 1. The public capability names are `Indexed`, `Lookup`, `Seqable`, and `Associative`; they remain distinct except where an explicit requirement defines refinement.
@@ -23,6 +23,9 @@ Decisions:
 7. The architecture capability model must keep `Seqable` independent from `Indexed`, `Lookup`, and `Associative`; `contains` is governed by `Lookup`; and associative/conj concepts must expose their preflight operations.
 8. Architecture synchronization also requires explicit deferred status for `into`/`fits_into`, negative-index policy, String invalid-character evaluation policy, and Set equality/search constraints.
 9. Requirement lifecycle reconciliation uses `REQ-COLL-020T`: `is_empty`, `can_conj`, and `full` or equivalent capacity inspection are requirements-backed; `empty`, `not_empty`, `into`, and `fits_into` remain deferred while their behavior is approved.
+10. `IndexedCollection` and `LookupCollection` are independent of the sequence-observation baseline; `AssociativeCollection` requires key/value aliases plus `can_assoc` and `assoc`, not callable lookup.
+11. Vector and String expose integer key aliases and immutable association operations; Map exposes an association value alias while retaining its MapEntry storage value type.
+12. Associative tests cover Map replacement/insertion, Vector replacement/append/invalid indexes, String replacement/append/null termination/runtime invalid-byte replacement, and value-independent preflight behavior.
 
 Validation:
 1. Full requirements-to-vocabulary audit completed; the only concrete gap was the missing `PersistentValue` entry, which was added.
@@ -33,10 +36,14 @@ Validation:
 6. Architecture synchronization repairs passed `git diff --check`; the concept model no longer implies `Seqable`, `contains` uses `Lookup`, and Set/Queue/Vector `conj` contracts are represented.
 7. The five follow-up architecture repairs passed `git diff --check`: deferred materialization lifecycle, negative-index policy, String invalid-character behavior, Set equality/linear-scan constraints, and concept-block formatting.
 8. Requirements lifecycle reconciliation passed `git diff --check` for Modules 3 and 4; no specifications, tests, traceability, implementation, architecture, or vocabulary files were changed by that increment.
+9. Focused `[assoc],[can_assoc],[concepts]` tests passed with 141 assertions in 19 cases.
+10. Full modular Catch2 suite passed with 754 assertions in 55 cases.
+11. Strict `traceability-spec-to-code`, `no-heap-src`, `git diff --check`, formatting, and `cljonic-test` single-header probe passed.
+12. Source/test propagation changed only the synchronized concept and collection headers, associated spec tests, and regenerated `cljonic.hpp`; no unrelated source or tests were reverted.
 
 Current Increment:
-1. Requirements, vocabulary, and architecture lifecycle authority are reconciled; downstream specifications, tests, traceability, and implementation remain unchanged.
+1. Requirements, vocabulary, architecture, specifications, tests, traceability, and implementation are synchronized for the Associative capability increment.
 
 Next:
-1. Propagate the reconciled requirements into operation-level behavioral specifications required by `REQ-SEQ-022`, starting with collection-shaping and traversal contracts.
-2. Propagate approved architecture contracts into focused tests, traceability, and implementation in that order, then rerun vocabulary, specification, architecture, build, no-heap, and coverage gates.
+1. Review the complete diff and run any remaining repository-wide quality gates before merging the implementation increment.
+2. Continue with the next approved requirements/specification slice; do not begin unrelated source changes without upstream specification propagation.
