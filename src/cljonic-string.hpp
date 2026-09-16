@@ -94,6 +94,9 @@ namespace cljonic {
 template <std::size_t CapacityValue>
 class String {
   public:
+    using key_type = std::size_t;
+    using lookup_type = key_type;
+    using association_value_type = char;
     using value_type = char;
 
     static_assert(
@@ -166,32 +169,56 @@ class String {
 
     /** Returns true when index falls within logical bounds (not counting null
      * terminator). Mirrors Clojure contains? over string indices. */
-    [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
-        return index < logical_size_;
-    }
-
-    /** Callable index access returning default-constructed char ('\\0') on
-     * invalid index. */
-    [[nodiscard]] constexpr auto operator()(std::size_t index) const noexcept -> char {
-        return (index < logical_size_) ? data_[index] : '\0';
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_;
     }
 
     /** Callable index access with custom fallback value on invalid index. */
-    [[nodiscard]] constexpr auto operator()(std::size_t index, char fallback) const noexcept -> char {
-        return (index < logical_size_) ? data_[index] : fallback;
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index, char fallback = '\0') const noexcept -> char {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_ ? data_[*normalized_index] : fallback;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && association_index_is_valid(*normalized_index);
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto assoc(IndexType index, char value) const noexcept -> String {
+        String result = *this;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && association_index_is_valid(*normalized_index)) {
+            result.data_[*normalized_index] = normalize_byte(value);
+            if (*normalized_index == logical_size_) {
+                ++result.logical_size_;
+                result.data_[result.logical_size_] = '\0';
+            }
+        }
+        return result;
     }
 
     /** Returns a fresh String with the character at index replaced. Out-of-bounds
      * indices leave copy unchanged. */
-    [[nodiscard]] constexpr auto put(std::size_t index, char c) const noexcept -> String {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto put(IndexType index, char c) const noexcept -> String {
         String result = *this;
-        if (index < logical_size_) {
-            result.data_[index] = c;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && *normalized_index < logical_size_) {
+            result.data_[*normalized_index] = c;
         }
         return result;
     }
 
   private:
+    [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
+        return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
+    }
+
     template <typename Source>
     constexpr void copy_from_source(const Source& source, std::size_t copy_count) noexcept {
         logical_size_ = copy_count;

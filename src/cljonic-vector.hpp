@@ -150,6 +150,9 @@ namespace cljonic {
 template <concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue>
 class Vector {
   public:
+    using key_type = std::size_t;
+    using lookup_type = key_type;
+    using association_value_type = ElementType;
     using value_type = ElementType;
 
     static_assert(
@@ -199,18 +202,35 @@ class Vector {
     }
 
     template <std::integral IndexType>
-    [[nodiscard]] constexpr auto operator()(IndexType index) const noexcept -> value_type {
-        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : value_type{};
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback) const noexcept -> value_type {
-        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : fallback;
+    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback = value_type{}) const noexcept
+        -> value_type {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_ ? storage_[*normalized_index] : fallback;
     }
 
     template <std::integral IndexType>
     [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
-        return index_is_valid(index);
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && association_index_is_valid(*normalized_index);
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto assoc(IndexType index, const value_type& value) const noexcept -> Vector {
+        Vector result = *this;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && association_index_is_valid(*normalized_index)) {
+            result.storage_[*normalized_index] = value;
+            if (*normalized_index == logical_size_) {
+                ++result.logical_size_;
+            }
+        }
+        return result;
     }
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
@@ -230,15 +250,8 @@ class Vector {
     }
 
   private:
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto index_is_valid(IndexType index) const noexcept -> bool {
-        if constexpr (std::signed_integral<IndexType>) {
-            if (index < 0) {
-                return false;
-            }
-        }
-
-        return static_cast<std::size_t>(index) < logical_size_;
+    [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
+        return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
     }
 
     template <typename... Args>

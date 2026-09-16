@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <ranges>
@@ -110,6 +109,7 @@ class Map {
     using key_type = KeyType;
     using lookup_type = key_type;
     using mapped_type = ValueType;
+    using association_value_type = ValueType;
     using value_type = MapEntry<KeyType, ValueType>;
 
     static_assert(
@@ -163,12 +163,8 @@ class Map {
         return find_index(key) < logical_size_;
     }
 
-    [[nodiscard]] constexpr auto operator()(const KeyType& key) const noexcept -> ValueType {
-        const auto idx = find_index(key);
-        return (idx < logical_size_) ? entries_[idx].value : ValueType{};
-    }
-
-    [[nodiscard]] constexpr auto operator()(const KeyType& key, const ValueType& fallback) const noexcept -> ValueType {
+    [[nodiscard]] constexpr auto operator()(const KeyType& key, const ValueType& fallback = ValueType{}) const noexcept
+        -> ValueType {
         const auto idx = find_index(key);
         return (idx < logical_size_) ? entries_[idx].value : fallback;
     }

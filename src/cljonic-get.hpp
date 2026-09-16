@@ -10,8 +10,8 @@ namespace cljonic {
  * \brief Looks up an element by a key or index, returning the default or
  *        supplied fallback when absent.
  *
- * Dispatches to the collection's callable lookup forms, consistent with the `operator()` behavior of Map, Set, Vector,
- * and String.
+ * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of Map, Set,
+ * Vector, and String. The fallback defaults to the collection's default lookup result when omitted.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -39,18 +39,13 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C, typename K>
-    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
-            requires(const C& collection, const K& key) { collection(key); }
-[[nodiscard]] constexpr auto get(const C& collection, const K& key) noexcept -> decltype(collection(key)) {
-    return collection(key);
-}
-
-/** Returns the stored value when present, otherwise the supplied fallback. */
-template <typename C, typename K, typename V>
+/** Returns the stored value when present, otherwise the supplied fallback or
+ * the collection's default lookup result when no fallback is supplied. */
+template <typename C, typename K,
+          typename V = std::remove_cvref_t<decltype(std::declval<const C&>()(std::declval<const K&>()))>>
     requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
             requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
-[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback) noexcept
+[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback = V{}) noexcept
     -> decltype(collection(key, fallback)) {
     return collection(key, fallback);
 }

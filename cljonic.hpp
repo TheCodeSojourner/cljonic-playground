@@ -171,28 +171,53 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
+#include <optional>
 #include <span>
 #include <type_traits>
 #include <utility>
 
 namespace cljonic {
 
+// Private compile-time metadata used by the public concepts below. Collection
+// implementations specialize these traits to opt into the closed nominal
+// collection domain; extent helpers validate bounded source types without
+// inspecting runtime data.
 namespace concepts_detail {
 
+// A small closed-world tag lets concepts distinguish collection families
+// without exposing implementation-specific type traits as public API.
 enum class collection_kind { none, vector, map, set, queue, string };
 
+// Convert an integral API index only when its value is representable by the
+// library's normalized size_t index domain. Collection-specific bounds remain
+// at each collection's call site because lookup and association have different
+// valid ranges.
+template <std::integral IndexType>
+[[nodiscard]] constexpr auto try_normalize_index(IndexType index) noexcept -> std::optional<std::size_t> {
+    if (!std::in_range<std::size_t>(index)) {
+        return std::nullopt;
+    }
+    return static_cast<std::size_t>(index);
+}
+
+// The unspecialized form rejects types by default. Each supported collection
+// specializes this trait with its nominal identity and collection kind.
 template <typename T>
 struct collection_traits {
     static constexpr bool is_cljonic_collection = false;
     static constexpr collection_kind kind = collection_kind::none;
 };
 
+// Remove cv/ref qualifiers so concepts behave consistently for values,
+// references, and const references.
 template <typename T>
 inline constexpr bool is_cljonic_collection_v = collection_traits<std::remove_cvref_t<T>>::is_cljonic_collection;
 
 template <typename T>
 inline constexpr collection_kind collection_kind_of_v = collection_traits<std::remove_cvref_t<T>>::kind;
 
+// Extract a source's compile-time element count when one is knowable. A
+// dynamic extent remains acceptable because it must be checked at runtime.
 template <typename T>
 struct static_extent : std::integral_constant<std::size_t, std::dynamic_extent> {};
 
@@ -208,6 +233,8 @@ struct static_extent<ElementType[Extent]> : std::integral_constant<std::size_t, 
 template <typename T>
 inline constexpr std::size_t static_extent_v = static_extent<std::remove_cvref_t<T>>::value;
 
+// Static sources must fit their destination capacity before construction;
+// dynamic sources defer that decision to the bounded copy loop.
 template <typename T, std::size_t CapacityValue>
 inline constexpr bool static_extent_fits_v =
     static_extent_v<T> == std::dynamic_extent || static_extent_v<T> <= CapacityValue;
@@ -231,9 +258,6 @@ concept NothrowCollectionElement = CopyableElement<T> && std::destructible<T> &&
     { T{other} } noexcept;
     { value = other } noexcept;
 };
-
-template <typename T>
-concept NothrowCopyableElement = NothrowCollectionElement<T>;
 
 /** Requires that an argument is convertible to and can construct an element
  *  without throwing. */
@@ -307,30 +331,33 @@ concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
     { c.count() } noexcept -> std::integral;
 };
 
-/** Requires that a sequenceable collection provides callable indexed lookup
+/** Requires that an admitted collection provides callable indexed lookup
  *  c(index) and the contains(index) index-in-range membership test (Clojure
  *  contains? over vector/string indices). */
 template <typename C>
-concept IndexedCollection = SequenceableCollection<C> && requires(const C& c, std::size_t i) {
+concept IndexedCollection = CljonicCollection<C> && requires(const C& c, std::size_t i) {
     { c(i) } noexcept;
     { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 
-/** Requires an admitted sequenceable collection to expose a named lookup
+/** Requires an admitted collection to expose a named lookup
  * domain, callable lookup, and matching membership predicate. */
 template <typename C>
-concept LookupCollection = SequenceableCollection<C> && requires(const C& c, const C::lookup_type& key) {
+concept LookupCollection = CljonicCollection<C> && requires(const C& c, const C::lookup_type& key) {
     { c(key) } noexcept;
     { c.contains(key) } noexcept -> std::same_as<bool>;
 };
 
-/** Requires that a sequenceable collection provides callable key lookup
- *  c(key) and the contains(key) key-presence membership test. */
+/** Requires that an admitted collection provides immutable association and
+ *  its key-domain/capacity preflight operation. */
 template <typename C>
-concept AssociativeCollection = SequenceableCollection<C> && requires(const C& c, const C::key_type& k) {
-    { c(k) } noexcept;
-    { c.contains(k) } noexcept -> std::same_as<bool>;
-};
+concept AssociativeCollection =
+    CljonicCollection<C> && requires(const C& c, const C::key_type& key, const C::association_value_type& value) {
+        typename C::key_type;
+        typename C::association_value_type;
+        { c.can_assoc(key) } noexcept -> std::same_as<bool>;
+        { c.assoc(key, value) } noexcept -> std::same_as<C>;
+    };
 
 } // namespace concepts
 
@@ -708,8 +735,8 @@ namespace cljonic {
  * \brief Looks up an element by a key or index, returning the default or
  *        supplied fallback when absent.
  *
- * Dispatches to the collection's callable lookup forms, consistent with the `operator()` behavior of Map, Set, Vector,
- * and String.
+ * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of Map, Set,
+ * Vector, and String. The fallback defaults to the collection's default lookup result when omitted.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -737,18 +764,13 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <typename C, typename K>
-    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
-            requires(const C& collection, const K& key) { collection(key); }
-[[nodiscard]] constexpr auto get(const C& collection, const K& key) noexcept -> decltype(collection(key)) {
-    return collection(key);
-}
-
-/** Returns the stored value when present, otherwise the supplied fallback. */
-template <typename C, typename K, typename V>
+/** Returns the stored value when present, otherwise the supplied fallback or
+ * the collection's default lookup result when no fallback is supplied. */
+template <typename C, typename K,
+          typename V = std::remove_cvref_t<decltype(std::declval<const C&>()(std::declval<const K&>()))>>
     requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
             requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
-[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback) noexcept
+[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback = V{}) noexcept
     -> decltype(collection(key, fallback)) {
     return collection(key, fallback);
 }
@@ -798,7 +820,6 @@ template <concepts::SequenceableCollection C>
 // Begin cljonic-map.hpp
 #pragma once
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <ranges>
@@ -807,14 +828,14 @@ template <concepts::SequenceableCollection C>
 // Begin cljonic-map-entry.hpp
 #pragma once
 
-#include <concepts>
-#include <cstddef>
 
 namespace cljonic {
 
 /** \anchor MapEntry
- * \b MapEntry is a value-semantic pair representing a single key-value association. Its key satisfies
- * `NothrowStableEqualityComparable`; its value satisfies `NothrowCollectionElement`.
+ * \b MapEntry is a value-semantic pair representing a single key-value association. Keys must support reliable,
+ * non-throwing equality comparison and non-throwing storage operations. Values must be default-constructible,
+ * copyable, assignable, and destructible without throwing so the entry remains safe to copy and update in bounded
+ * collections.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -825,19 +846,13 @@ namespace cljonic {
  *
  *   // Compile-time demonstration.
  *   constexpr MapEntry<int, int> e_const{1, 100};
- *   static_assert(e_const.key == 1);
- *   static_assert(e_const.value == 100);
- *   static_assert(e_const.contains(0));
- *   static_assert(e_const.contains(1));
- *   static_assert(!e_const.contains(2));
+ *   static_assert(e_const == MapEntry<int, int>{1, 100});
  *
  *   // Runtime demonstration.
  *   auto e_runtime = MapEntry<int, int>{2, 200};
- *   const auto k = e_runtime.key;
- *   const auto v = e_runtime.value;
- *   const auto ok = e_runtime.contains(0);
+ *   const auto equal_runtime = e_runtime == MapEntry<int, int>{2, 200};
  *
- *   return (k == 2 && v == 200 && ok) ? 0 : 1;
+ *   return equal_runtime ? 0 : 1;
  * }
  * ~~~~~
  */
@@ -852,16 +867,6 @@ struct MapEntry {
 
     [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool {
         return key == other.key && value == other.value;
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
-        if constexpr (std::signed_integral<IndexType>) {
-            if (index < 0) {
-                return false;
-            }
-        }
-        return static_cast<std::size_t>(index) < 2U;
     }
 };
 
@@ -967,6 +972,7 @@ class Map {
     using key_type = KeyType;
     using lookup_type = key_type;
     using mapped_type = ValueType;
+    using association_value_type = ValueType;
     using value_type = MapEntry<KeyType, ValueType>;
 
     static_assert(
@@ -1020,12 +1026,8 @@ class Map {
         return find_index(key) < logical_size_;
     }
 
-    [[nodiscard]] constexpr auto operator()(const KeyType& key) const noexcept -> ValueType {
-        const auto idx = find_index(key);
-        return (idx < logical_size_) ? entries_[idx].value : ValueType{};
-    }
-
-    [[nodiscard]] constexpr auto operator()(const KeyType& key, const ValueType& fallback) const noexcept -> ValueType {
+    [[nodiscard]] constexpr auto operator()(const KeyType& key, const ValueType& fallback = ValueType{}) const noexcept
+        -> ValueType {
         const auto idx = find_index(key);
         return (idx < logical_size_) ? entries_[idx].value : fallback;
     }
@@ -1193,7 +1195,6 @@ template <typename C>
 // Begin cljonic-queue.hpp
 #pragma once
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <iterator>
@@ -1438,7 +1439,6 @@ struct collection_traits<Queue<T, CapacityValue>> {
 #ifndef CLJONIC_SET_HPP
 #define CLJONIC_SET_HPP
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdlib>
@@ -1602,16 +1602,9 @@ class Set {
         return find_index(element) < logical_size_;
     }
 
-    /** Returns the stored element value when present; otherwise returns a
-     * default-constructed value. */
-    [[nodiscard]] constexpr auto operator()(const T& element) const noexcept -> T {
-        const auto idx = find_index(element);
-        return (idx < logical_size_) ? elements_[idx] : T{};
-    }
-
     /** Returns the stored element value when present; otherwise returns the
      * supplied fallback. */
-    [[nodiscard]] constexpr auto operator()(const T& element, const T& fallback) const noexcept -> T {
+    [[nodiscard]] constexpr auto operator()(const T& element, const T& fallback = T{}) const noexcept -> T {
         const auto idx = find_index(element);
         return (idx < logical_size_) ? elements_[idx] : fallback;
     }
@@ -1794,6 +1787,9 @@ namespace cljonic {
 template <std::size_t CapacityValue>
 class String {
   public:
+    using key_type = std::size_t;
+    using lookup_type = key_type;
+    using association_value_type = char;
     using value_type = char;
 
     static_assert(
@@ -1866,32 +1862,56 @@ class String {
 
     /** Returns true when index falls within logical bounds (not counting null
      * terminator). Mirrors Clojure contains? over string indices. */
-    [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
-        return index < logical_size_;
-    }
-
-    /** Callable index access returning default-constructed char ('\\0') on
-     * invalid index. */
-    [[nodiscard]] constexpr auto operator()(std::size_t index) const noexcept -> char {
-        return (index < logical_size_) ? data_[index] : '\0';
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_;
     }
 
     /** Callable index access with custom fallback value on invalid index. */
-    [[nodiscard]] constexpr auto operator()(std::size_t index, char fallback) const noexcept -> char {
-        return (index < logical_size_) ? data_[index] : fallback;
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index, char fallback = '\0') const noexcept -> char {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_ ? data_[*normalized_index] : fallback;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && association_index_is_valid(*normalized_index);
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto assoc(IndexType index, char value) const noexcept -> String {
+        String result = *this;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && association_index_is_valid(*normalized_index)) {
+            result.data_[*normalized_index] = normalize_byte(value);
+            if (*normalized_index == logical_size_) {
+                ++result.logical_size_;
+                result.data_[result.logical_size_] = '\0';
+            }
+        }
+        return result;
     }
 
     /** Returns a fresh String with the character at index replaced. Out-of-bounds
      * indices leave copy unchanged. */
-    [[nodiscard]] constexpr auto put(std::size_t index, char c) const noexcept -> String {
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto put(IndexType index, char c) const noexcept -> String {
         String result = *this;
-        if (index < logical_size_) {
-            result.data_[index] = c;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && *normalized_index < logical_size_) {
+            result.data_[*normalized_index] = c;
         }
         return result;
     }
 
   private:
+    [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
+        return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
+    }
+
     template <typename Source>
     constexpr void copy_from_source(const Source& source, std::size_t copy_count) noexcept {
         logical_size_ = copy_count;
@@ -2088,6 +2108,9 @@ namespace cljonic {
 template <concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue>
 class Vector {
   public:
+    using key_type = std::size_t;
+    using lookup_type = key_type;
+    using association_value_type = ElementType;
     using value_type = ElementType;
 
     static_assert(
@@ -2137,18 +2160,35 @@ class Vector {
     }
 
     template <std::integral IndexType>
-    [[nodiscard]] constexpr auto operator()(IndexType index) const noexcept -> value_type {
-        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : value_type{};
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback) const noexcept -> value_type {
-        return index_is_valid(index) ? storage_[static_cast<std::size_t>(index)] : fallback;
+    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback = value_type{}) const noexcept
+        -> value_type {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_ ? storage_[*normalized_index] : fallback;
     }
 
     template <std::integral IndexType>
     [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
-        return index_is_valid(index);
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && association_index_is_valid(*normalized_index);
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto assoc(IndexType index, const value_type& value) const noexcept -> Vector {
+        Vector result = *this;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && association_index_is_valid(*normalized_index)) {
+            result.storage_[*normalized_index] = value;
+            if (*normalized_index == logical_size_) {
+                ++result.logical_size_;
+            }
+        }
+        return result;
     }
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
@@ -2168,15 +2208,8 @@ class Vector {
     }
 
   private:
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto index_is_valid(IndexType index) const noexcept -> bool {
-        if constexpr (std::signed_integral<IndexType>) {
-            if (index < 0) {
-                return false;
-            }
-        }
-
-        return static_cast<std::size_t>(index) < logical_size_;
+    [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
+        return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
     }
 
     template <typename... Args>

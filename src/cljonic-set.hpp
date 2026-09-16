@@ -1,7 +1,6 @@
 #ifndef CLJONIC_SET_HPP
 #define CLJONIC_SET_HPP
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdlib>
@@ -168,16 +167,9 @@ class Set {
         return find_index(element) < logical_size_;
     }
 
-    /** Returns the stored element value when present; otherwise returns a
-     * default-constructed value. */
-    [[nodiscard]] constexpr auto operator()(const T& element) const noexcept -> T {
-        const auto idx = find_index(element);
-        return (idx < logical_size_) ? elements_[idx] : T{};
-    }
-
     /** Returns the stored element value when present; otherwise returns the
      * supplied fallback. */
-    [[nodiscard]] constexpr auto operator()(const T& element, const T& fallback) const noexcept -> T {
+    [[nodiscard]] constexpr auto operator()(const T& element, const T& fallback = T{}) const noexcept -> T {
         const auto idx = find_index(element);
         return (idx < logical_size_) ? elements_[idx] : fallback;
     }
