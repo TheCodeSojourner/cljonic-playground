@@ -1,6 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <array>
+#include <limits>
 #include <ranges>
 #include <span>
 #include <string_view>
@@ -10,6 +11,7 @@
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
 TEST_CASE("String construction and indexed operations", "[string]") {
+    using cljonic::assoc;
     using cljonic::get;
     using cljonic::String;
 
@@ -60,7 +62,20 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.OversizedInitializerIsCompileTimeFailure");
     TRACE_ID("invariant.String.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.String.SupportsIndexedLookup");
-    TRACE_ID("invariant.String.SupportsIndexedFallbackLookup");
+    TRACE_ID("invariant.String.SupportsDefaultFallbackLookup");
+    TRACE_ID("invariant.String.AcceptsIntegralIndexTypes");
+    TRACE_ID("invariant.String.SupportsLookupCapability");
+    TRACE_ID("invariant.String.SupportsAssociativeCapability");
+    TRACE_ID("invariant.String.SeqableLifecycleIsDeferred");
+    TRACE_ID("invariant.String.SupportsAssocUpdate");
+    TRACE_ID("invariant.String.SupportsCanAssocPreflight");
+    TRACE_ID("invariant.String.AssocReplacesExistingCharacter");
+    TRACE_ID("invariant.String.AssocAppendsAtLogicalCount");
+    TRACE_ID("invariant.String.InvalidAssocIndexReturnsUnchangedString");
+    TRACE_ID("invariant.String.NullTerminatorIsNotAssociationIndex");
+    TRACE_ID("invariant.String.CanAssocTrueForExistingOrAppendIndex");
+    TRACE_ID("invariant.String.CanAssocFalseForInvalidOrFullAppendIndex");
+    TRACE_ID("invariant.String.AssocCharacterValueIsValidated");
     TRACE_ID("invariant.String.SupportsGetFreeFunction");
     TRACE_ID("invariant.String.InvalidIndexReturnsDefaultElement");
     TRACE_ID("invariant.String.InvalidIndexReturnsSuppliedFallback");
@@ -95,6 +110,8 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     STATIC_REQUIRE(s1.contains(0)); // valid indices 0..4
     STATIC_REQUIRE(s1.contains(4));
     STATIC_REQUIRE_FALSE(s1.contains(5)); // null terminator position is invalid
+    STATIC_REQUIRE_FALSE(s1.contains(-1));
+    STATIC_REQUIRE_FALSE(s1.contains(std::numeric_limits<unsigned long long>::max()));
     STATIC_REQUIRE(get(s1, 0U) == 'H');
     STATIC_REQUIRE(get(s1, 99U) == '\0');
     STATIC_REQUIRE(get(s1, 99U, 'X') == 'X');
@@ -112,6 +129,9 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     // Callable index access: custom fallback
     STATIC_REQUIRE(s1(99, 'X') == 'X');
+    STATIC_REQUIRE(s1(-1) == '\0');
+    STATIC_REQUIRE(s1(-1, 'X') == 'X');
+    STATIC_REQUIRE(s1(std::numeric_limits<unsigned long long>::max(), 'X') == 'X');
 
     // put replaces character at index (copy-on-modify semantics)
     constexpr auto s2 = s1.put(0, 'h');
@@ -123,6 +143,8 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     constexpr auto s3 = s1.put(99, 'X');
     STATIC_REQUIRE(s3(0) == 'H');
     STATIC_REQUIRE(s3.count() == 5U);
+    constexpr auto s4 = s1.put(-1, 'X');
+    STATIC_REQUIRE(s4.view() == s1.view());
 
     // Capacity zero: can only hold empty/null
     constexpr String<0> s_empty_cap{};
@@ -155,6 +177,10 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     auto rs_put = rs1.put(idx0, 'X');
     REQUIRE(rs_put(idx0) == 'X');
     REQUIRE(rs1(idx0) == 'A'); // immutability
+
+    const auto rs_assoc_append = assoc(rs1, 2U, 'C');
+    REQUIRE(rs_assoc_append.view() == std::string_view{"ABC"});
+    REQUIRE(rs1.view() == std::string_view{"AB"});
 
     auto rs_put_oob = rs1.put(99, 'X');
     REQUIRE(rs_put_oob.count() == 2U);

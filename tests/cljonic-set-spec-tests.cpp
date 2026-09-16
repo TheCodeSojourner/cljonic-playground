@@ -42,7 +42,10 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     TRACE_ID("invariant.Set.CompileTimeDuplicateConstructionIsRejected");
     TRACE_ID("invariant.Set.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.Set.SupportsMembershipLookup");
-    TRACE_ID("invariant.Set.SupportsMembershipFallbackLookup");
+    TRACE_ID("invariant.Set.SupportsDefaultFallbackLookup");
+    TRACE_ID("invariant.Set.SupportsLookupCapability");
+    TRACE_ID("invariant.Set.RejectsAssociativeCapability");
+    TRACE_ID("invariant.Set.SeqableLifecycleIsDeferred");
     TRACE_ID("invariant.Set.MissingValueReturnsDefaultElement");
     TRACE_ID("invariant.Set.MissingValueReturnsSuppliedFallback");
     TRACE_ID("invariant.Set.CanonicalResultStatusModelIsDeclared");

@@ -114,7 +114,17 @@ TEST_CASE("Vector canonical preflight predicates model index validity and emptin
     TRACE_ID("invariant.Vector.RuntimeCapacityFailuresHaveDocumentedPolicy");
     TRACE_ID("invariant.Vector.DefaultAccessHasPreflightPredicate");
     TRACE_ID("invariant.Vector.SupportsIndexedLookup");
-    TRACE_ID("invariant.Vector.SupportsIndexedFallbackLookup");
+    TRACE_ID("invariant.Vector.SupportsDefaultFallbackLookup");
+    TRACE_ID("invariant.Vector.SupportsLookupCapability");
+    TRACE_ID("invariant.Vector.SupportsAssociativeCapability");
+    TRACE_ID("invariant.Vector.SeqableLifecycleIsDeferred");
+    TRACE_ID("invariant.Vector.SupportsAssocUpdate");
+    TRACE_ID("invariant.Vector.SupportsCanAssocPreflight");
+    TRACE_ID("invariant.Vector.AssocReplacesExistingIndex");
+    TRACE_ID("invariant.Vector.AssocAppendsAtLogicalCount");
+    TRACE_ID("invariant.Vector.InvalidAssocIndexReturnsUnchangedVector");
+    TRACE_ID("invariant.Vector.CanAssocTrueForExistingOrAppendIndex");
+    TRACE_ID("invariant.Vector.CanAssocFalseForInvalidOrFullAppendIndex");
     TRACE_ID("invariant.Vector.InvalidIndexReturnsDefaultElement");
     TRACE_ID("invariant.Vector.InvalidIndexReturnsSuppliedFallback");
 
@@ -140,7 +150,7 @@ TEST_CASE("Vector indexed access handles valid and invalid indexes", "[vector][i
 
     TRACE_ID("entity-fields.Vector");
     TRACE_ID("invariant.Vector.SupportsIndexedLookup");
-    TRACE_ID("invariant.Vector.SupportsIndexedFallbackLookup");
+    TRACE_ID("invariant.Vector.SupportsDefaultFallbackLookup");
     TRACE_ID("invariant.Vector.InvalidIndexReturnsDefaultElement");
     TRACE_ID("invariant.Vector.InvalidIndexReturnsSuppliedFallback");
 

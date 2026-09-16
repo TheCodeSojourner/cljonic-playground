@@ -43,7 +43,17 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     TRACE_ID("invariant.Map.PackConstructionRequiresAtLeastOneEntry");
     TRACE_ID("invariant.Map.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.Map.SupportsAssociativeLookup");
-    TRACE_ID("invariant.Map.SupportsAssociativeFallbackLookup");
+    TRACE_ID("invariant.Map.SupportsDefaultFallbackLookup");
+    TRACE_ID("invariant.Map.SupportsLookupCapability");
+    TRACE_ID("invariant.Map.SupportsAssociativeCapability");
+    TRACE_ID("invariant.Map.SeqableLifecycleIsDeferred");
+    TRACE_ID("invariant.Map.SupportsAssocUpdate");
+    TRACE_ID("invariant.Map.SupportsCanAssocPreflight");
+    TRACE_ID("invariant.Map.AssocReplacesExistingValue");
+    TRACE_ID("invariant.Map.AssocInsertsNewKeyWhenCapacityRemains");
+    TRACE_ID("invariant.Map.InvalidKeyOrFullInsertReturnsUnchangedMap");
+    TRACE_ID("invariant.Map.CanAssocTrueForExistingOrInsertableKey");
+    TRACE_ID("invariant.Map.CanAssocFalseForMissingKeyAtCapacity");
     TRACE_ID("invariant.Map.MissingKeyReturnsDefaultElement");
     TRACE_ID("invariant.Map.MissingKeyReturnsSuppliedFallback");
     TRACE_ID("invariant.Map.CanonicalResultStatusModelIsDeclared");

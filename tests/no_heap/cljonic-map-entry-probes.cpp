@@ -6,7 +6,7 @@ namespace cljonic::no_heap::probes {
 
 [[nodiscard]] auto map_entry_probe() noexcept -> bool {
     const MapEntry<int, int> me{1, 2};
-    return me.key == 1 && me.value == 2 && me.contains(0);
+    return me.key == 1 && me.value == 2;
 }
 
 } // namespace cljonic::no_heap::probes

@@ -15,7 +15,7 @@ TEST_CASE("Get free function operations", "[get]") {
 
     TRACE_ID("entity-fields.Get");
     TRACE_ID("invariant.Get.GetFreeFunctionSupported");
-    TRACE_ID("invariant.Get.SupportsFallbackArgument");
+    TRACE_ID("invariant.Get.SupportsDefaultFallback");
     TRACE_ID("invariant.Get.NoHeapAllocation");
     TRACE_ID("invariant.Get.NoRtti");
     TRACE_ID("invariant.Get.NoExceptions");

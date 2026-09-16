@@ -24,6 +24,7 @@ namespace {
 // ============================================================================
 
 struct VectorLike {
+    using key_type = std::size_t;
     using value_type = int;
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
@@ -38,12 +39,19 @@ struct VectorLike {
     [[nodiscard]] constexpr auto contains(std::size_t) const noexcept -> bool {
         return false;
     }
+    [[nodiscard]] constexpr auto can_assoc(key_type) const noexcept -> bool {
+        return true;
+    }
+    [[nodiscard]] constexpr auto assoc(key_type, const value_type&) const noexcept -> VectorLike {
+        return {};
+    }
 };
 
 struct MapLike {
     using key_type = int;
     using lookup_type = int;
     using mapped_type = int;
+    using association_value_type = int;
     using value_type = int;
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
@@ -57,6 +65,12 @@ struct MapLike {
     }
     [[nodiscard]] constexpr auto contains(const int&) const noexcept -> bool {
         return false;
+    }
+    [[nodiscard]] constexpr auto can_assoc(const key_type&) const noexcept -> bool {
+        return true;
+    }
+    [[nodiscard]] constexpr auto assoc(const key_type&, const value_type&) const noexcept -> MapLike {
+        return {};
     }
 };
 
@@ -94,6 +108,8 @@ struct QueueLike {
 };
 
 struct StringLike {
+    using key_type = std::size_t;
+    using association_value_type = char;
     using value_type = char;
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
@@ -101,6 +117,18 @@ struct StringLike {
     }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
+    }
+    [[nodiscard]] constexpr auto operator()(std::size_t) const noexcept -> char {
+        return 0;
+    }
+    [[nodiscard]] constexpr auto contains(std::size_t) const noexcept -> bool {
+        return false;
+    }
+    [[nodiscard]] constexpr auto can_assoc(key_type) const noexcept -> bool {
+        return true;
+    }
+    [[nodiscard]] constexpr auto assoc(key_type, const value_type&) const noexcept -> StringLike {
+        return {};
     }
 };
 
@@ -374,19 +402,19 @@ TEST_CASE("IndexedCollection structural capability", "[concepts][collection]") {
     using namespace cljonic::concepts;
 
     TRACE_ID("entity-fields.IndexedCollection");
-    TRACE_ID("invariant.IndexedCollection.ExtendsSequenceable");
+    TRACE_ID("invariant.IndexedCollection.SequenceIndependent");
+    TRACE_ID("invariant.IndexedCollection.RefinesLookupCapability");
     TRACE_ID("invariant.IndexedCollection.RequiresCallableIndexedLookup");
     TRACE_ID("invariant.IndexedCollection.RequiresContainsPredicate");
 
-    // ExtendsSequenceable: an indexed collection is sequenceable.
-    STATIC_REQUIRE(SequenceableCollection<VectorLike>);
+    // Sequence independence: indexed access does not require the separate
+    // sequence-observation baseline.
     STATIC_REQUIRE(IndexedCollection<VectorLike>);
     STATIC_REQUIRE(IndexedCollection<cljonic::Vector<int, 4>>);
     STATIC_REQUIRE(IndexedCollection<cljonic::String<8>>);
 
-    // RequiresCallableIndexedLookup + RequiresContainsPredicate: a sequenceable
+    // RequiresCallableIndexedLookup + RequiresContainsPredicate: a nominal
     // collection without operator()(size_t)/contains is not indexed.
-    STATIC_REQUIRE(SequenceableCollection<SetLike>);
     STATIC_REQUIRE_FALSE(IndexedCollection<SetLike>);
     STATIC_REQUIRE_FALSE(IndexedCollection<cljonic::Set<EqualityOnly, 4>>);
     STATIC_REQUIRE_FALSE(IndexedCollection<cljonic::Queue<int, 4>>);
@@ -403,16 +431,18 @@ TEST_CASE("LookupCollection general lookup capability", "[concepts][collection]"
     using namespace cljonic::concepts;
 
     TRACE_ID("entity-fields.LookupCollection");
-    TRACE_ID("invariant.LookupCollection.ExtendsSequenceable");
+    TRACE_ID("invariant.LookupCollection.SequenceIndependent");
     TRACE_ID("invariant.LookupCollection.RequiresLookupType");
     TRACE_ID("invariant.LookupCollection.RequiresCallableLookup");
+    TRACE_ID("invariant.LookupCollection.RequiresDefaultOrFallbackAccess");
     TRACE_ID("invariant.LookupCollection.RequiresMembershipPredicate");
 
     STATIC_REQUIRE(LookupCollection<MapLike>);
     STATIC_REQUIRE(LookupCollection<SetLike>);
     STATIC_REQUIRE(LookupCollection<cljonic::Map<int, int, 4>>);
     STATIC_REQUIRE(LookupCollection<cljonic::Set<int, 4>>);
-    STATIC_REQUIRE_FALSE(LookupCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(LookupCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(LookupCollection<cljonic::String<8>>);
     STATIC_REQUIRE_FALSE(LookupCollection<cljonic::Queue<int, 4>>);
     STATIC_REQUIRE_FALSE(LookupCollection<ExternalLike>);
 }
@@ -425,23 +455,27 @@ TEST_CASE("AssociativeCollection structural capability", "[concepts][collection]
     using namespace cljonic::concepts;
 
     TRACE_ID("entity-fields.AssociativeCollection");
-    TRACE_ID("invariant.AssociativeCollection.ExtendsSequenceable");
-    TRACE_ID("invariant.AssociativeCollection.RequiresCallableKeyLookup");
-    TRACE_ID("invariant.AssociativeCollection.RequiresMembershipPredicate");
+    TRACE_ID("invariant.AssociativeCollection.SequenceIndependent");
+    TRACE_ID("invariant.AssociativeCollection.DefinesKeyType");
+    TRACE_ID("invariant.AssociativeCollection.DefinesValueType");
+    TRACE_ID("invariant.AssociativeCollection.DefinesCapacityPolicy");
+    TRACE_ID("invariant.AssociativeCollection.RequiresAssocOperation");
+    TRACE_ID("invariant.AssociativeCollection.RequiresCanAssocPreflight");
+    TRACE_ID("invariant.AssociativeCollection.ReturnsNewCollectionValue");
+    TRACE_ID("invariant.AssociativeCollection.PreservesSource");
+    TRACE_ID("invariant.AssociativeCollection.RequiresNonMutatingAssocOperation");
+    TRACE_ID("invariant.AssociativeCollection.RequiresNonMutatingAssocPreflight");
 
-    // ExtendsSequenceable.
-    STATIC_REQUIRE(SequenceableCollection<MapLike>);
     STATIC_REQUIRE(AssociativeCollection<MapLike>);
     STATIC_REQUIRE(AssociativeCollection<cljonic::Map<int, int, 4>>);
+    STATIC_REQUIRE(AssociativeCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(AssociativeCollection<StringLike>);
+    STATIC_REQUIRE(AssociativeCollection<cljonic::String<8>>);
 
-    // RequiresCallableKeyLookup + RequiresMembershipPredicate: a sequenceable
-    // collection without key lookup/contains is not associative.
-    STATIC_REQUIRE(SequenceableCollection<SetLike>);
+    // Association is independent from callable lookup and membership.
     STATIC_REQUIRE_FALSE(AssociativeCollection<SetLike>);
     STATIC_REQUIRE_FALSE(AssociativeCollection<cljonic::Set<int, 4>>);
-    STATIC_REQUIRE_FALSE(AssociativeCollection<cljonic::Vector<int, 4>>);
     STATIC_REQUIRE_FALSE(AssociativeCollection<cljonic::Queue<int, 4>>);
-    STATIC_REQUIRE_FALSE(AssociativeCollection<cljonic::String<8>>);
 }
 
 // ============================================================================
@@ -576,11 +610,7 @@ TEST_CASE("Vector element storage requires non-throwing operations", "[vector][c
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingDefault>);
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingAssignment>);
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCollectionElement<ThrowingDestruction>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCopyableElement<ThrowingDefault>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCopyableElement<ThrowingAssignment>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowCopyableElement<ThrowingDestruction>);
     STATIC_REQUIRE(cljonic::concepts::NothrowCollectionElement<int>);
-    STATIC_REQUIRE(cljonic::concepts::NothrowCopyableElement<int>);
     STATIC_REQUIRE(noexcept(cljonic::Vector<int, 4>{1, 2}));
 }
 
