@@ -407,7 +407,7 @@ concept AssociativeCollection =
   | introduce_concept(x) → require(tested_api_boundary(x)) ∧ specify(consumers_and_diagnostics(x))
 
 λ concept_member_naming(x). canonical_capacity_observation(x) ≡ count ∧ is_empty
-  | member_lookup(x) ≡ operator()(...) ∧ contains
+  | member_lookup(x) ≡ operator()(key, fallback = default_result) ∧ contains
   | index_bracket_lookup(x) → omitted_from_all_collections(x)
 
 ## S1 - Operations
