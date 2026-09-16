@@ -365,7 +365,7 @@ invariant.Get.NoHeapAllocation
 invariant.Get.NoRtti
 invariant.Get.ReferentialTransparency
 invariant.Get.SingleThreadedExecutionModel
-invariant.Get.SupportsFallbackArgument
+invariant.Get.SupportsDefaultFallback
 invariant.GroupBy.CallbackIsFirstArgument
 invariant.GroupBy.CallbackIsPureAndNonAllocating
 invariant.GroupBy.FailurePolicyIsTyped
@@ -480,7 +480,6 @@ invariant.Map.DefaultAccessHasPreflightPredicate
 invariant.Map.DefaultReturningResultStatusDeclared
 invariant.MapEntry.HeaderOnlyDistribution
 invariant.MapEntry.ImmutablePublicApi
-invariant.MapEntry.IsSequenceableTwoElementSequence
 invariant.MapEntry.KeyValueCountIsTwo
 invariant.MapEntry.NoExceptions
 invariant.MapEntry.NoHeapAllocation
@@ -495,7 +494,6 @@ invariant.MapEntry.RequiresValueSemanticElements
 invariant.MapEntry.SingleThreadedExecutionModel
 invariant.MapEntry.StaticOrAutomaticStorageOnly
 invariant.MapEntry.SupportsFirstObservation
-invariant.MapEntry.SupportsIndexedLookup
 invariant.MapEntry.SupportsKeyObservation
 invariant.MapEntry.SupportsLastObservation
 invariant.MapEntry.SupportsValObservation
@@ -540,11 +538,11 @@ invariant.Map.SeqableLifecycleIsDeferred
 invariant.Map.SingleThreadedExecutionModel
 invariant.Map.StaticOrAutomaticStorageOnly
 invariant.Map.SupportsAssociativeCapability
-invariant.Map.SupportsAssociativeFallbackLookup
 invariant.Map.SupportsAssociativeLookup
 invariant.Map.SupportsAssocUpdate
 invariant.Map.SupportsCanAssocPreflight
 invariant.Map.SupportsCapacityInferredLiteralEquivalentSemantics
+invariant.Map.SupportsDefaultFallbackLookup
 invariant.Map.SupportsEmptyExplicitCapacityConstruction
 invariant.Map.SupportsExplicitCapacityConstruction
 invariant.Map.SupportsLiteralDeducedConstruction
@@ -855,11 +853,11 @@ invariant.Set.SeqableLifecycleIsDeferred
 invariant.Set.SingleThreadedExecutionModel
 invariant.Set.StaticOrAutomaticStorageOnly
 invariant.Set.SupportsCapacityInferredLiteralEquivalentSemantics
+invariant.Set.SupportsDefaultFallbackLookup
 invariant.Set.SupportsEmptyExplicitCapacityConstruction
 invariant.Set.SupportsExplicitCapacityConstruction
 invariant.Set.SupportsLiteralDeducedConstruction
 invariant.Set.SupportsLookupCapability
-invariant.Set.SupportsMembershipFallbackLookup
 invariant.Set.SupportsMembershipLookup
 invariant.Set.SwapAndRemove
 invariant.Set.UpdateReturnsNewValue
@@ -917,6 +915,7 @@ invariant.SplitWith.SourceIsSecondArgument
 invariant.SplitWith.TerminationIsDeclared
 invariant.StableEqualityComparable.RejectsFloatingPoint
 invariant.StableEqualityComparable.RequiresBoolEquality
+invariant.String.AcceptsIntegralIndexTypes
 invariant.String.AssocAppendsAtLogicalCount
 invariant.String.AssocCharacterValueIsValidated
 invariant.String.AssocReplacesExistingCharacter
@@ -982,10 +981,10 @@ invariant.String.SupportsAssocUpdate
 invariant.String.SupportsCanAssocPreflight
 invariant.String.SupportsCapacityInferredLiteralEquivalentSemantics
 invariant.String.SupportsConstCharSpanSourceConstruction
+invariant.String.SupportsDefaultFallbackLookup
 invariant.String.SupportsEmptyExplicitCapacityConstruction
 invariant.String.SupportsExplicitCapacityConstruction
 invariant.String.SupportsGetFreeFunction
-invariant.String.SupportsIndexedFallbackLookup
 invariant.String.SupportsIndexedLookup
 invariant.String.SupportsLiteralDeducedConstruction
 invariant.String.SupportsLookupCapability
@@ -1105,9 +1104,9 @@ invariant.Vector.SupportsAssociativeCapability
 invariant.Vector.SupportsAssocUpdate
 invariant.Vector.SupportsCanAssocPreflight
 invariant.Vector.SupportsCapacityInferredLiteralEquivalentSemantics
+invariant.Vector.SupportsDefaultFallbackLookup
 invariant.Vector.SupportsEmptyExplicitCapacityConstruction
 invariant.Vector.SupportsExplicitCapacityConstruction
-invariant.Vector.SupportsIndexedFallbackLookup
 invariant.Vector.SupportsIndexedLookup
 invariant.Vector.SupportsLiteralDeducedConstruction
 invariant.Vector.SupportsLookupCapability
