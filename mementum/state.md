@@ -1,17 +1,17 @@
 ## Session State
 
-- last_session_id: 100e64c9-0db2-49ed-b243-63073653e7e6
-- current_timestamp: 2026-09-15
+- last_session_id: bc85a370-bf7b-4556-8401-5d062cdfaaf3
+- current_timestamp: 2026-09-16
 - recover: 1
-- session_complete: false
+- session_complete: true
 
 Task:
-1. Propagate the synchronized Associative capability, Assoc, and CanAssoc contracts from specifications into tests and implementation.
-2. Preserve traceability and validate modular and single-header behavior.
+1. Complete the spec-weed convergence pass across architecture, Allium specifications, tests, and implementation for the Associative capability increment.
+2. Preserve strict traceability and validate modular, single-header, and no-heap behavior.
 
 Questions:
-1. None blocking this session; the requested downstream propagation was explicitly authorized.
-2. Full repository quality gates beyond the focused suite remain for the next increment if required.
+1. None blocking this session.
+2. The remaining unstaged source/test/header changes are the approved Associative propagation increment and should be reviewed before merging.
 
 Decisions:
 1. The public capability names are `Indexed`, `Lookup`, `Seqable`, and `Associative`; they remain distinct except where an explicit requirement defines refinement.
@@ -26,6 +26,7 @@ Decisions:
 10. `IndexedCollection` and `LookupCollection` are independent of the sequence-observation baseline; `AssociativeCollection` requires key/value aliases plus `can_assoc` and `assoc`, not callable lookup.
 11. Vector and String expose integer key aliases and immutable association operations; Map exposes an association value alias while retaining its MapEntry storage value type.
 12. Associative tests cover Map replacement/insertion, Vector replacement/append/invalid indexes, String replacement/append/null termination/runtime invalid-byte replacement, and value-independent preflight behavior.
+13. The spec-weed pass uses interactive convergence with code/spec/architecture divergence triage; no divergence was found, so no correction was applied.
 
 Validation:
 1. Full requirements-to-vocabulary audit completed; the only concrete gap was the missing `PersistentValue` entry, which was added.
@@ -40,10 +41,14 @@ Validation:
 10. Full modular Catch2 suite passed with 754 assertions in 55 cases.
 11. Strict `traceability-spec-to-code`, `no-heap-src`, `git diff --check`, formatting, and `cljonic-test` single-header probe passed.
 12. Source/test propagation changed only the synchronized concept and collection headers, associated spec tests, and regenerated `cljonic.hpp`; no unrelated source or tests were reverted.
+13. `allium check specs` and `allium analyse specs` returned zero diagnostics and findings across the full spec set.
+14. `make traceability-spec-to-code` passed with the committed obligation snapshot synchronized and all planned obligations traceable to tests.
+15. `make test` passed all 110 modular and generated-header tests; `make cljonic-test` and `make no-heap` also passed.
+16. `git diff --check` passed; the worktree contains only the pre-existing Associative propagation changes plus this Mementum checkpoint.
 
 Current Increment:
-1. Requirements, vocabulary, architecture, specifications, tests, traceability, and implementation are synchronized for the Associative capability increment.
+1. Requirements, vocabulary, architecture, specifications, tests, traceability, and implementation are synchronized for the Associative capability increment; spec-weed convergence is complete.
 
 Next:
-1. Review the complete diff and run any remaining repository-wide quality gates before merging the implementation increment.
+1. Review the complete Associative propagation diff before merging; do not revert the unstaged source, test, or generated-header changes.
 2. Continue with the next approved requirements/specification slice; do not begin unrelated source changes without upstream specification propagation.
