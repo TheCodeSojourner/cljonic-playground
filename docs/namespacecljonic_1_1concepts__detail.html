@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">cljonic::concepts_detail Namespace Reference</div></div>
 </div><!--header-->
@@ -132,6 +133,11 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#a2e9b3e27bfcfd4e694144ca6f355b122ab45cffe084dd3d20d928bee85e7b0f21">string</a>
 <br />
  }</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6" id="r_a4ca1374dc952d90d209ac69dbee803c6"><td class="memTemplParams" colspan="2">template&lt;std::integral IndexType&gt; </td></tr>
+<tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4ca1374dc952d90d209ac69dbee803c6">try_normalize_index</a> (IndexType index) noexcept -&gt; std::optional&lt; std::size_t &gt;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -173,7 +179,37 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="a2e9b3e27bfcfd4e694144ca6f355b122ab45cffe084dd3d20d928bee85e7b0f21" name="a2e9b3e27bfcfd4e694144ca6f355b122ab45cffe084dd3d20d928bee85e7b0f21"></a>string&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00015">15</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00022">22</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a4ca1374dc952d90d209ac69dbee803c6" name="a4ca1374dc952d90d209ac69dbee803c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ca1374dc952d90d209ac69dbee803c6">&#9670;&#160;</a></span>try_normalize_index()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::integral IndexType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::try_normalize_index </td>
+          <td>(</td>
+          <td class="paramtype">IndexType</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td> -&gt; std::optional&lt; std::size_t &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00029">29</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 
 </div>
 </div>
@@ -200,7 +236,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00027">27</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00050">50</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 
 </div>
 </div>
@@ -226,7 +262,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00024">24</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00047">47</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 
 </div>
 </div>
@@ -253,9 +289,9 @@ template&lt;typename T, std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">                                       =</div>
 <div class="line"><a class="code hl_variable" href="#a29e1da7a418720132814cc4045837614">static_extent_v&lt;T&gt;</a> == std::dynamic_extent || <a class="code hl_variable" href="#a29e1da7a418720132814cc4045837614">static_extent_v&lt;T&gt;</a> &lt;= CapacityValue</div>
-<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a29e1da7a418720132814cc4045837614"><div class="ttname"><a href="#a29e1da7a418720132814cc4045837614">cljonic::concepts_detail::static_extent_v</a></div><div class="ttdeci">constexpr std::size_t static_extent_v</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00042">cljonic-concepts.hpp:42</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a29e1da7a418720132814cc4045837614"><div class="ttname"><a href="#a29e1da7a418720132814cc4045837614">cljonic::concepts_detail::static_extent_v</a></div><div class="ttdeci">constexpr std::size_t static_extent_v</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00067">cljonic-concepts.hpp:67</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00045">45</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00072">72</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 
 </div>
 </div>
@@ -281,7 +317,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00042">42</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00067">67</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 
 </div>
 </div>

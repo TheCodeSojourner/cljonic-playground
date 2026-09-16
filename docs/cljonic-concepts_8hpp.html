@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#concepts">Concepts</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">cljonic-concepts.hpp File Reference</div></div>
 </div><!--header-->
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="textblock"><code>#include &lt;array&gt;</code><br />
 <code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;span&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
@@ -135,7 +137,6 @@ Namespaces</h2></td></tr>
 Concepts</h2></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ACopyableElement" id="r_cljonic_3A_3Aconcepts_3A_3ACopyableElement"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_copyable_element.html">cljonic::concepts::CopyableElement</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ANothrowCollectionElement" id="r_cljonic_3A_3Aconcepts_3A_3ANothrowCollectionElement"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_nothrow_collection_element.html">cljonic::concepts::NothrowCollectionElement</a></td></tr>
-<tr class="memitem:cljonic_3A_3Aconcepts_3A_3ANothrowCopyableElement" id="r_cljonic_3A_3Aconcepts_3A_3ANothrowCopyableElement"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_nothrow_copyable_element.html">cljonic::concepts::NothrowCopyableElement</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ANothrowElementConstruction" id="r_cljonic_3A_3Aconcepts_3A_3ANothrowElementConstruction"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_nothrow_element_construction.html">cljonic::concepts::NothrowElementConstruction</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3AStableEqualityComparable" id="r_cljonic_3A_3Aconcepts_3A_3AStableEqualityComparable"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_stable_equality_comparable.html">cljonic::concepts::StableEqualityComparable</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ATotallyOrdered" id="r_cljonic_3A_3Aconcepts_3A_3ATotallyOrdered"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_totally_ordered.html">cljonic::concepts::TotallyOrdered</a></td></tr>
@@ -163,6 +164,11 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122ab45cffe084dd3d20d928bee85e7b0f21">cljonic::concepts_detail::string</a>
 <br />
  }</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6" id="r_a4ca1374dc952d90d209ac69dbee803c6"><td class="memTemplParams" colspan="2">template&lt;std::integral IndexType&gt; </td></tr>
+<tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a4ca1374dc952d90d209ac69dbee803c6">cljonic::concepts_detail::try_normalize_index</a> (IndexType index) noexcept -&gt; std::optional&lt; std::size_t &gt;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

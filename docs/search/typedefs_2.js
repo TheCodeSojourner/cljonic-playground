@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['key_5ftype_0',['key_type',['../structcljonic_1_1_map_entry.html#ac1bfaaaefa6b3d353623552ae78589a9',1,'cljonic::MapEntry::key_type'],['../classcljonic_1_1_map.html#abbeea97f83441d303186b7949fe63f78',1,'cljonic::Map::key_type']]]
+  ['iterator_5fcategory_0',['iterator_category',['../classcljonic_1_1_queue_1_1const__iterator.html#ad38ae7388be751510b105cb6619c5b0f',1,'cljonic::Queue::const_iterator']]],
+  ['iterator_5fconcept_1',['iterator_concept',['../classcljonic_1_1_queue_1_1const__iterator.html#a481607d9ff3032f1352461fea07be6b5',1,'cljonic::Queue::const_iterator']]]
 ];

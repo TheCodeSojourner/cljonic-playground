@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['get_0',['get',['../namespacecljonic.html#abdac28f51feb6ae08a7cb43f39e68e02',1,'cljonic::get(const C &amp;collection, const K &amp;key) noexcept -&gt; decltype(collection(key))'],['../namespacecljonic.html#a52f18313932d99688d352d903d30b7cd',1,'cljonic::get(const C &amp;collection, const K &amp;key, const V &amp;fallback) noexcept -&gt; decltype(collection(key, fallback))']]]
+  ['get_0',['get',['../namespacecljonic.html#a5619a9d49633aabff9b98aee1b381151',1,'cljonic']]]
 ];
