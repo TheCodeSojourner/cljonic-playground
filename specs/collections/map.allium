@@ -32,7 +32,7 @@ entity Map {
     pack_construction_requires_at_least_one_entry: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_associative_lookup: Boolean
-    supports_associative_fallback_lookup: Boolean
+    supports_default_fallback_lookup: Boolean
     supports_lookup_capability: Boolean
     supports_associative_capability: Boolean
     seqable_lifecycle_is_deferred: Boolean
@@ -187,8 +187,8 @@ entity Map {
         this.supports_associative_lookup = true
     }
 
-    invariant SupportsAssociativeFallbackLookup {
-        this.supports_associative_fallback_lookup = true
+    invariant SupportsDefaultFallbackLookup {
+        this.supports_default_fallback_lookup = true
     }
 
     invariant SupportsLookupCapability {

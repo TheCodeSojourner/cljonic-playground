@@ -32,7 +32,7 @@ entity Set {
     compile_time_duplicate_construction_is_rejected: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_membership_lookup: Boolean
-    supports_membership_fallback_lookup: Boolean
+    supports_default_fallback_lookup: Boolean
     supports_lookup_capability: Boolean
     rejects_associative_capability: Boolean
     seqable_lifecycle_is_deferred: Boolean
@@ -180,8 +180,8 @@ entity Set {
         this.supports_membership_lookup = true
     }
 
-    invariant SupportsMembershipFallbackLookup {
-        this.supports_membership_fallback_lookup = true
+    invariant SupportsDefaultFallbackLookup {
+        this.supports_default_fallback_lookup = true
     }
 
     invariant SupportsLookupCapability {

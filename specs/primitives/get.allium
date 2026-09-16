@@ -7,14 +7,14 @@ entity Get {
     no_exceptions: Boolean
     single_threaded_execution_model: Boolean
     referential_transparency: Boolean
-    supports_fallback_argument: Boolean
+    supports_default_fallback: Boolean
 
     invariant GetFreeFunctionSupported {
         this.supports_get_free_function = true
     }
 
-    invariant SupportsFallbackArgument {
-        this.supports_fallback_argument = true
+    invariant SupportsDefaultFallback {
+        this.supports_default_fallback = true
     }
 
     invariant NoHeapAllocation {
