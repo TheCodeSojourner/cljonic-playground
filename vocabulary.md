@@ -315,7 +315,7 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### MapEntry
-- **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value. MapEntry is also an explicitly approved fixed two-element sequence: its first element is the key, its second element is the value, and its count is always two. Its key satisfies `NothrowStableEqualityComparable`; its value satisfies `NothrowCollectionElement`.
+- **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value. Its key and value are named fields; typed `key` and `val` free functions are the planned user-facing accessors. Any future fixed two-element sequence behavior remains deferred until an indexed result representation is approved.
 - **Deprecated Synonyms:** map entry, key-value entry
 - **Related:** Map, Lookup, Seqable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -420,23 +420,15 @@ govern stored collection building blocks used across all higher-order algorithms
 ### CopyableElement
 - **Definition:** A user-defined type admissible to a cljonic storage boundary when it is default-initializable and copyable, without requiring the copy operations to be non-throwing. This is the broader storage-admission gate that underpins the stricter non-throwing form used by bounded collections.
 - **Deprecated Synonyms:** copyable collection element, default-initializable copyable type
-- **Related:** NothrowCollectionElement, NothrowCopyableElement, CopyOnModifyCollection, NoExceptionConstraint
+- **Related:** NothrowCollectionElement, CopyOnModifyCollection, NoExceptionConstraint
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `CopyableElement<int>` is satisfied, and a user-defined type with a throwing copy constructor does not satisfy the stricter `NothrowCollectionElement` rule even if it remains copyable.
-
-
-### NothrowCopyableElement
-- **Definition:** The non-throwing specialization of `CopyableElement`, requiring a type to be copyable and to provide default construction, copy construction, copy assignment, and destruction all as `noexcept`. This is the storage-admission concept used when a collection guarantees non-throwing lifetime and copy semantics.
-- **Deprecated Synonyms:** nothrow copyable element, non-throwing copyable element
-- **Related:** CopyableElement, NothrowCollectionElement, CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage
-- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `NothrowCopyableElement<int>` is satisfied, while a type with a throwing copy assignment is rejected even if it remains structurally copyable.
 
 
 ### NothrowCollectionElement
 - **Definition:** A user-defined type admissible for storage in a cljonic collection because its default construction, copy construction, copy assignment, and destruction are all non-throwing. This storage-admission capability is independent of equality, ordering, hashing, parsing, traversal, and other operation-specific capabilities.
 - **Deprecated Synonyms:** nothrow collection element, non-throwing collection element
-- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct, CopyableElement, NothrowCopyableElement
+- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct, CopyableElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Vector<T, N>`, `Set<T, N>`, or `Queue<T, N>` element, and a `Map<K, V, N>` key or value, must satisfy `NothrowCollectionElement` before storage admission.
 
@@ -530,11 +522,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### CallableLookup
-- **Definition:** Invocation of a collection instance via `operator()` providing concise read-only lookup with optional fallback default, behaviorally equivalent to `get`.
+- **Definition:** Invocation of a collection instance via `operator()` providing concise read-only lookup with an optional fallback argument that defaults to the collection's default lookup result, behaviorally equivalent to `get`.
 - **Deprecated Synonyms:** callable collection, functional lookup syntax, operator() lookup
 - **Related:** SentinelBasedAccess, DefaultElement, Indexed, Lookup
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `xs(2)` on a Vector, `m(key)` on a Map, `s(val)` on a Set, and `text(2)` on a String invoke callable lookup without mutating the collection; each is behaviorally equivalent to the corresponding `get` overload.
+- **Examples:** `xs(2)` on a Vector, `m(key)` on a Map, `s(val)` on a Set, and `text(2)` on a String invoke callable lookup without mutating the collection; each uses the default fallback and is behaviorally equivalent to `get` without an explicit fallback.
 
 
 ### LinearScan
