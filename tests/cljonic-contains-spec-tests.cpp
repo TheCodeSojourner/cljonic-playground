@@ -4,11 +4,12 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
-TEST_CASE("Contains free function operates on each collection lookup domain", "[contains]") {
+TEST_CASE("Contains free function operates on each supported lookup or indexed domain", "[contains]") {
     using cljonic::assoc;
     using cljonic::conj;
     using cljonic::contains;
     using cljonic::Map;
+    using cljonic::Range;
     using cljonic::Set;
     using cljonic::String;
     using cljonic::Vector;
@@ -16,7 +17,7 @@ TEST_CASE("Contains free function operates on each collection lookup domain", "[
     TRACE_ID("entity-fields.Contains");
     TRACE_ID("invariant.Contains.ContainsFreeFunctionSupported");
     TRACE_ID("invariant.Contains.ReturnsBooleanMembership");
-    TRACE_ID("invariant.Contains.TestsCollectionLookupDomain");
+    TRACE_ID("invariant.Contains.TestsApplicableLookupOrIndexedDomain");
     TRACE_ID("invariant.Contains.NoHeapAllocation");
     TRACE_ID("invariant.Contains.NoRtti");
     TRACE_ID("invariant.Contains.NoExceptions");
@@ -50,6 +51,12 @@ TEST_CASE("Contains free function operates on each collection lookup domain", "[
     STATIC_REQUIRE(contains(st, 2U));
     STATIC_REQUIRE_FALSE(contains(st, 3U));
 
+    // Range: available bounded-prefix index.
+    constexpr Range<int> r{0, 5};
+    STATIC_REQUIRE(contains(r, 0U));
+    STATIC_REQUIRE(contains(r, 4U));
+    STATIC_REQUIRE_FALSE(contains(r, 5U));
+
     // Runtime forms.
     const auto m_runtime = assoc(Map<int, int, 4>{}, 7, 70);
     CHECK(contains(m_runtime, 7));
@@ -66,4 +73,8 @@ TEST_CASE("Contains free function operates on each collection lookup domain", "[
     const auto st_runtime = String<8>{"xy"};
     CHECK(contains(st_runtime, 1U));
     CHECK_FALSE(contains(st_runtime, 2U));
+
+    const auto r_runtime = Range<int>{0, 3};
+    CHECK(contains(r_runtime, 2U));
+    CHECK_FALSE(contains(r_runtime, 3U));
 }

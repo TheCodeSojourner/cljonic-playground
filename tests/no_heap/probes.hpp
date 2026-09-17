@@ -16,13 +16,16 @@ namespace cljonic::no_heap::probes {
 [[nodiscard]] auto count_probe() noexcept -> bool;
 [[nodiscard]] auto disj_probe() noexcept -> bool;
 [[nodiscard]] auto dissoc_probe() noexcept -> bool;
+[[nodiscard]] auto fits_into_probe() noexcept -> bool;
 [[nodiscard]] auto get_probe() noexcept -> bool;
+[[nodiscard]] auto into_probe() noexcept -> bool;
 [[nodiscard]] auto is_empty_probe() noexcept -> bool;
 [[nodiscard]] auto map_entry_probe() noexcept -> bool;
 [[nodiscard]] auto map_probe() noexcept -> bool;
 [[nodiscard]] auto peek_probe() noexcept -> bool;
 [[nodiscard]] auto pop_probe() noexcept -> bool;
 [[nodiscard]] auto queue_probe() noexcept -> bool;
+[[nodiscard]] auto range_probe() noexcept -> bool;
 [[nodiscard]] auto set_probe() noexcept -> bool;
 [[nodiscard]] auto string_probe() noexcept -> bool;
 
