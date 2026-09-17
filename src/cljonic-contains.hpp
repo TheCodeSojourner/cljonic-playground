@@ -6,18 +6,19 @@
 namespace cljonic {
 
 /** \anchor Contains
- * \brief Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's `contains?`
- * predicate.
+ * \brief Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure's
+ * `contains?` predicate.
  *
- * The meaning of the argument follows the collection kind: - Map: tests key presence (`contains(m, key)` is true when
- * key is present). - Set: tests element presence (`contains(s, value)` is true when value is a
+ * The meaning of the argument follows the source kind: - Map: tests key presence (`contains(m, key)` is true when key
+ * is present). - Set: tests element presence (`contains(s, value)` is true when value is a
  *   member).
  * - Vector / String: tests whether a numeric index is in range
  *   (`contains(xs, index)` is true when index is valid, like Clojure's
  *   `contains?` over vector/string indices).
+ * - Range: tests whether a numeric index is available in the bounded prefix.
  *
- * `contains` never performs a default-returning access; it only answers the membership question for the collection's
- * lookup domain.
+ * `contains` never performs a default-returning access; it only answers whether the supplied argument belongs to the
+ * supported source's membership domain.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -31,6 +32,7 @@ namespace cljonic {
  *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
  *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
  *   constexpr auto st_const = String<8>{"abc"};
+ *   constexpr auto r_const = Range{0, 5};
  *   static_assert(contains(v_const, 0U));
  *   static_assert(!contains(v_const, 9U));
  *   static_assert(contains(m_const, 1));
@@ -38,6 +40,7 @@ namespace cljonic {
  *   static_assert(contains(s_const, 5));
  *   static_assert(!contains(s_const, 8));
  *   static_assert(contains(st_const, 1U));
+ *   static_assert(contains(r_const, 4U));
  *
  *   // Runtime demonstration.
  *   auto v_runtime = Vector<int, 4>{10, 20};

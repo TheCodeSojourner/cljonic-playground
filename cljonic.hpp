@@ -70,14 +70,19 @@
  *
  * ## Aliases
  *
- * | Namespace | "using" C++ Statement | |-----------|-------------------------| | \ref Namespace_Core "core" | using
- * **core** = cljonic::core; | | \ref Namespace_Set "set" | using **set** = cljonic::set; | | \ref Namespace_String
- * "string" | using **string** = cljonic::string; |
+ * Namespace		       | "using" C++ Statement ------------------------------ |
+ * --------------------------------------------- \ref Namespace_Core "Core"     | using **core** = cljonic::core; \ref
+ * Namespace_Set "Set"   | using **set** = cljonic::set; \ref Namespace_String "String" | using **string** =
+ * cljonic::string;
  *
  * ## Collection Types
  *
  * - \ref Map "cljonic::Map" - \ref MapEntry "cljonic::MapEntry" - \ref Queue "cljonic::Queue" - \ref Set
  * "cljonic::Set" - \ref String "cljonic::String" - \ref Vector "cljonic::Vector"
+ *
+ * ## Producer Types
+ *
+ * - \ref Range "cljonic::Range"
  *
  * ## Core Functions
  *
@@ -118,19 +123,20 @@
  * Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
  * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy "EqualBy", \ref
  * Core_Every "Every" - \ref Core_Filter "Filter", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize",
- * \ref Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy" - \ref Get "get" - \ref Core_Identical
- * "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref
- * Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Core_IsDistinct "IsDistinct", \ref
- * Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull "IsFull", \ref Core_Iterate "Iterate" -
- * \ref Core_Juxt "Juxt" - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy
- * "LastIndexOfBy" - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref
- * Core_MinBy "MinBy" - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref Core_NotEvery "NotEvery", \ref
- * Core_Nth "Nth", \ref Core_Nth_M "Nth_M" - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
- * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop" - \ref Core_Reduce "Reduce", \ref
- * Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse" -
- * \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort", \ref Core_SortBy
- * "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs "Subs" - \ref Core_Take
- * "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
+ * Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into" - \ref Get "get"
+ * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy
+ * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into" - \ref
+ * Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull
+ * "IsFull", \ref Core_Iterate "Iterate" - \ref Core_Juxt "Juxt" - \ref Core_Last "Last", \ref Core_LastIndexOf
+ * "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy" - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy
+ * "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy" - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref
+ * Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M" - \ref Core_Partition "Partition", \ref
+ * Core_PartitionAll "PartitionAll", \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop" - \ref
+ * Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace "Replace",
+ * \ref Core_Reverse "Reverse" - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref
+ * Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref
+ * Core_Subs "Subs" - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref
+ * Core_TakeWhile "TakeWhile"
  *
  * ## Set Functions
  *
@@ -239,6 +245,24 @@ template <typename T, std::size_t CapacityValue>
 inline constexpr bool static_extent_fits_v =
     static_extent_v<T> == std::dynamic_extent || static_extent_v<T> <= CapacityValue;
 
+// A closed-world tag distinguishing producer families, parallel to collection_kind
+// but for the separate producer nominal domain (cljonic_source ≡ collection ∨ producer).
+enum class producer_kind { none, range };
+
+// The unspecialized form rejects types by default. Each supported producer
+// specializes this trait with its nominal identity and producer kind.
+template <typename T>
+struct producer_traits {
+    static constexpr bool is_cljonic_producer = false;
+    static constexpr producer_kind kind = producer_kind::none;
+};
+
+template <typename T>
+inline constexpr bool is_cljonic_producer_v = producer_traits<std::remove_cvref_t<T>>::is_cljonic_producer;
+
+template <typename T>
+inline constexpr producer_kind producer_kind_of_v = producer_traits<std::remove_cvref_t<T>>::kind;
+
 } // namespace concepts_detail
 
 namespace concepts {
@@ -294,6 +318,21 @@ concept NothrowStableEqualityComparable = StableEqualityComparable<T> && Nothrow
 template <typename T>
 concept CljonicCollection = concepts_detail::is_cljonic_collection_v<T>;
 
+/** Gates types admitted to the separate producer nominal domain through
+ *  cljonic-owned trait specialization, distinct from CljonicCollection. */
+template <typename T>
+concept CljonicProducer = concepts_detail::is_cljonic_producer_v<T>;
+
+/** Nominal identity gate for Range producer types. */
+template <typename T>
+concept CljonicRange =
+    CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::range);
+
+/** Admits either a stored collection or a producer to the combined source
+ *  domain used by materialization operations (`into`, `fits_into`). */
+template <typename T>
+concept CljonicSource = CljonicCollection<T> || CljonicProducer<T>;
+
 /** Nominal identity gate for Vector collection types. */
 template <typename T>
 concept CljonicVector =
@@ -324,11 +363,11 @@ concept CljonicString =
 // ============================================================================
 
 /** Requires that an admitted nominal collection provides non-throwing
- * is_empty() and count() sequence observation. */
+ * is_empty() and count() sequence observation, with count() returning std::size_t. */
 template <typename C>
 concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
     { c.is_empty() } noexcept -> std::same_as<bool>;
-    { c.count() } noexcept -> std::integral;
+    { c.count() } noexcept -> std::same_as<std::size_t>;
 };
 
 /** Requires that an admitted collection provides callable indexed lookup
@@ -358,6 +397,26 @@ concept AssociativeCollection =
         { c.can_assoc(key) } noexcept -> std::same_as<bool>;
         { c.assoc(key, value) } noexcept -> std::same_as<C>;
     };
+
+/** Requires that an admitted producer provides non-throwing count() effective-size
+ *  observation, returning std::size_t. count() for a producer is a conservative
+ *  materialization maximum (saturated at the synthesis cap), not necessarily the
+ *  true unsaturated span. */
+template <typename C>
+concept SequenceableProducer = CljonicProducer<C> && requires(const C& c) {
+    { c.count() } noexcept -> std::same_as<std::size_t>;
+};
+
+/** Requires that an admitted producer provides the contains(i) index-in-range predicate
+ *  over the available bounded prefix, in O(1) without traversal (e.g. Range). Unlike
+ *  IndexedCollection, this does not require callable value access: a
+ *  Range is Indexed but not IFn (invocable), unlike Vector/Map/Set. Positional value
+ *  retrieval is deferred future work. Cycle and Iterate never qualify; Repeat and
+ *  Repeatedly never qualify either (they are not efficiently indexed in Clojure). */
+template <typename C>
+concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t i) {
+    { c.contains(i) } noexcept -> std::same_as<bool>;
+};
 
 } // namespace concepts
 
@@ -534,18 +593,19 @@ template <typename C, typename T>
 namespace cljonic {
 
 /** \anchor Contains
- * \brief Tests whether its argument belongs to a collection's lookup domain, mirroring Clojure's `contains?`
- * predicate.
+ * \brief Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure's
+ * `contains?` predicate.
  *
- * The meaning of the argument follows the collection kind: - Map: tests key presence (`contains(m, key)` is true when
- * key is present). - Set: tests element presence (`contains(s, value)` is true when value is a
+ * The meaning of the argument follows the source kind: - Map: tests key presence (`contains(m, key)` is true when key
+ * is present). - Set: tests element presence (`contains(s, value)` is true when value is a
  *   member).
  * - Vector / String: tests whether a numeric index is in range
  *   (`contains(xs, index)` is true when index is valid, like Clojure's
  *   `contains?` over vector/string indices).
+ * - Range: tests whether a numeric index is available in the bounded prefix.
  *
- * `contains` never performs a default-returning access; it only answers the membership question for the collection's
- * lookup domain.
+ * `contains` never performs a default-returning access; it only answers whether the supplied argument belongs to the
+ * supported source's membership domain.
  *
  * \b Examples
  * ~~~~~{.cpp}
@@ -559,6 +619,7 @@ namespace cljonic {
  *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
  *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
  *   constexpr auto st_const = String<8>{"abc"};
+ *   constexpr auto r_const = Range{0, 5};
  *   static_assert(contains(v_const, 0U));
  *   static_assert(!contains(v_const, 9U));
  *   static_assert(contains(m_const, 1));
@@ -566,6 +627,7 @@ namespace cljonic {
  *   static_assert(contains(s_const, 5));
  *   static_assert(!contains(s_const, 8));
  *   static_assert(contains(st_const, 1U));
+ *   static_assert(contains(r_const, 4U));
  *
  *   // Runtime demonstration.
  *   auto v_runtime = Vector<int, 4>{10, 20};
@@ -623,9 +685,11 @@ namespace cljonic {
  *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
  *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
  *   constexpr auto q_const = conj(Queue<int, 4>{}, 9);
+ *   constexpr Range<int> r_const{0, 5};
  *   static_assert(count(v_const) == 3U);
  *   static_assert(count(m_const) == 1U);
  *   static_assert(count(q_const) == 1U);
+ *   static_assert(count(r_const) == 5U);
  *
  *   // Runtime demonstration.
  *   auto v_runtime = Vector<int, 4>{10, 20};
@@ -635,7 +699,8 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <concepts::SequenceableCollection C>
+template <typename C>
+    requires concepts::SequenceableCollection<C> || concepts::SequenceableProducer<C>
 [[nodiscard]] constexpr auto count(const C& collection) noexcept -> std::size_t {
     return collection.count();
 }
@@ -723,6 +788,34 @@ template <typename C, typename K>
 
 #endif // CLJONIC_DISSOC_HPP
 // End cljonic-dissoc.hpp
+// Begin cljonic-fits-into.hpp
+#pragma once
+
+
+namespace cljonic {
+
+/** \anchor FitsInto
+ * \brief The non-throwing, non-allocating materialization-completeness preflight for \ref Into "into".
+ *
+ * Reports whether appending the complete \p source to \p destination fits within the destination's capacity, using the
+ * same cardinality semantics as `into`. Scoped to `Vector` destinations in this increment.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ constexpr Vector<int, 8> destination{};
+ constexpr Range<int> source{0, 5};
+ static_assert(fits_into(destination, source));
+ ~~~~~
+ */
+template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
+[[nodiscard]] constexpr auto fits_into(const Dest& destination, const Source& source) noexcept -> bool {
+    return (destination.count() + source.count()) <= Dest::capacity();
+}
+
+} // namespace cljonic
+// End cljonic-fits-into.hpp
 // Begin cljonic-get.hpp
 #ifndef CLJONIC_GET_HPP
 #define CLJONIC_GET_HPP
@@ -778,6 +871,44 @@ template <typename C, typename K,
 } // namespace cljonic
 
 #endif // CLJONIC_GET_HPP// End cljonic-get.hpp
+// Begin cljonic-into.hpp
+#pragma once
+
+
+namespace cljonic {
+
+/** \anchor Into
+ * \brief Materializes a \ref CljonicSource "source" (collection or producer) into an explicit bounded destination,
+ * appending its elements.
+ *
+ * Returns an updated destination-typed collection and leaves both \p destination and \p source unchanged. An unbounded
+ * or oversized source produces a deterministic bounded prefix limited by the destination's remaining capacity; a
+ * finite source that fits materializes completely. Scoped to `Vector` destinations in this increment.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ constexpr Vector<int, 8> destination{};
+ constexpr Range<int> source{0, 5};
+ constexpr auto result = into(destination, source);
+ static_assert(count(result) == 5U);
+ ~~~~~
+ */
+template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
+[[nodiscard]] constexpr auto into(const Dest& destination, const Source& source) noexcept -> Dest {
+    Dest result = destination;
+    for (auto&& item : source) {
+        if (!result.can_assoc(result.count())) {
+            break;
+        }
+        result = result.assoc(result.count(), item);
+    }
+    return result;
+}
+
+} // namespace cljonic
+// End cljonic-into.hpp
 // Begin cljonic-is-empty.hpp
 #ifndef CLJONIC_IS_EMPTY_HPP
 #define CLJONIC_IS_EMPTY_HPP
@@ -1435,6 +1566,188 @@ struct collection_traits<Queue<T, CapacityValue>> {
 
 } // namespace cljonic::concepts_detail
 // End cljonic-queue.hpp
+// Begin cljonic-range.hpp
+#pragma once
+
+#include <concepts>
+#include <cstddef>
+#include <type_traits>
+
+
+namespace cljonic {
+
+/** \anchor Range
+ * \b Range is a bounded producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end
+ * by a fixed \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking
+ * precedence over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p
+ * end produces an empty range.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero
+   // arguments.
+   [[maybe_unused]] constexpr Range<int> empty{};
+
+   // Single argument is the exclusive end; start defaults to 0, step to 1.
+   [[maybe_unused]] constexpr auto to_five = Range{5};
+
+   // Explicit start and end; step still defaults to 1.
+   [[maybe_unused]] constexpr auto two_to_five = Range{2, 5};
+
+   // Explicit start, end, and step.
+   [[maybe_unused]] constexpr auto evens = Range{0, 10, 2};
+
+   // A zero step repeats start indefinitely rather than being empty.
+   [[maybe_unused]] constexpr auto repeating = Range{0, 5, 0};
+
+   // A billion elements exceeds the system's allowed maximum, so only that
+   // maximum number of elements is available.
+   [[maybe_unused]] constexpr auto huge = Range{1000000000L};
+ }
+ ~~~~~
+ */
+template <std::signed_integral T>
+class Range {
+  public:
+    using value_type = T;
+
+    /** A bounded, generating const iterator used by free-function observation
+     *  (e.g. \ref Into "into"); it does not expose start/end/step parameters. */
+    class const_iterator {
+      public:
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+
+        constexpr const_iterator() noexcept = default;
+
+        constexpr const_iterator(T current, std::size_t remaining, T step) noexcept
+            : current_(current), remaining_(remaining), step_(step) {
+        }
+
+        [[nodiscard]] constexpr auto operator*() const noexcept -> T {
+            return current_;
+        }
+
+        constexpr auto operator++() noexcept -> const_iterator& {
+            if (remaining_ > 1U) {
+                current_ = static_cast<T>(current_ + step_);
+            }
+            --remaining_;
+            return *this;
+        }
+
+        constexpr auto operator++(int) noexcept -> const_iterator {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+
+        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
+            -> bool {
+            return lhs.remaining_ == rhs.remaining_;
+        }
+
+      private:
+        T current_{};
+        std::size_t remaining_{0U};
+        T step_{};
+    };
+
+    constexpr Range() noexcept : start_(T{0}), end_(T{0}), step_(T{1}) {
+    }
+
+    constexpr explicit Range(T end) noexcept : start_(T{0}), end_(end), step_(T{1}) {
+    }
+
+    constexpr Range(T start, T end) noexcept : start_(start), end_(end), step_(T{1}) {
+    }
+
+    constexpr Range(T start, T end, T step) noexcept : start_(start), end_(end), step_(step) {
+    }
+
+    /** Conservative materialization size: the synthesis cap for a zero step, otherwise the
+     *  exact finite cardinality saturated at the synthesis cap. */
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return step_ == T{0} ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE : saturate(nonzero_step_extent());
+    }
+
+    /** Index-in-range predicate over the available bounded prefix; O(1), no traversal. */
+    [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
+        return index < count();
+    }
+
+    /** Bounded generating iteration up to the effective size returned by count(). */
+    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+        return const_iterator{start_, count(), step_};
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+        return const_iterator{T{}, 0U, T{}};
+    }
+
+  private:
+    using ExtentType = std::make_unsigned_t<T>;
+
+    /** Caps an internal extent at the public materialization maximum. */
+    [[nodiscard]] static constexpr auto saturate(ExtentType raw_count) noexcept -> std::size_t {
+        return raw_count > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
+                   ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
+                   : static_cast<std::size_t>(raw_count);
+    }
+
+    /** Converts a signed step to an unsigned magnitude without signed overflow. */
+    [[nodiscard]] static constexpr auto magnitude(T value) noexcept -> ExtentType {
+        const auto unsigned_value = static_cast<ExtentType>(value);
+        return value < T{0} ? ExtentType{0} - unsigned_value : unsigned_value;
+    }
+
+    /** Computes how many stepped positions fit inside an unsigned span. */
+    [[nodiscard]] constexpr auto extent_from_span(ExtentType span) const noexcept -> ExtentType {
+        const auto step = magnitude(step_);
+        return (span / step) + (span % step == ExtentType{0} ? ExtentType{0} : ExtentType{1});
+    }
+
+    /** Chooses the finite extent calculation after zero-step handling. */
+    [[nodiscard]] constexpr auto nonzero_step_extent() const noexcept -> ExtentType {
+        return step_ > T{0} ? ascending_extent() : descending_extent();
+    }
+
+    /** Computes the finite extent for a range moving upward. */
+    [[nodiscard]] constexpr auto ascending_extent() const noexcept -> ExtentType {
+        if (start_ >= end_) {
+            return ExtentType{0};
+        }
+        return extent_from_span(static_cast<ExtentType>(end_) - static_cast<ExtentType>(start_));
+    }
+
+    /** Computes the finite extent for a range moving downward. */
+    [[nodiscard]] constexpr auto descending_extent() const noexcept -> ExtentType {
+        if (end_ >= start_) {
+            return ExtentType{0};
+        }
+        return extent_from_span(static_cast<ExtentType>(start_) - static_cast<ExtentType>(end_));
+    }
+
+    T start_;
+    T end_;
+    T step_;
+};
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename T>
+struct producer_traits<Range<T>> {
+    static constexpr bool is_cljonic_producer = true;
+    static constexpr producer_kind kind = producer_kind::range;
+};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-range.hpp
 // Begin cljonic-set.hpp
 #ifndef CLJONIC_SET_HPP
 #define CLJONIC_SET_HPP

@@ -72,6 +72,24 @@ template <typename T, std::size_t CapacityValue>
 inline constexpr bool static_extent_fits_v =
     static_extent_v<T> == std::dynamic_extent || static_extent_v<T> <= CapacityValue;
 
+// A closed-world tag distinguishing producer families, parallel to collection_kind
+// but for the separate producer nominal domain (cljonic_source ≡ collection ∨ producer).
+enum class producer_kind { none, range };
+
+// The unspecialized form rejects types by default. Each supported producer
+// specializes this trait with its nominal identity and producer kind.
+template <typename T>
+struct producer_traits {
+    static constexpr bool is_cljonic_producer = false;
+    static constexpr producer_kind kind = producer_kind::none;
+};
+
+template <typename T>
+inline constexpr bool is_cljonic_producer_v = producer_traits<std::remove_cvref_t<T>>::is_cljonic_producer;
+
+template <typename T>
+inline constexpr producer_kind producer_kind_of_v = producer_traits<std::remove_cvref_t<T>>::kind;
+
 } // namespace concepts_detail
 
 namespace concepts {
@@ -127,6 +145,21 @@ concept NothrowStableEqualityComparable = StableEqualityComparable<T> && Nothrow
 template <typename T>
 concept CljonicCollection = concepts_detail::is_cljonic_collection_v<T>;
 
+/** Gates types admitted to the separate producer nominal domain through
+ *  cljonic-owned trait specialization, distinct from CljonicCollection. */
+template <typename T>
+concept CljonicProducer = concepts_detail::is_cljonic_producer_v<T>;
+
+/** Nominal identity gate for Range producer types. */
+template <typename T>
+concept CljonicRange =
+    CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::range);
+
+/** Admits either a stored collection or a producer to the combined source
+ *  domain used by materialization operations (`into`, `fits_into`). */
+template <typename T>
+concept CljonicSource = CljonicCollection<T> || CljonicProducer<T>;
+
 /** Nominal identity gate for Vector collection types. */
 template <typename T>
 concept CljonicVector =
@@ -157,11 +190,11 @@ concept CljonicString =
 // ============================================================================
 
 /** Requires that an admitted nominal collection provides non-throwing
- * is_empty() and count() sequence observation. */
+ * is_empty() and count() sequence observation, with count() returning std::size_t. */
 template <typename C>
 concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
     { c.is_empty() } noexcept -> std::same_as<bool>;
-    { c.count() } noexcept -> std::integral;
+    { c.count() } noexcept -> std::same_as<std::size_t>;
 };
 
 /** Requires that an admitted collection provides callable indexed lookup
@@ -191,6 +224,26 @@ concept AssociativeCollection =
         { c.can_assoc(key) } noexcept -> std::same_as<bool>;
         { c.assoc(key, value) } noexcept -> std::same_as<C>;
     };
+
+/** Requires that an admitted producer provides non-throwing count() effective-size
+ *  observation, returning std::size_t. count() for a producer is a conservative
+ *  materialization maximum (saturated at the synthesis cap), not necessarily the
+ *  true unsaturated span. */
+template <typename C>
+concept SequenceableProducer = CljonicProducer<C> && requires(const C& c) {
+    { c.count() } noexcept -> std::same_as<std::size_t>;
+};
+
+/** Requires that an admitted producer provides the contains(i) index-in-range predicate
+ *  over the available bounded prefix, in O(1) without traversal (e.g. Range). Unlike
+ *  IndexedCollection, this does not require callable value access: a
+ *  Range is Indexed but not IFn (invocable), unlike Vector/Map/Set. Positional value
+ *  retrieval is deferred future work. Cycle and Iterate never qualify; Repeat and
+ *  Repeatedly never qualify either (they are not efficiently indexed in Clojure). */
+template <typename C>
+concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t i) {
+    { c.contains(i) } noexcept -> std::same_as<bool>;
+};
 
 } // namespace concepts
 

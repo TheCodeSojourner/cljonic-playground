@@ -20,9 +20,11 @@ namespace cljonic {
  *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
  *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
  *   constexpr auto q_const = conj(Queue<int, 4>{}, 9);
+ *   constexpr Range<int> r_const{0, 5};
  *   static_assert(count(v_const) == 3U);
  *   static_assert(count(m_const) == 1U);
  *   static_assert(count(q_const) == 1U);
+ *   static_assert(count(r_const) == 5U);
  *
  *   // Runtime demonstration.
  *   auto v_runtime = Vector<int, 4>{10, 20};
@@ -32,7 +34,8 @@ namespace cljonic {
  * }
  * ~~~~~
  */
-template <concepts::SequenceableCollection C>
+template <typename C>
+    requires concepts::SequenceableCollection<C> || concepts::SequenceableProducer<C>
 [[nodiscard]] constexpr auto count(const C& collection) noexcept -> std::size_t {
     return collection.count();
 }
