@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-09-15
+last_updated: 2026-09-17
 status: draft
 ---
 
@@ -9,14 +9,17 @@ status: draft
 ## Current Scope
 
 The current implementation and tests cover the core collection types (`Vector`,
-`Map`, `Set`, `Queue`, and `String`), their direct construction, member-observation,
-callable forms, and current primitive free-function operations defined in Module 3.
-Semantic sequence operations remain deferred future work for every collection;
-const range traversal and read-only C++ interoperability are active infrastructure.
-Module 3 establishes the concrete, array-backed,
-bounded collection types, their contiguous storage strategies, linear scan lookup
-algorithms, swap-and-remove policies, and primitive free functions. These terms
-govern stored collection building blocks used across all higher-order algorithms.
+`Map`, `Set`, `Queue`, and `String`), the active `Range` producer, their direct
+construction, member-observation, callable collection forms, current primitive
+free-function operations, and explicit producer materialization through `into`
+and `fits_into`. Semantic sequence operations remain deferred future work for
+every collection; const range traversal and read-only C++ interoperability are
+active infrastructure. Module 3 establishes the concrete, array-backed, bounded
+collection types, their contiguous storage strategies, linear scan lookup
+algorithms, swap-and-remove policies, and primitive free functions. Module 4's
+active slice establishes `Range` and explicit producer materialization. These
+terms govern stored collection and producer building blocks used across all
+higher-order algorithms.
 
 ### Collection
 - **Definition:** A bounded cljonic value or data structure admitted to the closed nominal collection domain and governed by collection-specific capacity, access, failure, and value-semantic rules.
@@ -43,11 +46,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Indexed
-- **Definition:** A semantic capability for ordered, integer-indexed access to a collection's logical elements. An `Indexed` collection defines a bounded logical index domain, provides non-mutating default-returning access for that domain, and provides `contains` as the non-throwing, non-allocating index-membership predicate. Negative indexes are outside the domain when representable by the accepted index type. `Indexed` refines `Lookup` for the integer lookup domain.
+- **Definition:** A semantic capability for *efficient* (constant-time, non-traversing) integer-indexed access to a collection or producer's logical elements. An `Indexed` value defines a bounded logical index domain, provides non-mutating default-returning access for that domain, and provides `contains` as the non-throwing, non-allocating index-in-range predicate over that same integer domain. Negative indexes are outside the domain when representable by the accepted index type. `Indexed` refines `Lookup` for the integer lookup domain. `Indexed` is distinct from merely supporting positional access by traversal: a value that requires traversal to reach a position is not `Indexed`. `Indexed` also does not imply invocability (`IFn`, callable syntax): `Vector`/`Map`/`Set` are both `Indexed`/`Lookup`-family and invocable, but a producer such as `Range` can be `Indexed` without being invocable.
 - **Deprecated Synonyms:** indexed access, indexed collection access, index access capability
-- **Related:** Lookup, Contains, DefaultReturningResult, CapabilityConcept
+- **Related:** Lookup, Contains, DefaultReturningResult, CapabilityConcept, Range
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector` and `String` are `Indexed`; `contains(xs, i)` distinguishes an invalid index from a valid position whose value equals its default element.
+- **Examples:** `Vector`, `String`, and `Range` are `Indexed`; `contains(xs, i)` distinguishes an invalid index from a valid position whose value equals its default element. `Range`'s indexed access is arithmetic and O(1) over its available bounded prefix, but `Range` is not invocable like `Vector`.
 
 
 ### Lookup
@@ -211,11 +214,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Contains
-- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to a collection's lookup domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, and for indexed collections (vector/string) it tests index-in-range.
+- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to the applicable lookup or indexed domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, for indexed collections (vector/string) it tests index-in-range, and for `Range` it tests whether an index is within the available bounded prefix.
 - **Deprecated Synonyms:** `contains?`, contains predicate, key-presence check
-- **Related:** FreeFunction, Indexed, Lookup, PreflightPredicate, VerbPredicate
+- **Related:** FreeFunction, Indexed, Lookup, PreflightPredicate, VerbPredicate, IndexedProducer, Range
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `contains(m, key)` tests a map key, `contains(s, value)` tests set membership, and `contains(xs, index)` tests whether an indexed position is valid.
+- **Examples:** `contains(m, key)` tests a map key, `contains(s, value)` tests set membership, `contains(xs, index)` tests whether an indexed collection position is valid, and `contains(r, index)` tests whether a Range position is available.
 
 
 ### FitsInto
@@ -299,9 +302,9 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### Producer
-- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime.
+- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Producers vary in which capabilities they satisfy: `Range` is efficiently `Indexed` and efficiently counted (`count()` is O(1)); `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` are never efficiently `Indexed` and never efficiently counted, matching Clojure. A future producer MUST NOT claim `Indexed` unless its positional access is genuinely O(1), and being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
 - **Deprecated Synonyms:** sequence producer, source producer
-- **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue
+- **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `range`, `repeat`, `cycle`, `iterate`, and `repeatedly` are producer families when their requirements are active.
 
@@ -312,6 +315,14 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Related:** Producer, UnboundedProducer, OwningValue, ProducerMaterialization
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** An unbounded `range` operation may return a ProducerOnlyResult that must be materialized into an explicit bounded destination.
+
+
+### Range
+- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. `Range` exposes no canonical `start`/`end`/`step` observation; instead it is `Indexed`: `contains(r, i)` tests whether an index is within its available bounded prefix in O(1). Unlike `Vector`/`Map`/`Set`, `Range` is not invocable (not `IFn`); it exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
+- **Deprecated Synonyms:** range producer, arithmetic range
+- **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount, Contains, Indexed, CljonicRange
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `range(0, 5)` produces `0, 1, 2, 3, 4`; `range(0, 0, 0)` produces an infinite repetition of `0` rather than an empty range; when a range is larger than the system maximum, only the available bounded prefix is exposed.
 
 
 ### MapEntry
@@ -522,11 +533,11 @@ govern stored collection building blocks used across all higher-order algorithms
 
 
 ### CallableLookup
-- **Definition:** Invocation of a collection instance via `operator()` providing concise read-only lookup with an optional fallback argument that defaults to the collection's default lookup result, behaviorally equivalent to `get`.
-- **Deprecated Synonyms:** callable collection, functional lookup syntax, operator() lookup
+- **Definition:** Invocation of a collection instance via `operator()` providing concise read-only lookup with an optional fallback argument that defaults to the collection's default lookup result, behaviorally equivalent to `get`. CallableLookup mirrors Clojure's `IFn` invocability for `Vector`, `Map`, `Set`, and `String`; it MUST NOT be extended to a value that is not invocable in Clojure. A producer being `Indexed` does not by itself grant CallableLookup: `Range` is `Indexed` but not `IFn`, so it exposes no callable `operator()`.
+- **Deprecated Synonyms:** callable collection, functional lookup syntax, operator() lookup, IFn
 - **Related:** SentinelBasedAccess, DefaultElement, Indexed, Lookup
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `xs(2)` on a Vector, `m(key)` on a Map, `s(val)` on a Set, and `text(2)` on a String invoke callable lookup without mutating the collection; each uses the default fallback and is behaviorally equivalent to `get` without an explicit fallback.
+- **Examples:** `xs(2)` on a Vector, `m(key)` on a Map, `s(val)` on a Set, and `text(2)` on a String invoke callable lookup without mutating the collection; each uses the default fallback and is behaviorally equivalent to `get` without an explicit fallback. `Range<int>{0, 5}` has no such callable form.
 
 
 ### LinearScan
@@ -891,17 +902,33 @@ govern stored collection building blocks used across all higher-order algorithms
 ### CollectionKind
 - **Definition:** The closed discriminant used by nominal traits and concepts to distinguish the supported collection families.
 - **Deprecated Synonyms:** collection category, nominal collection kind
-- **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition
+- **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition, ProducerKind
 - **Usage:** Architecture, implementation, and tests
 - **Examples:** A collection trait classifies an admitted type as vector, map, set, queue, or string.
+
+
+### ProducerKind
+- **Definition:** The closed discriminant used by nominal producer traits and concepts to distinguish supported producer families.
+- **Deprecated Synonyms:** producer category, nominal producer kind
+- **Related:** ProducerConcept, CljonicProducer, CljonicRange, Producer, CollectionKind
+- **Usage:** Architecture, implementation, and tests
+- **Examples:** A producer trait classifies an admitted type as range in the current active slice, with repeat, cycle, iterate, and repeatedly reserved for future producer families.
 
 
 ### CollectionConcept
 - **Definition:** A C++20 concept that gates a type on its cljonic nominal collection identity (admission to the ClosedNominalCollectionDomain), rather than on structural similarity to an external container.
 - **Deprecated Synonyms:** nominal concept, public nominal concept
-- **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition, CollectionKind, CapabilityConcept, CljonicCollection
+- **Related:** ClosedNominalCollectionDomain, NominalCollectionRecognition, CollectionKind, CapabilityConcept, CljonicCollection, ProducerConcept
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `CljonicCollection<T>` is a CollectionConcept that depends on cljonic-owned trait admission.
+
+
+### ProducerConcept
+- **Definition:** A C++20 concept that gates a type on its cljonic nominal producer identity, parallel to CollectionConcept but admitted through the producer domain and ProducerKind classification rather than the ClosedNominalCollectionDomain.
+- **Deprecated Synonyms:** producer concept, nominal producer concept
+- **Related:** Producer, ProducerKind, CljonicProducer, CljonicRange, CljonicSource, CollectionConcept
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicProducer<T>` is a ProducerConcept that depends on cljonic-owned producer trait admission.
 
 
 ### CljonicCollection
@@ -952,10 +979,34 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Examples:** `CljonicString<String<16>>` is satisfied while an external container is not.
 
 
+### CljonicProducer
+- **Definition:** The C++ concept identifier implementing the ProducerConcept nominal-admission pattern: admission to the producer nominal identity through cljonic-owned trait specialization, parallel to but distinct from `CljonicCollection`.
+- **Deprecated Synonyms:** cljonic_producer, cljonic producer concept
+- **Related:** ProducerConcept, ProducerKind, CollectionConcept, CljonicCollection, CljonicSource, Producer, CljonicRange
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicProducer<Range<int>>` is satisfied while a stored collection type is not.
+
+
+### CljonicRange
+- **Definition:** The C++ concept identifier implementing the nominal producer identity for the Range producer family.
+- **Deprecated Synonyms:** cljonic_range, cljonic range concept
+- **Related:** CljonicProducer, Range, ProducerKind, ProducerConcept
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicRange<Range<int>>` is satisfied while `Vector<int, 4>` is not.
+
+
+### CljonicSource
+- **Definition:** The C++ concept identifier admitting either a stored collection or a producer to the combined source domain used by materialization operations: `CljonicCollection ∨ CljonicProducer`.
+- **Deprecated Synonyms:** cljonic_source, cljonic source concept
+- **Related:** CljonicCollection, CljonicProducer, Producer, ProducerMaterialization
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicSource<Range<int>>` and `CljonicSource<Vector<int, 4>>` are both satisfied; an external container is not.
+
+
 ### CapabilityConcept
-- **Definition:** A C++20 concept that expresses one of the named semantic capabilities a cljonic collection must expose (`Indexed`, `Lookup`, `Seqable`, or `Associative`) in order to participate in an operation, layered on top of nominal collection identity.
+- **Definition:** A C++20 concept that expresses one of the named semantic capabilities a cljonic collection or producer must expose (`Indexed`, `Lookup`, `Seqable`, or `Associative`) in order to participate in an operation, layered on top of nominal identity.
 - **Deprecated Synonyms:** capability concept, semantic capability gate
-- **Related:** CollectionConcept, Indexed, Lookup, Seqable, Associative, CapabilityPredicate, SequenceableCollection, IndexedCollection, LookupCollection, AssociativeCollection
+- **Related:** CollectionConcept, ProducerConcept, Indexed, Lookup, Seqable, Associative, CapabilityPredicate, SequenceableCollection, IndexedCollection, LookupCollection, AssociativeCollection, SequenceableProducer, IndexedProducer
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `SequenceableCollection<C>` is a CapabilityConcept requiring non-throwing `is_empty` and `count` observation.
 
@@ -990,6 +1041,22 @@ govern stored collection building blocks used across all higher-order algorithms
 - **Related:** CapabilityConcept, Associative, Lookup, SequenceableCollection, CljonicCollection, Contains, Assoc, CanAssoc
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `AssociativeCollection<C>` requires `c(k)` and `c.contains(k)`.
+
+
+### SequenceableProducer
+- **Definition:** The C++ concept identifier implementing the producer-domain baseline CapabilityConcept, requiring non-throwing `count()` effective-size observation on an admitted producer. `count()` for a producer is a conservative maximum (saturated at `CollectionMaximumElementCount` for an unbounded or oversized form), distinct from Clojure's `Counted` interface, which implies an exact O(1) size. SequenceableProducer does not imply `IndexedProducer`, `LookupCollection`, or any positional access; free-function observation remains the canonical producer access path for producers that are not `IndexedProducer`.
+- **Deprecated Synonyms:** sequenceable_cljonic_producer, sequenceable producer concept
+- **Related:** CapabilityConcept, CljonicProducer, CljonicRange, IndexedProducer, SequenceableCollection
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `SequenceableProducer<Range<int>>` requires only `r.count()`.
+
+
+### IndexedProducer
+- **Definition:** The C++ concept identifier implementing the `Indexed` CapabilityConcept for the producer domain, gated on `CljonicProducer` rather than `CljonicCollection`. It requires only `r.contains(i)` as the available-index predicate over the producer's bounded prefix, where `i` is an integer position, not a produced value. It deliberately does not require callable access, since a producer being `Indexed` does not imply it is invocable (`IFn`): `Range` is `Indexed` but not `IFn`, unlike `Vector`/`Map`/`Set`. Positional value retrieval (a `nth`-equivalent) remains deferred future work. Only producers with genuinely O(1) available-index testing may satisfy `IndexedProducer`; `Cycle`, `Iterate`, `Repeat`, and `Repeatedly` never do.
+- **Deprecated Synonyms:** indexed_cljonic_producer, indexed producer concept
+- **Related:** CapabilityConcept, CljonicProducer, CljonicRange, Indexed, IndexedCollection, Contains, SequenceableProducer
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `IndexedProducer<Range<int>>` requires `r.contains(i)`; testing whether a position is available in `Range<int>{0, 1000000000}` is O(1).
 
 
 ### StableEqualityComparable
