@@ -1,0 +1,77 @@
+-- allium: 3
+
+entity ProducerMaterialization {
+    into_requires_explicit_bounded_destination: Boolean
+    into_returns_new_destination_typed_collection: Boolean
+    into_leaves_destination_unchanged: Boolean
+    into_leaves_source_unchanged: Boolean
+    fits_into_is_non_throwing_non_allocating: Boolean
+    fits_into_predicts_into_completeness: Boolean
+    unbounded_source_materializes_bounded_prefix: Boolean
+    finite_source_materializes_complete_result_when_it_fits: Boolean
+    bounded_prefix_preserves_source_traversal_order: Boolean
+    count_is_exact_for_materialized_collection: Boolean
+    count_is_conservative_maximum_for_producer_without_traversal: Boolean
+    composed_producer_cardinality_uses_saturating_arithmetic: Boolean
+    composed_cardinality_bounded_by_collection_maximum_element_count: Boolean
+    materialization_source_domain_is_cljonic_source: Boolean
+
+    invariant IntoRequiresExplicitBoundedDestination {
+        this.into_requires_explicit_bounded_destination = true
+    }
+
+    invariant IntoReturnsNewDestinationTypedCollection {
+        this.into_returns_new_destination_typed_collection = true
+    }
+
+    invariant IntoLeavesDestinationUnchanged {
+        this.into_leaves_destination_unchanged = true
+    }
+
+    invariant IntoLeavesSourceUnchanged {
+        this.into_leaves_source_unchanged = true
+    }
+
+    invariant FitsIntoIsNonThrowingNonAllocating {
+        this.fits_into_is_non_throwing_non_allocating = true
+    }
+
+    invariant FitsIntoPredictsIntoCompleteness {
+        this.fits_into_predicts_into_completeness = true
+    }
+
+    invariant UnboundedSourceMaterializesBoundedPrefix {
+        this.unbounded_source_materializes_bounded_prefix = true
+    }
+
+    invariant FiniteSourceMaterializesCompleteResultWhenItFits {
+        this.finite_source_materializes_complete_result_when_it_fits = true
+    }
+
+    invariant BoundedPrefixPreservesSourceTraversalOrder {
+        this.bounded_prefix_preserves_source_traversal_order = true
+    }
+
+    invariant CountIsExactForMaterializedCollection {
+        this.count_is_exact_for_materialized_collection = true
+    }
+
+    invariant CountIsConservativeMaximumForProducerWithoutTraversal {
+        this.count_is_conservative_maximum_for_producer_without_traversal = true
+    }
+
+    invariant ComposedProducerCardinalityUsesSaturatingArithmetic {
+        this.composed_producer_cardinality_uses_saturating_arithmetic = true
+    }
+
+    invariant ComposedCardinalityBoundedByCollectionMaximumElementCount {
+        this.composed_cardinality_bounded_by_collection_maximum_element_count = true
+    }
+
+    invariant MaterializationSourceDomainIsCljonicSource {
+        this.materialization_source_domain_is_cljonic_source = true
+    }
+
+}
+
+actor ProducerMaterializationOperator { identified_by: ProducerMaterialization }

@@ -1,0 +1,147 @@
+-- allium: 3
+
+entity Range {
+    supports_header_only_distribution: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    owns_its_parameters: Boolean
+    does_not_own_result_storage: Boolean
+    does_not_borrow_source_or_callback: Boolean
+    referential_transparency: Boolean
+    default_start_is_zero: Boolean
+    default_step_is_one: Boolean
+    start_is_inclusive: Boolean
+    end_is_exclusive: Boolean
+    zero_step_produces_infinite_repetition_of_start: Boolean
+    zero_step_takes_precedence_over_empty_range: Boolean
+    nonzero_step_away_from_end_is_empty_range: Boolean
+    equal_start_and_end_with_nonzero_step_is_empty_range: Boolean
+    effective_size_is_conservative_maximum_without_traversal: Boolean
+    saturating_cardinality_bounded_by_collection_maximum_element_count: Boolean
+    span_arithmetic_avoids_signed_overflow: Boolean
+    unbounded_range_does_not_satisfy_stable_equality: Boolean
+    unbounded_equality_fails_at_compile_time: Boolean
+    contains_is_authoritative_available_index_predicate: Boolean
+    contains_is_constant_time: Boolean
+    does_not_expose_callable_operator: Boolean
+    get_and_lookup_are_excluded: Boolean
+    free_function_observation_is_canonical_access_path: Boolean
+    start_end_step_member_accessors_are_noncanonical: Boolean
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant OwnsItsParameters {
+        this.owns_its_parameters = true
+    }
+
+    invariant DoesNotOwnResultStorage {
+        this.does_not_own_result_storage = true
+    }
+
+    invariant DoesNotBorrowSourceOrCallback {
+        this.does_not_borrow_source_or_callback = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant DefaultStartIsZero {
+        this.default_start_is_zero = true
+    }
+
+    invariant DefaultStepIsOne {
+        this.default_step_is_one = true
+    }
+
+    invariant StartIsInclusive {
+        this.start_is_inclusive = true
+    }
+
+    invariant EndIsExclusive {
+        this.end_is_exclusive = true
+    }
+
+    invariant ZeroStepProducesInfiniteRepetitionOfStart {
+        this.zero_step_produces_infinite_repetition_of_start = true
+    }
+
+    invariant ZeroStepTakesPrecedenceOverEmptyRange {
+        this.zero_step_takes_precedence_over_empty_range = true
+    }
+
+    invariant NonzeroStepAwayFromEndIsEmptyRange {
+        this.nonzero_step_away_from_end_is_empty_range = true
+    }
+
+    invariant EqualStartAndEndWithNonzeroStepIsEmptyRange {
+        this.equal_start_and_end_with_nonzero_step_is_empty_range = true
+    }
+
+    invariant EffectiveSizeIsConservativeMaximumWithoutTraversal {
+        this.effective_size_is_conservative_maximum_without_traversal = true
+    }
+
+    invariant SaturatingCardinalityBoundedByCollectionMaximumElementCount {
+        this.saturating_cardinality_bounded_by_collection_maximum_element_count = true
+    }
+
+    invariant SpanArithmeticAvoidsSignedOverflow {
+        this.span_arithmetic_avoids_signed_overflow = true
+    }
+
+    invariant UnboundedRangeDoesNotSatisfyStableEquality {
+        this.unbounded_range_does_not_satisfy_stable_equality = true
+    }
+
+    invariant UnboundedEqualityFailsAtCompileTime {
+        this.unbounded_equality_fails_at_compile_time = true
+    }
+
+    invariant ContainsIsAuthoritativeAvailableIndexPredicate {
+        this.contains_is_authoritative_available_index_predicate = true
+    }
+
+    invariant ContainsIsConstantTime {
+        this.contains_is_constant_time = true
+    }
+
+    invariant DoesNotExposeCallableOperator {
+        this.does_not_expose_callable_operator = true
+    }
+
+    invariant GetAndLookupAreExcluded {
+        this.get_and_lookup_are_excluded = true
+    }
+
+    invariant FreeFunctionObservationIsCanonicalAccessPath {
+        this.free_function_observation_is_canonical_access_path = true
+    }
+
+    invariant StartEndStepMemberAccessorsAreNoncanonical {
+        this.start_end_step_member_accessors_are_noncanonical = true
+    }
+
+}
+
+actor RangeOperator { identified_by: Range }

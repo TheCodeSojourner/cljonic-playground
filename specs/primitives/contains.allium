@@ -8,7 +8,7 @@ entity Contains {
     single_threaded_execution_model: Boolean
     referential_transparency: Boolean
     returns_boolean_membership: Boolean
-    tests_collection_lookup_domain: Boolean
+    tests_applicable_lookup_or_indexed_domain: Boolean
 
     invariant ContainsFreeFunctionSupported {
         this.supports_contains_free_function = true
@@ -18,8 +18,8 @@ entity Contains {
         this.returns_boolean_membership = true
     }
 
-    invariant TestsCollectionLookupDomain {
-        this.tests_collection_lookup_domain = true
+    invariant TestsApplicableLookupOrIndexedDomain {
+        this.tests_applicable_lookup_or_indexed_domain = true
     }
 
     invariant NoHeapAllocation {
