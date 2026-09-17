@@ -110,19 +110,22 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">template</span> &lt;concepts::SequenceableCollection C&gt;</div>
-<div class="foldopen" id="foldopen00036" data-start="{" data-end="}">
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a33ef3cad32c48f7b361f8c9a9e554e67">   36</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a33ef3cad32c48f7b361f8c9a9e554e67">count</a>(<span class="keyword">const</span> C&amp; collection) <span class="keyword">noexcept</span> -&gt; std::size_t {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">return</span> collection.count();</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>}</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C&gt;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keyword">requires</span> <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">concepts::SequenceableCollection&lt;C&gt;</a> || <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_sequenceable_producer.html">concepts::SequenceableProducer&lt;C&gt;</a></div>
+<div class="foldopen" id="foldopen00039" data-start="{" data-end="}">
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="namespacecljonic.html#af5da07418b370bc5072eacf31957e0ee">   39</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#af5da07418b370bc5072eacf31957e0ee">count</a>(<span class="keyword">const</span> C&amp; collection) <span class="keyword">noexcept</span> -&gt; std::size_t {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordflow">return</span> collection.count();</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>}</div>
 </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>} <span class="comment">// namespace cljonic</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#endif </span><span class="comment">// CLJONIC_COUNT_HPP</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#endif </span><span class="comment">// CLJONIC_COUNT_HPP</span></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_sequenceable_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">cljonic::concepts::SequenceableCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00195">cljonic-concepts.hpp:195</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_sequenceable_producer_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_producer.html">cljonic::concepts::SequenceableProducer</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00233">cljonic-concepts.hpp:233</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a33ef3cad32c48f7b361f8c9a9e554e67"><div class="ttname"><a href="namespacecljonic.html#a33ef3cad32c48f7b361f8c9a9e554e67">cljonic::count</a></div><div class="ttdeci">constexpr auto count(const C &amp;collection) noexcept -&gt; std::size_t</div><div class="ttdoc">Returns the logical size (number of active elements) of a collection.</div><div class="ttdef"><b>Definition</b> <a href="#l00036">cljonic-count.hpp:36</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_af5da07418b370bc5072eacf31957e0ee"><div class="ttname"><a href="namespacecljonic.html#af5da07418b370bc5072eacf31957e0ee">cljonic::count</a></div><div class="ttdeci">constexpr auto count(const C &amp;collection) noexcept -&gt; std::size_t</div><div class="ttdoc">Returns the logical size (number of active elements) of a collection.</div><div class="ttdef"><b>Definition</b> <a href="#l00039">cljonic-count.hpp:39</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
