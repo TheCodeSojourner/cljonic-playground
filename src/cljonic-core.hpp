@@ -59,14 +59,20 @@
  *
  * ## Aliases
  *
- * | Namespace | "using" C++ Statement | |-----------|-------------------------| | \ref Namespace_Core "core" | using
- * **core** = cljonic::core; | | \ref Namespace_Set "set" | using **set** = cljonic::set; | | \ref Namespace_String
- * "string" | using **string** = cljonic::string; |
+ * Namespace                      | "using" C++ Statement
+ * ------------------------------ | ---------------------------------------------
+ * \ref Namespace_Core "Core"     | using **core** = cljonic::core;
+ * \ref Namespace_Set "Set"       | using **set** = cljonic::set;
+ * \ref Namespace_String "String" | using **string** = cljonic::string;
  *
  * ## Collection Types
  *
- * - \ref Map "cljonic::Map" - \ref MapEntry "cljonic::MapEntry" - \ref Queue "cljonic::Queue" - \ref Set
- * "cljonic::Set" - \ref String "cljonic::String" - \ref Vector "cljonic::Vector"
+ * - \ref Map "cljonic::Map"
+ * - \ref MapEntry "cljonic::MapEntry"
+ * - \ref Queue "cljonic::Queue"
+ * - \ref Set "cljonic::Set"
+ * - \ref String "cljonic::String"
+ * - \ref Vector "cljonic::Vector"
  *
  * ## Core Functions
  *
