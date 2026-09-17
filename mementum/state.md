@@ -1,54 +1,46 @@
 ## Session State
 
-- last_session_id: bc85a370-bf7b-4556-8401-5d062cdfaaf3
-- current_timestamp: 2026-09-16
+- last_session_id: 3ab452a3-bda1-4961-abea-c605ca05f1c0
+- current_timestamp: 2026-09-17
 - recover: 1
 - session_complete: true
 
 Task:
-1. Complete the spec-weed convergence pass across architecture, Allium specifications, tests, and implementation for the Associative capability increment.
-2. Preserve strict traceability and validate modular, single-header, and no-heap behavior.
+1. Implement the Module 4 `Range` producer and `Vector`-destination producer materialization (`into`, `fits_into`) end to end across requirements, vocabulary, architecture, specs, traceability, tests, source, generated single header, docs, and no-heap probes.
+2. Resolve follow-up semantic corrections for `Range`: zero-step behavior, bounded-prefix availability, `IndexedProducer` without `Lookup`/`IFn`, no `Range::operator()`, no public `start`/`end`/`step` accessors, and arithmetic that avoids signed overflow at extreme endpoints.
+3. Run final consistency passes among requirements, vocabulary, architecture, specs, tests, source, and docs, then finish the session with durable recovery state.
 
 Questions:
-1. None blocking this session.
-2. The remaining unstaged source/test/header changes are the approved Associative propagation increment and should be reviewed before merging.
+1. No blocking questions remain.
+2. User-confirmed semantic decisions: `Range` is a producer; it is efficiently indexed only for availability checks; it is not callable/`IFn`; `nth`/positional value retrieval remains deferred to Module 5.
+3. User asked for stepwise architecture finding repair and approved each item before moving on. Later vocabulary/spec/architecture weed/check passes converged to zero actionable findings.
 
 Decisions:
-1. The public capability names are `Indexed`, `Lookup`, `Seqable`, and `Associative`; they remain distinct except where an explicit requirement defines refinement.
-2. `Indexed` refines integer-key `Lookup`; `Seqable` remains lifecycle-independent and deferred until sequence requirements are implementation-backed.
-3. Vector satisfies `Indexed`, `Lookup`, and `Associative`; Map satisfies `Lookup` and `Associative`; Set satisfies `Lookup`; String satisfies `Indexed`, `Lookup`, and `Associative`; Queue has none of these access or association capabilities by default.
-4. The vocabulary now represents the complete canonical vocabulary inventory from `REQ-VOCAB-001`, including `PersistentValue`, and matches the requirements' capability, lifecycle, predicate, result, ownership, and collection terminology.
-5. `Assoc` and `CanAssoc` vocabulary definitions cover Map replacement/insertion, Vector/String replacement/append, invalid-key behavior, capacity policy, immutability, string validity, and null termination.
-6. Supporting terms such as `LinearScan`, `SwapAndRemove`, `CopyOnModifyCollection`, and `DeepCopyUpdate` remain intentional specification/implementation vocabulary and do not contradict the canonical requirements vocabulary.
-7. The architecture capability model must keep `Seqable` independent from `Indexed`, `Lookup`, and `Associative`; `contains` is governed by `Lookup`; and associative/conj concepts must expose their preflight operations.
-8. Architecture synchronization also requires explicit deferred status for `into`/`fits_into`, negative-index policy, String invalid-character evaluation policy, and Set equality/search constraints.
-9. Requirement lifecycle reconciliation uses `REQ-COLL-020T`: `is_empty`, `can_conj`, and `full` or equivalent capacity inspection are requirements-backed; `empty`, `not_empty`, `into`, and `fits_into` remain deferred while their behavior is approved.
-10. `IndexedCollection` and `LookupCollection` are independent of the sequence-observation baseline; `AssociativeCollection` requires key/value aliases plus `can_assoc` and `assoc`, not callable lookup.
-11. Vector and String expose integer key aliases and immutable association operations; Map exposes an association value alias while retaining its MapEntry storage value type.
-12. Associative tests cover Map replacement/insertion, Vector replacement/append/invalid indexes, String replacement/append/null termination/runtime invalid-byte replacement, and value-independent preflight behavior.
-13. The spec-weed pass uses interactive convergence with code/spec/architecture divergence triage; no divergence was found, so no correction was applied.
+1. `Range<T>` is constrained to `std::signed_integral T`, owns `start_`, `end_`, and `step_`, and exposes only construction, `count`, `contains`, and bounded const iteration for materialization. No equality operator is provided.
+2. `Range::count()` returns the system materialization maximum for zero-step ranges and saturates finite ranges at `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE`.
+3. `Range::contains(std::size_t)` reports whether an index is in the available bounded prefix (`index < count()`), not whether a mathematical position exists in an unsaturated theoretical span.
+4. `Range` has no `operator()` because cljonic callable syntax mirrors Clojure `IFn`, and Clojure range values are not `IFn`. `IndexedProducer` therefore requires only `contains(i)` and does not imply `Lookup` or callable value access.
+5. Arithmetic in `Range` was hardened: signed endpoint subtraction and signed negation are avoided via `ExtentType` arithmetic, ceiling division avoids `span + step - 1` wraparound, and the iterator does not advance past the final available element.
+6. `into` and `fits_into` are requirements-backed active operations for this increment, scoped to `Vector` destinations and `CljonicSource` inputs. Other producer families (`Repeat`, `Cycle`, `Iterate`, `Repeatedly`) and additional destination dispatch remain future work.
+7. `Contains` is now canonical for applicable lookup or indexed domains: collection lookup/index domains plus `Range`'s available bounded-prefix index domain.
+8. `ProducerConcept` and `ProducerKind` were added to vocabulary; architecture now consistently classifies producer nominal admission with `ProducerKind`.
+9. Doxygen conventions retained: type examples show construction only; free-function examples live in function headers; examples use raw unindented `~~~~~{.cpp}` fences; prose should stay user-facing and avoid implementation-facing method-name narration where practical.
 
 Validation:
-1. Full requirements-to-vocabulary audit completed; the only concrete gap was the missing `PersistentValue` entry, which was added.
-2. `git diff --check` passed and the vocabulary file has no diagnostics.
-3. The vocabulary alignment is committed as `46c3d8e` (`fix: update last_updated date and refine vocabulary definitions for collection capabilities`).
-4. The worktree was clean before this state update; no source or test changes are pending.
-5. Architecture now records the canonical capability model, collection participation matrix, and associative operation contracts; `git diff --check` passed for the architecture edit.
-6. Architecture synchronization repairs passed `git diff --check`; the concept model no longer implies `Seqable`, `contains` uses `Lookup`, and Set/Queue/Vector `conj` contracts are represented.
-7. The five follow-up architecture repairs passed `git diff --check`: deferred materialization lifecycle, negative-index policy, String invalid-character behavior, Set equality/linear-scan constraints, and concept-block formatting.
-8. Requirements lifecycle reconciliation passed `git diff --check` for Modules 3 and 4; no specifications, tests, traceability, implementation, architecture, or vocabulary files were changed by that increment.
-9. Focused `[assoc],[can_assoc],[concepts]` tests passed with 141 assertions in 19 cases.
-10. Full modular Catch2 suite passed with 754 assertions in 55 cases.
-11. Strict `traceability-spec-to-code`, `no-heap-src`, `git diff --check`, formatting, and `cljonic-test` single-header probe passed.
-12. Source/test propagation changed only the synchronized concept and collection headers, associated spec tests, and regenerated `cljonic.hpp`; no unrelated source or tests were reverted.
-13. `allium check specs` and `allium analyse specs` returned zero diagnostics and findings across the full spec set.
-14. `make traceability-spec-to-code` passed with the committed obligation snapshot synchronized and all planned obligations traceable to tests.
-15. `make test` passed all 110 modular and generated-header tests; `make cljonic-test` and `make no-heap` also passed.
-16. `git diff --check` passed; the worktree contains only the pre-existing Associative propagation changes plus this Mementum checkpoint.
+1. `allium check specs` and `allium analyse specs` returned empty diagnostics/findings for all 24 `.allium` files. The local `allium` binary has no `gate` subcommand; use repo gates (`make traceability-spec-to-code`, `make git`) for equivalent project validation.
+2. `gybis-vocab-check`: PASS with 141 terms, valid frontmatter, all required fields present, no undefined `Related` terms, no self-links, no duplicate terms/fields, and no synonym conflicts.
+3. `gybis-vocab-weed`: PASS after resolving drift by updating vocabulary current scope, producer terms, and downstream `Contains` spec/docs/tests/no-heap probe.
+4. `gybis-arch-check`: PASS after resolving stale Module 4 active-surface wording, producer classifier wording, `Indexed`/`Lookup` scoping, producer interface wording, and Range predicate naming.
+5. `gybis-arch-weed`: PASS after aligning architecture's `contains(x)` governance with the producer-aware `Contains` spec.
+6. Final cross-artifact consistency pass found one requirements gap and fixed it: Module 2 now allows separately approved producer-domain `contains`, and Module 4 now explicitly defines `Range`'s `contains(range, index)` available bounded-prefix predicate plus active `Range`/`into`/`fits_into` slice.
+7. User manually reran `make git` after requesting that I stop my background process; `make git` passed twice with `git:ok`, including format, lint, complexity, single-header regeneration, compile-fail checks, sanitizer, 100% coverage, traceability, no-heap, docs, docs examples, and tests.
 
 Current Increment:
-1. Requirements, vocabulary, architecture, specifications, tests, traceability, and implementation are synchronized for the Associative capability increment; spec-weed convergence is complete.
+1. The `Range` producer, producer concept scaffolding (`CljonicProducer`, `CljonicRange`, `CljonicSource`, `SequenceableProducer`, `IndexedProducer`), `into`, and `fits_into` are implemented, documented, traced, and fully validated.
+2. Cross-layer artifacts are aligned: requirements, vocabulary, architecture, Allium specs, traceability snapshot, tests, no-heap probes, source headers, generated `cljonic.hpp`, and Doxygen docs.
 
 Next:
-1. Review the complete Associative propagation diff before merging; do not revert the unstaged source, test, or generated-header changes.
-2. Continue with the next approved requirements/specification slice; do not begin unrelated source changes without upstream specification propagation.
+1. Review the full working tree diff before committing the implementation/docs/spec changes. This `gybis-fini` step commits only `mementum/` state by default.
+2. If continuing Module 4, implement remaining producer families (`Repeat`, `Cycle`, `Iterate`, `Repeatedly`) one at a time through requirements → vocabulary → architecture → specs → traceability → tests → source.
+3. Extend `into`/`fits_into` destination support beyond `Vector` only after each destination's append/materialization semantics are explicitly specified.
+4. Defer `nth` and any Range positional value retrieval until Module 5 is formally elicited and approved.
