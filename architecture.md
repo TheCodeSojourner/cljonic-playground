@@ -2,23 +2,25 @@
 
 ## Current Scope
 
-λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
+λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range
   ∧ direct_construction(x) ∧ member_observation(x) ∧ callable_lookup(x)
-  ∧ primitive_free_functions(x)
+  ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ fits_into)(x)
   | module3(x) → concrete_array_backed_bounded_types(x)
     ∧ contiguous_storage_strategies(x) ∧ linear_scan_lookup(x)
     ∧ swap_and_remove_policies(x) ∧ primitive_free_functions(x)
   | cpp_interoperability(x) → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
     | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
+  | module4_active_slice(x) → Range(x) ∧ into(x) ∧ fits_into(x)
   | deferred_sequence_contracts(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
-  | future_expansion(unbounded_producers ∨ transformations ∨ regexes ∨ relational_models)
+  | future_expansion(repeat ∨ cycle ∨ iterate ∨ repeatedly ∨ transformations ∨ regexes ∨ relational_models)
     → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
 
-λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_free_function_surface)
+λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_public_producer_surface ∧ current_free_function_surface)
   | CollectionConcept_layer(x) → admit(ClosedNominalCollectionDomain)
+  | ProducerConcept_layer(x) → admit(CljonicProducer)
   | CapabilityConcept_layer(x) → express(indexed ∨ associative semantic_capability)
-  | model_active(x) → true_for(current_stored_collection_surface(x))
+  | model_active(x) → true_for(current_value_surface(x))
 
 ## S5 - Identity
 
@@ -139,8 +141,8 @@
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
-λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String
-  | planned_producer_domain(x) ≡ explicit_producers
+λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range
+  | planned_producer_domain(x) ≡ repeat ∨ cycle ∨ iterate ∨ repeatedly
   | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
   | domain_expansion(x) → require(explicit_approved_requirement)
@@ -208,7 +210,8 @@
     ∧ non_throwing_non_allocating_preflight(can_assoc(x))
   | capability_satisfaction(x) → compositional_and_operation_specific(x)
     ∧ remain_distinct(Indexed ∧ Lookup ∧ Seqable ∧ Associative)
-  | Indexed(x) → refine(Lookup(integer_key_domain(x)))
+  | IndexedCollection(x) → refine(Lookup(integer_key_domain(x)))
+  | IndexedProducer(x) → not_imply(Lookup(x)) ∧ require(explicit_positional_retrieval_specification_before_value_access(x))
   | Associative(x) → not_imply(Indexed ∨ Lookup) unless(concrete_collection_requirement(x))
   | Seqable(x) → independent_of(Indexed ∧ Lookup ∧ Associative)
   | public_operation(x) → require(only_capabilities_needed_by(documented_behavior(x)))
@@ -274,13 +277,11 @@
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | requirements_backed_operations(x) ≡ is_empty ∧ contains ∧ count ∧ get
-    ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
+  | requirements_backed_operations(x) ≡ is_empty ∧ contains ∧ count ∧ fits_into ∧ into
+    ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | bounded_insertion_capacity_inspection(x) ≡ full ∨ equivalent_capacity_inspection
   | requirements_backed_operations(x) → classify_as(RequirementsBacked)
   | bounded_insertion_capacity_inspection(x) → classify_as(RequirementsBacked)
-  | deferred_materialization_operations(x) ≡ fits_into ∧ into
-    ∧ classify_as(DeferredStatus)
   | deferred_empty_operations(x) ≡ empty ∧ not_empty
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
@@ -300,7 +301,7 @@
     ∧ typed_absence_and_failure_policy_is_declared(x) ∧ result_status_is_declared(x)
     ∧ bounded_owning_results_are_preferred(x) ∧ maps_and_sets_are_semantically_unordered(x)
     ∧ transducers_and_hidden_lazy_sequences_are_unsupported(x))
-  | contains(x) → govern(Lookup(x))
+  | contains(x) → govern(applicable_lookup_or_indexed_domain(x))
   | fits_into(x) → govern(complete_producer_materialization(x))
   | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
   | future_operation(x) → require(explicit_requirement_and_specification(x))
@@ -327,6 +328,27 @@ concept CljonicVector =
     (detail::collection_kind_of_v<Type> == detail::collection_kind::vector);
 ```
 
+### Level 1B: CljonicProducer (producer nominal admission) and CljonicSource
+
+λ CljonicProducer_level(x). gate(type) → nominal_producer_identity(x) ≡ admission(producer_domain(x)) ∧ classification(ProducerKind)
+  | recognition(x) → cljonic_owned_traits(x) ∧ distinct_domain_from(ClosedNominalCollectionDomain(x))
+  | nominal_pattern(x) → applies_to(CljonicRange) ∧ future(CljonicRepeat ∧ CljonicCycle ∧ CljonicIterate ∧ CljonicRepeatedly)
+  | CljonicSource(x) ≡ CljonicCollection(x) ∨ CljonicProducer(x)
+  | materialization_operations(into ∧ fits_into) → constrain_source_by(CljonicSource)
+
+```cpp
+template<class Type>
+concept CljonicProducer = detail::is_cljonic_producer_v<Type>;
+
+template<class Type>
+concept CljonicRange =
+    CljonicProducer<Type> &&
+    (detail::producer_kind_of_v<Type> == detail::producer_kind::range);
+
+template<class Type>
+concept CljonicSource = CljonicCollection<Type> || CljonicProducer<Type>;
+```
+
 ### Level 2: CapabilityConcept (semantic capability gates)
 
 λ CapabilityConcept_level(x). require(admitted_collection(x)) → expose(semantic_capability(x)) to(participate_in(operation(x)))
@@ -349,7 +371,7 @@ concept SequenceableCollection =
     CljonicCollection<C> &&
     requires(const C& c) {
       { c.is_empty() } -> std::same_as<bool>;
-      { c.count() } -> std::integral;
+      { c.count() } -> std::same_as<std::size_t>;
     };
 
 template<class C>
@@ -378,6 +400,44 @@ concept AssociativeCollection =
       typename C::value_type;
       { c.can_assoc(key) } -> std::same_as<bool>;
       { c.assoc(key, value) } -> std::same_as<C>;
+    };
+```
+
+### Level 2B: SequenceableProducer (producer baseline capability gate)
+
+λ SequenceableProducer_level(x). require(admitted_producer(x)) → expose(count(x)) to(participate_in(operation(x)))
+  | capability(x) → layered_on(CljonicProducer_admission(x))
+  | producer_count(x) → conservative_maximum(x) ∧ saturated_by(CollectionMaximumElementCount) ∧ ¬equivalent(Clojure_Counted_exact_size(x))
+  | ¬imply(IndexedProducer(x) ∨ LookupCollection(x)) because(no_callable_operator_parenthesis(x))
+
+```cpp
+template<class C>
+concept SequenceableProducer =
+    CljonicProducer<C> &&
+    requires(const C& c) {
+      { c.count() } -> std::same_as<std::size_t>;
+    };
+```
+
+### Level 2C: IndexedProducer (producer efficient-index-in-range gate)
+
+λ IndexedProducer_level(x). require(admitted_producer(x)) → expose(available_index_contains(x)) to(participate_in(operation(x)))
+  | capability(x) → layered_on(CljonicProducer_admission(x))
+  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_available_index_predicate(x)
+  | Indexed(x) ≡ efficient_O1_positional_access(x) ∧ ¬require(traversal(x)) matching(Clojure_Indexed_interface(x))
+  | Indexed(x) ¬imply(IFn(x)) because(Range_is_Indexed_and_Counted_but_not_invocable_in_Clojure(x))
+  | ¬expose(callable_operator_parenthesis(x)) on(producer(x)) because(operator_parenthesis_reserved_for_IFn_mirroring(x))
+  | positional_value_retrieval(x) → remain(deferred_future_work) until(Module5_nth_approved(x))
+  | eligible_producers(x) ≡ Range(x)
+  | ineligible_producers(x) ≡ Cycle(x) ∨ Iterate(x) ∨ Repeat(x) ∨ Repeatedly(x) because(never_efficiently_indexed_or_counted_in_Clojure(x))
+  | ¬claim(IndexedProducer(x)) unless(genuinely_O1_available_index_test(x))
+
+```cpp
+template<class C>
+concept IndexedProducer =
+    CljonicProducer<C> &&
+    requires(const C& c, std::size_t i) {
+      { c.contains(i) } -> std::same_as<bool>;
     };
 ```
 
@@ -445,7 +505,8 @@ concept AssociativeCollection =
   | docs(x) ≡ doxygen_html_site
 
 λ S1_interfaces(x). current_interface_types(x) ≡ header_only_member_api
-    ∧ header_only_free_functions ∧ callable_collection_lookup
+  ∧ header_only_free_functions ∧ callable_collection_lookup ∧ producer_values
+  ∧ explicit_materialization_functions
   | future_interface_types(x) ≡ template_concept_constrained_apis
   | required_callable_member_adapters(x) → permitted_when(explicitly_specified_and_behaviorally_equivalent(x))
   | optional_member_wrappers(x) ≡ non_canonical
@@ -473,7 +534,7 @@ concept AssociativeCollection =
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | effective_size(x) → authoritative_for(free_function_observation ∧ producer_iteration ∧ producer_materialization)
-  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_for_indexed_access(x) ∧ effective_endpoint_normalized_before_iteration(x)
+  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_available_index_predicate(x) ∧ effective_endpoint_normalized_before_iteration(x) ∧ span_arithmetic_avoids_signed_overflow(x)
   | range_member_accessors(start ∧ end ∧ step) → classify_as(non_canonical)
   | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
@@ -549,6 +610,6 @@ concept AssociativeCollection =
   | module6_numeric_authority(x) ≡ requirements/cljonic-requirements-module-6.md → govern(checked_arithmetic ∧ callables)
   | module7_extended_domain_authority(x) ≡ requirements/cljonic-requirements-module-7.md → govern(relations ∧ regex ∧ state ∧ formatting)
 
-λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ primitive_free_functions
-  | approved_but_unimplemented(unbounded_producers ∨ algorithms ∨ regexes) → remain_outside(active_surface(x))
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ primitive_free_functions ∧ into ∧ fits_into
+  | approved_but_unimplemented(repeat ∨ cycle ∨ iterate ∨ repeatedly ∨ algorithms ∨ regexes) → remain_outside(active_surface(x))
   | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
