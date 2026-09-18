@@ -24,8 +24,18 @@ class Range {
     // Stateless iteration generation; no internal storage buffer.
 };
 
+template<class T>
+class Repeat {
+    T m_value;
+    std::size_t m_count;
+    bool m_is_finite;
+    // No result buffer; materialization copies m_value into a destination.
+};
+
 } // namespace cljonic
 ```
+
+`repeat(value)` constructs `Repeat<T>` with `m_is_finite == false`; `repeat(value, count)` constructs it with `m_is_finite == true` and records `count`. `Repeat<T>` owns `m_value`, exposes neither a collection count nor producer indexed access, and does not retain a destination or source reference. The materialization adapter emits a copy of `m_value` for each finite count, or until the explicit destination becomes full for an unbounded repeat. `fits_into` returns `false` for an unbounded Repeat and uses the stored runtime count for a finite Repeat.
 
 ## Unbounded Traversal & Deep Equality Restriction Architecture
 
@@ -75,5 +85,5 @@ Views do NOT extend source lifetime and do NOT admit external types into the nom
 
 ## Traceability
 
-- Governed Requirements: `cljonic-requirements-module-4.md` (`REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, `REQ-FN-027`–`027A`, `REQ-PLAT-017`–`023`).
+- Governed Requirements: `cljonic-requirements-module-4.md` (`REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, including `REQ-FN-013B`, `REQ-FN-027`–`027A`, `REQ-PLAT-017`–`023`).
 - Downstream Modules: Module 5 (Higher-Order Algorithms), Module 7 (Specialized Domains).

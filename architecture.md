@@ -141,8 +141,8 @@
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
-λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range
-  | planned_producer_domain(x) ≡ repeat ∨ cycle ∨ iterate ∨ repeatedly
+λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat
+  | planned_producer_domain(x) ≡ cycle ∨ iterate ∨ repeatedly
   | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
   | domain_expansion(x) → require(explicit_approved_requirement)
@@ -530,6 +530,10 @@ concept IndexedProducer =
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
   | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
+  | Repeat(value) → store_owned(value) ∧ represent(unbounded)
+  | Repeat(value ∧ count) → store_owned(value) ∧ store(runtime_count) ∧ represent(finite)
+  | Repeat(x) → exclude(IndexedProducer ∧ SequenceableProducer ∧ IFn ∧ Lookup)
+  | Repeat_materialization(x) → emit_owned_value_copy_per_element(x) ∧ use(runtime_count) when(finite(x))
   | semantically_infinite_producer(x) → materialize_at_most(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
@@ -610,6 +614,6 @@ concept IndexedProducer =
   | module6_numeric_authority(x) ≡ requirements/cljonic-requirements-module-6.md → govern(checked_arithmetic ∧ callables)
   | module7_extended_domain_authority(x) ≡ requirements/cljonic-requirements-module-7.md → govern(relations ∧ regex ∧ state ∧ formatting)
 
-λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ primitive_free_functions ∧ into ∧ fits_into
-  | approved_but_unimplemented(repeat ∨ cycle ∨ iterate ∨ repeatedly ∨ algorithms ∨ regexes) → remain_outside(active_surface(x))
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ primitive_free_functions ∧ into ∧ fits_into
+  | approved_but_unimplemented(cycle ∨ iterate ∨ repeatedly ∨ algorithms ∨ regexes) → remain_outside(active_surface(x))
   | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
