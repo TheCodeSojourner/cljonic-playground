@@ -74,7 +74,7 @@ inline constexpr bool static_extent_fits_v =
 
 // A closed-world tag distinguishing producer families, parallel to collection_kind
 // but for the separate producer nominal domain (cljonic_source ≡ collection ∨ producer).
-enum class producer_kind { none, range };
+enum class producer_kind { none, range, repeat };
 
 // The unspecialized form rejects types by default. Each supported producer
 // specializes this trait with its nominal identity and producer kind.
@@ -154,6 +154,11 @@ concept CljonicProducer = concepts_detail::is_cljonic_producer_v<T>;
 template <typename T>
 concept CljonicRange =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::range);
+
+/** Nominal identity gate for Repeat producer types. */
+template <typename T>
+concept CljonicRepeat =
+    CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::repeat);
 
 /** Admits either a stored collection or a producer to the combined source
  *  domain used by materialization operations (`into`, `fits_into`). */

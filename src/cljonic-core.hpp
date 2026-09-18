@@ -78,6 +78,7 @@
  * ## Producer Types
  *
  * - \ref Range "cljonic::Range"
+ * - \ref Repeat "cljonic::Repeat"
  *
  * ## Core Functions
  *
@@ -204,6 +205,7 @@
 #include <cljonic-pop.hpp>
 #include <cljonic-queue.hpp>
 #include <cljonic-range.hpp>
+#include <cljonic-repeat.hpp>
 #include <cljonic-set.hpp>
 #include <cljonic-string.hpp>
 #include <cljonic-vector.hpp>
