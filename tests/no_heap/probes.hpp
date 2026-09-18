@@ -26,6 +26,7 @@ namespace cljonic::no_heap::probes {
 [[nodiscard]] auto pop_probe() noexcept -> bool;
 [[nodiscard]] auto queue_probe() noexcept -> bool;
 [[nodiscard]] auto range_probe() noexcept -> bool;
+[[nodiscard]] auto repeat_probe() noexcept -> bool;
 [[nodiscard]] auto set_probe() noexcept -> bool;
 [[nodiscard]] auto string_probe() noexcept -> bool;
 
