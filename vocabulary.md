@@ -302,7 +302,7 @@ higher-order algorithms.
 
 
 ### Producer
-- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Producers vary in which capabilities they satisfy: `Range` is efficiently `Indexed` and efficiently counted (`count()` is O(1)); `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` are never efficiently `Indexed` and never efficiently counted, matching Clojure. A future producer MUST NOT claim `Indexed` unless its positional access is genuinely O(1), and being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
+- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Producers vary in which capabilities they satisfy: `Range` is efficiently `Indexed` and efficiently counted (`count()` is O(1)); `Repeat` is neither efficiently `Indexed` nor efficiently counted, matching Clojure. Deferred producers (`Cycle`, `Iterate`, and `Repeatedly`) MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
 - **Deprecated Synonyms:** sequence producer, source producer
 - **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -323,6 +323,14 @@ higher-order algorithms.
 - **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount, Contains, Indexed, CljonicRange
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `range(0, 5)` produces `0, 1, 2, 3, 4`; `range(0, 0, 0)` produces an infinite repetition of `0` rather than an empty range; when a range is larger than the system maximum, only the available bounded prefix is exposed.
+
+
+### Repeat
+- **Definition:** A Producer that owns one value and yields copies of that value. `repeat(value)` is unbounded; `repeat(value, count)` is finite and yields exactly `count` copies, including an empty result for zero. `Repeat` is neither `Indexed` nor efficiently counted, is not invocable (`IFn`), and exposes no `count`, `contains`, positional retrieval, key-based lookup, or `get`. Its finite result count is used only by `into` and `fits_into`; its unbounded form has no complete-result fit.
+- **Deprecated Synonyms:** repeat producer, repeated-value producer
+- **Related:** Producer, UnboundedProducer, ProducerMaterialization, PreflightPredicate, OwningValue
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `repeat(7, 3)` produces `7, 7, 7`; `repeat(7, 0)` produces no values; `repeat(7)` produces destination-bounded copies only through `into`.
 
 
 ### MapEntry
