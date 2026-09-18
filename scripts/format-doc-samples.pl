@@ -24,7 +24,7 @@ for my $file (@files) {
     $content =~ s{(^[ \t]*~~~~~\{\.cpp\}[ \t]*\n)(.*?)(^[ \t]*~~~~~[ \t]*$)}
                { format_block($1, $2, $3, $clang_format) }gmse;
     $content =~ s{(^[ \t]*/\*\*.*?^[ \t]*\*/[ \t]*$)}
-                  { format_doxygen_block($1, $column_limit) }gmse;
+                  { format_doxygen_block($1, $column_limit, $file) }gmse;
 
     next if $content eq $original;
 
@@ -34,11 +34,13 @@ for my $file (@files) {
 }
 
 sub format_doxygen_block {
-    my ($block, $limit) = @_;
+    my ($block, $limit, $file) = @_;
     my @lines = split /\n/, $block, -1;
     my @formatted;
     my @paragraph;
     my $in_fence = 0;
+    my $in_core_cheatsheet = 0;
+    my $formatting_core_header = $file =~ m{(?:^|/)src/cljonic-core\.hpp\z};
 
     my $flush_paragraph = sub {
         return if !@paragraph;
@@ -62,9 +64,16 @@ sub format_doxygen_block {
         if ($line =~ /^[ \t]*\*\/[ \t]*$/) {
             $flush_paragraph->();
             push @formatted, $line;
+        } elsif ($formatting_core_header && $line =~ /^[ \t]*\*[ \t]*\\anchor[ \t]+Core_Cheatsheet\b/) {
+            $flush_paragraph->();
+            $in_core_cheatsheet = 1;
+            push @formatted, $line;
         } elsif ($line =~ /~~~~~/) {
             $flush_paragraph->();
             $in_fence = !$in_fence;
+            push @formatted, $line;
+        } elsif ($in_core_cheatsheet && $line =~ /^[ \t]*\*[ \t]*(?:___|#{1,6}[ \t]|-[ \t]|[^|]*\|)/) {
+            $flush_paragraph->();
             push @formatted, $line;
         } elsif ($in_fence || $line !~ /^[ \t]*\*\s?\S/) {
             $flush_paragraph->();

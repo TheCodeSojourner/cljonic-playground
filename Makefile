@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -147,7 +147,11 @@ format-doc-samples:
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
 	@find src -type f \( -name '*.hpp' -o -name '*.h' \) -print0 | \
 		xargs -0 -r scripts/format-doc-samples.pl
+	@$(MAKE) --no-print-directory -s core-cheatsheet-format
 	@echo "format-doc-samples:ok"
+
+core-cheatsheet-format:
+	@python3 scripts/check-core-cheatsheet-format.py --self-test
 
 docs-examples: cljonic
 	@python3 scripts/compile-doc-samples.py --source-dir src --build-dir $(BUILD_DIR)/docs-examples --header $(CLJONIC_HEADER)
