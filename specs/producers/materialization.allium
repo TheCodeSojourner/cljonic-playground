@@ -3,15 +3,19 @@
 entity ProducerMaterialization {
     into_requires_explicit_bounded_destination: Boolean
     into_returns_new_destination_typed_collection: Boolean
+    into_appends_after_destination_contents: Boolean
     into_leaves_destination_unchanged: Boolean
     into_leaves_source_unchanged: Boolean
     fits_into_is_non_throwing_non_allocating: Boolean
     fits_into_predicts_into_completeness: Boolean
+    fits_into_uses_remaining_destination_capacity: Boolean
+    fits_into_avoids_unsigned_addition_overflow: Boolean
+    unbounded_source_does_not_fit_into_destination: Boolean
     unbounded_source_materializes_bounded_prefix: Boolean
     finite_source_materializes_complete_result_when_it_fits: Boolean
     bounded_prefix_preserves_source_traversal_order: Boolean
     count_is_exact_for_materialized_collection: Boolean
-    count_is_conservative_maximum_for_producer_without_traversal: Boolean
+    unbounded_producer_count_is_observable_traversal_cap: Boolean
     composed_producer_cardinality_uses_saturating_arithmetic: Boolean
     composed_cardinality_bounded_by_collection_maximum_element_count: Boolean
     materialization_source_domain_is_cljonic_source: Boolean
@@ -22,6 +26,10 @@ entity ProducerMaterialization {
 
     invariant IntoReturnsNewDestinationTypedCollection {
         this.into_returns_new_destination_typed_collection = true
+    }
+
+    invariant IntoAppendsAfterDestinationContents {
+        this.into_appends_after_destination_contents = true
     }
 
     invariant IntoLeavesDestinationUnchanged {
@@ -40,6 +48,18 @@ entity ProducerMaterialization {
         this.fits_into_predicts_into_completeness = true
     }
 
+    invariant FitsIntoUsesRemainingDestinationCapacity {
+        this.fits_into_uses_remaining_destination_capacity = true
+    }
+
+    invariant FitsIntoAvoidsUnsignedAdditionOverflow {
+        this.fits_into_avoids_unsigned_addition_overflow = true
+    }
+
+    invariant UnboundedSourceDoesNotFitIntoDestination {
+        this.unbounded_source_does_not_fit_into_destination = true
+    }
+
     invariant UnboundedSourceMaterializesBoundedPrefix {
         this.unbounded_source_materializes_bounded_prefix = true
     }
@@ -56,8 +76,8 @@ entity ProducerMaterialization {
         this.count_is_exact_for_materialized_collection = true
     }
 
-    invariant CountIsConservativeMaximumForProducerWithoutTraversal {
-        this.count_is_conservative_maximum_for_producer_without_traversal = true
+    invariant UnboundedProducerCountIsObservableTraversalCap {
+        this.unbounded_producer_count_is_observable_traversal_cap = true
     }
 
     invariant ComposedProducerCardinalityUsesSaturatingArithmetic {

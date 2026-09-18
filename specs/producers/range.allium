@@ -19,6 +19,11 @@ entity Range {
     nonzero_step_away_from_end_is_empty_range: Boolean
     equal_start_and_end_with_nonzero_step_is_empty_range: Boolean
     effective_size_is_conservative_maximum_without_traversal: Boolean
+    exposes_is_finite_predicate: Boolean
+    finite_range_reports_true_is_finite: Boolean
+    zero_step_range_reports_false_is_finite: Boolean
+    unbounded_count_is_observable_traversal_cap: Boolean
+    const_traversal_terminates_at_count: Boolean
     saturating_cardinality_bounded_by_collection_maximum_element_count: Boolean
     span_arithmetic_avoids_signed_overflow: Boolean
     unbounded_range_does_not_satisfy_stable_equality: Boolean
@@ -100,6 +105,26 @@ entity Range {
 
     invariant EffectiveSizeIsConservativeMaximumWithoutTraversal {
         this.effective_size_is_conservative_maximum_without_traversal = true
+    }
+
+    invariant ExposesIsFinitePredicate {
+        this.exposes_is_finite_predicate = true
+    }
+
+    invariant FiniteRangeReportsTrueIsFinite {
+        this.finite_range_reports_true_is_finite = true
+    }
+
+    invariant ZeroStepRangeReportsFalseIsFinite {
+        this.zero_step_range_reports_false_is_finite = true
+    }
+
+    invariant UnboundedCountIsObservableTraversalCap {
+        this.unbounded_count_is_observable_traversal_cap = true
+    }
+
+    invariant ConstTraversalTerminatesAtCount {
+        this.const_traversal_terminates_at_count = true
     }
 
     invariant SaturatingCardinalityBoundedByCollectionMaximumElementCount {

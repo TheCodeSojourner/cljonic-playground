@@ -13,13 +13,17 @@ entity Repeat {
     uncounted_form_is_unbounded: Boolean
     counted_form_is_finite: Boolean
     zero_count_produces_empty_result: Boolean
+    exposes_count_and_is_finite: Boolean
     counted_form_uses_runtime_count_for_materialization: Boolean
+    counted_form_count_is_exact: Boolean
+    uncounted_form_count_is_observable_traversal_cap: Boolean
+    const_traversal_terminates_at_count: Boolean
     uncounted_form_materializes_at_most_destination_capacity: Boolean
     uncounted_form_does_not_fit_into_destination: Boolean
     unbounded_repeat_does_not_satisfy_stable_equality: Boolean
     unbounded_equality_fails_at_compile_time: Boolean
     does_not_satisfy_indexed_producer: Boolean
-    does_not_satisfy_sequenceable_producer: Boolean
+    satisfies_sequenceable_producer: Boolean
     does_not_expose_callable_operator: Boolean
     get_contains_and_lookup_are_excluded: Boolean
 
@@ -71,8 +75,24 @@ entity Repeat {
         this.zero_count_produces_empty_result = true
     }
 
+    invariant ExposesCountAndIsFinite {
+        this.exposes_count_and_is_finite = true
+    }
+
     invariant CountedFormUsesRuntimeCountForMaterialization {
         this.counted_form_uses_runtime_count_for_materialization = true
+    }
+
+    invariant CountedFormCountIsExact {
+        this.counted_form_count_is_exact = true
+    }
+
+    invariant UncountedFormCountIsObservableTraversalCap {
+        this.uncounted_form_count_is_observable_traversal_cap = true
+    }
+
+    invariant ConstTraversalTerminatesAtCount {
+        this.const_traversal_terminates_at_count = true
     }
 
     invariant UncountedFormMaterializesAtMostDestinationCapacity {
@@ -95,8 +115,8 @@ entity Repeat {
         this.does_not_satisfy_indexed_producer = true
     }
 
-    invariant DoesNotSatisfySequenceableProducer {
-        this.does_not_satisfy_sequenceable_producer = true
+    invariant SatisfiesSequenceableProducer {
+        this.satisfies_sequenceable_producer = true
     }
 
     invariant DoesNotExposeCallableOperator {
