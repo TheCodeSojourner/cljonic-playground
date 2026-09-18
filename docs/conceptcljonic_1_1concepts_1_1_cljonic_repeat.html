@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::concepts::SequenceableCollection Concept Reference</title>
+<title>cljonic: cljonic::concepts::CljonicRepeat Concept Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -94,28 +94,28 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts.html">concepts</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">SequenceableCollection</a></li>  </ul>
+<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts.html">concepts</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts_1_1_cljonic_repeat.html">CljonicRepeat</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">cljonic::concepts::SequenceableCollection Concept Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic::concepts::CljonicRepeat Concept Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code></p>
 <h2 id="header-conceptdef" class="groupheader">Concept definition</h2>
-<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">SequenceableCollection</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html">CljonicCollection&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; c) {</div>
-<div class="line">    { c.is_empty() } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
-<div class="line">    { c.count() } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;std::size_t&gt;;</div>
-<div class="line">}</div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html">cljonic::concepts::CljonicCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00146">cljonic-concepts.hpp:146</a></div></div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_sequenceable_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">cljonic::concepts::SequenceableCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00200">cljonic-concepts.hpp:200</a></div></div>
+<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_repeat.html">CljonicRepeat</a> =</div>
+<div class="line">    <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">CljonicProducer&lt;T&gt;</a> &amp;&amp; (<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#a9b6e0fa83ede71e749bff9da7c691ca7">concepts_detail::producer_kind_of_v&lt;T&gt;</a> == <a class="code hl_enumvalue" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca32cf6da134a8b268cf4ab6b79a9a5ad9">concepts_detail::producer_kind::repeat</a>)</div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_producer_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">cljonic::concepts::CljonicProducer</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00151">cljonic-concepts.hpp:151</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_repeat_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_repeat.html">cljonic::concepts::CljonicRepeat</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00160">cljonic-concepts.hpp:160</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a9b6e0fa83ede71e749bff9da7c691ca7"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#a9b6e0fa83ede71e749bff9da7c691ca7">cljonic::concepts_detail::producer_kind_of_v</a></div><div class="ttdeci">constexpr producer_kind producer_kind_of_v</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00091">cljonic-concepts.hpp:91</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_ae7b205beabb5ee36d468e0b1ca49b74ca32cf6da134a8b268cf4ab6b79a9a5ad9"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca32cf6da134a8b268cf4ab6b79a9a5ad9">cljonic::concepts_detail::producer_kind::repeat</a></div><div class="ttdeci">@ repeat</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00077">cljonic-concepts.hpp:77</a></div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Requires that an admitted nominal collection provides non-throwing is_empty() and count() sequence observation, with count() returning std::size_t. </p>
+<div class="textblock"><p>Nominal identity gate for Repeat producer types. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00200">200</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00160">160</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

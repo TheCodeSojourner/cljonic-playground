@@ -108,17 +108,23 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">template</span> &lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt;</div>
-<div class="foldopen" id="foldopen00023" data-start="{" data-end="}">
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a13428e612ad260bf2b1450fd1915d770">   23</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a13428e612ad260bf2b1450fd1915d770">fits_into</a>(<span class="keyword">const</span> Dest&amp; destination, <span class="keyword">const</span> Source&amp; source) <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> (destination.count() + source.count()) &lt;= Dest::capacity();</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span> &lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt;</div>
+<div class="foldopen" id="foldopen00026" data-start="{" data-end="}">
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a13428e612ad260bf2b1450fd1915d770">   26</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a13428e612ad260bf2b1450fd1915d770">fits_into</a>(<span class="keyword">const</span> Dest&amp; destination, <span class="keyword">const</span> Source&amp; source) <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">concepts::CljonicProducer&lt;Source&gt;</a>) {</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <span class="keywordflow">if</span> (!source.is_finite()) {</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        }</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    }</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordflow">return</span> source.count() &lt;= (Dest::capacity() - destination.count());</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>}</div>
 </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>} <span class="comment">// namespace cljonic</span></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_producer_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">cljonic::concepts::CljonicProducer</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00151">cljonic-concepts.hpp:151</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a13428e612ad260bf2b1450fd1915d770"><div class="ttname"><a href="namespacecljonic.html#a13428e612ad260bf2b1450fd1915d770">cljonic::fits_into</a></div><div class="ttdeci">constexpr auto fits_into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</div><div class="ttdoc">The non-throwing, non-allocating materialization-completeness preflight for into.</div><div class="ttdef"><b>Definition</b> <a href="#l00023">cljonic-fits-into.hpp:23</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a13428e612ad260bf2b1450fd1915d770"><div class="ttname"><a href="namespacecljonic.html#a13428e612ad260bf2b1450fd1915d770">cljonic::fits_into</a></div><div class="ttdeci">constexpr auto fits_into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</div><div class="ttdoc">The non-throwing, non-allocating materialization-completeness preflight for into.</div><div class="ttdef"><b>Definition</b> <a href="#l00026">cljonic-fits-into.hpp:26</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

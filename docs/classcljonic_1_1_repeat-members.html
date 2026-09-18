@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::concepts::SequenceableCollection Concept Reference</title>
+<title>cljonic: Member List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -94,29 +94,25 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts.html">concepts</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">SequenceableCollection</a></li>  </ul>
+<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="classcljonic_1_1_repeat.html">Repeat</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">cljonic::concepts::SequenceableCollection Concept Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic::Repeat&lt; T &gt; Member List</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code></p>
-<h2 id="header-conceptdef" class="groupheader">Concept definition</h2>
-<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">SequenceableCollection</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html">CljonicCollection&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; c) {</div>
-<div class="line">    { c.is_empty() } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
-<div class="line">    { c.count() } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;std::size_t&gt;;</div>
-<div class="line">}</div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html">cljonic::concepts::CljonicCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00146">cljonic-concepts.hpp:146</a></div></div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_sequenceable_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html">cljonic::concepts::SequenceableCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00200">cljonic-concepts.hpp:200</a></div></div>
-</div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Requires that an admitted nominal collection provides non-throwing is_empty() and count() sequence observation, with count() returning std::size_t. </p>
-
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00200">200</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
-</div></div><!-- contents -->
+<p>This is the complete list of members for <a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat&lt; T &gt;</a>, including all inherited members.</p>
+<table class="directory">
+  <tr class="even"><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html#a9001eb9066f88994bd6ce18ad6327337">begin</a>() const noexcept -&gt; const_iterator</td><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html#a4e95ae84875155308db3313271bb9abb">count</a>() const noexcept -&gt; std::size_t</td><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html#a6134576973c521a6401db2543011db3e">end</a>() const noexcept -&gt; const_iterator</td><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html#ae2a3728657632f6b35d855c76206c8f4">is_finite</a>() const noexcept -&gt; bool</td><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html#a5cd9e6691e5709127505b2688ea1818a">Repeat</a>(T value) noexcept</td><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html#a7d5a22bb3c8cd583d9192c68113a31c9">Repeat</a>(T value, std::size_t count) noexcept</td><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html#a5924fb8240dfd237fffe94d87b516f73">value_type</a> typedef</td><td class="entry"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat&lt; T &gt;</a></td><td class="entry"></td></tr>
+</table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated on <span class="timestamp"></span> for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0

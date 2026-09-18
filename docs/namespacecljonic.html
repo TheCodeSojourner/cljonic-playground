@@ -116,6 +116,7 @@ Classes</h2></td></tr>
 <tr class="memitem:MapEntry" id="r_MapEntry"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a></td></tr>
 <tr class="memitem:Queue" id="r_Queue"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></td></tr>
 <tr class="memitem:Range" id="r_Range"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_range.html">Range</a></td></tr>
+<tr class="memitem:Repeat" id="r_Repeat"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_repeat.html">Repeat</a></td></tr>
 <tr class="memitem:Set" id="r_Set"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_set.html">Set</a></td></tr>
 <tr class="memitem:String" id="r_String"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_string.html">String</a></td></tr>
 <tr class="memitem:Vector" id="r_Vector"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></td></tr>
@@ -194,6 +195,12 @@ requires (Extent != std::dynamic_extent)</td></tr>
 <tr class="memitem:a55bddea4174ca0026b4178b2623c67ef" id="r_a55bddea4174ca0026b4178b2623c67ef"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; <br />
 requires (Extent != std::dynamic_extent)</td></tr>
 <tr class="memitem:a55bddea4174ca0026b4178b2623c67ef template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a55bddea4174ca0026b4178b2623c67ef">Queue</a> (std::span&lt; SourceElement, Extent &gt;) -&gt; Queue&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td></tr>
+<tr class="memitem:af31c4c3eb2e82ffcc9d64da7ea5ca8bc" id="r_af31c4c3eb2e82ffcc9d64da7ea5ca8bc"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</td></tr>
+<tr class="memitem:af31c4c3eb2e82ffcc9d64da7ea5ca8bc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">repeat</a> (T &amp;&amp;value) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td></tr>
+<tr class="memitem:af6ddc48c44e50988e74fbe959e5697b5" id="r_af6ddc48c44e50988e74fbe959e5697b5"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</td></tr>
+<tr class="memitem:af6ddc48c44e50988e74fbe959e5697b5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af6ddc48c44e50988e74fbe959e5697b5">repeat</a> (T &amp;&amp;value, std::size_t count) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td></tr>
 <tr class="memitem:abf6c2fa3e470e828b91b5bb6a12afba7" id="r_abf6c2fa3e470e828b91b5bb6a12afba7"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
 <tr class="memitem:abf6c2fa3e470e828b91b5bb6a12afba7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#abf6c2fa3e470e828b91b5bb6a12afba7">rest</a> (const C &amp;collection) noexcept -&gt; decltype(collection.pop())</td></tr>
 <tr class="memdesc:abf6c2fa3e470e828b91b5bb6a12afba7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a collection without its first/accessible element.  <br /></td></tr>
@@ -511,7 +518,7 @@ template&lt;typename C, typename K&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (in_range &amp;&amp; !<a class="code hl_function" href="#a1985f084fdf102fe981bcf4d6a72c124">contains</a>(v_runtime, 9U)) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00067">cljonic-range.hpp:67</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00065">cljonic-range.hpp:65</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00095">cljonic-string.hpp:95</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00151">cljonic-vector.hpp:151</a></div></div>
 </div><!-- fragment --> 
@@ -844,16 +851,18 @@ template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; </d
 
 <p>The non-throwing, non-allocating materialization-completeness preflight for <a class="el" href="#Into" title="Into">into</a>. </p>
 <p><a class="anchor" id="FitsInto"></a> </p>
-<p>Reports whether appending the complete <code class="param">source</code> to <code class="param">destination</code> fits within the destination's capacity, using the same cardinality semantics as <span class="tt"><a class="el" href="#a2657ed445a742b6fa503dff183ac3a61" title="Materializes a source (collection or producer) into an explicit bounded destination,...">into</a></span>. Scoped to <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> destinations in this increment.</p>
+<p>Reports whether appending the complete <code class="param">source</code> to <code class="param">destination</code> fits within the destination's remaining capacity, using the same cardinality semantics as <span class="tt"><a class="el" href="#a2657ed445a742b6fa503dff183ac3a61" title="Materializes a source (collection or producer) into an explicit bounded destination,...">into</a></span>. It returns <span class="tt">false</span> for every unbounded producer, even though its normal const traversal is capped. Scoped to <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> destinations in this increment.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 8&gt;</a> destination{};</div>
 <div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> source{0, 5};</div>
 <div class="line"><span class="keyword">static_assert</span>(<a class="code hl_function" href="#a13428e612ad260bf2b1450fd1915d770">fits_into</a>(destination, source));</div>
-<div class="ttc" id="anamespacecljonic_html_a13428e612ad260bf2b1450fd1915d770"><div class="ttname"><a href="#a13428e612ad260bf2b1450fd1915d770">cljonic::fits_into</a></div><div class="ttdeci">constexpr auto fits_into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</div><div class="ttdoc">The non-throwing, non-allocating materialization-completeness preflight for into.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-fits-into_8hpp_source.html#l00023">cljonic-fits-into.hpp:23</a></div></div>
+<div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> unbounded{0, 5, 0};</div>
+<div class="line"><span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a13428e612ad260bf2b1450fd1915d770">fits_into</a>(destination, unbounded));</div>
+<div class="ttc" id="anamespacecljonic_html_a13428e612ad260bf2b1450fd1915d770"><div class="ttname"><a href="#a13428e612ad260bf2b1450fd1915d770">cljonic::fits_into</a></div><div class="ttdeci">constexpr auto fits_into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</div><div class="ttdoc">The non-throwing, non-allocating materialization-completeness preflight for into.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-fits-into_8hpp_source.html#l00026">cljonic-fits-into.hpp:26</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00023">23</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00026">26</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
 
 </div>
 </div>
@@ -956,17 +965,18 @@ template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; </d
 
 <p>Materializes a source (collection or producer) into an explicit bounded destination, appending its elements. </p>
 <p><a class="anchor" id="Into"></a> </p>
-<p>Returns an updated destination-typed collection and leaves both <code class="param">destination</code> and <code class="param">source</code> unchanged. An unbounded or oversized source produces a deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes completely. Scoped to <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> destinations in this increment.</p>
+<p>Returns an updated destination-typed collection with source elements appended after the destination's existing logical contents, leaving both <code class="param">destination</code> and <code class="param">source</code> unchanged. An unbounded or oversized source produces a deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes completely. Scoped to <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> destinations in this increment.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 8&gt;</a> destination{};</div>
+<div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 8&gt;</a> destination{100, 200};</div>
 <div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> source{0, 5};</div>
 <div class="line"><span class="keyword">constexpr</span> <span class="keyword">auto</span> result = <a class="code hl_function" href="#a2657ed445a742b6fa503dff183ac3a61">into</a>(destination, source);</div>
-<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(result) == 5U);</div>
-<div class="ttc" id="anamespacecljonic_html_a2657ed445a742b6fa503dff183ac3a61"><div class="ttname"><a href="#a2657ed445a742b6fa503dff183ac3a61">cljonic::into</a></div><div class="ttdeci">constexpr auto into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; Dest</div><div class="ttdoc">Materializes a source (collection or producer) into an explicit bounded destination,...</div><div class="ttdef"><b>Definition</b> <a href="cljonic-into_8hpp_source.html#l00026">cljonic-into.hpp:26</a></div></div>
+<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(result) == 7U);</div>
+<div class="line"><span class="keyword">static_assert</span>(result(2U) == 0);</div>
+<div class="ttc" id="anamespacecljonic_html_a2657ed445a742b6fa503dff183ac3a61"><div class="ttname"><a href="#a2657ed445a742b6fa503dff183ac3a61">cljonic::into</a></div><div class="ttdeci">constexpr auto into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; Dest</div><div class="ttdoc">Materializes a source (collection or producer) into an explicit bounded destination,...</div><div class="ttdef"><b>Definition</b> <a href="cljonic-into_8hpp_source.html#l00028">cljonic-into.hpp:28</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-into_8hpp_source.html#l00026">26</a> of file <a class="el" href="cljonic-into_8hpp_source.html">cljonic-into.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-into_8hpp_source.html#l00028">28</a> of file <a class="el" href="cljonic-into_8hpp_source.html">cljonic-into.hpp</a>.</p>
 
 </div>
 </div>
@@ -1319,6 +1329,70 @@ requires (Extent != std::dynamic_extent)</div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="af31c4c3eb2e82ffcc9d64da7ea5ca8bc" name="af31c4c3eb2e82ffcc9d64da7ea5ca8bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">&#9670;&#160;</a></span>repeat() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; <br />
+requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::repeat </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00132">132</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af6ddc48c44e50988e74fbe959e5697b5" name="af6ddc48c44e50988e74fbe959e5697b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6ddc48c44e50988e74fbe959e5697b5">&#9670;&#160;</a></span>repeat() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; <br />
+requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::repeat </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00138">138</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>

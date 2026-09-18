@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::Range&lt; T &gt;::const_iterator Class Reference</title>
+<title>cljonic: cljonic::Repeat&lt; T &gt;::const_iterator Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="classcljonic_1_1_range.html">Range</a></li><li class="navelem"><a href="classcljonic_1_1_range_1_1const__iterator.html">const_iterator</a></li>  </ul>
+<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="classcljonic_1_1_repeat.html">Repeat</a></li><li class="navelem"><a href="classcljonic_1_1_repeat_1_1const__iterator.html">const_iterator</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -103,86 +103,85 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
-<a href="classcljonic_1_1_range_1_1const__iterator-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">cljonic::Range&lt; T &gt;::const_iterator Class Reference</div></div>
+<a href="classcljonic_1_1_repeat_1_1const__iterator-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">cljonic::Repeat&lt; T &gt;::const_iterator Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-types" class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:add4f5627d966f33e082bacf77cc67086" id="r_add4f5627d966f33e082bacf77cc67086"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#add4f5627d966f33e082bacf77cc67086">value_type</a> = T</td></tr>
-<tr class="memitem:a63607c0402eab5d809caf2e064d77df9" id="r_a63607c0402eab5d809caf2e064d77df9"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#a63607c0402eab5d809caf2e064d77df9">difference_type</a> = std::ptrdiff_t</td></tr>
+<tr class="memitem:ace79bb39767373596d059fbc444a9915" id="r_ace79bb39767373596d059fbc444a9915"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#ace79bb39767373596d059fbc444a9915">value_type</a> = T</td></tr>
+<tr class="memitem:a22711a19f3e160ede41b07e3098fcf3d" id="r_a22711a19f3e160ede41b07e3098fcf3d"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#a22711a19f3e160ede41b07e3098fcf3d">difference_type</a> = std::ptrdiff_t</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a74dccbb8a39bcd848f5b258e6f0f7234" id="r_a74dccbb8a39bcd848f5b258e6f0f7234"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a> () noexcept=default</td></tr>
-<tr class="memitem:a2811f1c72f07e1d59167a360834623f4" id="r_a2811f1c72f07e1d59167a360834623f4"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a2811f1c72f07e1d59167a360834623f4">const_iterator</a> (T current, std::size_t remaining, T step) noexcept</td></tr>
-<tr class="memitem:aa002f5e18a03fee7a80ff70657b8813a" id="r_aa002f5e18a03fee7a80ff70657b8813a"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aa002f5e18a03fee7a80ff70657b8813a">operator*</a> () const noexcept -&gt; T</td></tr>
-<tr class="memitem:a6095dcaac27695e08fc57d7850bc40d6" id="r_a6095dcaac27695e08fc57d7850bc40d6"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a6095dcaac27695e08fc57d7850bc40d6">operator++</a> () noexcept -&gt; <a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a> &amp;</td></tr>
-<tr class="memitem:a9f3ef271e5bd6b399144a796c5f5c054" id="r_a9f3ef271e5bd6b399144a796c5f5c054"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a9f3ef271e5bd6b399144a796c5f5c054">operator++</a> (int) noexcept -&gt; <a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a></td></tr>
+<tr class="memitem:a102a35df896f5c7444586c4f92b044d5" id="r_a102a35df896f5c7444586c4f92b044d5"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a> () noexcept=default</td></tr>
+<tr class="memitem:ad9e79ba37bded7974938660f96e87f64" id="r_ad9e79ba37bded7974938660f96e87f64"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ad9e79ba37bded7974938660f96e87f64">const_iterator</a> (const T *value, std::size_t remaining) noexcept</td></tr>
+<tr class="memitem:a496ed738ee46af2ace938149358756b3" id="r_a496ed738ee46af2ace938149358756b3"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a496ed738ee46af2ace938149358756b3">operator*</a> () const noexcept -&gt; const T &amp;</td></tr>
+<tr class="memitem:a0cee47747a8252dd3f0416ba52511517" id="r_a0cee47747a8252dd3f0416ba52511517"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a0cee47747a8252dd3f0416ba52511517">operator++</a> () noexcept -&gt; <a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a> &amp;</td></tr>
+<tr class="memitem:a71d5a3c8a8fea5afcc5f6ade253ea246" id="r_a71d5a3c8a8fea5afcc5f6ade253ea246"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a71d5a3c8a8fea5afcc5f6ade253ea246">operator++</a> (int) noexcept -&gt; <a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a5423f8cd56530e83499880f2ef5db478" id="r_a5423f8cd56530e83499880f2ef5db478"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5423f8cd56530e83499880f2ef5db478">operator==</a> (const <a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a> &amp;lhs, const <a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a> &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a5423f8cd56530e83499880f2ef5db478" id="r_a5423f8cd56530e83499880f2ef5db478"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5423f8cd56530e83499880f2ef5db478">operator==</a> (const <a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a> &amp;lhs, const <a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a> &amp;rhs) noexcept -&gt; bool</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;std::signed_integral T&gt;<br />
-class cljonic::Range&lt; T &gt;::const_iterator</div><p>A bounded, generating const iterator used by free-function observation (e.g. <a class="el" href="namespacecljonic.html#Into" title="Into">into</a>); it does not expose start/end/step parameters. </p>
-
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00071">71</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowCollectionElement T&gt;<br />
+class cljonic::Repeat&lt; T &gt;::const_iterator</div>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00066">66</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
-<a id="a63607c0402eab5d809caf2e064d77df9" name="a63607c0402eab5d809caf2e064d77df9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63607c0402eab5d809caf2e064d77df9">&#9670;&#160;</a></span>difference_type</h2>
+<a id="a22711a19f3e160ede41b07e3098fcf3d" name="a22711a19f3e160ede41b07e3098fcf3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22711a19f3e160ede41b07e3098fcf3d">&#9670;&#160;</a></span>difference_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;std::signed_integral T&gt; </div>
+template&lt;concepts::NothrowCollectionElement T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classcljonic_1_1_range.html">cljonic::Range</a>&lt; T &gt;::const_iterator::difference_type = std::ptrdiff_t</td>
+          <td class="memname">using <a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::const_iterator::difference_type = std::ptrdiff_t</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00074">74</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00069">69</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
-<a id="add4f5627d966f33e082bacf77cc67086" name="add4f5627d966f33e082bacf77cc67086"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add4f5627d966f33e082bacf77cc67086">&#9670;&#160;</a></span>value_type</h2>
+<a id="ace79bb39767373596d059fbc444a9915" name="ace79bb39767373596d059fbc444a9915"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace79bb39767373596d059fbc444a9915">&#9670;&#160;</a></span>value_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;std::signed_integral T&gt; </div>
+template&lt;concepts::NothrowCollectionElement T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classcljonic_1_1_range.html">cljonic::Range</a>&lt; T &gt;::const_iterator::value_type = T</td>
+          <td class="memname">using <a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::const_iterator::value_type = T</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00073">73</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00068">68</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
 <a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a74dccbb8a39bcd848f5b258e6f0f7234" name="a74dccbb8a39bcd848f5b258e6f0f7234"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74dccbb8a39bcd848f5b258e6f0f7234">&#9670;&#160;</a></span>const_iterator() <span class="overload">[1/2]</span></h2>
+<a id="a102a35df896f5c7444586c4f92b044d5" name="a102a35df896f5c7444586c4f92b044d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a102a35df896f5c7444586c4f92b044d5">&#9670;&#160;</a></span>const_iterator() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;std::signed_integral T&gt; </div>
+template&lt;concepts::NothrowCollectionElement T&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classcljonic_1_1_range.html">cljonic::Range</a>&lt; T &gt;::const_iterator::const_iterator </td>
+          <td class="memname"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::const_iterator::const_iterator </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -197,31 +196,26 @@ template&lt;std::signed_integral T&gt; </div>
 
 </div>
 </div>
-<a id="a2811f1c72f07e1d59167a360834623f4" name="a2811f1c72f07e1d59167a360834623f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2811f1c72f07e1d59167a360834623f4">&#9670;&#160;</a></span>const_iterator() <span class="overload">[2/2]</span></h2>
+<a id="ad9e79ba37bded7974938660f96e87f64" name="ad9e79ba37bded7974938660f96e87f64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9e79ba37bded7974938660f96e87f64">&#9670;&#160;</a></span>const_iterator() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;std::signed_integral T&gt; </div>
+template&lt;concepts::NothrowCollectionElement T&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classcljonic_1_1_range.html">cljonic::Range</a>&lt; T &gt;::const_iterator::const_iterator </td>
+          <td class="memname"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::const_iterator::const_iterator </td>
           <td>(</td>
-          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>current</em></span>, </td>
+          <td class="paramtype">const T *</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>remaining</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>step</em></span>&#160;)</td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>remaining</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -231,27 +225,27 @@ template&lt;std::signed_integral T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00078">78</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00073">73</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
-<a id="aa002f5e18a03fee7a80ff70657b8813a" name="aa002f5e18a03fee7a80ff70657b8813a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa002f5e18a03fee7a80ff70657b8813a">&#9670;&#160;</a></span>operator*()</h2>
+<a id="a496ed738ee46af2ace938149358756b3" name="a496ed738ee46af2ace938149358756b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a496ed738ee46af2ace938149358756b3">&#9670;&#160;</a></span>operator*()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;std::signed_integral T&gt; </div>
+template&lt;concepts::NothrowCollectionElement T&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto <a class="el" href="classcljonic_1_1_range.html">cljonic::Range</a>&lt; T &gt;::const_iterator::operator* </td>
+          <td class="memname">auto <a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::const_iterator::operator* </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const -&gt; T</td>
+          <td> const -&gt; const T &amp;</td>
         </tr>
       </table>
   </td>
@@ -261,26 +255,26 @@ template&lt;std::signed_integral T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00082">82</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00077">77</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a6095dcaac27695e08fc57d7850bc40d6" name="a6095dcaac27695e08fc57d7850bc40d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6095dcaac27695e08fc57d7850bc40d6">&#9670;&#160;</a></span>operator++() <span class="overload">[1/2]</span></h2>
+<a id="a0cee47747a8252dd3f0416ba52511517" name="a0cee47747a8252dd3f0416ba52511517"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cee47747a8252dd3f0416ba52511517">&#9670;&#160;</a></span>operator++() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;std::signed_integral T&gt; </div>
+template&lt;concepts::NothrowCollectionElement T&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto <a class="el" href="classcljonic_1_1_range.html">cljonic::Range</a>&lt; T &gt;::const_iterator::operator++ </td>
+          <td class="memname">auto <a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::const_iterator::operator++ </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> -&gt; <a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a> &amp;</td>
+          <td> -&gt; <a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a> &amp;</td>
         </tr>
       </table>
   </td>
@@ -290,26 +284,26 @@ template&lt;std::signed_integral T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00086">86</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00081">81</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a9f3ef271e5bd6b399144a796c5f5c054" name="a9f3ef271e5bd6b399144a796c5f5c054"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f3ef271e5bd6b399144a796c5f5c054">&#9670;&#160;</a></span>operator++() <span class="overload">[2/2]</span></h2>
+<a id="a71d5a3c8a8fea5afcc5f6ade253ea246" name="a71d5a3c8a8fea5afcc5f6ade253ea246"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71d5a3c8a8fea5afcc5f6ade253ea246">&#9670;&#160;</a></span>operator++() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;std::signed_integral T&gt; </div>
+template&lt;concepts::NothrowCollectionElement T&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto <a class="el" href="classcljonic_1_1_range.html">cljonic::Range</a>&lt; T &gt;::const_iterator::operator++ </td>
+          <td class="memname">auto <a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::const_iterator::operator++ </td>
           <td>(</td>
           <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> -&gt; <a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a></td>
+          <td> -&gt; <a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a></td>
         </tr>
       </table>
   </td>
@@ -319,7 +313,7 @@ template&lt;std::signed_integral T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00094">94</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00086">86</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -330,7 +324,7 @@ template&lt;std::signed_integral T&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;std::signed_integral T&gt; </div>
+template&lt;concepts::NothrowCollectionElement T&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -338,12 +332,12 @@ template&lt;std::signed_integral T&gt; </div>
         <tr>
           <td class="memname">auto operator== </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="#a74dccbb8a39bcd848f5b258e6f0f7234">const_iterator</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;) -&gt; bool</td>
+          <td class="paramtype">const <a class="el" href="#a102a35df896f5c7444586c4f92b044d5">const_iterator</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;) -&gt; bool</td>
         </tr>
       </table>
   </td>
@@ -353,12 +347,12 @@ template&lt;std::signed_integral T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00100">100</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00092">92</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/pauwhi/Downloads/junk/cljonic-playground/src/<a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a></li>
+<li>/home/pauwhi/Downloads/junk/cljonic-playground/src/<a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
