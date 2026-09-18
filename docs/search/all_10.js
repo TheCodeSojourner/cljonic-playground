@@ -1,12 +1,12 @@
 var searchData=
 [
   ['seq_0',['seq',['../namespacecljonic.html#af23ad4b89cbea89172bb757a5fbd5b26',1,'cljonic']]],
-  ['sequence_20traversal_1',['Deferred sequence traversal',['../index.html#autotoc_md8',1,'']]],
+  ['sequence_20traversal_1',['Deferred sequence traversal',['../index.html#autotoc_md9',1,'']]],
   ['sequenceablecollection_2',['SequenceableCollection',['../conceptcljonic_1_1concepts_1_1_sequenceable_collection.html',1,'cljonic::concepts']]],
   ['sequenceableproducer_3',['SequenceableProducer',['../conceptcljonic_1_1concepts_1_1_sequenceable_producer.html',1,'cljonic::concepts']]],
   ['set_4',['Set',['../classcljonic_1_1_set.html',1,'cljonic::Set&lt; T, CapacityValue &gt;'],['../classcljonic_1_1_set.html#ae3ecb3bcbd7a96dd6754306bee88741a',1,'cljonic::Set::Set(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; T, Args &gt; &amp;&amp;...))'],['../classcljonic_1_1_set.html#a818fd2c8626aae40125885495b98495b',1,'cljonic::Set::Set(SourceRange &amp;&amp;source) noexcept((concepts::NothrowElementConstruction&lt; value_type, std::ranges::range_value_t&lt; SourceRange &gt; &gt;))'],['../namespacecljonic.html#af20d169ef36288b54ca608a14eb6b557',1,'cljonic::Set(First, Rest...) -&gt; Set&lt; First, 1+sizeof...(Rest)&gt;'],['../namespacecljonic.html#a6b6fab7c532f3e4641563b70404cbb3e',1,'cljonic::Set(std::span&lt; SourceElement, Extent &gt;) -&gt; Set&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;']]],
   ['set_5',['set',['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122acdaeeeba9b4a4c5ebf042c0215a7bb0e',1,'cljonic::concepts_detail']]],
-  ['set_20functions_6',['Set Functions',['../index.html#autotoc_md9',1,'']]],
+  ['set_20functions_6',['Set Functions',['../index.html#autotoc_md10',1,'']]],
   ['stableequalitycomparable_7',['StableEqualityComparable',['../conceptcljonic_1_1concepts_1_1_stable_equality_comparable.html',1,'cljonic::concepts']]],
   ['static_5fextent_8',['static_extent',['../structcljonic_1_1concepts__detail_1_1static__extent.html',1,'cljonic::concepts_detail']]],
   ['static_5fextent_3c_20elementtype_5bextent_5d_3e_9',['static_extent&lt; ElementType[Extent]&gt;',['../structcljonic_1_1concepts__detail_1_1static__extent_3_01_element_type_0f_extent_0e_4.html',1,'cljonic::concepts_detail']]],
@@ -16,5 +16,5 @@ var searchData=
   ['static_5fextent_5fv_13',['static_extent_v',['../namespacecljonic_1_1concepts__detail.html#a29e1da7a418720132814cc4045837614',1,'cljonic::concepts_detail']]],
   ['string_14',['String',['../classcljonic_1_1_string.html',1,'cljonic::String&lt; CapacityValue &gt;'],['../classcljonic_1_1_string.html#a7ea679911d132d5b5c601904153c8d64',1,'cljonic::String::String() noexcept'],['../classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2',1,'cljonic::String::String(const char(&amp;arr)[N]) noexcept'],['../classcljonic_1_1_string.html#a0262899e1fa653fdb875f3be9b7f9fe6',1,'cljonic::String::String(std::string_view source) noexcept'],['../classcljonic_1_1_string.html#a4c1e9b2ca453358ee6afee69547b9cd1',1,'cljonic::String::String(SourceRange &amp;&amp;source) noexcept'],['../namespacecljonic.html#ac8f7c83a056ffb2ba64e432680d09b21',1,'cljonic::String(const char(&amp;)[N]) -&gt; String&lt; N - 1U &gt;'],['../namespacecljonic.html#a814695bb71acee0980bac4a01c9e1e2d',1,'cljonic::String(std::span&lt; SourceElement, Extent &gt;) -&gt; String&lt; Extent &gt;']]],
   ['string_15',['string',['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122ab45cffe084dd3d20d928bee85e7b0f21',1,'cljonic::concepts_detail']]],
-  ['string_20functions_16',['String Functions',['../index.html#autotoc_md10',1,'']]]
+  ['string_20functions_16',['String Functions',['../index.html#autotoc_md11',1,'']]]
 ];
