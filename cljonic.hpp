@@ -1585,7 +1585,6 @@ namespace cljonic {
  ~~~~~{.cpp}
  #include "cljonic.hpp"
  using namespace cljonic;
-
  int main() {
    // Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero
    // arguments.
@@ -1606,6 +1605,28 @@ namespace cljonic {
    // A billion elements exceeds the system's allowed maximum, so only that
    // maximum number of elements is available.
    [[maybe_unused]] constexpr auto huge = Range{1000000000L};
+
+   // -----------------------------------------------------------------------
+   // C++ interoperability: a Range supports const traversal. Range sources
+   // are copied into owned storage, retaining only the bounded prefix that
+   // fits the capacity.
+   // -----------------------------------------------------------------------
+   constexpr auto odds = Range{1, 12, 2};
+   auto runtime_odds = Range{-1, -11, -2};
+
+   // Use C++ interoperability to sum the values in a constexpr range
+   int odds_sum = 0;
+   for (const auto value : odds) {
+     odds_sum += value;
+   }
+
+   // Use C++ interoperability to sum the values in a runtime range
+   int runtime_odds_sum = 0;
+   for (const auto value : runtime_odds) {
+     runtime_odds_sum += value;
+   }
+
+   return (odds_sum == 36) && (runtime_odds_sum == -25);
  }
  ~~~~~
  */
