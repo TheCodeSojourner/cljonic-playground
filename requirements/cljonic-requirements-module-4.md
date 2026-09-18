@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization mechanisms (`into`, `fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`). Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range` and explicit producer materialization through `into` and `fits_into`; the remaining producer families stay approved future behavior until individually propagated. Collection-owned sequence traversal and interoperability accessors remain deferred future work and are not current collection APIs. Standard ranges and views MAY be used internally by future cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
+This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization mechanisms (`into`, `fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`). Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range`, `Repeat`, and explicit producer materialization through `into` and `fits_into`; `Cycle`, `Iterate`, and `Repeatedly` remain approved future behavior until individually propagated. Collection-owned sequence traversal and interoperability accessors remain deferred future work and are not current collection APIs. Standard ranges and views MAY be used internally by future cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
 
 ## Materialization & Producer Invariants
 
@@ -44,6 +44,8 @@ REQ-FN-013. For `range` with both equal start and end and a zero step, zero-step
 
 REQ-FN-013A. `Range` MUST provide a non-throwing, non-allocating, constant-time `contains` predicate over its available bounded-prefix index domain. `contains(range, index)` MUST report whether the index is available for bounded observation, not whether the index is present as a produced value. `Range` MUST NOT expose key-based lookup, `get`, or callable lookup; positional value retrieval remains deferred until explicitly approved.
 
+REQ-FN-013B. `repeat(value)` MUST construct an unbounded `Repeat<T>` producer that owns a copy of `value` and produces the same value indefinitely. `repeat(value, count)` MUST construct a finite `Repeat<T>` producer that owns a copy of `value` and produces exactly `count` copies, including an empty result when `count` is zero. `Repeat<T>` MUST NOT expose `count`, `contains`, positional retrieval, key-based lookup, `get`, or callable lookup. Counted forms MUST use `count` as their exact runtime result count for `into` and `fits_into`; uncounted forms MUST materialize at most the explicit destination capacity and MUST report `false` from `fits_into`.
+
 REQ-FN-014. Callbacks supplied to `iterate` and `repeatedly` MUST be pure and non-allocating. Counted forms MUST invoke a callback exactly once per produced element during each `into` call when materialized completely; uncounted forms MUST be treated as potentially infinite producers.
 
 REQ-FN-014A. The unbounded-equality restriction MUST apply to every producer form that can produce an unbounded sequence, including open-ended `range`, `cycle`, uncounted `repeat`, uncounted `repeatedly`, and unbounded `iterate`, regardless of whether two such producers currently appear to produce the same values.
@@ -83,4 +85,4 @@ REQ-PLAT-023. Direct use of `std::ranges`, `std::views`, or collection interoper
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly` producer templates, `into`, `fits_into`, and internal collection traversal support.
-- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, including `REQ-FN-013A`, `REQ-FN-027`, `REQ-PLAT-017`–`023`, including `REQ-PLAT-017A` and `REQ-PLAT-022A`.
+- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, including `REQ-FN-013A`–`013B`, `REQ-FN-027`, `REQ-PLAT-017`–`023`, including `REQ-PLAT-017A` and `REQ-PLAT-022A`.
