@@ -66,19 +66,25 @@
  * quality code \b faster, and can be \b cost-effectively \b maintained over time.
  *
  * \anchor Core_Cheatsheet
- * ___ # Cheatsheet
+ * ___
+ * # Cheatsheet
  *
  * ## Aliases
  *
- * Namespace		       | "using" C++ Statement ------------------------------ |
- * --------------------------------------------- \ref Namespace_Core "Core"     | using **core** = cljonic::core; \ref
- * Namespace_Set "Set"   | using **set** = cljonic::set; \ref Namespace_String "String" | using **string** =
- * cljonic::string;
+ * Namespace                      | "using" C++ Statement
+ * ------------------------------ | ---------------------------------------------
+ * \ref Namespace_Core "Core"     | using **core** = cljonic::core;
+ * \ref Namespace_Set "Set"       | using **set** = cljonic::set;
+ * \ref Namespace_String "String" | using **string** = cljonic::string;
  *
  * ## Collection Types
  *
- * - \ref Map "cljonic::Map" - \ref MapEntry "cljonic::MapEntry" - \ref Queue "cljonic::Queue" - \ref Set
- * "cljonic::Set" - \ref String "cljonic::String" - \ref Vector "cljonic::Vector"
+ * - \ref Map "cljonic::Map"
+ * - \ref MapEntry "cljonic::MapEntry"
+ * - \ref Queue "cljonic::Queue"
+ * - \ref Set "cljonic::Set"
+ * - \ref String "cljonic::String"
+ * - \ref Vector "cljonic::Vector"
  *
  * ## Producer Types
  *
@@ -97,68 +103,92 @@
  *
  * ### Predicate
  *
- * - \ref Core_Compare "Compare" - \ref Core_EQ "EQ" - \ref Core_GE "GE", \ref Core_GT "GT" - \ref Core_IsAlpha
- * "IsAlpha", \ref Core_IsAlphanumeric "IsAlphanumeric", \ref Core_IsBlank "IsBlank", \ref Core_IsControl "IsControl",
- * \ref Core_IsDigit "IsDigit", \ref Core_IsEven "IsEven", \ref Core_IsGraphical "IsGraphical", \ref Core_IsHexDigit
- * "IsHexDigit", \ref Core_IsLowercase "IsLowercase", \ref Core_IsNatural "IsNatural", \ref Core_IsNegative
- * "IsNegative", \ref Core_IsOdd "IsOdd", \ref Core_IsPositive "IsPositive", \ref Core_IsPrintable "IsPrintable", \ref
- * Core_IsPunctuation "IsPunctuation", \ref Core_IsSpace "IsSpace", \ref Core_IsUppercase "IsUppercase", \ref
- * Core_IsZero "IsZero" - \ref Core_LE "LE", \ref Core_LT "LT" - \ref Core_NE "NE"
+ * - \ref Core_Compare "Compare"
+ * - \ref Core_EQ "EQ"
+ * - \ref Core_GE "GE", \ref Core_GT "GT"
+ * - \ref Core_IsAlpha "IsAlpha", \ref Core_IsAlphanumeric "IsAlphanumeric", \ref Core_IsBlank "IsBlank",
+ * \ref Core_IsControl "IsControl", \ref Core_IsDigit "IsDigit", \ref Core_IsEven "IsEven", \ref Core_IsGraphical
+ * "IsGraphical", \ref Core_IsHexDigit "IsHexDigit", \ref Core_IsLowercase "IsLowercase", \ref Core_IsNatural
+ * "IsNatural", \ref Core_IsNegative "IsNegative", \ref Core_IsOdd "IsOdd", \ref Core_IsPositive "IsPositive", \ref
+ * Core_IsPrintable "IsPrintable", \ref Core_IsPunctuation "IsPunctuation", \ref Core_IsSpace "IsSpace", \ref
+ * Core_IsUppercase "IsUppercase", \ref Core_IsZero "IsZero"
+ * - \ref Core_LE "LE", \ref Core_LT "LT"
+ * - \ref Core_NE "NE"
  *
  * ### Primitive
  *
- * - \ref Core_Abs "Abs", \ref Core_Add "Add" - \ref Core_Char "Char", \ref Core_Combinations "Combinations", \ref
- * Core_CString "CString" - \ref Core_Dec "Dec", \ref Core_Div "Div" - \ref Core_Factorial "Factorial" - \ref Core_Inc
- * "Inc" - \ref Core_Lowercase "Lowercase" - \ref Core_Max "Max", \ref Core_Min "Min", \ref Core_Mod "Mod", \ref
- * Core_Mul "Mul" - \ref Core_Ord "Ord" - \ref Core_Permutations "Permutations" - \ref Core_Sub "Sub", - \ref
- * Core_Uppercase "Uppercase"
+ * - \ref Core_Abs "Abs", \ref Core_Add "Add"
+ * - \ref Core_Char "Char", \ref Core_Combinations "Combinations", \ref Core_CString "CString"
+ * - \ref Core_Dec "Dec", \ref Core_Div "Div"
+ * - \ref Core_Factorial "Factorial"
+ * - \ref Core_Inc "Inc"
+ * - \ref Core_Lowercase "Lowercase"
+ * - \ref Core_Max "Max", \ref Core_Min "Min", \ref Core_Mod "Mod", \ref Core_Mul "Mul"
+ * - \ref Core_Ord "Ord"
+ * - \ref Core_Permutations "Permutations"
+ * - \ref Core_Sub "Sub"
+ * - \ref Core_Uppercase "Uppercase"
  *
  * ### Deferred sequence traversal
  *
  * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
- * when their requirements are approved. - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref
- * Conj "conj", \ref Contains "contains", \ref Count "count" - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy
- * "DedupeBy", \ref Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M "DefaultElement_M", \ref
- * Core_Different "Different", \ref Disj "disj", \ref Dissoc "dissoc", \ref Core_Distinct "Distinct", \ref
- * Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
- * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy "EqualBy", \ref
- * Core_Every "Every" - \ref Core_Filter "Filter", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize",
- * Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into" - \ref Get "get"
+ * when their requirements are approved.
+ *
+ * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref Conj "conj", \ref Contains
+ * "contains", \ref Count "count"
+ * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref Core_DefaultElement "DefaultElement",
+ * \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref Dissoc
+ * "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
+ * Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
+ * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy "EqualBy",
+ * \ref Core_Every "Every"
+ * - \ref Core_Filter "Filter", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize", Core_Frequencies
+ * "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into"
+ * - \ref Get "get"
  * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy
- * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into" - \ref
- * Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull
- * "IsFull", \ref Core_Iterate "Iterate" - \ref Core_Juxt "Juxt" - \ref Core_Last "Last", \ref Core_LastIndexOf
- * "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy" - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy
- * "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy" - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref
- * Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M" - \ref Core_Partition "Partition", \ref
- * Core_PartitionAll "PartitionAll", \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop" - \ref
- * Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace "Replace",
- * \ref Core_Reverse "Reverse" - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref
- * Core_Sort "Sort", \ref Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref
- * Core_Subs "Subs" - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref
- * Core_TakeWhile "TakeWhile"
+ * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into"
+ * - \ref Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull
+ * "IsFull", \ref Core_Iterate "Iterate"
+ * - \ref Core_Juxt "Juxt"
+ * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy"
+ * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy"
+ * - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth",
+ * \ref Core_Nth_M "Nth_M"
+ * - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll", \ref Core_PartitionBy "PartitionBy",
+ * \ref Peek "peek", \ref Pop "pop"
+ * - \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace
+ * "Replace", \ref Core_Reverse "Reverse"
+ * - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort", \ref
+ * Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs "Subs"
+ * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
  * ## Set Functions
  *
- * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy" - \ref Set_Difference "Difference", \ref Set_DifferenceBy
- * "DifferenceBy", \ref Set_Disj "Disj", \ref Set_DisjBy "DisjBy" - \ref Set_IndexOf "IndexOf", \ref Set_IndexOfBy
- * "IndexOfBy", \ref Set_Intersection "Intersection", \ref Set_IntersectionBy "IntersectionBy" - \ref Set_ToSet
- * "ToSet", \ref Set_ToSetBy "ToSetBy" - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
+ * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy"
+ * - \ref Set_Difference "Difference", \ref Set_DifferenceBy "DifferenceBy", \ref Set_Disj "Disj",
+ * \ref Set_DisjBy "DisjBy"
+ * - \ref Set_IndexOf "IndexOf", \ref Set_IndexOfBy "IndexOfBy", \ref Set_Intersection "Intersection",
+ * \ref Set_IntersectionBy "IntersectionBy"
+ * - \ref Set_ToSet "ToSet", \ref Set_ToSetBy "ToSetBy"
+ * - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
  *
  * ## String Functions
  *
- * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref String_Concat "Concat" - \ref
- * String_EndsWith "EndsWith" - \ref String_FloatToString "FloatToString", \ref String_Format "Format" - \ref
- * String_Includes "Includes", \ref String_IndexOf "IndexOf", \ref String_Interpose "Interpose", \ref
- * String_IntToString "IntToString", \ref String_IntToStringHex "IntToStringHex", \ref String_IsBlank "IsBlank" - \ref
- * String_LastIndexOf "LastIndexOf", \ref String_Lowercase "Lowercase" - \ref String_Partition "Partition", \ref
- * String_PartitionAll "PartitionAll", \ref String_PartitionBy "PartitionBy" - \ref String_Replace "Replace", \ref
- * String_ReplaceFirst "ReplaceFirst" - \ref String_Split "Split", \ref String_SplitCount "SplitCount", \ref
- * String_SplitLine "SplitLine", \ref String_StartsWith "StartsWith", \ref String_StrLen "StrLen", \ref
- * String_StrOfChar "StrOfChar", \ref String_StrToFloat "StrToFloat", \ref String_StrToIntDecimal "StrToIntDecimal",
- * \ref String_StrToIntHex "StrToIntHex", \ref String_Subs "Subs" - \ref String_Trim "Trim", \ref String_TrimLeft
- * "TrimLeft", \ref String_TrimNewLine "TrimNewLine", \ref String_TrimRight "TrimRight" - \ref String_Uppercase
- * "Uppercase"
+ * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref String_Concat "Concat"
+ * - \ref String_EndsWith "EndsWith"
+ * - \ref String_FloatToString "FloatToString", \ref String_Format "Format"
+ * - \ref String_Includes "Includes", \ref String_IndexOf "IndexOf", \ref String_Interpose "Interpose",
+ * \ref String_IntToString "IntToString", \ref String_IntToStringHex "IntToStringHex", \ref String_IsBlank "IsBlank"
+ * - \ref String_LastIndexOf "LastIndexOf", \ref String_Lowercase "Lowercase"
+ * - \ref String_Partition "Partition", \ref String_PartitionAll "PartitionAll", \ref String_PartitionBy "PartitionBy"
+ * - \ref String_Replace "Replace", \ref String_ReplaceFirst "ReplaceFirst"
+ * - \ref String_Split "Split", \ref String_SplitCount "SplitCount", \ref String_SplitLine "SplitLine",
+ * \ref String_StartsWith "StartsWith", \ref String_StrLen "StrLen", \ref String_StrOfChar "StrOfChar", \ref
+ * String_StrToFloat "StrToFloat", \ref String_StrToIntDecimal "StrToIntDecimal", \ref String_StrToIntHex
+ * "StrToIntHex", \ref String_Subs "Subs"
+ * - \ref String_Trim "Trim", \ref String_TrimLeft "TrimLeft", \ref String_TrimNewLine "TrimNewLine",
+ * \ref String_TrimRight "TrimRight"
+ * - \ref String_Uppercase "Uppercase"
  */
 
 /** \anchor Namespace_Core
