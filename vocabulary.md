@@ -285,6 +285,14 @@ higher-order algorithms.
 - **Examples:** Inspecting the first bounded prefix of an unbounded producer is finite observation.
 
 
+### FiniteStatus
+- **Definition:** The non-throwing `is_finite()` predicate result that distinguishes a producer with a finite complete result from an UnboundedProducer. FiniteStatus governs complete-result preflight; it is distinct from the bounded observable traversal returned by `count()`.
+- **Deprecated Synonyms:** boundedness flag, completion status
+- **Related:** UnboundedProducer, PreflightPredicate, ProducerIteration, ProducerMaterialization
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `range(0, 5).is_finite()` is true, while a zero-step Range and `repeat(value)` report false even though both have capped traversal.
+
+
 ### FiniteDeepEquality
 - **Definition:** Equality comparison that observes and compares only the documented finite domain of two values or producers, rather than requiring an unbounded source to terminate.
 - **Deprecated Synonyms:** bounded deep equality, finite sequence equality
@@ -302,7 +310,7 @@ higher-order algorithms.
 
 
 ### Producer
-- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Producers vary in which capabilities they satisfy: `Range` is efficiently `Indexed` and efficiently counted (`count()` is O(1)); `Repeat` is neither efficiently `Indexed` nor efficiently counted, matching Clojure. Deferred producers (`Cycle`, `Iterate`, and `Repeatedly`) MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
+- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat` is not `Indexed`. Deferred producers (`Cycle`, `Iterate`, and `Repeatedly`) MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
 - **Deprecated Synonyms:** sequence producer, source producer
 - **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -318,7 +326,7 @@ higher-order algorithms.
 
 
 ### Range
-- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. `Range` exposes no canonical `start`/`end`/`step` observation; instead it is `Indexed`: `contains(r, i)` tests whether an index is within its available bounded prefix in O(1). Unlike `Vector`/`Map`/`Set`, `Range` is not invocable (not `IFn`); it exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
+- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. Finite Range forms return their exact count and `true` from `is_finite()`; zero-step forms return the configured traversal cap and `false`. `Range` exposes no canonical `start`/`end`/`step` observation; instead it is `Indexed`: `contains(r, i)` tests whether an index is within its available bounded prefix in O(1). Unlike `Vector`/`Map`/`Set`, `Range` is not invocable (not `IFn`); it exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
 - **Deprecated Synonyms:** range producer, arithmetic range
 - **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount, Contains, Indexed, CljonicRange
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -326,7 +334,7 @@ higher-order algorithms.
 
 
 ### Repeat
-- **Definition:** A Producer that owns one value and yields copies of that value. `repeat(value)` is unbounded; `repeat(value, count)` is finite and yields exactly `count` copies, including an empty result for zero. `Repeat` is neither `Indexed` nor efficiently counted, is not invocable (`IFn`), and exposes no `count`, `contains`, positional retrieval, key-based lookup, or `get`. Its finite result count is used only by `into` and `fits_into`; its unbounded form has no complete-result fit.
+- **Definition:** A Producer that owns one value and yields copies of that value. `repeat(value)` is unbounded; `repeat(value, count)` is finite and yields exactly `count` copies, including an empty result for zero. Finite Repeat returns its exact count and `true` from `is_finite()`; unbounded Repeat returns the configured traversal cap and `false`. `Repeat` is not `Indexed`, is not invocable (`IFn`), and exposes no `contains`, positional retrieval, key-based lookup, or `get`. Its finite result count governs complete append preflight; its unbounded form has no complete-result fit.
 - **Deprecated Synonyms:** repeat producer, repeated-value producer
 - **Related:** Producer, UnboundedProducer, ProducerMaterialization, PreflightPredicate, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -702,7 +710,7 @@ higher-order algorithms.
 
 
 ### PreflightPredicate
-- **Definition:** A non-throwing, non-allocating predicate that measures the same completion and failure conditions as its paired operation.
+- **Definition:** A non-throwing, non-allocating predicate that measures the same completion and failure conditions as its paired operation. `fits_into(destination, source)` tests whether the complete source can be appended to the destination's remaining capacity; it is false for an UnboundedProducer regardless of its capped observable count.
 - **Deprecated Synonyms:** preflight check, capability precheck
 - **Related:** CompleteResult, BoundedPrefixResult, ProbeFirstAccess
 - **Usage:** Requirements, specification, implementation, tests, and documentation
@@ -758,7 +766,7 @@ higher-order algorithms.
 
 
 ### UnboundedProducer
-- **Definition:** An explicit producer value with no finite caller-independent complete-result bound, requiring bounded materialization semantics.
+- **Definition:** An explicit producer value with no finite caller-independent complete-result bound, requiring bounded materialization semantics. It reports false from `is_finite()` and has ordinary const traversal capped by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; that count is an observable traversal bound, not a complete cardinality.
 - **Deprecated Synonyms:** infinite producer, open-ended producer
 - **Related:** ProducerMaterialization, PreflightPredicate
 - **Usage:** Requirements, specification, implementation, tests, and documentation
@@ -766,7 +774,7 @@ higher-order algorithms.
 
 
 ### ProducerMaterialization
-- **Definition:** The explicit process of turning a producer into an owning bounded result in a selected destination under complete-result preflight rules.
+- **Definition:** The explicit process of appending a producer's elements to a copy of a selected bounded destination under complete-result preflight rules. `fits_into` determines whether the complete append fits the destination's remaining capacity; `into` returns the deterministic prefix when it does not.
 - **Deprecated Synonyms:** producer realization, producer into-materialization
 - **Related:** UnboundedProducer, PreflightPredicate, ProducerIteration
 - **Usage:** Requirements, specification, implementation, tests, and documentation
@@ -774,7 +782,7 @@ higher-order algorithms.
 
 
 ### ProducerIteration
-- **Definition:** The bounded traversal of a producer's elements up to its effective size, as distinct from ProducerMaterialization, which realizes those elements into an owning bounded result.
+- **Definition:** The ordinary const traversal of a producer's elements from `begin()` to `end()`, bounded by `count()`. For an UnboundedProducer, the configured count is the observable traversal cap rather than a complete result cardinality. ProducerIteration is distinct from ProducerMaterialization, which appends those elements into an owning bounded result.
 - **Deprecated Synonyms:** producer iteration, producer traversal
 - **Related:** ProducerMaterialization, UnboundedProducer
 - **Usage:** Architecture, specification, and documentation
