@@ -8,11 +8,13 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 
 REQ-VAL-014. A materialization operation whose maximum possible result cardinality is not statically guaranteed to fit MUST use an explicit bounded destination collection supplied at the call site. Producer values MUST NOT own result storage or require a result-capacity template parameter.
 
-REQ-VAL-015. The destination supplied to `into` MUST encode the result capacity and result collection type. `into` MUST return a new destination-typed collection and MUST leave both the destination value and producer/input values unchanged.
+REQ-VAL-015. The destination supplied to `into` MUST encode the result capacity and result collection type. `into(destination, source)` MUST return a new destination-typed collection formed by appending source elements after the destination's existing logical elements, and MUST leave both input values unchanged. `fits_into(destination, source)` MUST report whether the complete source can be appended within the destination's remaining capacity.
 
-REQ-VAL-016. `count` MUST return the exact element count for a materialized collection and MUST return a conservative maximum materialization count for a producer or composed producer without traversing an unbounded producer.
+REQ-VAL-016. `count` MUST return the exact element count for a materialized collection. Every Module 4 producer MUST expose a non-throwing, non-allocating `count` for its bounded observable traversal: finite forms MUST return their exact runtime result count, while unbounded forms MUST return `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`. This unbounded count is a configured observable traversal cap, not a claim that the producer has a finite complete result.
 
 REQ-VAL-017. Compile-time cardinality composition MUST use saturating arithmetic: every composed producer cardinality MUST be at most `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`.
+
+REQ-VAL-017A. Every Module 4 producer MUST expose a non-throwing, non-allocating `is_finite` predicate. `is_finite` MUST return `false` exactly when the producer has no finite complete result, despite having a bounded observable traversal count. `fits_into` MUST return `false` for every source for which `is_finite` is `false`; for finite sources, it MUST compare the source count to `destination.capacity() - destination.count()` without an overflow-prone addition.
 
 ## Sequence Equality & Deep Traversal Rules
 
@@ -32,9 +34,9 @@ REQ-SEQ-021. Operations that produce sequenceable results SHOULD return an ownin
 
 ## Sequence Producer Specifications
 
-REQ-FN-009. `cycle`, `iterate`, `range`, `repeat`, and `repeatedly` MUST be standalone producer values or producer operations that do not own materialized result storage or require a result-capacity template parameter. Their values MUST be materialized through `into` into an explicit bounded destination. Unbounded forms MUST produce at most the destination capacity and MAY return a deterministic prefix; finite forms MUST produce their complete result when it fits the destination.
+REQ-FN-009. `cycle`, `iterate`, `range`, `repeat`, and `repeatedly` MUST be standalone producer values or producer operations that do not own materialized result storage or require a result-capacity template parameter. Their values MUST provide ordinary const `begin`/`end` traversal bounded by `count()`. Their values MUST be materialized through `into` into an explicit bounded destination. Unbounded forms MUST terminate traversal after `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` elements, produce at most the destination's remaining capacity, and MAY return a deterministic prefix; finite forms MUST produce their complete result when it fits the destination.
 
-REQ-FN-010. For `cycle`, `iterate`, `range` without a finite end, `repeat` without a count, and `repeatedly` without a count, complete-result preflight MUST report that the result does not fit unless the operation terminates before reaching its unbounded behavior. Counted `repeat` and `repeatedly`, and finite `range`, MUST use their runtime result count for preflight and bounded `into` materialization.
+REQ-FN-010. For `cycle`, `iterate`, `range` without a finite end, `repeat` without a count, and `repeatedly` without a count, `is_finite()` MUST return `false` and complete-result preflight MUST report that the result does not fit. Counted `repeat` and `repeatedly`, and finite `range`, MUST return `true` from `is_finite()` and use their runtime result count for preflight and bounded `into` materialization.
 
 REQ-FN-011. `Range`, `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` producer values MUST own their parameters and MUST remain valid independently of other values. They MUST NOT allocate result storage or retain borrowed dependencies on source collections, callbacks, or input values.
 
@@ -44,7 +46,7 @@ REQ-FN-013. For `range` with both equal start and end and a zero step, zero-step
 
 REQ-FN-013A. `Range` MUST provide a non-throwing, non-allocating, constant-time `contains` predicate over its available bounded-prefix index domain. `contains(range, index)` MUST report whether the index is available for bounded observation, not whether the index is present as a produced value. `Range` MUST NOT expose key-based lookup, `get`, or callable lookup; positional value retrieval remains deferred until explicitly approved.
 
-REQ-FN-013B. `repeat(value)` MUST construct an unbounded `Repeat<T>` producer that owns a copy of `value` and produces the same value indefinitely. `repeat(value, count)` MUST construct a finite `Repeat<T>` producer that owns a copy of `value` and produces exactly `count` copies, including an empty result when `count` is zero. `Repeat<T>` MUST NOT expose `count`, `contains`, positional retrieval, key-based lookup, `get`, or callable lookup. Counted forms MUST use `count` as their exact runtime result count for `into` and `fits_into`; uncounted forms MUST materialize at most the explicit destination capacity and MUST report `false` from `fits_into`.
+REQ-FN-013B. `repeat(value)` MUST construct an unbounded `Repeat<T>` producer that owns a copy of `value` and produces the same value indefinitely. `repeat(value, count)` MUST construct a finite `Repeat<T>` producer that owns a copy of `value` and produces exactly `count` copies, including an empty result when `count` is zero. `Repeat<T>` MUST expose `count()` and `is_finite()` as specified by `REQ-VAL-016` and `REQ-VAL-017A`, and MUST NOT expose `contains`, positional retrieval, key-based lookup, `get`, or callable lookup. Counted forms MUST use `count` as their exact runtime result count for `into` and `fits_into`; uncounted forms MUST materialize at most the explicit destination's remaining capacity and MUST report `false` from `fits_into`.
 
 REQ-FN-014. Callbacks supplied to `iterate` and `repeatedly` MUST be pure and non-allocating. Counted forms MUST invoke a callback exactly once per produced element during each `into` call when materialized completely; uncounted forms MUST be treated as potentially infinite producers.
 
@@ -85,4 +87,4 @@ REQ-PLAT-023. Direct use of `std::ranges`, `std::views`, or collection interoper
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly` producer templates, `into`, `fits_into`, and internal collection traversal support.
-- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, including `REQ-FN-013A`–`013B`, `REQ-FN-027`, `REQ-PLAT-017`–`023`, including `REQ-PLAT-017A` and `REQ-PLAT-022A`.
+- **Governed REQs**: `REQ-VAL-014`–`017A`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, including `REQ-FN-013A`–`013B`, `REQ-FN-027`, `REQ-PLAT-017`–`023`, including `REQ-PLAT-017A` and `REQ-PLAT-022A`.

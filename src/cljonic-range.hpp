@@ -40,9 +40,7 @@ namespace cljonic {
    [[maybe_unused]] constexpr auto huge = Range{1000000000L};
 
    // -----------------------------------------------------------------------
-   // C++ interoperability: a Range supports const traversal. Range sources
-   // are copied into owned storage, retaining only the bounded prefix that
-   // fits the capacity.
+   // C++ interoperability: a Range supports const traversal.
    // -----------------------------------------------------------------------
    constexpr auto odds = Range{1, 12, 2};
    auto runtime_odds = Range{-1, -11, -2};
@@ -126,6 +124,11 @@ class Range {
      *  exact finite cardinality saturated at the synthesis cap. */
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return step_ == T{0} ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE : saturate(nonzero_step_extent());
+    }
+
+    /** Reports whether this Range has a finite complete result. */
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return step_ != T{0};
     }
 
     /** Index-in-range predicate over the available bounded prefix; O(1), no traversal. */
