@@ -314,7 +314,7 @@
 λ concept_architecture_intro(x). public_collection_type(x) ∨ primitive_free_function(x) → participate_in(two_level_concept_model(x))
   | two_level_model(x) → govern(admission ∧ capability) ∧ ¬mix(admission ∨ capability)
 
-### Level 1: CollectionConcept (nominal admission)
+### Level 1: CollectionConcept (NominalCollectionRecognition)
 
 λ CollectionConcept_level(x). gate(type) → nominal_cljonic_identity(x) ≡ admission(ClosedNominalCollectionDomain) ∧ classification(CollectionKind)
   | recognition(x) → cljonic_owned_traits(x) ∧ ¬structural_similarity(external_or_standard_container(x))
@@ -330,7 +330,7 @@ concept CljonicVector =
     (detail::collection_kind_of_v<Type> == detail::collection_kind::vector);
 ```
 
-### Level 1B: CljonicProducer (producer nominal admission) and CljonicSource
+### Level 1B: CljonicProducer (ProducerConcept) and CljonicSource
 
 λ CljonicProducer_level(x). gate(type) → nominal_producer_identity(x) ≡ admission(producer_domain(x)) ∧ classification(ProducerKind)
   | recognition(x) → cljonic_owned_traits(x) ∧ distinct_domain_from(ClosedNominalCollectionDomain(x))
