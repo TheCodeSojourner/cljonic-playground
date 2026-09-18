@@ -2,7 +2,7 @@
 
 ## Current Scope
 
-λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range
+λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat
   ∧ direct_construction(x) ∧ member_observation(x) ∧ callable_lookup(x)
   ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ fits_into)(x)
   | module3(x) → concrete_array_backed_bounded_types(x)
@@ -10,10 +10,10 @@
     ∧ swap_and_remove_policies(x) ∧ primitive_free_functions(x)
   | cpp_interoperability(x) → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
     | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
-  | module4_active_slice(x) → Range(x) ∧ into(x) ∧ fits_into(x)
+  | module4_active_slice(x) → Range(x) ∧ Repeat(x) ∧ into(x) ∧ fits_into(x)
   | deferred_sequence_contracts(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
-  | future_expansion(repeat ∨ cycle ∨ iterate ∨ repeatedly ∨ transformations ∨ regexes ∨ relational_models)
+  | future_expansion(cycle ∨ iterate ∨ repeatedly ∨ transformations ∨ regexes ∨ relational_models)
     → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
 
 λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_public_producer_surface ∧ current_free_function_surface)
@@ -334,7 +334,7 @@ concept CljonicVector =
 
 λ CljonicProducer_level(x). gate(type) → nominal_producer_identity(x) ≡ admission(producer_domain(x)) ∧ classification(ProducerKind)
   | recognition(x) → cljonic_owned_traits(x) ∧ distinct_domain_from(ClosedNominalCollectionDomain(x))
-  | nominal_pattern(x) → applies_to(CljonicRange) ∧ future(CljonicRepeat ∧ CljonicCycle ∧ CljonicIterate ∧ CljonicRepeatedly)
+  | nominal_pattern(x) → applies_to(CljonicRange ∧ CljonicRepeat) ∧ future(CljonicCycle ∧ CljonicIterate ∧ CljonicRepeatedly)
   | CljonicSource(x) ≡ CljonicCollection(x) ∨ CljonicProducer(x)
   | materialization_operations(into ∧ fits_into) → constrain_source_by(CljonicSource)
 
