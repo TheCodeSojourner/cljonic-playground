@@ -1,0 +1,111 @@
+-- allium: 3
+
+entity Repeat {
+    supports_header_only_distribution: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    owns_repeated_value: Boolean
+    does_not_own_result_storage: Boolean
+    does_not_borrow_source_or_callback: Boolean
+    referential_transparency: Boolean
+    uncounted_form_is_unbounded: Boolean
+    counted_form_is_finite: Boolean
+    zero_count_produces_empty_result: Boolean
+    counted_form_uses_runtime_count_for_materialization: Boolean
+    uncounted_form_materializes_at_most_destination_capacity: Boolean
+    uncounted_form_does_not_fit_into_destination: Boolean
+    unbounded_repeat_does_not_satisfy_stable_equality: Boolean
+    unbounded_equality_fails_at_compile_time: Boolean
+    does_not_satisfy_indexed_producer: Boolean
+    does_not_satisfy_sequenceable_producer: Boolean
+    does_not_expose_callable_operator: Boolean
+    get_contains_and_lookup_are_excluded: Boolean
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant OwnsRepeatedValue {
+        this.owns_repeated_value = true
+    }
+
+    invariant DoesNotOwnResultStorage {
+        this.does_not_own_result_storage = true
+    }
+
+    invariant DoesNotBorrowSourceOrCallback {
+        this.does_not_borrow_source_or_callback = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant UncountedFormIsUnbounded {
+        this.uncounted_form_is_unbounded = true
+    }
+
+    invariant CountedFormIsFinite {
+        this.counted_form_is_finite = true
+    }
+
+    invariant ZeroCountProducesEmptyResult {
+        this.zero_count_produces_empty_result = true
+    }
+
+    invariant CountedFormUsesRuntimeCountForMaterialization {
+        this.counted_form_uses_runtime_count_for_materialization = true
+    }
+
+    invariant UncountedFormMaterializesAtMostDestinationCapacity {
+        this.uncounted_form_materializes_at_most_destination_capacity = true
+    }
+
+    invariant UncountedFormDoesNotFitIntoDestination {
+        this.uncounted_form_does_not_fit_into_destination = true
+    }
+
+    invariant UnboundedRepeatDoesNotSatisfyStableEquality {
+        this.unbounded_repeat_does_not_satisfy_stable_equality = true
+    }
+
+    invariant UnboundedEqualityFailsAtCompileTime {
+        this.unbounded_equality_fails_at_compile_time = true
+    }
+
+    invariant DoesNotSatisfyIndexedProducer {
+        this.does_not_satisfy_indexed_producer = true
+    }
+
+    invariant DoesNotSatisfySequenceableProducer {
+        this.does_not_satisfy_sequenceable_producer = true
+    }
+
+    invariant DoesNotExposeCallableOperator {
+        this.does_not_expose_callable_operator = true
+    }
+
+    invariant GetContainsAndLookupAreExcluded {
+        this.get_contains_and_lookup_are_excluded = true
+    }
+}
+
+actor RepeatOperator { identified_by: Repeat }
