@@ -135,6 +135,8 @@
   | static_extent_source_overflow(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | runtime_extent_source_overflow(x) → classify_as(BoundedPrefixResult) ∧ preserve(source_traversal_order)
   | complete_source_materialization(x) → require(fits_into(x) ∧ into(x))
+  | fits_into(destination ∧ finite_source) → compare(source_count ≤ remaining_destination_capacity) ∧ avoid(unsigned_addition_overflow)
+  | fits_into(destination ∧ unbounded_producer) → return(false)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | synthesis_cap(x) → classify_as(CollectionMaximumElementCount)
   | effective_size(x) → authoritative_for(ProducerIteration ∧ ProducerMaterialization)
@@ -407,7 +409,9 @@ concept AssociativeCollection =
 
 λ SequenceableProducer_level(x). require(admitted_producer(x)) → expose(count(x)) to(participate_in(operation(x)))
   | capability(x) → layered_on(CljonicProducer_admission(x))
-  | producer_count(x) → conservative_maximum(x) ∧ saturated_by(CollectionMaximumElementCount) ∧ ¬equivalent(Clojure_Counted_exact_size(x))
+  | finite_producer_count(x) → exact_runtime_result_count(x)
+  | unbounded_producer_count(x) → bounded_observable_traversal_cap(x) ∧ saturated_by(CollectionMaximumElementCount) ∧ ¬equivalent(complete_cardinality(x))
+  | SequenceableProducer(x) → require(is_finite(x) ∧ const_begin_end_traversal_bounded_by_count(x))
   | ¬imply(IndexedProducer(x) ∨ LookupCollection(x)) because(no_callable_operator_parenthesis(x))
 
 ```cpp
@@ -530,9 +534,12 @@ concept IndexedProducer =
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
   | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
+  | producer(x) → expose(count ∧ is_finite ∧ const_begin_end)
+  | unbounded_producer(x) → is_finite(false) ∧ count(CollectionMaximumElementCount) ∧ traversal_terminates_at_count(x)
+  | finite_producer(x) → is_finite(true) ∧ count(exact_runtime_result_count(x))
   | Repeat(value) → store_owned(value) ∧ represent(unbounded)
   | Repeat(value ∧ count) → store_owned(value) ∧ store(runtime_count) ∧ represent(finite)
-  | Repeat(x) → exclude(IndexedProducer ∧ SequenceableProducer ∧ IFn ∧ Lookup)
+  | Repeat(x) → exclude(IndexedProducer ∧ IFn ∧ Lookup)
   | Repeat_materialization(x) → emit_owned_value_copy_per_element(x) ∧ use(runtime_count) when(finite(x))
   | semantically_infinite_producer(x) → materialize_at_most(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
