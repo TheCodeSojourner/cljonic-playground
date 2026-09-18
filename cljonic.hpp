@@ -277,7 +277,7 @@ inline constexpr bool static_extent_fits_v =
     static_extent_v<T> == std::dynamic_extent || static_extent_v<T> <= CapacityValue;
 
 // A closed-world tag distinguishing producer families, parallel to collection_kind
-// but for the separate producer nominal domain (cljonic_source ≡ collection ∨ producer).
+// but for the separate producer nominal domain (CljonicSource ≡ collection ∨ producer).
 enum class producer_kind { none, range, repeat };
 
 // The unspecialized form rejects types by default. Each supported producer
