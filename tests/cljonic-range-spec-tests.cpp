@@ -36,6 +36,11 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     TRACE_ID("invariant.Range.NonzeroStepAwayFromEndIsEmptyRange");
     TRACE_ID("invariant.Range.EqualStartAndEndWithNonzeroStepIsEmptyRange");
     TRACE_ID("invariant.Range.EffectiveSizeIsConservativeMaximumWithoutTraversal");
+    TRACE_ID("invariant.Range.ExposesIsFinitePredicate");
+    TRACE_ID("invariant.Range.FiniteRangeReportsTrueIsFinite");
+    TRACE_ID("invariant.Range.ZeroStepRangeReportsFalseIsFinite");
+    TRACE_ID("invariant.Range.UnboundedCountIsObservableTraversalCap");
+    TRACE_ID("invariant.Range.ConstTraversalTerminatesAtCount");
     TRACE_ID("invariant.Range.SaturatingCardinalityBoundedByCollectionMaximumElementCount");
     TRACE_ID("invariant.Range.SpanArithmeticAvoidsSignedOverflow");
     TRACE_ID("invariant.Range.UnboundedRangeDoesNotSatisfyStableEquality");
@@ -53,6 +58,7 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     // Default start 0 / step 1, inclusive start, exclusive end.
     constexpr Range<int> default_start_and_step{5};
     STATIC_REQUIRE(default_start_and_step.count() == 5U);
+    STATIC_REQUIRE(default_start_and_step.is_finite());
     STATIC_REQUIRE(default_start_and_step.contains(0U));
     STATIC_REQUIRE(default_start_and_step.contains(4U));
     STATIC_REQUIRE_FALSE(default_start_and_step.contains(5U));
@@ -66,6 +72,7 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     // Zero step is an infinite repetition of start, bounded by the system maximum.
     constexpr Range<int> zero_step{0, 5, 0};
     STATIC_REQUIRE(zero_step.count() == cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
+    STATIC_REQUIRE_FALSE(zero_step.is_finite());
     STATIC_REQUIRE(zero_step.contains(0U));
     STATIC_REQUIRE(zero_step.contains(cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE - 1U));
     STATIC_REQUIRE_FALSE(zero_step.contains(cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE));
@@ -78,11 +85,13 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     // A nonzero step moving away from end produces an empty range.
     constexpr Range<int> away_from_end{5, 0, 1};
     STATIC_REQUIRE(away_from_end.count() == 0U);
+    STATIC_REQUIRE(away_from_end.is_finite());
     STATIC_REQUIRE_FALSE(away_from_end.contains(0U));
 
     // Equal start and end with a nonzero step produces an empty range.
     constexpr Range<int> equal_nonzero_step{3, 3, 1};
     STATIC_REQUIRE(equal_nonzero_step.count() == 0U);
+    STATIC_REQUIRE(equal_nonzero_step.is_finite());
     STATIC_REQUIRE_FALSE(equal_nonzero_step.contains(0U));
 
     // Negative step traverses downward, still exclusive at end.
@@ -135,6 +144,7 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
 
     const auto runtime_range = Range<int>{0, 3};
     CHECK(runtime_range.count() == 3U);
+    CHECK(runtime_range.is_finite());
     CHECK(runtime_range.contains(1U));
 
     // Runtime coverage for zero-step, ascending, descending, empty, and saturated
@@ -142,6 +152,7 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     volatile int zero_step_raw = 0;
     const auto runtime_zero_step = Range<int>{0, 5, zero_step_raw};
     CHECK(runtime_zero_step.count() == cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
+    CHECK_FALSE(runtime_zero_step.is_finite());
     CHECK(runtime_zero_step.contains(0U));
 
     volatile int ascending_start_raw = 0;

@@ -13,15 +13,19 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
     TRACE_ID("entity-fields.ProducerMaterialization");
     TRACE_ID("invariant.ProducerMaterialization.IntoRequiresExplicitBoundedDestination");
     TRACE_ID("invariant.ProducerMaterialization.IntoReturnsNewDestinationTypedCollection");
+    TRACE_ID("invariant.ProducerMaterialization.IntoAppendsAfterDestinationContents");
     TRACE_ID("invariant.ProducerMaterialization.IntoLeavesDestinationUnchanged");
     TRACE_ID("invariant.ProducerMaterialization.IntoLeavesSourceUnchanged");
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoIsNonThrowingNonAllocating");
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoPredictsIntoCompleteness");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoUsesRemainingDestinationCapacity");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoAvoidsUnsignedAdditionOverflow");
+    TRACE_ID("invariant.ProducerMaterialization.UnboundedSourceDoesNotFitIntoDestination");
     TRACE_ID("invariant.ProducerMaterialization.UnboundedSourceMaterializesBoundedPrefix");
     TRACE_ID("invariant.ProducerMaterialization.FiniteSourceMaterializesCompleteResultWhenItFits");
     TRACE_ID("invariant.ProducerMaterialization.BoundedPrefixPreservesSourceTraversalOrder");
     TRACE_ID("invariant.ProducerMaterialization.CountIsExactForMaterializedCollection");
-    TRACE_ID("invariant.ProducerMaterialization.CountIsConservativeMaximumForProducerWithoutTraversal");
+    TRACE_ID("invariant.ProducerMaterialization.UnboundedProducerCountIsObservableTraversalCap");
     TRACE_ID("invariant.ProducerMaterialization.ComposedProducerCardinalityUsesSaturatingArithmetic");
     TRACE_ID("invariant.ProducerMaterialization.ComposedCardinalityBoundedByCollectionMaximumElementCount");
     TRACE_ID("invariant.ProducerMaterialization.MaterializationSourceDomainIsCljonicSource");
@@ -39,6 +43,7 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
 
     // An unbounded source materializes a deterministic bounded prefix limited by destination capacity.
     constexpr Range<int> unbounded_source{0, 5, 0};
+    STATIC_REQUIRE_FALSE(unbounded_source.is_finite());
     constexpr auto bounded_prefix_result = into(empty_destination, unbounded_source);
     STATIC_REQUIRE(bounded_prefix_result.count() == empty_destination.capacity());
     STATIC_REQUIRE(bounded_prefix_result(0U) == 0);
@@ -59,6 +64,7 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
     STATIC_REQUIRE(appended_result(0U) == 100);
     STATIC_REQUIRE(appended_result(2U) == 0);
     STATIC_REQUIRE(populated_destination.count() == 2U);
+    STATIC_REQUIRE(fits_into(populated_destination, finite_source));
 
     const auto runtime_destination = Vector<int, 8>{};
     const auto runtime_source = Range<int>{0, 5};
