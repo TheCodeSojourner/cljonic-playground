@@ -2,18 +2,19 @@
 
 ## Current Scope
 
-λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat
-  ∧ direct_construction(x) ∧ member_observation(x) ∧ callable_lookup(x)
+λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle
+  ∧ direct_construction(x) ∧ member_observation(x)
   ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ fits_into)(x)
+  | collection_callable_lookup(x) → Vector ∨ Map ∨ Set ∨ String
   | module3(x) → concrete_array_backed_bounded_types(x)
     ∧ contiguous_storage_strategies(x) ∧ linear_scan_lookup(x)
     ∧ swap_and_remove_policies(x) ∧ primitive_free_functions(x)
   | cpp_interoperability(x) → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
     | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
-  | module4_active_slice(x) → Range(x) ∧ Repeat(x) ∧ into(x) ∧ fits_into(x)
+  | module4_active_slice(x) → Range(x) ∧ Repeat(x) ∧ Cycle(x) ∧ into(x) ∧ fits_into(x)
   | deferred_sequence_contracts(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
-  | future_expansion(cycle ∨ iterate ∨ repeatedly ∨ transformations ∨ regexes ∨ relational_models)
+  | future_expansion(iterate ∨ repeatedly ∨ transformations ∨ regexes ∨ relational_models)
     → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
 
 λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_public_producer_surface ∧ current_free_function_surface)
@@ -125,7 +126,7 @@
 λ S3_result_contract_enforcement(x). result_contract_rules(x) → active_for(all_public_operations)
   | new_operation(x) → comply_with(S3_result_contract_policy ∧ S2_result_status_model)
 
-λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
+λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
@@ -143,8 +144,8 @@
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
-λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat
-  | planned_producer_domain(x) ≡ cycle ∨ iterate ∨ repeatedly
+λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle
+  | planned_producer_domain(x) ≡ iterate ∨ repeatedly
   | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
   | domain_expansion(x) → require(explicit_approved_requirement)
@@ -260,7 +261,7 @@
   | conj_operation(x) ∧ can_conj(x) → classify_as(RequirementsBacked)
     ∧ trace_to(requirements/cljonic-requirements-module-3.md)
 
-λ S2_result_status_model(x). public_operation(x) → declare(CompleteResult ∨ BoundedPrefixResult
+λ S2_result_status_model(x). public_operation(x) → declare(CompleteResult ∨ BoundedResult ∨ BoundedPrefixResult
   ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | operation(x) → document(status ∧ preflight ∧ failure_or_default_semantics)
   | complete_result_may_fail_to_fit(x) → require(PreflightPredicate(x))
@@ -309,6 +310,11 @@
   | future_operation(x) → require(explicit_requirement_and_specification(x))
   | preserve(clojure_like_names_and_semantics_by_default(x))
 
+λ traceability_coverage_policy(x). active_implementation_backed_specification(x)
+  → require(every_obligation_has_traceable_test(x))
+  | deferred_behavioral_specification(x) → preserve(contract ∧ optional_contract_tests)
+    ∧ exclude_from(strict_spec_to_code_gate(x))
+
 ## Concept Architecture
 
 λ concept_architecture_intro(x). public_collection_type(x) ∨ primitive_free_function(x) → participate_in(two_level_concept_model(x))
@@ -334,7 +340,7 @@ concept CljonicVector =
 
 λ CljonicProducer_level(x). gate(type) → nominal_producer_identity(x) ≡ admission(producer_domain(x)) ∧ classification(ProducerKind)
   | recognition(x) → cljonic_owned_traits(x) ∧ distinct_domain_from(ClosedNominalCollectionDomain(x))
-  | nominal_pattern(x) → applies_to(CljonicRange ∧ CljonicRepeat) ∧ future(CljonicCycle ∧ CljonicIterate ∧ CljonicRepeatedly)
+  | nominal_pattern(x) → applies_to(CljonicRange ∧ CljonicRepeat ∧ CljonicCycle) ∧ future(CljonicIterate ∧ CljonicRepeatedly)
   | CljonicSource(x) ≡ CljonicCollection(x) ∨ CljonicProducer(x)
   | materialization_operations(into ∧ fits_into) → constrain_source_by(CljonicSource)
 
@@ -537,6 +543,7 @@ concept IndexedProducer =
   | producer(x) → expose(count ∧ is_finite ∧ const_begin_end)
   | unbounded_producer(x) → is_finite(false) ∧ count(CollectionMaximumElementCount) ∧ traversal_terminates_at_count(x)
   | finite_producer(x) → is_finite(true) ∧ count(exact_runtime_result_count(x))
+  | cycle(source) → represent(UnboundedProducer) ∧ require(OwningValue ∧ preserve(source_traversal_order))
   | Repeat(value) → store_owned(value) ∧ represent(unbounded)
   | Repeat(value ∧ count) → store_owned(value) ∧ store(runtime_count) ∧ represent(finite)
   | Repeat(x) → exclude(IndexedProducer ∧ IFn ∧ Lookup)
@@ -621,6 +628,6 @@ concept IndexedProducer =
   | module6_numeric_authority(x) ≡ requirements/cljonic-requirements-module-6.md → govern(checked_arithmetic ∧ callables)
   | module7_extended_domain_authority(x) ≡ requirements/cljonic-requirements-module-7.md → govern(relations ∧ regex ∧ state ∧ formatting)
 
-λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ primitive_free_functions ∧ into ∧ fits_into
-  | approved_but_unimplemented(cycle ∨ iterate ∨ repeatedly ∨ algorithms ∨ regexes) → remain_outside(active_surface(x))
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ primitive_free_functions ∧ into ∧ fits_into
+  | approved_but_unimplemented(iterate ∨ repeatedly ∨ algorithms ∨ regexes) → remain_outside(active_surface(x))
   | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
