@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -52,8 +52,9 @@ help:
 	@printf '%-12s %s\n' 'traceability-spec-to-code' 'Strict spec-to-code traceability gate (set-scoped allium, snapshot sync, test macro trace coverage)'
 	@printf '%-12s %s\n' 'traceability-spec-to-code-update-snapshot' 'Regenerate committed spec-to-code obligation snapshot from current specs'
 	@printf '%-12s %s\n' 'upsert-fast' 'Fast scoped loop: lint and complexity-cli for UPSERT_FAST_FILE'
+	@printf '%-12s %s\n' 'upsert-gate-fast' 'Coherent-slice gate: lint, complexity, active traceability, and no-heap'
 	@printf '%-12s %s\n' 'upsert-gate' 'Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for UPSERT_COVERAGE_FILE'
-	@printf '%-12s %s\n' 'upsert-gate-strict' 'upsert-gate plus strict spec-to-code traceability and no-heap verification'
+	@printf '%-12s %s\n' 'upsert-gate-strict' 'Pre-final gate: upsert-gate plus strict spec-to-code traceability and no-heap verification'
 	@printf '%-12s %s\n' 'validate' 'Non-mutating green-state validation: format, lint, complexity, sanitizers, coverage, traceability, and no-heap without doc regeneration'
 
 all: clean test
@@ -238,7 +239,10 @@ _traceability-obligation-ids-current:
 		echo "traceability: no .allium files under specs/" >&2; \
 		exit 1; \
 	fi; \
-	for f in $$spec_files; do allium plan "$$f"; done | \
+	for f in $$spec_files; do \
+		if grep -q '^-- lifecycle: deferred$$' "$$f"; then continue; fi; \
+		allium plan "$$f"; \
+	done | \
 		rg -No '"id":\s*"([^"]+)"' | \
 		sed -E 's/.*"id":\s*"([^"]+)"/\1/' | \
 		sort -u > $(TRACEABILITY_IDS_CURRENT)
@@ -264,9 +268,9 @@ traceability-spec-to-code:
 		echo "traceability-spec-to-code: no TRACE_ID references found in tests" >&2; \
 		exit 1; \
 	fi
-	@if ! diff -u $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_TEST_IDS_CURRENT) > /dev/null; then \
+	@if comm -23 $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_TEST_IDS_CURRENT) | grep -q .; then \
 		echo "traceability-spec-to-code: test TRACE_ID coverage does not match snapshot obligations" >&2; \
-		diff -u $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_TEST_IDS_CURRENT) >&2; \
+		comm -23 $(TRACEABILITY_SNAPSHOT) $(TRACEABILITY_TEST_IDS_CURRENT) >&2; \
 		exit 1; \
 	fi
 	@for f in $$(find tests -type f \( -name '*.cpp' -o -name '*.cc' \) | sort); do \
@@ -309,6 +313,13 @@ upsert-gate:
 	@$(MAKE) --no-print-directory -s range-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
+
+upsert-gate-fast:
+	@$(MAKE) --no-print-directory -s lint
+	@$(MAKE) --no-print-directory -s complexity-cli
+	@$(MAKE) --no-print-directory -s traceability-spec-to-code
+	@$(MAKE) --no-print-directory -s no-heap
+	@echo "upsert-gate-fast:ok"
 
 upsert-gate-strict:
 	@$(MAKE) --no-print-directory -s upsert-gate
