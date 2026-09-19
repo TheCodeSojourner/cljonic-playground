@@ -1,0 +1,121 @@
+-- allium: 3
+
+entity Cycle {
+    supports_header_only_distribution: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    owns_repeated_sequence: Boolean
+    does_not_own_result_storage: Boolean
+    does_not_borrow_source_or_callback: Boolean
+    referential_transparency: Boolean
+    single_argument_form_only: Boolean
+    is_unbounded: Boolean
+    exposes_count_and_is_finite: Boolean
+    count_is_observable_traversal_cap: Boolean
+    const_traversal_terminates_at_maximum_cap: Boolean
+    repeats_source_sequence_in_order: Boolean
+    empty_source_produces_empty_observation: Boolean
+    materializes_at_most_destination_capacity: Boolean
+    does_not_fit_into_destination: Boolean
+    unbounded_cycle_does_not_satisfy_stable_equality: Boolean
+    unbounded_equality_fails_at_compile_time: Boolean
+    does_not_satisfy_indexed_producer: Boolean
+    satisfies_sequenceable_producer: Boolean
+    does_not_expose_callable_operator: Boolean
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant OwnsRepeatedSequence {
+        this.owns_repeated_sequence = true
+    }
+
+    invariant DoesNotOwnResultStorage {
+        this.does_not_own_result_storage = true
+    }
+
+    invariant DoesNotBorrowSourceOrCallback {
+        this.does_not_borrow_source_or_callback = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant SingleArgumentFormOnly {
+        this.single_argument_form_only = true
+    }
+
+    invariant IsUnbounded {
+        this.is_unbounded = true
+    }
+
+    invariant ExposesCountAndIsFinite {
+        this.exposes_count_and_is_finite = true
+    }
+
+    invariant CountIsObservableTraversalCap {
+        this.count_is_observable_traversal_cap = true
+    }
+
+    invariant ConstTraversalTerminatesAtMaximumCap {
+        this.const_traversal_terminates_at_maximum_cap = true
+    }
+
+    invariant RepeatsSourceSequenceInOrder {
+        this.repeats_source_sequence_in_order = true
+    }
+
+    invariant EmptySourceProducesEmptyObservation {
+        this.empty_source_produces_empty_observation = true
+    }
+
+    invariant MaterializesAtMostDestinationCapacity {
+        this.materializes_at_most_destination_capacity = true
+    }
+
+    invariant DoesNotFitIntoDestination {
+        this.does_not_fit_into_destination = true
+    }
+
+    invariant UnboundedCycleDoesNotSatisfyStableEquality {
+        this.unbounded_cycle_does_not_satisfy_stable_equality = true
+    }
+
+    invariant UnboundedEqualityFailsAtCompileTime {
+        this.unbounded_equality_fails_at_compile_time = true
+    }
+
+    invariant DoesNotSatisfyIndexedProducer {
+        this.does_not_satisfy_indexed_producer = true
+    }
+
+    invariant SatisfiesSequenceableProducer {
+        this.satisfies_sequenceable_producer = true
+    }
+
+    invariant DoesNotExposeCallableOperator {
+        this.does_not_expose_callable_operator = true
+    }
+}
+
+actor CycleOperator { identified_by: Cycle }

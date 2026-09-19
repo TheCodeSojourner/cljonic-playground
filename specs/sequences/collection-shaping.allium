@@ -1,4 +1,5 @@
 -- allium: 3
+-- lifecycle: deferred
 
 -- First-pass behavioral contract shared by the REQ-SEQ-022 operation family.
 entity CollectionShapingTraversalPolicy {
