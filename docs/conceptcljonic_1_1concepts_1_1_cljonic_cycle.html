@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::concepts::CljonicSource Concept Reference</title>
+<title>cljonic: cljonic::concepts::CljonicCycle Concept Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -94,26 +94,28 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts.html">concepts</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts_1_1_cljonic_source.html">CljonicSource</a></li>  </ul>
+<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts.html">concepts</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts_1_1_cljonic_cycle.html">CljonicCycle</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">cljonic::concepts::CljonicSource Concept Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic::concepts::CljonicCycle Concept Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code></p>
 <h2 id="header-conceptdef" class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_source.html">CljonicSource</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html">CljonicCollection&lt;T&gt;</a> || <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">CljonicProducer&lt;T&gt;</a></div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html">cljonic::concepts::CljonicCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00146">cljonic-concepts.hpp:146</a></div></div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_cycle.html">CljonicCycle</a> =</div>
+<div class="line">    <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">CljonicProducer&lt;T&gt;</a> &amp;&amp; (<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#a9b6e0fa83ede71e749bff9da7c691ca7">concepts_detail::producer_kind_of_v&lt;T&gt;</a> == <a class="code hl_enumvalue" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca9a4c07402cc2f3740fb5849a16920e13">concepts_detail::producer_kind::cycle</a>)</div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_cycle_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_cycle.html">cljonic::concepts::CljonicCycle</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00165">cljonic-concepts.hpp:165</a></div></div>
 <div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_producer_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">cljonic::concepts::CljonicProducer</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00151">cljonic-concepts.hpp:151</a></div></div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_source_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_source.html">cljonic::concepts::CljonicSource</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00171">cljonic-concepts.hpp:171</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a9b6e0fa83ede71e749bff9da7c691ca7"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#a9b6e0fa83ede71e749bff9da7c691ca7">cljonic::concepts_detail::producer_kind_of_v</a></div><div class="ttdeci">constexpr producer_kind producer_kind_of_v</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00091">cljonic-concepts.hpp:91</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_ae7b205beabb5ee36d468e0b1ca49b74ca9a4c07402cc2f3740fb5849a16920e13"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca9a4c07402cc2f3740fb5849a16920e13">cljonic::concepts_detail::producer_kind::cycle</a></div><div class="ttdeci">@ cycle</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00077">cljonic-concepts.hpp:77</a></div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Admits either a stored collection or a producer to the combined source domain used by materialization operations (<span class="tt">into</span>, <span class="tt">fits_into</span>). </p>
+<div class="textblock"><p>Nominal identity gate for Cycle producer types. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00171">171</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00165">165</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

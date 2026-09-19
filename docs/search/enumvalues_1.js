@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['none_0',['none',['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a334c4a4c42fdb79d7ebc3e73b517e6f8',1,'cljonic::concepts_detail::none'],['../namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca334c4a4c42fdb79d7ebc3e73b517e6f8',1,'cljonic::concepts_detail::none']]]
+  ['map_0',['map',['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a1d78dc8ed51214e518b5114fe24490ae',1,'cljonic::concepts_detail']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['map_0',['map',['../namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a1d78dc8ed51214e518b5114fe24490ae',1,'cljonic::concepts_detail']]]
+  ['cycle_0',['cycle',['../namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca9a4c07402cc2f3740fb5849a16920e13',1,'cljonic::concepts_detail']]]
 ];
