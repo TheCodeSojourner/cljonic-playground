@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-09-17
+last_updated: 2026-09-18
 status: draft
 ---
 
@@ -9,17 +9,19 @@ status: draft
 ## Current Scope
 
 The current implementation and tests cover the core collection types (`Vector`,
-`Map`, `Set`, `Queue`, and `String`), the active `Range` producer, their direct
-construction, member-observation, callable collection forms, current primitive
-free-function operations, and explicit producer materialization through `into`
-and `fits_into`. Semantic sequence operations remain deferred future work for
-every collection; const range traversal and read-only C++ interoperability are
-active infrastructure. Module 3 establishes the concrete, array-backed, bounded
+`Map`, `Set`, `Queue`, and `String`), the active `Range` and `Repeat` producers,
+the active unbounded `cycle(source)` producer, their direct construction,
+member-observation, callable collection forms, current primitive free-function
+operations, and explicit producer materialization through `into` and
+`fits_into`. `Iterate` and `Repeatedly` remain deferred future producer families.
+Semantic sequence operations remain deferred future work for every collection;
+const range traversal and read-only C++ interoperability are active
+infrastructure. Module 3 establishes the concrete, array-backed, bounded
 collection types, their contiguous storage strategies, linear scan lookup
 algorithms, swap-and-remove policies, and primitive free functions. Module 4's
-active slice establishes `Range` and explicit producer materialization. These
-terms govern stored collection and producer building blocks used across all
-higher-order algorithms.
+active slice establishes `Range`, `Repeat`, unbounded `cycle(source)`, and
+explicit producer materialization. These terms govern stored collection and
+producer building blocks used across all higher-order algorithms.
 
 ### Collection
 - **Definition:** A bounded cljonic value or data structure admitted to the closed nominal collection domain and governed by collection-specific capacity, access, failure, and value-semantic rules.
@@ -310,7 +312,7 @@ higher-order algorithms.
 
 
 ### Producer
-- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat` is not `Indexed`. Deferred producers (`Cycle`, `Iterate`, and `Repeatedly`) MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
+- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat` and `Cycle` are not `Indexed`. Cycle has only the public form `cycle(source)` and is always unbounded. Future producers (`Iterate` and `Repeatedly`) MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
 - **Deprecated Synonyms:** sequence producer, source producer
 - **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -339,6 +341,14 @@ higher-order algorithms.
 - **Related:** Producer, UnboundedProducer, ProducerMaterialization, PreflightPredicate, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `repeat(7, 3)` produces `7, 7, 7`; `repeat(7, 0)` produces no values; `repeat(7)` produces destination-bounded copies only through `into`.
+
+
+### Cycle
+- **Definition:** An unbounded Producer created only by `cycle(source)` that owns a bounded copy of its source sequence and repeats that sequence in order from its beginning after each complete pass. Cycle returns the configured observable traversal cap and `false` from `is_finite()`; its complete result never fits a destination, while `into` may materialize a bounded prefix.
+- **Deprecated Synonyms:** cycle producer, repeating sequence producer
+- **Related:** Producer, UnboundedProducer, ProducerMaterialization, PreflightPredicate, OwningValue, SequenceableProducer, CljonicCycle
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `cycle(Vector<int, 3>{1, 2, 3})` produces the repeating sequence `1, 2, 3, 1, 2, 3, ...`; materializing into `Vector<int, 5>` yields the bounded prefix `1, 2, 3, 1, 2`.
 
 
 ### MapEntry
@@ -928,7 +938,7 @@ higher-order algorithms.
 - **Deprecated Synonyms:** producer category, nominal producer kind
 - **Related:** ProducerConcept, CljonicProducer, CljonicRange, Producer, CollectionKind
 - **Usage:** Architecture, implementation, and tests
-- **Examples:** A producer trait classifies an admitted type as range in the current active slice, with repeat, cycle, iterate, and repeatedly reserved for future producer families.
+- **Examples:** A producer trait classifies an admitted type as range, repeat, or cycle in the current active slice, with iterate and repeatedly reserved for future producer families.
 
 
 ### CollectionConcept
@@ -1009,6 +1019,22 @@ higher-order algorithms.
 - **Related:** CljonicProducer, Range, ProducerKind, ProducerConcept
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `CljonicRange<Range<int>>` is satisfied while `Vector<int, 4>` is not.
+
+
+### CljonicRepeat
+- **Definition:** The C++ concept identifier implementing the nominal producer identity for the Repeat producer family.
+- **Deprecated Synonyms:** cljonic_repeat, cljonic repeat concept
+- **Related:** CljonicProducer, Repeat, ProducerKind, ProducerConcept
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicRepeat<Repeat<int>>` is satisfied while `Vector<int, 4>` is not.
+
+
+### CljonicCycle
+- **Definition:** The C++ concept identifier implementing the nominal producer identity for the Cycle producer family.
+- **Deprecated Synonyms:** cljonic_cycle, cljonic cycle concept
+- **Related:** CljonicProducer, Cycle, ProducerKind, ProducerConcept
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicCycle<Cycle<int, 3>>` is satisfied while `Vector<int, 3>` is not.
 
 
 ### CljonicSource
