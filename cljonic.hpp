@@ -278,7 +278,7 @@ inline constexpr bool static_extent_fits_v =
 
 // A closed-world tag distinguishing producer families, parallel to collection_kind
 // but for the separate producer nominal domain (CljonicSource ≡ collection ∨ producer).
-enum class producer_kind { none, range, repeat };
+enum class producer_kind { none, range, repeat, cycle };
 
 // The unspecialized form rejects types by default. Each supported producer
 // specializes this trait with its nominal identity and producer kind.
@@ -363,6 +363,11 @@ concept CljonicRange =
 template <typename T>
 concept CljonicRepeat =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::repeat);
+
+/** Nominal identity gate for Cycle producer types. */
+template <typename T>
+concept CljonicCycle =
+    CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::cycle);
 
 /** Admits either a stored collection or a producer to the combined source
  *  domain used by materialization operations (`into`, `fits_into`). */
@@ -744,6 +749,414 @@ template <typename C>
 } // namespace cljonic
 
 #endif // CLJONIC_COUNT_HPP// End cljonic-count.hpp
+// Begin cljonic-cycle.hpp
+#pragma once
+
+#include <cstddef>
+#include <span>
+#include <utility>
+
+// Begin cljonic-vector.hpp
+#pragma once
+
+#include <array>
+#include <cstddef>
+#include <ranges>
+#include <span>
+#include <utility>
+
+
+namespace cljonic {
+
+/** \anchor Vector
+ * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
+ * operate on the collection is through the library's free-function API. Updates return a modified copy without
+ * changing the original collection. Construction with more initializers than the available capacity is rejected at
+ * compile time.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ struct Pixel {
+   int x;
+   int y;
+
+   friend constexpr bool operator==(const Pixel &lhs,
+                                    const Pixel &rhs) noexcept {
+     return lhs.x == rhs.x && lhs.y == rhs.y;
+   }
+ };
+
+ struct CategoryArgument {};
+
+ struct CategoryElement {
+   int category = 0;
+
+   constexpr CategoryElement() noexcept = default;
+   constexpr CategoryElement(const CategoryArgument &) noexcept : category(1) {}
+   constexpr CategoryElement(CategoryArgument &&) noexcept : category(2) {}
+   constexpr CategoryElement(const CategoryElement &) noexcept = default;
+   constexpr auto operator=(const CategoryElement &) noexcept
+       -> CategoryElement & = default;
+ };
+
+ using Inner = Vector<int, 2>;
+
+ int main() {
+   // CTAD infers Vector<int, 3> from the initializer count.
+   [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
+
+   // Explicit capacity permits a partially populated Vector and an empty Vector.
+   [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
+   [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
+
+   // Vector values can be nested, including through an explicit type alias.
+   [[maybe_unused]] constexpr auto nested_int_vectors =
+       Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
+   [[maybe_unused]] constexpr auto nested_alias_vectors =
+       Vector{Inner{4, 5}, Inner{6}};
+
+   // User-defined values and constructor argument categories are supported.
+   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
+   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
+   constexpr Vector<int, 4> values{10, 20};
+   constexpr CategoryArgument category_argument{};
+   constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
+   constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
+
+   // Vector values can be used as a callable function, returning a default-
+   // value for invalid indexes or a supplied fallback when provided.
+   static_assert(values(0) == 10);
+   static_assert(values(2) == 0);
+   static_assert(values(2, 99) == 99);
+   static_assert(values(-1) == 0);
+   static_assert(values(-1, 99) == 99);
+   static_assert(std::same_as<decltype(doubles_populated(0)), double>);
+   static_assert(pixels_populated(0).x == 1);
+   static_assert(pixels_populated(1).y == 4);
+   static_assert(lvalue_constructed(0).category == 1);
+   static_assert(rvalue_constructed(0).category == 2);
+
+   // Without a fallback, an invalid lookup returns value_type{}; Pixel's
+   // default-constructed int members are zero.
+   static_assert(pixels_populated(-1).x == 0);
+   static_assert(pixels_populated(-1).y == 0);
+
+   // Pixel equality validates the runtime result for a user-defined value type.
+   auto runtime_pixels = Vector<Pixel, 4>{Pixel{1, 2}, Pixel{3, 4}};
+   const auto pixel_value = runtime_pixels(1);
+   const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
+
+   // Runtime construction supports the same callable lookup and fallback
+   // behavior.
+   auto runtime_values = Vector<int, 4>{7, 9};
+   const auto fallback = runtime_values(4, -1);
+   const auto negative_default = runtime_values(-1);
+   const auto negative_fallback = runtime_values(-1, 99);
+
+   // A standard view pipeline can use an existing Vector as its source and
+   // materialize transformed values into another Vector.
+   const auto doubled_view =
+       runtime_values |
+       std::views::transform([](int value) { return value * 2; });
+   const auto from_pipeline = Vector<int, 4>{doubled_view};
+
+   // -----------------------------------------------------------------------
+   // C++ interoperability: a Vector supports const traversal and exposes a
+   // non-owning std::span view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity.
+   // -----------------------------------------------------------------------
+   static constexpr int source_values[] = {11, 22, 33, 44};
+   constexpr std::span source_span{source_values};
+   constexpr auto from_span = Vector<int, 4>{source_span};
+   static_assert(from_span(1) == 22);
+   constexpr auto from_span_ctad = Vector{source_span};
+   static_assert(from_span_ctad(2) == 33);
+   constexpr auto from_span_overallocated = Vector<int, 40>{source_span};
+   static_assert(from_span_overallocated(20, -11) == -11);
+
+   // Constructing a Vector from a runtime C++ array/span
+   int runtime_buffer[] = {100, 200, 300};
+   const auto runtime_from_span =
+       Vector<int, 4>{std::span<const int>{runtime_buffer, 3}};
+
+   constexpr auto interop_values = Vector<int, 4>{10, 20, 30};
+   static_assert(interop_values.begin()[1] == 20);
+   static_assert(interop_values.view().size() == 3);
+
+   // Use C++ interoperability to sum the values in a vector
+   int range_sum = 0;
+   for (const auto value : runtime_values) {
+     range_sum += value;
+   }
+
+   const auto runtime_view = runtime_values.view();
+
+   return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
+           pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
+           range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
+           from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
+           runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue>
+class Vector {
+  public:
+    using key_type = std::size_t;
+    using lookup_type = key_type;
+    using association_value_type = ElementType;
+    using value_type = ElementType;
+
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "Vector CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
+
+    template <typename... Args>
+    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
+        static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
+        static_assert((concepts::NothrowElementConstruction<ElementType, Args> && ...),
+                      "Vector constructor requires all arguments to construct "
+                      "ElementType without throwing and be implicitly "
+                      "convertible to ElementType");
+
+        initialize_storage_if_valid(std::forward<Args>(args)...);
+    }
+
+    template <std::ranges::input_range SourceRange>
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Vector>)
+    constexpr Vector(SourceRange&& source) noexcept(
+        (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
+        using source_value_type = std::ranges::range_value_t<SourceRange>;
+        static_assert(concepts::NothrowElementConstruction<ElementType, source_value_type>,
+                      "Vector range/view constructor requires each source element to "
+                      "construct ElementType without throwing and be implicitly "
+                      "convertible to ElementType");
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "Vector static-extent range source exceeds Vector CapacityValue");
+
+        std::size_t copy_count = 0;
+        for (auto&& item : std::forward<SourceRange>(source)) {
+            if (copy_count >= CapacityValue) {
+                break;
+            }
+            storage_[copy_count++] = value_type{std::forward<decltype(item)>(item)};
+        }
+        logical_size_ = copy_count;
+    }
+
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
+    }
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback = value_type{}) const noexcept
+        -> value_type {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_ ? storage_[*normalized_index] : fallback;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && association_index_is_valid(*normalized_index);
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto assoc(IndexType index, const value_type& value) const noexcept -> Vector {
+        Vector result = *this;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && association_index_is_valid(*normalized_index)) {
+            result.storage_[*normalized_index] = value;
+            if (*normalized_index == logical_size_) {
+                ++result.logical_size_;
+            }
+        }
+        return result;
+    }
+
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return storage_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return storage_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
+        return {storage_.data(), logical_size_};
+    }
+
+  private:
+    [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
+        return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
+    }
+
+    template <typename... Args>
+    static constexpr bool constructor_arguments_valid =
+        sizeof...(Args) <= CapacityValue && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
+
+    template <typename... Args>
+    constexpr void initialize_storage_if_valid(Args&&... args) noexcept {
+        if constexpr (constructor_arguments_valid<Args...>) {
+            initialize_storage(std::index_sequence_for<Args...>{}, std::forward<Args>(args)...);
+            logical_size_ = sizeof...(Args);
+        }
+    }
+
+    template <std::size_t... Indices, typename... Args>
+    constexpr void initialize_storage(std::index_sequence<Indices...> indices, Args&&... args) noexcept {
+        (void)indices;
+        ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
+    }
+
+    std::array<value_type, CapacityValue> storage_{};
+    std::size_t logical_size_ = 0;
+};
+
+template <typename First, typename... Rest>
+Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+Vector(std::span<SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename ElementType, std::size_t CapacityValue>
+struct collection_traits<Vector<ElementType, CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::vector;
+};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-vector.hpp
+
+namespace cljonic {
+
+/** \anchor Cycle
+ * \b Cycle is a producer that repeats a bounded source sequence until it is exhausted, then wraps back to the start.
+ * The approved public form is `cycle(source)` only. The producer is unbounded and terminates traversal only by the
+ * observable cap used for bounded materialization.
+ */
+template <concepts::NothrowCollectionElement T, std::size_t CapacityValue>
+class Cycle {
+  public:
+    using value_type = T;
+
+    class const_iterator {
+      public:
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+
+        struct position {
+            std::size_t remaining;
+            std::size_t index;
+        };
+
+        constexpr const_iterator() noexcept = default;
+
+        constexpr const_iterator(std::span<const T> values, position cursor) noexcept
+            : values_(values), remaining_(cursor.remaining), index_(cursor.index) {
+        }
+
+        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
+            return values_[index_ % values_.size()];
+        }
+
+        constexpr auto operator++() noexcept -> const_iterator& {
+            if (values_.empty() || remaining_ == 0U) {
+                remaining_ = 0U;
+                return *this;
+            }
+            index_ = (index_ + 1U) % values_.size();
+            --remaining_;
+            return *this;
+        }
+
+        constexpr auto operator++(int) noexcept -> const_iterator {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+
+        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
+            -> bool {
+            return lhs.remaining_ == rhs.remaining_;
+        }
+
+      private:
+        std::span<const T> values_{};
+        std::size_t remaining_{0U};
+        std::size_t index_{0U};
+    };
+
+    constexpr explicit Cycle(Vector<T, CapacityValue> values) noexcept : values_(std::move(values)) {
+    }
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return count_;
+    }
+
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return is_finite_;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+        if (values_.count() == 0U) {
+            return const_iterator{std::span<const T>{}, typename const_iterator::position{0U, 0U}};
+        }
+        return const_iterator{std::span<const T>{values_.begin(), values_.count()},
+                              typename const_iterator::position{count(), 0U}};
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+        return const_iterator{std::span<const T>{}, typename const_iterator::position{0U, 0U}};
+    }
+
+  private:
+    Vector<T, CapacityValue> values_{};
+    std::size_t count_{CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE};
+    bool is_finite_{false};
+};
+
+template <typename T, std::size_t CapacityValue>
+[[nodiscard]] constexpr auto cycle(Vector<T, CapacityValue> values) noexcept -> Cycle<T, CapacityValue> {
+    return Cycle<T, CapacityValue>{std::move(values)};
+}
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename T, std::size_t CapacityValue>
+struct producer_traits<Cycle<T, CapacityValue>> {
+    static constexpr bool is_cljonic_producer = true;
+    static constexpr producer_kind kind = producer_kind::cycle;
+};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-cycle.hpp
 // Begin cljonic-disj.hpp
 #ifndef CLJONIC_DISJ_HPP
 #define CLJONIC_DISJ_HPP
@@ -2493,301 +2906,6 @@ struct collection_traits<String<CapacityValue>> {
 
 } // namespace cljonic::concepts_detail
 // End cljonic-string.hpp
-// Begin cljonic-vector.hpp
-#pragma once
-
-#include <array>
-#include <cstddef>
-#include <ranges>
-#include <span>
-#include <utility>
-
-
-namespace cljonic {
-
-/** \anchor Vector
- * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
- * operate on the collection is through the library's free-function API. Updates return a modified copy without
- * changing the original collection. Construction with more initializers than the available capacity is rejected at
- * compile time.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- struct Pixel {
-   int x;
-   int y;
-
-   friend constexpr bool operator==(const Pixel &lhs,
-                                    const Pixel &rhs) noexcept {
-     return lhs.x == rhs.x && lhs.y == rhs.y;
-   }
- };
-
- struct CategoryArgument {};
-
- struct CategoryElement {
-   int category = 0;
-
-   constexpr CategoryElement() noexcept = default;
-   constexpr CategoryElement(const CategoryArgument &) noexcept : category(1) {}
-   constexpr CategoryElement(CategoryArgument &&) noexcept : category(2) {}
-   constexpr CategoryElement(const CategoryElement &) noexcept = default;
-   constexpr auto operator=(const CategoryElement &) noexcept
-       -> CategoryElement & = default;
- };
-
- using Inner = Vector<int, 2>;
-
- int main() {
-   // CTAD infers Vector<int, 3> from the initializer count.
-   [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
-
-   // Explicit capacity permits a partially populated Vector and an empty Vector.
-   [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
-   [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
-
-   // Vector values can be nested, including through an explicit type alias.
-   [[maybe_unused]] constexpr auto nested_int_vectors =
-       Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
-   [[maybe_unused]] constexpr auto nested_alias_vectors =
-       Vector{Inner{4, 5}, Inner{6}};
-
-   // User-defined values and constructor argument categories are supported.
-   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
-   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
-   constexpr Vector<int, 4> values{10, 20};
-   constexpr CategoryArgument category_argument{};
-   constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
-   constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
-
-   // Vector values can be used as a callable function, returning a default-
-   // value for invalid indexes or a supplied fallback when provided.
-   static_assert(values(0) == 10);
-   static_assert(values(2) == 0);
-   static_assert(values(2, 99) == 99);
-   static_assert(values(-1) == 0);
-   static_assert(values(-1, 99) == 99);
-   static_assert(std::same_as<decltype(doubles_populated(0)), double>);
-   static_assert(pixels_populated(0).x == 1);
-   static_assert(pixels_populated(1).y == 4);
-   static_assert(lvalue_constructed(0).category == 1);
-   static_assert(rvalue_constructed(0).category == 2);
-
-   // Without a fallback, an invalid lookup returns value_type{}; Pixel's
-   // default-constructed int members are zero.
-   static_assert(pixels_populated(-1).x == 0);
-   static_assert(pixels_populated(-1).y == 0);
-
-   // Pixel equality validates the runtime result for a user-defined value type.
-   auto runtime_pixels = Vector<Pixel, 4>{Pixel{1, 2}, Pixel{3, 4}};
-   const auto pixel_value = runtime_pixels(1);
-   const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
-
-   // Runtime construction supports the same callable lookup and fallback
-   // behavior.
-   auto runtime_values = Vector<int, 4>{7, 9};
-   const auto fallback = runtime_values(4, -1);
-   const auto negative_default = runtime_values(-1);
-   const auto negative_fallback = runtime_values(-1, 99);
-
-   // A standard view pipeline can use an existing Vector as its source and
-   // materialize transformed values into another Vector.
-   const auto doubled_view =
-       runtime_values |
-       std::views::transform([](int value) { return value * 2; });
-   const auto from_pipeline = Vector<int, 4>{doubled_view};
-
-   // -----------------------------------------------------------------------
-   // C++ interoperability: a Vector supports const traversal and exposes a
-   // non-owning std::span view. Range/view sources are copied into owned
-   // storage, retaining only the bounded prefix that fits the capacity.
-   // -----------------------------------------------------------------------
-   static constexpr int source_values[] = {11, 22, 33, 44};
-   constexpr std::span source_span{source_values};
-   constexpr auto from_span = Vector<int, 4>{source_span};
-   static_assert(from_span(1) == 22);
-   constexpr auto from_span_ctad = Vector{source_span};
-   static_assert(from_span_ctad(2) == 33);
-   constexpr auto from_span_overallocated = Vector<int, 40>{source_span};
-   static_assert(from_span_overallocated(20, -11) == -11);
-
-   // Constructing a Vector from a runtime C++ array/span
-   int runtime_buffer[] = {100, 200, 300};
-   const auto runtime_from_span =
-       Vector<int, 4>{std::span<const int>{runtime_buffer, 3}};
-
-   constexpr auto interop_values = Vector<int, 4>{10, 20, 30};
-   static_assert(interop_values.begin()[1] == 20);
-   static_assert(interop_values.view().size() == 3);
-
-   // Use C++ interoperability to sum the values in a vector
-   int range_sum = 0;
-   for (const auto value : runtime_values) {
-     range_sum += value;
-   }
-
-   const auto runtime_view = runtime_values.view();
-
-   return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
-           pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
-           range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
-           from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
-           runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
-              ? 0
-              : 1;
- }
- ~~~~~
- */
-template <concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue>
-class Vector {
-  public:
-    using key_type = std::size_t;
-    using lookup_type = key_type;
-    using association_value_type = ElementType;
-    using value_type = ElementType;
-
-    static_assert(
-        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Vector CapacityValue exceeds "
-        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
-
-    template <typename... Args>
-    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
-        static_assert((concepts::NothrowElementConstruction<ElementType, Args> && ...),
-                      "Vector constructor requires all arguments to construct "
-                      "ElementType without throwing and be implicitly "
-                      "convertible to ElementType");
-
-        initialize_storage_if_valid(std::forward<Args>(args)...);
-    }
-
-    template <std::ranges::input_range SourceRange>
-        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Vector>)
-    constexpr Vector(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(concepts::NothrowElementConstruction<ElementType, source_value_type>,
-                      "Vector range/view constructor requires each source element to "
-                      "construct ElementType without throwing and be implicitly "
-                      "convertible to ElementType");
-        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "Vector static-extent range source exceeds Vector CapacityValue");
-
-        std::size_t copy_count = 0;
-        for (auto&& item : std::forward<SourceRange>(source)) {
-            if (copy_count >= CapacityValue) {
-                break;
-            }
-            storage_[copy_count++] = value_type{std::forward<decltype(item)>(item)};
-        }
-        logical_size_ = copy_count;
-    }
-
-    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-        return CapacityValue;
-    }
-
-    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
-        return logical_size_;
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback = value_type{}) const noexcept
-        -> value_type {
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        return normalized_index && *normalized_index < logical_size_ ? storage_[*normalized_index] : fallback;
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        return normalized_index && *normalized_index < logical_size_;
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        return normalized_index && association_index_is_valid(*normalized_index);
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto assoc(IndexType index, const value_type& value) const noexcept -> Vector {
-        Vector result = *this;
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        if (normalized_index && association_index_is_valid(*normalized_index)) {
-            result.storage_[*normalized_index] = value;
-            if (*normalized_index == logical_size_) {
-                ++result.logical_size_;
-            }
-        }
-        return result;
-    }
-
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
-    }
-
-    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
-        return storage_.data();
-    }
-
-    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
-        return storage_.data() + logical_size_;
-    }
-
-    [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
-        return {storage_.data(), logical_size_};
-    }
-
-  private:
-    [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
-        return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
-    }
-
-    template <typename... Args>
-    static constexpr bool constructor_arguments_valid =
-        sizeof...(Args) <= CapacityValue && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
-
-    template <typename... Args>
-    constexpr void initialize_storage_if_valid(Args&&... args) noexcept {
-        if constexpr (constructor_arguments_valid<Args...>) {
-            initialize_storage(std::index_sequence_for<Args...>{}, std::forward<Args>(args)...);
-            logical_size_ = sizeof...(Args);
-        }
-    }
-
-    template <std::size_t... Indices, typename... Args>
-    constexpr void initialize_storage(std::index_sequence<Indices...> indices, Args&&... args) noexcept {
-        (void)indices;
-        ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
-    }
-
-    std::array<value_type, CapacityValue> storage_{};
-    std::size_t logical_size_ = 0;
-};
-
-template <typename First, typename... Rest>
-Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
-
-template <typename SourceElement, std::size_t Extent>
-    requires(Extent != std::dynamic_extent)
-Vector(std::span<SourceElement, Extent>) -> Vector<std::remove_cv_t<SourceElement>, Extent>;
-
-} // namespace cljonic
-
-namespace cljonic::concepts_detail {
-
-template <typename ElementType, std::size_t CapacityValue>
-struct collection_traits<Vector<ElementType, CapacityValue>> {
-    static constexpr bool is_cljonic_collection = true;
-    static constexpr collection_kind kind = collection_kind::vector;
-};
-
-} // namespace cljonic::concepts_detail
-// End cljonic-vector.hpp
 
 namespace cljonic::core {}
 

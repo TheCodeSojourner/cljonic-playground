@@ -194,6 +194,7 @@
 #include <cljonic-contains.hpp>
 #include <cljonic-core-collection-maximum-element-count.hpp>
 #include <cljonic-count.hpp>
+#include <cljonic-cycle.hpp>
 #include <cljonic-disj.hpp>
 #include <cljonic-dissoc.hpp>
 #include <cljonic-fits-into.hpp>
