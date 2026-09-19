@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization mechanisms (`into`, `fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`). Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range`, `Repeat`, and explicit producer materialization through `into` and `fits_into`; `Cycle`, `Iterate`, and `Repeatedly` remain approved future behavior until individually propagated. Collection-owned sequence traversal and interoperability accessors remain deferred future work and are not current collection APIs. Standard ranges and views MAY be used internally by future cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
+This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization mechanisms (`into`, `fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`). Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range`, `Repeat`, `Cycle`, and explicit producer materialization through `into` and `fits_into`; `Iterate` and `Repeatedly` remain approved future behavior until individually propagated. Collection-owned sequence traversal and interoperability accessors remain deferred future work and are not current collection APIs. Standard ranges and views MAY be used internally by future cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
 
 ## Materialization & Producer Invariants
 
@@ -35,6 +35,8 @@ REQ-SEQ-021. Operations that produce sequenceable results SHOULD return an ownin
 ## Sequence Producer Specifications
 
 REQ-FN-009. `cycle`, `iterate`, `range`, `repeat`, and `repeatedly` MUST be standalone producer values or producer operations that do not own materialized result storage or require a result-capacity template parameter. Their values MUST provide ordinary const `begin`/`end` traversal bounded by `count()`. Their values MUST be materialized through `into` into an explicit bounded destination. Unbounded forms MUST terminate traversal after `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` elements, produce at most the destination's remaining capacity, and MAY return a deterministic prefix; finite forms MUST produce their complete result when it fits the destination.
+
+REQ-FN-009A. The only approved public Cycle spelling is `cycle(source)`. It MUST construct an unbounded Cycle producer that owns a bounded copy of the source sequence and repeats that sequence from its beginning after each complete pass.
 
 REQ-FN-010. For `cycle`, `iterate`, `range` without a finite end, `repeat` without a count, and `repeatedly` without a count, `is_finite()` MUST return `false` and complete-result preflight MUST report that the result does not fit. Counted `repeat` and `repeatedly`, and finite `range`, MUST return `true` from `is_finite()` and use their runtime result count for preflight and bounded `into` materialization.
 

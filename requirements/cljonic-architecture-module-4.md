@@ -32,10 +32,19 @@ class Repeat {
     // No result buffer; materialization copies m_value into a destination.
 };
 
+template<class T>
+class Cycle {
+    Vector<T, source_capacity> m_source;
+    // The only public form is cycle(source); traversal is unbounded and capped
+    // only when observed or materialized into an explicit destination.
+};
+
 } // namespace cljonic
 ```
 
 `repeat(value)` constructs `Repeat<T>` with `m_is_finite == false`; `repeat(value, count)` constructs it with `m_is_finite == true` and records `count`. `Repeat<T>` owns `m_value`, exposes `count()`, `is_finite()`, and const bounded `begin()`/`end()` traversal, has no producer indexed access, and does not retain a destination or source reference. An unbounded Repeat reports the configured observable traversal cap and `false` from `is_finite()`; a finite Repeat reports its stored runtime count and `true`. The materialization adapter emits a copy of `m_value` for each finite count, or until the explicit destination becomes full for an unbounded repeat.
+
+`cycle(source)` constructs `Cycle<T>` with an owned bounded copy of `source`. Cycle is always unbounded, exposes the configured observable traversal cap and `false` from `is_finite()`, and repeats the owned source sequence in order.
 
 ## Unbounded Traversal & Deep Equality Restriction Architecture
 
