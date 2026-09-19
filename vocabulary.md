@@ -344,11 +344,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Cycle
-- **Definition:** An unbounded Producer created only by `cycle(source)` that owns a bounded copy of its source sequence and repeats that sequence in order from its beginning after each complete pass. Cycle returns the configured observable traversal cap and `false` from `is_finite()`; its complete result never fits a destination, while `into` may materialize a bounded prefix.
+- **Definition:** An unbounded Producer created only by `cycle(source)` that owns the source value or an independent copy of its source parameters. For a finite source, Cycle repeats the source sequence in logical traversal order from its beginning after each complete pass. For an unbounded source, Cycle preserves the source's observable traversal without requiring the source to reach an end, so bounded observation of `cycle(source)` produces the same prefix as bounded observation of `source`. Cycle returns the configured observable traversal cap and `false` from `is_finite()`; its complete result never fits a destination, while `into` may materialize a bounded prefix. An empty finite source is valid and produces empty observation.
 - **Deprecated Synonyms:** cycle producer, repeating sequence producer
 - **Related:** Producer, UnboundedProducer, ProducerMaterialization, PreflightPredicate, OwningValue, SequenceableProducer, CljonicCycle
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `cycle(Vector<int, 3>{1, 2, 3})` produces the repeating sequence `1, 2, 3, 1, 2, 3, ...`; materializing into `Vector<int, 5>` yields the bounded prefix `1, 2, 3, 1, 2`.
+- **Examples:** `cycle(Vector<int, 3>{1, 2, 3})` produces the repeating sequence `1, 2, 3, 1, 2, 3, ...`; `cycle(range())` has the same bounded observable prefix as `range()`; materializing the finite-source case into `Vector<int, 5>` yields `1, 2, 3, 1, 2`.
 
 
 ### MapEntry
