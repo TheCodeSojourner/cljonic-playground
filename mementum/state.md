@@ -1,13 +1,13 @@
 ## Session State
 
-- last_session_id: 0e04dfde-7f2a-4f7c-b56b-c5a7bd3d5ea6
-- current_timestamp: 2026-09-18T18:10:12-06:00
+- last_session_id: 70e9ac89-e63f-427d-8d98-fd60d428b429
+- current_timestamp: 2026-09-19T18:39:09-06:00
 - recover: 1
 - session_complete: true
 
 Task:
 1. Complete and converge the active Module 4 `Cycle` producer across requirements, vocabulary, architecture, Allium specification, tests, source, generated documentation, no-heap probes, and validation policy.
-2. Align strict traceability and validation cadence with the active implementation-backed surface while preserving deferred contracts.
+2. Validate and weed vocabulary, architecture, and specification convergence across the active implementation-backed surface.
 
 Questions:
 1. No blocking questions remain.
@@ -22,6 +22,9 @@ Decisions:
 7. Active-scope vocabulary, architecture, specification, and traceability checks converge; API spellings, macro names, and standard-library identifiers remain intentional exceptions to prose canonicalization.
 8. `specs/sequences/collection-shaping.allium` is explicitly deferred; its behavioral contracts and optional tests remain preserved, while strict traceability covers only active implementation-backed specs.
 9. Validation cadence is tiered: focused checks during iteration, `make upsert-gate-fast` after coherent slices, `make upsert-gate-strict` before final validation, and `make git` only at milestone or handoff.
+10. Feature-family behavior changes MUST update the dedicated `tests/no_heap/` probe alongside ordinary tests; the no-heap harness is a separate contract surface.
+11. `CljonicSource` requires `NothrowConstInputRange`; Cycle owns source values or producer parameters, finite sources restart after exhaustion, and unbounded sources preserve observable prefixes.
+12. `is_finite()` remains a producer member observation; architecture, requirements, specs, implementation, tests, and probes are aligned on that API.
 
 Validation:
 1. Active obligations: 620; active test traces: 620; missing active traces: 0.
@@ -31,6 +34,9 @@ Validation:
 5. `make test`: PASS, 118/118 tests.
 6. `make git`: PASS, including format, lint, complexity, compile-fail, sanitizers, 100% line coverage, traceability, no-heap, docs, documentation examples, and tests.
 7. GYBIS vocabulary, architecture, specification, vocabulary-drift, architecture-drift, and spec-weed checks: PASS for the active implementation-backed scope.
+8. Cycle no-heap probes cover bounded collection sources, finite producer sources, and unbounded producer sources in modular and single-header builds; `make no-heap` and `make upsert-gate-strict` pass.
+9. Final vocabulary validation: 148 terms, zero syntax/completeness/semantic errors, zero orphaned terms.
+10. Final architecture/spec weed checks: PASS with no actionable divergences.
 
 Next:
 1. Implement `Iterate` and `Repeatedly` only after requirements, vocabulary, architecture, specs, tests, source, and no-heap probes are individually propagated.
