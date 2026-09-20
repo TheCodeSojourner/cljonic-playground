@@ -9,7 +9,9 @@ This document specifies the implementation architecture for Module 4 of `cljonic
 The architecture distinguishes stored collections from explicit sequence producers:
 - `cljonic_collection<T>`: Closed set of owning bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`).
 - `cljonic_producer<T>`: Standalone generator types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`).
-- `cljonic_source<T>`: `cljonic_collection<T> || cljonic_producer<T>`.
+- `const_input_range<T>`: A structural const-source traversal capability equivalent to `std::ranges::input_range<const T>`.
+- `nothrow_const_input_range<T>`: A structural const-source traversal capability equivalent to `const_input_range<T>` whose begin, end, dereference, increment, and iterator/sentinel comparison operations are non-throwing.
+- `cljonic_source<T>`: `(cljonic_collection<T> || cljonic_producer<T>) && nothrow_const_input_range<T>`.
 
 Producers store parameters by value without allocating result buffers or retaining references.
 
@@ -32,11 +34,13 @@ class Repeat {
     // No result buffer; materialization copies m_value into a destination.
 };
 
-template<class T>
+template<cljonic_source Source>
 class Cycle {
-    Vector<T, source_capacity> m_source;
+    Source m_source;
     // The only public form is cycle(source); traversal is unbounded and capped
-    // only when observed or materialized into an explicit destination.
+    // only when observed or materialized into an explicit destination. Finite
+    // sources restart after exhaustion; unbounded sources preserve their
+    // observable traversal without requiring a complete source result.
 };
 
 } // namespace cljonic
@@ -44,7 +48,7 @@ class Cycle {
 
 `repeat(value)` constructs `Repeat<T>` with `m_is_finite == false`; `repeat(value, count)` constructs it with `m_is_finite == true` and records `count`. `Repeat<T>` owns `m_value`, exposes `count()`, `is_finite()`, and const bounded `begin()`/`end()` traversal, has no producer indexed access, and does not retain a destination or source reference. An unbounded Repeat reports the configured observable traversal cap and `false` from `is_finite()`; a finite Repeat reports its stored runtime count and `true`. The materialization adapter emits a copy of `m_value` for each finite count, or until the explicit destination becomes full for an unbounded repeat.
 
-`cycle(source)` constructs `Cycle<T>` with an owned bounded copy of `source`. Cycle is always unbounded, exposes the configured observable traversal cap and `false` from `is_finite()`, and repeats the owned source sequence in order.
+`cycle(source)` constructs a source-parameterized `Cycle<Source>` that stores an independent owned copy of the source value. For a Producer source, the stored copy consists of the producer's parameters and state, not a materialized result sequence. Cycle is always unbounded, exposes the configured observable traversal cap and `false` from `is_finite()`, and repeats finite source sequences in logical traversal order. When the source is unbounded, Cycle preserves the source's bounded observable prefix without requiring the source to produce a complete result. An empty finite source produces empty observation. The `Cycle` source constraint is inherited from `cljonic_source<Source>` and therefore includes `nothrow_const_input_range<Source>`.
 
 ## Unbounded Traversal & Deep Equality Restriction Architecture
 
