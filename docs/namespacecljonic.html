@@ -143,8 +143,9 @@ Functions</h2></td></tr>
 requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProducer&lt;C&gt;</td></tr>
 <tr class="memitem:af5da07418b370bc5072eacf31957e0ee template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af5da07418b370bc5072eacf31957e0ee">count</a> (const C &amp;collection) noexcept -&gt; std::size_t</td></tr>
 <tr class="memdesc:af5da07418b370bc5072eacf31957e0ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the logical size (number of active elements) of a collection.  <br /></td></tr>
-<tr class="memitem:a1190fbb2e7a60517f2f8ec9a3b280b1b" id="r_a1190fbb2e7a60517f2f8ec9a3b280b1b"><td class="memTemplParams" colspan="2">template&lt;typename T, std::size_t CapacityValue&gt; </td></tr>
-<tr class="memitem:a1190fbb2e7a60517f2f8ec9a3b280b1b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1190fbb2e7a60517f2f8ec9a3b280b1b">cycle</a> (<a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; T, CapacityValue &gt; values) noexcept -&gt; <a class="el" href="classcljonic_1_1_cycle.html">Cycle</a>&lt; T, CapacityValue &gt;</td></tr>
+<tr class="memitem:ae3e6305e3e1c90eef86582f2181618fe" id="r_ae3e6305e3e1c90eef86582f2181618fe"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicSource Source&gt; <br />
+requires concepts::NothrowCollectionElement&lt;std::ranges::range_value_t&lt;const Source&gt;&gt;</td></tr>
+<tr class="memitem:ae3e6305e3e1c90eef86582f2181618fe template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ae3e6305e3e1c90eef86582f2181618fe">cycle</a> (Source source) noexcept -&gt; <a class="el" href="classcljonic_1_1_cycle.html">Cycle</a>&lt; Source &gt;</td></tr>
 <tr class="memitem:a208a537a25b84868835300afc4c14047" id="r_a208a537a25b84868835300afc4c14047"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T&gt; </td></tr>
 <tr class="memitem:a208a537a25b84868835300afc4c14047 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a208a537a25b84868835300afc4c14047">disj</a> (const C &amp;collection, const T &amp;value) noexcept</td></tr>
 <tr class="memdesc:a208a537a25b84868835300afc4c14047"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disjoins an element from a set.  <br /></td></tr>
@@ -584,13 +585,14 @@ requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProd
 
 </div>
 </div>
-<a id="a1190fbb2e7a60517f2f8ec9a3b280b1b" name="a1190fbb2e7a60517f2f8ec9a3b280b1b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1190fbb2e7a60517f2f8ec9a3b280b1b">&#9670;&#160;</a></span>cycle()</h2>
+<a id="ae3e6305e3e1c90eef86582f2181618fe" name="ae3e6305e3e1c90eef86582f2181618fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3e6305e3e1c90eef86582f2181618fe">&#9670;&#160;</a></span>cycle()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T, std::size_t CapacityValue&gt; </div>
+template&lt;concepts::CljonicSource Source&gt; <br />
+requires concepts::NothrowCollectionElement&lt;std::ranges::range_value_t&lt;const Source&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -598,8 +600,8 @@ template&lt;typename T, std::size_t CapacityValue&gt; </div>
         <tr>
           <td class="memname">auto cljonic::cycle </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; T, CapacityValue &gt;</td>          <td class="paramname"><span class="paramname"><em>values</em></span></td><td>)</td>
-          <td> -&gt; <a class="el" href="classcljonic_1_1_cycle.html">Cycle</a>&lt; T, CapacityValue &gt;</td>
+          <td class="paramtype">Source</td>          <td class="paramname"><span class="paramname"><em>source</em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_cycle.html">Cycle</a>&lt; Source &gt;</td>
         </tr>
       </table>
   </td>
@@ -609,7 +611,7 @@ template&lt;typename T, std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00099">99</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00164">164</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 
 </div>
 </div>

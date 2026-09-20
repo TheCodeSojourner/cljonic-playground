@@ -11,5 +11,6 @@ var searchData=
   ['cljonicsource_8',['CljonicSource',['../conceptcljonic_1_1concepts_1_1_cljonic_source.html',1,'cljonic::concepts']]],
   ['cljonicstring_9',['CljonicString',['../conceptcljonic_1_1concepts_1_1_cljonic_string.html',1,'cljonic::concepts']]],
   ['cljonicvector_10',['CljonicVector',['../conceptcljonic_1_1concepts_1_1_cljonic_vector.html',1,'cljonic::concepts']]],
-  ['copyableelement_11',['CopyableElement',['../conceptcljonic_1_1concepts_1_1_copyable_element.html',1,'cljonic::concepts']]]
+  ['constinputrange_11',['ConstInputRange',['../conceptcljonic_1_1concepts_1_1_const_input_range.html',1,'cljonic::concepts']]],
+  ['copyableelement_12',['CopyableElement',['../conceptcljonic_1_1concepts_1_1_copyable_element.html',1,'cljonic::concepts']]]
 ];
