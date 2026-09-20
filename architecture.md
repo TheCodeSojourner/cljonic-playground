@@ -345,6 +345,7 @@ concept CljonicVector =
   | NothrowConstInputRange(x) ≡ ConstInputRange(x) ∧ noexcept(begin ∧ end ∧ dereference ∧ increment ∧ sentinel_compare(x))
   | CljonicSource(x) ≡ (CljonicCollection(x) ∨ CljonicProducer(x)) ∧ NothrowConstInputRange(x)
   | materialization_operations(into ∧ fits_into) → constrain_source_by(CljonicSource)
+  | producer_observation_api(x) → expose(member(is_finite))
 
 ```cpp
 template<class Type>
@@ -356,7 +357,10 @@ concept CljonicRange =
     (detail::producer_kind_of_v<Type> == detail::producer_kind::range);
 
 template<class Type>
-concept CljonicSource = CljonicCollection<Type> || CljonicProducer<Type>;
+concept CljonicSource =
+    (CljonicCollection<Type> || CljonicProducer<Type>) &&
+    NothrowConstInputRange<Type>;
+
 ```
 
 ### Level 2: CapabilityConcept (semantic capability gates)
@@ -542,9 +546,9 @@ concept IndexedProducer =
 
 λ S1_sequence_materialization_model(x). unbounded_sequences(x) → represent_as(UnboundedProducer) ∧ attach_synthesis_cap(CollectionMaximumElementCount)
   | producer_family(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly) → preserve_semantic_infinity(x) ∧ normalize_effective_bounds(x) ∧ before_materialization(x)
-  | producer(x) → expose(count ∧ is_finite ∧ const_begin_end)
-  | unbounded_producer(x) → is_finite(false) ∧ count(CollectionMaximumElementCount) ∧ traversal_terminates_at_count(x)
-  | finite_producer(x) → is_finite(true) ∧ count(exact_runtime_result_count(x))
+  | producer(x) → expose(count ∧ member(is_finite) ∧ const_begin_end)
+  | unbounded_producer(x) → is_finite(x, false) ∧ count(CollectionMaximumElementCount) ∧ traversal_terminates_at_count(x)
+  | finite_producer(x) → is_finite(x, true) ∧ count(exact_runtime_result_count(x))
   | cycle(source) → constrain_source_by(CljonicSource) ∧ represent(UnboundedProducer) ∧ require(store(independent_owned_copy(source_value)) ∧ ¬borrow(source_storage) ∧ ¬own(result_storage))
   | producer_source_copy(source) → store(parameters ∧ state(source)) ∧ ¬materialize(source_result_sequence)
   | finite_cycle_source(source) → repeat(source_sequence_from_beginning_after_complete_pass)
