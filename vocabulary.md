@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-09-18
+last_updated: 2026-09-19
 status: draft
 ---
 
@@ -66,7 +66,7 @@ producer building blocks used across all higher-order algorithms.
 ### Seqable
 - **Definition:** The canonical semantic capability for producing a collection's documented logical traversal representation. A `Seqable` collection provides sequence conversion without mutating the source, dynamic allocation, or exceptions; the result is an independently valid bounded value whose elements and order follow the collection's traversal semantics. `Seqable` remains independent of `Indexed`, `Lookup`, and `Associative` and is deferred until the sequence requirements are implementation-backed.
 - **Deprecated Synonyms:** sequenceable capability, sequence capability
-- **Related:** Sequenceable, Sequence, Traversal, ConstRangeTraversal, CapabilityConcept
+- **Related:** Sequenceable, Sequence, Seq, Traversal, ConstRangeTraversal, CapabilityConcept
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `Seqable` is a deferred capability for `Vector`, `Map`, `Set`, `Queue`, and `String`; its presence does not follow merely from `is_empty` or `count`.
 
@@ -282,7 +282,7 @@ producer building blocks used across all higher-order algorithms.
 ### FiniteObservation
 - **Definition:** Observation of a producer or value over a finite, explicitly bounded domain, without implying that an unbounded source has a finite complete result.
 - **Deprecated Synonyms:** bounded observation, finite producer observation
-- **Related:** BoundedInspection, ProducerIteration, UnboundedProducer
+- **Related:** BoundedInspection, FiniteStatus, ProducerIteration, UnboundedProducer
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** Inspecting the first bounded prefix of an unbounded producer is finite observation.
 
@@ -314,7 +314,7 @@ producer building blocks used across all higher-order algorithms.
 ### Producer
 - **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat` and `Cycle` are not `Indexed`. Cycle has only the public form `cycle(source)` and is always unbounded. Future producers (`Iterate` and `Repeatedly`) MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
 - **Deprecated Synonyms:** sequence producer, source producer
-- **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed
+- **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed, Iterate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `range`, `repeat`, `cycle`, `iterate`, and `repeatedly` are producer families when their requirements are active.
 
@@ -378,7 +378,7 @@ producer building blocks used across all higher-order algorithms.
 ### SemanticPredicateName
 - **Definition:** A predicate name chosen to communicate the semantic question it answers, rather than exposing an access operation or an ambiguous truthy convention.
 - **Deprecated Synonyms:** predicate naming policy, semantic predicate naming
-- **Related:** CapabilityPredicate, StatePredicate, VerbPredicate
+- **Related:** CapabilityPredicate, StatePredicate, VerbPredicate, IsPredicatePrefix, CanPredicatePrefix, HasPredicatePrefix, ValidPredicatePrefix
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `is_empty`, `contains`, and `fits_into` use names that identify their semantic questions.
 
@@ -442,7 +442,7 @@ producer building blocks used across all higher-order algorithms.
 ### KeywordEnumNameContext
 - **Definition:** The explicit context required to interpret, validate, or map keyword names to scoped enumeration values without hidden global state.
 - **Deprecated Synonyms:** enum-name mapping context, keyword mapping context
-- **Related:** KeywordEnumNameEntry, KeywordEnumNameMap, NoHiddenGlobalInitialization
+- **Related:** KeywordEnumNameEntry, KeywordEnumNameMap, KeywordEnumNameMapping, NoHiddenGlobalInitialization
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A caller supplies the mapping context rather than relying on a library-managed global registry.
 
@@ -465,7 +465,7 @@ producer building blocks used across all higher-order algorithms.
 ### NothrowCollectionElement
 - **Definition:** A user-defined type admissible for storage in a cljonic collection because its default construction, copy construction, copy assignment, and destruction are all non-throwing. This storage-admission capability is independent of equality, ordering, hashing, parsing, traversal, and other operation-specific capabilities.
 - **Deprecated Synonyms:** nothrow collection element, non-throwing collection element
-- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct, CopyableElement
+- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct, CopyableElement, NothrowStableEqualityComparable
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Vector<T, N>`, `Set<T, N>`, or `Queue<T, N>` element, and a `Map<K, V, N>` key or value, must satisfy `NothrowCollectionElement` before storage admission.
 
@@ -513,7 +513,7 @@ producer building blocks used across all higher-order algorithms.
 ### Map
 - **Definition:** The cljonic fixed-capacity associative collection type mapping unique, stably comparable keys to values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates. Both keys and values satisfy the `NothrowCollectionElement` storage contract at template admission.
 - **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
-- **Related:** MapEntry, Associative, Lookup, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** MapEntry, Associative, Lookup, Contains, LinearScan, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback. `Map{MapEntry{1, 10}, MapEntry{2, 20}}` deduces `Map<int, int, 2>` and folds `assoc` over each entry in argument order; every argument must be exactly `MapEntry<int, int>`, and at least one argument is required (use `Map<int, int, N>{}` for the empty case).
 
@@ -521,7 +521,7 @@ producer building blocks used across all higher-order algorithms.
 ### Set
 - **Definition:** The cljonic fixed-capacity unordered collection type storing unique elements using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates.
 - **Deprecated Synonyms:** bounded set, fixed-capacity set, unique element collection
-- **Related:** StableEquality, Contains, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** StableEquality, Contains, LinearScan, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Set<int, 4>{1, 2, 3}` creates a bounded set supporting `conj`, `disj`, `contains`, `get`, and callable lookup `s(v)`.
 
@@ -649,7 +649,7 @@ producer building blocks used across all higher-order algorithms.
 ### Iterate
 - **Definition:** A generated collection type that repeatedly applies a function to produce a sequence. Element at index `i` is computed by applying the function `i` times to a seed value. Iterate is referentially transparent and finite by construction when a finite count is supplied; unbounded or omitted forms use the synthesis cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than a fake finite size.
 - **Deprecated Synonyms:** iterated sequence
-- **Related:** CollectionMaximumElementCount
+- **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Iterate(inc, 0, 5)` produces `0, 1, 2, 3, 4` by repeatedly incrementing from `0`; `Iterate(f, seed)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` iterations.
 
@@ -690,7 +690,7 @@ producer building blocks used across all higher-order algorithms.
 ### BoundedPrefixResult
 - **Definition:** A bounded result that intentionally contains only a deterministic prefix or reduced subset because the complete result could not fit under the documented capacity or result policy.
 - **Deprecated Synonyms:** partial result, prefix result
-- **Related:** CompleteResult, PreflightPredicate, EffectiveBoundedPrefixBoundary
+- **Related:** CompleteResult, PartialResult, PreflightPredicate, EffectiveBoundedPrefixBoundary
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** An over-capacity `into` operation may return a bounded-prefix result when its preflight indicates non-fit.
 
@@ -754,7 +754,7 @@ producer building blocks used across all higher-order algorithms.
 ### DeferredStatus
 - **Definition:** A lifecycle classification indicating a function is intentionally postponed because required scope or governing requirements are not yet complete.
 - **Deprecated Synonyms:** deferred, postponed status
-- **Related:** LifecycleClassification, CandidateStatus
+- **Related:** LifecycleClassification, CandidateStatus, RelationModel
 - **Usage:** Requirements, architecture, specification governance, and documentation
 - **Examples:** Relational operations can be deferred until a complete relation model is approved.
 
@@ -1008,7 +1008,7 @@ producer building blocks used across all higher-order algorithms.
 ### CljonicProducer
 - **Definition:** The C++ concept identifier implementing the ProducerConcept nominal-admission pattern: admission to the producer nominal identity through cljonic-owned trait specialization, parallel to but distinct from `CljonicCollection`.
 - **Deprecated Synonyms:** cljonic_producer, cljonic producer concept
-- **Related:** ProducerConcept, ProducerKind, CollectionConcept, CljonicCollection, CljonicSource, Producer, CljonicRange
+- **Related:** ProducerConcept, ProducerKind, CollectionConcept, CljonicCollection, CljonicSource, Producer, CljonicRange, CljonicRepeat
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `CljonicProducer<Range<int>>` is satisfied while a stored collection type is not.
 
@@ -1056,7 +1056,7 @@ producer building blocks used across all higher-order algorithms.
 ### NothrowConstInputRange
 - **Definition:** The strengthened structural capability requiring a `ConstInputRange` whose const `begin`, `end`, dereference, pre-increment, post-increment, and iterator/sentinel comparison operations are non-throwing. NothrowConstInputRange is the structural traversal requirement of `CljonicSource` and does not replace nominal source admission.
 - **Deprecated Synonyms:** non-throwing const input range, noexcept const input range
-- **Related:** CljonicSource, ConstInputRange, ConstRangeTraversal, NoExceptions, Traversal
+- **Related:** CljonicSource, ConstInputRange, ConstRangeTraversal, NoExceptionConstraint, Traversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `NothrowConstInputRange<Vector<int, 4>>`, `NothrowConstInputRange<Queue<int, 4>>`, and `NothrowConstInputRange<Range<int>>` are satisfied by their non-throwing const traversal operations.
 
