@@ -341,7 +341,9 @@ concept CljonicVector =
 λ CljonicProducer_level(x). gate(type) → nominal_producer_identity(x) ≡ admission(producer_domain(x)) ∧ classification(ProducerKind)
   | recognition(x) → cljonic_owned_traits(x) ∧ distinct_domain_from(ClosedNominalCollectionDomain(x))
   | nominal_pattern(x) → applies_to(CljonicRange ∧ CljonicRepeat ∧ CljonicCycle) ∧ future(CljonicIterate ∧ CljonicRepeatedly)
-  | CljonicSource(x) ≡ CljonicCollection(x) ∨ CljonicProducer(x)
+  | ConstInputRange(x) ≡ std::ranges::input_range<const x>
+  | NothrowConstInputRange(x) ≡ ConstInputRange(x) ∧ noexcept(begin ∧ end ∧ dereference ∧ increment ∧ sentinel_compare(x))
+  | CljonicSource(x) ≡ (CljonicCollection(x) ∨ CljonicProducer(x)) ∧ NothrowConstInputRange(x)
   | materialization_operations(into ∧ fits_into) → constrain_source_by(CljonicSource)
 
 ```cpp
@@ -543,7 +545,10 @@ concept IndexedProducer =
   | producer(x) → expose(count ∧ is_finite ∧ const_begin_end)
   | unbounded_producer(x) → is_finite(false) ∧ count(CollectionMaximumElementCount) ∧ traversal_terminates_at_count(x)
   | finite_producer(x) → is_finite(true) ∧ count(exact_runtime_result_count(x))
-  | cycle(source) → represent(UnboundedProducer) ∧ require(OwningValue ∧ preserve(source_traversal_order))
+  | cycle(source) → constrain_source_by(CljonicSource) ∧ represent(UnboundedProducer) ∧ require(store(independent_owned_copy(source_value)) ∧ ¬borrow(source_storage) ∧ ¬own(result_storage))
+  | producer_source_copy(source) → store(parameters ∧ state(source)) ∧ ¬materialize(source_result_sequence)
+  | finite_cycle_source(source) → repeat(source_sequence_from_beginning_after_complete_pass)
+  | unbounded_cycle_source(source) → preserve(source_observable_prefix) ∧ ¬require(complete_source_result)
   | Repeat(value) → store_owned(value) ∧ represent(unbounded)
   | Repeat(value ∧ count) → store_owned(value) ∧ store(runtime_count) ∧ represent(finite)
   | Repeat(x) → exclude(IndexedProducer ∧ IFn ∧ Lookup)
