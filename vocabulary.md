@@ -1034,15 +1034,31 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** cljonic_cycle, cljonic cycle concept
 - **Related:** CljonicProducer, Cycle, ProducerKind, ProducerConcept
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `CljonicCycle<Cycle<int, 3>>` is satisfied while `Vector<int, 3>` is not.
+- **Examples:** `CljonicCycle<Cycle<Vector<int, 3>>>` is satisfied while `Vector<int, 3>` is not.
 
 
 ### CljonicSource
-- **Definition:** The C++ concept identifier admitting either a stored collection or a producer to the combined source domain used by materialization operations: `CljonicCollection ∨ CljonicProducer`.
+- **Definition:** The C++ concept identifier admitting a stored collection or producer to the combined source domain used by materialization and producer operations. CljonicSource requires nominal admission as `CljonicCollection ∨ CljonicProducer` and structural admission as `NothrowConstInputRange`; nominal admission or throwing traversal alone is insufficient.
 - **Deprecated Synonyms:** cljonic_source, cljonic source concept
-- **Related:** CljonicCollection, CljonicProducer, Producer, ProducerMaterialization
+- **Related:** CljonicCollection, CljonicProducer, ConstInputRange, NothrowConstInputRange, Producer, ProducerMaterialization
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `CljonicSource<Range<int>>` and `CljonicSource<Vector<int, 4>>` are both satisfied; an external container is not.
+- **Examples:** `CljonicSource<Range<int>>` and `CljonicSource<Vector<int, 4>>` are both satisfied because they provide const input traversal; an external container is not nominally admitted even when it models `std::ranges::input_range`.
+
+
+### ConstInputRange
+- **Definition:** The named structural capability requiring a value to provide input-range traversal from a const source expression. ConstInputRange is the weaker traversal capability refined by `NothrowConstInputRange`; it does not by itself imply nominal cljonic collection or producer admission, ownership, no-heap behavior, or exact cardinality.
+- **Deprecated Synonyms:** const input range, read-only input range
+- **Related:** CljonicSource, ConstRangeTraversal, NothrowConstInputRange, Traversal, Sequence, Producer
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `ConstInputRange<Vector<int, 4>>`, `ConstInputRange<Queue<int, 4>>`, and `ConstInputRange<Range<int>>` are satisfied by their const `begin()`/`end()` traversal.
+
+
+### NothrowConstInputRange
+- **Definition:** The strengthened structural capability requiring a `ConstInputRange` whose const `begin`, `end`, dereference, pre-increment, post-increment, and iterator/sentinel comparison operations are non-throwing. NothrowConstInputRange is the structural traversal requirement of `CljonicSource` and does not replace nominal source admission.
+- **Deprecated Synonyms:** non-throwing const input range, noexcept const input range
+- **Related:** CljonicSource, ConstInputRange, ConstRangeTraversal, NoExceptions, Traversal
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `NothrowConstInputRange<Vector<int, 4>>`, `NothrowConstInputRange<Queue<int, 4>>`, and `NothrowConstInputRange<Range<int>>` are satisfied by their non-throwing const traversal operations.
 
 
 ### CapabilityConcept
