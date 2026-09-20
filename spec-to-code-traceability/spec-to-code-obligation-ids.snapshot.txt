@@ -160,6 +160,7 @@ invariant.Count.NoRtti
 invariant.Count.ReferentialTransparency
 invariant.Count.ReturnsLogicalSize
 invariant.Count.SingleThreadedExecutionModel
+invariant.Cycle.AcceptsFiniteOrUnboundedSequenceSource
 invariant.Cycle.ConstTraversalTerminatesAtMaximumCap
 invariant.Cycle.CountIsObservableTraversalCap
 invariant.Cycle.DoesNotBorrowSourceOrCallback
@@ -169,6 +170,7 @@ invariant.Cycle.DoesNotOwnResultStorage
 invariant.Cycle.DoesNotSatisfyIndexedProducer
 invariant.Cycle.EmptySourceProducesEmptyObservation
 invariant.Cycle.ExposesCountAndIsFinite
+invariant.Cycle.FiniteSourceRestartsAfterCompletePass
 invariant.Cycle.HeaderOnlyDistribution
 invariant.Cycle.IsUnbounded
 invariant.Cycle.MaterializesAtMostDestinationCapacity
@@ -176,13 +178,18 @@ invariant.Cycle.NoExceptions
 invariant.Cycle.NoHeapAllocation
 invariant.Cycle.NoRtti
 invariant.Cycle.OwnsRepeatedSequence
+invariant.Cycle.ProducerSourceCopyIsParametersAndState
 invariant.Cycle.ReferentialTransparency
 invariant.Cycle.RepeatsSourceSequenceInOrder
 invariant.Cycle.SatisfiesSequenceableProducer
 invariant.Cycle.SingleArgumentFormOnly
 invariant.Cycle.SingleThreadedExecutionModel
+invariant.Cycle.SourceSatisfiesConstInputRange
+invariant.Cycle.SourceSatisfiesNothrowConstInputRange
+invariant.Cycle.StoresIndependentOwnedSourceCopy
 invariant.Cycle.UnboundedCycleDoesNotSatisfyStableEquality
 invariant.Cycle.UnboundedEqualityFailsAtCompileTime
+invariant.Cycle.UnboundedSourcePreservesObservablePrefix
 invariant.Disj.CopyOnModifySemantics
 invariant.Disj.DisjFreeFunctionSupported
 invariant.Disj.FunctionalImmutabilityPreserved

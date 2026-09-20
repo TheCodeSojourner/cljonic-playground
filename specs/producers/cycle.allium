@@ -11,11 +11,18 @@ entity Cycle {
     does_not_borrow_source_or_callback: Boolean
     referential_transparency: Boolean
     single_argument_form_only: Boolean
+    accepts_finite_or_unbounded_sequence_source: Boolean
+    source_satisfies_const_input_range: Boolean
+    source_satisfies_nothrow_const_input_range: Boolean
+    stores_independent_owned_source_copy: Boolean
+    producer_source_copy_is_parameters_and_state: Boolean
     is_unbounded: Boolean
     exposes_count_and_is_finite: Boolean
     count_is_observable_traversal_cap: Boolean
     const_traversal_terminates_at_maximum_cap: Boolean
     repeats_source_sequence_in_order: Boolean
+    finite_source_restarts_after_complete_pass: Boolean
+    unbounded_source_preserves_observable_prefix: Boolean
     empty_source_produces_empty_observation: Boolean
     materializes_at_most_destination_capacity: Boolean
     does_not_fit_into_destination: Boolean
@@ -65,6 +72,26 @@ entity Cycle {
         this.single_argument_form_only = true
     }
 
+    invariant AcceptsFiniteOrUnboundedSequenceSource {
+        this.accepts_finite_or_unbounded_sequence_source = true
+    }
+
+    invariant SourceSatisfiesConstInputRange {
+        this.source_satisfies_const_input_range = true
+    }
+
+    invariant SourceSatisfiesNothrowConstInputRange {
+        this.source_satisfies_nothrow_const_input_range = true
+    }
+
+    invariant StoresIndependentOwnedSourceCopy {
+        this.stores_independent_owned_source_copy = true
+    }
+
+    invariant ProducerSourceCopyIsParametersAndState {
+        this.producer_source_copy_is_parameters_and_state = true
+    }
+
     invariant IsUnbounded {
         this.is_unbounded = true
     }
@@ -83,6 +110,14 @@ entity Cycle {
 
     invariant RepeatsSourceSequenceInOrder {
         this.repeats_source_sequence_in_order = true
+    }
+
+    invariant FiniteSourceRestartsAfterCompletePass {
+        this.finite_source_restarts_after_complete_pass = true
+    }
+
+    invariant UnboundedSourcePreservesObservablePrefix {
+        this.unbounded_source_preserves_observable_prefix = true
     }
 
     invariant EmptySourceProducesEmptyObservation {
