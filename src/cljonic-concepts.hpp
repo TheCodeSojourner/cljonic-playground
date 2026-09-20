@@ -5,6 +5,7 @@
 #include <concepts>
 #include <cstddef>
 #include <optional>
+#include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
@@ -140,6 +141,23 @@ concept NothrowStableEqualityComparable = StableEqualityComparable<T> && Nothrow
 // Level 1: CollectionConcept (Nominal Collection Admission)
 // ============================================================================
 
+/** Requires input-range traversal from a const source expression. */
+template <typename T>
+concept ConstInputRange = std::ranges::input_range<const T>;
+
+/** Requires non-throwing input-range traversal from a const source expression. */
+template <typename T>
+concept NothrowConstInputRange =
+    ConstInputRange<T> &&
+    requires(const T& source, std::ranges::iterator_t<const T> iterator, std::ranges::sentinel_t<const T> sentinel) {
+        { std::ranges::begin(source) } noexcept;
+        { std::ranges::end(source) } noexcept;
+        { *iterator } noexcept;
+        { ++iterator } noexcept;
+        { iterator++ } noexcept;
+        { iterator == sentinel } noexcept -> std::same_as<bool>;
+    };
+
 /** Gates types admitted to the closed nominal cljonic collection domain
  *  through cljonic-owned trait specialization. */
 template <typename T>
@@ -168,7 +186,7 @@ concept CljonicCycle =
 /** Admits either a stored collection or a producer to the combined source
  *  domain used by materialization operations (`into`, `fits_into`). */
 template <typename T>
-concept CljonicSource = CljonicCollection<T> || CljonicProducer<T>;
+concept CljonicSource = (CljonicCollection<T> || CljonicProducer<T>) && NothrowConstInputRange<T>;
 
 /** Nominal identity gate for Vector collection types. */
 template <typename T>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstddef>
-#include <span>
+#include <ranges>
 #include <utility>
 
 #include <cljonic-concepts.hpp>
@@ -10,42 +10,88 @@
 namespace cljonic {
 
 /** \anchor Cycle
- * \b Cycle is a producer that repeats a bounded source sequence until it is exhausted, then wraps back to the start.
- * The approved public form is `cycle(source)` only. The producer is unbounded and terminates traversal only by the
- * observable cap used for bounded materialization.
+ * \b Cycle is an unbounded producer over an owned source value. A finite source sequence is repeated from the
+ * beginning after exhaustion; an unbounded source preserves its observable prefix without requiring a complete source
+ * result. The approved public form is `cycle(source)` only, and traversal terminates only at the observable cap used
+ * for bounded materialization.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   [[maybe_unused]] constexpr auto finite_cycle = cycle(Vector<int, 3>{1, 2, 3});
+   [[maybe_unused]] constexpr auto unbounded_cycle = cycle(Range{0, 0, 0});
+
+   // -----------------------------------------------------------------------
+   // C++ interoperability: Cycle supports const traversal.
+   // -----------------------------------------------------------------------
+   auto runtime_cycle = cycle(Vector<int, 3>{4, 5, 6});
+   auto runtime_unbounded_cycle = cycle(Range{0, 0, 0});
+
+   // Use C++ interoperability to observe a finite source cycle at runtime.
+   int runtime_sum = 0;
+   int runtime_count = 0;
+   for (const auto value : runtime_cycle) {
+     runtime_sum += value;
+     if (++runtime_count == 5) {
+       break;
+     }
+   }
+
+   // Use C++ interoperability to observe an unbounded source cycle at runtime.
+   int runtime_unbounded_sum = 0;
+   int runtime_unbounded_count = 0;
+   for (const auto value : runtime_unbounded_cycle) {
+     runtime_unbounded_sum += value;
+     if (++runtime_unbounded_count == 4) {
+       break;
+     }
+   }
+
+   return runtime_count == 5 && runtime_sum == 24 &&
+                  runtime_unbounded_count == 4 && runtime_unbounded_sum == 0
+              ? 0
+              : 1;
+ }
+ ~~~~~
  */
-template <concepts::NothrowCollectionElement T, std::size_t CapacityValue>
+template <concepts::CljonicSource Source>
+    requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>
 class Cycle {
   public:
-    using value_type = T;
+    using source_type = Source;
+    using value_type = std::ranges::range_value_t<const Source>;
+    using source_iterator = std::ranges::iterator_t<const Source>;
+    using source_sentinel = std::ranges::sentinel_t<const Source>;
 
     class const_iterator {
       public:
-        using value_type = T;
+        using value_type = Cycle::value_type;
         using difference_type = std::ptrdiff_t;
-
-        struct position {
-            std::size_t remaining;
-            std::size_t index;
-        };
 
         constexpr const_iterator() noexcept = default;
 
-        constexpr const_iterator(std::span<const T> values, position cursor) noexcept
-            : values_(values), remaining_(cursor.remaining), index_(cursor.index) {
+        constexpr const_iterator(const Source* source, source_iterator current, source_sentinel end,
+                                 std::size_t remaining, bool restart) noexcept
+            : source_(source), current_(std::move(current)), end_(std::move(end)), remaining_(remaining),
+              restart_(restart) {
         }
 
-        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
-            return values_[index_ % values_.size()];
+        [[nodiscard]] constexpr auto operator*() const noexcept -> decltype(auto) {
+            return *current_;
         }
 
         constexpr auto operator++() noexcept -> const_iterator& {
-            if (values_.empty() || remaining_ == 0U) {
+            if (remaining_ == 0U) {
                 remaining_ = 0U;
                 return *this;
             }
-            index_ = (index_ + 1U) % values_.size();
             --remaining_;
+            ++current_;
+            if (remaining_ != 0U && current_ == end_) {
+                advance_after_source_end();
+            }
             return *this;
         }
 
@@ -61,12 +107,20 @@ class Cycle {
         }
 
       private:
-        std::span<const T> values_{};
+        constexpr void advance_after_source_end() noexcept {
+            current_ = std::ranges::begin(*source_);
+            end_ = std::ranges::end(*source_);
+            remaining_ = restart_ ? remaining_ : 0U;
+        }
+
+        const Source* source_{nullptr};
+        source_iterator current_{};
+        source_sentinel end_{};
         std::size_t remaining_{0U};
-        std::size_t index_{0U};
+        bool restart_{false};
     };
 
-    constexpr explicit Cycle(Vector<T, CapacityValue> values) noexcept : values_(std::move(values)) {
+    constexpr explicit Cycle(Source source) noexcept : source_(std::move(source)) {
     }
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
@@ -78,34 +132,45 @@ class Cycle {
     }
 
     [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
-        if (values_.count() == 0U) {
-            return const_iterator{std::span<const T>{}, typename const_iterator::position{0U, 0U}};
+        const auto source_count = source_.count();
+        const auto source_begin = std::ranges::begin(source_);
+        const auto source_end = std::ranges::end(source_);
+        const auto source_is_finite = source_finiteness();
+        if (source_count == 0U || source_begin == source_end) {
+            return const_iterator{&source_, source_begin, source_end, 0U, source_is_finite};
         }
-        return const_iterator{std::span<const T>{values_.begin(), values_.count()},
-                              typename const_iterator::position{count(), 0U}};
+        return const_iterator{&source_, source_begin, source_end, count(), source_is_finite};
     }
 
     [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
-        return const_iterator{std::span<const T>{}, typename const_iterator::position{0U, 0U}};
+        return const_iterator{};
     }
 
   private:
-    Vector<T, CapacityValue> values_{};
+    [[nodiscard]] constexpr auto source_finiteness() const noexcept -> bool {
+        if constexpr (concepts::CljonicProducer<Source>) {
+            return source_.is_finite();
+        }
+        return true;
+    }
+
+    Source source_{};
     std::size_t count_{CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE};
     bool is_finite_{false};
 };
 
-template <typename T, std::size_t CapacityValue>
-[[nodiscard]] constexpr auto cycle(Vector<T, CapacityValue> values) noexcept -> Cycle<T, CapacityValue> {
-    return Cycle<T, CapacityValue>{std::move(values)};
+template <concepts::CljonicSource Source>
+    requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>
+[[nodiscard]] constexpr auto cycle(Source source) noexcept -> Cycle<Source> {
+    return Cycle<Source>{std::move(source)};
 }
 
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
 
-template <typename T, std::size_t CapacityValue>
-struct producer_traits<Cycle<T, CapacityValue>> {
+template <typename Source>
+struct producer_traits<Cycle<Source>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::cycle;
 };
