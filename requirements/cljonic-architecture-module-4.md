@@ -12,8 +12,9 @@ The architecture distinguishes stored collections from explicit sequence produce
 - `const_input_range<T>`: A structural const-source traversal capability equivalent to `std::ranges::input_range<const T>`.
 - `nothrow_const_input_range<T>`: A structural const-source traversal capability equivalent to `const_input_range<T>` whose begin, end, dereference, increment, and iterator/sentinel comparison operations are non-throwing.
 - `cljonic_source<T>`: `(cljonic_collection<T> || cljonic_producer<T>) && nothrow_const_input_range<T>`.
+- `iterate_step<T, Step>`: A callable capability requiring a `NothrowCollectionElement` `T` and a copy-constructible `Step` whose const invocation with one `T` argument is non-throwing and returns exactly `T`.
 
-Producers store parameters by value without allocating result buffers or retaining references.
+Producers store parameters by value without allocating result buffers or retaining references. A producer satisfying `cljonic_source` is a direct input to source-taking free functions; `into` is the explicit conversion path into an owning destination.
 
 ```cpp
 namespace cljonic {
@@ -43,12 +44,25 @@ class Cycle {
     // observable traversal without requiring a complete source result.
 };
 
+template<class T, iterate_step<T> Step>
+class Iterate {
+    T m_initial;
+    Step m_step;
+    // Unbounded state transition; no result buffer and no callback evaluation
+    // during construction. Traversal emits m_initial first, then applies m_step
+    // to the previously emitted value until the observable cap or destination
+    // capacity is reached. The type and traversal operations are constexpr-capable
+    // and remain callable at runtime when their arguments are runtime values.
+};
+
 } // namespace cljonic
 ```
 
 `repeat(value)` constructs `Repeat<T>` with `m_is_finite == false`; `repeat(value, count)` constructs it with `m_is_finite == true` and records `count`. `Repeat<T>` owns `m_value`, exposes `count()`, `is_finite()`, and const bounded `begin()`/`end()` traversal, has no producer indexed access, and does not retain a destination or source reference. An unbounded Repeat reports the configured observable traversal cap and `false` from `is_finite()`; a finite Repeat reports its stored runtime count and `true`. The materialization adapter emits a copy of `m_value` for each finite count, or until the explicit destination becomes full for an unbounded repeat.
 
 `cycle(source)` constructs a source-parameterized `Cycle<Source>` that stores an independent owned copy of the source value. For a Producer source, the stored copy consists of the producer's parameters and state, not a materialized result sequence. Cycle is always unbounded, exposes the configured observable traversal cap and `false` from `is_finite()`, and repeats finite source sequences in logical traversal order. When the source is unbounded, Cycle preserves the source's bounded observable prefix without requiring the source to produce a complete result. An empty finite source produces empty observation. The `Cycle` source constraint is inherited from `cljonic_source<Source>` and therefore includes `nothrow_const_input_range<Source>`.
+
+`iterate(step, initial)` constructs an unbounded `Iterate<T, Step>` only when `T` satisfies `NothrowCollectionElement` and the const step callback is a copy-constructible, non-throwing exact `T -> T` transition. `Step` may be moved from an rvalue during construction when supported, but the resulting producer remains copyable. `Iterate` owns copies of `initial` and `step`, emits `initial` first, and applies `step` to the previously emitted value for each subsequent element. It exposes the configured observable traversal cap and `false` from `is_finite()`, satisfies `cljonic_source`, may be consumed directly by source-taking free functions, and converts into an owning destination through `into`; `fits_into` returns `false`. `Iterate` is not indexed or invocable and exposes no `contains`, positional retrieval, key-based lookup, or `get`. Its construction and traversal operations are constexpr-capable when their arguments are, and remain usable at runtime. The callback is not evaluated during construction.
 
 ## Unbounded Traversal & Deep Equality Restriction Architecture
 
@@ -58,7 +72,7 @@ class Cycle {
 
 ## Materialization Pipeline (`into` & `fits_into`)
 
-Materialization requires an explicit bounded destination:
+Complete producer materialization requires an explicit bounded destination; producers may also be consumed directly by source-taking free functions:
 
 ```cpp
 namespace cljonic {

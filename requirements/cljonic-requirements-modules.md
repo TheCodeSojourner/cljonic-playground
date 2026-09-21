@@ -18,7 +18,7 @@ This document outlines the modular implementation roadmap for `cljonic`. To ensu
 
 4. **[cljonic-requirements-module-4.md](cljonic-requirements-module-4.md)** / **[cljonic-architecture-module-4.md](cljonic-architecture-module-4.md)** — *Sequence Producers & Materialization Pipeline*
    - **Goal**: Adds explicit materialization, non-collection generator values, and standard view interop.
-   - **Scope**: Active generator producers (`Range`, `Repeat`, `Cycle`); future generator producers (`Iterate`, `Repeatedly`); materialization free functions (`into`, `fits_into`); deferred const logical-range traversal; and deferred conditional C++ interoperability accessors (`std::span<const T>`-like and `std::string_view`-like representations) (`REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, including `REQ-FN-009A`, `REQ-FN-013B`, `REQ-FN-027`, `REQ-PLAT-017`–`023`).
+   - **Scope**: Active generator producers (`Range`, `Repeat`, `Cycle`, `Iterate`); future generator producer (`Repeatedly`); direct producer consumption by source-taking free functions; materialization free functions (`into`, `fits_into`); deferred const logical-range traversal; and deferred conditional C++ interoperability accessors (`std::span<const T>`-like and `std::string_view`-like representations) (`REQ-VAL-014`–`017`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C`, including `REQ-FN-009A`, `REQ-FN-013B`, `REQ-FN-013C`, `REQ-FN-027`, `REQ-PLAT-017`–`023`).
 
 5. **[cljonic-requirements-module-5.md](cljonic-requirements-module-5.md)** / **[cljonic-architecture-module-5.md](cljonic-architecture-module-5.md)** — *Higher-Order Algorithms & Traversal*
    - **Goal**: Implements generic sequence transformation algorithms over any `cljonic_source`.
