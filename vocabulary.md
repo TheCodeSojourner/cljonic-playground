@@ -9,17 +9,18 @@ status: draft
 ## Current Scope
 
 The current implementation and tests cover the core collection types (`Vector`,
-`Map`, `Set`, `Queue`, and `String`), the active `Range` and `Repeat` producers,
+`Map`, `Set`, `Queue`, and `String`), the active `Range`, `Repeat`, and `Iterate`
+producers,
 the active unbounded `cycle(source)` producer, their direct construction,
 member-observation, callable collection forms, current primitive free-function
 operations, and explicit producer materialization through `into` and
-`fits_into`. `Iterate` and `Repeatedly` remain deferred future producer families.
+`fits_into`. `Repeatedly` remains a deferred future producer family.
 Semantic sequence operations remain deferred future work for every collection;
 const range traversal and read-only C++ interoperability are active
 infrastructure. Module 3 establishes the concrete, array-backed, bounded
 collection types, their contiguous storage strategies, linear scan lookup
 algorithms, swap-and-remove policies, and primitive free functions. Module 4's
-active slice establishes `Range`, `Repeat`, unbounded `cycle(source)`, and
+active slice establishes `Range`, `Repeat`, `Iterate`, unbounded `cycle(source)`, and
 explicit producer materialization. These terms govern stored collection and
 producer building blocks used across all higher-order algorithms.
 
@@ -312,7 +313,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Producer
-- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat` and `Cycle` are not `Indexed`. Cycle has only the public form `cycle(source)` and is always unbounded. Future producers (`Iterate` and `Repeatedly`) MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
+- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat`, `Cycle`, and `Iterate` are not `Indexed`. Cycle has only the public form `cycle(source)` and is always unbounded. Producers MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
 - **Deprecated Synonyms:** sequence producer, source producer
 - **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed, Iterate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -647,11 +648,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Iterate
-- **Definition:** A generated collection type that repeatedly applies a function to produce a sequence. Element at index `i` is computed by applying the function `i` times to a seed value. Iterate is referentially transparent and finite by construction when a finite count is supplied; unbounded or omitted forms use the synthesis cap `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` rather than a fake finite size.
+- **Definition:** A `Producer` and `CljonicSource` whose element type satisfies `NothrowCollectionElement`, owning an initial value and a pure, non-allocating, copy-constructible step callback. `iterate(step, initial)` produces `initial` first and then applies `step` to the previously produced value for each subsequent element. The step may be moved from an rvalue during construction when supported, but the resulting producer remains copyable. The callback is not evaluated during construction. `Iterate` uses `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` as its observable traversal cap rather than claiming a finite complete result, may be consumed directly by source-taking free functions, and converts to an owning destination through `into`. Its construction and traversal are constexpr-capable when the supplied arguments are and remain usable at runtime. It is not `Indexed`, is not invocable (`IFn`), and exposes no `contains`, positional retrieval, key-based lookup, or `get`.
 - **Deprecated Synonyms:** iterated sequence
-- **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount
+- **Related:** Producer, CljonicSource, UnboundedProducer, ProducerMaterialization, PreflightPredicate, CollectionMaximumElementCount, OwningValue
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Iterate(inc, 0, 5)` produces `0, 1, 2, 3, 4` by repeatedly incrementing from `0`; `Iterate(f, seed)` defaults to `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` iterations.
+- **Examples:** `iterate([](int value) { return value + 1; }, 0)` produces the unbounded sequence `0, 1, 2, 3, ...`, observed only through its configured traversal cap or an explicit destination.
 
 
 ### DeterministicOverflowPolicy
@@ -938,7 +939,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** producer category, nominal producer kind
 - **Related:** ProducerConcept, CljonicProducer, CljonicRange, Producer, CollectionKind
 - **Usage:** Architecture, implementation, and tests
-- **Examples:** A producer trait classifies an admitted type as range, repeat, or cycle in the current active slice, with iterate and repeatedly reserved for future producer families.
+- **Examples:** A producer trait classifies an admitted type as range, repeat, cycle, or iterate in the current active slice, with repeatedly reserved for a future producer family.
 
 
 ### CollectionConcept
