@@ -1,0 +1,196 @@
+-- allium: 3
+
+entity Iterate {
+    supports_header_only_distribution: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    owns_initial_value: Boolean
+    element_satisfies_nothrow_collection_element: Boolean
+    owns_step_callback: Boolean
+    factory_stores_decayed_step: Boolean
+    accepts_named_function_lambda_and_function_object: Boolean
+    step_is_copy_constructible: Boolean
+    step_may_be_move_constructed_from_rvalue: Boolean
+    step_const_invocation_accepts_value_of_t: Boolean
+    step_const_invocation_returns_exact_t: Boolean
+    step_invocation_is_non_throwing: Boolean
+    does_not_own_result_storage: Boolean
+    does_not_borrow_initial_or_step: Boolean
+    referential_transparency: Boolean
+    two_argument_form_only: Boolean
+    emits_initial_first: Boolean
+    applies_step_to_previous_value: Boolean
+    is_unbounded: Boolean
+    exposes_count_and_is_finite: Boolean
+    count_is_observable_traversal_cap: Boolean
+    const_traversal_terminates_at_maximum_cap: Boolean
+    materializes_at_most_destination_capacity: Boolean
+    does_not_fit_into_destination: Boolean
+    satisfies_cljonic_source: Boolean
+    direct_source_consumption_is_supported: Boolean
+    constexpr_capable_when_arguments_are: Boolean
+    runtime_use_is_supported: Boolean
+    construction_does_not_invoke_step: Boolean
+    unbounded_iterate_does_not_satisfy_stable_equality: Boolean
+    unbounded_equality_fails_at_compile_time: Boolean
+    does_not_satisfy_indexed_producer: Boolean
+    satisfies_sequenceable_producer: Boolean
+    does_not_expose_callable_operator: Boolean
+    get_contains_and_lookup_are_excluded: Boolean
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant OwnsInitialValue {
+        this.owns_initial_value = true
+    }
+
+    invariant ElementSatisfiesNothrowCollectionElement {
+        this.element_satisfies_nothrow_collection_element = true
+    }
+
+    invariant OwnsStepCallback {
+        this.owns_step_callback = true
+    }
+
+    invariant FactoryStoresDecayedStep {
+        this.factory_stores_decayed_step = true
+    }
+
+    invariant AcceptsNamedFunctionLambdaAndFunctionObject {
+        this.accepts_named_function_lambda_and_function_object = true
+    }
+
+    invariant StepIsCopyConstructible {
+        this.step_is_copy_constructible = true
+    }
+
+    invariant StepMayBeMoveConstructedFromRvalue {
+        this.step_may_be_move_constructed_from_rvalue = true
+    }
+
+    invariant StepConstInvocationAcceptsValueOfT {
+        this.step_const_invocation_accepts_value_of_t = true
+    }
+
+    invariant StepConstInvocationReturnsExactT {
+        this.step_const_invocation_returns_exact_t = true
+    }
+
+    invariant StepInvocationIsNonThrowing {
+        this.step_invocation_is_non_throwing = true
+    }
+
+    invariant DoesNotOwnResultStorage {
+        this.does_not_own_result_storage = true
+    }
+
+    invariant DoesNotBorrowInitialOrStep {
+        this.does_not_borrow_initial_or_step = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant TwoArgumentFormOnly {
+        this.two_argument_form_only = true
+    }
+
+    invariant EmitsInitialFirst {
+        this.emits_initial_first = true
+    }
+
+    invariant AppliesStepToPreviousValue {
+        this.applies_step_to_previous_value = true
+    }
+
+    invariant IsUnbounded {
+        this.is_unbounded = true
+    }
+
+    invariant ExposesCountAndIsFinite {
+        this.exposes_count_and_is_finite = true
+    }
+
+    invariant CountIsObservableTraversalCap {
+        this.count_is_observable_traversal_cap = true
+    }
+
+    invariant ConstTraversalTerminatesAtMaximumCap {
+        this.const_traversal_terminates_at_maximum_cap = true
+    }
+
+    invariant MaterializesAtMostDestinationCapacity {
+        this.materializes_at_most_destination_capacity = true
+    }
+
+    invariant DoesNotFitIntoDestination {
+        this.does_not_fit_into_destination = true
+    }
+
+    invariant SatisfiesCljonicSource {
+        this.satisfies_cljonic_source = true
+    }
+
+    invariant DirectSourceConsumptionIsSupported {
+        this.direct_source_consumption_is_supported = true
+    }
+
+    invariant ConstexprCapableWhenArgumentsAre {
+        this.constexpr_capable_when_arguments_are = true
+    }
+
+    invariant RuntimeUseIsSupported {
+        this.runtime_use_is_supported = true
+    }
+
+    invariant ConstructionDoesNotInvokeStep {
+        this.construction_does_not_invoke_step = true
+    }
+
+    invariant UnboundedIterateDoesNotSatisfyStableEquality {
+        this.unbounded_iterate_does_not_satisfy_stable_equality = true
+    }
+
+    invariant UnboundedEqualityFailsAtCompileTime {
+        this.unbounded_equality_fails_at_compile_time = true
+    }
+
+    invariant DoesNotSatisfyIndexedProducer {
+        this.does_not_satisfy_indexed_producer = true
+    }
+
+    invariant SatisfiesSequenceableProducer {
+        this.satisfies_sequenceable_producer = true
+    }
+
+    invariant DoesNotExposeCallableOperator {
+        this.does_not_expose_callable_operator = true
+    }
+
+    invariant GetContainsAndLookupAreExcluded {
+        this.get_contains_and_lookup_are_excluded = true
+    }
+}
+
+actor IterateOperator { identified_by: Iterate }

@@ -19,6 +19,8 @@ entity ProducerMaterialization {
     composed_producer_cardinality_uses_saturating_arithmetic: Boolean
     composed_cardinality_bounded_by_collection_maximum_element_count: Boolean
     materialization_source_domain_is_cljonic_source: Boolean
+    cljonic_sources_are_directly_consumable_by_free_functions: Boolean
+    into_is_explicit_owning_materialization_path: Boolean
 
     invariant IntoRequiresExplicitBoundedDestination {
         this.into_requires_explicit_bounded_destination = true
@@ -90,6 +92,14 @@ entity ProducerMaterialization {
 
     invariant MaterializationSourceDomainIsCljonicSource {
         this.materialization_source_domain_is_cljonic_source = true
+    }
+
+    invariant CljonicSourcesAreDirectlyConsumableByFreeFunctions {
+        this.cljonic_sources_are_directly_consumable_by_free_functions = true
+    }
+
+    invariant IntoIsExplicitOwningMaterializationPath {
+        this.into_is_explicit_owning_materialization_path = true
     }
 
 }
