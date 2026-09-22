@@ -29,6 +29,8 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
     TRACE_ID("invariant.ProducerMaterialization.ComposedProducerCardinalityUsesSaturatingArithmetic");
     TRACE_ID("invariant.ProducerMaterialization.ComposedCardinalityBoundedByCollectionMaximumElementCount");
     TRACE_ID("invariant.ProducerMaterialization.MaterializationSourceDomainIsCljonicSource");
+    TRACE_ID("invariant.ProducerMaterialization.CljonicSourcesAreDirectlyConsumableByFreeFunctions");
+    TRACE_ID("invariant.ProducerMaterialization.IntoIsExplicitOwningMaterializationPath");
 
     // A finite source that fits materializes completely, leaving destination and source unchanged.
     constexpr Vector<int, 8> empty_destination{};
