@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="textblock"><code>#include &lt;array&gt;</code><br />
 <code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;ranges&gt;</code><br />
 <code>#include &lt;span&gt;</code><br />
@@ -150,6 +151,8 @@ Concepts</h2></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ACljonicRange" id="r_cljonic_3A_3Aconcepts_3A_3ACljonicRange"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_range.html">cljonic::concepts::CljonicRange</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ACljonicRepeat" id="r_cljonic_3A_3Aconcepts_3A_3ACljonicRepeat"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_repeat.html">cljonic::concepts::CljonicRepeat</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ACljonicCycle" id="r_cljonic_3A_3Aconcepts_3A_3ACljonicCycle"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_cycle.html">cljonic::concepts::CljonicCycle</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_3A_3ACljonicIterate" id="r_cljonic_3A_3Aconcepts_3A_3ACljonicIterate"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_iterate.html">cljonic::concepts::CljonicIterate</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_3A_3AIterateStep" id="r_cljonic_3A_3Aconcepts_3A_3AIterateStep"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_iterate_step.html">cljonic::concepts::IterateStep</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ACljonicSource" id="r_cljonic_3A_3Aconcepts_3A_3ACljonicSource"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_source.html">cljonic::concepts::CljonicSource</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ACljonicVector" id="r_cljonic_3A_3Aconcepts_3A_3ACljonicVector"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_vector.html">cljonic::concepts::CljonicVector</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_3A_3ACljonicMap" id="r_cljonic_3A_3Aconcepts_3A_3ACljonicMap"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_map.html">cljonic::concepts::CljonicMap</a></td></tr>
@@ -175,10 +178,14 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122ab45cffe084dd3d20d928bee85e7b0f21">cljonic::concepts_detail::string</a>
 <br />
  }</td></tr>
-<tr class="memitem:ae7b205beabb5ee36d468e0b1ca49b74c" id="r_ae7b205beabb5ee36d468e0b1ca49b74c"><td class="memItemLeft">enum class &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74c">cljonic::concepts_detail::producer_kind</a> { <a class="el" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca334c4a4c42fdb79d7ebc3e73b517e6f8">cljonic::concepts_detail::none</a>
+<tr class="memitem:ae7b205beabb5ee36d468e0b1ca49b74c" id="r_ae7b205beabb5ee36d468e0b1ca49b74c"><td class="memItemLeft">enum class &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74c">cljonic::concepts_detail::producer_kind</a> { <br />
+&#160;&#160;<a class="el" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca334c4a4c42fdb79d7ebc3e73b517e6f8">cljonic::concepts_detail::none</a>
 , <a class="el" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca37b19816109a32106d109e83bbb3c97d">cljonic::concepts_detail::range</a>
 , <a class="el" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca32cf6da134a8b268cf4ab6b79a9a5ad9">cljonic::concepts_detail::repeat</a>
 , <a class="el" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca9a4c07402cc2f3740fb5849a16920e13">cljonic::concepts_detail::cycle</a>
+, <br />
+&#160;&#160;<a class="el" href="namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74ca82ffa73b3288478a77f5d5b1008914d4">cljonic::concepts_detail::iterate</a>
+<br />
  }</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
