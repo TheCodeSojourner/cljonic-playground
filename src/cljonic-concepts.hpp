@@ -4,6 +4,7 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
+#include <functional>
 #include <optional>
 #include <ranges>
 #include <span>
@@ -75,7 +76,7 @@ inline constexpr bool static_extent_fits_v =
 
 // A closed-world tag distinguishing producer families, parallel to collection_kind
 // but for the separate producer nominal domain (CljonicSource ≡ collection ∨ producer).
-enum class producer_kind { none, range, repeat, cycle };
+enum class producer_kind { none, range, repeat, cycle, iterate };
 
 // The unspecialized form rejects types by default. Each supported producer
 // specializes this trait with its nominal identity and producer kind.
@@ -182,6 +183,18 @@ concept CljonicRepeat =
 template <typename T>
 concept CljonicCycle =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::cycle);
+
+/** Nominal identity gate for Iterate producer types. */
+template <typename T>
+concept CljonicIterate =
+    CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::iterate);
+
+/** Requires a nothrow-storable element and a copyable, non-throwing const step transition from T to T. */
+template <typename T, typename Step>
+concept IterateStep = NothrowCollectionElement<T> && std::copy_constructible<Step> &&
+                      std::is_nothrow_copy_constructible_v<Step> && requires(const Step& step, T value) {
+                          { std::invoke(step, value) } noexcept -> std::same_as<T>;
+                      };
 
 /** Admits either a stored collection or a producer to the combined source
  *  domain used by materialization operations (`into`, `fits_into`). */
