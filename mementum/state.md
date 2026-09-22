@@ -1,45 +1,42 @@
 ## Session State
 
-- last_session_id: 70e9ac89-e63f-427d-8d98-fd60d428b429
-- current_timestamp: 2026-09-19T18:39:09-06:00
+- last_session_id: 97d5e330-45c6-4b59-9f74-802eef23af55
+- current_timestamp: 2026-09-22T09:24:06-06:00
 - recover: 1
 - session_complete: true
 
 Task:
-1. Complete and converge the active Module 4 `Cycle` producer across requirements, vocabulary, architecture, Allium specification, tests, source, generated documentation, no-heap probes, and validation policy.
-2. Validate and weed vocabulary, architecture, and specification convergence across the active implementation-backed surface.
+1. Complete and converge the active Module 4 `Iterate` producer across requirements, vocabulary, architecture, Allium specification, tests, source, generated documentation, no-heap probes, and validation policy.
+2. Audit the full requirements-to-documentation stack and repair any discovered cross-layer drift.
 
 Questions:
 1. No blocking questions remain.
 
 Decisions:
-1. `Range`, `Repeat`, and `Cycle` are active; `Iterate` and `Repeatedly` remain deferred.
+1. `Range`, `Repeat`, `Cycle`, and `Iterate` are active; `Repeatedly` remains deferred.
 2. Every Module 4 producer follows the shared bounded traversal model: `count()` is exact for finite producers and is the configured observable cap for unbounded producers; `is_finite()` controls complete-result semantics.
-3. `into(destination, source)` appends source elements to a new destination value. `fits_into` measures complete appendability within the destination's remaining capacity, returns `false` for unbounded producers, and avoids unsigned-addition overflow.
-4. `Repeat` uses CTAD constructor syntax in type documentation, mirrors `Range` with constexpr/runtime const traversal, and keeps type-level examples separate from `into`/`fits_into` behavior.
-5. `Range`, `Repeat`, and `Cycle` each have dedicated no-heap probes exercising their producer-specific bounded behavior in both modular and single-header probe binaries.
-6. The architecture's top-level scope, Module 4 slice, and producer nominal-admission declaration classify `Range`, `Repeat`, and `Cycle` and their concepts as active; only `Iterate` and `Repeatedly` remain deferred.
-7. Active-scope vocabulary, architecture, specification, and traceability checks converge; API spellings, macro names, and standard-library identifiers remain intentional exceptions to prose canonicalization.
-8. `specs/sequences/collection-shaping.allium` is explicitly deferred; its behavioral contracts and optional tests remain preserved, while strict traceability covers only active implementation-backed specs.
-9. Validation cadence is tiered: focused checks during iteration, `make upsert-gate-fast` after coherent slices, `make upsert-gate-strict` before final validation, and `make git` only at milestone or handoff.
-10. Feature-family behavior changes MUST update the dedicated `tests/no_heap/` probe alongside ordinary tests; the no-heap harness is a separate contract surface.
-11. `CljonicSource` requires `NothrowConstInputRange`; Cycle owns source values or producer parameters, finite sources restart after exhaustion, and unbounded sources preserve observable prefixes.
-12. `is_finite()` remains a producer member observation; architecture, requirements, specs, implementation, tests, and probes are aligned on that API.
+3. `iterate(step, initial)` emits `initial`, then repeatedly applies `step` to the previously emitted value; its observable sequence is `x, (f x), (f (f x)), ...`.
+4. `Iterate` requires a `NothrowCollectionElement` element type and a copyable, const-invocable, non-throwing exact `T -> T` step. The factory stores `std::decay_t<Step>`, accepting named functions, lambdas, and function objects; named functions become copyable function pointers.
+5. `Iterate` is a `CljonicSource`, supports direct source-taking free functions, constexpr and runtime traversal, and uses `into` only for explicit owning materialization; `fits_into` returns false for the unbounded producer.
+6. `into(destination, source)` appends source elements to a new destination value. `fits_into` measures complete appendability within the destination's remaining capacity, returns `false` for unbounded producers, and avoids unsigned-addition overflow.
+7. Every public free-function addition or behavior change requires a dedicated no-heap probe in both modular and single-header builds; this rule applies across producers, collections, scalars, and other domains.
+8. Type-level producer Doxygen examples show construction and const C++ traversal; free-function behavior remains documented at the free-function boundary. Iterate documentation includes constexpr/runtime traversal, named/lambda/function-object steps, and the plain-ASCII sequence notation.
+9. The top-level `architecture.md` and Module 4 architecture must classify Iterate as active and Repeatedly as deferred; active implementation boundaries must agree across requirements, vocabulary, architecture, specs, tests, source, and documentation.
+10. `specs/sequences/collection-shaping.allium` remains explicitly deferred; its behavioral contracts and optional tests are preserved outside active implementation-backed scope.
 
 Validation:
-1. Active obligations: 620; active test traces: 620; missing active traces: 0.
-2. Allium check and analyse: PASS for all 26 specification files, including preserved deferred contracts.
-3. `make upsert-gate-fast`: PASS for lint, complexity, active traceability, and no-heap.
-4. `make no-heap`: PASS for modular and single-header probes, including Cycle.
-5. `make test`: PASS, 118/118 tests.
-6. `make git`: PASS, including format, lint, complexity, compile-fail, sanitizers, 100% line coverage, traceability, no-heap, docs, documentation examples, and tests.
-7. GYBIS vocabulary, architecture, specification, vocabulary-drift, architecture-drift, and spec-weed checks: PASS for the active implementation-backed scope.
-8. Cycle no-heap probes cover bounded collection sources, finite producer sources, and unbounded producer sources in modular and single-header builds; `make no-heap` and `make upsert-gate-strict` pass.
-9. Final vocabulary validation: 148 terms, zero syntax/completeness/semantic errors, zero orphaned terms.
-10. Final architecture/spec weed checks: PASS with no actionable divergences.
+1. Allium check and analyse: PASS for all 26 specification files, including the new Iterate entity and preserved deferred contracts.
+2. `make validate`: PASS for format, lint, complexity, sanitizers, 100% line coverage, strict traceability, and no-heap.
+3. `make upsert-gate-fast`: PASS after refreshing the obligation snapshot and adding all new trace IDs.
+4. `make upsert-gate-strict`: PASS.
+5. `make no-heap`: PASS for modular and single-header probes, including the dedicated Iterate probe.
+6. `make git`: PASS, including compile-fail checks, sanitizers, 100% line coverage, traceability, no-heap, docs, 11 documentation examples, and tests.
+7. Focused Iterate tests: PASS in modular and single-header builds, including 32 assertions and named-function callable support.
+8. Full requirements-to-documentation audit: PASS after repairing top-level architecture scope and propagating decayed callable storage into requirements, vocabulary, specification, and traceability.
+9. `git diff --check`: PASS; no unsupported form-feed or Doxygen math characters remain in the Iterate documentation comment.
 
 Next:
-1. Implement `Iterate` and `Repeatedly` only after requirements, vocabulary, architecture, specs, tests, source, and no-heap probes are individually propagated.
+1. Implement `Repeatedly` only after requirements, vocabulary, architecture, specs, tests, source, no-heap probes, and documentation are individually propagated.
 2. Extend `into`/`fits_into` destination support beyond `Vector` only after each destination's append/materialization semantics are explicitly specified.
 3. Defer `nth` and any Range positional value retrieval until Module 5 is formally elicited and approved.
 4. Keep deferred collection-shaping contracts outside strict active coverage until their implementation slice begins.
