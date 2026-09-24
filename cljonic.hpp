@@ -88,8 +88,10 @@
  *
  * ## Producer Types
  *
- * - \ref Range "cljonic::Range"
- * - \ref Repeat "cljonic::Repeat"
+ * - \ref Cycle "Cycle"
+ * - \ref Iterate "Iterate"
+ * - \ref Range "Range"
+ * - \ref Repeat "Repeat"
  *
  * ## Core Functions
  *
@@ -130,7 +132,7 @@
  * - \ref Core_Sub "Sub"
  * - \ref Core_Uppercase "Uppercase"
  *
- * ### Deferred sequence traversal
+ * ### Sequence traversal
  *
  * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
  * when their requirements are approved.
@@ -193,8 +195,9 @@
  */
 
 /** \anchor Namespace_Core
- * The \b Core namespace provides the vast majority of \b cljonic functions. The current Core surface starts with the
- * Vector collection. Free-function collection operations are planned for later requirements modules.
+ * The \b Core namespace provides the vast majority of \b cljonic functions. The current Core surface provides the
+ * bounded collections and the active producers, and its free-function collection operations are introduced module by
+ * module as their requirements are approved.
  */
 
 // Begin cljonic-assoc.hpp
