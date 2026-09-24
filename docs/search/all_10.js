@@ -1,7 +1,7 @@
 var searchData=
 [
   ['seq_0',['seq',['../namespacecljonic.html#af23ad4b89cbea89172bb757a5fbd5b26',1,'cljonic']]],
-  ['sequence_20traversal_1',['Deferred sequence traversal',['../index.html#autotoc_md9',1,'']]],
+  ['sequence_20traversal_1',['Sequence traversal',['../index.html#autotoc_md9',1,'']]],
   ['sequenceablecollection_2',['SequenceableCollection',['../conceptcljonic_1_1concepts_1_1_sequenceable_collection.html',1,'cljonic::concepts']]],
   ['sequenceableproducer_3',['SequenceableProducer',['../conceptcljonic_1_1concepts_1_1_sequenceable_producer.html',1,'cljonic::concepts']]],
   ['set_4',['Set',['../classcljonic_1_1_set.html',1,'cljonic::Set&lt; T, CapacityValue &gt;'],['../classcljonic_1_1_set.html#ae3ecb3bcbd7a96dd6754306bee88741a',1,'cljonic::Set::Set(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; T, Args &gt; &amp;&amp;...))'],['../classcljonic_1_1_set.html#a818fd2c8626aae40125885495b98495b',1,'cljonic::Set::Set(SourceRange &amp;&amp;source) noexcept((concepts::NothrowElementConstruction&lt; value_type, std::ranges::range_value_t&lt; SourceRange &gt; &gt;))'],['../namespacecljonic.html#af20d169ef36288b54ca608a14eb6b557',1,'cljonic::Set(First, Rest...) -&gt; Set&lt; First, 1+sizeof...(Rest)&gt;'],['../namespacecljonic.html#a6b6fab7c532f3e4641563b70404cbb3e',1,'cljonic::Set(std::span&lt; SourceElement, Extent &gt;) -&gt; Set&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;']]],

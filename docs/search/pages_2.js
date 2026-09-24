@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['deferred_20sequence_20traversal_0',['Deferred sequence traversal',['../index.html#autotoc_md9',1,'']]]
+  ['functions_0',['Functions',['../index.html#autotoc_md4',1,'Core Functions'],['../index.html#autotoc_md10',1,'Set Functions'],['../index.html#autotoc_md11',1,'String Functions']]]
 ];

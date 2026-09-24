@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['functions_0',['Functions',['../index.html#autotoc_md4',1,'Core Functions'],['../index.html#autotoc_md10',1,'Set Functions'],['../index.html#autotoc_md11',1,'String Functions']]]
+  ['predicate_0',['Predicate',['../index.html#autotoc_md7',1,'']]],
+  ['primitive_1',['Primitive',['../index.html#autotoc_md8',1,'']]],
+  ['producer_20types_2',['Producer Types',['../index.html#autotoc_md3',1,'']]]
 ];
