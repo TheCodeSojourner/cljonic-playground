@@ -2,7 +2,7 @@
 
 ## Current Scope
 
-λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate
+λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
   ∧ direct_construction(x) ∧ member_observation(x)
   ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ fits_into)(x)
   | collection_callable_lookup(x) → Vector ∨ Map ∨ Set ∨ String
@@ -11,10 +11,10 @@
     ∧ swap_and_remove_policies(x) ∧ primitive_free_functions(x)
   | cpp_interoperability(x) → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
     | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
-  | module4_active_slice(x) → Range(x) ∧ Repeat(x) ∧ Cycle(x) ∧ Iterate(x) ∧ into(x) ∧ fits_into(x)
+  | module4_active_slice(x) → Range(x) ∧ Repeat(x) ∧ Cycle(x) ∧ Iterate(x) ∧ Repeatedly(x) ∧ into(x) ∧ fits_into(x)
   | deferred_sequence_contracts(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
-  | future_expansion(repeatedly ∨ transformations ∨ regexes ∨ relational_models)
+  | future_expansion(transformations ∨ regexes ∨ relational_models)
     → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
 
 λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_public_producer_surface ∧ current_free_function_surface)
@@ -340,7 +340,7 @@ concept CljonicVector =
 
 λ CljonicProducer_level(x). gate(type) → nominal_producer_identity(x) ≡ admission(producer_domain(x)) ∧ classification(ProducerKind)
   | recognition(x) → cljonic_owned_traits(x) ∧ distinct_domain_from(ClosedNominalCollectionDomain(x))
-  | nominal_pattern(x) → applies_to(CljonicRange ∧ CljonicRepeat ∧ CljonicCycle ∧ CljonicIterate) ∧ future(CljonicRepeatedly)
+  | nominal_pattern(x) → applies_to(CljonicRange ∧ CljonicRepeat ∧ CljonicCycle ∧ CljonicIterate ∧ CljonicRepeatedly)
   | ConstInputRange(x) ≡ std::ranges::input_range<const x>
   | NothrowConstInputRange(x) ≡ ConstInputRange(x) ∧ noexcept(begin ∧ end ∧ dereference ∧ increment ∧ sentinel_compare(x))
   | CljonicSource(x) ≡ (CljonicCollection(x) ∨ CljonicProducer(x)) ∧ NothrowConstInputRange(x)
@@ -360,6 +360,11 @@ template<class Type>
 concept CljonicIterate =
   CljonicProducer<Type> &&
   (detail::producer_kind_of_v<Type> == detail::producer_kind::iterate);
+
+template<class Type>
+concept CljonicRepeatedly =
+  CljonicProducer<Type> &&
+  (detail::producer_kind_of_v<Type> == detail::producer_kind::repeatedly);
 
 template<class Type>
 concept CljonicSource =
@@ -565,6 +570,9 @@ concept IndexedProducer =
   | Iterate(step ∧ initial) → store(decay(step) ∧ initial) ∧ require(NothrowCollectionElement(initial)) ∧ require(const_step_invocation_is_noexcept_T_to_T(step))
   | Iterate(x) → emit(initial(x)) ∧ apply(step_to_previous_value(x)) ∧ represent(unbounded) ∧ support(constexpr ∧ runtime)
   | Iterate(x) → permit(named_function ∨ lambda ∨ function_object) ∧ satisfy(CljonicSource) ∧ exclude(IndexedProducer ∧ IFn ∧ Lookup)
+  | Repeatedly(step) → store(decay(step)) ∧ require(NothrowCollectionElement(element)) ∧ require(const_step_invocation_is_noexcept_nullary_to_T(step))
+  | Repeatedly(count ∧ step) → store(decay(step) ∧ runtime_count) ∧ represent(finite) ∧ invoke(step_once_per_produced_element) ∧ mirror(Clojure_repeatedly_n_f)
+  | Repeatedly(x) → permit(named_function ∨ lambda ∨ function_object) ∧ satisfy(CljonicSource) ∧ exclude(IndexedProducer ∧ IFn ∧ Lookup) ∧ exclude(step_evaluation_during_construction)
   | semantically_infinite_producer(x) → materialize_at_most(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
@@ -645,6 +653,6 @@ concept IndexedProducer =
   | module6_numeric_authority(x) ≡ requirements/cljonic-requirements-module-6.md → govern(checked_arithmetic ∧ callables)
   | module7_extended_domain_authority(x) ≡ requirements/cljonic-requirements-module-7.md → govern(relations ∧ regex ∧ state ∧ formatting)
 
-λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ primitive_free_functions ∧ into ∧ fits_into
-  | approved_but_unimplemented(repeatedly ∨ algorithms ∨ regexes) → remain_outside(active_surface(x))
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ into ∧ fits_into
+  | approved_but_unimplemented(algorithms ∨ regexes) → remain_outside(active_surface(x))
   | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
