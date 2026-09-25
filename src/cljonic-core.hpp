@@ -68,12 +68,12 @@
  *
  * ## Collection Types
  *
- * - \ref Map "cljonic::Map"
- * - \ref MapEntry "cljonic::MapEntry"
- * - \ref Queue "cljonic::Queue"
- * - \ref Set "cljonic::Set"
- * - \ref String "cljonic::String"
- * - \ref Vector "cljonic::Vector"
+ * - \ref Map "Map"
+ * - \ref MapEntry "MapEntry"
+ * - \ref Queue "Queue"
+ * - \ref Set "Set"
+ * - \ref String "String"
+ * - \ref Vector "Vector"
  *
  * ## Producer Types
  *
@@ -81,6 +81,7 @@
  * - \ref Iterate "Iterate"
  * - \ref Range "Range"
  * - \ref Repeat "Repeat"
+ * - \ref Repeatedly "Repeatedly"
  *
  * ## Core Functions
  *
@@ -211,6 +212,7 @@
 #include <cljonic-queue.hpp>
 #include <cljonic-range.hpp>
 #include <cljonic-repeat.hpp>
+#include <cljonic-repeatedly.hpp>
 #include <cljonic-set.hpp>
 #include <cljonic-string.hpp>
 #include <cljonic-vector.hpp>
