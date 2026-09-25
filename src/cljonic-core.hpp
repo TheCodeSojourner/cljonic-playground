@@ -68,8 +68,7 @@
  *
  * ## Collection Types
  *
- * - \ref Map "Map"
- * - \ref MapEntry "MapEntry"
+ * - \ref Map "Map", \ref MapEntry "MapEntry"
  * - \ref Queue "Queue"
  * - \ref Set "Set"
  * - \ref String "String"
