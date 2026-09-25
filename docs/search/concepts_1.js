@@ -8,10 +8,11 @@ var searchData=
   ['cljonicqueue_5',['CljonicQueue',['../conceptcljonic_1_1concepts_1_1_cljonic_queue.html',1,'cljonic::concepts']]],
   ['cljonicrange_6',['CljonicRange',['../conceptcljonic_1_1concepts_1_1_cljonic_range.html',1,'cljonic::concepts']]],
   ['cljonicrepeat_7',['CljonicRepeat',['../conceptcljonic_1_1concepts_1_1_cljonic_repeat.html',1,'cljonic::concepts']]],
-  ['cljonicset_8',['CljonicSet',['../conceptcljonic_1_1concepts_1_1_cljonic_set.html',1,'cljonic::concepts']]],
-  ['cljonicsource_9',['CljonicSource',['../conceptcljonic_1_1concepts_1_1_cljonic_source.html',1,'cljonic::concepts']]],
-  ['cljonicstring_10',['CljonicString',['../conceptcljonic_1_1concepts_1_1_cljonic_string.html',1,'cljonic::concepts']]],
-  ['cljonicvector_11',['CljonicVector',['../conceptcljonic_1_1concepts_1_1_cljonic_vector.html',1,'cljonic::concepts']]],
-  ['constinputrange_12',['ConstInputRange',['../conceptcljonic_1_1concepts_1_1_const_input_range.html',1,'cljonic::concepts']]],
-  ['copyableelement_13',['CopyableElement',['../conceptcljonic_1_1concepts_1_1_copyable_element.html',1,'cljonic::concepts']]]
+  ['cljonicrepeatedly_8',['CljonicRepeatedly',['../conceptcljonic_1_1concepts_1_1_cljonic_repeatedly.html',1,'cljonic::concepts']]],
+  ['cljonicset_9',['CljonicSet',['../conceptcljonic_1_1concepts_1_1_cljonic_set.html',1,'cljonic::concepts']]],
+  ['cljonicsource_10',['CljonicSource',['../conceptcljonic_1_1concepts_1_1_cljonic_source.html',1,'cljonic::concepts']]],
+  ['cljonicstring_11',['CljonicString',['../conceptcljonic_1_1concepts_1_1_cljonic_string.html',1,'cljonic::concepts']]],
+  ['cljonicvector_12',['CljonicVector',['../conceptcljonic_1_1concepts_1_1_cljonic_vector.html',1,'cljonic::concepts']]],
+  ['constinputrange_13',['ConstInputRange',['../conceptcljonic_1_1concepts_1_1_const_input_range.html',1,'cljonic::concepts']]],
+  ['copyableelement_14',['CopyableElement',['../conceptcljonic_1_1concepts_1_1_copyable_element.html',1,'cljonic::concepts']]]
 ];

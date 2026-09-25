@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: /home/pauwhi/Downloads/junk/cljonic-playground/src/cljonic-core.hpp File Reference</title>
+<title>cljonic: /home/pauwhi/Downloads/junk/cljonic-playground/src/cljonic-repeatedly.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -100,44 +100,41 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a>  </div>
-  <div class="headertitle"><div class="title">cljonic-core.hpp File Reference</div></div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle"><div class="title">cljonic-repeatedly.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="cljonic-config_8hpp_source.html">cljonic-config.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-assoc_8hpp_source.html">cljonic-assoc.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;concepts&gt;</code><br />
+<code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
+<code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-core-collection-maximum-element-count_8hpp_source.html">cljonic-core-collection-maximum-element-count.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-count_8hpp_source.html">cljonic-count.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-disj_8hpp_source.html">cljonic-disj.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-dissoc_8hpp_source.html">cljonic-dissoc.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-get_8hpp_source.html">cljonic-get.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-into_8hpp_source.html">cljonic-into.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-is-empty_8hpp_source.html">cljonic-is-empty.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-peek_8hpp_source.html">cljonic-peek.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-pop_8hpp_source.html">cljonic-pop.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>&gt;</code><br />
 </div>
-<p><a href="cljonic-core_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="cljonic-repeatedly_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:cljonic_3A_3ARepeatedly_3C_20T_2C_20Step_20_3E" id="r_cljonic_3A_3ARepeatedly_3C_20T_2C_20Step_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_repeatedly.html">cljonic::Repeatedly&lt; T, Step &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3ARepeatedly_3C_20T_2C_20Step_20_3E_3A_3Aconst_5Fiterator" id="r_cljonic_3A_3ARepeatedly_3C_20T_2C_20Step_20_3E_3A_3Aconst_5Fiterator"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_repeatedly_1_1const__iterator.html">cljonic::Repeatedly&lt; T, Step &gt;::const_iterator</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aproducer_5Ftraits_3C_20Repeatedly_3C_20T_2C_20Step_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aproducer_5Ftraits_3C_20Repeatedly_3C_20T_2C_20Step_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1producer__traits_3_01_repeatedly_3_01_t_00_01_step_01_4_01_4.html">cljonic::concepts_detail::producer_traits&lt; Repeatedly&lt; T, Step &gt; &gt;</a></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
-<tr class="memitem:cljonic_3A_3Acore" id="r_cljonic_3A_3Acore"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1core.html">cljonic::core</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ada46d509c8f0d0124e524878e323c208" id="r_ada46d509c8f0d0124e524878e323c208"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
+requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</td></tr>
+<tr class="memitem:ada46d509c8f0d0124e524878e323c208 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ada46d509c8f0d0124e524878e323c208">cljonic::repeatedly</a> (Step &amp;&amp;step) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a>&lt; T, std::decay_t&lt; Step &gt; &gt;</td></tr>
+<tr class="memitem:a3f461517779626ecb7fa5ef3920ab701" id="r_a3f461517779626ecb7fa5ef3920ab701"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
+requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</td></tr>
+<tr class="memitem:a3f461517779626ecb7fa5ef3920ab701 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a3f461517779626ecb7fa5ef3920ab701">cljonic::repeatedly</a> (std::size_t count, Step &amp;&amp;step) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a>&lt; T, std::decay_t&lt; Step &gt; &gt;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

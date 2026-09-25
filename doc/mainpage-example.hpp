@@ -65,6 +65,7 @@
  *
  * - \ref Array  "cljonic::Array"
  * - \ref Range  "cljonic::Range"
+ * - \ref Repeatedly "cljonic::Repeatedly"
  * - \ref Repeat "cljonic::Repeat"
  * - \ref Set    "cljonic::Set"
  * - \ref String "cljonic::String"
