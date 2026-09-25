@@ -9,18 +9,20 @@ status: draft
 ## Current Scope
 
 The current implementation and tests cover the core collection types (`Vector`,
-`Map`, `Set`, `Queue`, and `String`), the active `Range`, `Repeat`, and `Iterate`
+`Map`, `Set`, `Queue`, and `String`), the active `Range`, `Repeat`, `Iterate`,
+and `Repeatedly`
 producers,
 the active unbounded `cycle(source)` producer, their direct construction,
 member-observation, callable collection forms, current primitive free-function
 operations, and explicit producer materialization through `into` and
-`fits_into`. `Repeatedly` remains a deferred future producer family.
-Semantic sequence operations remain deferred future work for every collection;
+`fits_into`. Semantic sequence operations remain deferred future work for every
+collection;
 const range traversal and read-only C++ interoperability are active
 infrastructure. Module 3 establishes the concrete, array-backed, bounded
 collection types, their contiguous storage strategies, linear scan lookup
 algorithms, swap-and-remove policies, and primitive free functions. Module 4's
-active slice establishes `Range`, `Repeat`, `Iterate`, unbounded `cycle(source)`, and
+active slice establishes `Range`, `Repeat`, `Iterate`, unbounded `cycle(source)`,
+`Repeatedly`, and
 explicit producer materialization. These terms govern stored collection and
 producer building blocks used across all higher-order algorithms.
 
@@ -313,7 +315,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Producer
-- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat`, `Cycle`, and `Iterate` are not `Indexed`. Cycle has only the public form `cycle(source)` and is always unbounded. Producers MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
+- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` are not `Indexed`. Cycle has only the public form `cycle(source)` and is always unbounded. Producers MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
 - **Deprecated Synonyms:** sequence producer, source producer
 - **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed, Iterate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -653,6 +655,14 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** Producer, CljonicSource, UnboundedProducer, ProducerMaterialization, PreflightPredicate, CollectionMaximumElementCount, OwningValue
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `iterate([](int value) { return value + 1; }, 0)` produces the unbounded sequence `0, 1, 2, 3, ...`, observed only through its configured traversal cap or an explicit destination.
+
+
+### Repeatedly
+- **Definition:** A `Producer` and `CljonicSource` whose element type satisfies `NothrowCollectionElement`, owning a non-allocating, copy-constructible zero-argument step callback that produces a fresh element for every produced value; the step MAY maintain state or produce side effects, mirroring Clojure's `repeatedly`, but MUST NOT throw or allocate when invoked. `repeatedly(step)` is unbounded; `repeatedly(count, step)` produces exactly `count` elements, including an empty result when the count is zero, with the count placed before the step as in Clojure's `(repeatedly n f)` form. Named functions, lambdas, and function objects are accepted; the factory stores the decayed callable value, including a copyable function pointer for a named function. The step may be moved from an rvalue during construction when supported, but the resulting producer remains copyable. The callback is not evaluated during construction and is invoked exactly once per produced element during each materialization. The uncounted form uses `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` as its observable traversal cap rather than claiming a finite complete result, may be consumed directly by source-taking free functions, and converts to an owning destination through `into`; the counted form uses its runtime count for materialization. Construction and traversal are constexpr-capable when the supplied arguments are and remain usable at runtime. It is not `Indexed`, is not invocable (`IFn`), and exposes no `contains`, positional retrieval, key-based lookup, or `get`.
+- **Deprecated Synonyms:** repeatedly sequence
+- **Related:** Producer, CljonicSource, UnboundedProducer, ProducerMaterialization, PreflightPredicate, CollectionMaximumElementCount, OwningValue, Repeat
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `repeatedly(3U, []() { return 7; })` produces the finite sequence `7, 7, 7`; the uncounted `repeatedly([]() { return 7; })` is unbounded, observed only through its configured traversal cap or an explicit destination.
 
 
 ### DeterministicOverflowPolicy
