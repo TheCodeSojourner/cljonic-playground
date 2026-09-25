@@ -1,0 +1,176 @@
+-- allium: 3
+
+entity Repeatedly {
+    supports_header_only_distribution: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    element_satisfies_nothrow_collection_element: Boolean
+    owns_step_callback: Boolean
+    factory_stores_decayed_step: Boolean
+    accepts_named_function_lambda_and_function_object: Boolean
+    step_is_copy_constructible: Boolean
+    step_may_be_move_constructed_from_rvalue: Boolean
+    step_const_invocation_produces_element_of_t: Boolean
+    step_invocation_is_non_throwing: Boolean
+    does_not_own_result_storage: Boolean
+    does_not_borrow_step_callback: Boolean
+    step_may_maintain_state_or_side_effects: Boolean
+    uncounted_form_is_unbounded: Boolean
+    counted_form_is_finite: Boolean
+    zero_count_produces_empty_result: Boolean
+    exposes_count_and_is_finite: Boolean
+    counted_form_uses_runtime_count_for_materialization: Boolean
+    counted_form_count_is_exact: Boolean
+    uncounted_form_count_is_observable_traversal_cap: Boolean
+    const_traversal_terminates_at_count: Boolean
+    uncounted_form_materializes_at_most_destination_capacity: Boolean
+    uncounted_form_does_not_fit_into_destination: Boolean
+    callback_invoked_once_per_produced_element: Boolean
+    construction_does_not_invoke_step: Boolean
+    unbounded_repeatedly_does_not_satisfy_stable_equality: Boolean
+    unbounded_equality_fails_at_compile_time: Boolean
+    does_not_satisfy_indexed_producer: Boolean
+    satisfies_sequenceable_producer: Boolean
+    does_not_expose_callable_operator: Boolean
+    get_contains_and_lookup_are_excluded: Boolean
+
+    invariant HeaderOnlyDistribution {
+        this.supports_header_only_distribution = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ElementSatisfiesNothrowCollectionElement {
+        this.element_satisfies_nothrow_collection_element = true
+    }
+
+    invariant OwnsStepCallback {
+        this.owns_step_callback = true
+    }
+
+    invariant FactoryStoresDecayedStep {
+        this.factory_stores_decayed_step = true
+    }
+
+    invariant AcceptsNamedFunctionLambdaAndFunctionObject {
+        this.accepts_named_function_lambda_and_function_object = true
+    }
+
+    invariant StepIsCopyConstructible {
+        this.step_is_copy_constructible = true
+    }
+
+    invariant StepMayBeMoveConstructedFromRvalue {
+        this.step_may_be_move_constructed_from_rvalue = true
+    }
+
+    invariant StepConstInvocationProducesElementOfT {
+        this.step_const_invocation_produces_element_of_t = true
+    }
+
+    invariant StepInvocationIsNonThrowing {
+        this.step_invocation_is_non_throwing = true
+    }
+
+    invariant DoesNotOwnResultStorage {
+        this.does_not_own_result_storage = true
+    }
+
+    invariant DoesNotBorrowStepCallback {
+        this.does_not_borrow_step_callback = true
+    }
+
+    invariant StepMayMaintainStateOrSideEffects {
+        this.step_may_maintain_state_or_side_effects = true
+    }
+
+    invariant UncountedFormIsUnbounded {
+        this.uncounted_form_is_unbounded = true
+    }
+
+    invariant CountedFormIsFinite {
+        this.counted_form_is_finite = true
+    }
+
+    invariant ZeroCountProducesEmptyResult {
+        this.zero_count_produces_empty_result = true
+    }
+
+    invariant ExposesCountAndIsFinite {
+        this.exposes_count_and_is_finite = true
+    }
+
+    invariant CountedFormUsesRuntimeCountForMaterialization {
+        this.counted_form_uses_runtime_count_for_materialization = true
+    }
+
+    invariant CountedFormCountIsExact {
+        this.counted_form_count_is_exact = true
+    }
+
+    invariant UncountedFormCountIsObservableTraversalCap {
+        this.uncounted_form_count_is_observable_traversal_cap = true
+    }
+
+    invariant ConstTraversalTerminatesAtCount {
+        this.const_traversal_terminates_at_count = true
+    }
+
+    invariant UncountedFormMaterializesAtMostDestinationCapacity {
+        this.uncounted_form_materializes_at_most_destination_capacity = true
+    }
+
+    invariant UncountedFormDoesNotFitIntoDestination {
+        this.uncounted_form_does_not_fit_into_destination = true
+    }
+
+    invariant CallbackInvokedOncePerProducedElement {
+        this.callback_invoked_once_per_produced_element = true
+    }
+
+    invariant ConstructionDoesNotInvokeStep {
+        this.construction_does_not_invoke_step = true
+    }
+
+    invariant UnboundedRepeatedlyDoesNotSatisfyStableEquality {
+        this.unbounded_repeatedly_does_not_satisfy_stable_equality = true
+    }
+
+    invariant UnboundedEqualityFailsAtCompileTime {
+        this.unbounded_equality_fails_at_compile_time = true
+    }
+
+    invariant DoesNotSatisfyIndexedProducer {
+        this.does_not_satisfy_indexed_producer = true
+    }
+
+    invariant SatisfiesSequenceableProducer {
+        this.satisfies_sequenceable_producer = true
+    }
+
+    invariant DoesNotExposeCallableOperator {
+        this.does_not_expose_callable_operator = true
+    }
+
+    invariant GetContainsAndLookupAreExcluded {
+        this.get_contains_and_lookup_are_excluded = true
+    }
+}
+
+actor RepeatedlyOperator { identified_by: Repeatedly }
