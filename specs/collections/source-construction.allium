@@ -11,6 +11,7 @@ entity CollectionSourceConstruction {
     complete_materialization_uses_fits_into: Boolean
     complete_materialization_uses_into: Boolean
     checked_constructor_is_not_required: Boolean
+    single_element_type_argument_yields_pack_construction: Boolean
 
     invariant DirectSourceConstructionIsOwned {
         this.direct_source_construction_is_owned = true
@@ -50,6 +51,10 @@ entity CollectionSourceConstruction {
 
     invariant CheckedConstructorIsNotRequired {
         this.checked_constructor_is_not_required = true
+    }
+
+    invariant SingleElementTypeArgumentYieldsPackConstruction {
+        this.single_element_type_argument_yields_pack_construction = true
     }
 }
 

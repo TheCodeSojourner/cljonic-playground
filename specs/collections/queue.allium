@@ -27,6 +27,7 @@ entity Queue {
     oversized_initializer_is_compile_time_failure: Boolean
     pack_construction_folds_over_conj: Boolean
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
+    single_element_type_argument_yields_pack_construction: Boolean
     rejects_indexed_capability: Boolean
     rejects_lookup_capability: Boolean
     rejects_associative_capability: Boolean
@@ -148,6 +149,10 @@ entity Queue {
 
     invariant CapacityExceedsMaximumIsCompileTimeFailure {
         this.capacity_exceeds_maximum_is_compile_time_failure = true
+    }
+
+    invariant SingleElementTypeArgumentYieldsPackConstruction {
+        this.single_element_type_argument_yields_pack_construction = true
     }
 
     invariant RejectsIndexedCapability {
