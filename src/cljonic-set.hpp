@@ -151,6 +151,20 @@ class Set {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const Set& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<T>
+    {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (other.find_index(elements_[i]) >= other.logical_size_) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
         return elements_.data();
     }
@@ -253,6 +267,12 @@ struct collection_traits<Set<T, CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::set;
 };
+
+template <typename T, std::size_t CapacityValue>
+struct contains_floating_point<Set<T, CapacityValue>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <typename T, std::size_t CapacityValue>
+struct contains_callable<Set<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 

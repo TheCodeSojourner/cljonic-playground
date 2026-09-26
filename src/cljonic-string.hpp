@@ -155,6 +155,18 @@ class String {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const String& other) const noexcept -> bool {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (data_[i] != other.data_[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
         return data_.data();
     }
@@ -262,5 +274,11 @@ struct collection_traits<String<CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::string;
 };
+
+template <std::size_t CapacityValue>
+struct contains_floating_point<String<CapacityValue>> : std::false_type {};
+
+template <std::size_t CapacityValue>
+struct contains_callable<String<CapacityValue>> : std::false_type {};
 
 } // namespace cljonic::concepts_detail

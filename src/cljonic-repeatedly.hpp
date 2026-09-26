@@ -106,6 +106,14 @@ class Repeatedly {
         T current_{};
     };
 
+    // The default form requires a default-constructed step. Constraining the
+    // constructor keeps a non-default-constructible Step from satisfying
+    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
+    constexpr Repeatedly() noexcept
+        requires std::default_initializable<Step>
+        : step_{}, count_{0U}, is_finite_{true} {
+    }
+
     constexpr explicit Repeatedly(Step step) noexcept : step_(std::move(step)), count_(0U), is_finite_(false) {
     }
 
@@ -157,5 +165,16 @@ struct producer_traits<Repeatedly<T, Step>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::repeatedly;
 };
+
+// The stored step is a callable component, so Repeatedly never admits producer
+// parameter equality and is never usable as a map key or set
+// element (REQ-CAP-010, REQ-FN-014B).
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct contains_callable<Repeatedly<T, Step>> : std::true_type {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct contains_floating_point<Repeatedly<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
 
 } // namespace cljonic::concepts_detail

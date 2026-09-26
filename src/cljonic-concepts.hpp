@@ -10,6 +10,7 @@
 #include <span>
 #include <type_traits>
 #include <utility>
+#include <variant>
 
 namespace cljonic {
 
@@ -92,6 +93,43 @@ inline constexpr bool is_cljonic_producer_v = producer_traits<std::remove_cvref_
 template <typename T>
 inline constexpr producer_kind producer_kind_of_v = producer_traits<std::remove_cvref_t<T>>::kind;
 
+// Recursive component analysis for composite values in the closed cljonic
+// value domain (REQ-CAP-010). `contains_floating_point_v<T>` reports whether a
+// floating-point type occurs as T itself or inside any stored component of a
+// supported composite (std::variant alternatives, cljonic collections, and
+// MapEntry). `contains_callable_v<T>` reports whether a callable type occurs as
+// a component of a composite (including function pointers); callables never
+// admit stable value equality.
+template <typename T>
+struct contains_floating_point : std::bool_constant<std::floating_point<std::remove_cvref_t<T>>> {};
+
+template <typename T>
+inline constexpr bool contains_floating_point_v = contains_floating_point<std::remove_cvref_t<T>>::value;
+
+template <typename T>
+struct contains_callable : std::false_type {};
+
+template <typename T>
+inline constexpr bool contains_callable_v = contains_callable<std::remove_cvref_t<T>>::value;
+
+// A function pointer is callable even though it happens to define operator==;
+// the callable-component rejection rule treats it as a callable for composite
+// admission (REQ-CAP-010) so address-as-key semantics are never exposed.
+template <typename Return, typename... Args>
+struct contains_callable<Return (*)(Args...)> : std::true_type {};
+
+template <typename Return, typename... Args>
+struct contains_callable<Return (*)(Args...) noexcept> : std::true_type {};
+
+// std::variant: recurse into every alternative.
+template <typename... Alternatives>
+struct contains_floating_point<std::variant<Alternatives...>>
+    : std::bool_constant<(contains_floating_point_v<Alternatives> || ...)> {};
+
+template <typename... Alternatives>
+struct contains_callable<std::variant<Alternatives...>>
+    : std::bool_constant<(contains_callable_v<Alternatives> || ...)> {};
+
 } // namespace concepts_detail
 
 namespace concepts {
@@ -125,9 +163,12 @@ concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg
 
 /** Requires stable value equality comparison, explicitly rejecting
  *  floating-point types to prevent NaN/precision instabilities in map keys
- *  and set elements. */
+ *  and set elements. For composite values this is recursive: every stored
+ *  component must admit stable equality, callable components are always
+ *  rejected, and the composite's own equality must be valid. */
 template <typename T>
-concept StableEqualityComparable = std::equality_comparable<T> && !std::floating_point<std::remove_cvref_t<T>>;
+concept StableEqualityComparable = std::equality_comparable<T> && !concepts_detail::contains_floating_point_v<T> &&
+                                   !concepts_detail::contains_callable_v<T>;
 
 /** Requires a strict total ordering layered on stable equality. */
 template <typename T>

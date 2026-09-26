@@ -120,6 +120,8 @@ class Cycle {
         bool restart_{false};
     };
 
+    constexpr Cycle() noexcept = default;
+
     constexpr explicit Cycle(Source source) noexcept : source_(std::move(source)) {
     }
 
@@ -146,6 +148,18 @@ class Cycle {
         return const_iterator{};
     }
 
+    /** Producer parameter equality (REQ-FN-014B): compares only the stored
+     *  owned source, count, and finite-form parameters, never the produced
+     *  sequence. The owned source compares by its own stable equality, so
+     *  `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 3})` is true while
+     *  `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 4})` is false. O(1), no
+     *  traversal, no allocation. */
+    [[nodiscard]] friend constexpr auto operator==(const Cycle& lhs, const Cycle& rhs) noexcept -> bool
+        requires concepts::StableEqualityComparable<Source>
+    {
+        return lhs.source_ == rhs.source_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_;
+    }
+
   private:
     [[nodiscard]] constexpr auto source_finiteness() const noexcept -> bool {
         if constexpr (concepts::CljonicProducer<Source>) {
@@ -165,6 +179,13 @@ template <concepts::CljonicSource Source>
     return Cycle<Source>{std::move(source)};
 }
 
+template <concepts::CljonicSource Source>
+    requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>> &&
+             concepts::StableEqualityComparable<Source>
+[[nodiscard]] constexpr auto parameters_equal(const Cycle<Source>& lhs, const Cycle<Source>& rhs) noexcept -> bool {
+    return lhs == rhs;
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -174,5 +195,11 @@ struct producer_traits<Cycle<Source>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::cycle;
 };
+
+template <concepts::CljonicSource Source>
+struct contains_floating_point<Cycle<Source>> : std::bool_constant<contains_floating_point_v<Source>> {};
+
+template <concepts::CljonicSource Source>
+struct contains_callable<Cycle<Source>> : std::bool_constant<contains_callable_v<Source>> {};
 
 } // namespace cljonic::concepts_detail

@@ -38,9 +38,26 @@ struct MapEntry {
     KeyType key{};
     ValueType value{};
 
-    [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool {
+    [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<KeyType> && concepts::StableEqualityComparable<ValueType>
+    {
         return key == other.key && value == other.value;
     }
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+// MapEntry inherits the recursive component analysis of the closed cljonic
+// value domain: it admits stable equality only when both its key and value
+// components admit stable equality (REQ-CAP-010).
+template <typename KeyType, typename ValueType>
+struct contains_floating_point<cljonic::MapEntry<KeyType, ValueType>>
+    : std::bool_constant<contains_floating_point_v<KeyType> || contains_floating_point_v<ValueType>> {};
+
+template <typename KeyType, typename ValueType>
+struct contains_callable<cljonic::MapEntry<KeyType, ValueType>>
+    : std::bool_constant<contains_callable_v<KeyType> || contains_callable_v<ValueType>> {};
+
+} // namespace cljonic::concepts_detail

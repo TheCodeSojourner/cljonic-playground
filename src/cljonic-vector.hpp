@@ -237,6 +237,20 @@ class Vector {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const Vector& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<ElementType>
+    {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (!(storage_[i] == other.storage_[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
         return storage_.data();
     }
@@ -292,5 +306,12 @@ struct collection_traits<Vector<ElementType, CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::vector;
 };
+
+template <typename ElementType, std::size_t CapacityValue>
+struct contains_floating_point<Vector<ElementType, CapacityValue>>
+    : std::bool_constant<contains_floating_point_v<ElementType>> {};
+
+template <typename ElementType, std::size_t CapacityValue>
+struct contains_callable<Vector<ElementType, CapacityValue>> : std::bool_constant<contains_callable_v<ElementType>> {};
 
 } // namespace cljonic::concepts_detail

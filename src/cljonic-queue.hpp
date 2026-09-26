@@ -172,6 +172,22 @@ class Queue {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const Queue& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<T>
+    {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            const auto lhs_index = (head_ + i) % CapacityValue;
+            const auto rhs_index = (other.head_ + i) % CapacityValue;
+            if (!(elements_[lhs_index] == other.elements_[rhs_index])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
         return {this, 0U};
     }
@@ -240,5 +256,11 @@ struct collection_traits<Queue<T, CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::queue;
 };
+
+template <typename T, std::size_t CapacityValue>
+struct contains_floating_point<Queue<T, CapacityValue>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <typename T, std::size_t CapacityValue>
+struct contains_callable<Queue<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail

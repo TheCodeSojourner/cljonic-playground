@@ -108,6 +108,14 @@ class Iterate {
         std::size_t remaining_{0U};
     };
 
+    // The default form requires a default-constructed step. Constraining the
+    // constructor keeps a non-default-constructible Step from satisfying
+    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
+    constexpr Iterate() noexcept
+        requires std::default_initializable<Step>
+        : initial_{}, step_{} {
+    }
+
     constexpr Iterate(T initial, Step step) noexcept : initial_(std::move(initial)), step_(std::move(step)) {
     }
 
@@ -150,5 +158,16 @@ struct producer_traits<Iterate<T, Step>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::iterate;
 };
+
+// The stored step is a callable component, so Iterate never admits producer
+// parameter equality and is never usable as a map key or set
+// element (REQ-CAP-010, REQ-FN-014B).
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_callable<Iterate<T, Step>> : std::true_type {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_floating_point<Iterate<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
 
 } // namespace cljonic::concepts_detail

@@ -99,6 +99,9 @@ class Repeat {
         std::size_t remaining_{0U};
     };
 
+    constexpr Repeat() noexcept : value_{}, count_{0U}, is_finite_{true} {
+    }
+
     constexpr explicit Repeat(T value) noexcept : value_(std::move(value)), count_(0U), is_finite_(false) {
     }
 
@@ -121,11 +124,29 @@ class Repeat {
         return const_iterator{&value_, 0U};
     }
 
+    /** Producer parameter equality (REQ-FN-014B): compares only the stored
+     *  value, count, and finite-form parameters, never the produced sequence.
+     *  The unbounded `repeat(value)` form is distinct from the finite `repeat
+     *  (value, count)` forms even when their produced prefixes coincide, and a
+     *  counted form with count zero is distinct from the unbounded form.
+     *  O(1), no traversal, no allocation. */
+    [[nodiscard]] friend constexpr auto operator==(const Repeat& lhs, const Repeat& rhs) noexcept -> bool
+        requires concepts::StableEqualityComparable<T>
+    {
+        return lhs.value_ == rhs.value_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_;
+    }
+
   private:
     T value_;
     std::size_t count_;
     bool is_finite_;
 };
+
+template <concepts::NothrowCollectionElement T>
+    requires concepts::StableEqualityComparable<T>
+[[nodiscard]] constexpr auto parameters_equal(const Repeat<T>& lhs, const Repeat<T>& rhs) noexcept -> bool {
+    return lhs == rhs;
+}
 
 template <typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
@@ -148,5 +169,11 @@ struct producer_traits<Repeat<T>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::repeat;
 };
+
+template <concepts::NothrowCollectionElement T>
+struct contains_floating_point<Repeat<T>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <concepts::NothrowCollectionElement T>
+struct contains_callable<Repeat<T>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail

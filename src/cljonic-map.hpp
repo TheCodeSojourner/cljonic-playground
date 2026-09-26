@@ -159,6 +159,20 @@ class Map {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const Map& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<KeyType> && concepts::StableEqualityComparable<ValueType>
+    {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (!matches_entry(other, i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto contains(const KeyType& key) const noexcept -> bool {
         return find_index(key) < logical_size_;
     }
@@ -219,6 +233,14 @@ class Map {
         return logical_size_;
     }
 
+    [[nodiscard]] constexpr auto matches_entry(const Map& other, std::size_t index) const noexcept -> bool {
+        const auto idx = other.find_index(entries_[index].key);
+        if (idx >= other.logical_size_) {
+            return false;
+        }
+        return entries_[index].value == other.entries_[idx].value;
+    }
+
     [[nodiscard]] constexpr auto assoc_entry(const value_type& entry) const noexcept -> Map {
         return assoc(entry.key, entry.value);
     }
@@ -247,5 +269,13 @@ struct collection_traits<Map<KeyType, ValueType, CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::map;
 };
+
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct contains_floating_point<Map<KeyType, ValueType, CapacityValue>>
+    : std::bool_constant<contains_floating_point_v<KeyType> || contains_floating_point_v<ValueType>> {};
+
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct contains_callable<Map<KeyType, ValueType, CapacityValue>>
+    : std::bool_constant<contains_callable_v<KeyType> || contains_callable_v<ValueType>> {};
 
 } // namespace cljonic::concepts_detail

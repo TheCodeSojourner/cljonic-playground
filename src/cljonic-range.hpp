@@ -145,6 +145,16 @@ class Range {
         return const_iterator{T{}, 0U, T{}};
     }
 
+    /** Producer parameter equality (REQ-FN-014B): compares only the stored
+     *  start/end/step parameters, never the produced sequence. Two Range
+     *  values with different parameters compare unequal even when their
+     *  produced or observed sequences coincide (for example two zero-step
+     *  ranges with different endpoints both produce an infinite repetition of
+     *  their respective start values). O(1), no traversal, no allocation. */
+    [[nodiscard]] friend constexpr auto operator==(const Range& lhs, const Range& rhs) noexcept -> bool {
+        return lhs.start_ == rhs.start_ && lhs.end_ == rhs.end_ && lhs.step_ == rhs.step_;
+    }
+
   private:
     using ExtentType = std::make_unsigned_t<T>;
 
@@ -193,6 +203,65 @@ class Range {
     T step_;
 };
 
+/** \anchor ParametersEqual
+ * \b ParametersEqual compares the stored parameters of two producer values and reports whether they are exactly equal.
+ * It is the explicitly named structural-comparison operation for producers (REQ-FN-014B): it has semantics identical
+ * to each producer's `operator==`, compares only bounded stored parameters, never traverses or materializes a produced
+ * sequence, and does not imply that producers with equal parameters produce equal materialized sequences.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Compile-time checks: producer parameter equality is exact.
+   constexpr auto r1 = Range{1, 5, 2};
+   constexpr auto r2 = Range{1, 5, 2};
+   constexpr auto r3 = Range{1, 5, 3};
+   static_assert(r1 == r2);
+   static_assert(!(r1 == r3));
+   static_assert(parameters_equal(r1, r2));
+   static_assert(!parameters_equal(r1, r3));
+
+   // Distinct parameters compare unequal even when sequences coincide:
+   // both produce an infinite sequence of zeros, but the stored endpoints
+   // differ, so the producers are distinct keys.
+   constexpr auto infinite_zeros_a = Range{0, 5, 0};
+   constexpr auto infinite_zeros_b = Range{0, 7, 0};
+   static_assert(!parameters_equal(infinite_zeros_a, infinite_zeros_b));
+
+   // Repeat and Cycle also provide parameter equality.
+   constexpr auto p1 = Repeat{7, 3U};
+   constexpr auto p2 = Repeat{7, 3U};
+   constexpr auto p3 = Repeat{7};
+   static_assert(p1 == p2);
+   static_assert(!(p1 == p3));
+   static_assert(parameters_equal(p1, p2));
+
+   constexpr auto c1 = cycle(Vector<int, 3>{1, 2, 3});
+   constexpr auto c2 = cycle(Vector<int, 3>{1, 2, 3});
+   constexpr auto c3 = cycle(Vector<int, 3>{1, 2, 4});
+   static_assert(c1 == c2);
+   static_assert(!(c1 == c3));
+   static_assert(parameters_equal(c1, c2));
+
+   // Runtime demonstration.
+   auto runtime_a = Range{2, 9, 2};
+   auto runtime_b = Range{2, 9, 2};
+   auto runtime_c = Range{2, 9, 3};
+   return runtime_a == runtime_b && runtime_a != runtime_c &&
+                  parameters_equal(runtime_a, runtime_b) &&
+                  !parameters_equal(runtime_a, runtime_c)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <std::signed_integral T>
+[[nodiscard]] constexpr auto parameters_equal(const Range<T>& lhs, const Range<T>& rhs) noexcept -> bool {
+    return lhs == rhs;
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -202,5 +271,11 @@ struct producer_traits<Range<T>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::range;
 };
+
+template <typename T>
+struct contains_floating_point<Range<T>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <typename T>
+struct contains_callable<Range<T>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail
