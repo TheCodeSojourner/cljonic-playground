@@ -198,6 +198,53 @@ template <typename T>
     return cljonic::concepts::CljonicCollection<T>;
 }
 
+// A structurally producer-similar type: it exposes count()/is_finite()/const
+// begin()/end() but has no cljonic-owned producer trait specialization, so it
+// must NOT be admitted to the producer nominal domain.
+struct ExternalProducerLike {
+    using value_type = int;
+
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return true;
+    }
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return 0;
+    }
+    [[nodiscard]] constexpr auto begin() const noexcept -> const int* {
+        return nullptr;
+    }
+    [[nodiscard]] constexpr auto end() const noexcept -> const int* {
+        return nullptr;
+    }
+};
+
+// A producer-similar scaffolding type that opts into the producer nominal
+// domain through the cljonic-owned producer trait specialization, and provides
+// the structural members required by SequenceableProducer.
+struct ProducerLike {
+    using value_type = int;
+
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return true;
+    }
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return 0;
+    }
+    [[nodiscard]] constexpr auto begin() const noexcept -> const int* {
+        return nullptr;
+    }
+    [[nodiscard]] constexpr auto end() const noexcept -> const int* {
+        return nullptr;
+    }
+};
+
+// The producer nominal admission concept is likewise a constexpr noexcept
+// predicate with the same resource properties.
+template <typename T>
+[[nodiscard]] constexpr auto is_producer_admitted() noexcept -> bool {
+    return cljonic::concepts::CljonicProducer<T>;
+}
+
 } // namespace
 
 // ============================================================================
@@ -248,6 +295,19 @@ template <>
 struct collection_traits<BracketLike> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::vector;
+};
+
+} // namespace cljonic::concepts_detail
+
+namespace cljonic::concepts_detail {
+
+// Nominal admission for the producer-domain scaffolding type: the ONLY
+// mechanism that admits a type to the producer nominal domain
+// (CljonicProducer.NominalAdmissionRequiresCljonicOwnedTrait).
+template <>
+struct producer_traits<ProducerLike> {
+    static constexpr bool is_cljonic_producer = true;
+    static constexpr producer_kind kind = producer_kind::range;
 };
 
 } // namespace cljonic::concepts_detail
@@ -710,6 +770,121 @@ TEST_CASE("ConceptMemberNaming surface", "[concepts][collection]") {
     STATIC_REQUIRE(IndexedCollection<VectorLike>);
     STATIC_REQUIRE(IndexedCollection<cljonic::Vector<int, 4>>);
     STATIC_REQUIRE(IndexedCollection<cljonic::String<8>>);
+}
+
+// ============================================================================
+// CljonicProducer (nominal producer admission)
+// ============================================================================
+
+TEST_CASE("CljonicProducer nominal producer admission", "[concepts][producer]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("entity-fields.CljonicProducer");
+    TRACE_ID("invariant.CljonicProducer.NominalAdmissionRequiresCljonicOwnedTrait");
+    TRACE_ID("invariant.CljonicProducer.DistinguishesProducerKind");
+    TRACE_ID("invariant.CljonicProducer.DistinctDomainFromClosedNominalCollectionDomain");
+    TRACE_ID("invariant.CljonicProducer.NoHeapAllocation");
+    TRACE_ID("invariant.CljonicProducer.NoRtti");
+    TRACE_ID("invariant.CljonicProducer.NoExceptions");
+    TRACE_ID("invariant.CljonicProducer.SingleThreadedExecutionModel");
+    TRACE_ID("invariant.CljonicProducer.ReferentialTransparency");
+
+    // NominalAdmissionRequiresCljonicOwnedTrait: a structurally similar
+    // producer without the cljonic-owned producer trait specialization is NOT
+    // admitted, and neither is a non-producer type.
+    STATIC_REQUIRE(CljonicProducer<ProducerLike>);
+    STATIC_REQUIRE_FALSE(CljonicProducer<ExternalProducerLike>);
+    STATIC_REQUIRE_FALSE(CljonicProducer<int>);
+    STATIC_REQUIRE_FALSE(CljonicProducer<std::vector<int>>);
+
+    // DistinguishesProducerKind: the family concepts partition the producer
+    // domain, so each admitted producer resolves to exactly one family.
+    STATIC_REQUIRE(CljonicRange<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicRepeat<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicCycle<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicIterate<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicRepeatedly<cljonic::Range<int>>);
+
+    // DistinctDomainFromClosedNominalCollectionDomain: producers and
+    // collections are disjoint nominal domains.
+    STATIC_REQUIRE_FALSE(CljonicProducer<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE_FALSE(CljonicCollection<cljonic::Range<int>>);
+
+    // NoHeapAllocation, NoRtti, NoExceptions, SingleThreadedExecutionModel,
+    // ReferentialTransparency: the producer nominal admission concept is a
+    // constexpr noexcept predicate, so evaluating it requires no heap, no
+    // RTTI, no exceptions, no threads, and is referentially transparent.
+    STATIC_REQUIRE(is_producer_admitted<ProducerLike>());
+    STATIC_REQUIRE(noexcept(is_producer_admitted<ProducerLike>()));
+}
+
+// ============================================================================
+// CljonicRange / CljonicRepeat / CljonicCycle / CljonicIterate / CljonicRepeatedly
+// ============================================================================
+
+TEST_CASE("CljonicRange nominal kind identity", "[concepts][producer]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("entity-fields.CljonicRange");
+    TRACE_ID("invariant.CljonicRange.NominalConceptIdentifiesRangeKind");
+    TRACE_ID("invariant.CljonicRange.RejectsExternalContainer");
+
+    STATIC_REQUIRE(CljonicRange<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicRange<cljonic::Repeat<int>>);
+    STATIC_REQUIRE_FALSE(CljonicRange<ExternalProducerLike>);
+    STATIC_REQUIRE_FALSE(CljonicRange<std::vector<int>>);
+}
+
+TEST_CASE("CljonicRepeat nominal kind identity", "[concepts][producer]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("entity-fields.CljonicRepeat");
+    TRACE_ID("invariant.CljonicRepeat.NominalConceptIdentifiesRepeatKind");
+    TRACE_ID("invariant.CljonicRepeat.RejectsExternalContainer");
+
+    STATIC_REQUIRE(CljonicRepeat<cljonic::Repeat<int>>);
+    STATIC_REQUIRE_FALSE(CljonicRepeat<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicRepeat<ExternalProducerLike>);
+    STATIC_REQUIRE_FALSE(CljonicRepeat<std::vector<int>>);
+}
+
+TEST_CASE("CljonicCycle nominal kind identity", "[concepts][producer]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("entity-fields.CljonicCycle");
+    TRACE_ID("invariant.CljonicCycle.NominalConceptIdentifiesCycleKind");
+    TRACE_ID("invariant.CljonicCycle.RejectsExternalContainer");
+
+    STATIC_REQUIRE(CljonicCycle<cljonic::Cycle<cljonic::Vector<int, 3>>>);
+    STATIC_REQUIRE_FALSE(CljonicCycle<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicCycle<ExternalProducerLike>);
+    STATIC_REQUIRE_FALSE(CljonicCycle<std::vector<int>>);
+}
+
+TEST_CASE("CljonicIterate nominal kind identity", "[concepts][producer]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("entity-fields.CljonicIterate");
+    TRACE_ID("invariant.CljonicIterate.NominalConceptIdentifiesIterateKind");
+    TRACE_ID("invariant.CljonicIterate.RejectsExternalContainer");
+
+    STATIC_REQUIRE(CljonicIterate<cljonic::Iterate<int, int (*)(int) noexcept>>);
+    STATIC_REQUIRE_FALSE(CljonicIterate<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicIterate<ExternalProducerLike>);
+    STATIC_REQUIRE_FALSE(CljonicIterate<std::vector<int>>);
+}
+
+TEST_CASE("CljonicRepeatedly nominal kind identity", "[concepts][producer]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("entity-fields.CljonicRepeatedly");
+    TRACE_ID("invariant.CljonicRepeatedly.NominalConceptIdentifiesRepeatedlyKind");
+    TRACE_ID("invariant.CljonicRepeatedly.RejectsExternalContainer");
+
+    STATIC_REQUIRE(CljonicRepeatedly<cljonic::Repeatedly<int, int (*)() noexcept>>);
+    STATIC_REQUIRE_FALSE(CljonicRepeatedly<cljonic::Range<int>>);
+    STATIC_REQUIRE_FALSE(CljonicRepeatedly<ExternalProducerLike>);
+    STATIC_REQUIRE_FALSE(CljonicRepeatedly<std::vector<int>>);
 }
 
 TEST_CASE("Vector element storage requires non-throwing operations", "[vector][concepts]") {

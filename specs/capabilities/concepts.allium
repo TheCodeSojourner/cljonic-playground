@@ -428,44 +428,6 @@ entity CljonicRepeatedly {
     }
 }
 
-entity ApiLifecycleGate {
-    public_function_classified_before_api_surface_finalization: Boolean
-    requirements_backed_requires_approved_req_mapping: Boolean
-    requirements_backed_requires_executable_test_coverage: Boolean
-    candidate_status_awaiting_specification: Boolean
-    deferred_status_awaiting_approved_design: Boolean
-    excluded_status_out_of_scope: Boolean
-    non_backed_status_is_not_supported_behavior: Boolean
-
-    invariant PublicFunctionClassifiedBeforeApiSurfaceFinalization {
-        this.public_function_classified_before_api_surface_finalization = true
-    }
-
-    invariant RequirementsBackedRequiresApprovedReqMapping {
-        this.requirements_backed_requires_approved_req_mapping = true
-    }
-
-    invariant RequirementsBackedRequiresExecutableTestCoverage {
-        this.requirements_backed_requires_executable_test_coverage = true
-    }
-
-    invariant CandidateStatusAwaitingSpecification {
-        this.candidate_status_awaiting_specification = true
-    }
-
-    invariant DeferredStatusAwaitingApprovedDesign {
-        this.deferred_status_awaiting_approved_design = true
-    }
-
-    invariant ExcludedStatusOutOfScope {
-        this.excluded_status_out_of_scope = true
-    }
-
-    invariant NonBackedStatusIsNotSupportedBehavior {
-        this.non_backed_status_is_not_supported_behavior = true
-    }
-}
-
 actor CljonicCollectionOperator { identified_by: CljonicCollection }
 actor CljonicVectorOperator { identified_by: CljonicVector }
 actor CljonicMapOperator { identified_by: CljonicMap }
@@ -487,4 +449,3 @@ actor CljonicRepeatOperator { identified_by: CljonicRepeat }
 actor CljonicCycleOperator { identified_by: CljonicCycle }
 actor CljonicIterateOperator { identified_by: CljonicIterate }
 actor CljonicRepeatedlyOperator { identified_by: CljonicRepeatedly }
-actor ApiLifecycleGateOperator { identified_by: ApiLifecycleGate }
