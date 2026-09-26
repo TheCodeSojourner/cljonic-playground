@@ -320,6 +320,152 @@ entity ConceptMemberNaming {
     }
 }
 
+entity CljonicProducer {
+    nominal_admission_requires_cljonic_owned_trait: Boolean
+    distinguishes_producer_kind: Boolean
+    distinct_domain_from_closed_nominal_collection_domain: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+
+    invariant NominalAdmissionRequiresCljonicOwnedTrait {
+        this.nominal_admission_requires_cljonic_owned_trait = true
+    }
+
+    invariant DistinguishesProducerKind {
+        this.distinguishes_producer_kind = true
+    }
+
+    invariant DistinctDomainFromClosedNominalCollectionDomain {
+        this.distinct_domain_from_closed_nominal_collection_domain = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+entity CljonicRange {
+    nominal_concept_identifies_range_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesRangeKind {
+        this.nominal_concept_identifies_range_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity CljonicRepeat {
+    nominal_concept_identifies_repeat_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesRepeatKind {
+        this.nominal_concept_identifies_repeat_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity CljonicCycle {
+    nominal_concept_identifies_cycle_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesCycleKind {
+        this.nominal_concept_identifies_cycle_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity CljonicIterate {
+    nominal_concept_identifies_iterate_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesIterateKind {
+        this.nominal_concept_identifies_iterate_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity CljonicRepeatedly {
+    nominal_concept_identifies_repeatedly_kind: Boolean
+    rejects_external_container: Boolean
+
+    invariant NominalConceptIdentifiesRepeatedlyKind {
+        this.nominal_concept_identifies_repeatedly_kind = true
+    }
+
+    invariant RejectsExternalContainer {
+        this.rejects_external_container = true
+    }
+}
+
+entity ApiLifecycleGate {
+    public_function_classified_before_api_surface_finalization: Boolean
+    requirements_backed_requires_approved_req_mapping: Boolean
+    requirements_backed_requires_executable_test_coverage: Boolean
+    candidate_status_awaiting_specification: Boolean
+    deferred_status_awaiting_approved_design: Boolean
+    excluded_status_out_of_scope: Boolean
+    non_backed_status_is_not_supported_behavior: Boolean
+
+    invariant PublicFunctionClassifiedBeforeApiSurfaceFinalization {
+        this.public_function_classified_before_api_surface_finalization = true
+    }
+
+    invariant RequirementsBackedRequiresApprovedReqMapping {
+        this.requirements_backed_requires_approved_req_mapping = true
+    }
+
+    invariant RequirementsBackedRequiresExecutableTestCoverage {
+        this.requirements_backed_requires_executable_test_coverage = true
+    }
+
+    invariant CandidateStatusAwaitingSpecification {
+        this.candidate_status_awaiting_specification = true
+    }
+
+    invariant DeferredStatusAwaitingApprovedDesign {
+        this.deferred_status_awaiting_approved_design = true
+    }
+
+    invariant ExcludedStatusOutOfScope {
+        this.excluded_status_out_of_scope = true
+    }
+
+    invariant NonBackedStatusIsNotSupportedBehavior {
+        this.non_backed_status_is_not_supported_behavior = true
+    }
+}
+
 actor CljonicCollectionOperator { identified_by: CljonicCollection }
 actor CljonicVectorOperator { identified_by: CljonicVector }
 actor CljonicMapOperator { identified_by: CljonicMap }
@@ -335,3 +481,10 @@ actor AlternativeStrictEqualityOperator { identified_by: AlternativeStrictEquali
 actor TotallyOrderedOperator { identified_by: TotallyOrdered }
 actor NothrowStableEqualityComparableOperator { identified_by: NothrowStableEqualityComparable }
 actor ConceptMemberNamingOperator { identified_by: ConceptMemberNaming }
+actor CljonicProducerOperator { identified_by: CljonicProducer }
+actor CljonicRangeOperator { identified_by: CljonicRange }
+actor CljonicRepeatOperator { identified_by: CljonicRepeat }
+actor CljonicCycleOperator { identified_by: CljonicCycle }
+actor CljonicIterateOperator { identified_by: CljonicIterate }
+actor CljonicRepeatedlyOperator { identified_by: CljonicRepeatedly }
+actor ApiLifecycleGateOperator { identified_by: ApiLifecycleGate }
