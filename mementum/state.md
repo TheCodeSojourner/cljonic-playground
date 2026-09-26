@@ -3,7 +3,7 @@
 - last_session_id: 70d78d17-c457-46d6-82e8-6aa8063d9036
 - current_timestamp: 2026-09-26
 - recover: 1
-- session_complete: false
+- session_complete: true
 
 Task:
 1. Variadic `equal` arity slice — COMPLETE and committed (2026-09-26, commit 93231aa): REQ-FN-002G amended to the three Clojure `=` arities (unary returns true for a domain-admitted operand; variadic conjoins adjacent-pair equality left to right with short-circuit; every adjacent pair compile-time gated), S2_general_equality_function arch rule extended, five new EqualFunction invariants in equal.allium, SFINAE-safe equal_pair_admissible_v / all_adjacent_pairs_admissible predicates in src, spec tests + 13 compile-fail + 7 compile-pass arity cases in both builds, arity no-heap probe, Equal vocabulary term anchored, and the unused-<utility> include hygiene fix folded in.

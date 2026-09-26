@@ -45,8 +45,8 @@ std::equality_comparable<T>
 
 | Surface             | operator== semantics                                 | Named operation                     | Constraint                                |
 | ------------------- | ---------------------------------------------------- | ----------------------------------- | ----------------------------------------- |
-| Vector/String/Queue | order-sensitive (count + logical order)              | — (planned `equal` family deferred) | stable element equality                   |
-| Map/Set             | order-insensitive (count + matching entries)         | —                                   | stable key/value equality                 |
+| Vector/String/Queue | order-sensitive (count + logical order)              | `equal` (REQ-FN-002G)               | stable element equality                   |
+| Map/Set             | order-insensitive (count + matching entries)         | `equal` (REQ-FN-002G)               | stable key/value equality                 |
 | Range/Repeat/Cycle  | producer parameter equality (stored parameters only) | `parameters_equal`                  | stable parameter equality                 |
 | Iterate/Repeatedly  | none                                                 | none                                | callable step → excluded at type boundary |
 
@@ -91,4 +91,12 @@ propagation.
    decision, see state.md carry-forward).
 4. `equal_by` / `identical` and the rest of the REQ-FN-002C comparison family
    (`not_equal`, `less`, `less_equal`, `greater`, `greater_equal`) remain
-   deferred; `equal` is implemented (REQ-FN-002G).
+   deferred; `equal` is implemented (REQ-FN-002G) with the three Clojure `=`
+   arities (2026-09-26, commit 93231aa): unary admits a single domain-admitted
+   operand and returns true, the variadic form conjoins adjacent-pair equality
+   left to right with short-circuit, and every adjacent pair is individually
+   compile-time gated by `equal_pair_admissible_v` (the lockstep mirror of the
+   five binary overload gates; SFINAE-safe via void-fallback detection traits).
+   Cross-family and mixed cljonic-to-non-cljonic pairs fail at compile time in
+   every arity; termination (bounded-prefix, configured traversal cap) is
+   uniform across arities.
