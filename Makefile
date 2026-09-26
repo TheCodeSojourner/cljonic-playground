@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -140,6 +140,9 @@ range-compile-fail: cljonic scripts/check-range-compile-failures.py
 
 variant-compile-fail: cljonic scripts/check-variant-compile-failures.py
 	@python3 scripts/check-variant-compile-failures.py
+
+equal-compile-fail: cljonic scripts/check-equal-compile-failures.py
+	@python3 scripts/check-equal-compile-failures.py
 
 format:
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
@@ -316,6 +319,7 @@ upsert-gate:
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s range-compile-fail
 	@$(MAKE) --no-print-directory -s variant-compile-fail
+	@$(MAKE) --no-print-directory -s equal-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
 
@@ -337,6 +341,7 @@ validate:
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s range-compile-fail
 	@$(MAKE) --no-print-directory -s variant-compile-fail
+	@$(MAKE) --no-print-directory -s equal-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
@@ -349,6 +354,7 @@ git:
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s range-compile-fail
 	@$(MAKE) --no-print-directory -s variant-compile-fail
+	@$(MAKE) --no-print-directory -s equal-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code

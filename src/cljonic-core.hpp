@@ -132,7 +132,7 @@
  * \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref Dissoc
  * "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
  * Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
- * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_Equal "Equal", \ref Core_EqualBy "EqualBy",
+ * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Equal "equal", \ref Core_EqualBy "EqualBy",
  * \ref Core_Every "Every"
  * - \ref Core_Filter "Filter", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize", Core_Frequencies
  * "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into"
@@ -200,6 +200,7 @@
 #include <cljonic-cycle.hpp>
 #include <cljonic-disj.hpp>
 #include <cljonic-dissoc.hpp>
+#include <cljonic-equal.hpp>
 #include <cljonic-fits-into.hpp>
 #include <cljonic-get.hpp>
 #include <cljonic-into.hpp>

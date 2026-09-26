@@ -12,6 +12,8 @@ entity EqualFunction {
     named_operation_distinct_from_operator_equals: Boolean
     supported_domain_scope: Boolean
     scalar_operands_compare_via_operator_equals: Boolean
+    scalar_fallthrough_domain_is_closed_value_domain: Boolean
+    standard_range_types_rejected_as_interop_surface: Boolean
     floating_point_rejected_at_compile_time_at_any_depth: Boolean
     cljonic_nonscalar_pairs_classified_by_equality_family: Boolean
     sequential_family_mutually_comparable_by_produced_sequence: Boolean
@@ -46,6 +48,14 @@ entity EqualFunction {
 
     invariant ScalarOperandsCompareViaOperatorEquals {
         this.scalar_operands_compare_via_operator_equals = true
+    }
+
+    invariant ScalarFallthroughDomainIsClosedValueDomain {
+        this.scalar_fallthrough_domain_is_closed_value_domain = true
+    }
+
+    invariant StandardRangeTypesRejectedAsInteropSurface {
+        this.standard_range_types_rejected_as_interop_surface = true
     }
 
     invariant FloatingPointRejectedAtCompileTimeAtAnyDepth {
