@@ -43,12 +43,12 @@ std::equality_comparable<T>
 
 ## Three equality surfaces, one rule shape
 
-| Surface             | operator== semantics                                 | Named operation                     | Constraint                                |
-| ------------------- | ---------------------------------------------------- | ----------------------------------- | ----------------------------------------- |
-| Vector/String/Queue | order-sensitive (count + logical order)              | `equal` (REQ-FN-002G)               | stable element equality                   |
-| Map/Set             | order-insensitive (count + matching entries)         | `equal` (REQ-FN-002G)               | stable key/value equality                 |
-| Range/Repeat/Cycle  | producer parameter equality (stored parameters only) | `parameters_equal`                  | stable parameter equality                 |
-| Iterate/Repeatedly  | none                                                 | none                                | callable step → excluded at type boundary |
+| Surface             | operator== semantics                                 | Named operation       | Constraint                                |
+| ------------------- | ---------------------------------------------------- | --------------------- | ----------------------------------------- |
+| Vector/String/Queue | order-sensitive (count + logical order)              | `equal` (REQ-FN-002G) | stable element equality                   |
+| Map/Set             | order-insensitive (count + matching entries)         | `equal` (REQ-FN-002G) | stable key/value equality                 |
+| Range/Repeat/Cycle  | producer parameter equality (stored parameters only) | `parameters_equal`    | stable parameter equality                 |
+| Iterate/Repeatedly  | none                                                 | none                  | callable step → excluded at type boundary |
 
 Producer parameter equality (REQ-FN-014B) is normative for every producer whose
 stored parameters all admit stable equality: provide both `==` and
