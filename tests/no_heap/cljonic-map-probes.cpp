@@ -3,6 +3,7 @@
 #include "probes.hpp"
 
 #include <ranges>
+#include <variant>
 
 namespace cljonic::no_heap::probes {
 
@@ -16,8 +17,16 @@ namespace cljonic::no_heap::probes {
     const std::span<const MapEntry<int, int>> dynamic_source{source};
     const auto imported = Map<int, int, 2>{dynamic_source};
     const auto view_imported = Map<int, int, 2>{std::views::all(static_source)};
+
+    // Alternative-strict variant map keys (REQ-CAP-010).
+    using alt = std::variant<int, long>;
+    const auto variant_map = Map<alt, int, 4>{MapEntry<alt, int>{alt{1}, 100}};
+    const auto variant_hit = variant_map(alt{1}) == 100;
+    const auto variant_miss = variant_map(alt{1L}, -1) == -1;
+
     return m1.count() == 1U && m1.contains(1) && m1(1) == 10 && literal.count() == 2U && imported.count() == 2U &&
-           imported(3) == 30 && imported(4) == 40 && static_imported(6) == 60 && view_imported(7) == 70;
+           imported(3) == 30 && imported(4) == 40 && static_imported(6) == 60 && view_imported(7) == 70 &&
+           variant_hit && variant_miss;
 }
 
 } // namespace cljonic::no_heap::probes

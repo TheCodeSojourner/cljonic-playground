@@ -115,7 +115,7 @@ TEST_CASE("Iterate owns a copyable step and exposes bounded unbounded traversal"
     TRACE_ID("invariant.Iterate.ConstexprCapableWhenArgumentsAre");
     TRACE_ID("invariant.Iterate.RuntimeUseIsSupported");
     TRACE_ID("invariant.Iterate.ConstructionDoesNotInvokeStep");
-    TRACE_ID("invariant.Iterate.UnboundedIterateDoesNotSatisfyStableEquality");
+    TRACE_ID("invariant.Iterate.CallableStepExcludesParameterEquality");
     TRACE_ID("invariant.Iterate.UnboundedEqualityFailsAtCompileTime");
     TRACE_ID("invariant.Iterate.DoesNotSatisfyIndexedProducer");
     TRACE_ID("invariant.Iterate.SatisfiesSequenceableProducer");

@@ -8,14 +8,18 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     using cljonic::cycle;
     using cljonic::fits_into;
     using cljonic::into;
+    using cljonic::parameters_equal;
     using cljonic::Range;
+    using cljonic::Set;
     using cljonic::Vector;
     using cljonic::concepts::CljonicCycle;
     using cljonic::concepts::CljonicProducer;
     using cljonic::concepts::CljonicSource;
     using cljonic::concepts::ConstInputRange;
     using cljonic::concepts::NothrowConstInputRange;
+    using cljonic::concepts::NothrowStableEqualityComparable;
     using cljonic::concepts::SequenceableProducer;
+    using cljonic::concepts::StableEqualityComparable;
 
     TRACE_ID("entity-fields.Cycle");
     TRACE_ID("invariant.Cycle.HeaderOnlyDistribution");
@@ -43,8 +47,17 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     TRACE_ID("invariant.Cycle.EmptySourceProducesEmptyObservation");
     TRACE_ID("invariant.Cycle.MaterializesAtMostDestinationCapacity");
     TRACE_ID("invariant.Cycle.DoesNotFitIntoDestination");
-    TRACE_ID("invariant.Cycle.UnboundedCycleDoesNotSatisfyStableEquality");
-    TRACE_ID("invariant.Cycle.UnboundedEqualityFailsAtCompileTime");
+    TRACE_ID("invariant.Cycle.OperatorEqualsUsesProducerParameterEquality");
+    TRACE_ID("invariant.Cycle.EqualityComparesOwnedSourceAndForm");
+    TRACE_ID("invariant.Cycle.ProvidesNamedParametersEqualOperation");
+    TRACE_ID("invariant.Cycle.SatisfiesNothrowStableEqualityComparable");
+    TRACE_ID("entity-fields.ProducerParameterEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.ComparesBoundedStoredParametersOnly");
+    TRACE_ID("invariant.ProducerParameterEquality.OperatorEqualsUsesProducerParameterEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.ProvidesNamedParametersEqualOperation");
+    TRACE_ID("invariant.ProducerParameterEquality.NeverTraversesProducedSequence");
+    TRACE_ID("invariant.ProducerParameterEquality.DoesNotImplySequenceEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.ProducerAdmittedAsMapKeyAndSetElement");
     TRACE_ID("invariant.Cycle.DoesNotSatisfyIndexedProducer");
     TRACE_ID("invariant.Cycle.SatisfiesSequenceableProducer");
     TRACE_ID("invariant.Cycle.DoesNotExposeCallableOperator");
@@ -85,6 +98,40 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     STATIC_REQUIRE(CljonicSource<Vector<int, 3>>);
     STATIC_REQUIRE(CljonicSource<Range<int>>);
     STATIC_REQUIRE(SequenceableProducer<decltype(unbounded_cycle)>);
+
+    // Cycle satisfies producer parameter equality: operator== compares the
+    // stored owned source, count, and finite-form parameters, never the
+    // produced sequence. Equal sources yield equal cycles; different sources
+    // yield unequal cycles even though all Cycle values are unbounded.
+    constexpr auto cycle_a = cycle(Vector<int, 3>{1, 2, 3});
+    constexpr auto cycle_b = cycle(Vector<int, 3>{1, 2, 3});
+    constexpr auto cycle_c = cycle(Vector<int, 3>{1, 2, 4});
+    STATIC_REQUIRE(cycle_a == cycle_b);
+    STATIC_REQUIRE(!(cycle_a == cycle_c));
+    STATIC_REQUIRE(parameters_equal(cycle_a, cycle_b));
+    STATIC_REQUIRE(!parameters_equal(cycle_a, cycle_c));
+    STATIC_REQUIRE(StableEqualityComparable<std::remove_cvref_t<decltype(cycle_a)>>);
+    STATIC_REQUIRE(NothrowStableEqualityComparable<std::remove_cvref_t<decltype(cycle_a)>>);
+
+    // Cycle over a producer source: Range compares by its own parameters.
+    constexpr auto cycle_over_range_a = cycle(Range{1, 4, 2});
+    constexpr auto cycle_over_range_b = cycle(Range{1, 4, 2});
+    constexpr auto cycle_over_range_c = cycle(Range{1, 4, 3});
+    STATIC_REQUIRE(cycle_over_range_a == cycle_over_range_b);
+    STATIC_REQUIRE(!(cycle_over_range_a == cycle_over_range_c));
+
+    // Cycle is admitted as a set element when its source admits stable
+    // equality. Distinct cycles (different source contents) are distinct
+    // elements.
+    using cycle_type = std::remove_cvref_t<decltype(cycle_a)>;
+    constexpr Set<cycle_type, 4> cycle_set{cycle_a, cycle_c};
+    STATIC_REQUIRE(cycle_set.count() == 2U);
+    STATIC_REQUIRE(cycle_set.contains(cycle_a));
+
+    // A float-bearing source never admits stable equality, so a Cycle over it
+    // is excluded from equality and set/map admission.
+    using float_cycle_type = decltype(cycle(Vector<double, 3>{1.0, 2.0, 3.0}));
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<float_cycle_type>);
 
     const auto runtime_unbounded_cycle = cycle(Vector<int, 3>{7, 8, 9});
     const auto runtime_prefix_result = into(Vector<int, 2>{}, runtime_unbounded_cycle);

@@ -106,7 +106,7 @@ TEST_CASE("Repeatedly owns a copyable zero-argument step and exposes counted unc
     TRACE_ID("invariant.Repeatedly.UncountedFormDoesNotFitIntoDestination");
     TRACE_ID("invariant.Repeatedly.CallbackInvokedOncePerProducedElement");
     TRACE_ID("invariant.Repeatedly.ConstructionDoesNotInvokeStep");
-    TRACE_ID("invariant.Repeatedly.UnboundedRepeatedlyDoesNotSatisfyStableEquality");
+    TRACE_ID("invariant.Repeatedly.CallableStepExcludesParameterEquality");
     TRACE_ID("invariant.Repeatedly.UnboundedEqualityFailsAtCompileTime");
     TRACE_ID("invariant.Repeatedly.DoesNotSatisfyIndexedProducer");
     TRACE_ID("invariant.Repeatedly.SatisfiesSequenceableProducer");

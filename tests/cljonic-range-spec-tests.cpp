@@ -7,13 +7,18 @@
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
 TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
+    using cljonic::Map;
+    using cljonic::MapEntry;
+    using cljonic::parameters_equal;
     using cljonic::Range;
+    using cljonic::Set;
     using cljonic::Vector;
     using cljonic::concepts::CljonicCollection;
     using cljonic::concepts::CljonicProducer;
     using cljonic::concepts::CljonicRange;
     using cljonic::concepts::CljonicSource;
     using cljonic::concepts::IndexedProducer;
+    using cljonic::concepts::NothrowStableEqualityComparable;
     using cljonic::concepts::SequenceableProducer;
     using cljonic::concepts::StableEqualityComparable;
 
@@ -43,8 +48,18 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     TRACE_ID("invariant.Range.ConstTraversalTerminatesAtCount");
     TRACE_ID("invariant.Range.SaturatingCardinalityBoundedByCollectionMaximumElementCount");
     TRACE_ID("invariant.Range.SpanArithmeticAvoidsSignedOverflow");
-    TRACE_ID("invariant.Range.UnboundedRangeDoesNotSatisfyStableEquality");
-    TRACE_ID("invariant.Range.UnboundedEqualityFailsAtCompileTime");
+    TRACE_ID("invariant.Range.OperatorEqualsUsesProducerParameterEquality");
+    TRACE_ID("invariant.Range.EqualityComparesStartEndStep");
+    TRACE_ID("invariant.Range.ProvidesNamedParametersEqualOperation");
+    TRACE_ID("invariant.Range.SatisfiesNothrowStableEqualityComparable");
+    TRACE_ID("entity-fields.ProducerParameterEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.ComparesBoundedStoredParametersOnly");
+    TRACE_ID("invariant.ProducerParameterEquality.OperatorEqualsUsesProducerParameterEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.ProvidesNamedParametersEqualOperation");
+    TRACE_ID("invariant.ProducerParameterEquality.NeverTraversesProducedSequence");
+    TRACE_ID("invariant.ProducerParameterEquality.DoesNotImplySequenceEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.DistinctParametersCompareUnequalEvenWhenSequencesCoincide");
+    TRACE_ID("invariant.ProducerParameterEquality.ProducerAdmittedAsMapKeyAndSetElement");
     TRACE_ID("invariant.Range.ContainsIsAuthoritativeAvailableIndexPredicate");
     TRACE_ID("invariant.Range.ContainsIsConstantTime");
     TRACE_ID("invariant.Range.DoesNotExposeCallableOperator");
@@ -139,8 +154,32 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     STATIC_REQUIRE_FALSE(CljonicRange<Vector<int, 4>>);
     STATIC_REQUIRE(CljonicSource<Vector<int, 4>>);
 
-    // Range never satisfies equality, regardless of whether a particular instance is finite.
-    STATIC_REQUIRE_FALSE(StableEqualityComparable<Range<int>>);
+    // Range satisfies producer parameter equality: operator== compares the
+    // stored start/end/step parameters, never the produced sequence. Range is
+    // therefore admitted as a set element and map key.
+    STATIC_REQUIRE(StableEqualityComparable<Range<int>>);
+    STATIC_REQUIRE(NothrowStableEqualityComparable<Range<int>>);
+    constexpr Range<int> eq_a{1, 5, 2};
+    constexpr Range<int> eq_b{1, 5, 2};
+    constexpr Range<int> eq_c{1, 5, 3};
+    STATIC_REQUIRE(eq_a == eq_b);
+    STATIC_REQUIRE(!(eq_a == eq_c));
+    STATIC_REQUIRE(parameters_equal(eq_a, eq_b));
+    STATIC_REQUIRE(!parameters_equal(eq_a, eq_c));
+
+    // Distinct parameters compare unequal even when the produced sequences
+    // coincide: both zero-step ranges produce an infinite repetition of zero.
+    constexpr Range<int> zero_step_a{0, 5, 0};
+    constexpr Range<int> zero_step_b{0, 7, 0};
+    STATIC_REQUIRE(!(zero_step_a == zero_step_b));
+    STATIC_REQUIRE(!parameters_equal(zero_step_a, zero_step_b));
+
+    // Range is admitted as a set element and map key.
+    constexpr Set<Range<int>, 4> range_set{Range<int>{1, 5, 2}, Range<int>{1, 5, 3}};
+    STATIC_REQUIRE(range_set.count() == 2U);
+    STATIC_REQUIRE(range_set.contains(Range<int>{1, 5, 2}));
+    constexpr Map<Range<int>, int, 4> range_map{MapEntry<Range<int>, int>{Range<int>{1, 5, 2}, 10}};
+    STATIC_REQUIRE(range_map.count() == 1U);
 
     const auto runtime_range = Range<int>{0, 3};
     CHECK(runtime_range.count() == 3U);

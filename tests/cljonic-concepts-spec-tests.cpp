@@ -2,9 +2,11 @@
 
 #include <cstddef>
 #include <deque>
+#include <functional>
 #include <map>
 #include <set>
 #include <string>
+#include <variant>
 #include <vector>
 
 #include "cljonic-test-api.hpp"
@@ -545,6 +547,135 @@ TEST_CASE("NothrowStableEqualityComparable value capability", "[concepts][value]
 
     // A stable-equality type may lack ordering yet still satisfy this concept.
     STATIC_REQUIRE_FALSE(TotallyOrdered<EqualityOnly>);
+}
+
+// ============================================================================
+// Composite stable equality (REQ-CAP-010)
+// ============================================================================
+
+TEST_CASE("Composite variant stable equality", "[concepts][value][composite]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("invariant.StableEqualityComparable.RecursesOverComponents");
+    TRACE_ID("invariant.StableEqualityComparable.RejectsCallableComponents");
+    TRACE_ID("invariant.AlternativeStrictEquality.RequiresSameAlternative");
+    TRACE_ID("invariant.AlternativeStrictEquality.RejectsCrossAlternativeEquality");
+    TRACE_ID("invariant.AlternativeStrictEquality.RejectsCrossTypeNumericUnification");
+
+    // RecursesOverComponents: composite admits stable equality when every
+    // stored component admits stable equality.
+    STATIC_REQUIRE(StableEqualityComparable<std::variant<int, long>>);
+    STATIC_REQUIRE(StableEqualityComparable<std::variant<int, char, bool>>);
+
+    // Recursion into cljonic collections: a collection with equality components
+    // is itself stable-equality comparable (REQ-COLL-021).
+    STATIC_REQUIRE(StableEqualityComparable<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(StableEqualityComparable<cljonic::Set<int, 4>>);
+    STATIC_REQUIRE(StableEqualityComparable<cljonic::Map<int, int, 4>>);
+    STATIC_REQUIRE(StableEqualityComparable<cljonic::Queue<int, 4>>);
+    STATIC_REQUIRE(StableEqualityComparable<cljonic::String<8>>);
+    STATIC_REQUIRE(StableEqualityComparable<cljonic::MapEntry<int, int>>);
+    STATIC_REQUIRE(StableEqualityComparable<std::variant<int, cljonic::Vector<int, 4>>>);
+
+    // RecursesOverComponents: floating-point components are rejected at any
+    // nesting level, including inside cljonic collections and nested variants.
+    // (Types whose own admission constraints reject floating-point — such as
+    // Set<float,4> or MapEntry<double,int> — cannot be formed at all and are
+    // verified by the variant-compile-fail gate instead.)
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<int, double>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<int, float>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<std::variant<int, double>, char>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<cljonic::Vector<double, 4>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<cljonic::Map<int, double, 4>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<cljonic::MapEntry<int, double>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<int, cljonic::Vector<double, 4>>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<int, cljonic::Map<int, double, 4>>>);
+
+    // RejectsCallableComponents: callable components never admit stable
+    // equality, including function pointers (rejected as a class).
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<int, int (*)(int)>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<int, std::function<int(int)>>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<int (*)(int)>);
+}
+
+TEST_CASE("Producer parameter equality stable-recursion", "[concepts][value][producer][composite]") {
+    using namespace cljonic::concepts;
+    using namespace cljonic;
+
+    TRACE_ID("invariant.StableEqualityComparable.RecursesIntoProducerParameters");
+    TRACE_ID("invariant.StableEqualityComparable.RecursesOverComponents");
+    TRACE_ID("invariant.StableEqualityComparable.RejectsCallableComponents");
+
+    // RecursesIntoProducerParameters: Range/Repeat/Cycle with all-stable
+    // stored parameters admit producer parameter equality.
+    STATIC_REQUIRE(StableEqualityComparable<Range<int>>);
+    STATIC_REQUIRE(StableEqualityComparable<Repeat<int>>);
+    STATIC_REQUIRE(StableEqualityComparable<std::remove_cvref_t<decltype(cycle(Vector<int, 3>{1, 2, 3}))>>);
+
+    // Floating-point stored parameters are rejected at any nesting level,
+    // including inside a producer.
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<Repeat<double>>);
+    STATIC_REQUIRE_FALSE(
+        StableEqualityComparable<std::remove_cvref_t<decltype(cycle(Vector<double, 3>{1.0, 2.0, 3.0}))>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<int, Repeat<double>>>);
+
+    // Nested producers admit stable equality only when every nested component
+    // admits stable equality (REQ-SEQ-018 / REQ-CAP-010 recursion).
+    STATIC_REQUIRE(StableEqualityComparable<Vector<Range<int>, 4>>);
+    STATIC_REQUIRE(StableEqualityComparable<Repeat<Vector<int, 3>>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<Vector<Repeat<double>, 4>>);
+
+    // RejectsCallableComponents: Iterate/Repeatedly never admit stable
+    // equality because their stored step is a callable component, so they are
+    // never usable as a map key or set element.
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<Iterate<int, int (*)(int) noexcept>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<Repeatedly<int, int (*)() noexcept>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::variant<int, Iterate<int, int (*)(int) noexcept>>>);
+
+    // A Cycle over a callable-producing source is also rejected.
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<std::remove_cvref_t<decltype(cycle(
+                             Iterate<int, int (*)(int) noexcept>{0, [](int v) noexcept { return v + 1; }}))>>);
+}
+
+TEST_CASE("AlternativeStrictEquality variant-equality semantics", "[value][composite]") {
+    TRACE_ID("entity-fields.AlternativeStrictEquality");
+    TRACE_ID("invariant.AlternativeStrictEquality.RequiresSameAlternative");
+    TRACE_ID("invariant.AlternativeStrictEquality.RejectsCrossAlternativeEquality");
+    TRACE_ID("invariant.AlternativeStrictEquality.RejectsCrossTypeNumericUnification");
+
+    using alt = std::variant<int, long>;
+
+    constexpr alt same_int_one{1};
+    constexpr alt same_int_two{1};
+    constexpr alt long_one{1L};
+
+    // RequiresSameAlternative: equal alternative values are equal.
+    STATIC_REQUIRE(same_int_one == same_int_two);
+    STATIC_REQUIRE(long_one == long_one);
+
+    // RejectsCrossAlternativeEquality: a variant holding the long alternative is
+    // not equal to a variant holding the int alternative, even though the
+    // alternative values compare conventionally equal (1 == 1L).
+    STATIC_REQUIRE(same_int_one == same_int_one);
+    STATIC_REQUIRE_FALSE(same_int_one == long_one);
+    STATIC_REQUIRE(long_one != same_int_one);
+
+    // The variant can be used as a map key / set element under these semantics.
+    constexpr cljonic::Map<alt, int, 4> map{cljonic::MapEntry<alt, int>{same_int_one, 10}};
+    static_assert(map(alt{1}) == 10);
+    static_assert(map(alt{1L}, -1) == -1); // long alternative: not found
+    // Runtime coverage of the same lookup paths.
+    const auto runtime_map = cljonic::Map<alt, int, 4>{cljonic::MapEntry<alt, int>{alt{1}, 10}};
+    CHECK(runtime_map(alt{1}) == 10);
+    CHECK(runtime_map(alt{2}, -1) == -1);
+    CHECK(runtime_map(alt{1L}, -1) == -1); // cross-alternative miss
+    CHECK(runtime_map.contains(alt{1}));
+    CHECK_FALSE(runtime_map.contains(alt{1L}));
+
+    const auto runtime_set = cljonic::Set<alt, 4>{alt{1}};
+    CHECK(runtime_set.contains(alt{1}));
+    CHECK_FALSE(runtime_set.contains(alt{1L}));
+    CHECK_FALSE(runtime_set.contains(alt{2}));
 }
 
 // ============================================================================

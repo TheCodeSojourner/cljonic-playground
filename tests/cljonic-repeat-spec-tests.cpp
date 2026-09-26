@@ -16,12 +16,16 @@ concept HasGet = requires(const T& value) { cljonic::get(value, 0U); };
 TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[repeat]") {
     using cljonic::fits_into;
     using cljonic::into;
+    using cljonic::parameters_equal;
+    using cljonic::Repeat;
     using cljonic::repeat;
+    using cljonic::Set;
     using cljonic::Vector;
     using cljonic::concepts::CljonicCollection;
     using cljonic::concepts::CljonicProducer;
     using cljonic::concepts::CljonicSource;
     using cljonic::concepts::IndexedProducer;
+    using cljonic::concepts::NothrowStableEqualityComparable;
     using cljonic::concepts::SequenceableProducer;
     using cljonic::concepts::StableEqualityComparable;
 
@@ -45,8 +49,17 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     TRACE_ID("invariant.Repeat.ConstTraversalTerminatesAtCount");
     TRACE_ID("invariant.Repeat.UncountedFormMaterializesAtMostDestinationCapacity");
     TRACE_ID("invariant.Repeat.UncountedFormDoesNotFitIntoDestination");
-    TRACE_ID("invariant.Repeat.UnboundedRepeatDoesNotSatisfyStableEquality");
-    TRACE_ID("invariant.Repeat.UnboundedEqualityFailsAtCompileTime");
+    TRACE_ID("invariant.Repeat.OperatorEqualsUsesProducerParameterEquality");
+    TRACE_ID("invariant.Repeat.EqualityComparesValueCountAndForm");
+    TRACE_ID("invariant.Repeat.ProvidesNamedParametersEqualOperation");
+    TRACE_ID("invariant.Repeat.SatisfiesNothrowStableEqualityComparable");
+    TRACE_ID("entity-fields.ProducerParameterEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.ComparesBoundedStoredParametersOnly");
+    TRACE_ID("invariant.ProducerParameterEquality.OperatorEqualsUsesProducerParameterEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.ProvidesNamedParametersEqualOperation");
+    TRACE_ID("invariant.ProducerParameterEquality.DoesNotImplySequenceEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.DistinctParametersCompareUnequalEvenWhenSequencesCoincide");
+    TRACE_ID("invariant.ProducerParameterEquality.ProducerAdmittedAsMapKeyAndSetElement");
     TRACE_ID("invariant.Repeat.DoesNotSatisfyIndexedProducer");
     TRACE_ID("invariant.Repeat.SatisfiesSequenceableProducer");
     TRACE_ID("invariant.Repeat.DoesNotExposeCallableOperator");
@@ -91,7 +104,32 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     STATIC_REQUIRE_FALSE(CljonicCollection<decltype(finite_repeat)>);
     STATIC_REQUIRE_FALSE(IndexedProducer<decltype(finite_repeat)>);
     STATIC_REQUIRE(SequenceableProducer<decltype(finite_repeat)>);
-    STATIC_REQUIRE_FALSE(StableEqualityComparable<decltype(unbounded_repeat)>);
+
+    // Repeat satisfies producer parameter equality: operator== compares the
+    // stored value, count, and finite-form parameters, never the produced
+    // sequence. The unbounded form, the zero-count finite form, and a counted
+    // form are pairwise distinct even when their produced prefixes coincide.
+    constexpr auto counted_a = repeat(7, 3U);
+    constexpr auto counted_b = repeat(7, 3U);
+    constexpr auto counted_c = repeat(7, 2U);
+    STATIC_REQUIRE(counted_a == counted_b);
+    STATIC_REQUIRE(!(counted_a == counted_c));
+    STATIC_REQUIRE(parameters_equal(counted_a, counted_b));
+    STATIC_REQUIRE(!parameters_equal(counted_a, counted_c));
+    STATIC_REQUIRE(!(counted_a == unbounded_repeat));
+    STATIC_REQUIRE(!(counted_a == empty_repeat));
+    STATIC_REQUIRE(StableEqualityComparable<std::remove_cvref_t<decltype(counted_a)>>);
+    STATIC_REQUIRE(NothrowStableEqualityComparable<std::remove_cvref_t<decltype(counted_a)>>);
+    STATIC_REQUIRE_FALSE(StableEqualityComparable<Repeat<double>>);
+
+    // Repeat is admitted as a set element. The capability is type-level: the
+    // unbounded and finite forms share the Repeat<int> type, so both admit
+    // producer parameter equality even though their stored parameters differ.
+    constexpr Set<Repeat<int>, 4> repeat_set{repeat(7, 3U), repeat(8, 2U)};
+    STATIC_REQUIRE(repeat_set.count() == 2U);
+    STATIC_REQUIRE(repeat_set.contains(repeat(7, 3U)));
+    STATIC_REQUIRE(StableEqualityComparable<std::remove_cvref_t<decltype(unbounded_repeat)>>);
+
     STATIC_REQUIRE_FALSE(std::invocable<decltype(finite_repeat), std::size_t>);
     STATIC_REQUIRE_FALSE(HasContains<decltype(finite_repeat)>);
     STATIC_REQUIRE_FALSE(HasCallableLookup<decltype(finite_repeat)>);
