@@ -89,5 +89,6 @@ propagation.
 3. Single range-typed constructor argument selects the source constructor, not
    the pack constructor; tests use multi-element packs (pending design
    decision, see state.md carry-forward).
-4. `equal` / `equal_by` / `identical` are indexed in docs but unimplemented
-   (REQ-FN-002E deferred, separate slice).
+4. `equal_by` / `identical` and the rest of the REQ-FN-002C comparison family
+   (`not_equal`, `less`, `less_equal`, `greater`, `greater_equal`) remain
+   deferred; `equal` is implemented (REQ-FN-002G).
