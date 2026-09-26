@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -45,6 +45,7 @@ help:
 	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
 	@printf '%-12s %s\n' 'no-heap-symbols' 'Fail if compiled artifact contains forbidden allocator symbols'
 	@printf '%-12s %s\n' 'range-compile-fail' 'Verify statically oversized range sources fail for all collections and header variants'
+	@printf '%-12s %s\n' 'variant-compile-fail' 'Verify composite keys with floating-point or callable components and non-storable producers fail for all header variants'
 	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
 	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
 	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and modular/generated parallel test run'
@@ -136,6 +137,9 @@ complexity-cli:
 
 range-compile-fail: cljonic scripts/check-range-compile-failures.py
 	@python3 scripts/check-range-compile-failures.py
+
+variant-compile-fail: cljonic scripts/check-variant-compile-failures.py
+	@python3 scripts/check-variant-compile-failures.py
 
 format:
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
@@ -311,6 +315,7 @@ upsert-gate:
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s range-compile-fail
+	@$(MAKE) --no-print-directory -s variant-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
 
@@ -331,6 +336,7 @@ validate:
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s range-compile-fail
+	@$(MAKE) --no-print-directory -s variant-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
@@ -342,6 +348,7 @@ git:
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s range-compile-fail
+	@$(MAKE) --no-print-directory -s variant-compile-fail
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
