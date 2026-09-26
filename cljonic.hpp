@@ -1498,6 +1498,85 @@ inline constexpr equality_family equal_family_of_v = []() constexpr -> equality_
     }
 }();
 
+// SFINAE-safe member-type detection: the admissibility predicates below must
+// stay substitution-safe over the full closed value domain, where most types
+// carry no collection member types at all; the void fallback keeps the
+// corresponding disjunct false instead of ill-formed.
+template <typename T, typename = void>
+struct equal_value_type_of {
+    using type = void;
+};
+
+template <typename T>
+struct equal_value_type_of<T, std::void_t<typename T::value_type>> {
+    using type = T::value_type;
+};
+
+template <typename T, typename = void>
+struct equal_key_type_of {
+    using type = void;
+};
+
+template <typename T>
+struct equal_key_type_of<T, std::void_t<typename T::key_type>> {
+    using type = T::key_type;
+};
+
+template <typename T, typename = void>
+struct equal_association_value_type_of {
+    using type = void;
+};
+
+template <typename T>
+struct equal_association_value_type_of<T, std::void_t<typename T::association_value_type>> {
+    using type = T::association_value_type;
+};
+
+template <typename T>
+using equal_value_type_of_t = equal_value_type_of<T>::type;
+
+template <typename T>
+using equal_key_type_of_t = equal_key_type_of<T>::type;
+
+template <typename T>
+using equal_association_value_type_of_t = equal_association_value_type_of<T>::type;
+
+// Compile-time admissibility of one operand pair (REQ-FN-002G): the
+// disjunction of the binary equal overload gates, kept in lockstep with the
+// five binary overloads so every arity rejects the same pairs at compile
+// time. Both members of a family pair always expose the corresponding member
+// types, so the void fallback only guards the non-family substitution path.
+template <typename Lhs, typename Rhs>
+inline constexpr bool equal_pair_admissible_v =
+    (equal_family_of_v<Lhs> == equality_family::none && equal_family_of_v<Rhs> == equality_family::none &&
+     in_non_cljonic_fallthrough_domain_v<Lhs> && in_non_cljonic_fallthrough_domain_v<Rhs> && std::same_as<Lhs, Rhs> &&
+     concepts::StableEqualityComparable<Lhs>) ||
+    (equal_family_of_v<Lhs> == equality_family::sequential && equal_family_of_v<Rhs> == equality_family::sequential &&
+     std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
+     concepts::StableEqualityComparable<equal_value_type_of_t<Lhs>>) ||
+    (equal_family_of_v<Lhs> == equality_family::string && equal_family_of_v<Rhs> == equality_family::string) ||
+    (equal_family_of_v<Lhs> == equality_family::map && equal_family_of_v<Rhs> == equality_family::map &&
+     std::same_as<equal_key_type_of_t<Lhs>, equal_key_type_of_t<Rhs>> &&
+     std::same_as<equal_association_value_type_of_t<Lhs>, equal_association_value_type_of_t<Rhs>> &&
+     concepts::StableEqualityComparable<equal_key_type_of_t<Lhs>> &&
+     concepts::StableEqualityComparable<equal_association_value_type_of_t<Lhs>>) ||
+    (equal_family_of_v<Lhs> == equality_family::set && equal_family_of_v<Rhs> == equality_family::set &&
+     std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
+     concepts::StableEqualityComparable<equal_value_type_of_t<Lhs>>);
+
+// Every adjacent pair of a variadic equal argument list is admissible
+// (REQ-FN-002G); one or zero trailing operands satisfy the rule vacuously.
+template <typename... Ts>
+struct all_adjacent_pairs_admissible : std::true_type {};
+
+template <typename First, typename Second, typename... Rest>
+struct all_adjacent_pairs_admissible<First, Second, Rest...>
+    : std::bool_constant<equal_pair_admissible_v<First, Second> &&
+                         all_adjacent_pairs_admissible<Second, Rest...>::value> {};
+
+template <typename... Ts>
+inline constexpr bool all_adjacent_pairs_admissible_v = all_adjacent_pairs_admissible<Ts...>::value;
+
 // Lazy element-wise bounded-prefix walk: terminates at the first differing
 // element pair and requires both operands to be exhausted simultaneously for
 // equality. All producers expose cap-bounded begin()/end() traversal, so the
@@ -1565,10 +1644,20 @@ template <typename Lhs, typename Rhs>
 namespace cljonic {
 
 /** \anchor Equal
- * \brief Compares two values for general value equality, modeled on Clojure's
- *        `=`.
+ * \brief Compares one or more values for general value equality, modeled on
+ *        Clojure's `=` in its three arities.
  *
- * \b Equal implements general value equality (REQ-FN-002G) over the supported stable-equality domain:
+ * \b Equal implements general value equality (REQ-FN-002G) over the supported stable-equality domain in the three
+ * arities of Clojure's `=`:
+ *
+ * - `equal(x)` returns true for a single operand admitted by the same
+ *   compile-time domain gating as the binary form.
+ * - `equal(a, b)` compares the two operands by the family rules below. - `equal(a, b, more...)` holds exactly when
+ * every adjacent operand pair
+ *   compares equal by those family rules, evaluated left to right and
+ *   short-circuited at the first unequal pair; every adjacent pair is
+ *   individually compile-time gated, so an unsupported or mixed pair fails
+ *   compilation regardless of its position in the argument list.
  *
  * - Non-collection, non-producer values compare with `==` when both operands
  *   have the same type and satisfy \ref StableEqualityComparable
@@ -1610,6 +1699,10 @@ namespace cljonic {
  *   constexpr auto str2 = String<16>{"abc"};
  *   static_assert(equal(1, 1));
  *   static_assert(!equal(1, 2));
+ *   static_assert(equal(1));         // unary arity
+ *   static_assert(equal(1, 1, 1));   // variadic arity
+ *   static_assert(!equal(1, 2, 1));  // second adjacent pair is unequal
+ *   static_assert(equal(v, r, q));   // variadic sequential family comparison
  *   static_assert(equal(v, r));      // sequential family: Vector vs Range
  *   static_assert(equal(v, q));      // sequential family: Vector vs Queue
  *   static_assert(equal(Vector<int, 4>{1, 1, 1}, rep));
@@ -1675,6 +1768,21 @@ template <typename Lhs, typename Rhs>
         return false;
     }
     return equal_match_detail::set_elements_all_contained(lhs, rhs);
+}
+
+template <typename T>
+    requires(concepts_detail::equal_pair_admissible_v<T, T>)
+[[nodiscard]] constexpr auto equal(const T& value) noexcept -> bool {
+    return true;
+}
+
+template <typename Lhs, typename Rhs, typename... Rest>
+    requires((sizeof...(Rest) >= 1) && concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>)
+[[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs, const Rest&... rest) noexcept -> bool {
+    if (!equal(lhs, rhs)) {
+        return false;
+    }
+    return equal(rhs, rest...);
 }
 
 } // namespace cljonic

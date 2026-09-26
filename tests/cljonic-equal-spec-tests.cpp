@@ -45,6 +45,11 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     TRACE_ID("invariant.EqualFunction.GeneralValueEqualityOperation");
     TRACE_ID("invariant.EqualFunction.NamedOperationDistinctFromOperatorEquals");
     TRACE_ID("invariant.EqualFunction.SupportedDomainScope");
+    TRACE_ID("invariant.EqualFunction.ThreeClojureEqualArities");
+    TRACE_ID("invariant.EqualFunction.UnaryFormAdmitsSingleSupportedDomainOperand");
+    TRACE_ID("invariant.EqualFunction.VariadicFormConjoinsAdjacentPairEquality");
+    TRACE_ID("invariant.EqualFunction.AdjacentPairsAndUnaryOperandCompileTimeGated");
+    TRACE_ID("invariant.EqualFunction.VariadicEvaluationLeftToRightShortCircuit");
     TRACE_ID("invariant.EqualFunction.ScalarOperandsCompareViaOperatorEquals");
     TRACE_ID("invariant.EqualFunction.ScalarFallthroughDomainIsClosedValueDomain");
     TRACE_ID("invariant.EqualFunction.StandardRangeTypesRejectedAsInteropSurface");
@@ -160,6 +165,34 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     STATIC_REQUIRE(!equal(ProducerVector{Repeat<int>{7, 3U}}, ProducerVector{Repeat<int>{7}}));
 
     // ------------------------------------------------------------------------
+    // Arities: unary admits a single domain operand; the variadic form
+    // conjoins adjacent-pair equality left to right with short-circuit.
+    // ------------------------------------------------------------------------
+    STATIC_REQUIRE(equal(1));
+    STATIC_REQUIRE(equal(Color::Red));
+    STATIC_REQUIRE(equal(Pixel{1, 2}));
+    STATIC_REQUIRE(equal(vector_a));
+    STATIC_REQUIRE(equal(map_small));
+    STATIC_REQUIRE(equal(set_small));
+    STATIC_REQUIRE(equal(String<8>{"abc"}));
+    STATIC_REQUIRE(equal(Repeat<int>{7}));
+    STATIC_REQUIRE(equal(1, 1, 1));
+    STATIC_REQUIRE(equal(1, 1, 1, 1, 1));
+    STATIC_REQUIRE(!equal(1, 2, 1));
+    STATIC_REQUIRE(!equal(1, 1, 2));
+    STATIC_REQUIRE(equal(vector_a, Range<int>{1, 4, 1}, Queue<int, 4>{1, 2, 3}));
+    STATIC_REQUIRE(equal(vector_a, vector_b, Range<int>{1, 4, 1}));
+    STATIC_REQUIRE(!equal(vector_a, vector_b, Vector<int, 4>{1, 2, 4}));
+    STATIC_REQUIRE(equal(map_small, map_large, map_small));
+    STATIC_REQUIRE(!equal(map_small, map_large, Map<int, int, 4>{MapEntry<int, int>{1, 11}}));
+    STATIC_REQUIRE(equal(set_small, set_large, set_small));
+    STATIC_REQUIRE(equal(String<8>{"abc"}, String<16>{"abc"}, String<4>{"abc"}));
+    STATIC_REQUIRE(!equal(String<8>{"abc"}, String<16>{"abc"}, String<4>{"abd"}));
+    // Variadic recursion bottoms out in the binary overloads: mixed-family and
+    // mixed cljonic-to-non-cljonic adjacent pairs fail compilation regardless
+    // of position (proved by the compile-fail harness).
+
+    // ------------------------------------------------------------------------
     // Runtime coverage: volatile-derived values defeat constexpr folding so
     // every overload and branch genuinely executes (coverage gate).
     // ------------------------------------------------------------------------
@@ -225,9 +258,29 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     CHECK_FALSE(equal(runtime_variant_vector, VariantVector{VariantValue{runtime_two}}));
 
     // noexcept and constexpr quality bar.
+    STATIC_REQUIRE(noexcept(equal(1)));
     STATIC_REQUIRE(noexcept(equal(1, 1)));
+    STATIC_REQUIRE(noexcept(equal(1, 1, 1)));
     STATIC_REQUIRE(noexcept(equal(vector_a, vector_b)));
     STATIC_REQUIRE(noexcept(equal(map_small, map_large)));
     STATIC_REQUIRE(noexcept(equal(set_small, set_large)));
     STATIC_REQUIRE(noexcept(equal(String<8>{"abc"}, String<8>{"abc"})));
-}
+
+    // Runtime arity coverage: unary and variadic overloads genuinely execute.
+    CHECK(equal(runtime_one));
+    CHECK(equal(runtime_vector));
+    CHECK(equal(runtime_map));
+    CHECK(equal(runtime_set));
+    CHECK(equal(runtime_string));
+    CHECK(equal(runtime_cycle));
+    CHECK(equal(runtime_one, runtime_one, runtime_one));
+    CHECK_FALSE(equal(runtime_one, runtime_two, runtime_one));
+    CHECK_FALSE(equal(runtime_one, runtime_one, runtime_two));
+    CHECK(equal(runtime_vector, runtime_queue, runtime_vector));
+    CHECK_FALSE(equal(runtime_vector, runtime_vector, runtime_vector_diff));
+    CHECK(equal(runtime_map, runtime_map_reordered, runtime_map));
+    CHECK_FALSE(equal(runtime_map, runtime_map_reordered, runtime_map_value));
+    CHECK(equal(runtime_set, runtime_set_reordered, runtime_set));
+    CHECK(equal(runtime_string, runtime_string_same, runtime_string));
+    CHECK_FALSE(equal(runtime_string, runtime_string_same, runtime_string_diff));
+} // namespace

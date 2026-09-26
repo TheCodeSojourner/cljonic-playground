@@ -7,12 +7,21 @@
 -- at any depth; equality over two unbounded producers compares the configured
 -- observable traversal cap of each operand so no call can fail to terminate.
 -- SequentialEquality is the vocabulary term for the sequential family rule
--- (invariant SequentialFamilyMutuallyComparableByProducedSequence).
+-- (invariant SequentialFamilyMutuallyComparableByProducedSequence). The
+-- operation carries the three arities of Clojure's `=`: unary returns true for
+-- a single domain-admitted operand, binary compares a pair by family, and the
+-- variadic form conjoins adjacent-pair equality left to right with
+-- short-circuit, every adjacent pair compile-time gated.
 
 entity EqualFunction {
     general_value_equality_operation: Boolean
     named_operation_distinct_from_operator_equals: Boolean
     supported_domain_scope: Boolean
+    three_clojure_equal_arities: Boolean
+    unary_form_admits_single_supported_domain_operand: Boolean
+    variadic_form_conjoins_adjacent_pair_equality: Boolean
+    adjacent_pairs_and_unary_operand_compile_time_gated: Boolean
+    variadic_evaluation_left_to_right_short_circuit: Boolean
     scalar_operands_compare_via_operator_equals: Boolean
     scalar_fallthrough_domain_is_closed_value_domain: Boolean
     standard_range_types_rejected_as_interop_surface: Boolean
@@ -46,6 +55,26 @@ entity EqualFunction {
 
     invariant SupportedDomainScope {
         this.supported_domain_scope = true
+    }
+
+    invariant ThreeClojureEqualArities {
+        this.three_clojure_equal_arities = true
+    }
+
+    invariant UnaryFormAdmitsSingleSupportedDomainOperand {
+        this.unary_form_admits_single_supported_domain_operand = true
+    }
+
+    invariant VariadicFormConjoinsAdjacentPairEquality {
+        this.variadic_form_conjoins_adjacent_pair_equality = true
+    }
+
+    invariant AdjacentPairsAndUnaryOperandCompileTimeGated {
+        this.adjacent_pairs_and_unary_operand_compile_time_gated = true
+    }
+
+    invariant VariadicEvaluationLeftToRightShortCircuit {
+        this.variadic_evaluation_left_to_right_short_circuit = true
     }
 
     invariant ScalarOperandsCompareViaOperatorEquals {

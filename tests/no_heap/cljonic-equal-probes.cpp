@@ -8,6 +8,9 @@ namespace cljonic::no_heap::probes {
     // General value equality (REQ-FN-002G): sequential prefix comparison over
     // the supported domain, all constexpr-capable, non-allocating, noexcept.
     constexpr auto scalar_ok = equal(1, 1) && !equal(1, 2);
+    constexpr auto arity_ok = equal(1) && equal(1, 1, 1) && !equal(1, 2, 1) && !equal(1, 1, 2) &&
+                              equal(Vector<int, 4>{1, 2, 3}, Range<int>{1, 4, 1}, Queue<int, 4>{1, 2, 3}) &&
+                              !equal(Vector<int, 4>{1, 2, 3}, Vector<int, 4>{1, 2, 3}, Vector<int, 4>{1, 2, 4});
     constexpr auto sequential_ok =
         equal(Vector<int, 4>{1, 2, 3}, Range<int>{1, 4, 1}) && equal(Vector<int, 4>{1, 2, 3}, Queue<int, 4>{1, 2, 3}) &&
         equal(Vector<int, 4>{1, 1, 1}, Repeat<int>{1, 3U}) &&
@@ -36,9 +39,10 @@ namespace cljonic::no_heap::probes {
         !equal(Vector<int, 4>{first, second}, Range<int>{first, 3, 1}) &&
         equal(Map<int, int, 4>{MapEntry<int, int>{first, 10}}, Map<int, int, 8>{MapEntry<int, int>{first, 10}}) &&
         equal(Set<int, 4>{first, second}, Set<int, 8>{second, first}) && equal(String<8>{"abc"}, String<16>{"abc"}) &&
-        equal(Repeat<int>{first}, Repeat<int>{first});
+        equal(Repeat<int>{first}, Repeat<int>{first}) && equal(first) && equal(first, first, first) &&
+        !equal(first, second, first) && !equal(first, first, second);
 
-    return scalar_ok && sequential_ok && map_ok && set_ok && string_ok && nested_ok && runtime_ok;
+    return scalar_ok && arity_ok && sequential_ok && map_ok && set_ok && string_ok && nested_ok && runtime_ok;
 }
 
 } // namespace cljonic::no_heap::probes

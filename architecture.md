@@ -300,6 +300,11 @@
     ∧ trace_to(REQ-FN-014B ∧ REQ-CAP-010 ∧ REQ-SEQ-016)
 
 λ S2_general_equality_function(x). equal(lhs, rhs) ≡ named_general_value_equality(x)
+  | equal_arity(x) ≡ three_clojure_arities(unary ∨ binary ∨ variadic)
+    ∧ unary_form(x) → admit(single_supported_domain_operand(x)) ∧ return(true)
+    ∧ variadic_form(x) → conjoin(adjacent_pair_equality(x)) ∧ evaluate_left_to_right(x)
+      ∧ short_circuit_on_first_unequal_pair(x)
+    ∧ ∀adjacent_pair(x) ∧ ∀unary_operand(x) → satisfy(compile_time_domain_gating(x))
   | equal(x) → distinct_from(operator== (x)) ∧ scoped_to(supported_stable_equality_domain(x))
   | non_cljonic_scalar_operands(x) → compare_via(operator== (x))
     ∧ fallthrough_domain(x) ≡ closed_value_domain(

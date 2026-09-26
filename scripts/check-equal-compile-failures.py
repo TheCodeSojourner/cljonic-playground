@@ -9,6 +9,9 @@ Covers the EqualFunction spec invariants:
 - StandardRangeTypesRejectedAsInteropSurface
 - SequentialElementsRequireIdenticalElementTypes
 - NoCrossTypeNumericUnification (pinned NumericEquality rule)
+- UnaryFormAdmitsSingleSupportedDomainOperand
+- AdjacentPairsAndUnaryOperandCompileTimeGated
+- VariadicFormConjoinsAdjacentPairEquality
 """
 
 from __future__ import annotations
@@ -55,6 +58,25 @@ FAILURE_CASES = {
     # Callables are outside the stable-equality domain.
     "Equal-callable-bearing-producer": ("(void)cljonic::equal(cljonic::Iterate<int, int (*)(int)>{}, "
                                         "cljonic::Iterate<int, int (*)(int)>{});"),
+    # Unary arity: only domain-admitted operands, float and interop rejected.
+    "Equal-unary-float": "(void)cljonic::equal(1.0);",
+    "Equal-unary-std-vector": "(void)cljonic::equal(std::vector<int>{});",
+    "Equal-unary-std-string": "(void)cljonic::equal(std::string{});",
+    "Equal-unary-float-collection": "(void)cljonic::equal(cljonic::Vector<double, 2>{});",
+    "Equal-unary-float-map": "(void)cljonic::equal(cljonic::Map<int, double, 2>{});",
+    # Variadic arity: every adjacent pair must be individually admissible.
+    "Equal-variadic-mixed-scalar-collection": ("(void)cljonic::equal(1, cljonic::Vector<int, 2>{1}, 2);"),
+    "Equal-variadic-cross-family-position": ("(void)cljonic::equal(1, 2, cljonic::Vector<int, 2>{});"),
+    "Equal-variadic-cross-family-tail": ("(void)cljonic::equal(cljonic::Vector<int, 2>{1}, "
+                                         "cljonic::Vector<int, 2>{1}, cljonic::Set<int, 2>{});"),
+    "Equal-variadic-float-adjacent": "(void)cljonic::equal(1, 1.0, 1);",
+    "Equal-variadic-element-cross-type": ("(void)cljonic::equal(cljonic::Vector<int, 2>{1}, "
+                                          "cljonic::Range<long>{1, 3, 1}, cljonic::Vector<int, 2>{1});"),
+    "Equal-variadic-std-range-tail": ("(void)cljonic::equal(1, 1, std::vector<int>{1});"),
+    "Equal-variadic-mixed-family-chain": ("(void)cljonic::equal(cljonic::Map<int, int, 4>"
+                                          "{cljonic::MapEntry<int, int>{1, 10}}, "
+                                          "cljonic::Map<int, int, 4>{cljonic::MapEntry<int, int>{1, 10}}, "
+                                          "cljonic::Set<int, 4>{1, 2}, cljonic::Set<int, 8>{2, 1});"),
 }
 
 PASS_CASES = {
@@ -84,6 +106,17 @@ PASS_CASES = {
                                                  "{cljonic::Repeat<int>{7, 3U}}, "
                                                  "cljonic::Vector<cljonic::Repeat<int>, 2>"
                                                  "{cljonic::Repeat<int>{7, 3U}});"),
+    "Equal-unary-scalar": "(void)cljonic::equal(1);",
+    "Equal-unary-collection": "(void)cljonic::equal(cljonic::Vector<int, 2>{});",
+    "Equal-unary-producer": "(void)cljonic::equal(cljonic::Repeat<int>{7});",
+    "Equal-variadic-scalar": "(void)cljonic::equal(1, 1, 1, 1);",
+    "Equal-variadic-sequential": ("(void)cljonic::equal(cljonic::Vector<int, 4>{1, 2, 3}, "
+                                 "cljonic::Range<int>{1, 4, 1}, cljonic::Queue<int, 4>{1, 2, 3});"),
+    "Equal-variadic-associative": ("(void)cljonic::equal("
+                                  "cljonic::Map<int, int, 4>{cljonic::MapEntry<int, int>{1, 10}}, "
+                                  "cljonic::Map<int, int, 8>{cljonic::MapEntry<int, int>{1, 10}}, "
+                                  "cljonic::Map<int, int, 4>{cljonic::MapEntry<int, int>{1, 10}});"),
+
 }
 
 # Injected before main(): an aggregate-like struct with stable equality.
