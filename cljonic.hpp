@@ -79,8 +79,7 @@
  *
  * ## Collection Types
  *
- * - \ref Map "Map"
- * - \ref MapEntry "MapEntry"
+ * - \ref Map "Map", \ref MapEntry "MapEntry"
  * - \ref Queue "Queue"
  * - \ref Set "Set"
  * - \ref String "String"
@@ -158,8 +157,8 @@
  * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy"
  * - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth",
  * \ref Core_Nth_M "Nth_M"
- * - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll", \ref Core_PartitionBy "PartitionBy",
- * \ref Peek "peek", \ref Pop "pop"
+ * - \ref ParametersEqual "parameters_equal", \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
+ * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Pop "pop"
  * - \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace
  * "Replace", \ref Core_Reverse "Reverse"
  * - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort", \ref
@@ -218,6 +217,7 @@
 #include <span>
 #include <type_traits>
 #include <utility>
+#include <variant>
 
 namespace cljonic {
 
@@ -300,6 +300,43 @@ inline constexpr bool is_cljonic_producer_v = producer_traits<std::remove_cvref_
 template <typename T>
 inline constexpr producer_kind producer_kind_of_v = producer_traits<std::remove_cvref_t<T>>::kind;
 
+// Recursive component analysis for composite values in the closed cljonic
+// value domain (REQ-CAP-010). `contains_floating_point_v<T>` reports whether a
+// floating-point type occurs as T itself or inside any stored component of a
+// supported composite (std::variant alternatives, cljonic collections, and
+// MapEntry). `contains_callable_v<T>` reports whether a callable type occurs as
+// a component of a composite (including function pointers); callables never
+// admit stable value equality.
+template <typename T>
+struct contains_floating_point : std::bool_constant<std::floating_point<std::remove_cvref_t<T>>> {};
+
+template <typename T>
+inline constexpr bool contains_floating_point_v = contains_floating_point<std::remove_cvref_t<T>>::value;
+
+template <typename T>
+struct contains_callable : std::false_type {};
+
+template <typename T>
+inline constexpr bool contains_callable_v = contains_callable<std::remove_cvref_t<T>>::value;
+
+// A function pointer is callable even though it happens to define operator==;
+// the callable-component rejection rule treats it as a callable for composite
+// admission (REQ-CAP-010) so address-as-key semantics are never exposed.
+template <typename Return, typename... Args>
+struct contains_callable<Return (*)(Args...)> : std::true_type {};
+
+template <typename Return, typename... Args>
+struct contains_callable<Return (*)(Args...) noexcept> : std::true_type {};
+
+// std::variant: recurse into every alternative.
+template <typename... Alternatives>
+struct contains_floating_point<std::variant<Alternatives...>>
+    : std::bool_constant<(contains_floating_point_v<Alternatives> || ...)> {};
+
+template <typename... Alternatives>
+struct contains_callable<std::variant<Alternatives...>>
+    : std::bool_constant<(contains_callable_v<Alternatives> || ...)> {};
+
 } // namespace concepts_detail
 
 namespace concepts {
@@ -333,9 +370,12 @@ concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg
 
 /** Requires stable value equality comparison, explicitly rejecting
  *  floating-point types to prevent NaN/precision instabilities in map keys
- *  and set elements. */
+ *  and set elements. For composite values this is recursive: every stored
+ *  component must admit stable equality, callable components are always
+ *  rejected, and the composite's own equality must be valid. */
 template <typename T>
-concept StableEqualityComparable = std::equality_comparable<T> && !std::floating_point<std::remove_cvref_t<T>>;
+concept StableEqualityComparable = std::equality_comparable<T> && !concepts_detail::contains_floating_point_v<T> &&
+                                   !concepts_detail::contains_callable_v<T>;
 
 /** Requires a strict total ordering layered on stable equality. */
 template <typename T>
@@ -1040,6 +1080,20 @@ class Vector {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const Vector& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<ElementType>
+    {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (!(storage_[i] == other.storage_[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
         return storage_.data();
     }
@@ -1095,6 +1149,13 @@ struct collection_traits<Vector<ElementType, CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::vector;
 };
+
+template <typename ElementType, std::size_t CapacityValue>
+struct contains_floating_point<Vector<ElementType, CapacityValue>>
+    : std::bool_constant<contains_floating_point_v<ElementType>> {};
+
+template <typename ElementType, std::size_t CapacityValue>
+struct contains_callable<Vector<ElementType, CapacityValue>> : std::bool_constant<contains_callable_v<ElementType>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-vector.hpp
@@ -1212,6 +1273,8 @@ class Cycle {
         bool restart_{false};
     };
 
+    constexpr Cycle() noexcept = default;
+
     constexpr explicit Cycle(Source source) noexcept : source_(std::move(source)) {
     }
 
@@ -1238,6 +1301,18 @@ class Cycle {
         return const_iterator{};
     }
 
+    /** Producer parameter equality (REQ-FN-014B): compares only the stored
+     *  owned source, count, and finite-form parameters, never the produced
+     *  sequence. The owned source compares by its own stable equality, so
+     *  `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 3})` is true while
+     *  `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 4})` is false. O(1), no
+     *  traversal, no allocation. */
+    [[nodiscard]] friend constexpr auto operator==(const Cycle& lhs, const Cycle& rhs) noexcept -> bool
+        requires concepts::StableEqualityComparable<Source>
+    {
+        return lhs.source_ == rhs.source_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_;
+    }
+
   private:
     [[nodiscard]] constexpr auto source_finiteness() const noexcept -> bool {
         if constexpr (concepts::CljonicProducer<Source>) {
@@ -1257,6 +1332,13 @@ template <concepts::CljonicSource Source>
     return Cycle<Source>{std::move(source)};
 }
 
+template <concepts::CljonicSource Source>
+    requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>> &&
+             concepts::StableEqualityComparable<Source>
+[[nodiscard]] constexpr auto parameters_equal(const Cycle<Source>& lhs, const Cycle<Source>& rhs) noexcept -> bool {
+    return lhs == rhs;
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -1266,6 +1348,12 @@ struct producer_traits<Cycle<Source>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::cycle;
 };
+
+template <concepts::CljonicSource Source>
+struct contains_floating_point<Cycle<Source>> : std::bool_constant<contains_floating_point_v<Source>> {};
+
+template <concepts::CljonicSource Source>
+struct contains_callable<Cycle<Source>> : std::bool_constant<contains_callable_v<Source>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-cycle.hpp
@@ -1628,6 +1716,14 @@ class Iterate {
         std::size_t remaining_{0U};
     };
 
+    // The default form requires a default-constructed step. Constraining the
+    // constructor keeps a non-default-constructible Step from satisfying
+    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
+    constexpr Iterate() noexcept
+        requires std::default_initializable<Step>
+        : initial_{}, step_{} {
+    }
+
     constexpr Iterate(T initial, Step step) noexcept : initial_(std::move(initial)), step_(std::move(step)) {
     }
 
@@ -1670,6 +1766,17 @@ struct producer_traits<Iterate<T, Step>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::iterate;
 };
+
+// The stored step is a callable component, so Iterate never admits producer
+// parameter equality and is never usable as a map key or set
+// element (REQ-CAP-010, REQ-FN-014B).
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_callable<Iterate<T, Step>> : std::true_type {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_floating_point<Iterate<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-iterate.hpp
@@ -1721,12 +1828,29 @@ struct MapEntry {
     KeyType key{};
     ValueType value{};
 
-    [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool {
+    [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<KeyType> && concepts::StableEqualityComparable<ValueType>
+    {
         return key == other.key && value == other.value;
     }
 };
 
 } // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+// MapEntry inherits the recursive component analysis of the closed cljonic
+// value domain: it admits stable equality only when both its key and value
+// components admit stable equality (REQ-CAP-010).
+template <typename KeyType, typename ValueType>
+struct contains_floating_point<cljonic::MapEntry<KeyType, ValueType>>
+    : std::bool_constant<contains_floating_point_v<KeyType> || contains_floating_point_v<ValueType>> {};
+
+template <typename KeyType, typename ValueType>
+struct contains_callable<cljonic::MapEntry<KeyType, ValueType>>
+    : std::bool_constant<contains_callable_v<KeyType> || contains_callable_v<ValueType>> {};
+
+} // namespace cljonic::concepts_detail
 // End cljonic-map-entry.hpp
 
 namespace cljonic {
@@ -1878,6 +2002,20 @@ class Map {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const Map& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<KeyType> && concepts::StableEqualityComparable<ValueType>
+    {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (!matches_entry(other, i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto contains(const KeyType& key) const noexcept -> bool {
         return find_index(key) < logical_size_;
     }
@@ -1938,6 +2076,14 @@ class Map {
         return logical_size_;
     }
 
+    [[nodiscard]] constexpr auto matches_entry(const Map& other, std::size_t index) const noexcept -> bool {
+        const auto idx = other.find_index(entries_[index].key);
+        if (idx >= other.logical_size_) {
+            return false;
+        }
+        return entries_[index].value == other.entries_[idx].value;
+    }
+
     [[nodiscard]] constexpr auto assoc_entry(const value_type& entry) const noexcept -> Map {
         return assoc(entry.key, entry.value);
     }
@@ -1966,6 +2112,14 @@ struct collection_traits<Map<KeyType, ValueType, CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::map;
 };
+
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct contains_floating_point<Map<KeyType, ValueType, CapacityValue>>
+    : std::bool_constant<contains_floating_point_v<KeyType> || contains_floating_point_v<ValueType>> {};
+
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct contains_callable<Map<KeyType, ValueType, CapacityValue>>
+    : std::bool_constant<contains_callable_v<KeyType> || contains_callable_v<ValueType>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-map.hpp
@@ -2220,6 +2374,22 @@ class Queue {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const Queue& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<T>
+    {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            const auto lhs_index = (head_ + i) % CapacityValue;
+            const auto rhs_index = (other.head_ + i) % CapacityValue;
+            if (!(elements_[lhs_index] == other.elements_[rhs_index])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
         return {this, 0U};
     }
@@ -2288,6 +2458,12 @@ struct collection_traits<Queue<T, CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::queue;
 };
+
+template <typename T, std::size_t CapacityValue>
+struct contains_floating_point<Queue<T, CapacityValue>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <typename T, std::size_t CapacityValue>
+struct contains_callable<Queue<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-queue.hpp
@@ -2437,6 +2613,16 @@ class Range {
         return const_iterator{T{}, 0U, T{}};
     }
 
+    /** Producer parameter equality (REQ-FN-014B): compares only the stored
+     *  start/end/step parameters, never the produced sequence. Two Range
+     *  values with different parameters compare unequal even when their
+     *  produced or observed sequences coincide (for example two zero-step
+     *  ranges with different endpoints both produce an infinite repetition of
+     *  their respective start values). O(1), no traversal, no allocation. */
+    [[nodiscard]] friend constexpr auto operator==(const Range& lhs, const Range& rhs) noexcept -> bool {
+        return lhs.start_ == rhs.start_ && lhs.end_ == rhs.end_ && lhs.step_ == rhs.step_;
+    }
+
   private:
     using ExtentType = std::make_unsigned_t<T>;
 
@@ -2485,6 +2671,65 @@ class Range {
     T step_;
 };
 
+/** \anchor ParametersEqual
+ * \b ParametersEqual compares the stored parameters of two producer values and reports whether they are exactly equal.
+ * It is the explicitly named structural-comparison operation for producers (REQ-FN-014B): it has semantics identical
+ * to each producer's `operator==`, compares only bounded stored parameters, never traverses or materializes a produced
+ * sequence, and does not imply that producers with equal parameters produce equal materialized sequences.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Compile-time checks: producer parameter equality is exact.
+   constexpr auto r1 = Range{1, 5, 2};
+   constexpr auto r2 = Range{1, 5, 2};
+   constexpr auto r3 = Range{1, 5, 3};
+   static_assert(r1 == r2);
+   static_assert(!(r1 == r3));
+   static_assert(parameters_equal(r1, r2));
+   static_assert(!parameters_equal(r1, r3));
+
+   // Distinct parameters compare unequal even when sequences coincide:
+   // both produce an infinite sequence of zeros, but the stored endpoints
+   // differ, so the producers are distinct keys.
+   constexpr auto infinite_zeros_a = Range{0, 5, 0};
+   constexpr auto infinite_zeros_b = Range{0, 7, 0};
+   static_assert(!parameters_equal(infinite_zeros_a, infinite_zeros_b));
+
+   // Repeat and Cycle also provide parameter equality.
+   constexpr auto p1 = Repeat{7, 3U};
+   constexpr auto p2 = Repeat{7, 3U};
+   constexpr auto p3 = Repeat{7};
+   static_assert(p1 == p2);
+   static_assert(!(p1 == p3));
+   static_assert(parameters_equal(p1, p2));
+
+   constexpr auto c1 = cycle(Vector<int, 3>{1, 2, 3});
+   constexpr auto c2 = cycle(Vector<int, 3>{1, 2, 3});
+   constexpr auto c3 = cycle(Vector<int, 3>{1, 2, 4});
+   static_assert(c1 == c2);
+   static_assert(!(c1 == c3));
+   static_assert(parameters_equal(c1, c2));
+
+   // Runtime demonstration.
+   auto runtime_a = Range{2, 9, 2};
+   auto runtime_b = Range{2, 9, 2};
+   auto runtime_c = Range{2, 9, 3};
+   return runtime_a == runtime_b && runtime_a != runtime_c &&
+                  parameters_equal(runtime_a, runtime_b) &&
+                  !parameters_equal(runtime_a, runtime_c)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <std::signed_integral T>
+[[nodiscard]] constexpr auto parameters_equal(const Range<T>& lhs, const Range<T>& rhs) noexcept -> bool {
+    return lhs == rhs;
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -2494,6 +2739,12 @@ struct producer_traits<Range<T>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::range;
 };
+
+template <typename T>
+struct contains_floating_point<Range<T>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <typename T>
+struct contains_callable<Range<T>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-range.hpp
@@ -2597,6 +2848,9 @@ class Repeat {
         std::size_t remaining_{0U};
     };
 
+    constexpr Repeat() noexcept : value_{}, count_{0U}, is_finite_{true} {
+    }
+
     constexpr explicit Repeat(T value) noexcept : value_(std::move(value)), count_(0U), is_finite_(false) {
     }
 
@@ -2619,11 +2873,29 @@ class Repeat {
         return const_iterator{&value_, 0U};
     }
 
+    /** Producer parameter equality (REQ-FN-014B): compares only the stored
+     *  value, count, and finite-form parameters, never the produced sequence.
+     *  The unbounded `repeat(value)` form is distinct from the finite `repeat
+     *  (value, count)` forms even when their produced prefixes coincide, and a
+     *  counted form with count zero is distinct from the unbounded form.
+     *  O(1), no traversal, no allocation. */
+    [[nodiscard]] friend constexpr auto operator==(const Repeat& lhs, const Repeat& rhs) noexcept -> bool
+        requires concepts::StableEqualityComparable<T>
+    {
+        return lhs.value_ == rhs.value_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_;
+    }
+
   private:
     T value_;
     std::size_t count_;
     bool is_finite_;
 };
+
+template <concepts::NothrowCollectionElement T>
+    requires concepts::StableEqualityComparable<T>
+[[nodiscard]] constexpr auto parameters_equal(const Repeat<T>& lhs, const Repeat<T>& rhs) noexcept -> bool {
+    return lhs == rhs;
+}
 
 template <typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
@@ -2646,6 +2918,12 @@ struct producer_traits<Repeat<T>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::repeat;
 };
+
+template <concepts::NothrowCollectionElement T>
+struct contains_floating_point<Repeat<T>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <concepts::NothrowCollectionElement T>
+struct contains_callable<Repeat<T>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-repeat.hpp
@@ -2756,6 +3034,14 @@ class Repeatedly {
         T current_{};
     };
 
+    // The default form requires a default-constructed step. Constraining the
+    // constructor keeps a non-default-constructible Step from satisfying
+    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
+    constexpr Repeatedly() noexcept
+        requires std::default_initializable<Step>
+        : step_{}, count_{0U}, is_finite_{true} {
+    }
+
     constexpr explicit Repeatedly(Step step) noexcept : step_(std::move(step)), count_(0U), is_finite_(false) {
     }
 
@@ -2807,6 +3093,17 @@ struct producer_traits<Repeatedly<T, Step>> {
     static constexpr bool is_cljonic_producer = true;
     static constexpr producer_kind kind = producer_kind::repeatedly;
 };
+
+// The stored step is a callable component, so Repeatedly never admits producer
+// parameter equality and is never usable as a map key or set
+// element (REQ-CAP-010, REQ-FN-014B).
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct contains_callable<Repeatedly<T, Step>> : std::true_type {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct contains_floating_point<Repeatedly<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-repeatedly.hpp
@@ -2961,6 +3258,20 @@ class Set {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const Set& other) const noexcept -> bool
+        requires concepts::StableEqualityComparable<T>
+    {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (other.find_index(elements_[i]) >= other.logical_size_) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
         return elements_.data();
     }
@@ -3063,6 +3374,12 @@ struct collection_traits<Set<T, CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::set;
 };
+
+template <typename T, std::size_t CapacityValue>
+struct contains_floating_point<Set<T, CapacityValue>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <typename T, std::size_t CapacityValue>
+struct contains_callable<Set<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 
@@ -3223,6 +3540,18 @@ class String {
         return logical_size_ == 0U;
     }
 
+    [[nodiscard]] constexpr auto operator==(const String& other) const noexcept -> bool {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (data_[i] != other.data_[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
         return data_.data();
     }
@@ -3330,6 +3659,12 @@ struct collection_traits<String<CapacityValue>> {
     static constexpr bool is_cljonic_collection = true;
     static constexpr collection_kind kind = collection_kind::string;
 };
+
+template <std::size_t CapacityValue>
+struct contains_floating_point<String<CapacityValue>> : std::false_type {};
+
+template <std::size_t CapacityValue>
+struct contains_callable<String<CapacityValue>> : std::false_type {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-string.hpp

@@ -43,12 +43,12 @@ std::equality_comparable<T>
 
 ## Three equality surfaces, one rule shape
 
-| Surface | operator== semantics | Named operation | Constraint |
-|---|---|---|---|
-| Vector/String/Queue | order-sensitive (count + logical order) | — (planned `equal` family deferred) | stable element equality |
-| Map/Set | order-insensitive (count + matching entries) | — | stable key/value equality |
-| Range/Repeat/Cycle | producer parameter equality (stored parameters only) | `parameters_equal` | stable parameter equality |
-| Iterate/Repeatedly | none | none | callable step → excluded at type boundary |
+| Surface             | operator== semantics                                 | Named operation                     | Constraint                                |
+| ------------------- | ---------------------------------------------------- | ----------------------------------- | ----------------------------------------- |
+| Vector/String/Queue | order-sensitive (count + logical order)              | — (planned `equal` family deferred) | stable element equality                   |
+| Map/Set             | order-insensitive (count + matching entries)         | —                                   | stable key/value equality                 |
+| Range/Repeat/Cycle  | producer parameter equality (stored parameters only) | `parameters_equal`                  | stable parameter equality                 |
+| Iterate/Repeatedly  | none                                                 | none                                | callable step → excluded at type boundary |
 
 Producer parameter equality (REQ-FN-014B) is normative for every producer whose
 stored parameters all admit stable equality: provide both `==` and
@@ -71,6 +71,12 @@ compare equal. No cross-type numeric unification (`variant<int,long>{1}` is not
 `variant<int,long>{1L}`), no hash-based equality. The composite key/element
 domain includes scalars, scoped enums, collections, and producers with stable
 parameters, all subject to recursive component analysis.
+
+**This decision is final (human decision, 2026-09-25):** alternative-strict is
+the only supported variant equality semantics. Cross-type numeric unification
+is permanently out of scope — there is no deferred "Stream D" and no reopen
+path; changing this would require a fresh spec-tend with full downstream
+propagation.
 
 ## Known limitations (do not rediscover these)
 
