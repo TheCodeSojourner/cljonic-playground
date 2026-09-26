@@ -20,10 +20,13 @@ entity Repeat {
     const_traversal_terminates_at_count: Boolean
     uncounted_form_materializes_at_most_destination_capacity: Boolean
     uncounted_form_does_not_fit_into_destination: Boolean
-    unbounded_repeat_does_not_satisfy_stable_equality: Boolean
-    unbounded_equality_fails_at_compile_time: Boolean
+    operator_equals_uses_producer_parameter_equality: Boolean
+    equality_compares_value_count_and_form: Boolean
+    provides_named_parameters_equal_operation: Boolean
+    satisfies_nothrow_stable_equality_comparable: Boolean
     does_not_satisfy_indexed_producer: Boolean
     satisfies_sequenceable_producer: Boolean
+    satisfies_nothrow_collection_element: Boolean
     does_not_expose_callable_operator: Boolean
     get_contains_and_lookup_are_excluded: Boolean
 
@@ -103,12 +106,20 @@ entity Repeat {
         this.uncounted_form_does_not_fit_into_destination = true
     }
 
-    invariant UnboundedRepeatDoesNotSatisfyStableEquality {
-        this.unbounded_repeat_does_not_satisfy_stable_equality = true
+    invariant OperatorEqualsUsesProducerParameterEquality {
+        this.operator_equals_uses_producer_parameter_equality = true
     }
 
-    invariant UnboundedEqualityFailsAtCompileTime {
-        this.unbounded_equality_fails_at_compile_time = true
+    invariant EqualityComparesValueCountAndForm {
+        this.equality_compares_value_count_and_form = true
+    }
+
+    invariant ProvidesNamedParametersEqualOperation {
+        this.provides_named_parameters_equal_operation = true
+    }
+
+    invariant SatisfiesNothrowStableEqualityComparable {
+        this.satisfies_nothrow_stable_equality_comparable = true
     }
 
     invariant DoesNotSatisfyIndexedProducer {
@@ -125,6 +136,14 @@ entity Repeat {
 
     invariant GetContainsAndLookupAreExcluded {
         this.get_contains_and_lookup_are_excluded = true
+    }
+
+    invariant SatisfiesNothrowCollectionElement {
+        this.satisfies_nothrow_collection_element = true
+    }
+
+    invariant DefaultFormIsValid {
+        this.default_constructed_form_is_valid_and_deterministic = true
     }
 }
 

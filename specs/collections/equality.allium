@@ -1,0 +1,131 @@
+-- allium: 3
+
+entity CollectionEquality {
+    order_sensitive_for_vector_string_queue: Boolean
+    order_insensitive_for_map_set: Boolean
+    requires_stable_equality_components: Boolean
+    recursion_into_nested_values: Boolean
+    bounded_traversal_only: Boolean
+    constexpr_noexcept_nonmutating_nonallocating: Boolean
+    no_implicit_sequence_equality_for_producers: Boolean
+    producer_components_use_producer_parameter_equality: Boolean
+    no_cross_type_numeric_unification: Boolean
+
+    invariant OrderSensitiveForVectorStringQueue {
+        this.order_sensitive_for_vector_string_queue = true
+    }
+
+    invariant OrderInsensitiveForMapSet {
+        this.order_insensitive_for_map_set = true
+    }
+
+    invariant RequiresStableEqualityComponents {
+        this.requires_stable_equality_components = true
+    }
+
+    invariant RecursionIntoNestedValues {
+        this.recursion_into_nested_values = true
+    }
+
+    invariant BoundedTraversalOnly {
+        this.bounded_traversal_only = true
+    }
+
+    invariant ConstexprNoexceptNonmutatingNonallocating {
+        this.constexpr_noexcept_nonmutating_nonallocating = true
+    }
+
+    invariant NoImplicitSequenceEqualityForProducers {
+        this.no_implicit_sequence_equality_for_producers = true
+    }
+
+    invariant ProducerComponentsUseProducerParameterEquality {
+        this.producer_components_use_producer_parameter_equality = true
+    }
+
+    invariant NoCrossTypeNumericUnification {
+        this.no_cross_type_numeric_unification = true
+    }
+}
+
+entity VectorEquality {
+    order_sensitive: Boolean
+    compares_count_and_elements_in_logical_order: Boolean
+
+    invariant OrderSensitive {
+        this.order_sensitive = true
+    }
+
+    invariant ComparesCountAndElementsInLogicalOrder {
+        this.compares_count_and_elements_in_logical_order = true
+    }
+}
+
+entity StringEquality {
+    order_sensitive: Boolean
+    compares_count_and_content_in_logical_order: Boolean
+
+    invariant OrderSensitive {
+        this.order_sensitive = true
+    }
+
+    invariant ComparesCountAndContentInLogicalOrder {
+        this.compares_count_and_content_in_logical_order = true
+    }
+}
+
+entity QueueEquality {
+    order_sensitive: Boolean
+    compares_count_and_elements_in_fifo_order: Boolean
+
+    invariant OrderSensitive {
+        this.order_sensitive = true
+    }
+
+    invariant ComparesCountAndElementsInFifoOrder {
+        this.compares_count_and_elements_in_fifo_order = true
+    }
+}
+
+entity MapEquality {
+    order_insensitive: Boolean
+    compares_count_and_key_value_matching_without_order: Boolean
+    uses_stable_key_and_value_equality: Boolean
+
+    invariant OrderInsensitive {
+        this.order_insensitive = true
+    }
+
+    invariant ComparesCountAndKeyValueMatchingWithoutOrder {
+        this.compares_count_and_key_value_matching_without_order = true
+    }
+
+    invariant UsesStableKeyAndValueEquality {
+        this.uses_stable_key_and_value_equality = true
+    }
+}
+
+entity SetEquality {
+    order_insensitive: Boolean
+    compares_count_and_element_matching_without_order: Boolean
+    uses_stable_element_equality: Boolean
+
+    invariant OrderInsensitive {
+        this.order_insensitive = true
+    }
+
+    invariant ComparesCountAndElementMatchingWithoutOrder {
+        this.compares_count_and_element_matching_without_order = true
+    }
+
+    invariant UsesStableElementEquality {
+        this.uses_stable_element_equality = true
+    }
+}
+
+actor CollectionEqualityOperator { identified_by: CollectionEquality }
+actor VectorEqualityOperator { identified_by: VectorEquality }
+actor StringEqualityOperator { identified_by: StringEquality }
+actor QueueEqualityOperator { identified_by: QueueEquality }
+actor MapEqualityOperator { identified_by: MapEquality }
+actor SetEqualityOperator { identified_by: SetEquality }

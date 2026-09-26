@@ -233,6 +233,9 @@ entity AssociativeCollection {
 entity StableEqualityComparable {
     requires_bool_equality: Boolean
     rejects_floating_point: Boolean
+    recurses_over_components: Boolean
+    recurses_into_producer_parameters: Boolean
+    rejects_callable_components: Boolean
 
     invariant RequiresBoolEquality {
         this.requires_bool_equality = true
@@ -240,6 +243,36 @@ entity StableEqualityComparable {
 
     invariant RejectsFloatingPoint {
         this.rejects_floating_point = true
+    }
+
+    invariant RecursesOverComponents {
+        this.recurses_over_components = true
+    }
+
+    invariant RecursesIntoProducerParameters {
+        this.recurses_into_producer_parameters = true
+    }
+
+    invariant RejectsCallableComponents {
+        this.rejects_callable_components = true
+    }
+}
+
+entity AlternativeStrictEquality {
+    requires_same_alternative: Boolean
+    rejects_cross_alternative_equality: Boolean
+    rejects_cross_type_numeric_unification: Boolean
+
+    invariant RequiresSameAlternative {
+        this.requires_same_alternative = true
+    }
+
+    invariant RejectsCrossAlternativeEquality {
+        this.rejects_cross_alternative_equality = true
+    }
+
+    invariant RejectsCrossTypeNumericUnification {
+        this.rejects_cross_type_numeric_unification = true
     }
 }
 
@@ -298,6 +331,7 @@ actor IndexedCollectionOperator { identified_by: IndexedCollection }
 actor LookupCollectionOperator { identified_by: LookupCollection }
 actor AssociativeCollectionOperator { identified_by: AssociativeCollection }
 actor StableEqualityComparableOperator { identified_by: StableEqualityComparable }
+actor AlternativeStrictEqualityOperator { identified_by: AlternativeStrictEquality }
 actor TotallyOrderedOperator { identified_by: TotallyOrdered }
 actor NothrowStableEqualityComparableOperator { identified_by: NothrowStableEqualityComparable }
 actor ConceptMemberNamingOperator { identified_by: ConceptMemberNaming }

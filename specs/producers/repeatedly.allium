@@ -29,10 +29,11 @@ entity Repeatedly {
     uncounted_form_does_not_fit_into_destination: Boolean
     callback_invoked_once_per_produced_element: Boolean
     construction_does_not_invoke_step: Boolean
-    unbounded_repeatedly_does_not_satisfy_stable_equality: Boolean
+    callable_step_excludes_parameter_equality: Boolean
     unbounded_equality_fails_at_compile_time: Boolean
     does_not_satisfy_indexed_producer: Boolean
     satisfies_sequenceable_producer: Boolean
+    satisfies_nothrow_collection_element: Boolean
     does_not_expose_callable_operator: Boolean
     get_contains_and_lookup_are_excluded: Boolean
 
@@ -148,8 +149,8 @@ entity Repeatedly {
         this.construction_does_not_invoke_step = true
     }
 
-    invariant UnboundedRepeatedlyDoesNotSatisfyStableEquality {
-        this.unbounded_repeatedly_does_not_satisfy_stable_equality = true
+    invariant CallableStepExcludesParameterEquality {
+        this.callable_step_excludes_parameter_equality = true
     }
 
     invariant UnboundedEqualityFailsAtCompileTime {
@@ -170,6 +171,14 @@ entity Repeatedly {
 
     invariant GetContainsAndLookupAreExcluded {
         this.get_contains_and_lookup_are_excluded = true
+    }
+
+    invariant SatisfiesNothrowCollectionElement {
+        this.satisfies_nothrow_collection_element = true
+    }
+
+    invariant DefaultFormIsValid {
+        this.default_constructed_form_is_valid_and_deterministic = true
     }
 }
 

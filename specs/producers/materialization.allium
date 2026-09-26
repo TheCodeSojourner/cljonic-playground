@@ -104,4 +104,87 @@ entity ProducerMaterialization {
 
 }
 
+entity ProducerStorageAdmission {
+    every_producer_is_nothrow_collection_element: Boolean
+    default_constructed_producer_is_valid_and_deterministic: Boolean
+    default_construction_does_not_evaluate_callbacks: Boolean
+    default_construction_does_not_allocate_or_throw: Boolean
+    non_default_constructible_components_reject_storage: Boolean
+
+    invariant EveryProducerIsNothrowCollectionElement {
+        this.every_producer_is_nothrow_collection_element = true
+    }
+
+    invariant DefaultConstructedProducerIsValidAndDeterministic {
+        this.default_constructed_producer_is_valid_and_deterministic = true
+    }
+
+    invariant DefaultConstructionDoesNotEvaluateCallbacks {
+        this.default_construction_does_not_evaluate_callbacks = true
+    }
+
+    invariant DefaultConstructionDoesNotAllocateOrThrow {
+        this.default_construction_does_not_allocate_or_throw = true
+    }
+
+    invariant NonDefaultConstructibleComponentsRejectStorage {
+        this.non_default_constructible_components_reject_storage = true
+    }
+}
+
+entity ProducerParameterEquality {
+    compares_bounded_stored_parameters_only: Boolean
+    operator_equals_uses_producer_parameter_equality: Boolean
+    provides_named_parameters_equal_operation: Boolean
+    is_o1_constexpr_noexcept_nonmutating_nonallocating: Boolean
+    never_traverses_produced_sequence: Boolean
+    does_not_imply_sequence_equality: Boolean
+    distinct_parameters_compare_unequal_even_when_sequences_coincide: Boolean
+    requires_all_stored_components_admit_stable_equality: Boolean
+    callable_components_exclude_parameter_equality: Boolean
+    producer_admitted_as_map_key_and_set_element: Boolean
+
+    invariant ComparesBoundedStoredParametersOnly {
+        this.compares_bounded_stored_parameters_only = true
+    }
+
+    invariant OperatorEqualsUsesProducerParameterEquality {
+        this.operator_equals_uses_producer_parameter_equality = true
+    }
+
+    invariant ProvidesNamedParametersEqualOperation {
+        this.provides_named_parameters_equal_operation = true
+    }
+
+    invariant IsO1ConstexprNoexceptNonmutatingNonallocating {
+        this.is_o1_constexpr_noexcept_nonmutating_nonallocating = true
+    }
+
+    invariant NeverTraversesProducedSequence {
+        this.never_traverses_produced_sequence = true
+    }
+
+    invariant DoesNotImplySequenceEquality {
+        this.does_not_imply_sequence_equality = true
+    }
+
+    invariant DistinctParametersCompareUnequalEvenWhenSequencesCoincide {
+        this.distinct_parameters_compare_unequal_even_when_sequences_coincide = true
+    }
+
+    invariant RequiresAllStoredComponentsAdmitStableEquality {
+        this.requires_all_stored_components_admit_stable_equality = true
+    }
+
+    invariant CallableComponentsExcludeParameterEquality {
+        this.callable_components_exclude_parameter_equality = true
+    }
+
+    invariant ProducerAdmittedAsMapKeyAndSetElement {
+        this.producer_admitted_as_map_key_and_set_element = true
+    }
+}
+
 actor ProducerMaterializationOperator { identified_by: ProducerMaterialization }
+actor ProducerStorageAdmissionOperator { identified_by: ProducerStorageAdmission }
+actor ProducerParameterEqualityOperator { identified_by: ProducerParameterEquality }

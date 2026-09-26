@@ -1,0 +1,61 @@
+-- allium: 3
+
+entity ParametersEqual {
+    named_structural_comparison_operation: Boolean
+    semantic_identity_with_producer_operator_equals: Boolean
+    compares_bounded_stored_parameters_only: Boolean
+    never_traverses_produced_sequence: Boolean
+    does_not_imply_sequence_equality: Boolean
+    distinct_parameters_compare_unequal_even_when_sequences_coincide: Boolean
+    is_o1_constexpr_noexcept_nonmutating_nonallocating: Boolean
+    requires_all_stored_components_admit_stable_equality: Boolean
+    callable_components_exclude_operation: Boolean
+    supports_range_repeat_and_cycle: Boolean
+    rejects_float_bearing_and_callable_components_at_compile_time: Boolean
+
+    invariant NamedStructuralComparisonOperation {
+        this.named_structural_comparison_operation = true
+    }
+
+    invariant SemanticIdentityWithProducerOperatorEquals {
+        this.semantic_identity_with_producer_operator_equals = true
+    }
+
+    invariant ComparesBoundedStoredParametersOnly {
+        this.compares_bounded_stored_parameters_only = true
+    }
+
+    invariant NeverTraversesProducedSequence {
+        this.never_traverses_produced_sequence = true
+    }
+
+    invariant DoesNotImplySequenceEquality {
+        this.does_not_imply_sequence_equality = true
+    }
+
+    invariant DistinctParametersCompareUnequalEvenWhenSequencesCoincide {
+        this.distinct_parameters_compare_unequal_even_when_sequences_coincide = true
+    }
+
+    invariant IsO1ConstexprNoexceptNonmutatingNonallocating {
+        this.is_o1_constexpr_noexcept_nonmutating_nonallocating = true
+    }
+
+    invariant RequiresAllStoredComponentsAdmitStableEquality {
+        this.requires_all_stored_components_admit_stable_equality = true
+    }
+
+    invariant CallableComponentsExcludeOperation {
+        this.callable_components_exclude_operation = true
+    }
+
+    invariant SupportsRangeRepeatAndCycle {
+        this.supports_range_repeat_and_cycle = true
+    }
+
+    invariant RejectsFloatBearingAndCallableComponentsAtCompileTime {
+        this.rejects_float_bearing_and_callable_components_at_compile_time = true
+    }
+}
+
+actor ParametersEqualOperator { identified_by: ParametersEqual }

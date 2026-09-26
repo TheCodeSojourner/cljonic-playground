@@ -26,10 +26,13 @@ entity Range {
     const_traversal_terminates_at_count: Boolean
     saturating_cardinality_bounded_by_collection_maximum_element_count: Boolean
     span_arithmetic_avoids_signed_overflow: Boolean
-    unbounded_range_does_not_satisfy_stable_equality: Boolean
-    unbounded_equality_fails_at_compile_time: Boolean
+    operator_equals_uses_producer_parameter_equality: Boolean
+    equality_compares_start_end_step: Boolean
+    provides_named_parameters_equal_operation: Boolean
+    satisfies_nothrow_stable_equality_comparable: Boolean
     contains_is_authoritative_available_index_predicate: Boolean
     contains_is_constant_time: Boolean
+    satisfies_nothrow_collection_element: Boolean
     does_not_expose_callable_operator: Boolean
     get_and_lookup_are_excluded: Boolean
     free_function_observation_is_canonical_access_path: Boolean
@@ -135,12 +138,20 @@ entity Range {
         this.span_arithmetic_avoids_signed_overflow = true
     }
 
-    invariant UnboundedRangeDoesNotSatisfyStableEquality {
-        this.unbounded_range_does_not_satisfy_stable_equality = true
+    invariant OperatorEqualsUsesProducerParameterEquality {
+        this.operator_equals_uses_producer_parameter_equality = true
     }
 
-    invariant UnboundedEqualityFailsAtCompileTime {
-        this.unbounded_equality_fails_at_compile_time = true
+    invariant EqualityComparesStartEndStep {
+        this.equality_compares_start_end_step = true
+    }
+
+    invariant ProvidesNamedParametersEqualOperation {
+        this.provides_named_parameters_equal_operation = true
+    }
+
+    invariant SatisfiesNothrowStableEqualityComparable {
+        this.satisfies_nothrow_stable_equality_comparable = true
     }
 
     invariant ContainsIsAuthoritativeAvailableIndexPredicate {
@@ -165,6 +176,14 @@ entity Range {
 
     invariant StartEndStepMemberAccessorsAreNoncanonical {
         this.start_end_step_member_accessors_are_noncanonical = true
+    }
+
+    invariant SatisfiesNothrowCollectionElement {
+        this.satisfies_nothrow_collection_element = true
+    }
+
+    invariant DefaultFormIsValid {
+        this.default_constructed_form_is_valid_and_deterministic = true
     }
 
 }
