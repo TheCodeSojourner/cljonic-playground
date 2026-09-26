@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-09-19
+last_updated: 2026-09-25
 status: draft
 ---
 
@@ -301,9 +301,9 @@ producer building blocks used across all higher-order algorithms.
 ### FiniteDeepEquality
 - **Definition:** Equality comparison that observes and compares only the documented finite domain of two values or producers, rather than requiring an unbounded source to terminate.
 - **Deprecated Synonyms:** bounded deep equality, finite sequence equality
-- **Related:** FiniteObservation, GeneralEquality, StableEquality
+- **Related:** FiniteObservation, GeneralEquality, StableEquality, ProducerParameterEquality
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A finite deep-equality operation must document the observed bound when either input is an unbounded producer.
+- **Examples:** A finite deep-equality operation must document the observed bound when either input is an unbounded producer; producer parameter equality never traverses and therefore needs no observed bound.
 
 
 ### BoundedInspection
@@ -365,17 +365,17 @@ producer building blocks used across all higher-order algorithms.
 ### GeneralEquality
 - **Definition:** Equality over supported values using the applicable semantic equality capability, distinct from numeric equality and from storage identity.
 - **Deprecated Synonyms:** structural equality, semantic equality
-- **Related:** StableEquality, NumericEquality, FiniteDeepEquality
+- **Related:** StableEquality, NumericEquality, FiniteDeepEquality, ProducerParameterEquality
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** General equality compares supported collection content according to its documented logical semantics.
+- **Examples:** General equality compares supported collection content according to its documented logical semantics and compares producer values by their stored parameters under ProducerParameterEquality.
 
 
 ### NumericEquality
-- **Definition:** Equality governed by the operation's numeric policy for supported numeric values, including representability and any permitted cross-type comparison rules.
+- **Definition:** Equality governed by the operation's numeric policy for supported numeric values, including representability. No cross-type comparison rules are permitted: values of different numeric types never compare equal under any cljonic equality operation; a cross-type comparison requires an explicit conversion performed by the caller under NumericPolicy.
 - **Deprecated Synonyms:** numeric value equality, numeric comparison
 - **Related:** GeneralEquality, StableEquality, NumericPolicy
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** Numeric equality must state whether values of different numeric types compare directly or require exact conversion.
+- **Examples:** Numeric equality compares only same-type numeric values; comparing values of different numeric types requires an explicit caller-performed conversion under CheckedConversion or ExactConversion.
 
 
 ### SemanticPredicateName
@@ -1129,11 +1129,27 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### StableEqualityComparable
-- **Definition:** The C++ concept identifier implementing the StableEquality capability: a non-floating-point equality comparison admitting a type for equality-dependent operations.
+- **Definition:** The C++ concept identifier implementing the StableEquality capability: a non-floating-point, non-callable equality comparison admitting a type for equality-dependent operations. For composite values, StableEqualityComparable is recursive: it is satisfied only when every stored component admits stable equality. For producers, StableEqualityComparable is satisfied only when every stored parameter admits stable equality and the producer provides producer parameter equality as governed by ProducerParameterEquality.
 - **Deprecated Synonyms:** stable_equality_comparable, stable equality comparable concept
-- **Related:** StableEquality, TotalOrder, TotallyOrdered, AggregateLikeStruct
+- **Related:** StableEquality, TotalOrder, TotallyOrdered, AggregateLikeStruct, AlternativeStrictEquality, ProducerParameterEquality, Map, Set, MapEntry
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `StableEqualityComparable<T>` is satisfied when `a == b` returns `bool` and `T` is not a floating-point type.
+- **Examples:** `StableEqualityComparable<T>` is satisfied when `a == b` returns `bool`, `T` is not a floating-point type, and every component of a composite `T` (such as a `std::variant` alternative, a cljonic collection element, or a producer's stored parameter) is itself stable-equality comparable. A callable component is never admitted.
+
+
+### ProducerParameterEquality
+- **Definition:** The equality capability for producer values that compares only the producer's bounded stored parameters, never traversing, observing, or materializing any produced sequence, and never implying that equal parameters yield equal materialized sequences. It is exposed both as the producer's native `operator==` and as the named `parameters_equal` free function with identical semantics. It requires every stored parameter to admit stable equality and excludes callable parameters. When satisfied, the producer admits `StableEqualityComparable` and `NothrowStableEqualityComparable` and may be used as a map key or set element directly or as a composite component.
+- **Deprecated Synonyms:** producer structural parameter equality, parameter-structural equality
+- **Related:** StableEqualityComparable, StableEquality, GeneralEquality, FiniteDeepEquality, Producer, Range, Repeat, Cycle, Iterate, Repeatedly, Map, Set
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Range{1, 5, 2} == Range{1, 5, 2}` is true and `parameters_equal(Range{1, 5, 2}, Range{1, 5, 2})` is true; `Range{0, 5, 0} != Range{0, 7, 0}` even though both produce an infinite sequence of zeros; `parameters_equal(Repeat{7}, Repeat{7, 0U})` is false because the unbounded and finite-empty forms have different stored parameters; `Iterate` and `Repeatedly` never provide parameter equality because their step is a callable component.
+
+
+### AlternativeStrictEquality
+- **Definition:** The equality semantics applied to `std::variant` values used as map keys or set elements: two variant values are equal only when they hold the same alternative and that alternative's values compare equal. Variants holding different alternatives compare unequal even when the alternative values would compare conventionally equal. Cross-type numeric unification and hash-based equality are not part of this capability.
+- **Deprecated Synonyms:** alternative-strict equality, same-alternative equality
+- **Related:** StableEqualityComparable, StableEquality, Map, Set, MapEntry
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `variant<int, long>{5}` (int alternative) is not equal to `variant<int, long>{5L}` (long alternative); two `variant<int, long>{5}` values are equal.
 
 
 ### TotallyOrdered
@@ -1145,11 +1161,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### NothrowStableEqualityComparable
-- **Definition:** The C++ concept identifier combining StableEqualityComparable with NothrowCollectionElement, the shared admission contract for map keys and set elements.
+- **Definition:** The C++ concept identifier combining StableEqualityComparable with NothrowCollectionElement, the shared admission contract for map keys and set elements. The stable-equality component is recursive: every stored component of a composite key or set element must admit stable equality, and callable components are never admitted.
 - **Deprecated Synonyms:** nothrow_stable_equality_comparable, map key concept, set element concept
-- **Related:** StableEqualityComparable, NothrowCollectionElement, Map, Set
+- **Related:** StableEqualityComparable, NothrowCollectionElement, Map, Set, MapEntry, AlternativeStrictEquality
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `NothrowStableEqualityComparable<int>` is satisfied; a type with a throwing copy assignment is rejected even if it defines `operator==`.
+- **Examples:** `NothrowStableEqualityComparable<int>` is satisfied; a type with a throwing copy assignment is rejected even if it defines `operator==`; a `std::variant` containing a callable alternative is rejected because callable components never admit stable equality.
 
 
 ### StaticInspectableStorage
