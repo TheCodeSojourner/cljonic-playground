@@ -109,12 +109,12 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_sequenceable_producer.html">SequenceableProducer</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">CljonicProducer&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; c) {</div>
 <div class="line">    { c.count() } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;std::size_t&gt;;</div>
 <div class="line">}</div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_producer_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">cljonic::concepts::CljonicProducer</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00170">cljonic-concepts.hpp:170</a></div></div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_sequenceable_producer_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_producer.html">cljonic::concepts::SequenceableProducer</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00286">cljonic-concepts.hpp:286</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_producer_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_producer.html">cljonic::concepts::CljonicProducer</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00211">cljonic-concepts.hpp:211</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_sequenceable_producer_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_sequenceable_producer.html">cljonic::concepts::SequenceableProducer</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00327">cljonic-concepts.hpp:327</a></div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Requires that an admitted producer provides non-throwing count() effective-size observation, returning std::size_t. count() for a producer is a conservative materialization maximum (saturated at the synthesis cap), not necessarily the true unsaturated span. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00286">286</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00327">327</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classcljonic_1_1_range-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">cljonic::Range&lt; T &gt; Class Template Reference</div></div>
 </div><!--header-->
@@ -129,6 +130,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7acc8c854bb451b8a5a08c067634b5a9" id="r_a7acc8c854bb451b8a5a08c067634b5a9"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7acc8c854bb451b8a5a08c067634b5a9">contains</a> (std::size_t index) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:ac34648e869dab1f7fa5b3f295214afdc" id="r_ac34648e869dab1f7fa5b3f295214afdc"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac34648e869dab1f7fa5b3f295214afdc">begin</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_range_1_1const__iterator.html">const_iterator</a></td></tr>
 <tr class="memitem:af9c388a70c8ab6651f36c6698bef90a8" id="r_af9c388a70c8ab6651f36c6698bef90a8"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af9c388a70c8ab6651f36c6698bef90a8">end</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_range_1_1const__iterator.html">const_iterator</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a7c9f0ed91c1c0daa2e3fe8a5388b3edf" id="r_a7c9f0ed91c1c0daa2e3fe8a5388b3edf"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7c9f0ed91c1c0daa2e3fe8a5388b3edf">operator==</a> (const <a class="el" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a> &amp;lhs, const <a class="el" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a> &amp;rhs) noexcept -&gt; bool</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::signed_integral T&gt;<br />
@@ -478,6 +483,41 @@ template&lt;std::signed_integral T&gt; </div>
 <p>Reports whether this <a class="el" href="classcljonic_1_1_range.html">Range</a> has a finite complete result. </p>
 
 <p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00130">130</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+
+</div>
+</div>
+<a name="doc-related-members" id="doc-related-members"></a><h2 id="header-doc-related-members" class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a7c9f0ed91c1c0daa2e3fe8a5388b3edf" name="a7c9f0ed91c1c0daa2e3fe8a5388b3edf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c9f0ed91c1c0daa2e3fe8a5388b3edf">&#9670;&#160;</a></span>operator==</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::signed_integral T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>&lt; T &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>&lt; T &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Producer parameter equality (REQ-FN-014B): compares only the stored start/end/step parameters, never the produced sequence. Two <a class="el" href="classcljonic_1_1_range.html">Range</a> values with different parameters compare unequal even when their produced or observed sequences coincide (for example two zero-step ranges with different endpoints both produce an infinite repetition of their respective start values). O(1), no traversal, no allocation. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00154">154</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>

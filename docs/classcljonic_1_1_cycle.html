@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classcljonic_1_1_cycle-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">cljonic::Cycle&lt; Source &gt; Class Template Reference</div></div>
 </div><!--header-->
@@ -123,11 +124,16 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:aa5ae773e454d1f1a8cd540398435dc98" id="r_aa5ae773e454d1f1a8cd540398435dc98"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#aa5ae773e454d1f1a8cd540398435dc98">Cycle</a> () noexcept=default</td></tr>
 <tr class="memitem:ace4aa666ea7d752cb8b55dfa3e7c159d" id="r_ace4aa666ea7d752cb8b55dfa3e7c159d"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ace4aa666ea7d752cb8b55dfa3e7c159d">Cycle</a> (Source source) noexcept</td></tr>
 <tr class="memitem:a5fac29efee3a7dcc950667a3a0e47fdf" id="r_a5fac29efee3a7dcc950667a3a0e47fdf"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5fac29efee3a7dcc950667a3a0e47fdf">count</a> () const noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:a34a288af912a94260743c3de3291ab5b" id="r_a34a288af912a94260743c3de3291ab5b"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a34a288af912a94260743c3de3291ab5b">is_finite</a> () const noexcept -&gt; bool</td></tr>
 <tr class="memitem:af5690e9a1aca3cbe93319ad415c54d77" id="r_af5690e9a1aca3cbe93319ad415c54d77"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af5690e9a1aca3cbe93319ad415c54d77">begin</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_cycle_1_1const__iterator.html">const_iterator</a></td></tr>
 <tr class="memitem:ada9eff693995deb0328295fe75b64cec" id="r_ada9eff693995deb0328295fe75b64cec"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ada9eff693995deb0328295fe75b64cec">end</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_cycle_1_1const__iterator.html">const_iterator</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a82667cb30b690cc4acf71c9435a927fa" id="r_a82667cb30b690cc4acf71c9435a927fa"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a82667cb30b690cc4acf71c9435a927fa">operator==</a> (const <a class="el" href="#aa5ae773e454d1f1a8cd540398435dc98">Cycle</a> &amp;lhs, const <a class="el" href="#aa5ae773e454d1f1a8cd540398435dc98">Cycle</a> &amp;rhs) noexcept -&gt; bool</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts::CljonicSource Source&gt;<br />
@@ -174,7 +180,7 @@ class cljonic::Cycle&lt; Source &gt;</div><p><a class="anchor" id="Cycle"></a> <
 <div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00065">cljonic-range.hpp:65</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00151">cljonic-vector.hpp:151</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ae3e6305e3e1c90eef86582f2181618fe"><div class="ttname"><a href="namespacecljonic.html#ae3e6305e3e1c90eef86582f2181618fe">cljonic::cycle</a></div><div class="ttdeci">constexpr auto cycle(Source source) noexcept -&gt; Cycle&lt; Source &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-cycle_8hpp_source.html#l00164">cljonic-cycle.hpp:164</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_ae3e6305e3e1c90eef86582f2181618fe"><div class="ttname"><a href="namespacecljonic.html#ae3e6305e3e1c90eef86582f2181618fe">cljonic::cycle</a></div><div class="ttdeci">constexpr auto cycle(Source source) noexcept -&gt; Cycle&lt; Source &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-cycle_8hpp_source.html#l00178">cljonic-cycle.hpp:178</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00061">61</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
@@ -251,8 +257,35 @@ template&lt;concepts::CljonicSource Source&gt; </div>
 </div>
 </div>
 <a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aa5ae773e454d1f1a8cd540398435dc98" name="aa5ae773e454d1f1a8cd540398435dc98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5ae773e454d1f1a8cd540398435dc98">&#9670;&#160;</a></span>Cycle() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::CljonicSource Source&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcljonic_1_1_cycle.html">cljonic::Cycle</a>&lt; Source &gt;::Cycle </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel default">default</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ace4aa666ea7d752cb8b55dfa3e7c159d" name="ace4aa666ea7d752cb8b55dfa3e7c159d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace4aa666ea7d752cb8b55dfa3e7c159d">&#9670;&#160;</a></span>Cycle()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ace4aa666ea7d752cb8b55dfa3e7c159d">&#9670;&#160;</a></span>Cycle() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,7 +309,7 @@ template&lt;concepts::CljonicSource Source&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00123">123</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00125">125</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 
 </div>
 </div>
@@ -306,7 +339,7 @@ template&lt;concepts::CljonicSource Source&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00134">134</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00136">136</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 
 </div>
 </div>
@@ -335,7 +368,7 @@ template&lt;concepts::CljonicSource Source&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00126">126</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00128">128</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 
 </div>
 </div>
@@ -364,7 +397,7 @@ template&lt;concepts::CljonicSource Source&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00145">145</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00147">147</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 
 </div>
 </div>
@@ -393,7 +426,42 @@ template&lt;concepts::CljonicSource Source&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00130">130</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00132">132</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+
+</div>
+</div>
+<a name="doc-related-members" id="doc-related-members"></a><h2 id="header-doc-related-members" class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a82667cb30b690cc4acf71c9435a927fa" name="a82667cb30b690cc4acf71c9435a927fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82667cb30b690cc4acf71c9435a927fa">&#9670;&#160;</a></span>operator==</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::CljonicSource Source&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#aa5ae773e454d1f1a8cd540398435dc98">Cycle</a>&lt; Source &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="#aa5ae773e454d1f1a8cd540398435dc98">Cycle</a>&lt; Source &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Producer parameter equality (REQ-FN-014B): compares only the stored owned source, count, and finite-form parameters, never the produced sequence. The owned source compares by its own stable equality, so <span class="tt"><a class="el" href="namespacecljonic.html#ae3e6305e3e1c90eef86582f2181618fe">cycle</a>(<a class="el" href="classcljonic_1_1_vector.html">Vector</a>{1, 2, 3}) == <a class="el" href="namespacecljonic.html#ae3e6305e3e1c90eef86582f2181618fe">cycle</a>(<a class="el" href="classcljonic_1_1_vector.html">Vector</a>{1, 2, 3})</span> is true while <span class="tt"><a class="el" href="namespacecljonic.html#ae3e6305e3e1c90eef86582f2181618fe">cycle</a>(<a class="el" href="classcljonic_1_1_vector.html">Vector</a>{1, 2, 3}) == <a class="el" href="namespacecljonic.html#ae3e6305e3e1c90eef86582f2181618fe">cycle</a>(<a class="el" href="classcljonic_1_1_vector.html">Vector</a>{1, 2, 4})</span> is false. O(1), no traversal, no allocation. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00157">157</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 
 </div>
 </div>

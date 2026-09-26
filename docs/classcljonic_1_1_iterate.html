@@ -120,6 +120,7 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a94c134f714fcf0d8e139e17cf3786b65" id="r_a94c134f714fcf0d8e139e17cf3786b65"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a94c134f714fcf0d8e139e17cf3786b65">Iterate</a> () noexcept</td></tr>
 <tr class="memitem:ae22e645f09519256e03546f04e7dce0f" id="r_ae22e645f09519256e03546f04e7dce0f"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ae22e645f09519256e03546f04e7dce0f">Iterate</a> (T initial, Step step) noexcept</td></tr>
 <tr class="memitem:abc8fbce795efa34085fbdd61c159102c" id="r_abc8fbce795efa34085fbdd61c159102c"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#abc8fbce795efa34085fbdd61c159102c">count</a> () const noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:a306713adb4e2694981f7db570851af0b" id="r_a306713adb4e2694981f7db570851af0b"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a306713adb4e2694981f7db570851af0b">is_finite</a> () const noexcept -&gt; bool</td></tr>
@@ -170,7 +171,7 @@ class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"><
 <div class="line">  <span class="keywordflow">return</span> constexpr_sum == 16 &amp;&amp; runtime_sum == 30 ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a63314a7947b7251553be23329779260a"><div class="ttname"><a href="namespacecljonic.html#a63314a7947b7251553be23329779260a">cljonic::iterate</a></div><div class="ttdeci">constexpr auto iterate(Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; Iterate&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-iterate_8hpp_source.html#l00138">cljonic-iterate.hpp:138</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a63314a7947b7251553be23329779260a"><div class="ttname"><a href="namespacecljonic.html#a63314a7947b7251553be23329779260a">cljonic::iterate</a></div><div class="ttdeci">constexpr auto iterate(Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; Iterate&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-iterate_8hpp_source.html#l00146">cljonic-iterate.hpp:146</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00067">67</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
@@ -193,8 +194,37 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </div>
 </div>
 <a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a94c134f714fcf0d8e139e17cf3786b65" name="a94c134f714fcf0d8e139e17cf3786b65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94c134f714fcf0d8e139e17cf3786b65">&#9670;&#160;</a></span>Iterate() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcljonic_1_1_iterate.html">cljonic::Iterate</a>&lt; T, Step &gt;::Iterate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00114">114</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ae22e645f09519256e03546f04e7dce0f" name="ae22e645f09519256e03546f04e7dce0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae22e645f09519256e03546f04e7dce0f">&#9670;&#160;</a></span>Iterate()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae22e645f09519256e03546f04e7dce0f">&#9670;&#160;</a></span>Iterate() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -222,7 +252,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00111">111</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00119">119</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -252,7 +282,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00122">122</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00130">130</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -281,7 +311,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00114">114</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00122">122</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -310,7 +340,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00126">126</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00134">134</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -339,7 +369,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00118">118</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00126">126</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
