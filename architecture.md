@@ -144,8 +144,7 @@
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
-λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate
-  | planned_producer_domain(x) ≡ repeatedly
+λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
   | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
   | domain_expansion(x) → require(explicit_approved_requirement)
@@ -260,6 +259,44 @@
     ∧ not(throw ∨ allocate ∨ mutate_source(x))
   | conj_operation(x) ∧ can_conj(x) → classify_as(RequirementsBacked)
     ∧ trace_to(requirements/cljonic-requirements-module-3.md)
+
+λ S2_composite_value_domain(x). composite_value(x) ≡ std_variant_over(
+    scalar_literals ∨ scoped_enumerations ∨ supported_collections ∨ producers_with_stable_parameters ∨ MapEntry)
+  | composite_as_key_or_set_element(x) → require(every_stored_component_admits_stable_equality(x))
+    ∧ require(recursive_component_analysis(x))
+  | callable_component(x) → reject_as_key_or_set_element(x)
+    because(callables_do_not_admit_stable_value_equality(x))
+  | variant_equality(x) → alternative_strict(x)
+    ∧ ¬cross_type_numeric_unification(x) ∧ ¬hash_based_equality(x)
+  | composite_domain(x) → trace_to(REQ-CAP-010)
+
+λ S2_collection_equality(x). bounded_collection(x) ∧ stable_equality_components(x)
+  → provide(operator== (x)) ∧ constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | Vector(x) ∨ String(x) ∨ Queue(x) → order_sensitive(x)
+    ∧ equal_when(equal_logical_count ∧ equal_elements_in_logical_order)
+  | Map(x) ∨ Set(x) → order_insensitive(x)
+    ∧ equal_when(equal_logical_count ∧ every_logical_entry_or_element_matches_under_stable_equality)
+  | ¬stable_equality_components(x) → omit(operator== (x))
+    ∧ equality_position_usage(x) → compile_time_rejection(x)
+  | collection_equality(x) → recurse_into(nested_collections ∧ producers_with_stable_parameters ∧ composite_values)
+    ∧ never_traverse_beyond(bounded_logical_count)
+  | collection_equality(x) → ¬imply(cross_type_numeric_unification ∨ hash_based_equality)
+    ∧ trace_to(REQ-COLL-021)
+
+λ S2_producer_parameter_equality(x). producer(x) ∧ every_stored_component_admits_stable_equality(x)
+  → provide(operator== (x)) ∧ provide(parameters_equal(x))
+    ∧ both_with(producer_parameter_equality_semantics(x))
+    ∧ constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating ∧ o1_stored_parameters(x)
+  | Range(x) → compare(stored(start_ ∧ end_ ∧ step_))
+  | Repeat(x) → compare(stored(value_ ∧ count_ ∧ is_finite_))
+  | Cycle(x) → compare(stored(owned_source_ ∧ count_ ∧ is_finite_))
+    ∧ recurse_into_parameters(owned_source_)
+  | callable_parameter(x) → omit(operator== (x) ∧ parameters_equal(x))
+  | producer_parameter_equality(x) → never_traverse_produced_sequence(x)
+    ∧ ¬imply(sequence_equality(x))
+    ∧ distinct_parameters(x) → unequal_even_when_sequences_coincide(x)
+    ∧ equal_parameters(x) ∧ qualifies(x) → map_key ∨ set_element_admission(x)
+    ∧ trace_to(REQ-FN-014B ∧ REQ-CAP-010 ∧ REQ-SEQ-016)
 
 λ S2_result_status_model(x). public_operation(x) → declare(CompleteResult ∨ BoundedResult ∨ BoundedPrefixResult
   ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
@@ -381,12 +418,30 @@ concept CljonicSource =
 
 ```cpp
 // Value capabilities (apply to element and key types)
+// StableEqualityComparable is recursive over composite components:
+// a composite admits stable equality only when every stored component
+// admits stable equality; callable components never admit stable equality.
 template<class T>
 concept StableEqualityComparable =
-    std::equality_comparable<T> && !std::floating_point<std::remove_cvref_t<T>>;
+    std::equality_comparable<T> &&
+    !cljonic::concepts_detail::contains_floating_point_v<T> &&
+    !cljonic::concepts_detail::contains_callable_v<T>;
 
 template<class T>
 concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
+
+// Collection equality is conditional and component-wise: a collection
+// provides operator== exactly when its element/key/value types admit
+// stable equality, and comparison never traverses beyond its bounded
+// logical count.
+λ collection_equality(x). bounded_collection(x) && stable_equality_components(x)
+  → provide(operator== (x) with (Vector ∧ String ∧ Queue → order_sensitive(x))
+    ∧ (Map ∧ Set → order_insensitive(x)))
+  | ¬stable_equality_components(x) → omit(operator== (x))
+    ∧ usage_in_equality_position(x) → fail_at_compile_time(x)
+  | collection_equality(x) → recurse_into(nested_collections ∧
+    producers_with_stable_parameters ∧ composite_values)
+    ∧ never_traverse_beyond(bounded_logical_count)
 
 // SequenceableCollection is the current observation baseline; it does not imply
 // the independent Seqable lifecycle capability.
