@@ -299,6 +299,25 @@
     ∧ equal_parameters(x) ∧ qualifies(x) → map_key ∨ set_element_admission(x)
     ∧ trace_to(REQ-FN-014B ∧ REQ-CAP-010 ∧ REQ-SEQ-016)
 
+λ S2_general_equality_function(x). equal(lhs, rhs) ≡ named_general_value_equality(x)
+  | equal(x) → distinct_from(operator== (x)) ∧ scoped_to(supported_stable_equality_domain(x))
+  | non_cljonic_scalar_operands(x) → compare_via(operator== (x))
+    ∧ fallthrough_domain(x) ≡ closed_value_domain(
+        scalars ∨ scoped_enumerations ∨ aggregate_like_structs ∨ composite_variants)
+  | standard_range_or_container_type(x) → compile_time_rejection(x)
+    because(equal_is_not_interop_surface(x))
+  | floating_point_component(x) → compile_time_rejection(x) ∧ at_any_depth(x)
+  | sequential_family(x) ≡ Vector ∨ Queue ∨ Cycle ∨ Iterate ∨ Range ∨ Repeat ∨ Repeatedly
+    ∧ sequential_family_pair(x) → compare(produced_sequence(x)) ∧ require(identical_element_types(x))
+    ∧ compare_order_sensitive(x) ∧ lazy_element_wise(x) ∧ early_exit_on_first_difference(x)
+    ∧ unbounded_pair(x) → compare(configured_observable_traversal_cap(x)) ∧ every_call_terminates(x)
+  | Map(x) → comparable_only_to(Map) | Set(x) → comparable_only_to(Set) | String(x) → comparable_only_to(String)
+  | incompatible_family_pair(x) ∨ mixed_cljonic_non_cljonic_pair(x) → compile_time_rejection(x)
+  | nested_producer_component(x) → compare_via(producer_parameter_equality(x))
+    ∧ operator==_prohibition(REQ-SEQ-016) ∧ recursion_requirements(REQ-SEQ-017)_unchanged(x)
+  | equal_operation(x) → classify_as(RequirementsBacked)
+    ∧ trace_to(REQ-FN-002G ∧ REQ-FN-002E)
+
 λ S2_result_status_model(x). public_operation(x) → declare(CompleteResult ∨ BoundedResult ∨ BoundedPrefixResult
   ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | operation(x) → document(status ∧ preflight ∧ failure_or_default_semantics)

@@ -6,6 +6,8 @@
 -- values compare via `==`; floating-point values are rejected at compile time
 -- at any depth; equality over two unbounded producers compares the configured
 -- observable traversal cap of each operand so no call can fail to terminate.
+-- SequentialEquality is the vocabulary term for the sequential family rule
+-- (invariant SequentialFamilyMutuallyComparableByProducedSequence).
 
 entity EqualFunction {
     general_value_equality_operation: Boolean
