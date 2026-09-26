@@ -57,7 +57,7 @@ optimization. Many projects have a small amount of code that must be **finely tu
 **not performance critical**.
 
 The motivation behind **cljonic** is to provide a **Clojure-esque** functional programming library for **C++** embedded
-systems developers. It aims to be **laconic**, **immutable-by-default**, **practical**, and **stable**. **Cljonic** should also be
+system developers. It aims to be **laconic**, **immutable-by-default**, **practical**, and **stable**. **Cljonic** should also be
 **easy to learn and understand**, and **easy to use properly** for the **safe** and **efficient** implementation of embedded
 systems.
 

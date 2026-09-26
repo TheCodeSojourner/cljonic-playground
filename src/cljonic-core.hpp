@@ -4,33 +4,33 @@
 #include <cljonic-config.hpp>
 
 /** \mainpage
- * \b cljonic is a \b header-only C++ library designed to allow an \b embedded \b systems C++ developer to program in a
+ * \b cljonic is a \b header-only C++ library designed to allow an \b embedded \b system C++ developer to program in a
  * \b Functional \b Programming \b Style using a set of functions \b similar in \b name and \b function to \b Clojure.
- * To address the embedded systems focus, \b cljonic \b DOES \b NOT use the heap or exceptions, and uses \b Modern \b
+ * To address the embedded system focus, \b cljonic \b DOES \b NOT use the heap or exceptions, and uses \b Modern \b
  * C++ features to \b protect , \b guide , and \b teach C++ developers. Finally, \b cljonic is a library that includes
  * unit tests with nearly <b>100% coverage</b>, and is designed to be efficiently maintained.
  *
- * The motivation for \b cljonic comes from observations made about the pragmatic use of C++ for embedded systems
+ * The motivation for \b cljonic comes from observations made about the pragmatic use of C++ for embedded system
  * software development, the progression of the C++ language (e.g., C++11, C++14, C++17, C++20, C++23), and the counsel
  * of software development "experts", in many different programming languages, that <b>a functional programming style
  * should be eagerly embraced by all developers</b>.
  *
- * Many embedded systems C++ developers are <b>not academic programming language experts</b> with in-depth knowledge of
+ * Many embedded system C++ developers are <b>not academic programming language experts</b> with in-depth knowledge of
  * every C++ feature, and many <b>may not have time</b> to follow the progression of the language.  Rather, many
- * embedded systems C++ developers have <b>strong hardware backgrounds</B>, and <B>know a pragmatic specific subset of
+ * embedded system C++ developers have <b>strong hardware backgrounds</B>, and <B>know a pragmatic specific subset of
  * C++</B> that is often sufficient to deliver reasonably good software in a predictable amount of time, though this is
  * often <b>not optimized for minimal long term cost of ownership</b>. Generally speaking, many C++ developers use a
  * subset of the \b C programming language with some of C++'s <b>Object Oriented</b> capabilities.  This begs a
  * question:
  *
- * <b>Is there a pragmatic subset of Modern C++ that enables embedded systems developers to produce higher-quality,
- * more efficient, and more maintainable code?</b>
+ * <b>Is there a pragmatic subset of Modern C++ that enables embedded system developers to produce higher-quality, more
+ * efficient, and more maintainable code?</b>
  *
  * Changes to C++ have provided valuable capabilities that are time consuming to master, hence it is both <b> valuable
  * to development organizations</b> for their developers to use modern C++ capabilities, and <b> too expensive to
  * train</b> all of their developers to be experts in their use.  This, too, begs a question:
  *
- * <b>Can one or two embedded systems software developers cost-effectively introduce modern C++ capabilities to the
+ * <b>Can one or two embedded system software developers cost-effectively introduce modern C++ capabilities to the
  * entire team?</b>
  *
  * In this post:
@@ -51,7 +51,7 @@
  * it is convenient, and you should think hard about the decision when it isn't convenient."</b>
  *
  * \b cljonic is a \b header-only library that utilizes \b Modern \b C++ capabilities to provide a functional style C++
- * \b Clojure subset to \b embedded \b systems developers, promotes the \b predictable \b development of \b higher \b
+ * \b Clojure subset to \b embedded \b system developers, promotes the \b predictable \b development of \b higher \b
  * quality code \b faster, and can be \b cost-effectively \b maintained over time.
  *
  * \anchor Core_Cheatsheet

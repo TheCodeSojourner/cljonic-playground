@@ -839,7 +839,7 @@ producer building blocks used across all higher-order algorithms.
 
 ### EmbeddedConstraint
 - **Definition:** The platform constraint set that assumes embedded targets with bounded resources and therefore prioritizes fixed capacity, predictable execution, and explicit profiles.
-- **Deprecated Synonyms:** embedded constraint, embedded systems constraint
+- **Deprecated Synonyms:** embedded constraint, embedded system constraint
 - **Related:** StaticInspectableStorage, NoHeapConstraint, NoExceptionConstraint, NoRttiConstraint, SingleThreadedExecutionModel, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, and documentation
 - **Examples:** Collection APIs use fixed-capacity storage and avoid runtime allocation on strict profiles.
