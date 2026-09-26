@@ -1,0 +1,7 @@
+---
+type: Insight
+symbol: 💡
+title: governance-invariants-do-not-belong-in-behavioral-specs
+related: [spec-to-code-strict-fail-gate.md, architecture-lambda-notation.md, use-upsert-gate-strict-for-full-checks-without-docs.md]
+---
+Governance-process invariants (API lifecycle classification: CandidateStatus, DeferredStatus, ExcludedStatus, RequirementsBacked) must NOT be encoded as allium spec entities. Discovered 2026-09-26: an `ApiLifecycleGate` entity added to concepts.allium during arch-weed generated 7 plan obligations that the strict spec-to-code traceability gate requires executable test evidence for — but lifecycle rules are enforced by the traceability/quality-gate process, not runtime behavior, and the implemented surface legitimately contains deferred-labeled functions (seq, first, empty, not_empty exist in code under the deferred shaping spec's optional contract tests). A "non-backed status is not supported behavior" assertion would therefore contradict repo state and could never be honestly evidenced. The entity was reverted per human decision. Rule of thumb: a spec entity/invariant earns its place only when some executable artifact (concept, trait, function, storage behavior) can witness it; governance vocabulary stays in architecture λ-rules and the vocabulary, whose enforcement channel is the gate process itself.
