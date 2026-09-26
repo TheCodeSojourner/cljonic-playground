@@ -1,0 +1,7 @@
+---
+type: Insight
+symbol: 💡
+title: equal-family-classification
+related: [same-type-constructor-pack-preference.md, producer-parameter-equality.md, use-concepts-and-hide-traits-in-cljonic-concepts.md]
+---
+The `equal` free function (REQ-FN-002G, Clojure-`=`-equivalent) classifies operands through a closed-world `equality_family` tag in `cljonic::concepts_detail`, reusing the existing `collection_kind`/`producer_kind` traits: Vector+Queue join all five producers in the `sequential` family; Map/Set/String each form their own family; everything else is `none`. The non-cljonic fallthrough domain is deliberately the closed value domain only (scalars, scoped enums, aggregate-like structs with stable `==`, `std::variant` composites); standard-library range/container types are rejected at compile time because `equal` is NOT part of the C++ interoperability surface (human decision 2026-09-26). Family compatibility, actual equality, and termination are three separate compile-time concepts. Termination is guaranteed by bounded-prefix comparison: unbounded producer pairs compare the configured observable traversal cap, so `equal(Repeat{1}, Repeat{1})` is true and no call can hang; a finite value vs an agreeing unbounded producer is false (finite side exhausts first). Nested producers compare by REQ-FN-014B parameter equality; sequential prefix equality exists only on the named function, never on `operator==` (REQ-SEQ-016 unchanged).

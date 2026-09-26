@@ -3,28 +3,32 @@
 - last_session_id: a779ef01-ea2d-4d8e-af8e-c129a62dd4e7
 - current_timestamp: 2026-09-26
 - recover: 1
-- session_complete: false
+- session_complete: true
 
 Task:
-1. `equal` free-function slice (REQ-FN-002G) — COMPLETE through implementation. Committed: 71404d2 (requirements REQ-FN-002G + REQ-VOCAB-001 terms + specs/sequences/equal.allium + vocabulary Equal/SequentialEquality/GeneralEquality + traceability snapshot) and fa9a0fa (src/cljonic-equal.hpp implementation, cheatsheet entry, spec tests with all 26 TRACE_IDs, no-heap probe + registration, scripts/check-equal-compile-failures.py + Makefile equal-compile-fail target wired into upsert-gate/validate/git). Remaining: docs regeneration check happens in make git; knowledge page updated (value-equality-domain.md); fini/encode step pending.
+1. `equal` free-function slice (REQ-FN-002G) — COMPLETE and committed (2026-09-26, commits 71404d2, fa9a0fa, a11569a, 7a3e80a): requirements + spec + vocabulary, implementation with compile-time domain gating, spec tests (76 assertions, all 26 TRACE_IDs), no-heap probe in both builds, compile-fail harness + Makefile wiring, mementum updates, and convergence-sweep corrections (SequentialEquality anchored, S2_general_equality_function arch rule).
+2. Fini: encode session memories (equal-family-classification, no-heap-src-scans-comments, convergence-sweep-corrections) and commit mementum/ only, per established precedent.
+
+Questions:
+1. None blocking.
 
 Decisions:
-1. Termination contract (human, 2026-09-26): bounded-prefix compare. Unbounded operand pairs compare the configured observable traversal cap; equal(Repeat{1}, Repeat{1}) is true. A finite value vs an unbounded producer with agreeing prefix is false. Every call terminates.
-2. Element-type policy (human, 2026-09-26): identical element types required for cross-category sequential comparison (Vector<int> vs Range<int> ok; Vector<int> vs Range<long> compile-time rejected). Same-type sequential equal coincides with REQ-COLL-021 operator==.
-3. Scope (human, 2026-09-26): `equal` only. not_equal, equal_by, identical, and the rest of REQ-FN-002C stay deferred.
-4. Cross-family pairs (human, 2026-09-26): compile-time reject. Map↔Map, Set↔Set, String↔String only; family compatibility is a compile-time concept.
-5. Nested producer elements (human, 2026-09-26): producer parameter equality (REQ-FN-014B) for nested producer components; REQ-SEQ-016/017 unchanged. Sequential prefix equality exists only on the named `equal` function, never on producer operator==.
+1. Termination contract (human, 2026-09-26): bounded-prefix compare; unbounded pairs compare the configured observable traversal cap; equal(Repeat{1}, Repeat{1}) is true; a finite value vs an agreeing unbounded producer is false; every call terminates.
+2. Element-type policy (human, 2026-09-26): identical element types for cross-category sequential comparison; same-type sequential equal coincides with REQ-COLL-021 operator==.
+3. Scope (human, 2026-09-26): `equal` only; not_equal/equal_by/identical and rest of REQ-FN-002C stay deferred.
+4. Cross-family pairs (human, 2026-09-26): compile-time reject; Map↔Map, Set↔Set, String↔String only; family compatibility is a compile-time concept.
+5. Nested producer elements (human, 2026-09-26): producer parameter equality (REQ-FN-014B) for nested producer components; REQ-SEQ-016/017 unchanged; sequential prefix equality exists only on the named `equal` function.
 5a. Mixed pairs (human, 2026-09-26, approved): equal(Vector{1}, 1) and any cljonic↔non-cljonic pair is compile-time rejected, mirroring AlternativeStrictEquality.
-6. Non-cljonic fallthrough domain (human, 2026-09-26, approved option 1): `equal` is NOT part of the C++ interoperability surface, so standard-library range/container types (vector, span, string, string_view, map) are rejected at compile time. Fallthrough is the closed value domain only: scalars, scoped enums, aggregate-like structs (with stable ==), and std::variant composites. Spec invariants ScalarFallthroughDomainIsClosedValueDomain + StandardRangeTypesRejectedAsInteropSurface.
+6. Non-cljonic fallthrough domain (human, 2026-09-26, approved option 1): `equal` is NOT part of the C++ interoperability surface; standard-library range/container types are compile-time rejected; fallthrough is the closed value domain only (scalars, scoped enums, aggregate-like structs with stable ==, std::variant composites).
 7. Standing decisions 2026-09-25: alternative-strict variant equality FINAL and exclusive; cross-type numeric unification permanently out of scope (Stream D retired). NoHeap probe rule: every behavior change needs a dedicated probe in both builds.
 
 Validation:
-1. equal slice: 157/157 tests pass. New test case: 76 assertions (STATIC_REQUIRE + volatile-derived runtime CHECKs per constexpr-calls-defeat-gcov-coverage).
-2. Gates: coverage lines=100.0%, no-heap ok (probe registered both builds), equal-compile-fail ok (21 failure + 14 pass cases, modular + single-header), complexity ok (helpers extracted to keep CCN <= 4: equal_walk_detail::both_exhausted, equal_match_detail::{map_entries_all_match,set_elements_all_contained}), lint/format/docs-examples ok, traceability-spec-to-code ok, allium check/analyse 0 findings.
+1. equal slice: 157/157 tests pass; coverage lines=100.0%; no-heap ok (probe registered both builds); equal-compile-fail ok (21 failure + 14 pass cases, modular + single-header); complexity ok (CCN<=4 via equal_walk_detail::both_exhausted + equal_match_detail helpers); lint/format/docs-examples ok; traceability-spec-to-code ok; allium check/analyse 0 findings.
+2. Final six-command convergence sweep (after corrections): vocab-check PASS (154 terms, 0 issues), arch-check PASS (0 findings), spec-check PASS (31 files, 0 findings/issues), vocab-weed PASS (0 divergences), arch-weed PASS (0 divergences), spec-weed PASS (26 EqualFunction obligations fully traced, snapshot synced, 157/157 tests).
 
 Next:
-1. /gybis-fini: encode session memories (equal-family classification pattern, no-heap-src scanner flags comment text mentioning std container names, advance_if_equal inversion bug lesson) and commit mementum/ only.
-2. Candidate next slice: `not_equal` (trivially !equal) or `equal_by`; REQ-SEQ-022 reconciliation for remaining families.
+1. Candidate next slice: `not_equal` (trivially !equal, REQ-FN-002C) or `equal_by`; complete the equality-domain table.
+2. REQ-SEQ-022 operation-level specification reconciliation for remaining operation families (mementum/knowledge/cljonic-next-agenda.md).
 
 Carry-forward (unaddressed, remember for later):
 1. equal_by/identical and the rest of REQ-FN-002C remain deferred.
