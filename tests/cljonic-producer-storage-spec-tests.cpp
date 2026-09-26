@@ -118,19 +118,19 @@ TEST_CASE("Producers may be stored as map values, vector elements, and queue ele
     // instead with a vector of sets of Range? Keep this slice to storage-only
     // positions (REQ-VAL-017D) since producer key/set-element equality is
     // Stream C.
-    // Construct collection-of-collection values via Vector assoc to avoid the
-    // single-range-argument source-constructor ambiguity.
+    // Construct collection-of-collection values directly: a single argument
+    // whose type is exactly the element type is one element (pack
+    // construction), never a source to materialize.
     const auto pair_of_ranges = cljonic::Queue<cljonic::Range<int>, 2>{cljonic::Range<int>{}, cljonic::Range<int>{3}};
-    const auto vector_of_queues =
-        cljonic::Vector<cljonic::Queue<cljonic::Range<int>, 2>, 2>{}.assoc(0U, pair_of_ranges);
+    const auto vector_of_queues = cljonic::Vector<cljonic::Queue<cljonic::Range<int>, 2>, 2>{pair_of_ranges};
     CHECK(vector_of_queues.count() == 1U);
     CHECK(vector_of_queues(0U).count() == 2U);
 
     // Producers may be nested inside collections without materialization.
-    // (Use multi-element pack construction: a single producer argument would
-    // be matched by the range/view constructor since producers are ranges.)
+    // (A single collection/producer argument matching the element type is one
+    // element; use into/fits_into to materialize a producer as a source.)
     const auto inner = cljonic::Vector<cljonic::Repeat<int>, 2>{cljonic::Repeat<int>{9, 2U}, cljonic::Repeat<int>{}};
-    const auto nested = cljonic::Vector<cljonic::Vector<cljonic::Repeat<int>, 2>, 2>{}.assoc(0U, inner);
+    const auto nested = cljonic::Vector<cljonic::Vector<cljonic::Repeat<int>, 2>, 2>{inner};
     CHECK(nested.count() == 1U);
     CHECK(nested(0U)(0U).count() == 2U);
 }

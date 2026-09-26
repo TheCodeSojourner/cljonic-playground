@@ -43,6 +43,52 @@ TEST_CASE("Vector source construction preserves bounded ownership policy", "[sou
     REQUIRE(runtime_view[0] == -1);
 }
 
+TEST_CASE("Single element-type argument selects pack construction", "[source-construction][pack]") {
+    using cljonic::Queue;
+    using cljonic::Range;
+    using cljonic::Repeat;
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.CollectionSourceConstruction");
+    TRACE_ID("invariant.CollectionSourceConstruction.SingleElementTypeArgumentYieldsPackConstruction");
+    TRACE_ID("invariant.Vector.SingleElementTypeArgumentYieldsPackConstruction");
+    TRACE_ID("invariant.Queue.SingleElementTypeArgumentYieldsPackConstruction");
+
+    // A single argument whose type is exactly the element type is one element
+    // (pack construction), never a source to materialize. Complete
+    // materialization of a producer remains the role of into/fits_into.
+    constexpr auto producer = Range<int>{0, 3, 1};
+    constexpr auto vector_of_one_range = Vector<Range<int>, 4>{producer};
+    STATIC_REQUIRE(vector_of_one_range.count() == 1U);
+    STATIC_REQUIRE(vector_of_one_range(0U) == Range<int>{0, 3, 1});
+
+    constexpr auto repeated = Repeat<int>{7, 2U};
+    constexpr auto vector_of_one_repeat = Vector<Repeat<int>, 4>{repeated};
+    STATIC_REQUIRE(vector_of_one_repeat.count() == 1U);
+    STATIC_REQUIRE(vector_of_one_repeat(0U) == Repeat<int>{7, 2U});
+
+    // Nesting: a single collection argument that matches the element type is
+    // one element, enabling Clojure-style heterogeneous closure nesting.
+    constexpr auto inner = Vector<Repeat<int>, 2>{Repeat<int>{9, 2U}, Repeat<int>{}};
+    constexpr auto nested = Vector<Vector<Repeat<int>, 2>, 2>{inner};
+    STATIC_REQUIRE(nested.count() == 1U);
+    STATIC_REQUIRE(nested(0U).count() == 2U);
+    STATIC_REQUIRE(nested(0U)(0U).count() == 2U);
+
+    constexpr auto queue_of_one_range = Queue<Range<int>, 4>{Range<int>{1, 4, 1}};
+    STATIC_REQUIRE(queue_of_one_range.count() == 1U);
+    STATIC_REQUIRE(queue_of_one_range.peek() == Range<int>{1, 4, 1});
+
+    // Span-of-producers remains source construction (span is not the element
+    // type), preserving the RangeViewMaterialization path.
+    static constexpr Range<int> ranges[] = {Range<int>{0, 2, 1}, Range<int>{5, 8, 1}};
+    constexpr std::span<const Range<int>, 2> range_span{ranges};
+    constexpr auto vector_from_span = Vector<Range<int>, 4>{range_span};
+    STATIC_REQUIRE(vector_from_span.count() == 2U);
+    STATIC_REQUIRE(vector_from_span(0U) == Range<int>{0, 2, 1});
+    STATIC_REQUIRE(vector_from_span(1U) == Range<int>{5, 8, 1});
+}
+
 TEST_CASE("Map, Set, and Queue accept bounded span sources", "[source-construction]") {
     using cljonic::Map;
     using cljonic::MapEntry;

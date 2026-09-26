@@ -8,7 +8,8 @@ namespace {
            max_count_probe() && core_probe() && count_probe() && disj_probe() && dissoc_probe() && fits_into_probe() &&
            get_probe() && into_probe() && iterate_probe() && is_empty_probe() && map_entry_probe() && map_probe() &&
            parameters_equal_probe() && peek_probe() && pop_probe() && queue_probe() && range_probe() &&
-           repeat_probe() && repeatedly_probe() && producer_storage_probe() && set_probe() && string_probe();
+           repeat_probe() && repeatedly_probe() && same_type_argument_probe() && producer_storage_probe() &&
+           set_probe() && string_probe();
 }
 } // namespace
 
