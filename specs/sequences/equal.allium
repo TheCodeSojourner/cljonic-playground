@@ -1,0 +1,128 @@
+-- allium: 3
+
+-- General value equality free function (Clojure `=` equivalent, REQ-FN-002G).
+-- Concretizes REQ-FN-002E over the supported stable-equality domain. The ten
+-- cljonic collection/producer categories follow the equality matrix; scalar
+-- values compare via `==`; floating-point values are rejected at compile time
+-- at any depth; equality over two unbounded producers compares the configured
+-- observable traversal cap of each operand so no call can fail to terminate.
+
+entity EqualFunction {
+    general_value_equality_operation: Boolean
+    named_operation_distinct_from_operator_equals: Boolean
+    supported_domain_scope: Boolean
+    scalar_operands_compare_via_operator_equals: Boolean
+    floating_point_rejected_at_compile_time_at_any_depth: Boolean
+    cljonic_nonscalar_pairs_classified_by_equality_family: Boolean
+    sequential_family_mutually_comparable_by_produced_sequence: Boolean
+    map_comparable_only_to_map: Boolean
+    set_comparable_only_to_set: Boolean
+    string_comparable_only_to_string: Boolean
+    cross_family_and_mixed_pairs_rejected_at_compile_time: Boolean
+    sequential_elements_require_identical_element_types: Boolean
+    sequential_comparison_is_order_sensitive: Boolean
+    equality_is_recursive_over_nested_values: Boolean
+    nested_producer_components_use_producer_parameter_equality: Boolean
+    lazy_element_wise_comparison_no_eager_materialization: Boolean
+    terminates_on_first_differing_element_pair: Boolean
+    unbounded_pairs_compare_configured_traversal_cap: Boolean
+    every_call_terminates: Boolean
+    constexpr_noexcept_nonmutating_nonallocating: Boolean
+    requires_stable_equality_components: Boolean
+    no_cross_type_numeric_unification: Boolean
+    outside_supported_domain_rejected_at_compile_time: Boolean
+
+    invariant GeneralValueEqualityOperation {
+        this.general_value_equality_operation = true
+    }
+
+    invariant NamedOperationDistinctFromOperatorEquals {
+        this.named_operation_distinct_from_operator_equals = true
+    }
+
+    invariant SupportedDomainScope {
+        this.supported_domain_scope = true
+    }
+
+    invariant ScalarOperandsCompareViaOperatorEquals {
+        this.scalar_operands_compare_via_operator_equals = true
+    }
+
+    invariant FloatingPointRejectedAtCompileTimeAtAnyDepth {
+        this.floating_point_rejected_at_compile_time_at_any_depth = true
+    }
+
+    invariant CljonicNonscalarPairsClassifiedByEqualityFamily {
+        this.cljonic_nonscalar_pairs_classified_by_equality_family = true
+    }
+
+    invariant SequentialFamilyMutuallyComparableByProducedSequence {
+        this.sequential_family_mutually_comparable_by_produced_sequence = true
+    }
+
+    invariant MapComparableOnlyToMap {
+        this.map_comparable_only_to_map = true
+    }
+
+    invariant SetComparableOnlyToSet {
+        this.set_comparable_only_to_set = true
+    }
+
+    invariant StringComparableOnlyToString {
+        this.string_comparable_only_to_string = true
+    }
+
+    invariant CrossFamilyAndMixedPairsRejectedAtCompileTime {
+        this.cross_family_and_mixed_pairs_rejected_at_compile_time = true
+    }
+
+    invariant SequentialElementsRequireIdenticalElementTypes {
+        this.sequential_elements_require_identical_element_types = true
+    }
+
+    invariant SequentialComparisonIsOrderSensitive {
+        this.sequential_comparison_is_order_sensitive = true
+    }
+
+    invariant EqualityIsRecursiveOverNestedValues {
+        this.equality_is_recursive_over_nested_values = true
+    }
+
+    invariant NestedProducerComponentsUseProducerParameterEquality {
+        this.nested_producer_components_use_producer_parameter_equality = true
+    }
+
+    invariant LazyElementWiseComparisonNoEagerMaterialization {
+        this.lazy_element_wise_comparison_no_eager_materialization = true
+    }
+
+    invariant TerminatesOnFirstDifferingElementPair {
+        this.terminates_on_first_differing_element_pair = true
+    }
+
+    invariant UnboundedPairsCompareConfiguredTraversalCap {
+        this.unbounded_pairs_compare_configured_traversal_cap = true
+    }
+
+    invariant EveryCallTerminates {
+        this.every_call_terminates = true
+    }
+
+    invariant ConstexprNoexceptNonmutatingNonallocating {
+        this.constexpr_noexcept_nonmutating_nonallocating = true
+    }
+
+    invariant RequiresStableEqualityComponents {
+        this.requires_stable_equality_components = true
+    }
+
+    invariant NoCrossTypeNumericUnification {
+        this.no_cross_type_numeric_unification = true
+    }
+
+    invariant OutsideSupportedDomainRejectedAtCompileTime {
+        this.outside_supported_domain_rejected_at_compile_time = true
+    }
+}
+
+actor EqualFunctionOperator { identified_by: EqualFunction }

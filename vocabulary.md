@@ -373,9 +373,25 @@ producer building blocks used across all higher-order algorithms.
 ### GeneralEquality
 - **Definition:** Equality over supported values using the applicable semantic equality capability, distinct from numeric equality and from storage identity.
 - **Deprecated Synonyms:** structural equality, semantic equality
-- **Related:** StableEquality, NumericEquality, FiniteDeepEquality, ProducerParameterEquality
+- **Related:** StableEquality, NumericEquality, FiniteDeepEquality, ProducerParameterEquality, SequentialEquality, Equal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** General equality compares supported collection content according to its documented logical semantics and compares producer values by their stored parameters under ProducerParameterEquality.
+- **Examples:** General equality compares supported collection content according to its documented logical semantics and compares producer values by their stored parameters under ProducerParameterEquality. The named free function `equal` implements general equality over the supported stable-equality domain: it compares scalar operands with `==`, applies the SequentialEquality family rules across cljonic collections and producers, and rejects floating-point operands at compile time at any depth.
+
+
+### SequentialEquality
+- **Definition:** The equality family rule under which Vector, Queue, Cycle, Iterate, Range, Repeat, and Repeatedly are mutually comparable by their produced sequence: two sequential values are equal exactly when they produce the same elements in the same order, compared with identical element types, regardless of their concrete types. Comparison is order-sensitive, element-wise, lazy (no eager producer materialization), terminates at the first differing element pair, and compares each operand's configured observable traversal cap when both operands are unbounded so every call terminates.
+- **Deprecated Synonyms:** sequence equality family, cross-type sequential comparison
+- **Related:** Equal, GeneralEquality, FiniteDeepEquality, ProducerParameterEquality, FiniteObservation, StableEqualityComparable
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `equal(Vector<int, 4>{1, 2, 3}, Range<int>{0, 3, 1})` is true because both produce `1, 2, 3`; `equal(Vector<int, 3>{1, 1, 1}, repeat(1, 3U))` is true; `equal(cycle(Vector<int, 2>{1, 2}), Vector<int, 4>{1, 2, 3})` is false after the third element without materializing the Cycle; `equal(repeat(1), repeat(1))` is true by bounded-prefix comparison. Map, Set, and String are never members of the sequential family.
+
+
+### Equal
+- **Definition:** The canonical named general-equality free function mapped conceptually to Clojure's `=`. It implements GeneralEquality over the supported stable-equality domain: non-collection, non-producer values compare via `==`; floating-point values are rejected at compile time at any depth, including nested inside either operand; cljonic collections and producers compare by their equality family, with the SequentialEquality family mutually comparable by produced sequence and Map, Set, and String comparable only to their own kind; incompatible-family and mixed cljonic-to-non-cljonic pairs fail at compile time. Comparison is recursive over nested values, lazy and element-wise for sequential operands, terminates at the first differing element pair, and compares configured observable traversal caps when both operands are unbounded so every call terminates.
+- **Deprecated Synonyms:** `=`, general equality function, Clojure equals
+- **Related:** GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, ProducerParameterEquality, FiniteDeepEquality, AlternativeStrictEquality, CompileTimeFailure
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `equal(1, 1)` is true by scalar comparison; `equal(Vector<int, 3>{1, 2, 3}, Range<int>{0, 3, 1})` is true by sequential equality; `equal(map, map)` compares key/value mappings without entry order; `equal(1.0, 1.0)` and `equal(Vector<float, 2>{}, Vector<float, 2>{})` fail at compile time under the floating-point rule; `equal(Vector<int, 2>{1}, 1)` fails at compile time because a collection is never equal to a scalar. Producer `==` and `parameters_equal` remain producer parameter equality and are distinct from `equal`, which may compare produced sequences at the top level.
 
 
 ### NumericEquality
