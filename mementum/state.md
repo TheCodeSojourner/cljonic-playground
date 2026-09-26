@@ -1,61 +1,34 @@
 ## Session State
 
-- last_session_id: 4c6756bf-400a-4e32-b5c4-f447a3991b06
+- last_session_id: 39961408-6c3f-4ed7-95d3-d1e36f01a0a4
 - current_timestamp: 2026-09-26
 - recover: 1
-- session_complete: false
+- session_complete: true
 
 Task:
-1. Same-Type-Argument Is One Element slice (human-approved 2026-09-26): a single constructor argument whose type is exactly the element type is pack construction (one element), never source materialization. Materialization of a range/producer source remains into/fits_into. Enables Clojure-style nesting: `Vector<Range<int>,N>{r}` is a vector containing one range; `Vector<Vector<...>,N>{inner}` is one nested element.
-2. Propagated: architecture.md S3_result_contract_policy + S1_construction clauses; specs/collections/source-construction.allium + vector.allium + queue.allium `SingleElementTypeArgumentYieldsPackConstruction` invariants; range-ctor constrained in vector/queue/set/map headers (String excluded: element type char is not a range); new test case "Single element-type argument selects pack construction" (TRACE_ID-covered) + simplified the .assoc workarounds in producer-storage tests; vocabulary term `SameTypeArgumentIsOneElement` pinned; Doxygen prose in Vector/Queue/Set/Map; cljonic.hpp + docs regenerated; traceability snapshot regenerated.
-3. PENDING: human approval to commit this slice (all changes uncommitted in working tree).
+1. Same-Type-Argument Is One Element slice — COMPLETE and committed by the human (2026-09-26, commits 57abd60..96a28a6: arch rules, spec invariants + obligation snapshot, tests + no-heap probe, implementation, docs, session state).
+2. Fini: encode session insights (no-heap probe rule refresh + same-type-constructor-pack-preference memory) and commit mementum/ only, per established precedent.
 
 Questions:
-1. None blocking. Full six-command convergence sweep (vocab/arch/spec check+weed) suggested before or at fini.
+1. None blocking.
 
 Decisions:
-1. Human decision 2026-09-26: same-type single argument = one element (pack), superseding the earlier source-wins observation. This resolves the carried-forward single-range-argument ambiguity; carry-forward item 1 is now CLOSED.
-2. Implementation is a requires-clause exclusion per header: `!std::same_as<remove_cvref_t<SourceRange>, ElementType>` on the range constructor (value_type alias for queue/set/map). No API added; conj/assoc remain canonical for element insertion.
-3. Span-of-producers still source-constructs (span is not the element type) — RangeViewMaterialization path unchanged, verified by new static_assert cases.
-
-Decisions:
-1. `StableEqualityComparable` is now recursive: `std::equality_comparable<T> && !contains_floating_point_v<T> && !contains_callable_v<T>`.
-2. `concepts_detail::contains_floating_point` / `contains_callable` walkers recurse through `std::variant` alternatives, cljonic collections, MapEntry, AND producer stored parameters (per-header specializations; producers in their own headers, MapEntry in cljonic-map-entry.hpp; `Iterate`/`Repeatedly` mark `contains_callable` true due to the stored step).
-3. Callable components rejected as a class, including function pointers.
-4. `MapEntry<K,V>::operator==` constrained (REQ-NUM-007 fix).
-5. Collections have conditional `operator==` (REQ-COLL-021): Vector/Queue/String order-sensitive; Map/Set order-insensitive.
-6. New spec `specs/collections/equality.allium`; `entity AlternativeStrictEquality` added; REQs REQ-CAP-010 / REQ-COLL-021 added.
-7. Stream B: default ctors added to `Repeat` (finite-empty, `Repeat{T{},0}`), `Repeatedly` (finite-empty, `Repeatedly{Step{},0}`), `Iterate` (unbounded, `Iterate{T{},Step{}}`), `Cycle` (`= default`, unbounded over default source). `Range` already had its default (finite-empty). New REQ-VAL-017D + architecture section "Producer Storage Admission Architecture" + `entity ProducerStorageAdmission` in materialization.allium + per-producer `satisfies_nothrow_collection_element`/`DefaultFormIsValid` invariants.
-8. A single range-typed argument to `Vector<C,N>{...}`/`Queue<C,N>{...}` matches the range/view constructor, not the pack constructor (source-constructor ambiguity). Tests must use multi-element pack construction or `.assoc(0U, ...)`.
-9. `NothrowCollectionElement<Iterate<T, Step>>` with a non-default-constructible Step evaluates TRUE in an unevaluated requires context (member-init failures aren't visible), even though direct `Iterate<T,Step>{}` is a hard error; storage-site rejection is verified via the variant-compile-fail gate instead (FAILURE_PREAMBLE_CASES with NonDefaultStep/NonDefaultGen).
-10. Stream C: producer equality is PARAMETER-STRUCTURAL (REQ-FN-014B). `Range<T>` `operator==` compares `start_/end_/step_`; `Repeat<T>` compares `value_/count_/is_finite_`; `Cycle<Source>` compares `source_/count_/is_finite_` (recursing into the owned source). All three provide a named free function `parameters_equal` with identical semantics. O(1), constexpr, noexcept, non-allocating, never traverses. Distinct parameters compare unequal even when produced sequences coincide (e.g. `Range{0,5,0} != Range{0,7,0}`; `Repeat{7} != Repeat{7,0U}`).
-11. Stream C admission: `Range`/`Repeat`/`Cycle` satisfy `StableEqualityComparable` and `NothrowStableEqualityComparable` over stable components → usable as map keys, set elements, and composite components. `Iterate`/`Repeatedly` never do (callable `step_` → `contains_callable` true).
-12. REQ amendments for Stream C: REQ-SEQ-016 reworded to withhold SEQUENCE equality (compile-time failure) while permitting producer parameter equality; REQ-FN-014A reworded (sequence-equality restriction only); REQ-FN-014B made normative (mandatory `==` + `parameters_equal` for all-stable-parameter producers); REQ-CAP-010 widened "supported bounded producers" → "supported producers whose stored parameters admit stable equality".
-13. New spec `specs/producers/parameters-equal.allium` + `entity ProducerParameterEquality` in materialization.allium + `RecursesIntoProducerParameters` on StableEqualityComparable + `ProducerComponentsUseProducerParameterEquality` on CollectionEquality. Vocabulary gains `ProducerParameterEquality` term.
-14. Compile-fail gate extended: producer-key/equality PASS cases + float/callable producer FAILURE cases (Repeat-float, Cycle-float-source, variant-iterate-callable).
-15. Convergence weeds (all decisions human-approved): vocab-weed C1 arch (canonical `producer_parameter_equality`), C2 spec+code (full repo canonicalization to ProducerParameterEquality / producer parameter equality; vocabulary synonym map corrected), C3 skip (29 aspirational terms retained); arch-weed A1 arch (lambda renamed `S2_producer_parameter_equality`), A2 arch (Level-2 collection_equality recursion clause added), A3 arch (StableEqualityComparable formula corrected with `!contains_callable_v`); spec-weed converged first pass, no decisions.
-16. New knowledge page `mementum/knowledge/value-equality-domain.md` synthesizing the unified equality architecture (streams A+B+C crystallized).
-
-17. Human decision 2026-09-25: alternative-strict variant equality is FINAL and exclusive. Cross-type numeric unification (`variant<int,long>{1}` vs `variant<int,long>{1L}`) is permanently out of scope, not deferred. No Stream D work stream exists or will be created.
-18. `NumericEquality` vocabulary term pinned (human-approved vocab-tend): "No cross-type comparison rules are permitted: values of different numeric types never compare equal under any cljonic equality operation; a cross-type comparison requires an explicit conversion performed by the caller under NumericPolicy." Zero usages in arch/specs, so no propagation was needed.
-19. Arch-tend fix for arch-check warning W1: `S3_domain_boundary.implemented_value_domain` now includes `Repeatedly`; the single-occurrence `planned_producer_domain(x) ≡ repeatedly` line retired. All four domain statements (current_scope, module4_active_slice, S3_domain_boundary, current_implementation_boundary) now agree.
-20. Obligation-id snapshot regenerated (`make traceability-spec-to-code-update-snapshot`) and verified (`make traceability-spec-to-code` ok): 782 strict-gate ids, zero drift, every obligation covered by at least one test TRACE_ID (strict `comm` gate). No-heap src/symbol gates pass.
+1. Human decision 2026-09-26: Same-Type-Argument Is One Element — a single constructor argument whose type is exactly the element type is pack construction (one element), never source materialization; materialization remains `into`/`fits_into`. Resolves the carried-forward single-range-argument ambiguity (carry-forward CLOSED). Enables Clojure-style nesting: `Vector<Range<int>,N>{r}` is a vector containing one range.
+2. Implementation is a requires-clause exclusion per header: `!std::same_as<remove_cvref_t<SourceRange>, ElementType>` on the range constructor. No API added; conj/assoc remain canonical for element insertion. String exempt (char is never a range). Span-of-producers still source-constructs.
+3. Standing decision 2026-09-25: alternative-strict variant equality is FINAL and exclusive; cross-type numeric unification permanently out of scope (Stream D retired). `NumericEquality` pinned: no cross-type comparison rules under any cljonic equality operation.
+4. No-heap rule sharpened by human flag this session: constructor/behavior changes require a dedicated no-heap probe in both builds; `no-heap-src`/`no-heap-symbols` scans do not verify behavior coverage.
 
 Validation:
-1. `make git`: FULL PASS (format, lint, complexity, cljonic header, range-compile-fail, variant-compile-fail, sanitizers, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols, docs, 13 doc examples, single-header probe, git:ok).
-2. `make test`: 100% tests passed out of 154.
-3. Six-command convergence sweep: vocab-check PASS (151 terms, 0 issues), arch-check PASS (0 findings after the S3 fix), spec-check PASS (30/30 files, 0 diagnostics/0 issues), vocab-weed 0 divergences (29 aspirational terms retained per standing decision C3), arch-weed 0 divergences (14 candidates all resolved as naming-form coverage), spec-weed 0 divergences (1378 obligations, strict traceability PASS, tests PASS).
-4. Probe check: `NothrowCollectionElement<Iterate<int, NonDefaultStep>>` and `<Repeatedly<int, NonDefaultGen>>` now correctly evaluate false; storage-site rejection previously verified only via the variant-compile-fail gate is now visible at the concept boundary itself.
+1. `make validate` FULL PASS (format, lint, complexity, cljonic header, range/variant compile-fail, sanitizers, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols).
+2. Six-command convergence sweep: vocab-check PASS (152 terms, 0 issues), arch-check PASS (0 findings), spec-check PASS (30/30, 0 diagnostics), vocab-weed PASS (0 actionable divergences; 29 aspirational terms retained per standing decision C3), arch-weed PASS (0 actionable divergences), spec-weed PASS (1382 obligations, strict traceability, 156/156 tests).
+3. `make no-heap` PASS after adding `tests/no_heap/cljonic-same-type-argument-probes.cpp` (registered in probes.hpp + harness_main.cpp, both builds).
 
 Next:
-1. Human approval needed before committing the implementation work: Streams A+B+C implementation + blind-spot fix + regenerated cljonic.hpp + regenerated docs/snapshot + the NumericEquality vocab pin + the S3 domain-boundary fix are all uncommitted in the working tree (this fini commits mementum/ only, matching the established precedent).
-2. Candidate next slice: `equal`/`equal_by`/`identical` documented (cljonic-core.hpp:135) but unimplemented; REQ-FN-002E deferred. Completes the equality domain table in mementum/knowledge/value-equality-domain.md.
-3. RETIRED: Stream D (cross-type numeric unification). Human decision 2026-09-25: alternative-strict is final and exclusive; there is no reopen path — changing it would be a new spec-tend with full propagation, not a deferred item.
-4. REQ-SEQ-022 operation-level specification reconciliation remains the older agenda item (mementum/knowledge/cljonic-next-agenda.md).
+1. Candidate next slice: `equal`/`equal_by`/`identical` documented (cljonic-core.hpp:135) but unimplemented; REQ-FN-002E deferred. Completes the equality domain table in mementum/knowledge/value-equality-domain.md.
+2. REQ-SEQ-022 operation-level specification reconciliation remains the older agenda item (mementum/knowledge/cljonic-next-agenda.md).
+3. RETIRED: Stream D (cross-type numeric unification) — final and exclusive, no reopen path; a change would be a new spec-tend with full propagation, not a deferred item.
 
 Carry-forward (unaddressed, remember for later):
-1. Single-range-argument construction ambiguity: `Vector<C,N>{one_range_typed_value}` selects the source constructor, not the pack constructor (producers are ranges). Tests work around it (two-element packs / `.assoc(0U, ...)`); users hit it. Needs a decision: documented guidance, a REQ pinning constructor-preference, or a named append/emplace helper.
-2. RESOLVED this session: the NothrowCollectionElement blind spot is fixed by constrained producer default ctors (`requires std::default_initializable<Step>` on Iterate/Repeatedly). Concept-level rejection now matches storage-site rejection; the variant-compile-fail storage cases remain as regression evidence.
-3. `equal`/`equal_by`/`identical` documented (cljonic-core.hpp:135) but unimplemented; REQ-FN-002E deferred. Separate slice.
-4. User-defined aggregates with float members are unanalyzable (no reflection) — REQ-NUM-007 recursion cannot be enforced for them; documented known limitation, revisit with the aggregate story.
-5. Set duplicate-insertion in a constexpr context hits `std::abort()` (src/cljonic-set.hpp:117), so constexpr sets with duplicate elements can't be formed; the equality contract is verified with distinct producers at compile time and duplicate no-op at runtime.
+1. `equal`/`equal_by`/`identical` documented but unimplemented; REQ-FN-002E deferred. Separate slice (same as Next 1).
+2. User-defined aggregates with float members are unanalyzable (no reflection) — REQ-NUM-007 recursion cannot be enforced for them; documented known limitation, revisit with the aggregate story.
+3. Set duplicate-insertion in a constexpr context hits `std::abort()` (src/cljonic-set.hpp:117), so constexpr sets with duplicate elements can't be formed; the equality contract is verified with distinct producers at compile time and duplicate no-op at runtime.
