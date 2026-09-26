@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-09-25
+last_updated: 2026-09-26
 status: draft
 ---
 
@@ -152,6 +152,14 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** Collection, Capacity, BoundedStorage, OwningValue, PlatformInteroperability, RangeViewMaterialization
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `Vector<int, 4>{source_range}`, `Map<Key, Value, 4>{source_view}`, and analogous constructors for `Set`, `Queue`, and `String` perform SourceConstruction.
+
+
+### SameTypeArgumentIsOneElement
+- **Definition:** The constructor-selection rule that a single constructor argument whose type is exactly the collection's element type is pack construction of one element, and is never treated as a range or view source to materialize. Complete materialization of a range or producer argument remains the role of `into` and `fits_into`.
+- **Deprecated Synonyms:** pack preference, single-argument disambiguation
+- **Related:** SourceConstruction, RangeViewMaterialization, ProducerMaterialization, CapacityConstruction, Conj
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector<Range<int>, 4>{r}` constructs a vector containing the single producer value `r`; `into(Vector<int, 4>{}, Range<int>{0, 3, 1})` materializes the producer's elements.
 
 
 ### RangeViewMaterialization
