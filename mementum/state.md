@@ -7,6 +7,9 @@
 - oriented: 2026-09-26 (gybis-init: read state.md, recent memories since 70d78d17, value-equality-domain and cljonic-next-agenda knowledge)
 
 Task:
+1. Convergence sweep (arch-check + vocab-check findings, human-approved 2026-09-26) — COMPLETE: consolidated the near-duplicate S3_result_contract_guidance/S3_result_contract_enforcement rules into a single S3_result_contract rule; stripped the five empty `λ expressions:` filler lines; tended the stale ProducerKind vocabulary entry to admit the Repeatedly family and added the missing CljonicIterate and CljonicRepeatedly vocabulary terms (surfaced by the vocab-check undefined-reference gate); refreshed architecture-lambda-notation memory with the one-rule-per-concern lesson. Re-validation clean (0 issues).
+
+Task:
 1. Variadic `equal` arity slice — COMPLETE and committed (2026-09-26, commit 93231aa): REQ-FN-002G amended to the three Clojure `=` arities (unary returns true for a domain-admitted operand; variadic conjoins adjacent-pair equality left to right with short-circuit; every adjacent pair compile-time gated), S2_general_equality_function arch rule extended, five new EqualFunction invariants in equal.allium, SFINAE-safe equal_pair_admissible_v / all_adjacent_pairs_admissible predicates in src, spec tests + 13 compile-fail + 7 compile-pass arity cases in both builds, arity no-heap probe, Equal vocabulary term anchored, and the unused-<utility> include hygiene fix folded in.
 2. Mementum migration — COMPLETE (commit 5e80ab9): migrated helper-return-semantics-inversion and pipefail-masks-build-failures out of the forbidden Copilot repo-memory store; validation-cadence duplicate discarded; store now empty.
 

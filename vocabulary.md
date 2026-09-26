@@ -971,9 +971,9 @@ producer building blocks used across all higher-order algorithms.
 ### ProducerKind
 - **Definition:** The closed discriminant used by nominal producer traits and concepts to distinguish supported producer families.
 - **Deprecated Synonyms:** producer category, nominal producer kind
-- **Related:** ProducerConcept, CljonicProducer, CljonicRange, Producer, CollectionKind
+- **Related:** ProducerConcept, CljonicProducer, CljonicRange, CljonicRepeatedly, Producer, CollectionKind
 - **Usage:** Architecture, implementation, and tests
-- **Examples:** A producer trait classifies an admitted type as range, repeat, cycle, or iterate in the current active slice, with repeatedly reserved for a future producer family.
+- **Examples:** A producer trait classifies an admitted type as range, repeat, cycle, iterate, or repeatedly in the current active slice.
 
 
 ### CollectionConcept
@@ -1070,6 +1070,22 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** CljonicProducer, Cycle, ProducerKind, ProducerConcept
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `CljonicCycle<Cycle<Vector<int, 3>>>` is satisfied while `Vector<int, 3>` is not.
+
+
+### CljonicIterate
+- **Definition:** The C++ concept identifier implementing the nominal producer identity for the Iterate producer family.
+- **Deprecated Synonyms:** cljonic_iterate, cljonic iterate concept
+- **Related:** CljonicProducer, Iterate, ProducerKind, ProducerConcept
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicIterate<Iterate<int>>` is satisfied while `Vector<int, 4>` is not.
+
+
+### CljonicRepeatedly
+- **Definition:** The C++ concept identifier implementing the nominal producer identity for the Repeatedly producer family.
+- **Deprecated Synonyms:** cljonic_repeatedly, cljonic repeatedly concept
+- **Related:** CljonicProducer, Repeatedly, ProducerKind, ProducerConcept
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicRepeatedly<Repeatedly<int>>` is satisfied while `Vector<int, 4>` is not.
 
 
 ### CljonicSource

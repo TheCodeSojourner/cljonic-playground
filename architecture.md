@@ -29,8 +29,6 @@
   | identity(x) → bounded(x) ∧ deterministic(x) ∧ semantically_clear(x)
   | preserve_identity(x) → CopyOnModifyCollection(x) ∧ SentinelBasedAccess(x) ∧ ProbeFirstAccess(x) ∧ strict_resource_determinism(x)
 
-λ expressions:
-
 λ S5_identity(x). embedded_first(x) ∧ DeterministicBehavior(x) ∧ fixed_capacity_value_semantics(x)
   | no_hidden_allocation(x) ∧ no_exceptions(x)
   | canonical_vocabulary_governs(x)
@@ -49,8 +47,6 @@
   | profile_evolution(x) → preserve(stable_public_vocabulary ∧ backward_compatible_semantic_contracts)
   | new_capability(x) → introduce_as(explicit_mode) ∧ ¬silent_behavior_drift(x)
 
-λ expressions:
-
 λ S4_learning(x). detect(assumption_break) → capture_decision ∧ refine_policy
   | prefer_explicit_deprecation_windows(x)
   | stable_handle_model(x)
@@ -64,8 +60,6 @@
 
 λ S3_control_intro(x). enforce(x) → NoHeapConstraint ∧ NoExceptionConstraint ∧ deterministic_sentinel_and_overflow_behavior ∧ strict_quality_gates
   | resource_usage(x) ∧ policy_outcomes(x) → bounded ∧ auditable
-
-λ expressions:
 
 λ S3_constraints(x). NoHeapConstraint(x) ∧ NoExceptionConstraint(x)
   | NoRttiConstraint(x) ∧ NoHiddenGlobalInitialization(x)
@@ -120,10 +114,8 @@
   | conditional_on(user_defined_types_being_pure_and_non_allocating(x))
   | preserve_input_values(x) ∧ return(OwningValue(x))
 
-λ S3_result_contract_guidance(x). result_contract_rules(x) → active_for(all_public_operations)
+λ S3_result_contract(x). result_contract_rules(x) → active_for(all_public_operations)
   | approved_operation(x) → comply_with(result_contract_rules(x))
-
-λ S3_result_contract_enforcement(x). result_contract_rules(x) → active_for(all_public_operations)
   | new_operation(x) → comply_with(S3_result_contract_policy ∧ S2_result_status_model)
 
 λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
@@ -158,8 +150,6 @@
 
 λ S2_coordination_intro(x). coordination(x) → driven_by(canonical_vocabulary ∧ interaction_protocols)
   | component_consistency(x) → ProbeFirstAccess(x) ∧ stable_handle_contracts(x) ∧ prefer(Clojure_semantic_consistency) when(embedded_constraints_permit(x))
-
-λ expressions:
 
 λ S2_protocol(x). canonical_vocabulary_controls_interfaces(x)
   ∧ canonical_vocabulary_controls_docs(x)
@@ -581,8 +571,6 @@ concept IndexedProducer =
 λ S1_operations_intro(x). operations(x) → C++23 ∧ FP_oriented ∧ HeaderOnlyDistribution
   | development(x) → CMake_orchestration ∧ Catch2_v3_testing ∧ deterministic_quality_tooling
   | distribution(x) → single_AmalgamatedHeader_artifact(x)
-
-λ expressions:
 
 λ S1_language(x). programming_language_version(x) ≡ C++23
   | paradigm_preference(x) ≡ FP_oriented
