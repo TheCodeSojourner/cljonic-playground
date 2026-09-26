@@ -4,7 +4,7 @@
 #include <cljonic-concepts.hpp>
 #include <ranges>
 #include <type_traits>
-#include <utility>
+#include <variant>
 
 namespace cljonic::concepts_detail {
 
