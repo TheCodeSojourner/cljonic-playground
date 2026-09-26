@@ -1,0 +1,7 @@
+---
+type: Insight
+symbol: 💡
+title: variable-template-constraints-need-sfinae-safe-detection
+related: [equal-family-classification.md, helper-return-semantics-inversion.md, generic-deleted-templates-over-type-whitelist.md]
+---
+Extending `equal` to the three Clojure arities (commit 93231aa) surfaced a C++ trap: a variable template like `equal_pair_admissible_v<Lhs, Rhs>` cannot SFINAE member-type extraction — `typename Lhs::value_type` inside a `||` disjunct is a hard error when Lhs is `int`, unlike a function-template requires clause which silently drops the overload. Fix: SFINAE-safe detection traits (`std::void_t` partial specializations with `void` fallback) so every disjunct stays substitution-safe over the full closed value domain; a concept used on the fallback (`StableEqualityComparable<void>`) evaluates false, never errors. Also: a pack-adjacent-pair predicate needs a trait-struct base (`all_adjacent_pairs_admissible` with `std::true_type` primary) — a variable-template recursion with a single-type partial specialization fails ("too few template arguments"). And this project's clang-tidy enforces P0634: drop `typename` on member typedefs/aliases, but keep it inside `std::void_t<typename T::...>` template arguments.
