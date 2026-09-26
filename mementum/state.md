@@ -1,16 +1,22 @@
 ## Session State
 
 - last_session_id: 4c6756bf-400a-4e32-b5c4-f447a3991b06
-- current_timestamp: 2026-09-25
+- current_timestamp: 2026-09-26
 - recover: 1
-- session_complete: true
+- session_complete: false
 
 Task:
-1. Resume after session 5bfdfb56 and finish its follow-through: fix the `NothrowCollectionElement` blind spot by constraining the `Iterate()`/`Repeatedly()` default ctors with `requires std::default_initializable<Step>` (REQ-VAL-017D), regenerate the stale root `cljonic.hpp`, retire Stream D (alternative-strict final), pin `NumericEquality` vocabulary (no cross-type rules), fix the stale `S3_domain_boundary` (add `Repeatedly`, retire `planned_producer_domain`), run the full six-command convergence sweep, and regenerate + verify the obligation-id snapshot with no-heap gates.
-2. Prior session work carried in this working tree (validated, approval pending): Streams A+B+C — Composite Values in the Closed Cljonic Domain (`std::variant` map keys/set elements, recursive stable equality REQ-CAP-010, collection equality REQ-COLL-021), producer storage admission (REQ-VAL-017D default forms), producer parameter equality (REQ-FN-014B `Range`/`Repeat`/`Cycle` `==` + `parameters_equal`).
+1. Same-Type-Argument Is One Element slice (human-approved 2026-09-26): a single constructor argument whose type is exactly the element type is pack construction (one element), never source materialization. Materialization of a range/producer source remains into/fits_into. Enables Clojure-style nesting: `Vector<Range<int>,N>{r}` is a vector containing one range; `Vector<Vector<...>,N>{inner}` is one nested element.
+2. Propagated: architecture.md S3_result_contract_policy + S1_construction clauses; specs/collections/source-construction.allium + vector.allium + queue.allium `SingleElementTypeArgumentYieldsPackConstruction` invariants; range-ctor constrained in vector/queue/set/map headers (String excluded: element type char is not a range); new test case "Single element-type argument selects pack construction" (TRACE_ID-covered) + simplified the .assoc workarounds in producer-storage tests; vocabulary term `SameTypeArgumentIsOneElement` pinned; Doxygen prose in Vector/Queue/Set/Map; cljonic.hpp + docs regenerated; traceability snapshot regenerated.
+3. PENDING: human approval to commit this slice (all changes uncommitted in working tree).
 
 Questions:
-1. No blocking questions remain.
+1. None blocking. Full six-command convergence sweep (vocab/arch/spec check+weed) suggested before or at fini.
+
+Decisions:
+1. Human decision 2026-09-26: same-type single argument = one element (pack), superseding the earlier source-wins observation. This resolves the carried-forward single-range-argument ambiguity; carry-forward item 1 is now CLOSED.
+2. Implementation is a requires-clause exclusion per header: `!std::same_as<remove_cvref_t<SourceRange>, ElementType>` on the range constructor (value_type alias for queue/set/map). No API added; conj/assoc remain canonical for element insertion.
+3. Span-of-producers still source-constructs (span is not the element type) — RangeViewMaterialization path unchanged, verified by new static_assert cases.
 
 Decisions:
 1. `StableEqualityComparable` is now recursive: `std::equality_comparable<T> && !contains_floating_point_v<T> && !contains_callable_v<T>`.
