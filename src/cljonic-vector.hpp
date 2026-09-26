@@ -16,7 +16,8 @@ namespace cljonic {
  * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more initializers than the available capacity is rejected at
- * compile time.
+ * compile time. A single constructor argument whose type is exactly the element type constructs one element (never a
+ * source to materialize); use \b into or \b fits_into to materialize a range or producer source.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -172,7 +173,8 @@ class Vector {
     }
 
     template <std::ranges::input_range SourceRange>
-        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Vector>)
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Vector> &&
+                 !std::same_as<std::remove_cvref_t<SourceRange>, ElementType>)
     constexpr Vector(SourceRange&& source) noexcept(
         (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
         using source_value_type = std::ranges::range_value_t<SourceRange>;

@@ -19,7 +19,8 @@ namespace cljonic {
  * \b Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more values than the available capacity is rejected at compile
- * time.
+ * time. A single constructor argument whose type is exactly the element type constructs one element (never a source to
+ * materialize); use \b into or \b fits_into to materialize a range or producer source.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -120,7 +121,8 @@ class Set {
     }
 
     template <std::ranges::input_range SourceRange>
-        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Set>)
+        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Set> &&
+                 !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
     constexpr Set(SourceRange&& source) noexcept(
         (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
         using source_value_type = std::ranges::range_value_t<SourceRange>;
