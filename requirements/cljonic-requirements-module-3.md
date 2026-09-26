@@ -116,6 +116,10 @@ REQ-COLL-020S. The lifecycle classification MUST be `requirements-backed` for `I
 
 REQ-COLL-020T. The lifecycle classification MUST also be `requirements-backed` for `is_empty`, `can_conj`, and the `full` predicate or equivalent capacity inspection over their supported bounded collection inputs. `empty` and `not_empty` MUST remain `deferred` until their owning-value behavior is implementation-backed. The behavioral contracts for `into` and `fits_into` are approved by Module 2 and Module 4, but both operations MUST remain `deferred` until producer and materialization support is implementation-backed.
 
+## Collection Equality
+
+REQ-COLL-021. Bounded owning collection values MUST support value equality through the native C++ `==` operator where the collection's element, key, and value types satisfy the stable equality capability required by `REQ-NUM-007` and `REQ-CAP-010`. `Vector`, `String`, and `Queue` equality MUST be order-sensitive: two values are equal exactly when their logical counts are equal and their logical elements compare equal in logical order. `Map` and `Set` equality MUST be order-insensitive: two values are equal exactly when their logical counts are equal and every logical entry or element of one value has a matching logical entry or element in the other under stable key/element equality, independent of storage or insertion order. Collection equality MUST be `constexpr`, `noexcept`, non-mutating, and non-allocating, MUST NOT traverse beyond the collection's bounded logical count, and MUST be recursively defined so that nested owning collection values, bounded producer values, and composite variant values compare according to the same component-wise stable-equality rule. A collection whose element, key, or value type does not admit stable equality MUST NOT provide `==`; such a collection MUST fail at compile time when used in an equality position. Collection equality MUST NOT imply Clojure cross-type numeric unification or hash-based equality.
+
 ## Deferred Sequence Traversal Mechanics
 
 The sequence traversal contracts below are approved future-work behavior, not current collection APIs. No supported collection currently exposes `seq`, `first`, `next`, `rest`, a collection-owned logical range, or a C++ interoperability traversal accessor. These contracts MUST remain deferred until a later increment separately propagates their implementation and tests for every collection family. Their presence here records the intended future behavior without making it implementation-ready now.
@@ -199,4 +203,4 @@ REQ-FN-026. The core vocabulary MUST include `empty`, `is_empty`, and `not_empty
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
-- **Governed REQs**: `REQ-COLL-001`–`020P`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`.
+- **Governed REQs**: `REQ-COLL-001`–`021`, `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`.

@@ -65,6 +65,18 @@ class Iterate {
 
 `iterate(step, initial)` constructs an unbounded `Iterate<T, std::decay_t<Step>>` only when `T` satisfies `NothrowCollectionElement` and the const step callback is a copy-constructible, non-throwing exact `T -> T` transition. The factory decays `Step` before storing it: a named function becomes a copyable function pointer, while a lambda or function object is stored as its decayed value type. `Step` may be moved from an rvalue during construction when supported, but the resulting producer remains copyable. `Iterate` owns copies of `initial` and the decayed `step`, emits `initial` first, and applies `step` to the previously emitted value for each subsequent element. For an initial value x and step f, its sequence is `x, (f x), (f (f x)), ...`. It exposes the configured observable traversal cap and `false` from `is_finite()`, satisfies `cljonic_source`, may be consumed directly by source-taking free functions, and converts into an owning destination through `into`; `fits_into` returns `false`. `Iterate` is not indexed or invocable and exposes no `contains`, positional retrieval, key-based lookup, or `get`. Its construction and traversal operations are constexpr-capable when their arguments are, and remain usable at runtime. The callback is not evaluated during construction.
 
+## Producer Storage Admission Architecture
+
+Every Module 4 producer satisfies the `NothrowCollectionElement` storage contract (REQ-VAL-017D) so producer values may be stored as map values, vector elements, queue elements, or nested collection components. This requires default-constructibility and nothrow default/copy construction and assignment. The default-constructed producer form is deterministic and matches the existing default/argumentless construction precedent set by `Range{}`:
+
+- `Range{}` — the existing default: start `T{0}`, end `T{0}`, step `T{1}`; a finite empty range.
+- `Repeat{}` — finite empty: same as `repeat(value, 0)` with `value == T{}`; reports `count() == 0` and `is_finite() == true`.
+- `Repeatedly{}` — finite empty: same as `repeatedly(count, step)` with `count == 0` and a default-constructed step; reports `count() == 0` and `is_finite() == true`.
+- `Iterate{}` — unbounded: same as `iterate(step, initial)` with default-constructed `step` and `initial == T{}`; reports the observable traversal cap and `is_finite() == false`. Iterate has no counted form, so its default is inherently unbounded.
+- `Cycle{}` — unbounded over a default-constructed source: same as `cycle(source{})`; reports the observable traversal cap and `is_finite() == false`. A default-constructed source is typically empty, producing empty observation.
+
+A producer whose component types are not themselves nothrow default-constructible does not satisfy `NothrowCollectionElement`; such a producer fails at compile time when used in a storage position. Default construction never evaluates callbacks, allocates, or throws.
+
 ## Unbounded Traversal & Deep Equality Restriction Architecture
 
 - Open-ended producers (`range` without end, `repeat` without count, `cycle`, `iterate`) do NOT satisfy `stable_equality_comparable`.
