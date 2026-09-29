@@ -11,23 +11,23 @@ namespace cljonic {
  * collections.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr MapEntry<int, int> e_const{1, 100};
- *   static_assert(e_const == MapEntry<int, int>{1, 100});
- *
- *   // Runtime demonstration.
- *   auto e_runtime = MapEntry<int, int>{2, 200};
- *   const auto equal_runtime = e_runtime == MapEntry<int, int>{2, 200};
- *
- *   return equal_runtime ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr MapEntry<int, int> e_const{1, 100};
+   static_assert(e_const == MapEntry<int, int>{1, 100});
+
+   // Runtime demonstration.
+   auto e_runtime = MapEntry<int, int>{2, 200};
+   const auto equal_runtime = e_runtime == MapEntry<int, int>{2, 200};
+
+   return equal_runtime ? 0 : 1;
+ }
+ ~~~~~
  */
 template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType>
 struct MapEntry {

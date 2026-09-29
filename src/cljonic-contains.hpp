@@ -21,34 +21,34 @@ namespace cljonic {
  * supported source's membership domain.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
- *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
- *   constexpr auto st_const = String<8>{"abc"};
- *   constexpr auto r_const = Range{0, 5};
- *   static_assert(contains(v_const, 0U));
- *   static_assert(!contains(v_const, 9U));
- *   static_assert(contains(m_const, 1));
- *   static_assert(!contains(m_const, 2));
- *   static_assert(contains(s_const, 5));
- *   static_assert(!contains(s_const, 8));
- *   static_assert(contains(st_const, 1U));
- *   static_assert(contains(r_const, 4U));
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10, 20};
- *   const auto in_range = contains(v_runtime, 0U);
- *
- *   return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+   constexpr auto st_const = String<8>{"abc"};
+   constexpr auto r_const = Range{0, 5};
+   static_assert(contains(v_const, 0U));
+   static_assert(!contains(v_const, 9U));
+   static_assert(contains(m_const, 1));
+   static_assert(!contains(m_const, 2));
+   static_assert(contains(s_const, 5));
+   static_assert(!contains(s_const, 8));
+   static_assert(contains(st_const, 1U));
+   static_assert(contains(r_const, 4U));
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{10, 20};
+   const auto in_range = contains(v_runtime, 0U);
+
+   return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C, typename K>
 [[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept -> bool {

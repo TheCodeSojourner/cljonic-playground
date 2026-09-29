@@ -12,6 +12,25 @@ import textwrap
 BLOCK_OPEN_RE = re.compile(r"^[ \t]*~~~~~\{\.cpp\}[ \t]*$", re.MULTILINE)
 BLOCK_CLOSE_RE = re.compile(r"^[ \t]*~~~~~[ \t]*$", re.MULTILINE)
 
+# Doc examples are compiled against the public single-header API (cljonic.hpp),
+# which is generated from the cljonic-core.hpp umbrella. The sequence-shaping
+# free functions below are intentionally NOT part of that umbrella: they were
+# deferred with the traversal/interoperability work (see
+# specs/sequences/collection-shaping.allium, "lifecycle: deferred"). Their doc
+# examples therefore cannot be compiled against a public API they do not yet
+# belong to. This exclusion is explicit (and reported) rather than silent; drop a
+# header from this set only when it is promoted into cljonic-core.hpp.
+DEFERRED_NON_PUBLIC_HEADERS = frozenset(
+    {
+        "cljonic-empty.hpp",
+        "cljonic-first.hpp",
+        "cljonic-next.hpp",
+        "cljonic-not-empty.hpp",
+        "cljonic-rest.hpp",
+        "cljonic-seq.hpp",
+    }
+)
+
 
 def extract_cpp_blocks(content: str) -> list[str]:
     lines = content.splitlines()
@@ -97,7 +116,11 @@ def main() -> int:
     build_dir.mkdir(parents=True, exist_ok=True)
 
     example_count = 0
+    deferred_skipped: list[str] = []
     for header_file in sorted(source_dir.glob("*.hpp")):
+        if header_file.name in DEFERRED_NON_PUBLIC_HEADERS:
+            deferred_skipped.append(header_file.name)
+            continue
         content = header_file.read_text(encoding="utf-8")
         blocks = extract_cpp_blocks(content)
         for idx, block in enumerate(blocks, start=1):
@@ -113,6 +136,11 @@ def main() -> int:
         print("docs-examples: no C++ sample blocks found", file=sys.stderr)
         return 1
 
+    if deferred_skipped:
+        print(
+            "docs-examples:deferred-skipped="
+            f"{len(deferred_skipped)} ({', '.join(deferred_skipped)})"
+        )
     print(f"docs-examples:compiled={example_count}")
     return 0
 

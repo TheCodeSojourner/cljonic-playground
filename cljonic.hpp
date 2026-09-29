@@ -560,24 +560,24 @@ namespace cljonic {
  * \brief Associates a key and value in an associative collection or index in a vector.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   static_assert(contains(m_const, 1));
- *   static_assert(m_const(1) == 100);
- *
- *   // Runtime demonstration.
- *   auto m_runtime = Map<int, int, 4>{};
- *   auto m1 = assoc(m_runtime, 2, 200);
- *
- *   return (contains(m1, 2) && m1(2) == 200) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   static_assert(contains(m_const, 1));
+   static_assert(m_const(1) == 100);
+
+   // Runtime demonstration.
+   auto m_runtime = Map<int, int, 4>{};
+   auto m1 = assoc(m_runtime, 2, 200);
+
+   return (contains(m1, 2) && m1(2) == 200) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C, typename K, typename V>
 [[nodiscard]] constexpr auto assoc(const C& collection, const K& key, const V& value) noexcept {
@@ -600,23 +600,23 @@ namespace cljonic {
  * \brief Checks if assoc can succeed without capacity overflow.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr Map<int, int, 4> m_const{};
- *   static_assert(can_assoc(m_const, 1));
- *
- *   // Runtime demonstration.
- *   auto m_runtime = Map<int, int, 4>{};
- *   const auto ok = can_assoc(m_runtime, 2);
- *
- *   return ok ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr Map<int, int, 4> m_const{};
+   static_assert(can_assoc(m_const, 1));
+
+   // Runtime demonstration.
+   auto m_runtime = Map<int, int, 4>{};
+   const auto ok = can_assoc(m_runtime, 2);
+
+   return ok ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C, typename K>
 [[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key) noexcept -> bool {
@@ -639,27 +639,27 @@ namespace cljonic {
  * \brief Checks if conj can succeed without capacity overflow.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr Queue<int, 4> q_const{};
- *   static_assert(can_conj(q_const));
- *   constexpr Set<int, 4> s_const{};
- *   static_assert(can_conj(s_const, 1));
- *
- *   // Runtime demonstration.
- *   auto q_runtime = Queue<int, 4>{};
- *   auto s_runtime = Set<int, 4>{};
- *   const auto q_ok = can_conj(q_runtime);
- *   const auto s_ok = can_conj(s_runtime, 10);
- *
- *   return (q_ok && s_ok) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr Queue<int, 4> q_const{};
+   static_assert(can_conj(q_const));
+   constexpr Set<int, 4> s_const{};
+   static_assert(can_conj(s_const, 1));
+
+   // Runtime demonstration.
+   auto q_runtime = Queue<int, 4>{};
+   auto s_runtime = Set<int, 4>{};
+   const auto q_ok = can_conj(q_runtime);
+   const auto s_ok = can_conj(s_runtime, 10);
+
+   return (q_ok && s_ok) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C, typename... Args>
 [[nodiscard]] constexpr auto can_conj(const C& collection, Args&&... args) noexcept -> bool {
@@ -682,27 +682,27 @@ namespace cljonic {
  * \brief Adds an element to a collection according to its type conventions.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto q_const = conj(Queue<int, 4>{}, 10);
- *   constexpr auto s_const = conj(Set<int, 4>{}, 20);
- *   static_assert(peek(q_const) == 10);
- *   static_assert(contains(s_const, 20));
- *
- *   // Runtime demonstration.
- *   auto q_runtime = Queue<int, 4>{};
- *   auto q1 = conj(q_runtime, 100);
- *   auto s_runtime = Set<int, 4>{};
- *   auto s1 = conj(s_runtime, 200);
- *
- *   return (peek(q1) == 100 && contains(s1, 200)) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto q_const = conj(Queue<int, 4>{}, 10);
+   constexpr auto s_const = conj(Set<int, 4>{}, 20);
+   static_assert(peek(q_const) == 10);
+   static_assert(contains(s_const, 20));
+
+   // Runtime demonstration.
+   auto q_runtime = Queue<int, 4>{};
+   auto q1 = conj(q_runtime, 100);
+   auto s_runtime = Set<int, 4>{};
+   auto s1 = conj(s_runtime, 200);
+
+   return (peek(q1) == 100 && contains(s1, 200)) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C, typename T>
 [[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept {
@@ -736,34 +736,34 @@ namespace cljonic {
  * supported source's membership domain.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
- *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
- *   constexpr auto st_const = String<8>{"abc"};
- *   constexpr auto r_const = Range{0, 5};
- *   static_assert(contains(v_const, 0U));
- *   static_assert(!contains(v_const, 9U));
- *   static_assert(contains(m_const, 1));
- *   static_assert(!contains(m_const, 2));
- *   static_assert(contains(s_const, 5));
- *   static_assert(!contains(s_const, 8));
- *   static_assert(contains(st_const, 1U));
- *   static_assert(contains(r_const, 4U));
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10, 20};
- *   const auto in_range = contains(v_runtime, 0U);
- *
- *   return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+   constexpr auto st_const = String<8>{"abc"};
+   constexpr auto r_const = Range{0, 5};
+   static_assert(contains(v_const, 0U));
+   static_assert(!contains(v_const, 9U));
+   static_assert(contains(m_const, 1));
+   static_assert(!contains(m_const, 2));
+   static_assert(contains(s_const, 5));
+   static_assert(!contains(s_const, 8));
+   static_assert(contains(st_const, 1U));
+   static_assert(contains(r_const, 4U));
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{10, 20};
+   const auto in_range = contains(v_runtime, 0U);
+
+   return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C, typename K>
 [[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept -> bool {
@@ -803,29 +803,29 @@ namespace cljonic {
  * \brief Returns the logical size (number of active elements) of a collection.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
- *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   constexpr auto q_const = conj(Queue<int, 4>{}, 9);
- *   constexpr Range<int> r_const{0, 5};
- *   static_assert(count(v_const) == 3U);
- *   static_assert(count(m_const) == 1U);
- *   static_assert(count(q_const) == 1U);
- *   static_assert(count(r_const) == 5U);
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10, 20};
- *   const auto sz = count(v_runtime);
- *
- *   return (sz == 2U) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
+   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr auto q_const = conj(Queue<int, 4>{}, 9);
+   constexpr Range<int> r_const{0, 5};
+   static_assert(count(v_const) == 3U);
+   static_assert(count(m_const) == 1U);
+   static_assert(count(q_const) == 1U);
+   static_assert(count(r_const) == 5U);
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{10, 20};
+   const auto sz = count(v_runtime);
+
+   return (sz == 2U) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C>
     requires concepts::SequenceableCollection<C> || concepts::SequenceableProducer<C>
@@ -1371,24 +1371,24 @@ namespace cljonic {
  * \brief Disjoins an element from a set.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto s0_const = conj(Set<int, 4>{}, 42);
- *   constexpr auto s1_const = disj(s0_const, 42);
- *   static_assert(!contains(s1_const, 42));
- *
- *   // Runtime demonstration.
- *   auto s0_runtime = conj(Set<int, 4>{}, 99);
- *   auto s1_runtime = disj(s0_runtime, 99);
- *
- *   return (!contains(s1_runtime, 99) && is_empty(s1_runtime)) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto s0_const = conj(Set<int, 4>{}, 42);
+   constexpr auto s1_const = disj(s0_const, 42);
+   static_assert(!contains(s1_const, 42));
+
+   // Runtime demonstration.
+   auto s0_runtime = conj(Set<int, 4>{}, 99);
+   auto s1_runtime = disj(s0_runtime, 99);
+
+   return (!contains(s1_runtime, 99) && is_empty(s1_runtime)) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C, typename T>
 [[nodiscard]] constexpr auto disj(const C& collection, const T& value) noexcept {
@@ -1411,24 +1411,24 @@ namespace cljonic {
  * \brief Disassociates a key from a map.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto m0_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   constexpr auto m1_const = dissoc(m0_const, 1);
- *   static_assert(!contains(m1_const, 1));
- *
- *   // Runtime demonstration.
- *   auto m0_runtime = assoc(Map<int, int, 4>{}, 2, 200);
- *   auto m1_runtime = dissoc(m0_runtime, 2);
- *
- *   return (!contains(m1_runtime, 2) && is_empty(m1_runtime)) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto m0_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr auto m1_const = dissoc(m0_const, 1);
+   static_assert(!contains(m1_const, 1));
+
+   // Runtime demonstration.
+   auto m0_runtime = assoc(Map<int, int, 4>{}, 2, 200);
+   auto m1_runtime = dissoc(m0_runtime, 2);
+
+   return (!contains(m1_runtime, 2) && is_empty(m1_runtime)) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C, typename K>
 [[nodiscard]] constexpr auto dissoc(const C& collection, const K& key) noexcept {
@@ -1836,30 +1836,30 @@ namespace cljonic {
  * Vector, and String. The fallback defaults to the collection's default lookup result when omitted.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{10, 20};
- *   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
- *   constexpr auto s_const = conj(Set<int, 4>{}, 5);
- *   static_assert(get(v_const, 0U) == 10);
- *   static_assert(get(v_const, 9U, -1) == -1);
- *   static_assert(get(m_const, 1) == 100);
- *   static_assert(get(m_const, 2, -1) == -1);
- *   static_assert(get(s_const, 5) == 5);
- *   static_assert(get(s_const, 8, -1) == -1);
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10, 20};
- *   const auto val = get(v_runtime, 0U);
- *
- *   return (val == 10) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto v_const = Vector<int, 4>{10, 20};
+   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+   static_assert(get(v_const, 0U) == 10);
+   static_assert(get(v_const, 9U, -1) == -1);
+   static_assert(get(m_const, 1) == 100);
+   static_assert(get(m_const, 2, -1) == -1);
+   static_assert(get(s_const, 5) == 5);
+   static_assert(get(s_const, 8, -1) == -1);
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{10, 20};
+   const auto val = get(v_runtime, 0U);
+
+   return (val == 10) ? 0 : 1;
+ }
+ ~~~~~
  */
 /** Returns the stored value when present, otherwise the supplied fallback or
  * the collection's default lookup result when no fallback is supplied. */
@@ -1926,25 +1926,25 @@ namespace cljonic {
  * \brief Returns true when the collection has no active elements.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto e_const = Vector<int, 4>{};
- *   constexpr auto v_const = Vector<int, 4>{1};
- *   static_assert(is_empty(e_const));
- *   static_assert(!is_empty(v_const));
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{10};
- *   const auto empty_res = is_empty(v_runtime);
- *
- *   return (!empty_res) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto e_const = Vector<int, 4>{};
+   constexpr auto v_const = Vector<int, 4>{1};
+   static_assert(is_empty(e_const));
+   static_assert(!is_empty(v_const));
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{10};
+   const auto empty_res = is_empty(v_runtime);
+
+   return (!empty_res) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
@@ -2148,23 +2148,23 @@ namespace cljonic {
  * collections.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr MapEntry<int, int> e_const{1, 100};
- *   static_assert(e_const == MapEntry<int, int>{1, 100});
- *
- *   // Runtime demonstration.
- *   auto e_runtime = MapEntry<int, int>{2, 200};
- *   const auto equal_runtime = e_runtime == MapEntry<int, int>{2, 200};
- *
- *   return equal_runtime ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr MapEntry<int, int> e_const{1, 100};
+   static_assert(e_const == MapEntry<int, int>{1, 100});
+
+   // Runtime demonstration.
+   auto e_runtime = MapEntry<int, int>{2, 200};
+   const auto equal_runtime = e_runtime == MapEntry<int, int>{2, 200};
+
+   return equal_runtime ? 0 : 1;
+ }
+ ~~~~~
  */
 template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType>
 struct MapEntry {
@@ -2485,23 +2485,23 @@ namespace cljonic {
  * \brief Observes the accessible element without removal.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto q_const = conj(Queue<int, 4>{}, 99);
- *   static_assert(peek(q_const) == 99);
- *
- *   // Runtime demonstration.
- *   auto q_runtime = conj(Queue<int, 4>{}, 77);
- *   const auto v = peek(q_runtime);
- *
- *   return (v == 77) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto q_const = conj(Queue<int, 4>{}, 99);
+   static_assert(peek(q_const) == 99);
+
+   // Runtime demonstration.
+   auto q_runtime = conj(Queue<int, 4>{}, 77);
+   const auto v = peek(q_runtime);
+
+   return (v == 77) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C>
 [[nodiscard]] constexpr auto peek(const C& collection) noexcept {
@@ -2524,24 +2524,24 @@ namespace cljonic {
  * \brief Yields an updated collection with the accessible element removed.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
- *   constexpr auto q1_const = pop(q0_const);
- *   static_assert(peek(q1_const) == 2);
- *
- *   // Runtime demonstration.
- *   auto q0_runtime = conj(conj(Queue<int, 4>{}, 10), 20);
- *   auto q1_runtime = pop(q0_runtime);
- *
- *   return (peek(q1_runtime) == 20) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
+   constexpr auto q1_const = pop(q0_const);
+   static_assert(peek(q1_const) == 2);
+
+   // Runtime demonstration.
+   auto q0_runtime = conj(conj(Queue<int, 4>{}, 10), 20);
+   auto q1_runtime = pop(q0_runtime);
+
+   return (peek(q1_runtime) == 20) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename C>
 [[nodiscard]] constexpr auto pop(const C& collection) noexcept {

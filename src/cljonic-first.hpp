@@ -13,26 +13,28 @@ namespace cljonic {
  * For a MapEntry value, `first` returns its key. For a sequenceable collection, `first` returns the element at index
  * zero.
  *
+ * \note Not yet part of the public API; the sequence-shaping operations are deferred.
+ *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
- *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
- *   constexpr MapEntry<int, int> e_const{1, 100};
- *   static_assert(first(v_const) == 10);
- *   static_assert(first(e_const) == 1);
- *
- *   // Runtime demonstration.
- *   auto v_runtime = Vector<int, 4>{100, 200};
- *   const auto fst = first(v_runtime);
- *
- *   return (fst == 100) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+
+ int main() {
+   using namespace cljonic;
+
+   // Compile-time demonstration.
+   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+   constexpr MapEntry<int, int> e_const{1, 100};
+   static_assert(first(v_const) == 10);
+   static_assert(first(e_const) == 1);
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{100, 200};
+   const auto fst = first(v_runtime);
+
+   return (fst == 100) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename KeyType, typename ValueType>
 [[nodiscard]] constexpr auto first(const MapEntry<KeyType, ValueType>& entry) noexcept -> const KeyType& {
