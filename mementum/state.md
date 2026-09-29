@@ -10,6 +10,7 @@ Task:
 1. `Equal` public doc comment refinement — COMPLETE (commits 75d2b68 + 5606804): removed all Clojure references (brief no longer "modeled on Clojure's `=`"); rewrote the prose to be user-facing and contract-first (dropped REQ-FN-002G/REQ-NUM-006/REQ-FN-014B/REQ-COLL-021 IDs, the `\ref StableEqualityComparable` link, and equality-family/gating jargon); restated the three rules as user-visible behavior (single value always true; ordinary values by same-type `==` with example types; producer comparison bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; matching element/key/value types; order-insensitive Map/Set); fixed a merged list bullet; reformatted the sample to the bare (non-asterisk) `~~~~~{.cpp}` fence so scripts/compile-doc-samples.py actually extracts and compiles it (docs-examples:compiled 13→14).
 2. Unary-arity gate repair — COMPLETE (commit 75d2b68): compiling the sample for the first time exposed that the unary `equal` overload's unnamed parameter (`const T&`) fails clang-tidy `readability-named-parameter` (in WarningsAsErrors), while naming it fails `-Werror=unused-parameter`. Fixed with the prefix form `[[maybe_unused]] const T& value`.
 3. Memory stored — COMPLETE (commit 07c45bc): mementum/memories/named-parameter-lint-vs-unused-parameter.md.
+4. Project-wide doc-sample verification fix — COMPLETE (2026-09-29): converted all 19 remaining asterisk-prefixed `\b Examples` blocks to the bare-fence style (all 32 headers now extractable); docs-examples compiled 14→27. The conversion surfaced 6 stale public examples for the deferred sequence-shaping free functions (empty, first, next, not-empty, rest, seq) that were deliberately removed from the public API (commit cc376ce) and are absent from the cljonic-core.hpp umbrella; per human decision they are excluded explicitly (DEFERRED_NON_PUBLIC_HEADERS in scripts/compile-doc-samples.py, reported as docs-examples:deferred-skipped=6) with a "Not yet part of the public API" note in each header.
 
 Questions:
 1. None blocking.
@@ -19,9 +20,11 @@ Decisions:
 2. Sample style (human, 2026-09-29): use the bare (non-asterisk-prefixed) `~~~~~{.cpp}` fence so the example is actually compiled, not silently skipped (per doc-sample-extraction-requires-unindented-fence).
 3. Unused-parameter idiom (human, 2026-09-29): named + `[[maybe_unused]]` in prefix position, since both gates cannot otherwise be satisfied at once.
 4. Anchor capitalization (human, 2026-09-29): `\anchor Equal` stays PascalCase (the doc-page label); the callable is written `equal` in code style within prose.
+5. Deferred doc-example exclusion (human, 2026-09-29): the 6 deferred non-public sequence-shaping headers are excluded from docs-examples via an explicit, reported skip list (mirroring traceability's lifecycle:deferred exemption); do not promote them into the umbrella without arch/spec work.
 
 Validation:
 1. `make git` green end-to-end: format, lint, complexity, range/variant/equal-compile-fail, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols/probe, docs, docs-examples:compiled=14, cljonic-test 170/170.
+2. Doc-sample fix (2026-09-29): `make git` green — format, lint, complexity, compile-fail harnesses, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols/probe, docs, docs-examples:compiled=27 + deferred-skipped=6, cljonic-test 170/170.
 
 Next:
 1. Candidate synthesis — COMPLETE (2026-09-29, human-approved): created mementum/knowledge/artifact-boundary-discipline.md from spec-to-code-strict-fail-gate.md, vocab-arch-weed-skip-aspirational-scope.md, and governance-invariants-do-not-belong-in-behavioral-specs.md.
@@ -33,7 +36,7 @@ Carry-forward (unaddressed, remember for later):
 2. User-defined aggregates with float members are unanalyzable (no reflection) — REQ-NUM-007 recursion cannot be enforced for them; documented known limitation.
 3. Set duplicate-insertion in a constexpr context hits std::abort(); constexpr sets can't hold duplicate elements.
 4. REQ-SEQ-022 operation-level specification reconciliation for remaining operation families (mementum/knowledge/cljonic-next-agenda.md).
-5. Project-wide doc-sample gap still open: most free-function headers (assoc, contains, count, conj, …) use the asterisk-prefixed fence and are silently NOT compiled; only Vector/Map/Set/Queue/String/Range/Into/FitsInto/Equal are actually verified.
+5. Project-wide doc-sample gap — FIXED 2026-09-29: all 32 headers now use the bare fence and are extracted; docs-examples:compiled=27. The 6 deferred non-public sequence-shaping headers (empty, first, next, not-empty, rest, seq) are explicitly excluded (DEFERRED_NON_PUBLIC_HEADERS) and reported as deferred-skipped=6.
 
 Task:
 1. gybis-init orientation — COMPLETE (commit 4a1fd1e): oriented on state.md, recent memories, value-equality-domain and cljonic-next-agenda knowledge.
