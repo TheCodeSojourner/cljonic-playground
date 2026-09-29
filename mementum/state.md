@@ -1,9 +1,10 @@
 ## Session State
 
-- last_session_id: eb80ac56-8659-4f7e-95d2-ef3a61ac8c77
+- last_session_id: 59abeb60-d44b-458b-93ba-862f63a872c7
 - current_timestamp: 2026-09-29
 - recover: 1
-- session_complete: true
+- session_complete: false
+- oriented: 2026-09-29 (gybis-init: read state.md; memories since eb80ac56 — named-parameter-lint-vs-unused-parameter, doxygen-prose-must-be-user-facing, doc-sample-extraction-requires-unindented-fence, spec-to-code-strict-fail-gate, vocab-arch-weed-skip-aspirational-scope, governance-invariants-do-not-belong-in-behavioral-specs; knowledge — value-equality-domain, cljonic-next-agenda, mementum-synthesis)
 
 Task:
 1. `Equal` public doc comment refinement — COMPLETE (commits 75d2b68 + 5606804): removed all Clojure references (brief no longer "modeled on Clojure's `=`"); rewrote the prose to be user-facing and contract-first (dropped REQ-FN-002G/REQ-NUM-006/REQ-FN-014B/REQ-COLL-021 IDs, the `\ref StableEqualityComparable` link, and equality-family/gating jargon); restated the three rules as user-visible behavior (single value always true; ordinary values by same-type `==` with example types; producer comparison bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; matching element/key/value types; order-insensitive Map/Set); fixed a merged list bullet; reformatted the sample to the bare (non-asterisk) `~~~~~{.cpp}` fence so scripts/compile-doc-samples.py actually extracts and compiles it (docs-examples:compiled 13→14).
