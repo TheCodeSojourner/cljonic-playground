@@ -102,26 +102,23 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="headertitle"><div class="title">cljonic-is-empty.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="cljonic-is-empty_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef CLJONIC_IS_EMPTY_HPP</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define CLJONIC_IS_EMPTY_HPP</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">template</span> &lt;concepts::SequenceableCollection C&gt;</div>
-<div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">   33</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(<span class="keyword">const</span> C&amp; collection) <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordflow">return</span> collection.is_empty();</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}</div>
+<a href="cljonic-is-empty_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;<a class="code" href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">template</span> &lt;concepts::SequenceableCollection C&gt;</div>
+<div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">   32</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(<span class="keyword">const</span> C&amp; collection) <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">return</span> collection.is_empty();</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
 </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>} <span class="comment">// namespace cljonic</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#endif </span><span class="comment">// CLJONIC_IS_EMPTY_HPP</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>} <span class="comment">// namespace cljonic</span></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
-<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00007">cljonic-assoc.hpp:7</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ad637ffe5ee8423fa106fbdfdb9ce9529"><div class="ttname"><a href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">cljonic::is_empty</a></div><div class="ttdeci">constexpr auto is_empty(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdoc">Returns true when the collection has no active elements.</div><div class="ttdef"><b>Definition</b> <a href="#l00033">cljonic-is-empty.hpp:33</a></div></div>
+<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_ad637ffe5ee8423fa106fbdfdb9ce9529"><div class="ttname"><a href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">cljonic::is_empty</a></div><div class="ttdeci">constexpr auto is_empty(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdoc">Returns true when the collection has no active elements.</div><div class="ttdef"><b>Definition</b> <a href="#l00032">cljonic-is-empty.hpp:32</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
