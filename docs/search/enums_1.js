@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['producer_5fkind_0',['producer_kind',['../namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74c',1,'cljonic::concepts_detail']]]
+  ['equality_5ffamily_0',['equality_family',['../namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39',1,'cljonic::concepts_detail']]]
 ];

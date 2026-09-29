@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['value_0',['value',['../structcljonic_1_1_map_entry.html#a83603835c380c14d13c252cf99b11c23',1,'cljonic::MapEntry']]]
+  ['producer_5fkind_5fof_5fv_0',['producer_kind_of_v',['../namespacecljonic_1_1concepts__detail.html#a9b6e0fa83ede71e749bff9da7c691ca7',1,'cljonic::concepts_detail']]]
 ];
