@@ -11,6 +11,7 @@ Task:
 2. Unary-arity gate repair — COMPLETE (commit 75d2b68): compiling the sample for the first time exposed that the unary `equal` overload's unnamed parameter (`const T&`) fails clang-tidy `readability-named-parameter` (in WarningsAsErrors), while naming it fails `-Werror=unused-parameter`. Fixed with the prefix form `[[maybe_unused]] const T& value`.
 3. Memory stored — COMPLETE (commit 07c45bc): mementum/memories/named-parameter-lint-vs-unused-parameter.md.
 4. Project-wide doc-sample verification fix — COMPLETE (2026-09-29): converted all 19 remaining asterisk-prefixed `\b Examples` blocks to the bare-fence style (all 32 headers now extractable); docs-examples compiled 14→27. The conversion surfaced 6 stale public examples for the deferred sequence-shaping free functions (empty, first, next, not-empty, rest, seq) that were deliberately removed from the public API (commit cc376ce) and are absent from the cljonic-core.hpp umbrella; per human decision they are excluded explicitly (DEFERRED_NON_PUBLIC_HEADERS in scripts/compile-doc-samples.py, reported as docs-examples:deferred-skipped=6) with a "Not yet part of the public API" note in each header.
+5. `not_equal` slice — COMPLETE (2026-09-29, REQ-FN-002H): added the canonical general-inequality free function as the thin negation of `equal`, top-down. Requirements: REQ-FN-002H. Vocabulary: `NotEqual` term. Architecture: λ `S2_not_equal_function`. Specification: new `specs/sequences/not-equal.allium` (entity `NotEqualFunction`, 11 invariants + actor). Code: new `src/cljonic-not-equal.hpp` (unary/binary/variadic, all delegating to `equal`), umbrella-registered in `cljonic-core.hpp`. Tests: `tests/cljonic-not-equal-spec-tests.cpp` (all 12 TRACE_IDs; STATIC_REQUIRE + volatile runtime coverage) and a dedicated no-heap probe registered in `probes.hpp`/`harness_main.cpp`. Gating: new `scripts/check-not-equal-compile-failures.py` + `make not-equal-compile-fail` wired into `.PHONY`/upsert-gate/validate/git. Snapshot synced.
 
 Questions:
 1. None blocking.
@@ -21,18 +22,23 @@ Decisions:
 3. Unused-parameter idiom (human, 2026-09-29): named + `[[maybe_unused]]` in prefix position, since both gates cannot otherwise be satisfied at once.
 4. Anchor capitalization (human, 2026-09-29): `\anchor Equal` stays PascalCase (the doc-page label); the callable is written `equal` in code style within prose.
 5. Deferred doc-example exclusion (human, 2026-09-29): the 6 deferred non-public sequence-shaping headers are excluded from docs-examples via an explicit, reported skip list (mirroring traceability's lifecycle:deferred exemption); do not promote them into the umbrella without arch/spec work.
+6. Requirements approach for not_equal (human, 2026-09-29): Option 2 — add REQ-FN-002H spelling out the three-arity negation semantics and the identical compile-time gating, so the requirement layer is self-contained rather than tracing only to REQ-FN-002C.
+7. not_equal semantics (human, 2026-09-29): D1 arities mirror `equal`; D2 compile-time gating identical to `equal` (reuse `equal_pair_admissible_v`/`all_adjacent_pairs_admissible_v`); D3 thin negation delegating to `equal` (no separate comparison logic), distinct from `operator!=`.
+8. not_equal unary arity (human, 2026-09-29): include `not_equal(x)` returning false for an admitted operand (Clojure `(not= x)` parity), still compile-time gated.
+9. not_equal organization (human, 2026-09-29): own header/spec/tests/probe/compile-fail harness as a sibling of `equal` (per free-function-addition-organization and header-addition-and-verification-lifecycle).
 
 Validation:
 1. `make git` green end-to-end: format, lint, complexity, range/variant/equal-compile-fail, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols/probe, docs, docs-examples:compiled=14, cljonic-test 170/170.
 2. Doc-sample fix (2026-09-29): `make git` green — format, lint, complexity, compile-fail harnesses, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols/probe, docs, docs-examples:compiled=27 + deferred-skipped=6, cljonic-test 170/170.
+3. not_equal slice (2026-09-29): `make git` green — format, lint, complexity, range/variant/equal/not-equal-compile-fail (39 rejection + 20 pass cases × two builds), sanitizer, coverage lines=100.0%, traceability-spec-to-code (snapshot synced; all 12 NotEqualFunction obligations traced), no-heap-src/symbols/probe, docs, docs-examples:compiled 27→28, cljonic-test ok; `allium check`/`analyse` clean (0 warnings).
 
 Next:
 1. Candidate synthesis — COMPLETE (2026-09-29, human-approved): created mementum/knowledge/artifact-boundary-discipline.md from spec-to-code-strict-fail-gate.md, vocab-arch-weed-skip-aspirational-scope.md, and governance-invariants-do-not-belong-in-behavioral-specs.md.
-2. Candidate next slice (human: not yet): `not_equal` (REQ-FN-002C) or `equal_by`; complete the equality-domain table.
+2. Candidate next comparison slices: `equal_by`/`identical`, then `less`, `less_equal`, `greater`, `greater_equal` (REQ-FN-002C); `not_equal` is now complete (REQ-FN-002H).
 3. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
 
 Carry-forward (unaddressed, remember for later):
-1. equal_by/identical and the rest of REQ-FN-002C remain deferred.
+1. equal_by/identical and the remaining REQ-FN-002C comparison family (`less`, `less_equal`, `greater`, `greater_equal`) remain deferred; `not_equal` is now implemented (REQ-FN-002H).
 2. User-defined aggregates with float members are unanalyzable (no reflection) — REQ-NUM-007 recursion cannot be enforced for them; documented known limitation.
 3. Set duplicate-insertion in a constexpr context hits std::abort(); constexpr sets can't hold duplicate elements.
 4. REQ-SEQ-022 operation-level specification reconciliation for remaining operation families (mementum/knowledge/cljonic-next-agenda.md).
