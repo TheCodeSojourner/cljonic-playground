@@ -3,8 +3,7 @@
 - last_session_id: 59abeb60-d44b-458b-93ba-862f63a872c7
 - current_timestamp: 2026-09-29
 - recover: 1
-- session_complete: false
-- oriented: 2026-09-29 (gybis-init: read state.md; memories since eb80ac56 — named-parameter-lint-vs-unused-parameter, doxygen-prose-must-be-user-facing, doc-sample-extraction-requires-unindented-fence, spec-to-code-strict-fail-gate, vocab-arch-weed-skip-aspirational-scope, governance-invariants-do-not-belong-in-behavioral-specs; knowledge — value-equality-domain, cljonic-next-agenda, mementum-synthesis)
+- session_complete: true
 
 Task:
 1. `Equal` public doc comment refinement — COMPLETE (commits 75d2b68 + 5606804): removed all Clojure references (brief no longer "modeled on Clojure's `=`"); rewrote the prose to be user-facing and contract-first (dropped REQ-FN-002G/REQ-NUM-006/REQ-FN-014B/REQ-COLL-021 IDs, the `\ref StableEqualityComparable` link, and equality-family/gating jargon); restated the three rules as user-visible behavior (single value always true; ordinary values by same-type `==` with example types; producer comparison bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; matching element/key/value types; order-insensitive Map/Set); fixed a merged list bullet; reformatted the sample to the bare (non-asterisk) `~~~~~{.cpp}` fence so scripts/compile-doc-samples.py actually extracts and compiles it (docs-examples:compiled 13→14).
@@ -12,6 +11,8 @@ Task:
 3. Memory stored — COMPLETE (commit 07c45bc): mementum/memories/named-parameter-lint-vs-unused-parameter.md.
 4. Project-wide doc-sample verification fix — COMPLETE (2026-09-29): converted all 19 remaining asterisk-prefixed `\b Examples` blocks to the bare-fence style (all 32 headers now extractable); docs-examples compiled 14→27. The conversion surfaced 6 stale public examples for the deferred sequence-shaping free functions (empty, first, next, not-empty, rest, seq) that were deliberately removed from the public API (commit cc376ce) and are absent from the cljonic-core.hpp umbrella; per human decision they are excluded explicitly (DEFERRED_NON_PUBLIC_HEADERS in scripts/compile-doc-samples.py, reported as docs-examples:deferred-skipped=6) with a "Not yet part of the public API" note in each header.
 5. `not_equal` slice — COMPLETE (2026-09-29, REQ-FN-002H): added the canonical general-inequality free function as the thin negation of `equal`, top-down. Requirements: REQ-FN-002H. Vocabulary: `NotEqual` term. Architecture: λ `S2_not_equal_function`. Specification: new `specs/sequences/not-equal.allium` (entity `NotEqualFunction`, 11 invariants + actor). Code: new `src/cljonic-not-equal.hpp` (unary/binary/variadic, all delegating to `equal`), umbrella-registered in `cljonic-core.hpp`. Tests: `tests/cljonic-not-equal-spec-tests.cpp` (all 12 TRACE_IDs; STATIC_REQUIRE + volatile runtime coverage) and a dedicated no-heap probe registered in `probes.hpp`/`harness_main.cpp`. Gating: new `scripts/check-not-equal-compile-failures.py` + `make not-equal-compile-fail` wired into `.PHONY`/upsert-gate/validate/git. Snapshot synced.
+6. `not_equal` mainpage index gap — COMPLETE (2026-09-29): the Doxygen `\mainpage` cheatsheet in `src/cljonic-core.hpp` did not list `not_equal` (the `user-facing-apis-require-mainpage-index-entry` pattern was missed in item 5). Added `\ref NotEqual "not_equal"` to the N group of Core Functions; regenerated docs; `docs/index.html` now links `not_equal` → `namespacecljonic.html#NotEqual`.
+7. Header-guard standardization — COMPLETE (2026-09-29): `src/` was split 23 include-guards vs 14 `#pragma once` with no documented convention or gate. Converted all 23 include-guard headers to `#pragma once` (guards were unreferenced outside their own header; all had a single `#endif`). Added `scripts/check-header-guards.py` + `make header-guards` (wired into `.PHONY`/help/upsert-gate/validate/git), and recorded decision mementum/memories/header-guard-convention.md.
 
 Questions:
 1. None blocking.
@@ -26,23 +27,26 @@ Decisions:
 7. not_equal semantics (human, 2026-09-29): D1 arities mirror `equal`; D2 compile-time gating identical to `equal` (reuse `equal_pair_admissible_v`/`all_adjacent_pairs_admissible_v`); D3 thin negation delegating to `equal` (no separate comparison logic), distinct from `operator!=`.
 8. not_equal unary arity (human, 2026-09-29): include `not_equal(x)` returning false for an admitted operand (Clojure `(not= x)` parity), still compile-time gated.
 9. not_equal organization (human, 2026-09-29): own header/spec/tests/probe/compile-fail harness as a sibling of `equal` (per free-function-addition-organization and header-addition-and-verification-lifecycle).
+10. Header-guard style (human, 2026-09-29): standardize on `#pragma once` for all `src/` and `tests/` headers (option A). Rationale: self-maintaining, removes the missing/mismatched-`#endif` bug class, already used by the flagship public types and all test headers. Core Guidelines SF.8 include-guard portability was considered and not chosen. Enforced by `make header-guards`.
+11. Commit workflow (human, 2026-09-29): during free-function/API slices, do not auto-commit — step through requirements → vocabulary → architecture → specification → tests → code one layer at a time, pausing for human verification between layers; commit only on explicit request. `/gybis-fini` retains its default commit step. (Recorded in mementum/memories/gybis-auto-commit-preference.md.)
 
 Validation:
 1. `make git` green end-to-end: format, lint, complexity, range/variant/equal-compile-fail, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols/probe, docs, docs-examples:compiled=14, cljonic-test 170/170.
 2. Doc-sample fix (2026-09-29): `make git` green — format, lint, complexity, compile-fail harnesses, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols/probe, docs, docs-examples:compiled=27 + deferred-skipped=6, cljonic-test 170/170.
 3. not_equal slice (2026-09-29): `make git` green — format, lint, complexity, range/variant/equal/not-equal-compile-fail (39 rejection + 20 pass cases × two builds), sanitizer, coverage lines=100.0%, traceability-spec-to-code (snapshot synced; all 12 NotEqualFunction obligations traced), no-heap-src/symbols/probe, docs, docs-examples:compiled 27→28, cljonic-test ok; `allium check`/`analyse` clean (0 warnings).
+4. Header-guard standardization (2026-09-29): `make git` green — format, lint, complexity, all compile-fail harnesses, `header-guards:ok`, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap, docs, docs-examples:compiled=28, cljonic-test ok; generated `cljonic.hpp` has 31 `#pragma once` and 0 include guards.
 
 Next:
-1. Candidate synthesis — COMPLETE (2026-09-29, human-approved): created mementum/knowledge/artifact-boundary-discipline.md from spec-to-code-strict-fail-gate.md, vocab-arch-weed-skip-aspirational-scope.md, and governance-invariants-do-not-belong-in-behavioral-specs.md.
-2. Candidate next comparison slices: `equal_by`/`identical`, then `less`, `less_equal`, `greater`, `greater_equal` (REQ-FN-002C); `not_equal` is now complete (REQ-FN-002H).
-3. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
+1. Candidate next comparison slices: `equal_by`/`identical`, then `less`, `less_equal`, `greater`, `greater_equal` (REQ-FN-002C); `not_equal` is now complete (REQ-FN-002H).
+2. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
+3. Candidate synthesis (proposed 2026-09-29, awaiting human approval): a gate-addition/enforcement knowledge page from header-guard-convention.md, allium-entity-needs-actor-reference.md, doc-sample-extraction-requires-unindented-fence.md, and spec-to-code-strict-fail-gate.md — may overlap verification-signal-discipline.md; request decision before writing.
 
 Carry-forward (unaddressed, remember for later):
 1. equal_by/identical and the remaining REQ-FN-002C comparison family (`less`, `less_equal`, `greater`, `greater_equal`) remain deferred; `not_equal` is now implemented (REQ-FN-002H).
 2. User-defined aggregates with float members are unanalyzable (no reflection) — REQ-NUM-007 recursion cannot be enforced for them; documented known limitation.
 3. Set duplicate-insertion in a constexpr context hits std::abort(); constexpr sets can't hold duplicate elements.
 4. REQ-SEQ-022 operation-level specification reconciliation for remaining operation families (mementum/knowledge/cljonic-next-agenda.md).
-5. Project-wide doc-sample gap — FIXED 2026-09-29: all 32 headers now use the bare fence and are extracted; docs-examples:compiled=27. The 6 deferred non-public sequence-shaping headers (empty, first, next, not-empty, rest, seq) are explicitly excluded (DEFERRED_NON_PUBLIC_HEADERS) and reported as deferred-skipped=6.
+5. Project-wide doc-sample gap — FIXED 2026-09-29: all 32 headers use the bare fence and are extracted; docs-examples:compiled=28; 6 deferred non-public sequence-shaping headers (empty, first, next, not-empty, rest, seq) explicitly excluded (DEFERRED_NON_PUBLIC_HEADERS, deferred-skipped=6). No longer open.
 
 Task:
 1. gybis-init orientation — COMPLETE (commit 4a1fd1e): oriented on state.md, recent memories, value-equality-domain and cljonic-next-agenda knowledge.
