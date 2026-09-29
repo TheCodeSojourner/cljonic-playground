@@ -1,9 +1,38 @@
 ## Session State
 
-- last_session_id: 66006950-33f9-4cf9-a6b2-ad7575134cff
-- current_timestamp: 2026-09-26
+- last_session_id: eb80ac56-8659-4f7e-95d2-ef3a61ac8c77
+- current_timestamp: 2026-09-29
 - recover: 1
 - session_complete: true
+
+Task:
+1. `Equal` public doc comment refinement — COMPLETE (commits 75d2b68 + 5606804): removed all Clojure references (brief no longer "modeled on Clojure's `=`"); rewrote the prose to be user-facing and contract-first (dropped REQ-FN-002G/REQ-NUM-006/REQ-FN-014B/REQ-COLL-021 IDs, the `\ref StableEqualityComparable` link, and equality-family/gating jargon); restated the three rules as user-visible behavior (single value always true; ordinary values by same-type `==` with example types; producer comparison bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; matching element/key/value types; order-insensitive Map/Set); fixed a merged list bullet; reformatted the sample to the bare (non-asterisk) `~~~~~{.cpp}` fence so scripts/compile-doc-samples.py actually extracts and compiles it (docs-examples:compiled 13→14).
+2. Unary-arity gate repair — COMPLETE (commit 75d2b68): compiling the sample for the first time exposed that the unary `equal` overload's unnamed parameter (`const T&`) fails clang-tidy `readability-named-parameter` (in WarningsAsErrors), while naming it fails `-Werror=unused-parameter`. Fixed with the prefix form `[[maybe_unused]] const T& value`.
+3. Memory stored — COMPLETE (commit 07c45bc): mementum/memories/named-parameter-lint-vs-unused-parameter.md.
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. Doc style (human, 2026-09-29): the public Doxygen prose is user-facing and contract-first — no Clojure references, requirement IDs, or capability-model jargon (per doxygen-prose-must-be-user-facing).
+2. Sample style (human, 2026-09-29): use the bare (non-asterisk-prefixed) `~~~~~{.cpp}` fence so the example is actually compiled, not silently skipped (per doc-sample-extraction-requires-unindented-fence).
+3. Unused-parameter idiom (human, 2026-09-29): named + `[[maybe_unused]]` in prefix position, since both gates cannot otherwise be satisfied at once.
+4. Anchor capitalization (human, 2026-09-29): `\anchor Equal` stays PascalCase (the doc-page label); the callable is written `equal` in code style within prose.
+
+Validation:
+1. `make git` green end-to-end: format, lint, complexity, range/variant/equal-compile-fail, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols/probe, docs, docs-examples:compiled=14, cljonic-test 170/170.
+
+Next:
+1. Candidate synthesis (still awaiting human approval from 2026-09-26): mementum/knowledge/artifact-boundary-discipline.md from spec-to-code-strict-fail-gate.md, vocab-arch-weed-skip-aspirational-scope.md, and governance-invariants-do-not-belong-in-behavioral-specs.md.
+2. Candidate next slice: `not_equal` (REQ-FN-002C) or `equal_by`; complete the equality-domain table.
+3. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
+
+Carry-forward (unaddressed, remember for later):
+1. equal_by/identical and the rest of REQ-FN-002C remain deferred.
+2. User-defined aggregates with float members are unanalyzable (no reflection) — REQ-NUM-007 recursion cannot be enforced for them; documented known limitation.
+3. Set duplicate-insertion in a constexpr context hits std::abort(); constexpr sets can't hold duplicate elements.
+4. REQ-SEQ-022 operation-level specification reconciliation for remaining operation families (mementum/knowledge/cljonic-next-agenda.md).
+5. Project-wide doc-sample gap still open: most free-function headers (assoc, contains, count, conj, …) use the asterisk-prefixed fence and are silently NOT compiled; only Vector/Map/Set/Queue/String/Range/Into/FitsInto/Equal are actually verified.
 
 Task:
 1. gybis-init orientation — COMPLETE (commit 4a1fd1e): oriented on state.md, recent memories, value-equality-domain and cljonic-next-agenda knowledge.
