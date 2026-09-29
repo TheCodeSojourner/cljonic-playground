@@ -89,14 +89,18 @@ propagation.
 3. Single range-typed constructor argument selects the source constructor, not
    the pack constructor; tests use multi-element packs (pending design
    decision, see state.md carry-forward).
-4. `equal_by` / `identical` and the rest of the REQ-FN-002C comparison family
-   (`not_equal`, `less`, `less_equal`, `greater`, `greater_equal`) remain
-   deferred; `equal` is implemented (REQ-FN-002G) with the three Clojure `=`
-   arities (2026-09-26, commit 93231aa): unary admits a single domain-admitted
-   operand and returns true, the variadic form conjoins adjacent-pair equality
-   left to right with short-circuit, and every adjacent pair is individually
-   compile-time gated by `equal_pair_admissible_v` (the lockstep mirror of the
-   five binary overload gates; SFINAE-safe via void-fallback detection traits).
-   Cross-family and mixed cljonic-to-non-cljonic pairs fail at compile time in
-   every arity; termination (bounded-prefix, configured traversal cap) is
-   uniform across arities.
+4. `equal_by` / `identical` and the remaining REQ-FN-002C comparison family
+   (`less`, `less_equal`, `greater`, `greater_equal`) remain deferred. `equal`
+   is implemented (REQ-FN-002G) with the three Clojure `=` arities (2026-09-26,
+   commit 93231aa): unary admits a single domain-admitted operand and returns
+   true, the variadic form conjoins adjacent-pair equality left to right with
+   short-circuit, and every adjacent pair is individually compile-time gated by
+   `equal_pair_admissible_v` (the lockstep mirror of the five binary overload
+   gates; SFINAE-safe via void-fallback detection traits). Cross-family and
+   mixed cljonic-to-non-cljonic pairs fail at compile time in every arity;
+   termination (bounded-prefix, configured traversal cap) is uniform across
+   arities. `not_equal` is implemented (REQ-FN-002H, 2026-09-29) as the thin
+   negation of `equal`: same three arities, same compile-time gating (reusing
+   `equal_pair_admissible_v` and `all_adjacent_pairs_admissible_v`), unary
+   returns false for an admitted operand, the variadic form negates the
+   adjacent-pair conjunction, and it is distinct from the native `operator!=`.
