@@ -1,5 +1,4 @@
-#ifndef CLJONIC_SET_HPP
-#define CLJONIC_SET_HPP
+#pragma once
 
 #include <array>
 #include <cstddef>
@@ -277,5 +276,3 @@ template <typename T, std::size_t CapacityValue>
 struct contains_callable<Set<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
 
 } // namespace cljonic::concepts_detail
-
-#endif // CLJONIC_SET_HPP

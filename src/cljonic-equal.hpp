@@ -1,5 +1,4 @@
-#ifndef CLJONIC_EQUAL_HPP
-#define CLJONIC_EQUAL_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 #include <ranges>
@@ -340,5 +339,3 @@ template <typename Lhs, typename Rhs, typename... Rest>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_EQUAL_HPP

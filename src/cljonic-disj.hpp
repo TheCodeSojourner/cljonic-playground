@@ -1,5 +1,4 @@
-#ifndef CLJONIC_DISJ_HPP
-#define CLJONIC_DISJ_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 #include <utility>
@@ -35,5 +34,3 @@ template <typename C, typename T>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_DISJ_HPP

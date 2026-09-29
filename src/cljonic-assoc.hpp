@@ -1,5 +1,4 @@
-#ifndef CLJONIC_ASSOC_HPP
-#define CLJONIC_ASSOC_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 #include <utility>
@@ -35,5 +34,3 @@ template <typename C, typename K, typename V>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_ASSOC_HPP

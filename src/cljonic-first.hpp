@@ -1,5 +1,4 @@
-#ifndef CLJONIC_FIRST_HPP
-#define CLJONIC_FIRST_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-map.hpp>
@@ -48,5 +47,3 @@ template <concepts::IndexedCollection C>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_FIRST_HPP

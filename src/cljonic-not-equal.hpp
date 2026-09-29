@@ -1,5 +1,4 @@
-#ifndef CLJONIC_NOT_EQUAL_HPP
-#define CLJONIC_NOT_EQUAL_HPP
+#pragma once
 
 #include <cljonic-equal.hpp>
 
@@ -80,5 +79,3 @@ template <typename Lhs, typename Rhs, typename... Rest>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_NOT_EQUAL_HPP

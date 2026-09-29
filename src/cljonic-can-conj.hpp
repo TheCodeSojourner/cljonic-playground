@@ -1,5 +1,4 @@
-#ifndef CLJONIC_CAN_CONJ_HPP
-#define CLJONIC_CAN_CONJ_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 #include <utility>
@@ -38,5 +37,3 @@ template <typename C, typename... Args>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_CAN_CONJ_HPP

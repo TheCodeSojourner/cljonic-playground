@@ -1,5 +1,4 @@
-#ifndef CLJONIC_PEEK_HPP
-#define CLJONIC_PEEK_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 #include <utility>
@@ -34,5 +33,3 @@ template <typename C>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_PEEK_HPP

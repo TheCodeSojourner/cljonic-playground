@@ -1,5 +1,4 @@
-#ifndef CLJONIC_NEXT_HPP
-#define CLJONIC_NEXT_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 
@@ -38,5 +37,3 @@ template <typename C>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_NEXT_HPP

@@ -1,5 +1,4 @@
-#ifndef CLJONIC_CONCEPTS_HPP
-#define CLJONIC_CONCEPTS_HPP
+#pragma once
 
 #include <array>
 #include <concepts>
@@ -342,5 +341,3 @@ concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t
 } // namespace concepts
 
 } // namespace cljonic
-
-#endif // CLJONIC_CONCEPTS_HPP

@@ -1,5 +1,4 @@
-#ifndef CLJONIC_POP_HPP
-#define CLJONIC_POP_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 #include <utility>
@@ -35,5 +34,3 @@ template <typename C>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_POP_HPP

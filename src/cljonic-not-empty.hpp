@@ -1,5 +1,4 @@
-#ifndef CLJONIC_NOT_EMPTY_HPP
-#define CLJONIC_NOT_EMPTY_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 
@@ -40,5 +39,3 @@ template <concepts::SequenceableCollection C>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_NOT_EMPTY_HPP

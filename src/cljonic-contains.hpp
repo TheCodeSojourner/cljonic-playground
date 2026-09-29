@@ -1,5 +1,4 @@
-#ifndef CLJONIC_CONTAINS_HPP
-#define CLJONIC_CONTAINS_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 
@@ -56,5 +55,3 @@ template <typename C, typename K>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_CONTAINS_HPP

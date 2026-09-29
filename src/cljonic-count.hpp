@@ -1,5 +1,4 @@
-#ifndef CLJONIC_COUNT_HPP
-#define CLJONIC_COUNT_HPP
+#pragma once
 
 #include <cljonic-concepts.hpp>
 #include <cstddef>
@@ -41,5 +40,3 @@ template <typename C>
 }
 
 } // namespace cljonic
-
-#endif // CLJONIC_COUNT_HPP
