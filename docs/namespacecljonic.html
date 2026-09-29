@@ -805,6 +805,7 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <p>Returns an empty owning value of the same collection type as the input. </p>
 <p><a class="anchor" id="Empty"></a> </p>
 <p>Per REQ-FN-026, <span class="tt"><a class="el" href="#a2936b6921ca67e4b8ae5f221c095bde0" title="Returns an empty owning value of the same collection type as the input.">empty</a></span> produces an empty owning value of the same supported collection type as its input.</p>
+<dl class="section note"><dt>Note</dt><dd>Not yet part of the public API; the sequence-shaping operations are deferred.</dd></dl>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -821,9 +822,9 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(e_runtime) &amp;&amp; <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(v_runtime) == 2U) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a2936b6921ca67e4b8ae5f221c095bde0"><div class="ttname"><a href="#a2936b6921ca67e4b8ae5f221c095bde0">cljonic::empty</a></div><div class="ttdeci">constexpr auto empty(const C &amp;) noexcept -&gt; C</div><div class="ttdoc">Returns an empty owning value of the same collection type as the input.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-empty_8hpp_source.html#l00034">cljonic-empty.hpp:34</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a2936b6921ca67e4b8ae5f221c095bde0"><div class="ttname"><a href="#a2936b6921ca67e4b8ae5f221c095bde0">cljonic::empty</a></div><div class="ttdeci">constexpr auto empty(const C &amp;) noexcept -&gt; C</div><div class="ttdoc">Returns an empty owning value of the same collection type as the input.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-empty_8hpp_source.html#l00036">cljonic-empty.hpp:36</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-empty_8hpp_source.html#l00034">34</a> of file <a class="el" href="cljonic-empty_8hpp_source.html">cljonic-empty.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-empty_8hpp_source.html#l00036">36</a> of file <a class="el" href="cljonic-empty_8hpp_source.html">cljonic-empty.hpp</a>.</p>
 
 </div>
 </div>
@@ -1158,7 +1159,7 @@ template&lt;concepts::IndexedCollection C&gt; </div>
 </div><div class="memdoc">
 <p>Returns the element at index zero of the sequenceable collection. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-first_8hpp_source.html#l00044">44</a> of file <a class="el" href="cljonic-first_8hpp_source.html">cljonic-first.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-first_8hpp_source.html#l00046">46</a> of file <a class="el" href="cljonic-first_8hpp_source.html">cljonic-first.hpp</a>.</p>
 
 </div>
 </div>
@@ -1190,6 +1191,7 @@ template&lt;typename KeyType, typename ValueType&gt; </div>
 <p>Returns the first element of a sequenceable collection, or the key of a <a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a>. </p>
 <p><a class="anchor" id="First"></a> </p>
 <p>For a <a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a> value, <span class="tt"><a class="el" href="#a873d28380c259fbc2ee183eb7d0c7328" title="Returns the first element of a sequenceable collection, or the key of a MapEntry.">first</a></span> returns its key. For a sequenceable collection, <span class="tt"><a class="el" href="#a873d28380c259fbc2ee183eb7d0c7328" title="Returns the first element of a sequenceable collection, or the key of a MapEntry.">first</a></span> returns the element at index zero.</p>
+<dl class="section note"><dt>Note</dt><dd>Not yet part of the public API; the sequence-shaping operations are deferred.</dd></dl>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -1207,9 +1209,9 @@ template&lt;typename KeyType, typename ValueType&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (fst == 100) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a873d28380c259fbc2ee183eb7d0c7328"><div class="ttname"><a href="#a873d28380c259fbc2ee183eb7d0c7328">cljonic::first</a></div><div class="ttdeci">constexpr auto first(const MapEntry&lt; KeyType, ValueType &gt; &amp;entry) noexcept -&gt; const KeyType &amp;</div><div class="ttdoc">Returns the first element of a sequenceable collection, or the key of a MapEntry.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-first_8hpp_source.html#l00038">cljonic-first.hpp:38</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a873d28380c259fbc2ee183eb7d0c7328"><div class="ttname"><a href="#a873d28380c259fbc2ee183eb7d0c7328">cljonic::first</a></div><div class="ttdeci">constexpr auto first(const MapEntry&lt; KeyType, ValueType &gt; &amp;entry) noexcept -&gt; const KeyType &amp;</div><div class="ttdoc">Returns the first element of a sequenceable collection, or the key of a MapEntry.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-first_8hpp_source.html#l00040">cljonic-first.hpp:40</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-first_8hpp_source.html#l00038">38</a> of file <a class="el" href="cljonic-first_8hpp_source.html">cljonic-first.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-first_8hpp_source.html#l00040">40</a> of file <a class="el" href="cljonic-first_8hpp_source.html">cljonic-first.hpp</a>.</p>
 
 </div>
 </div>
@@ -1548,6 +1550,7 @@ template&lt;typename C&gt; </div>
 <p>Returns a collection without its first element. </p>
 <p><a class="anchor" id="Next"></a> </p>
 <p>For a <a class="el" href="classcljonic_1_1_queue.html">Queue</a>, <span class="tt"><a class="el" href="#a375ca6d156afd5ac8cd31bae763d4062" title="Returns a collection without its first element.">next</a></span> dequeues the front element (the accessible element) and returns the remaining collection.</p>
+<dl class="section note"><dt>Note</dt><dd>Not yet part of the public API; the sequence-shaping operations are deferred.</dd></dl>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -1564,9 +1567,9 @@ template&lt;typename C&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_runtime) == 20) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a375ca6d156afd5ac8cd31bae763d4062"><div class="ttname"><a href="#a375ca6d156afd5ac8cd31bae763d4062">cljonic::next</a></div><div class="ttdeci">constexpr auto next(const C &amp;collection) noexcept -&gt; decltype(collection.pop())</div><div class="ttdoc">Returns a collection without its first element.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-next_8hpp_source.html#l00034">cljonic-next.hpp:34</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a375ca6d156afd5ac8cd31bae763d4062"><div class="ttname"><a href="#a375ca6d156afd5ac8cd31bae763d4062">cljonic::next</a></div><div class="ttdeci">constexpr auto next(const C &amp;collection) noexcept -&gt; decltype(collection.pop())</div><div class="ttdoc">Returns a collection without its first element.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-next_8hpp_source.html#l00036">cljonic-next.hpp:36</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00034">34</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00036">36</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
 
 </div>
 </div>
@@ -1598,6 +1601,7 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <p>Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value. </p>
 <p><a class="anchor" id="NotEmpty"></a> </p>
 <p>Per REQ-FN-026, <span class="tt"><a class="el" href="#a8180deddc8b1aa7386990604604648f0" title="Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value.">not_empty</a></span> preserves the input collection type and capacity and returns an owning copy of the input when nonempty or the corresponding empty value when empty.</p>
+<dl class="section note"><dt>Note</dt><dd>Not yet part of the public API; the sequence-shaping operations are deferred.</dd></dl>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -1615,9 +1619,9 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(nv_runtime) == 1U) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a8180deddc8b1aa7386990604604648f0"><div class="ttname"><a href="#a8180deddc8b1aa7386990604604648f0">cljonic::not_empty</a></div><div class="ttdeci">constexpr auto not_empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdoc">Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-empty_8hpp_source.html#l00036">cljonic-not-empty.hpp:36</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a8180deddc8b1aa7386990604604648f0"><div class="ttname"><a href="#a8180deddc8b1aa7386990604604648f0">cljonic::not_empty</a></div><div class="ttdeci">constexpr auto not_empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdoc">Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-empty_8hpp_source.html#l00038">cljonic-not-empty.hpp:38</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00036">36</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00038">38</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
 
 </div>
 </div>
@@ -2065,6 +2069,7 @@ template&lt;typename C&gt; </div>
 <p>Returns a collection without its first/accessible element. </p>
 <p><a class="anchor" id="Rest"></a> </p>
 <p>For a <a class="el" href="classcljonic_1_1_queue.html">Queue</a>, this removes the front element. Unlike <span class="tt"><a class="el" href="#a375ca6d156afd5ac8cd31bae763d4062" title="Returns a collection without its first element.">next</a></span>, <span class="tt"><a class="el" href="#abf6c2fa3e470e828b91b5bb6a12afba7" title="Returns a collection without its first/accessible element.">rest</a></span> returns an empty collection rather than signaling absence on an empty input.</p>
+<dl class="section note"><dt>Note</dt><dd>Not yet part of the public API; the sequence-shaping operations are deferred.</dd></dl>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -2081,9 +2086,9 @@ template&lt;typename C&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_runtime) == 200) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_abf6c2fa3e470e828b91b5bb6a12afba7"><div class="ttname"><a href="#abf6c2fa3e470e828b91b5bb6a12afba7">cljonic::rest</a></div><div class="ttdeci">constexpr auto rest(const C &amp;collection) noexcept -&gt; decltype(collection.pop())</div><div class="ttdoc">Returns a collection without its first/accessible element.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-rest_8hpp_source.html#l00035">cljonic-rest.hpp:35</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_abf6c2fa3e470e828b91b5bb6a12afba7"><div class="ttname"><a href="#abf6c2fa3e470e828b91b5bb6a12afba7">cljonic::rest</a></div><div class="ttdeci">constexpr auto rest(const C &amp;collection) noexcept -&gt; decltype(collection.pop())</div><div class="ttdoc">Returns a collection without its first/accessible element.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-rest_8hpp_source.html#l00037">cljonic-rest.hpp:37</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-rest_8hpp_source.html#l00035">35</a> of file <a class="el" href="cljonic-rest_8hpp_source.html">cljonic-rest.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-rest_8hpp_source.html#l00037">37</a> of file <a class="el" href="cljonic-rest_8hpp_source.html">cljonic-rest.hpp</a>.</p>
 
 </div>
 </div>
@@ -2115,6 +2120,7 @@ template&lt;typename C&gt; </div>
 <p>Converts a collection into an owning, value-semantic sequence. </p>
 <p><a class="anchor" id="Seq"></a> </p>
 <p>For a <a class="el" href="classcljonic_1_1_vector.html">Vector</a> this returns the owning vector itself; for other sequenceable collections it produces an owning <a class="el" href="classcljonic_1_1_vector.html">Vector</a> of their traversal elements.</p>
+<dl class="section note"><dt>Note</dt><dd>Not yet part of the public API; the sequence-shaping operations are deferred.</dd></dl>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
@@ -2131,9 +2137,9 @@ template&lt;typename C&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(s_runtime) == 2U) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_af23ad4b89cbea89172bb757a5fbd5b26"><div class="ttname"><a href="#af23ad4b89cbea89172bb757a5fbd5b26">cljonic::seq</a></div><div class="ttdeci">constexpr auto seq(const C &amp;collection) noexcept -&gt; C</div><div class="ttdoc">Converts a collection into an owning, value-semantic sequence.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-seq_8hpp_source.html#l00035">cljonic-seq.hpp:35</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_af23ad4b89cbea89172bb757a5fbd5b26"><div class="ttname"><a href="#af23ad4b89cbea89172bb757a5fbd5b26">cljonic::seq</a></div><div class="ttdeci">constexpr auto seq(const C &amp;collection) noexcept -&gt; C</div><div class="ttdoc">Converts a collection into an owning, value-semantic sequence.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-seq_8hpp_source.html#l00037">cljonic-seq.hpp:37</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-seq_8hpp_source.html#l00035">35</a> of file <a class="el" href="cljonic-seq_8hpp_source.html">cljonic-seq.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-seq_8hpp_source.html#l00037">37</a> of file <a class="el" href="cljonic-seq_8hpp_source.html">cljonic-seq.hpp</a>.</p>
 
 </div>
 </div>
