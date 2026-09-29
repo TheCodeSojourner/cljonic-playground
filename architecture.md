@@ -313,6 +313,21 @@
   | equal_operation(x) → classify_as(RequirementsBacked)
     ∧ trace_to(REQ-FN-002G ∧ REQ-FN-002E)
 
+λ S2_not_equal_function(x). not_equal(lhs, rhs) ≡ named_general_value_inequality(x)
+  | not_equal_arity(x) ≡ three_clojure_arities(unary ∨ binary ∨ variadic)
+    ∧ unary_form(x) → admit(single_supported_domain_operand(x)) ∧ return(false)
+    ∧ variadic_form(x) → negate(conjoin(adjacent_pair_equality(x)))
+      ∧ evaluate_left_to_right(x) ∧ short_circuit_on_first_unequal_pair(x)
+    ∧ ∀adjacent_pair(x) ∧ ∀unary_operand(x) → satisfy(compile_time_domain_gating(x))
+  | not_equal(x) → distinct_from(operator!= (x))
+    ∧ scoped_to(same_supported_stable_equality_domain_as(equal)(x))
+  | not_equal(x) → delegate_to(equal(x)) ∧ negate(result(x))
+    ∧ domain_gating(x) ≡ domain_gating(equal)(x)
+    ∧ family_classification(x) ≡ family_classification(equal)(x)
+    ∧ termination(x) ≡ termination(equal)(x)
+  | not_equal_operation(x) → classify_as(RequirementsBacked)
+    ∧ trace_to(REQ-FN-002H ∧ REQ-FN-002C ∧ REQ-FN-002G)
+
 λ S2_result_status_model(x). public_operation(x) → declare(CompleteResult ∨ BoundedResult ∨ BoundedPrefixResult
   ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
   | operation(x) → document(status ∧ preflight ∧ failure_or_default_semantics)

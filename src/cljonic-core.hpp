@@ -207,6 +207,7 @@
 #include <cljonic-is-empty.hpp>
 #include <cljonic-iterate.hpp>
 #include <cljonic-map.hpp>
+#include <cljonic-not-equal.hpp>
 #include <cljonic-peek.hpp>
 #include <cljonic-pop.hpp>
 #include <cljonic-queue.hpp>

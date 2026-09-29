@@ -25,6 +25,7 @@ namespace cljonic::no_heap::probes {
 [[nodiscard]] auto is_empty_probe() noexcept -> bool;
 [[nodiscard]] auto map_entry_probe() noexcept -> bool;
 [[nodiscard]] auto map_probe() noexcept -> bool;
+[[nodiscard]] auto not_equal_probe() noexcept -> bool;
 [[nodiscard]] auto parameters_equal_probe() noexcept -> bool;
 [[nodiscard]] auto peek_probe() noexcept -> bool;
 [[nodiscard]] auto pop_probe() noexcept -> bool;

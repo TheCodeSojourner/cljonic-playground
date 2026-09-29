@@ -394,6 +394,14 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `equal(1, 1)` is true by scalar comparison; `equal(1)` is true as the unary arity; `equal(1, 1, 1)` is true as the variadic arity over adjacent pairs; `equal(1, 2, 1)` is false at the second adjacent pair; `equal(Vector<int, 3>{1, 2, 3}, Range<int>{0, 3, 1})` is true by sequential equality; `equal(map, map)` compares key/value mappings without entry order; `equal(1.0, 1.0)` and `equal(Vector<float, 2>{}, Vector<float, 2>{})` fail at compile time under the floating-point rule; `equal(Vector<int, 2>{1}, 1)` fails at compile time because a collection is never equal to a scalar; `equal(1, Vector<int, 2>{1}, 2)` fails at compile time because every adjacent pair in the variadic form is gated. Producer `==` and `parameters_equal` remain producer parameter equality and are distinct from `equal`, which may compare produced sequences at the top level.
 
 
+### NotEqual
+- **Definition:** The canonical named general-inequality free function; the negation counterpart of `Equal`, mapped conceptually to Clojure's `not=`. Its C++ free-function spelling is `not_equal`. It implements the negation of GeneralEquality over the same supported stable-equality domain and in the same three arities as `Equal`: a unary form that returns false for a single domain-admitted operand, a binary form that holds exactly when the two operands do not compare equal, and a variadic form that holds exactly when at least one adjacent operand pair does not compare equal, evaluated left to right and short-circuited at the first unequal pair, with every adjacent pair and the unary operand individually compile-time gated. It is a named free-function operation distinct from the native `!=` operators, `constexpr`, `noexcept`, non-mutating, and non-allocating.
+- **Deprecated Synonyms:** `not=`, inequality function, Clojure not-equals
+- **Related:** Equal, GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, CompileTimeFailure
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `not_equal(1, 2)` is true; `not_equal(1, 1)` is false; `not_equal(1)` is false as the unary arity; `not_equal(1, 2, 1)` is true at the first unequal adjacent pair; `not_equal(Vector<int, 4>{1, 2, 3}, Range<int>{0, 3, 1})` is false by sequential equality; `not_equal(1.0, 1.0)` fails at compile time under the floating-point rule.
+
+
 ### NumericEquality
 - **Definition:** Equality governed by the operation's numeric policy for supported numeric values, including representability. No cross-type comparison rules are permitted: values of different numeric types never compare equal under any cljonic equality operation; a cross-type comparison requires an explicit conversion performed by the caller under NumericPolicy.
 - **Deprecated Synonyms:** numeric value equality, numeric comparison

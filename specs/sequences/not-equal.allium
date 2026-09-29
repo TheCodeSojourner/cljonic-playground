@@ -1,0 +1,70 @@
+-- allium: 3
+
+-- Canonical named general-inequality free function (Clojure `not=` equivalent,
+-- REQ-FN-002H). The strict negation of `equal` (REQ-FN-002G): it reuses the same
+-- three Clojure arities, the same compile-time domain gating, the same
+-- equality-family classification, the same lazy bounded-prefix termination, and
+-- the same recursive nested-value semantics, and negates the result.
+-- `not_equal(x)` is false for a single domain-admitted operand; the binary form
+-- negates `equal(a, b)`; the variadic form negates the adjacent-pair
+-- conjunction. Distinct from the native `!=` operators.
+
+entity NotEqualFunction {
+    canonical_named_general_inequality_operation: Boolean
+    named_operation_distinct_from_operator_not_equals: Boolean
+    negates_equal_over_same_supported_domain: Boolean
+    three_clojure_not_equal_arities: Boolean
+    unary_form_returns_false_for_single_supported_domain_operand: Boolean
+    binary_form_negates_equal: Boolean
+    variadic_form_negates_adjacent_pair_conjunction: Boolean
+    adjacent_pairs_and_unary_operand_compile_time_gated: Boolean
+    domain_gating_identical_to_equal: Boolean
+    termination_identical_to_equal: Boolean
+    constexpr_noexcept_nonmutating_nonallocating: Boolean
+
+    invariant CanonicalNamedGeneralInequalityOperation {
+        this.canonical_named_general_inequality_operation = true
+    }
+
+    invariant NamedOperationDistinctFromOperatorNotEquals {
+        this.named_operation_distinct_from_operator_not_equals = true
+    }
+
+    invariant NegatesEqualOverSameSupportedDomain {
+        this.negates_equal_over_same_supported_domain = true
+    }
+
+    invariant ThreeClojureNotEqualArities {
+        this.three_clojure_not_equal_arities = true
+    }
+
+    invariant UnaryFormReturnsFalseForSingleSupportedDomainOperand {
+        this.unary_form_returns_false_for_single_supported_domain_operand = true
+    }
+
+    invariant BinaryFormNegatesEqual {
+        this.binary_form_negates_equal = true
+    }
+
+    invariant VariadicFormNegatesAdjacentPairConjunction {
+        this.variadic_form_negates_adjacent_pair_conjunction = true
+    }
+
+    invariant AdjacentPairsAndUnaryOperandCompileTimeGated {
+        this.adjacent_pairs_and_unary_operand_compile_time_gated = true
+    }
+
+    invariant DomainGatingIdenticalToEqual {
+        this.domain_gating_identical_to_equal = true
+    }
+
+    invariant TerminationIdenticalToEqual {
+        this.termination_identical_to_equal = true
+    }
+
+    invariant ConstexprNoexceptNonmutatingNonallocating {
+        this.constexpr_noexcept_nonmutating_nonallocating = true
+    }
+}
+
+actor NotEqualFunctionOperator { identified_by: NotEqualFunction }
