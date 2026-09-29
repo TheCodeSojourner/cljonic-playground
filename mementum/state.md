@@ -24,8 +24,8 @@ Validation:
 1. `make git` green end-to-end: format, lint, complexity, range/variant/equal-compile-fail, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols/probe, docs, docs-examples:compiled=14, cljonic-test 170/170.
 
 Next:
-1. Candidate synthesis (still awaiting human approval from 2026-09-26): mementum/knowledge/artifact-boundary-discipline.md from spec-to-code-strict-fail-gate.md, vocab-arch-weed-skip-aspirational-scope.md, and governance-invariants-do-not-belong-in-behavioral-specs.md.
-2. Candidate next slice: `not_equal` (REQ-FN-002C) or `equal_by`; complete the equality-domain table.
+1. Candidate synthesis — COMPLETE (2026-09-29, human-approved): created mementum/knowledge/artifact-boundary-discipline.md from spec-to-code-strict-fail-gate.md, vocab-arch-weed-skip-aspirational-scope.md, and governance-invariants-do-not-belong-in-behavioral-specs.md.
+2. Candidate next slice (human: not yet): `not_equal` (REQ-FN-002C) or `equal_by`; complete the equality-domain table.
 3. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
 
 Carry-forward (unaddressed, remember for later):
