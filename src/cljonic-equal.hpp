@@ -203,79 +203,74 @@ template <typename Lhs, typename Rhs>
 namespace cljonic {
 
 /** \anchor Equal
- * \brief Compares one or more values for general value equality, modeled on
- *        Clojure's `=` in its three arities.
+ * \brief Compares one or more values for equality.
  *
- * \b Equal implements general value equality (REQ-FN-002G) over the supported stable-equality domain in the three
- * arities of Clojure's `=`:
+ * \b Equal compares values by their contents:
  *
- * - `equal(x)` returns true for a single operand admitted by the same
- *   compile-time domain gating as the binary form.
- * - `equal(a, b)` compares the two operands by the family rules below. - `equal(a, b, more...)` holds exactly when
- * every adjacent operand pair
- *   compares equal by those family rules, evaluated left to right and
- *   short-circuited at the first unequal pair; every adjacent pair is
- *   individually compile-time gated, so an unsupported or mixed pair fails
- *   compilation regardless of its position in the argument list.
+ * - Calling `equal` with one value always returns true. - Two ordinary values compare equal when they are the same
+ * type and
+ *   compare equal with `==` (e.g., `int`, a scoped enum, or a simple struct
+ *   with an explicit or defaulted `operator==`).
+ * - Vectors, Queues, Ranges, Repeats, Cycles, Iterates, and Repeatedlys
+ *   compare equal when they contain or produce the same elements in the same
+ *   order. Producers are compared by what they produce, one element at a
+ *   time, and comparison always finishes: no producer yields more than
+ *   `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` elements, so two unbounded
+ *   producers are compared over that configured maximum.
+ * - Maps compare equal when they hold the same entries, regardless of
+ *   insertion order.
+ * - Sets compare equal when they hold the same elements, regardless of
+ *   insertion order.
+ * - Strings compare equal when they hold the same characters.
  *
- * - Non-collection, non-producer values compare with `==` when both operands
- *   have the same type and satisfy \ref StableEqualityComparable
- *   "StableEqualityComparable"; floating-point values are rejected at compile
- *   time (REQ-NUM-006).
- * - Cljonic collections and producers are classified into equality families:
- *   Vector, Queue, Cycle, Iterate, Range, Repeat, and Repeatedly form the
- *   sequential family and are mutually comparable by their produced sequence;
- *   Map is comparable only to Map; Set is comparable only to Set; String is
- *   comparable only to String. Cross-family pairs, mixed cljonic-to-non-cljonic
- *   pairs, and operands outside the supported domain fail at compile time.
- * - Sequential comparison is order-sensitive, compares elements lazily without
- *   eagerly materializing any producer, terminates at the first differing
- *   element pair, and compares each operand's configured observable traversal
- *   cap when both operands are unbounded, so every call terminates.
- * - Element types must be identical for sequential comparison, and Map key and
- *   value types must be identical on both sides.
- * - Equality is recursive over nested values: nested collections and composite
- *   values compare by REQ-COLL-021, and nested producers compare by producer
- *   parameter equality (REQ-FN-014B).
+ * Compared collections and sets must have matching element types, and compared maps must have matching key and value
+ * types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as
+ * floating-point numbers, are not supported. Nested collections and composite values compare by the same rules.
+ *
+ * With more than two arguments, every adjacent pair is compared, from left to right, stopping at the first unequal
+ * pair.
  *
  * \b Examples
- * ~~~~~{.cpp}
- * #include "cljonic.hpp"
  *
- * int main() {
- *   using namespace cljonic;
- *
- *   // Compile-time demonstration.
- *   constexpr auto v = Vector<int, 4>{1, 2, 3};
- *   constexpr auto r = Range<int>{1, 4, 1}; // produces 1, 2, 3
- *   constexpr auto q = Queue<int, 4>{1, 2, 3};
- *   constexpr auto rep = Repeat<int>{1, 3U};
- *   constexpr auto m1 = Map<int, int, 4>{MapEntry<int, int>{1, 10}, MapEntry<int, int>{2, 20}};
- *   constexpr auto m2 = Map<int, int, 4>{MapEntry<int, int>{2, 20}, MapEntry<int, int>{1, 10}};
- *   constexpr auto s1 = Set<int, 4>{3, 1, 2};
- *   constexpr auto s2 = Set<int, 4>{1, 2, 3};
- *   constexpr auto str1 = String<8>{"abc"};
- *   constexpr auto str2 = String<16>{"abc"};
- *   static_assert(equal(1, 1));
- *   static_assert(!equal(1, 2));
- *   static_assert(equal(1));         // unary arity
- *   static_assert(equal(1, 1, 1));   // variadic arity
- *   static_assert(!equal(1, 2, 1));  // second adjacent pair is unequal
- *   static_assert(equal(v, r, q));   // variadic sequential family comparison
- *   static_assert(equal(v, r));      // sequential family: Vector vs Range
- *   static_assert(equal(v, q));      // sequential family: Vector vs Queue
- *   static_assert(equal(Vector<int, 4>{1, 1, 1}, rep));
- *   static_assert(equal(m1, m2));    // Map equality ignores entry order
- *   static_assert(equal(s1, s2));    // Set equality ignores element order
- *   static_assert(equal(str1, str2)); // String equality compares content
- *   static_assert(equal(Repeat<int>{}, Repeat<int>{})); // bounded prefix
- *
- *   // Runtime demonstration.
- *   auto runtime_v = Vector<int, 4>{1, 2, 3};
- *   auto runtime_r = Range<int>{1, 4, 1};
- *   return equal(runtime_v, runtime_r) ? 0 : 1;
- * }
- * ~~~~~
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Compile-time demonstration.
+   constexpr auto v = Vector<int, 4>{1, 2, 3};
+   constexpr auto r = Range<int>{1, 4, 1}; // produces 1, 2, 3
+   constexpr auto q = Queue<int, 4>{1, 2, 3};
+   constexpr auto rep = Repeat<int>{1, 3U};
+   constexpr auto m1 =
+       Map<int, int, 4>{MapEntry<int, int>{1, 10}, MapEntry<int, int>{2, 20}};
+   constexpr auto m2 =
+       Map<int, int, 4>{MapEntry<int, int>{2, 20}, MapEntry<int, int>{1, 10}};
+   constexpr auto s1 = Set<int, 4>{3, 1, 2};
+   constexpr auto s2 = Set<int, 4>{1, 2, 3};
+   constexpr auto str1 = String<8>{"abc"};
+   constexpr auto str2 = String<16>{"abc"};
+   static_assert(equal(1, 1));
+   static_assert(!equal(1, 2));
+   static_assert(equal(1));        // single value
+   static_assert(equal(1, 1, 1));  // multiple values, all equal
+   static_assert(!equal(1, 2, 1)); // stops at the first unequal pair
+   static_assert(equal(v, r, q));  // Vector, Range, and Queue with the
+                                   // same elements compare equal
+   static_assert(equal(v, r));     // Vector vs Range
+   static_assert(equal(v, q));     // Vector vs Queue
+   static_assert(equal(Vector<int, 4>{1, 1, 1}, rep));
+   static_assert(equal(m1, m2));     // Map equality ignores entry order
+   static_assert(equal(s1, s2));     // Set equality ignores element order
+   static_assert(equal(str1, str2)); // String equality compares content
+   static_assert(equal(Repeat<int>{}, Repeat<int>{})); // bounded prefix
+
+   // Runtime demonstration.
+   auto runtime_v = Vector<int, 4>{1, 2, 3};
+   auto runtime_r = Range<int>{1, 4, 1};
+   return equal(runtime_v, runtime_r) ? 0 : 1;
+ }
+ ~~~~~
  */
 template <typename Lhs, typename Rhs>
     requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::none) &&
@@ -331,7 +326,7 @@ template <typename Lhs, typename Rhs>
 
 template <typename T>
     requires(concepts_detail::equal_pair_admissible_v<T, T>)
-[[nodiscard]] constexpr auto equal(const T& value) noexcept -> bool {
+[[nodiscard]] constexpr auto equal([[maybe_unused]] const T& value) noexcept -> bool {
     return true;
 }
 
