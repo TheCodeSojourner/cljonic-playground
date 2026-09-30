@@ -3,7 +3,14 @@
 - last_session_id: 59abeb60-d44b-458b-93ba-862f63a872c7
 - current_timestamp: 2026-09-29
 - recover: 1
-- session_complete: true
+- session_complete: false
+
+Task:
+1. gybis-init orientation — COMPLETE.
+2. Layer-order adoption — COMPLETE (uncommitted): durability order is now `req > vocab > arch > spec > tests > code` (human decision). GYBIS-DEV-WORKFLOW.md upserted: loop line updated, new step 2 "Honor Requirements", steps renumbered 1–9, checklist item added. Human decision: NO S6 VSM layer — requirements are a document lane, not a VSM layer; VSM.md (nucleus) remains the basis of architecture.md with five layers (S5>S4>S3>S2>S1); requirements enter through S3/S5 gating (S3_domain_boundary → explicit_approved_requirement).
+
+Decisions:
+1. Layer order (human, 2026-09-29): `req > vocab > arch > spec > tests > code`. The req layer is an authority ordering between documents, not a VSM layer; no S6 added.
 
 Task:
 1. `Equal` public doc comment refinement — COMPLETE (commits 75d2b68 + 5606804): removed all Clojure references (brief no longer "modeled on Clojure's `=`"); rewrote the prose to be user-facing and contract-first (dropped REQ-FN-002G/REQ-NUM-006/REQ-FN-014B/REQ-COLL-021 IDs, the `\ref StableEqualityComparable` link, and equality-family/gating jargon); restated the three rules as user-visible behavior (single value always true; ordinary values by same-type `==` with example types; producer comparison bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; matching element/key/value types; order-insensitive Map/Set); fixed a merged list bullet; reformatted the sample to the bare (non-asterisk) `~~~~~{.cpp}` fence so scripts/compile-doc-samples.py actually extracts and compiles it (docs-examples:compiled 13→14).
