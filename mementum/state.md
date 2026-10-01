@@ -1,9 +1,31 @@
 ## Session State
 
-- last_session_id: 59abeb60-d44b-458b-93ba-862f63a872c7
-- current_timestamp: 2026-09-29
+- last_session_id: 55f47254-5bfa-42c5-be15-e3b9289e0a3a
+- current_timestamp: 2026-10-01
 - recover: 1
-- session_complete: false
+- session_complete: true
+
+Task:
+1. Requirements description under the revised gybis-req-describe contract — PARTIAL: rendered the seven-module stakeholder narrative for all 289 requirement clauses and created the requested root Markdown output during the interaction. It met the no-designator, no-clause-bullet, module-grouping, rationale, and deferred-label rules and passed the recorded prose checks. The user had selected all modules and default root Markdown output, but `requirements-description.md` is absent from the checkout at closeout; the requested persistent deliverable must be restored from the validated session content.
+2. gybis-fini closeout — COMPLETE: updated this state record and committed Mementum.
+
+Questions:
+1. No new blocking questions. The previously proposed artifact-boundary knowledge synthesis remains awaiting explicit human approval.
+
+Decisions:
+1. Requirements-description scope: all seven dependency-ordered modules; output mode: default repository-root Markdown file, explicitly selected by the human.
+2. Revised requirements-description contract: connected stakeholder prose only, no requirement designators or per-requirement bullets; supplied rationales use `because:` and analysis-derived rationales are attributed.
+3. The fini workflow writes only `mementum/state.md`; record the absent output file as the next recovery item rather than expanding the closeout write boundary.
+
+Validation:
+1. Requirements description during authoring: 289 source clauses; 31 source rationales and 31 rendered `because:` statements; four analysis-derived rationales; seven module headings; two deferred sections; no requirement designators or clause bullets; `git diff --check` clean.
+2. Closeout inspection: branch and worktree were clean; `requirements-description.md` was not present. No code or test gates were run.
+
+Next:
+1. Restore `requirements-description.md` from the validated narrative in this session; preserve the revised prose-only contract.
+2. Resume deferred comparison-family work (`equal_by`/`identical`, then the ordering comparisons) when selected.
+3. Reconcile operation-level specifications for `REQ-SEQ-022` per `mementum/knowledge/cljonic-next-agenda.md`.
+4. Ask for approval before creating the pending artifact-boundary knowledge synthesis.
 
 Task:
 1. gybis-init orientation — COMPLETE.
