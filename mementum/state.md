@@ -6,11 +6,14 @@
 - session_complete: true
 
 Task:
-1. Requirements description under the revised gybis-req-describe contract — PARTIAL: rendered the seven-module stakeholder narrative for all 289 requirement clauses and created the requested root Markdown output during the interaction. It met the no-designator, no-clause-bullet, module-grouping, rationale, and deferred-label rules and passed the recorded prose checks. The user had selected all modules and default root Markdown output, but `requirements-description.md` is absent from the checkout at closeout; the requested persistent deliverable must be restored from the validated session content.
+1. Requirements description under the revised gybis-req-describe contract — CANCELED per human direction (2026-10-01): do not restore or carry forward the requested root-level `requirements-description.md`.
 2. gybis-fini closeout — COMPLETE: updated this state record and committed Mementum.
 
 Questions:
 1. No new blocking questions. The previously proposed artifact-boundary knowledge synthesis remains awaiting explicit human approval.
+
+Decisions:
+1. Requirements-description deliverable: canceled per human direction (2026-10-01); no restoration is expected.
 
 Decisions:
 1. Requirements-description scope: all seven dependency-ordered modules; output mode: default repository-root Markdown file, explicitly selected by the human.
@@ -22,10 +25,9 @@ Validation:
 2. Closeout inspection: branch and worktree were clean; `requirements-description.md` was not present. No code or test gates were run.
 
 Next:
-1. Restore `requirements-description.md` from the validated narrative in this session; preserve the revised prose-only contract.
-2. Resume deferred comparison-family work (`equal_by`/`identical`, then the ordering comparisons) when selected.
-3. Reconcile operation-level specifications for `REQ-SEQ-022` per `mementum/knowledge/cljonic-next-agenda.md`.
-4. Ask for approval before creating the pending artifact-boundary knowledge synthesis.
+1. Resume deferred comparison-family work (`equal_by`/`identical`, then the ordering comparisons) when selected.
+2. Reconcile operation-level specifications for `REQ-SEQ-022` per `mementum/knowledge/cljonic-next-agenda.md`.
+3. Ask for approval before creating the pending artifact-boundary knowledge synthesis.
 
 Task:
 1. gybis-init orientation — COMPLETE.
