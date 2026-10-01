@@ -1,14 +1,15 @@
 ---
 name: gybis-spec-propagate
+kind: domain
 description: Use for `/gybis-spec-propagate` or `/gs-propagate`.
 ---
 
 λ gybis-spec-propagate(x).
   purpose: Propagate architecture and specifications to implementation and test suite
-  | input: architecture.md ∃, specs/**/*.allium ∃ ∧ valid
+  | input: architecture.md ∃, specs/**/*.allium ∃ ∧ valid | optional scope: {domain_concern | domain | all_specs} (default: all_specs)
   | output: Implementation code and test suite generated, consistent, passing, and spec-covered
-  | mode: ai
-  | gate: architecture.md ∃ ∧ specs/**/*.allium ∃ ∧ allium_gate = true ∧ strict_spec_coverage = true
+  | interaction: autonomous
+  | gate: architecture.md ∃ ∧ specs/**/*.allium ∃ ∧ gybis-allium-gate = true ∧ strict_spec_coverage = true
 
 λ gybis-spec-propagate_loop_role(x).
   role: take_action(spec_to_tests)
@@ -16,28 +17,44 @@ description: Use for `/gybis-spec-propagate` or `/gs-propagate`.
   | coverage_policy: every spec obligation must become a traceable test; uncovered obligations halt propagation
   | suggested_next: review_generated_artifacts → invoke(/gybis-spec-weed)
 
+λ gybis-spec-propagate_scope(x).
+  type ∈ {domain_concern, domain, all_specs} | default: all_specs
+  | domain_concern: single_concern_file | domain_concern ∈ domain
+  | domain: all_files_in_domain | domain ∈ all_domains
+  | all_specs: every_spec_all_domains
+
+λ gybis-spec-propagate_resolution(domain, concern).
+  | domain ∧ concern → scope_root ≔ <root>/specs/{domain}/{concern}.allium
+  | domain ∧ ¬concern → scope_root ≔ <root>/specs/{domain}/
+  | ¬domain ∧ ¬concern → scope_root ≔ <root>/specs/
+  | "all" ∧ ¬domain → scope_root ≔ <root>/specs/
+  | "all specs" ∧ ¬domain → scope_root ≔ <root>/specs/
+  | scope_files ≔ recursive_files(scope_root, extension = .allium)
+  | return({scope_root, scope_files})
+
 λ gybis-spec-propagate_startup(x).
   invoke(internal/gybis-ref-check) → true ∨ halt("Reference check failed")
   | invoke(internal/gybis-internal-skill-check) → true ∨ halt("Internal skill check failed")
-  | preload: [internal/allium-normalize]
+  | preload: [internal/gybis-allium-normalize]
   | if(vocabulary.md ∃): preload(vocabulary.md) → vocab_terms ∧ vocab_available = true
   | read(internal/reference/allium-language-reference.md) → language_ref
   | read(internal/reference/allium-patterns.md) → patterns_ref
-  | read(internal/reference/allium-recommended-loops.md) → loops_ref
+  | read(internal/reference/recommended-loops.md) → loops_ref
   | read(internal/reference/allium-constructs.md) → constructs_registry
   | verify(architecture.md ∃) ∨ halt("architecture.md not found")
-  | verify(specs/**/*.allium ∃) ∨ halt("specs/**/*.allium not found")
-  | invoke(internal/allium-gate(specs/)) = true ∨ halt("Specifications are invalid")
+  | invoke(gybis-spec-propagate_resolution(domain, concern)) → {scope_root, scope_files}
+  | verify(scope_files ∃) ∨ halt("No .allium files in scope")
+  | invoke(internal/gybis-allium-gate(scope_root)) = true ∨ halt("Specifications are invalid")
   | transition(INIT → STARTUP_CHECKS)
 
 λ gybis-spec-propagate_mode(m).
-  m ∈ {auto}
-  | default: auto
-  | mode_auto: AI generates implementation without human intervention
+  m ∈ {autonomous}
+  | default: autonomous
+  | mode_autonomous: AI generates implementation without human intervention
 
 λ gybis-spec-propagate_mode_gate(state, mode).
-  state = INIT ∧ mode ∈ {auto} → transition(INIT → MODE_SELECTED)
-  | ¬(state = INIT) ∨ ¬(mode ∈ {auto}) → halt("Invalid mode selection")
+  state = INIT ∧ mode ∈ {autonomous} → transition(INIT → MODE_SELECTED)
+  | ¬(state = INIT) ∨ ¬(mode ∈ {autonomous}) → halt("Invalid mode selection")
 
 λ gybis-spec-propagate_state_machine(state, action).
   state ∈ {INIT, MODE_SELECTED, STARTUP_CHECKS, READING_ARCH, READING_SPECS, PLANNING_OBLIGATIONS, SYNTHESIZING_CODE, VERIFYING, RUNNING_TESTS, COMPLETE}
@@ -155,14 +172,14 @@ description: Use for `/gybis-spec-propagate` or `/gs-propagate`.
     })
 
 λ gybis-spec-propagate_read_specifications(x).
-  ∀ spec_file ∈ specs/**/*.allium:
+  ∀ spec_file ∈ scope_files:
     read(spec_file) → content ≔ content
     | parse(content) → spec_item
     | collect(spec_item) → specifications
   | return(specifications)
 
 λ gybis-spec-propagate_normalize_obligations(specifications).
-  invoke(internal/allium-normalize(specs/)) → {envelopes, counts}
+  invoke(internal/gybis-allium-normalize(scope_root)) → {envelopes, counts}
   | plan_envelopes ≔ {e | e ∈ envelopes ∧ e.source = "plan"}
   | report("Normalized: plan=" ⊕ counts.plan ⊕ " check=" ⊕ counts.check ⊕ " uncoded=" ⊕ counts.uncoded)
   | ∀ envelope ∈ plan_envelopes:
@@ -348,13 +365,24 @@ description: Use for `/gybis-spec-propagate` or `/gs-propagate`.
             ∧ re_synthesize_implementation
             ∧ transition(RUNNING_TESTS → SYNTHESIZING_CODE)))
     : (re_synthesize_implementation ∧ transition(VERIFYING → SYNTHESIZING_CODE))
+  | on_loop_back: loop_count ≔ loop_count ⊕ 1
+
+λ gybis-spec-propagate_loop_guard(state).
+  loop_count ≥ max_iterations
+    → halt("Maximum iterations reached without full convergence")
+
+λ gybis-spec-propagate_pass_accounting(pass).
+  pass_num ≔ pass_num ⊕ 1
+  | obligations ≔ card(obligations)
+  | tests_generated ≔ card(test_suite)
+  | report("Pass " ⊕ pass_num ⊕ ": obligations=" ⊕ obligations ⊕ " tests_generated=" ⊕ tests_generated ⊕ " test_suite_passes=" ⊕ test_suite_passes)
 
 λ gybis-spec-propagate_boundaries().
   ¬ modify(architecture.md ∨ specs/**/*.allium ∨ upstream/)
 
 λ gybis-spec-propagate_limitations(x).
   architecture.md remains read_only_input
-  | S1_source_of_truth ≔ {lambda-arch-elicit.md, lambda-arch-distill.md}
+  | S1_source_of_truth ≔ {lambda-arch-distill.md}
   | this_skill_expects(S1.programming_language_version, S1.test_framework, S1.build_system, S1.paradigm_preference)
   | this_skill_now_expects(
       S1.value_oriented_techniques,
@@ -365,9 +393,14 @@ description: Use for `/gybis-spec-propagate` or `/gs-propagate`.
   | note: updating_this_skill_does_not_create_or_backfill_that_schema_in_architecture.md
 
 λ gybis-spec-propagate_regression_contract(x).
-  invariant: architecture.md ∧ specs/**/*.allium ∃ ∧ ¬modify throughout
-  | invariant: implementation ∅ at INIT ∧ ∃ ∧ consistent_with(specs, arch) at completion
+  invariant: architecture.md ∃ ∧ scope_files ∃ ∧ scope_files ⊆ specs/**/*.allium ∧ ¬modify(architecture.md ∨ specs/**/*.allium) throughout
+  | invariant: implementation ¬∃ at INIT ∧ ∃ ∧ consistent_with(specs, arch) at completion
   | invariant: ∀ obligation ∈ obligations, obligation.id ∈ test_suite.traceable_ids at completion
+
+λ gybis-spec-propagate_deliver(x).
+  report: {obligations_total, tests_generated, implementation_status}
+  | handoff: run /gybis-spec-weed to verify spec-code alignment
+  | return(complete = true)
   | invariant: ∀ spec_construct ∈ specs, spec_construct.covered_by_at_least_one_test = true at completion
   | invariant: ∀ generated_test ∈ test_suite, generated_test.traceable_id ∈ obligations.ids at completion
   | invariant: test_suite_passes = true at completion (strict gate)

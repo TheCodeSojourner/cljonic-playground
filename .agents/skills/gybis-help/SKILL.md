@@ -1,5 +1,6 @@
 ---
 name: gybis-help
+kind: help
 description: Use for `/gybis-help`.
 ---
 
@@ -14,42 +15,39 @@ CRITICAL CONSTRAINTS:
 | Skill Name | Description |
 |---|---|
 | `/gybis-arch-check` (`/ga-check`) | Validate architecture.md integrity & coherence |
-| `/gybis-arch-describe` (`/ga-describe`) | Describe arch in non-tech prose |
+| `/gybis-arch-describe` (`/ga-describe`) | Describe arch in stakeholder prose |
 | `/gybis-arch-distill` (`/ga-distill`) | Create initial arch from specs |
-| `/gybis-arch-elicit` (`/ga-elicit`) | Create initial arch with human |
 | `/gybis-arch-explain` (`/ga-explain`) | Explain arch in dev prose |
 | `/gybis-arch-propagate` (`/ga-propagate`) | Create initial specs from arch |
-| `/gybis-arch-tend` (`/ga-tend`) | Update arch with human |
-| `/gybis-arch-weed` (`/ga-weed`) | Upsert arch/specs from diffs with human |
-| `/gybis-fini` | CRUD memory before terminate |
+| `/gybis-arch-tend` (`/ga-tend`) | Update arch with impact analysis |
+| `/gybis-arch-weed` (`/ga-weed`) | Resolve divergence between arch and specs |
+| `/gybis-fini` | Persist memory before terminate |
 | `/gybis-init` | Initialize gybis AI context |
 | `/gybis-memory-migrate` (`/gm-migrate`) | Migrate Mementum store to current format |
 | `/gybis-memory-orient` (`/gm-orient`) | Restore prev AI context |
 | `/gybis-memory-recall {topic}` (`/gm-recall {topic}`) | Recall topic/summarize-latest |
 | `/gybis-memory-store {insight}` (`/gm-store {insight}`) | Store insight |
 | `/gybis-memory-synthesize` (`/gm-synthesize`) | Synthesize knowledge |
-| `/gybis-req-check` (`/gr-check`) | Validate requirements designators, ordering, & coverage |
+| `/gybis-req-check` (`/gr-check`) | Validate individual requirements, ordering, & coverage |
 | `/gybis-req-describe` (`/gr-describe`) | Describe requirements in stakeholder prose |
-| `/gybis-req-distill` (`/gr-distill`) | Create initial requirements (+ vocab candidates) from arch/specs/code |
+| `/gybis-req-distill` (`/gr-distill`) | Create initial requirements from vocab/arch/specs/code |
 | `/gybis-req-elicit` (`/gr-elicit`) | Elicit requirements via grilling interview rounds |
 | `/gybis-req-explain` (`/gr-explain`) | Explain requirements in dev prose |
 | `/gybis-req-propagate` (`/gr-propagate`) | Annotate specs/tests with REQ traceability |
 | `/gybis-req-refine` (`/gr-refine`) | Refine requirements structure & clarity |
 | `/gybis-req-tend` (`/gr-tend`) | Update requirements with impact analysis |
-| `/gybis-req-weed` (`/gr-weed`) | Upsert requirements/downstream from diffs with human |
-| `/gybis-spec-check` (`/gs-check {concern\|domain\|all}`) | Check/Update syntax until valid |
-| `/gybis-spec-describe` (`/gs-describe {concern\|domain\|all}`) | Describe in non-tech prose |
+| `/gybis-req-weed` (`/gr-weed`) | Resolve divergence between requirements and downstream |
+| `/gybis-spec-check` (`/gs-check {concern\|domain\|all}`) | Validate and repair spec syntax |
+| `/gybis-spec-describe` (`/gs-describe {concern\|domain\|all}`) | Describe specs in stakeholder prose |
 | `/gybis-spec-distill` (`/gs-distill`) | Create initial specs from code/tests |
-| `/gybis-spec-explain` (`/gs-explain {concern\|domain\|all}`) | Explain in dev prose |
+| `/gybis-spec-explain` (`/gs-explain {concern\|domain\|all}`) | Explain specs in dev prose |
 | `/gybis-spec-propagate` (`/gs-propagate {concern\|domain\|all}`) | Create initial code/tests |
-| `/gybis-spec-tend` (`/gs-tend`) | Update specs with human |
-| `/gybis-spec-weed` (`/gs-weed`) | Upsert specs/code-tests from diffs with human |
+| `/gybis-spec-tend` (`/gs-tend`) | Update specs with impact analysis |
+| `/gybis-spec-weed` (`/gs-weed`) | Resolve divergence between specs and code |
 | `/gybis-vocab-check` (`/gv-check`) | Validate vocabulary.md syntax & semantics |
-| `/gybis-vocab-describe` (`/gv-describe`) | Describe vocabulary in business language |
+| `/gybis-vocab-describe` (`/gv-describe`) | Describe vocabulary in stakeholder prose |
 | `/gybis-vocab-distill` (`/gv-distill`) | Extract vocabulary from arch/specs/code |
-| `/gybis-vocab-elicit` (`/gv-elicit`) | Elicit vocabulary from domain experts |
-| `/gybis-vocab-explain` (`/gv-explain`) | Explain vocabulary for developers |
+| `/gybis-vocab-explain` (`/gv-explain`) | Explain vocabulary in dev prose |
+| `/gybis-vocab-propagate` (`/gv-propagate`) | Create initial architecture from req + vocab |
 | `/gybis-vocab-tend` (`/gv-tend`) | Update vocabulary with impact analysis |
-| `/gybis-vocab-weed` (`/gv-weed`) | Upsert vocabulary/artifacts from diffs with human |
-
-REQ-clause convention: REQ clauses (`/gybis-req-*` family) may carry an optional `rationale:` line (why the requirement exists) — guidance and context only, never a rule anyone must satisfy. It is captured by elicit, validated by check (never a binding obligation, never counted as coverage), and rendered as "because: ..." by describe/explain when present.
+| `/gybis-vocab-weed` (`/gv-weed`) | Resolve divergence between vocab and downstream |
