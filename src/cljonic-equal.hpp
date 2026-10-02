@@ -3,31 +3,22 @@
 #include <cljonic-concepts.hpp>
 #include <ranges>
 #include <type_traits>
-#include <variant>
 
 namespace cljonic::concepts_detail {
 
 enum class equality_family { none, sequential, map, set, string };
 
-// A std::variant specialization is part of the closed composite value domain
-// (REQ-CAP-010) even though it is neither a scalar nor an aggregate.
-template <typename T>
-struct is_std_variant : std::false_type {};
-
-template <typename... Alternatives>
-struct is_std_variant<std::variant<Alternatives...>> : std::true_type {};
-
-template <typename T>
-inline constexpr bool is_std_variant_v = is_std_variant<std::remove_cvref_t<T>>::value;
-
 // The non-cljonic fallthrough domain of `equal` (REQ-FN-002G) is the closed
-// value domain: scalars and scoped enums, aggregate-like structs, and std::
-// variant composites. Standard-library range and container types belong to the
-// C++ interoperability surface, not the equality domain, and are rejected.
+// value domain: arithmetic scalars and scoped enums, aggregate-like structs,
+// and cljonic::Variant composites. Standard-library range and container types
+// belong to the C++ interoperability surface, not the equality domain, and are
+// rejected, as is the standard-library variant (it is not a cljonic value
+// type). Unscoped enums and pointers (including member pointers) are also
+// outside the domain: `std::is_scalar_v` would otherwise admit them.
 template <typename T>
 inline constexpr bool in_non_cljonic_fallthrough_domain_v =
     !is_cljonic_collection_v<T> && !is_cljonic_producer_v<T> && !std::ranges::range<T> &&
-    (std::is_scalar_v<T> || std::is_aggregate_v<T> || is_std_variant_v<T>);
+    ((std::is_arithmetic_v<T> || std::is_scoped_enum_v<T>) || std::is_aggregate_v<T> || is_cljonic_variant_v<T>);
 
 // Equality-family classification for the general-equality free function `equal`
 // (REQ-FN-002G): Vector and Queue join all five producers in the sequential
@@ -99,28 +90,50 @@ using equal_key_type_of_t = equal_key_type_of<T>::type;
 template <typename T>
 using equal_association_value_type_of_t = equal_association_value_type_of<T>::type;
 
-// Compile-time admissibility of one operand pair (REQ-FN-002G): the
-// disjunction of the binary equal overload gates, kept in lockstep with the
-// five binary overloads so every arity rejects the same pairs at compile
-// time. Both members of a family pair always expose the corresponding member
-// types, so the void fallback only guards the non-family substitution path.
+// The value domain admitted by equal's family gates: stable equality whose
+// comparison cannot throw (so the noexcept guarantee cannot be violated) and
+// free of standard-library range components at any depth (equal is not part of
+// the C++ interoperability surface).
+template <typename T>
+concept EqualDomainValue = concepts::NothrowEqualityComparable<T> && !contains_standard_range_v<T>;
+
+// Equality-family gates shared by equal's overloads and not_equal's delegated
+// gate (REQ-FN-002G, REQ-FN-002H); these are not ordering capabilities.
 template <typename Lhs, typename Rhs>
-inline constexpr bool equal_pair_admissible_v =
-    (equal_family_of_v<Lhs> == equality_family::none && equal_family_of_v<Rhs> == equality_family::none &&
-     in_non_cljonic_fallthrough_domain_v<Lhs> && in_non_cljonic_fallthrough_domain_v<Rhs> && std::same_as<Lhs, Rhs> &&
-     concepts::StableEqualityComparable<Lhs>) ||
-    (equal_family_of_v<Lhs> == equality_family::sequential && equal_family_of_v<Rhs> == equality_family::sequential &&
-     std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
-     concepts::StableEqualityComparable<equal_value_type_of_t<Lhs>>) ||
-    (equal_family_of_v<Lhs> == equality_family::string && equal_family_of_v<Rhs> == equality_family::string) ||
-    (equal_family_of_v<Lhs> == equality_family::map && equal_family_of_v<Rhs> == equality_family::map &&
-     std::same_as<equal_key_type_of_t<Lhs>, equal_key_type_of_t<Rhs>> &&
-     std::same_as<equal_association_value_type_of_t<Lhs>, equal_association_value_type_of_t<Rhs>> &&
-     concepts::StableEqualityComparable<equal_key_type_of_t<Lhs>> &&
-     concepts::StableEqualityComparable<equal_association_value_type_of_t<Lhs>>) ||
-    (equal_family_of_v<Lhs> == equality_family::set && equal_family_of_v<Rhs> == equality_family::set &&
-     std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
-     concepts::StableEqualityComparable<equal_value_type_of_t<Lhs>>);
+concept EqualScalarPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::none && equal_family_of_v<Rhs> == equality_family::none &&
+    in_non_cljonic_fallthrough_domain_v<Lhs> && in_non_cljonic_fallthrough_domain_v<Rhs> && std::same_as<Lhs, Rhs> &&
+    EqualDomainValue<Lhs>;
+
+template <typename Lhs, typename Rhs>
+concept EqualSequentialPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::sequential && equal_family_of_v<Rhs> == equality_family::sequential &&
+    std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
+    EqualDomainValue<equal_value_type_of_t<Lhs>>;
+
+template <typename Lhs, typename Rhs>
+concept EqualStringPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::string && equal_family_of_v<Rhs> == equality_family::string;
+
+template <typename Lhs, typename Rhs>
+concept EqualMapPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::map && equal_family_of_v<Rhs> == equality_family::map &&
+    std::same_as<equal_key_type_of_t<Lhs>, equal_key_type_of_t<Rhs>> &&
+    std::same_as<equal_association_value_type_of_t<Lhs>, equal_association_value_type_of_t<Rhs>> &&
+    EqualDomainValue<equal_key_type_of_t<Lhs>> && EqualDomainValue<equal_association_value_type_of_t<Lhs>>;
+
+template <typename Lhs, typename Rhs>
+concept EqualSetPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::set && equal_family_of_v<Rhs> == equality_family::set &&
+    std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
+    EqualDomainValue<equal_value_type_of_t<Lhs>>;
+
+// Keep every arity on the same family gates so unsupported pairs fail at
+// compile time regardless of their position in the argument list.
+template <typename Lhs, typename Rhs>
+concept EqualPairAdmissible =
+    EqualScalarPairAdmissible<Lhs, Rhs> || EqualSequentialPairAdmissible<Lhs, Rhs> ||
+    EqualStringPairAdmissible<Lhs, Rhs> || EqualMapPairAdmissible<Lhs, Rhs> || EqualSetPairAdmissible<Lhs, Rhs>;
 
 // Every adjacent pair of a variadic equal argument list is admissible
 // (REQ-FN-002G); one or zero trailing operands satisfy the rule vacuously.
@@ -129,8 +142,8 @@ struct all_adjacent_pairs_admissible : std::true_type {};
 
 template <typename First, typename Second, typename... Rest>
 struct all_adjacent_pairs_admissible<First, Second, Rest...>
-    : std::bool_constant<equal_pair_admissible_v<First, Second> &&
-                         all_adjacent_pairs_admissible<Second, Rest...>::value> {};
+    : std::bool_constant<EqualPairAdmissible<First, Second> && all_adjacent_pairs_admissible<Second, Rest...>::value> {
+};
 
 template <typename... Ts>
 inline constexpr bool all_adjacent_pairs_admissible_v = all_adjacent_pairs_admissible<Ts...>::value;
@@ -207,10 +220,13 @@ namespace cljonic {
  * \b Equal compares values by their contents:
  *
  * - Calling `equal` with one value always returns true. - Two ordinary values compare equal when they are the same
- * type and
- *   compare equal with `==` (e.g., `int`, a scoped enum, or a simple struct
- *   with an explicit or defaulted `operator==`).
- * - Vectors, Queues, Ranges, Repeats, Cycles, Iterates, and Repeatedlys
+ * type and compare
+ *   equal with `==` (e.g., `int`, a scoped enum, or a simple struct with an
+ *   explicit or defaulted `operator==`). The comparison must not throw, so a
+ *   type whose `==` can throw is not supported; pointers and unscoped enums
+ *   are not supported either.
+ * - Vectors, Queues, Ranges, Repeats, Cycles, and the Iterate and Repeatedly
+ *   producers
  *   compare equal when they contain or produce the same elements in the same
  *   order. Producers are compared by what they produce, one element at a
  *   time, and comparison always finishes: no producer yields more than
@@ -224,7 +240,9 @@ namespace cljonic {
  *
  * Compared collections and sets must have matching element types, and compared maps must have matching key and value
  * types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as
- * floating-point numbers, are not supported. Nested collections and composite values compare by the same rules.
+ * floating-point numbers, are not supported. Standard-library range and container types are not supported at any
+ * depth. Nested collections and composite values compare by the same rules; a nested producer is compared by its
+ * stored parameters.
  *
  * With more than two arguments, every adjacent pair is compared, from left to right, stopping at the first unequal
  * pair.
@@ -272,38 +290,25 @@ namespace cljonic {
  ~~~~~
  */
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::none) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::none) &&
-             concepts_detail::in_non_cljonic_fallthrough_domain_v<Lhs> &&
-             concepts_detail::in_non_cljonic_fallthrough_domain_v<Rhs> && std::same_as<Lhs, Rhs> &&
-             concepts::StableEqualityComparable<Lhs>)
+    requires concepts_detail::EqualScalarPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     return lhs == rhs;
 }
 
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::sequential) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::sequential) &&
-             std::same_as<typename Lhs::value_type, typename Rhs::value_type> &&
-             concepts::StableEqualityComparable<typename Lhs::value_type>)
+    requires concepts_detail::EqualSequentialPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     return concepts_detail::equal_prefix_walk(lhs, rhs);
 }
 
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::string) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::string))
+    requires concepts_detail::EqualStringPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     return concepts_detail::equal_prefix_walk(lhs, rhs);
 }
 
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::map) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::map) &&
-             std::same_as<typename Lhs::key_type, typename Rhs::key_type> &&
-             std::same_as<typename Lhs::association_value_type, typename Rhs::association_value_type> &&
-             concepts::StableEqualityComparable<typename Lhs::key_type> &&
-             concepts::StableEqualityComparable<typename Lhs::association_value_type>)
+    requires concepts_detail::EqualMapPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     if (lhs.count() != rhs.count()) {
         return false;
@@ -312,10 +317,7 @@ template <typename Lhs, typename Rhs>
 }
 
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::set) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::set) &&
-             std::same_as<typename Lhs::value_type, typename Rhs::value_type> &&
-             concepts::StableEqualityComparable<typename Lhs::value_type>)
+    requires concepts_detail::EqualSetPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     if (lhs.count() != rhs.count()) {
         return false;
@@ -324,7 +326,7 @@ template <typename Lhs, typename Rhs>
 }
 
 template <typename T>
-    requires(concepts_detail::equal_pair_admissible_v<T, T>)
+    requires concepts_detail::EqualPairAdmissible<T, T>
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const T& value) noexcept -> bool {
     return true;
 }
@@ -336,6 +338,45 @@ template <typename Lhs, typename Rhs, typename... Rest>
         return false;
     }
     return equal(rhs, rest...);
+}
+
+// Diagnostic fallbacks (REQ-DIAG-009): a single targeted message for an operand
+// outside the supported equality domain, in place of a list of rejected concept
+// candidates. They explain rejection and are never a supported call target;
+// domain support is detected through the admission concepts, not callability.
+template <typename T>
+    requires(!concepts_detail::EqualPairAdmissible<T, T>)
+[[nodiscard]] constexpr auto equal([[maybe_unused]] const T& value) -> bool {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::equal: operand is outside the supported equality domain. "
+                  "Floating-point values, callables, pointers, unscoped enums, standard-library "
+                  "range and container types, the standard-library variant, and values whose "
+                  "equality may throw are rejected.");
+    return false;
+}
+
+template <typename Lhs, typename Rhs>
+    requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
+[[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::equal: operands are outside the supported equality domain. The two "
+                  "operands must be the same admitted type, or a mutually comparable cljonic "
+                  "family pair (sequential, map, set, or string). Floating-point values, "
+                  "callables, pointers, unscoped enums, standard-library range and container "
+                  "types, the standard-library variant, values whose equality may throw, and "
+                  "mixed cljonic/non-cljonic pairs are rejected.");
+    return false;
+}
+
+template <typename Lhs, typename Rhs, typename... Rest>
+    requires((sizeof...(Rest) >= 1) && (!concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>))
+[[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs,
+                                   [[maybe_unused]] const Rest&... rest) -> bool {
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::equal: at least one adjacent operand pair is outside the supported "
+                  "equality domain. Every adjacent pair in the variadic form must individually "
+                  "satisfy the same domain rules as the two-operand form.");
+    return false;
 }
 
 } // namespace cljonic

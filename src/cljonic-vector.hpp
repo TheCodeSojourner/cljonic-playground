@@ -316,4 +316,8 @@ struct contains_floating_point<Vector<ElementType, CapacityValue>>
 template <typename ElementType, std::size_t CapacityValue>
 struct contains_callable<Vector<ElementType, CapacityValue>> : std::bool_constant<contains_callable_v<ElementType>> {};
 
+template <typename ElementType, std::size_t CapacityValue>
+struct contains_standard_range<Vector<ElementType, CapacityValue>>
+    : std::bool_constant<contains_standard_range_v<ElementType>> {};
+
 } // namespace cljonic::concepts_detail

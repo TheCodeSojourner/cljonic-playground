@@ -61,13 +61,13 @@ namespace cljonic {
  ~~~~~
  */
 template <typename T>
-    requires(concepts_detail::equal_pair_admissible_v<T, T>)
+    requires concepts_detail::EqualPairAdmissible<T, T>
 [[nodiscard]] constexpr auto not_equal(const T& value) noexcept -> bool {
     return !equal(value);
 }
 
 template <typename Lhs, typename Rhs>
-    requires(concepts_detail::equal_pair_admissible_v<Lhs, Rhs>)
+    requires concepts_detail::EqualPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto not_equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     return !equal(lhs, rhs);
 }
@@ -76,6 +76,38 @@ template <typename Lhs, typename Rhs, typename... Rest>
     requires((sizeof...(Rest) >= 1) && concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>)
 [[nodiscard]] constexpr auto not_equal(const Lhs& lhs, const Rhs& rhs, const Rest&... rest) noexcept -> bool {
     return !equal(lhs, rhs, rest...);
+}
+
+// Diagnostic fallbacks (REQ-DIAG-009): targeted messages over the same domain as
+// `equal`; never a supported call target.
+template <typename T>
+    requires(!concepts_detail::EqualPairAdmissible<T, T>)
+[[nodiscard]] constexpr auto not_equal([[maybe_unused]] const T& value) -> bool {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::not_equal: operand is outside the supported equality domain. It must "
+                  "satisfy the same domain as cljonic::equal.");
+    return false;
+}
+
+template <typename Lhs, typename Rhs>
+    requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
+[[nodiscard]] constexpr auto not_equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::not_equal: operands are outside the supported equality domain. They "
+                  "must satisfy the same two-operand domain as cljonic::equal (same admitted "
+                  "type, or a mutually comparable cljonic family pair).");
+    return false;
+}
+
+template <typename Lhs, typename Rhs, typename... Rest>
+    requires((sizeof...(Rest) >= 1) && (!concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>))
+[[nodiscard]] constexpr auto not_equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs,
+                                       [[maybe_unused]] const Rest&... rest) -> bool {
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::not_equal: at least one adjacent operand pair is outside the "
+                  "supported equality domain. Every adjacent pair must individually satisfy the "
+                  "same domain rules as cljonic::equal.");
+    return false;
 }
 
 } // namespace cljonic

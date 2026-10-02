@@ -228,6 +228,13 @@ namespace concepts_detail {
 // without exposing implementation-specific type traits as public API.
 enum class collection_kind { none, vector, map, set, queue, string };
 
+// A template-dependent false value for instantiation-dependent static_assert
+// diagnostics (REQ-DIAG-009): the assertion is ill-formed only where the
+// enclosing template is instantiated, so uninstantiated diagnostic overloads
+// never fire.
+template <typename...>
+inline constexpr bool dependent_false = false;
+
 // Convert an integral API index only when its value is representable by the
 // library's normalized size_t index domain. Collection-specific bounds remain
 // at each collection's call site because lookup and association have different
@@ -297,10 +304,34 @@ inline constexpr bool is_cljonic_producer_v = producer_traits<std::remove_cvref_
 template <typename T>
 inline constexpr producer_kind producer_kind_of_v = producer_traits<std::remove_cvref_t<T>>::kind;
 
+// Nominal admission for the cljonic composite value type cljonic::Variant
+// (REQ-CAP-011). The Variant header specializes this trait; the unspecialized
+// form rejects types by default, mirroring collection_traits and
+// producer_traits. std::variant is NOT admitted: it is not a cljonic value type.
+template <typename T>
+struct cljonic_variant_traits {
+    static constexpr bool is_cljonic_variant = false;
+};
+
+template <typename T>
+inline constexpr bool is_cljonic_variant_v = cljonic_variant_traits<std::remove_cvref_t<T>>::is_cljonic_variant;
+
+// The standard-library variant is NOT a cljonic value type (REQ-CAP-011): it is
+// rejected as an equality operand and as a map key or set element. It may be
+// used only as an internal implementation detail of cljonic::Variant.
+template <typename T>
+struct is_std_variant : std::false_type {};
+
+template <typename... Alternatives>
+struct is_std_variant<std::variant<Alternatives...>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_std_variant_v = is_std_variant<std::remove_cvref_t<T>>::value;
+
 // Recursive component analysis for composite values in the closed cljonic
 // value domain (REQ-CAP-010). `contains_floating_point_v<T>` reports whether a
 // floating-point type occurs as T itself or inside any stored component of a
-// supported composite (std::variant alternatives, cljonic collections, and
+// supported composite (cljonic::Variant alternatives, cljonic collections, and
 // MapEntry). `contains_callable_v<T>` reports whether a callable type occurs as
 // a component of a composite (including function pointers); callables never
 // admit stable value equality.
@@ -325,14 +356,26 @@ struct contains_callable<Return (*)(Args...)> : std::true_type {};
 template <typename Return, typename... Args>
 struct contains_callable<Return (*)(Args...) noexcept> : std::true_type {};
 
-// std::variant: recurse into every alternative.
-template <typename... Alternatives>
-struct contains_floating_point<std::variant<Alternatives...>>
-    : std::bool_constant<(contains_floating_point_v<Alternatives> || ...)> {};
+// Non-throwing equality of a type's own comparison (REQ-FN-002G): the type's own
+// operator== must be declared noexcept. This is the recursive guarantee behind
+// operations declared noexcept; a cljonic::Variant declares its own noexcept
+// ==, so detection succeeds through that operator.
+template <typename T>
+inline constexpr bool nothrow_equality_v = requires(const T& left, const T& right) {
+    { left == right } noexcept -> std::convertible_to<bool>;
+};
 
-template <typename... Alternatives>
-struct contains_callable<std::variant<Alternatives...>>
-    : std::bool_constant<(contains_callable_v<Alternatives> || ...)> {};
+// A standard-library range or container is outside the equality domain: `equal`
+// is not part of the C++ interoperability surface, so a standard range is
+// rejected wherever it occurs as an operand or a stored component, at any
+// depth. Cljonic collections and producers are themselves ranges, so the base
+// case excludes them and each one recurses into its component types instead.
+template <typename T>
+struct contains_standard_range
+    : std::bool_constant<std::ranges::range<T> && !is_cljonic_collection_v<T> && !is_cljonic_producer_v<T>> {};
+
+template <typename T>
+inline constexpr bool contains_standard_range_v = contains_standard_range<std::remove_cvref_t<T>>::value;
 
 } // namespace concepts_detail
 
@@ -378,10 +421,30 @@ concept StableEqualityComparable = std::equality_comparable<T> && !concepts_deta
 template <typename T>
 concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
 
+/** Requires stable equality whose comparison cannot throw, so operations
+ *  declared \c noexcept (such as \c equal and \c not_equal) cannot terminate
+ *  through a throwing \c operator==. std::variant relational operators are not
+ *  declared noexcept by the standard, so composites recurse over their
+ *  alternatives. */
+template <typename T>
+concept NothrowEqualityComparable = StableEqualityComparable<T> && concepts_detail::nothrow_equality_v<T>;
+
 /** Requires stable equality combined with non-throwing collection storage,
  *  the admission contract shared by map keys and set elements. */
 template <typename T>
 concept NothrowStableEqualityComparable = StableEqualityComparable<T> && NothrowCollectionElement<T>;
+
+/** Requires a `cljonic::Variant` alternative admissible for storage:
+ *  non-throwing collection storage. Floating-point and callable alternatives
+ *  are permitted for storage because storage does not require equality. */
+template <typename T>
+concept NothrowVariantAlternative = NothrowCollectionElement<T>;
+
+/** Requires a `cljonic::Variant` alternative admissible for equality:
+ *  non-throwing storage AND a non-throwing comparison, so a `cljonic::Variant`
+ *  declared `noexcept` cannot terminate through a throwing `operator==`. */
+template <typename T>
+concept ComparableVariantAlternative = NothrowStableEqualityComparable<T> && NothrowEqualityComparable<T>;
 
 // ============================================================================
 // Level 1: CollectionConcept (Nominal Collection Admission)
@@ -1139,6 +1202,10 @@ struct contains_floating_point<Vector<ElementType, CapacityValue>>
 template <typename ElementType, std::size_t CapacityValue>
 struct contains_callable<Vector<ElementType, CapacityValue>> : std::bool_constant<contains_callable_v<ElementType>> {};
 
+template <typename ElementType, std::size_t CapacityValue>
+struct contains_standard_range<Vector<ElementType, CapacityValue>>
+    : std::bool_constant<contains_standard_range_v<ElementType>> {};
+
 } // namespace cljonic::concepts_detail
 // End cljonic-vector.hpp
 
@@ -1337,6 +1404,9 @@ struct contains_floating_point<Cycle<Source>> : std::bool_constant<contains_floa
 template <concepts::CljonicSource Source>
 struct contains_callable<Cycle<Source>> : std::bool_constant<contains_callable_v<Source>> {};
 
+template <concepts::CljonicSource Source>
+struct contains_standard_range<Cycle<Source>> : std::bool_constant<contains_standard_range_v<Source>> {};
+
 } // namespace cljonic::concepts_detail
 // End cljonic-cycle.hpp
 // Begin cljonic-disj.hpp
@@ -1418,31 +1488,22 @@ template <typename C, typename K>
 
 #include <ranges>
 #include <type_traits>
-#include <variant>
 
 namespace cljonic::concepts_detail {
 
 enum class equality_family { none, sequential, map, set, string };
 
-// A std::variant specialization is part of the closed composite value domain
-// (REQ-CAP-010) even though it is neither a scalar nor an aggregate.
-template <typename T>
-struct is_std_variant : std::false_type {};
-
-template <typename... Alternatives>
-struct is_std_variant<std::variant<Alternatives...>> : std::true_type {};
-
-template <typename T>
-inline constexpr bool is_std_variant_v = is_std_variant<std::remove_cvref_t<T>>::value;
-
 // The non-cljonic fallthrough domain of `equal` (REQ-FN-002G) is the closed
-// value domain: scalars and scoped enums, aggregate-like structs, and std::
-// variant composites. Standard-library range and container types belong to the
-// C++ interoperability surface, not the equality domain, and are rejected.
+// value domain: arithmetic scalars and scoped enums, aggregate-like structs,
+// and cljonic::Variant composites. Standard-library range and container types
+// belong to the C++ interoperability surface, not the equality domain, and are
+// rejected, as is the standard-library variant (it is not a cljonic value
+// type). Unscoped enums and pointers (including member pointers) are also
+// outside the domain: `std::is_scalar_v` would otherwise admit them.
 template <typename T>
 inline constexpr bool in_non_cljonic_fallthrough_domain_v =
     !is_cljonic_collection_v<T> && !is_cljonic_producer_v<T> && !std::ranges::range<T> &&
-    (std::is_scalar_v<T> || std::is_aggregate_v<T> || is_std_variant_v<T>);
+    ((std::is_arithmetic_v<T> || std::is_scoped_enum_v<T>) || std::is_aggregate_v<T> || is_cljonic_variant_v<T>);
 
 // Equality-family classification for the general-equality free function `equal`
 // (REQ-FN-002G): Vector and Queue join all five producers in the sequential
@@ -1514,28 +1575,50 @@ using equal_key_type_of_t = equal_key_type_of<T>::type;
 template <typename T>
 using equal_association_value_type_of_t = equal_association_value_type_of<T>::type;
 
-// Compile-time admissibility of one operand pair (REQ-FN-002G): the
-// disjunction of the binary equal overload gates, kept in lockstep with the
-// five binary overloads so every arity rejects the same pairs at compile
-// time. Both members of a family pair always expose the corresponding member
-// types, so the void fallback only guards the non-family substitution path.
+// The value domain admitted by equal's family gates: stable equality whose
+// comparison cannot throw (so the noexcept guarantee cannot be violated) and
+// free of standard-library range components at any depth (equal is not part of
+// the C++ interoperability surface).
+template <typename T>
+concept EqualDomainValue = concepts::NothrowEqualityComparable<T> && !contains_standard_range_v<T>;
+
+// Equality-family gates shared by equal's overloads and not_equal's delegated
+// gate (REQ-FN-002G, REQ-FN-002H); these are not ordering capabilities.
 template <typename Lhs, typename Rhs>
-inline constexpr bool equal_pair_admissible_v =
-    (equal_family_of_v<Lhs> == equality_family::none && equal_family_of_v<Rhs> == equality_family::none &&
-     in_non_cljonic_fallthrough_domain_v<Lhs> && in_non_cljonic_fallthrough_domain_v<Rhs> && std::same_as<Lhs, Rhs> &&
-     concepts::StableEqualityComparable<Lhs>) ||
-    (equal_family_of_v<Lhs> == equality_family::sequential && equal_family_of_v<Rhs> == equality_family::sequential &&
-     std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
-     concepts::StableEqualityComparable<equal_value_type_of_t<Lhs>>) ||
-    (equal_family_of_v<Lhs> == equality_family::string && equal_family_of_v<Rhs> == equality_family::string) ||
-    (equal_family_of_v<Lhs> == equality_family::map && equal_family_of_v<Rhs> == equality_family::map &&
-     std::same_as<equal_key_type_of_t<Lhs>, equal_key_type_of_t<Rhs>> &&
-     std::same_as<equal_association_value_type_of_t<Lhs>, equal_association_value_type_of_t<Rhs>> &&
-     concepts::StableEqualityComparable<equal_key_type_of_t<Lhs>> &&
-     concepts::StableEqualityComparable<equal_association_value_type_of_t<Lhs>>) ||
-    (equal_family_of_v<Lhs> == equality_family::set && equal_family_of_v<Rhs> == equality_family::set &&
-     std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
-     concepts::StableEqualityComparable<equal_value_type_of_t<Lhs>>);
+concept EqualScalarPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::none && equal_family_of_v<Rhs> == equality_family::none &&
+    in_non_cljonic_fallthrough_domain_v<Lhs> && in_non_cljonic_fallthrough_domain_v<Rhs> && std::same_as<Lhs, Rhs> &&
+    EqualDomainValue<Lhs>;
+
+template <typename Lhs, typename Rhs>
+concept EqualSequentialPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::sequential && equal_family_of_v<Rhs> == equality_family::sequential &&
+    std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
+    EqualDomainValue<equal_value_type_of_t<Lhs>>;
+
+template <typename Lhs, typename Rhs>
+concept EqualStringPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::string && equal_family_of_v<Rhs> == equality_family::string;
+
+template <typename Lhs, typename Rhs>
+concept EqualMapPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::map && equal_family_of_v<Rhs> == equality_family::map &&
+    std::same_as<equal_key_type_of_t<Lhs>, equal_key_type_of_t<Rhs>> &&
+    std::same_as<equal_association_value_type_of_t<Lhs>, equal_association_value_type_of_t<Rhs>> &&
+    EqualDomainValue<equal_key_type_of_t<Lhs>> && EqualDomainValue<equal_association_value_type_of_t<Lhs>>;
+
+template <typename Lhs, typename Rhs>
+concept EqualSetPairAdmissible =
+    equal_family_of_v<Lhs> == equality_family::set && equal_family_of_v<Rhs> == equality_family::set &&
+    std::same_as<equal_value_type_of_t<Lhs>, equal_value_type_of_t<Rhs>> &&
+    EqualDomainValue<equal_value_type_of_t<Lhs>>;
+
+// Keep every arity on the same family gates so unsupported pairs fail at
+// compile time regardless of their position in the argument list.
+template <typename Lhs, typename Rhs>
+concept EqualPairAdmissible =
+    EqualScalarPairAdmissible<Lhs, Rhs> || EqualSequentialPairAdmissible<Lhs, Rhs> ||
+    EqualStringPairAdmissible<Lhs, Rhs> || EqualMapPairAdmissible<Lhs, Rhs> || EqualSetPairAdmissible<Lhs, Rhs>;
 
 // Every adjacent pair of a variadic equal argument list is admissible
 // (REQ-FN-002G); one or zero trailing operands satisfy the rule vacuously.
@@ -1544,8 +1627,8 @@ struct all_adjacent_pairs_admissible : std::true_type {};
 
 template <typename First, typename Second, typename... Rest>
 struct all_adjacent_pairs_admissible<First, Second, Rest...>
-    : std::bool_constant<equal_pair_admissible_v<First, Second> &&
-                         all_adjacent_pairs_admissible<Second, Rest...>::value> {};
+    : std::bool_constant<EqualPairAdmissible<First, Second> && all_adjacent_pairs_admissible<Second, Rest...>::value> {
+};
 
 template <typename... Ts>
 inline constexpr bool all_adjacent_pairs_admissible_v = all_adjacent_pairs_admissible<Ts...>::value;
@@ -1622,10 +1705,13 @@ namespace cljonic {
  * \b Equal compares values by their contents:
  *
  * - Calling `equal` with one value always returns true. - Two ordinary values compare equal when they are the same
- * type and
- *   compare equal with `==` (e.g., `int`, a scoped enum, or a simple struct
- *   with an explicit or defaulted `operator==`).
- * - Vectors, Queues, Ranges, Repeats, Cycles, Iterates, and Repeatedlys
+ * type and compare
+ *   equal with `==` (e.g., `int`, a scoped enum, or a simple struct with an
+ *   explicit or defaulted `operator==`). The comparison must not throw, so a
+ *   type whose `==` can throw is not supported; pointers and unscoped enums
+ *   are not supported either.
+ * - Vectors, Queues, Ranges, Repeats, Cycles, and the Iterate and Repeatedly
+ *   producers
  *   compare equal when they contain or produce the same elements in the same
  *   order. Producers are compared by what they produce, one element at a
  *   time, and comparison always finishes: no producer yields more than
@@ -1639,7 +1725,9 @@ namespace cljonic {
  *
  * Compared collections and sets must have matching element types, and compared maps must have matching key and value
  * types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as
- * floating-point numbers, are not supported. Nested collections and composite values compare by the same rules.
+ * floating-point numbers, are not supported. Standard-library range and container types are not supported at any
+ * depth. Nested collections and composite values compare by the same rules; a nested producer is compared by its
+ * stored parameters.
  *
  * With more than two arguments, every adjacent pair is compared, from left to right, stopping at the first unequal
  * pair.
@@ -1687,38 +1775,25 @@ namespace cljonic {
  ~~~~~
  */
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::none) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::none) &&
-             concepts_detail::in_non_cljonic_fallthrough_domain_v<Lhs> &&
-             concepts_detail::in_non_cljonic_fallthrough_domain_v<Rhs> && std::same_as<Lhs, Rhs> &&
-             concepts::StableEqualityComparable<Lhs>)
+    requires concepts_detail::EqualScalarPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     return lhs == rhs;
 }
 
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::sequential) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::sequential) &&
-             std::same_as<typename Lhs::value_type, typename Rhs::value_type> &&
-             concepts::StableEqualityComparable<typename Lhs::value_type>)
+    requires concepts_detail::EqualSequentialPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     return concepts_detail::equal_prefix_walk(lhs, rhs);
 }
 
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::string) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::string))
+    requires concepts_detail::EqualStringPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     return concepts_detail::equal_prefix_walk(lhs, rhs);
 }
 
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::map) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::map) &&
-             std::same_as<typename Lhs::key_type, typename Rhs::key_type> &&
-             std::same_as<typename Lhs::association_value_type, typename Rhs::association_value_type> &&
-             concepts::StableEqualityComparable<typename Lhs::key_type> &&
-             concepts::StableEqualityComparable<typename Lhs::association_value_type>)
+    requires concepts_detail::EqualMapPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     if (lhs.count() != rhs.count()) {
         return false;
@@ -1727,10 +1802,7 @@ template <typename Lhs, typename Rhs>
 }
 
 template <typename Lhs, typename Rhs>
-    requires((concepts_detail::equal_family_of_v<Lhs> == concepts_detail::equality_family::set) &&
-             (concepts_detail::equal_family_of_v<Rhs> == concepts_detail::equality_family::set) &&
-             std::same_as<typename Lhs::value_type, typename Rhs::value_type> &&
-             concepts::StableEqualityComparable<typename Lhs::value_type>)
+    requires concepts_detail::EqualSetPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     if (lhs.count() != rhs.count()) {
         return false;
@@ -1739,7 +1811,7 @@ template <typename Lhs, typename Rhs>
 }
 
 template <typename T>
-    requires(concepts_detail::equal_pair_admissible_v<T, T>)
+    requires concepts_detail::EqualPairAdmissible<T, T>
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const T& value) noexcept -> bool {
     return true;
 }
@@ -1751,6 +1823,45 @@ template <typename Lhs, typename Rhs, typename... Rest>
         return false;
     }
     return equal(rhs, rest...);
+}
+
+// Diagnostic fallbacks (REQ-DIAG-009): a single targeted message for an operand
+// outside the supported equality domain, in place of a list of rejected concept
+// candidates. They explain rejection and are never a supported call target;
+// domain support is detected through the admission concepts, not callability.
+template <typename T>
+    requires(!concepts_detail::EqualPairAdmissible<T, T>)
+[[nodiscard]] constexpr auto equal([[maybe_unused]] const T& value) -> bool {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::equal: operand is outside the supported equality domain. "
+                  "Floating-point values, callables, pointers, unscoped enums, standard-library "
+                  "range and container types, the standard-library variant, and values whose "
+                  "equality may throw are rejected.");
+    return false;
+}
+
+template <typename Lhs, typename Rhs>
+    requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
+[[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::equal: operands are outside the supported equality domain. The two "
+                  "operands must be the same admitted type, or a mutually comparable cljonic "
+                  "family pair (sequential, map, set, or string). Floating-point values, "
+                  "callables, pointers, unscoped enums, standard-library range and container "
+                  "types, the standard-library variant, values whose equality may throw, and "
+                  "mixed cljonic/non-cljonic pairs are rejected.");
+    return false;
+}
+
+template <typename Lhs, typename Rhs, typename... Rest>
+    requires((sizeof...(Rest) >= 1) && (!concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>))
+[[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs,
+                                   [[maybe_unused]] const Rest&... rest) -> bool {
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::equal: at least one adjacent operand pair is outside the supported "
+                  "equality domain. Every adjacent pair in the variadic form must individually "
+                  "satisfy the same domain rules as the two-operand form.");
+    return false;
 }
 
 } // namespace cljonic
@@ -2092,6 +2203,10 @@ template <concepts::NothrowCollectionElement T, typename Step>
     requires concepts::IterateStep<T, Step>
 struct contains_floating_point<Iterate<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
 
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_standard_range<Iterate<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
+
 } // namespace cljonic::concepts_detail
 // End cljonic-iterate.hpp
 // Begin cljonic-map.hpp
@@ -2163,6 +2278,10 @@ struct contains_floating_point<cljonic::MapEntry<KeyType, ValueType>>
 template <typename KeyType, typename ValueType>
 struct contains_callable<cljonic::MapEntry<KeyType, ValueType>>
     : std::bool_constant<contains_callable_v<KeyType> || contains_callable_v<ValueType>> {};
+
+template <typename KeyType, typename ValueType>
+struct contains_standard_range<cljonic::MapEntry<KeyType, ValueType>>
+    : std::bool_constant<contains_standard_range_v<KeyType> || contains_standard_range_v<ValueType>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-map-entry.hpp
@@ -2263,6 +2382,7 @@ namespace cljonic {
  */
 template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType,
           std::size_t CapacityValue>
+    requires(!concepts_detail::is_std_variant_v<KeyType>)
 class Map {
   public:
     using key_type = KeyType;
@@ -2438,6 +2558,10 @@ template <typename KeyType, typename ValueType, std::size_t CapacityValue>
 struct contains_callable<Map<KeyType, ValueType, CapacityValue>>
     : std::bool_constant<contains_callable_v<KeyType> || contains_callable_v<ValueType>> {};
 
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct contains_standard_range<Map<KeyType, ValueType, CapacityValue>>
+    : std::bool_constant<contains_standard_range_v<KeyType> || contains_standard_range_v<ValueType>> {};
+
 } // namespace cljonic::concepts_detail
 // End cljonic-map.hpp
 // Begin cljonic-not-equal.hpp
@@ -2503,13 +2627,13 @@ namespace cljonic {
  ~~~~~
  */
 template <typename T>
-    requires(concepts_detail::equal_pair_admissible_v<T, T>)
+    requires concepts_detail::EqualPairAdmissible<T, T>
 [[nodiscard]] constexpr auto not_equal(const T& value) noexcept -> bool {
     return !equal(value);
 }
 
 template <typename Lhs, typename Rhs>
-    requires(concepts_detail::equal_pair_admissible_v<Lhs, Rhs>)
+    requires concepts_detail::EqualPairAdmissible<Lhs, Rhs>
 [[nodiscard]] constexpr auto not_equal(const Lhs& lhs, const Rhs& rhs) noexcept -> bool {
     return !equal(lhs, rhs);
 }
@@ -2518,6 +2642,38 @@ template <typename Lhs, typename Rhs, typename... Rest>
     requires((sizeof...(Rest) >= 1) && concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>)
 [[nodiscard]] constexpr auto not_equal(const Lhs& lhs, const Rhs& rhs, const Rest&... rest) noexcept -> bool {
     return !equal(lhs, rhs, rest...);
+}
+
+// Diagnostic fallbacks (REQ-DIAG-009): targeted messages over the same domain as
+// `equal`; never a supported call target.
+template <typename T>
+    requires(!concepts_detail::EqualPairAdmissible<T, T>)
+[[nodiscard]] constexpr auto not_equal([[maybe_unused]] const T& value) -> bool {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::not_equal: operand is outside the supported equality domain. It must "
+                  "satisfy the same domain as cljonic::equal.");
+    return false;
+}
+
+template <typename Lhs, typename Rhs>
+    requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
+[[nodiscard]] constexpr auto not_equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::not_equal: operands are outside the supported equality domain. They "
+                  "must satisfy the same two-operand domain as cljonic::equal (same admitted "
+                  "type, or a mutually comparable cljonic family pair).");
+    return false;
+}
+
+template <typename Lhs, typename Rhs, typename... Rest>
+    requires((sizeof...(Rest) >= 1) && (!concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>))
+[[nodiscard]] constexpr auto not_equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs,
+                                       [[maybe_unused]] const Rest&... rest) -> bool {
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::not_equal: at least one adjacent operand pair is outside the "
+                  "supported equality domain. Every adjacent pair must individually satisfy the "
+                  "same domain rules as cljonic::equal.");
+    return false;
 }
 
 } // namespace cljonic
@@ -2861,6 +3017,9 @@ struct contains_floating_point<Queue<T, CapacityValue>> : std::bool_constant<con
 template <typename T, std::size_t CapacityValue>
 struct contains_callable<Queue<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
 
+template <typename T, std::size_t CapacityValue>
+struct contains_standard_range<Queue<T, CapacityValue>> : std::bool_constant<contains_standard_range_v<T>> {};
+
 } // namespace cljonic::concepts_detail
 // End cljonic-queue.hpp
 // Begin cljonic-range.hpp
@@ -3142,6 +3301,9 @@ struct contains_floating_point<Range<T>> : std::bool_constant<contains_floating_
 template <typename T>
 struct contains_callable<Range<T>> : std::bool_constant<contains_callable_v<T>> {};
 
+template <typename T>
+struct contains_standard_range<Range<T>> : std::bool_constant<contains_standard_range_v<T>> {};
+
 } // namespace cljonic::concepts_detail
 // End cljonic-range.hpp
 // Begin cljonic-repeat.hpp
@@ -3320,6 +3482,9 @@ struct contains_floating_point<Repeat<T>> : std::bool_constant<contains_floating
 
 template <concepts::NothrowCollectionElement T>
 struct contains_callable<Repeat<T>> : std::bool_constant<contains_callable_v<T>> {};
+
+template <concepts::NothrowCollectionElement T>
+struct contains_standard_range<Repeat<T>> : std::bool_constant<contains_standard_range_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-repeat.hpp
@@ -3501,6 +3666,10 @@ template <concepts::NothrowCollectionElement T, typename Step>
     requires concepts::RepeatedlyStep<T, Step>
 struct contains_floating_point<Repeatedly<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
 
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct contains_standard_range<Repeatedly<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
+
 } // namespace cljonic::concepts_detail
 // End cljonic-repeatedly.hpp
 // Begin cljonic-set.hpp
@@ -3596,6 +3765,7 @@ namespace cljonic {
  ~~~~~
  */
 template <concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue>
+    requires(!concepts_detail::is_std_variant_v<T>)
 class Set {
   public:
     using value_type = T;
@@ -3777,6 +3947,9 @@ struct contains_floating_point<Set<T, CapacityValue>> : std::bool_constant<conta
 
 template <typename T, std::size_t CapacityValue>
 struct contains_callable<Set<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
+
+template <typename T, std::size_t CapacityValue>
+struct contains_standard_range<Set<T, CapacityValue>> : std::bool_constant<contains_standard_range_v<T>> {};
 
 } // namespace cljonic::concepts_detail
 // End cljonic-set.hpp
@@ -4061,8 +4234,189 @@ struct contains_floating_point<String<CapacityValue>> : std::false_type {};
 template <std::size_t CapacityValue>
 struct contains_callable<String<CapacityValue>> : std::false_type {};
 
+template <std::size_t CapacityValue>
+struct contains_standard_range<String<CapacityValue>> : std::false_type {};
+
 } // namespace cljonic::concepts_detail
 // End cljonic-string.hpp
+// Begin cljonic-variant.hpp
+#pragma once
+
+#include <cstddef>
+#include <type_traits>
+#include <utility>
+#include <variant>
+
+namespace cljonic {
+
+namespace variant_detail {
+
+// The converting constructor selects exactly one alternative by decayed type;
+// zero or multiple matches leave the constructor non-viable, so an ambiguous or
+// foreign argument is rejected at compile time rather than converting.
+template <typename T, typename... Alternatives>
+inline constexpr std::size_t matching_alternative_count_v =
+    (std::size_t{0} + ... + (std::same_as<T, Alternatives> ? std::size_t{1} : std::size_t{0}));
+
+// Alternative-strict equality within a single active index. Recursion is by
+// index so only same-alternative comparisons are instantiated: a two-variant
+// std::visit would instantiate cross-alternative comparisons (which need not
+// exist) and fail to compile.
+template <std::size_t Index = 0, typename Variant>
+[[nodiscard]] constexpr auto same_index_equal(const Variant& lhs, const Variant& rhs) noexcept -> bool {
+    if constexpr (Index + 1 == std::variant_size_v<Variant>) {
+        // Last alternative: the caller guarantees the active index matches.
+        return std::get<Index>(lhs) == std::get<Index>(rhs);
+    } else {
+        if (lhs.index() == Index) {
+            return std::get<Index>(lhs) == std::get<Index>(rhs);
+        }
+        return same_index_equal<Index + 1>(lhs, rhs);
+    }
+}
+
+// Alternative-strict ordering within a single active index; mirrors
+// same_index_equal so only same-alternative comparisons are instantiated.
+template <std::size_t Index = 0, typename Variant>
+[[nodiscard]] constexpr auto same_index_less(const Variant& lhs, const Variant& rhs) noexcept -> bool {
+    if constexpr (Index + 1 == std::variant_size_v<Variant>) {
+        // Last alternative: the caller guarantees the active index matches.
+        return std::get<Index>(lhs) < std::get<Index>(rhs);
+    } else {
+        if (lhs.index() == Index) {
+            return std::get<Index>(lhs) < std::get<Index>(rhs);
+        }
+        return same_index_less<Index + 1>(lhs, rhs);
+    }
+}
+
+} // namespace variant_detail
+
+/** \anchor Variant
+ * \brief A composite value holding exactly one of several alternatives.
+ *
+ * \b Variant is the cljonic composite: it holds exactly one of its alternatives at a time and is the supported
+ * composite in the cljonic value domain.
+ *
+ * - Every alternative must be default-constructible and copyable without
+ *   throwing, so a `Variant` is a storable value: it can be a map value, a
+ *   vector element, or a queue element.
+ * - Two values compare equal only when they hold the same alternative and that
+ *   alternative's values compare equal (alternative-strict equality). Values
+ *   holding different alternatives always compare unequal.
+ * - Equality is provided only when every alternative is comparable without
+ *   throwing; otherwise `==` is not provided and the value cannot be used in an
+ *   equality position. A `Variant` may therefore be storable without being
+ *   comparable, exactly like a collection of floating-point numbers.
+ * - A `Variant` always holds an active alternative: it has no empty or
+ *   valueless state.
+ *
+ * \b Examples
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   constexpr auto v = Variant<int, long>{1};
+   static_assert(v.index() == 0);
+   static_assert(v.holds<int>());
+   static_assert(v == Variant<int, long>{1});
+   static_assert(Variant<int, long>{1} != Variant<int, long>{1L});
+   return 0;
+ }
+ ~~~~~
+ */
+template <typename... Alternatives>
+    requires(sizeof...(Alternatives) >= 1) && (concepts::NothrowVariantAlternative<Alternatives> && ...)
+class Variant {
+  public:
+    constexpr Variant() noexcept = default;
+
+    template <typename T>
+        requires(variant_detail::matching_alternative_count_v<std::remove_cvref_t<T>, Alternatives...> == 1)
+    constexpr Variant(T&& value) noexcept : storage_{std::forward<T>(value)} {
+    }
+
+    /** Returns the zero-based index of the active alternative. */
+    [[nodiscard]] constexpr auto index() const noexcept -> std::size_t {
+        return storage_.index();
+    }
+
+    /** Reports whether the active alternative is \p T. */
+    template <typename T>
+    [[nodiscard]] constexpr auto holds() const noexcept -> bool {
+        return std::holds_alternative<T>(storage_);
+    }
+
+    /** Alternative-strict equality; provided only when every alternative is
+     *  comparable without throwing. */
+    [[nodiscard]] friend constexpr auto operator==(const Variant& lhs, const Variant& rhs) noexcept -> bool
+        requires(concepts::ComparableVariantAlternative<Alternatives> && ...)
+    {
+        return (lhs.storage_.index() == rhs.storage_.index()) &&
+               variant_detail::same_index_equal(lhs.storage_, rhs.storage_);
+    }
+
+    /** Alternative-strict ordering; provided only when every alternative is
+     *  totally ordered. Alternatives are ordered by index first, then by value. */
+    [[nodiscard]] friend constexpr auto operator<(const Variant& lhs, const Variant& rhs) noexcept -> bool
+        requires(concepts::TotallyOrdered<Alternatives> && ...)
+    {
+        return (lhs.storage_.index() != rhs.storage_.index())
+                   ? (lhs.storage_.index() < rhs.storage_.index())
+                   : variant_detail::same_index_less(lhs.storage_, rhs.storage_);
+    }
+    [[nodiscard]] friend constexpr auto operator>(const Variant& lhs, const Variant& rhs) noexcept -> bool
+        requires(concepts::TotallyOrdered<Alternatives> && ...)
+    {
+        return rhs < lhs;
+    }
+
+    [[nodiscard]] friend constexpr auto operator<=(const Variant& lhs, const Variant& rhs) noexcept -> bool
+        requires(concepts::TotallyOrdered<Alternatives> && ...)
+    {
+        return !(rhs < lhs);
+    }
+
+    [[nodiscard]] friend constexpr auto operator>=(const Variant& lhs, const Variant& rhs) noexcept -> bool
+        requires(concepts::TotallyOrdered<Alternatives> && ...)
+    {
+        return !(lhs < rhs);
+    }
+
+  private:
+    std::variant<Alternatives...> storage_{};
+};
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+// Nominal admission for the cljonic composite value type (REQ-CAP-011).
+template <typename... Alternatives>
+struct cljonic_variant_traits<cljonic::Variant<Alternatives...>> {
+    static constexpr bool is_cljonic_variant = true;
+};
+
+// Recursive component analysis: a cljonic::Variant is a composite, so each
+// walker recurses over its alternatives, mirroring the collection and producer
+// headers. std::variant is never admitted, so no standard-library specialization
+// exists.
+template <typename... Alternatives>
+struct contains_floating_point<cljonic::Variant<Alternatives...>>
+    : std::bool_constant<(contains_floating_point_v<Alternatives> || ...)> {};
+
+template <typename... Alternatives>
+struct contains_callable<cljonic::Variant<Alternatives...>>
+    : std::bool_constant<(contains_callable_v<Alternatives> || ...)> {};
+
+template <typename... Alternatives>
+struct contains_standard_range<cljonic::Variant<Alternatives...>>
+    : std::bool_constant<(contains_standard_range_v<Alternatives> || ...)> {};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-variant.hpp
 
 namespace cljonic::core {}
 // End cljonic-core.hpp

@@ -23,6 +23,13 @@ namespace concepts_detail {
 // without exposing implementation-specific type traits as public API.
 enum class collection_kind { none, vector, map, set, queue, string };
 
+// A template-dependent false value for instantiation-dependent static_assert
+// diagnostics (REQ-DIAG-009): the assertion is ill-formed only where the
+// enclosing template is instantiated, so uninstantiated diagnostic overloads
+// never fire.
+template <typename...>
+inline constexpr bool dependent_false = false;
+
 // Convert an integral API index only when its value is representable by the
 // library's normalized size_t index domain. Collection-specific bounds remain
 // at each collection's call site because lookup and association have different
@@ -92,10 +99,34 @@ inline constexpr bool is_cljonic_producer_v = producer_traits<std::remove_cvref_
 template <typename T>
 inline constexpr producer_kind producer_kind_of_v = producer_traits<std::remove_cvref_t<T>>::kind;
 
+// Nominal admission for the cljonic composite value type cljonic::Variant
+// (REQ-CAP-011). The Variant header specializes this trait; the unspecialized
+// form rejects types by default, mirroring collection_traits and
+// producer_traits. std::variant is NOT admitted: it is not a cljonic value type.
+template <typename T>
+struct cljonic_variant_traits {
+    static constexpr bool is_cljonic_variant = false;
+};
+
+template <typename T>
+inline constexpr bool is_cljonic_variant_v = cljonic_variant_traits<std::remove_cvref_t<T>>::is_cljonic_variant;
+
+// The standard-library variant is NOT a cljonic value type (REQ-CAP-011): it is
+// rejected as an equality operand and as a map key or set element. It may be
+// used only as an internal implementation detail of cljonic::Variant.
+template <typename T>
+struct is_std_variant : std::false_type {};
+
+template <typename... Alternatives>
+struct is_std_variant<std::variant<Alternatives...>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_std_variant_v = is_std_variant<std::remove_cvref_t<T>>::value;
+
 // Recursive component analysis for composite values in the closed cljonic
 // value domain (REQ-CAP-010). `contains_floating_point_v<T>` reports whether a
 // floating-point type occurs as T itself or inside any stored component of a
-// supported composite (std::variant alternatives, cljonic collections, and
+// supported composite (cljonic::Variant alternatives, cljonic collections, and
 // MapEntry). `contains_callable_v<T>` reports whether a callable type occurs as
 // a component of a composite (including function pointers); callables never
 // admit stable value equality.
@@ -120,14 +151,26 @@ struct contains_callable<Return (*)(Args...)> : std::true_type {};
 template <typename Return, typename... Args>
 struct contains_callable<Return (*)(Args...) noexcept> : std::true_type {};
 
-// std::variant: recurse into every alternative.
-template <typename... Alternatives>
-struct contains_floating_point<std::variant<Alternatives...>>
-    : std::bool_constant<(contains_floating_point_v<Alternatives> || ...)> {};
+// Non-throwing equality of a type's own comparison (REQ-FN-002G): the type's own
+// operator== must be declared noexcept. This is the recursive guarantee behind
+// operations declared noexcept; a cljonic::Variant declares its own noexcept
+// ==, so detection succeeds through that operator.
+template <typename T>
+inline constexpr bool nothrow_equality_v = requires(const T& left, const T& right) {
+    { left == right } noexcept -> std::convertible_to<bool>;
+};
 
-template <typename... Alternatives>
-struct contains_callable<std::variant<Alternatives...>>
-    : std::bool_constant<(contains_callable_v<Alternatives> || ...)> {};
+// A standard-library range or container is outside the equality domain: `equal`
+// is not part of the C++ interoperability surface, so a standard range is
+// rejected wherever it occurs as an operand or a stored component, at any
+// depth. Cljonic collections and producers are themselves ranges, so the base
+// case excludes them and each one recurses into its component types instead.
+template <typename T>
+struct contains_standard_range
+    : std::bool_constant<std::ranges::range<T> && !is_cljonic_collection_v<T> && !is_cljonic_producer_v<T>> {};
+
+template <typename T>
+inline constexpr bool contains_standard_range_v = contains_standard_range<std::remove_cvref_t<T>>::value;
 
 } // namespace concepts_detail
 
@@ -173,10 +216,30 @@ concept StableEqualityComparable = std::equality_comparable<T> && !concepts_deta
 template <typename T>
 concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
 
+/** Requires stable equality whose comparison cannot throw, so operations
+ *  declared \c noexcept (such as \c equal and \c not_equal) cannot terminate
+ *  through a throwing \c operator==. std::variant relational operators are not
+ *  declared noexcept by the standard, so composites recurse over their
+ *  alternatives. */
+template <typename T>
+concept NothrowEqualityComparable = StableEqualityComparable<T> && concepts_detail::nothrow_equality_v<T>;
+
 /** Requires stable equality combined with non-throwing collection storage,
  *  the admission contract shared by map keys and set elements. */
 template <typename T>
 concept NothrowStableEqualityComparable = StableEqualityComparable<T> && NothrowCollectionElement<T>;
+
+/** Requires a `cljonic::Variant` alternative admissible for storage:
+ *  non-throwing collection storage. Floating-point and callable alternatives
+ *  are permitted for storage because storage does not require equality. */
+template <typename T>
+concept NothrowVariantAlternative = NothrowCollectionElement<T>;
+
+/** Requires a `cljonic::Variant` alternative admissible for equality:
+ *  non-throwing storage AND a non-throwing comparison, so a `cljonic::Variant`
+ *  declared `noexcept` cannot terminate through a throwing `operator==`. */
+template <typename T>
+concept ComparableVariantAlternative = NothrowStableEqualityComparable<T> && NothrowEqualityComparable<T>;
 
 // ============================================================================
 // Level 1: CollectionConcept (Nominal Collection Admission)

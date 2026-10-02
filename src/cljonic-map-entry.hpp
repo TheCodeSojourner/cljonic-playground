@@ -60,4 +60,8 @@ template <typename KeyType, typename ValueType>
 struct contains_callable<cljonic::MapEntry<KeyType, ValueType>>
     : std::bool_constant<contains_callable_v<KeyType> || contains_callable_v<ValueType>> {};
 
+template <typename KeyType, typename ValueType>
+struct contains_standard_range<cljonic::MapEntry<KeyType, ValueType>>
+    : std::bool_constant<contains_standard_range_v<KeyType> || contains_standard_range_v<ValueType>> {};
+
 } // namespace cljonic::concepts_detail

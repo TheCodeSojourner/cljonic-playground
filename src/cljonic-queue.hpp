@@ -266,4 +266,7 @@ struct contains_floating_point<Queue<T, CapacityValue>> : std::bool_constant<con
 template <typename T, std::size_t CapacityValue>
 struct contains_callable<Queue<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
 
+template <typename T, std::size_t CapacityValue>
+struct contains_standard_range<Queue<T, CapacityValue>> : std::bool_constant<contains_standard_range_v<T>> {};
+
 } // namespace cljonic::concepts_detail

@@ -93,6 +93,7 @@ namespace cljonic {
  ~~~~~
  */
 template <concepts::NothrowStableEqualityComparable T, std::size_t CapacityValue>
+    requires(!concepts_detail::is_std_variant_v<T>)
 class Set {
   public:
     using value_type = T;
@@ -274,5 +275,8 @@ struct contains_floating_point<Set<T, CapacityValue>> : std::bool_constant<conta
 
 template <typename T, std::size_t CapacityValue>
 struct contains_callable<Set<T, CapacityValue>> : std::bool_constant<contains_callable_v<T>> {};
+
+template <typename T, std::size_t CapacityValue>
+struct contains_standard_range<Set<T, CapacityValue>> : std::bool_constant<contains_standard_range_v<T>> {};
 
 } // namespace cljonic::concepts_detail
