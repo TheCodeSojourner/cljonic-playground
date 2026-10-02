@@ -57,13 +57,35 @@ This module establishes the C++20 concept capability framework, result status ou
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-CAP-010(x).
-  ∀ supported map-key ∧ set-element domain: includes composite values formed by `std::variant` over scalar C++ literals, scoped enumerations, supported cljonic collections, supported producers whose stored parameters admit stable equality, and `MapEntry` values, subject to the storage, stable-equality, and component-recursion requirements of this module and Modules 3 and 4
+  ∀ supported map-key ∧ set-element domain: includes composite values formed by `cljonic::Variant` over scalar C++ literals, scoped enumerations, supported cljonic collections, supported producers whose stored parameters admit stable equality, and `MapEntry` values, subject to the storage, stable-equality, and component-recursion requirements of this module and Modules 3 and 4
   ∧ ∀ producer admitted as map key ∨ set element (directly ∨ as composite component): compares by producer parameter equality as governed by `REQ-FN-014B` — equality compares only the producer's bounded stored parameters ∧ ¬∃ traversal ∨ materialization of the produced sequence ∧ ¬∃ implication that equal parameters yield equal materialized sequences
   ∧ ∀ composite_value: satisfies the same admission contract as non-composite values — every stored component admits stable equality ∧ recursion applies to all nested components ∧ callable components are rejected because callables do not admit a stable value-equality comparison in the supported domain
-  ∧ ∀ `std::variant` used as map key ∨ set element: uses alternative-strict equality — two variant values are equal only when they hold the same alternative and that alternative's values compare equal ∧ variants holding different alternatives compare unequal even when the alternative values would compare conventionally equal
+  ∧ ∀ `cljonic::Variant` used as map key ∨ set element: uses alternative-strict equality — two variant values are equal only when they hold the same alternative and that alternative's values compare equal ∧ variants holding different alternatives compare unequal even when the alternative values would compare conventionally equal
   ∧ ∀ composite_domain_extension: does not expand the closed cljonic vocabulary beyond the standard composition operator ∧ does not reproduce Clojure runtime features, cross-type numeric unification, or hash-based equality
   rationale: callable components cannot participate in the stable value-equality comparison the composite domain requires
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+
+λ REQ-CAP-011(x).
+  ∀ context: `cljonic::Variant<Alternatives...>` is the nominal cljonic composite value type holding exactly one alternative at a time; it replaces `std::variant` as the supported composite in the cljonic value domain
+  ∧ ∀ alternative: satisfies the `NothrowCollectionElement` storage contract — nothrow default construction, copy or move construction, copy assignment, and destruction — so a `Variant` is admissible as a map value, a vector element, and a queue element
+  ∧ ∀ admitted_alternative: arithmetic scalar ∨ scoped enumeration ∨ cljonic collection ∨ producer with stable parameters ∨ `MapEntry` ∨ nested `cljonic::Variant`; floating-point and callable alternatives are admissible for storage exactly where `NothrowCollectionElement` admits them, even though they are not equality-admissible
+  ∧ ∀ cljonic::Variant: provides alternative-strict value equality through the native `==` operator and the `equal` free function exactly when every alternative satisfies `NothrowStableEqualityComparable` and provides a non-throwing comparison; otherwise it provides no `==` and any use in an equality position fails at compile time, mirroring a storable-but-not-comparable collection element such as `Vector<float, N>`
+  ∧ ∀ equality_semantics: two `Variant` values are equal exactly when they hold the same alternative and that alternative's values compare equal ∧ variants holding different alternatives compare unequal even when their alternative values would compare conventionally equal ∧ ¬∃ cross-type numeric unification ∧ ¬∃ hash-based equality
+  ∧ ∀ ordering: `Variant` provides the native ordering operators exactly when every alternative satisfies `TotallyOrdered`
+  ∧ ∀ cljonic::Variant: has no valueless state ∧ ¬∃ `valueless_by_exception` ∧ because every alternative is nothrow-storable, no operation leaves the value without an active alternative
+  ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating for const operations ∧ non-allocating ∧ ¬∃ RTTI ∧ ¬∃ throwing access path
+  ∧ ∀ cljonic::Variant: is a component of the closed equality value domain — nestable inside cljonic collections, producers with stable parameters, `MapEntry`, and other `cljonic::Variant` values — and is subject to the same recursive component analysis as every other composite
+  ∧ ∀ standard_library `std::variant`: is not a supported cljonic value type ∧ fails at compile time as an `equal` operand ∧ fails at compile time as a map key ∨ set element ∧ MAY be used only as an internal implementation detail of `cljonic::Variant`
+  {source: stakeholder_decided, decided_by: original_spec_author}
+
+λ REQ-CAP-012(x).
+  ∀ cljonic::Variant capability: exposed as a cljonic free function ∧ backed by a `cljonic::Variant` member method, consistent with the `std::variant` capability set filtered by cljonic embedded constraints
+  ∧ ∀ required_capability: active-index query (`index`); alternative-membership predicate by type or index (`holds`); checked access to the active alternative by type or index (`get`, precondition: the queried alternative is active); checked access returning a pointer or null when the alternative is not active (`get_if`); non-throwing in-place rebinding of the active alternative by type or index (`emplace`); swap (`swap`); single-value visit (`visit`); equality comparison (`equal` and the native `==`); alternative count and alternative type queries (`variant_size`, `variant_alternative`)
+  ∧ ∀ access ∨ rebinding: non-throwing ∧ ¬∃ `bad_variant_access` ∧ rebinding leaves no valueless state
+  ∧ ∀ free_function: has the same behavior as its backing member method ∧ non-allocating ∧ non-mutating for query operations
+  ∧ ∀ excluded_std_variant_capability ∈ {`valueless_by_exception`, exception-based `get`, multi-variant `visit`}: not provided
+  ∧ ∀ class_template_argument_deduction: a single-alternative deduction guide is provided, consistent with the library's constructor-pack preference
+  {source: stakeholder_decided, decided_by: original_spec_author}
 
 ## Canonical Type, Result, and Status Model
 
@@ -266,6 +288,16 @@ This module establishes the C++20 concept capability framework, result status ou
   ∧ ∃ permitted_path: thematic module sections group related requirements from different families ∧ requirements distributed across dependency-ordered modules
   ∧ ∀ existing_designator: ¬∃ renumbering to fill gaps
   rationale: traceability must survive requirement refinement across downstream annotations
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+
+λ REQ-DIAG-009(x).
+  ∀ public_free_function whose supported domain is closed and expressible through named capability concepts (for example `equal` and `not_equal`):
+  ∧ primary admission: expressed through named capability concepts at the public API boundary (`REQ-DIAG-001`, `REQ-DIAG-002`, `REQ-DIAG-005`)
+  ∧ preferred diagnostic fallback: a diagnostic overload constrained on the negation of the admission gate, provided for each supported arity, so that an argument outside the supported domain fails with one targeted `static_assert` that names the operation, the rejected operand types, and the violated domain rule (`REQ-DIAG-003`)
+  ∧ the diagnostic fallback exists to explain rejection, not to accept it: it never returns a value and is never a supported call target
+  ∧ ∀ diagnostic_fallback message: states the meaning and the violated constraint rather than depending on compiler-specific wording (`REQ-DIAG-004`)
+  ∧ detectability contract: compile-time detection of domain support uses the named admission concepts and their `*_admissible_v` predicates, ¬∃ callability detection such as `requires { call(...) }`; a domain-rejected argument MAY satisfy callability once a diagnostic fallback is provided, and that callability is not a supported interface
+  rationale: maximally informative compile-time diagnostics are a global library goal, and a single targeted diagnostic is more accurate to a reader than a list of rejected concept candidates
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 ## Compile-Time Evaluation
