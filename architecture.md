@@ -146,6 +146,22 @@
   | vocabulary_consistency_gate(x) → enforce(canonical_vocabulary_governs) ∧ traces_to(S5_identity)
   | vocabulary_consistency_gate_fails(x) → reject_change(x)
 
+λ S3_rejection_diagnostic(x). public_free_function(x) ∧ closed_domain(x)
+    ∧ expressible_through_named_capability_concepts(x)
+  → require(concept_based_primary_admission(x))
+  | diagnostic_overload(x) → provide(one_per_supported_arity(x))
+    ∧ constrained_on(negation_of_admission_gate(x))
+    ∧ never_returns_a_value(x) ∧ ¬supported_call_target(x)
+  | diagnostic_overload_message(x) → identify(operation ∧ rejected_operand_types ∧ violated_domain_rule(x))
+    ∧ state_meaning_and_constraint(x) ∧ ¬depend_on(compiler_specific_wording(x))
+  | diagnostic_overload(x) → instantiation_dependent_static_assert(x)
+    ∧ mechanism(dependent_false_helper(x))
+  | domain_support_detection(x) → use(named_admission_concepts ∧ admissible_predicates(x))
+    ∧ ¬use(callability_detection(x))
+    ∧ callability_of_rejected_argument(x) → ¬supported_interface(x)
+  | applies_to(equal ∧ not_equal)(x)
+  | rejection_diagnostic(x) → trace_to(REQ-DIAG-009 ∧ REQ-DIAG-001 ∧ REQ-DIAG-003)
+
 ## S2 - Coordination
 
 λ S2_coordination_intro(x). coordination(x) → driven_by(canonical_vocabulary ∧ interaction_protocols)
@@ -251,15 +267,44 @@
   | conj_operation(x) ∧ can_conj(x) → classify_as(RequirementsBacked)
     ∧ trace_to(requirements/cljonic-requirements-module-3.md)
 
-λ S2_composite_value_domain(x). composite_value(x) ≡ std_variant_over(
-    scalar_literals ∨ scoped_enumerations ∨ supported_collections ∨ producers_with_stable_parameters ∨ MapEntry)
+λ S2_composite_value_domain(x). composite_value(x) ≡ cljonic_variant_over(
+    scalar_literals ∨ scoped_enumerations ∨ supported_collections ∨ producers_with_stable_parameters
+    ∨ MapEntry ∨ composite_values)
   | composite_as_key_or_set_element(x) → require(every_stored_component_admits_stable_equality(x))
     ∧ require(recursive_component_analysis(x))
   | callable_component(x) → reject_as_key_or_set_element(x)
     because(callables_do_not_admit_stable_value_equality(x))
   | variant_equality(x) → alternative_strict(x)
     ∧ ¬cross_type_numeric_unification(x) ∧ ¬hash_based_equality(x)
-  | composite_domain(x) → trace_to(REQ-CAP-010)
+  | composite_domain(x) → trace_to(REQ-CAP-010 ∧ REQ-CAP-011)
+
+λ S2_variant_value(x). cljonic::Variant<Alternatives...> ≡ nominal cljonic composite value
+  | ∀ alternative(x) → require(NothrowCollectionElement(x))
+    ∧ storage_admissible_as(map_value ∨ vector_element ∨ queue_element)(x)
+    ∧ (floating_point_alternative(x) ∨ callable_alternative(x)) → storage_admissible(x) ∧ ¬equality_admissible(x)
+  | cljonic::Variant(x) → provide(operator== (x) ∧ equal(x))
+      only_when(∀ alternative: ComparableVariantAlternative(alternative))
+    ∧ ¬equality_admissible(x) → omit(operator== (x))
+      ∧ equality_position_usage(x) → compile_time_rejection(x)
+  | cljonic::Variant(x) → provide(ordering_operators(x)) only_when(∀ alternative: TotallyOrdered(alternative))
+  | variant_value_equality(x) → alternative_strict(x) ∧ same_alternative(x)
+    ∧ ¬cross_type_numeric_unification(x) ∧ ¬hash_based_equality(x)
+  | cljonic::Variant(x) → ¬∃ valueless_state(x) ∧ ¬∃ valueless_by_exception(x) ∧ ¬∃ throwing_access_path(x)
+    because(every_alternative_is_nothrow_storable(x))
+  | variant_operation(x) → constexpr(x) ∧ noexcept(x) ∧ non_allocating(x) ∧ ¬rtti(x)
+    ∧ const_operation(x) → non_mutating(x)
+  | cljonic::Variant(x) → recurse_into_components(x) ∧ nestable(x) ∧ closed_value_domain_component(x)
+  | variant_free_function_api(x) ≡ {index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative}
+    ∧ ∀ api(x) → free_function(x) ∧ backed_by_member_method(x)
+    ∧ access ∨ rebinding(x) → non_throwing(x) ∧ ¬∃ bad_variant_access(x) ∧ rebinding_leaves_no_valueless_state(x)
+    ∧ ¬provide(valueless_by_exception ∨ exception_based_get ∨ multi_variant_visit)(x)
+    ∧ single_alternative_deduction_guide(x)
+  | standard_library_variant(x) → ¬cljonic_value_type(x)
+    ∧ reject_as_equal_operand(x) ∧ reject_as_map_key_or_set_element(x)
+    ∧ permitted_as_internal_implementation_detail_of(cljonic::Variant)(x)
+  | component_recognition(x) → nominal_trait(cljonic_variant_traits)(x)
+    ∧ mirror_float_callable_and_standard_range_walkers(x)
+  | variant_value(x) → trace_to(REQ-CAP-011 ∧ REQ-CAP-012)
 
 λ S2_collection_equality(x). bounded_collection(x) ∧ stable_equality_components(x)
   → provide(operator== (x)) ∧ constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
@@ -296,12 +341,20 @@
       ∧ short_circuit_on_first_unequal_pair(x)
     ∧ ∀adjacent_pair(x) ∧ ∀unary_operand(x) → satisfy(compile_time_domain_gating(x))
   | equal(x) → distinct_from(operator== (x)) ∧ scoped_to(supported_stable_equality_domain(x))
+    ∧ constexpr(x) ∧ noexcept(x)
   | non_cljonic_scalar_operands(x) → compare_via(operator== (x))
     ∧ fallthrough_domain(x) ≡ closed_value_domain(
-        scalars ∨ scoped_enumerations ∨ aggregate_like_structs ∨ composite_variants)
-  | standard_range_or_container_type(x) → compile_time_rejection(x)
+        arithmetic_scalars ∨ scoped_enumerations
+        ∨ aggregate_like_structs_with_nothrow_equality ∨ cljonic_variant_composites)
+    ∧ unscoped_enumerations_and_pointers_excluded_from_fallthrough(x)
+    ∧ standard_library_variant(x) → compile_time_rejection(x) ∧ at_any_depth(x)
+      because(¬cljonic_value_type(x))
+  | standard_range_or_container_type(x) → compile_time_rejection(x) ∧ at_any_depth(x)
+    ∧ standard_range_stored_component(x) → compile_time_rejection(x)
     because(equal_is_not_interop_surface(x))
   | floating_point_component(x) → compile_time_rejection(x) ∧ at_any_depth(x)
+  | value_whose_equality_comparison_may_throw(x) → compile_time_rejection(x)
+    because(noexcept_guarantee_cannot_be_violated(x))
   | sequential_family(x) ≡ Vector ∨ Queue ∨ Cycle ∨ Iterate ∨ Range ∨ Repeat ∨ Repeatedly
     ∧ sequential_family_pair(x) → compare(produced_sequence(x)) ∧ require(identical_element_types(x))
     ∧ compare_order_sensitive(x) ∧ lazy_element_wise(x) ∧ early_exit_on_first_difference(x)
@@ -440,6 +493,34 @@ concept CljonicSource =
 
 ```
 
+### Level 1C: CljonicVariant (VariantConcept)
+
+λ CljonicVariant_level(x). gate(type) → nominal_variant_identity(x) ≡ admission(cljonic_variant_traits(x))
+  | recognition(x) → cljonic_owned_traits(x) ∧ ¬structural_similarity(std::variant(x))
+    ∧ std::variant(x) → ¬admit(x) because(¬cljonic_value_type(x))
+  | nominal_pattern(x) → applies_to(cljonic::Variant<Alternatives...>)
+  | component_recognition(x) → detail::is_cljonic_variant_v(x) ∧ recurse_into(alternatives(x))
+  | walker_mirroring(x) → mirror(contains_floating_point ∧ contains_callable ∧ contains_standard_range)(x)
+    ∧ nothrow_equality_recurses_over_alternatives(x)
+  | storage_admission(x) → NothrowCollectionElement(alternative(x))
+  | equality_admission(x) → ComparableVariantAlternative(alternative(x))
+
+```cpp
+template<class Type>
+concept CljonicVariant = detail::is_cljonic_variant_v<Type>;
+
+// Alternative admission is layered, mirroring the two-level value model:
+// storage admission admits an alternative for map values, vector elements,
+// and queue elements; equality admission additionally admits the
+// cljonic::Variant itself into equality positions.
+template<class Type>
+concept NothrowVariantAlternative = NothrowCollectionElement<Type>;
+
+template<class Type>
+concept ComparableVariantAlternative =
+    NothrowStableEqualityComparable<Type> && NothrowEqualityComparable<Type>;
+```
+
 ### Level 2: CapabilityConcept (semantic capability gates)
 
 λ CapabilityConcept_level(x). require(admitted_collection(x)) → expose(semantic_capability(x)) to(participate_in(operation(x)))
@@ -459,6 +540,18 @@ concept StableEqualityComparable =
 
 template<class T>
 concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
+
+// NothrowEqualityComparable refines StableEqualityComparable with a
+// non-throwing comparison so operations declared noexcept cannot terminate:
+// the type's own operator== must be noexcept, and a composite whose relational
+// operators are not themselves declared noexcept recurses over its stored
+// components (std::variant relational operators are one such case; the
+// cljonic::Variant declares its own noexcept == over alternatives whose == is
+// noexcept).
+template<class T>
+concept NothrowEqualityComparable =
+    StableEqualityComparable<T> &&
+    cljonic::concepts_detail::nothrow_equality_v<T>;
 
 // Collection equality is conditional and component-wise: a collection
 // provides operator== exactly when its element/key/value types admit
