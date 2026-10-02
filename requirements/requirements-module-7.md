@@ -166,7 +166,7 @@ This module specifies specialized domain conveniences built on top of lower modu
 λ REQ-PLAT-026(x).
   ∀ map access: uses `get`, `contains`, and pre-access predicates rather than a special map-destructuring syntax
   rationale: struct-style destructuring syntax has no cljonic analog that preserves bounds-checked, default-returning map access semantics
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: AI_inferred}
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-PLAT-027(x).
   ∀ context: cljonic ¬∃ provision of runtime `Symbol` values or symbol-based namespace resolution
@@ -217,4 +217,4 @@ This module specifies specialized domain conveniences built on top of lower modu
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Relational algebra functions (`index`, `project`, `rename`, `join`), string/regex functions, `fits_print`/`print_to`, `Atom<T>`, and the test suite (`REQ-TEST-*`).
-- **Governed REQs**: `REQ-FN-015`–`024`, `REQ-FN-028`–`031` (incl. `REQ-FN-002I`, `REQ-FN-002J`, `REQ-FN-002K`, `REQ-FN-002O`), `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-021`–`022`, `REQ-TEST-001`–`005`.
+- **Governed REQs**: `REQ-FN-015`–`024`, `REQ-FN-028`–`031` (incl. `REQ-FN-002I`, `REQ-FN-002J`, `REQ-FN-002K`, `REQ-FN-002O`), `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.

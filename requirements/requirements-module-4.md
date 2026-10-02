@@ -196,7 +196,7 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∀ producer_construction: ¬∃ evaluation of producer callbacks
   ∧ ∀ `into` call ∧ ∀ element-producing callback: evaluated as needed for each produced element ∧ ∀ repeated `into` calls over the same producer: repeat those callback evaluations rather than reuse a hidden realization cache
   rationale: a hidden realization cache would retain state between calls and silently change side-effecting callback semantics
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: AI_inferred}
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 ## C++ Import Interoperability and Materialization
 

@@ -37,7 +37,7 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 
 5. **[requirements-module-5.md](requirements-module-5.md)** — *Higher-Order Algorithms & Traversal*
    - **Purpose**: Implements generic sequence transformation algorithms over any `cljonic_source`.
-   - **Scope**: Multi-source mapping and right-to-left composition (`map`, `comp`), and the bounded collection-shaping/traversal family with individually named downstream behavioral specifications (`REQ-SEQ-022`, `REQ-FN-002G`, `REQ-FN-002H` as governed by this module).
+   - **Scope**: Multi-source mapping and right-to-left composition (`map`, `comp`), and the bounded collection-shaping/traversal family with individually named downstream behavioral specifications (`REQ-SEQ-022`, `REQ-FN-032`, `REQ-FN-033`).
 
 6. **[requirements-module-6.md](requirements-module-6.md)** — *Numeric & Callable Convenience*
    - **Purpose**: Adds scalar arithmetic, bitwise math, conversion/parsing controls, and functional closure builders.
@@ -45,4 +45,4 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 
 7. **[requirements-module-7.md](requirements-module-7.md)** — *Specialized Value Domains & State*
    - **Purpose**: Implements higher-level domain conveniences and state built on top of lower modules.
-   - **Scope**: Set algebra (`union`, `intersection`, `difference`), relational operations (`index`, `project`, `rename`, `join`), bounded text/regex operations (`String`, `Regex`, `re_find`, `re_seq`, `split`, `join`), debug formatting (`fits_print`, `print_to`), keyword enum name mapping (`KeywordEnumNameMap`), `Atom<T>` state reference, and the master unit test suite verification requirements (`REQ-FN-015`–`024`, `REQ-FN-028`–`031`, `REQ-FN-002I`–`002K`, `REQ-FN-002J`, `REQ-FN-002O`, `REQ-PLAT-024`–`042` excl. `REQ-PLAT-017`–`023`, `REQ-VAL-021`–`022`, `REQ-TEST-001`–`005`).
+   - **Scope**: Set algebra (`union`, `intersection`, `difference`), relational operations (`index`, `project`, `rename`, `join`), bounded text/regex operations (`String`, `Regex`, `re_find`, `re_seq`, `split`, `join`), debug formatting (`fits_print`, `print_to`), keyword enum name mapping (`KeywordEnumNameMap`), `Atom<T>` state reference, and the master unit test suite verification requirements (`REQ-FN-015`–`024`, `REQ-FN-028`–`031`, `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-PLAT-024`–`042` excl. `REQ-PLAT-017`–`023`, `REQ-VAL-022`, `REQ-TEST-001`–`005`).

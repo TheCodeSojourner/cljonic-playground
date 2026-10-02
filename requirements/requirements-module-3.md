@@ -65,15 +65,6 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ context: `contains(set, value)` remains the authoritative boolean membership predicate ∧ distinguishes an absent value from a present value equal to `T{}` ∧ `get(set, value)` and `get(set, value, fallback)` remain behaviorally equivalent free-function forms
   {source: stakeholder_decided, decided_by: original_spec_author}
 
-λ REQ-COLL-012A(x).
-  ∀ `String<N>`: callable with `operator()(Index, fallback)` for indexed lookup, where `Index` is any integral type and `fallback` defaults to `char{}` when omitted
-  ∧ ∀ operation: returns the stored ASCII byte at a valid content index or the fallback character when the index is invalid
-  ∧ ∀ (negative ∧ unrepresentable index): invalid rather than converted modulo to the unsigned key domain
-  ∧ ∀ operation: ¬∃ (exposure of the null terminator as a content element ∨ mutation ∨ allocation ∨ throw)
-  ∧ ∀ context: `contains(string, index)` remains the authoritative way to distinguish an invalid index from a valid index whose byte equals `char{}`
-  rationale: modulo conversion would silently map negative indexes onto valid tail positions, hiding caller errors
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: AI_inferred}
-
 λ REQ-COLL-006(x).
   ∀ context: the library provides a bounded FIFO queue with insertion at the rear, removal at the front, peek, and count
   ∧ ∀ (sequence conversion ∧ traversal): deferred future capabilities
@@ -124,6 +115,15 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∀ string: bounded, array-backed collection with ordered ASCII byte storage and a null terminator immediately after its content
   ∧ ∀ terminator: ¬∃ counting as an element ∧ ∀ string_capacity: measured in content bytes excluding the terminator
   {source: stakeholder_decided, decided_by: original_spec_author}
+
+λ REQ-COLL-012A(x).
+  ∀ `String<N>`: callable with `operator()(Index, fallback)` for indexed lookup, where `Index` is any integral type and `fallback` defaults to `char{}` when omitted
+  ∧ ∀ operation: returns the stored ASCII byte at a valid content index or the fallback character when the index is invalid
+  ∧ ∀ (negative ∧ unrepresentable index): invalid rather than converted modulo to the unsigned key domain
+  ∧ ∀ operation: ¬∃ (exposure of the null terminator as a content element ∨ mutation ∨ allocation ∨ throw)
+  ∧ ∀ context: `contains(string, index)` remains the authoritative way to distinguish an invalid index from a valid index whose byte equals `char{}`
+  rationale: modulo conversion would silently map negative indexes onto valid tail positions, hiding caller errors
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-COLL-013(x).
   ∀ string: accepts only ASCII bytes in the range `0x01` through `0x7F`

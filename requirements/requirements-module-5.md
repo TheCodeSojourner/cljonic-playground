@@ -4,23 +4,21 @@
 
 This module specifies higher-order sequence transformation algorithms, function composition (`comp`), multi-source mapping, and collection shaping/traversal operations over any `cljonic_source`. Module 5 provides functional transformations while preserving value immutability, callback purity, and static bounds.
 
-> **Designator note**: Module 5 governs the `map`/`comp` behavior under designators `REQ-FN-002G`/`REQ-FN-002H`, which also name the `equal`/`not_equal` clauses governed by Module 3. The designators are reused per the original index; global-uniqueness reconciliation is a candidate for `/gybis-req-tend` (human approval).
-
 ## Function Composition (`comp`) & Multi-Source Operations
 
-λ REQ-FN-002G(x).
+λ REQ-FN-032(x).
   ∀ `map`: accepts its transforming function as the first argument, followed by one or more compatible source collections
   ∧ ∀ multi-source `map`: invokes the function with corresponding values from the source collections according to its documented termination and capacity policy
   {source: stakeholder_decided, decided_by: original_spec_author}
 
-λ REQ-FN-002H(x).
+λ REQ-FN-033(x).
   ∀ `comp`: accepts zero or more compatible element functions ∧ composes them into one callable value
   ∧ ∀ zero functions: produce an identity callable ∧ ∀ one function: produces an equivalent callable
   ∧ ∀ functions supplied as `comp(f, g, h, ...)`: compile-time checking verifies from right to left that each function accepts the return type of the function to its right ∧ the composed function has the rightmost function's input type and the leftmost function's return type
   ∧ ∀ resulting_callable: applies the functions from right to left, representing `f(g(h(value)))` for three functions
   ∧ ∀ incompatible parameter ∧ return types: rejected at compile time ∧ ∀ context: ¬∃ transducer composition ∨ destination-independent collection-processing semantics
   rationale: transducers and destination-independent processing sit outside the bounded, materialization-first model of the library
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: AI_inferred}
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 ## Collection-Shaping and Traversal Family
 
@@ -40,4 +38,4 @@ This module specifies higher-order sequence transformation algorithms, function 
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Free-function templates for sequence shaping, slicing, filtering, mapping, grouping, and ordering.
-- **Governed REQs**: `REQ-SEQ-022`, `REQ-FN-002G`, `REQ-FN-002H` (as governed by this module).
+- **Governed REQs**: `REQ-SEQ-022`, `REQ-FN-032`, `REQ-FN-033`.
