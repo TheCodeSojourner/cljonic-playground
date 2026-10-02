@@ -1,5 +1,39 @@
 ## Session State
 
+- last_session_id: 171c64d2-e025-4eb9-9ee1-732dd7840fa5
+- current_timestamp: 2026-10-02
+- recover: 1
+- session_complete: true
+
+Task:
+1. Nothrow/throwing equality contract — COMPLETE: added `concepts::NothrowEqualityComparable` (StableEqualityComparable ∧ `concepts_detail::nothrow_equality_v`) and excluded pointers/unscoped enums from `equal`'s fallthrough domain (`is_arithmetic_v || is_scoped_enum_v`); added recursive `contains_standard_range` rejection. Applied across REQ-FN-002G, vocabulary, architecture, specs, tests, and code.
+2. cljonic::Variant composite type (Slice A) — COMPLETE: added `src/cljonic-variant.hpp` (storage admission `NothrowVariantAlternative`, conditional alternative-strict equality/ordering via `ComparableVariantAlternative`/`TotallyOrdered`, no valueless state); retired `std::variant` from the cljonic value domain (rejected as `equal` operand and as Map key / Set element; permitted only as the internal backend); mirrored the walkers via `cljonic_variant_traits`; removed all `std::variant` walker specializations.
+3. Equality diagnostics policy — COMPLETE: `REQ-DIAG-009` rejection-diagnostic fallback (per-arity, negated admission gate, instantiation-dependent `static_assert` naming operation, operand types, and violated rule) across req/vocab/arch/spec/tests/code.
+4. Mementum refresh + gybis-fini closeout — COMPLETE: refreshed `value-equality-domain.md` and three stale memories; state upsert and Mementum-only commit.
+
+Questions:
+1. None blocking. Slice B (`cljonic::Variant` free-function API) awaits selection.
+
+Decisions:
+1. Add `cljonic::Variant`; retire `std::variant` from the cljonic value domain. Storage admission = `NothrowVariantAlternative` (`NothrowCollectionElement`); equality admission = `ComparableVariantAlternative` (`NothrowStableEqualityComparable && NothrowEqualityComparable`); ordering requires `TotallyOrdered`.
+2. Reject throwing equality at the concept layer (`NothrowEqualityComparable`) rather than dropping `noexcept`; exclude pointers and unscoped enums from the fallthrough domain; recursively reject nested standard ranges in composites.
+3. Informative diagnostics outrank callability detection (REQ-DIAG-009): per-arity diagnostic fallback on the negated gate with a `dependent_false` `static_assert`. Domain detection uses the admission concepts, not `requires { call(...) }`; consequently a domain-rejected argument may satisfy callability, and that callability is not a supported interface.
+4. Split `cljonic::Variant` into slice A (type + storage/equality admission + walkers + std::variant retirement) and slice B (free-function API), parking `VariantFreeFunctionApi` in `specs/capabilities/variant-api.allium` under `lifecycle: deferred`.
+5. Keep `concepts_detail` equality concepts visible in generated docs.
+6. No auto-commit during API slices; `/gybis-fini` retains its default commit step (Mementum-only).
+
+Validation:
+1. `make upsert-gate-fast:ok` and `make upsert-gate-strict` EXIT=0: format/lint/complexity, range/variant/equal/not-equal compile-fail (now with targeted diagnostic-message assertions), header-guards, sanitizer, coverage lines=100.0%, traceability (snapshot synced), no-heap-src/symbols/probe.
+2. `make git:ok` (user-run, post-commit): docs:ok, docs-examples:compiled=29 (6 deferred skipped), cljonic-test:ok.
+3. New tests: `tests/cljonic-variant-spec-tests.cpp` (with runtime coverage case) and `tests/cljonic-diagnostics-spec-tests.cpp`; new `tests/no_heap/cljonic-variant-probes.cpp`.
+
+Next:
+1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
+2. Extend the REQ-DIAG-009 rejection-diagnostic policy to other closed-domain public free functions when they gain a fallback.
+3. Deferred comparison family (`equal_by`/`identical`, `less`, `less_equal`, `greater`, `greater_equal`) and `REQ-SEQ-022` operation-level reconciliation remain candidates.
+
+## Previous Session State
+
 - last_session_id: fd3522cd-6d0a-4782-ae03-2be453291d76
 - current_timestamp: 2026-10-02
 - recover: 1
@@ -32,7 +66,7 @@ Next:
 3. Refresh `mementum/knowledge/value-equality-domain.md`, which still refers to `equal_pair_admissible_v` rather than the new `EqualPairAdmissible` concept.
 4. Continue deferred comparison-family or `REQ-SEQ-022` work only when selected.
 
-## Previous Session State
+## Older Session State
 
 - last_session_id: 55f47254-5bfa-42c5-be15-e3b9289e0a3a
 - current_timestamp: 2026-10-01

@@ -9,6 +9,7 @@ related:
   - /mementum/knowledge/collection-api-surface-discipline.md
   - /mementum/memories/producer-parameter-equality.md
   - /mementum/memories/nothrow-stable-equality-comparable-concept.md
+  - /mementum/memories/rejection-diagnostic-fallback.md
   - /mementum/memories/cljonic-design-notes.md
 depends-on: [requirements/cljonic-requirements-module-2.md, requirements/cljonic-requirements-module-3.md, requirements/cljonic-requirements-module-4.md]
 ---
@@ -35,11 +36,26 @@ std::equality_comparable<T>
   (REQ-NUM-001) never implies equality.
 - Callables are rejected as a class, including function pointers (a function
   pointer has `operator==` but admits only address-as-key semantics).
-- The walkers (`contains_floating_point` / `contains_callable`) are specialized
-  per header and recurse through `std::variant` alternatives, cljonic
-  collections, `MapEntry`, and producer stored parameters.
+- The walkers (`contains_floating_point` / `contains_callable` /
+  `contains_standard_range`) are specialized per header and recurse through
+  `cljonic::Variant` alternatives, cljonic collections, `MapEntry`, and producer
+  stored parameters. (`std::variant` specializations were removed 2026-10-02.)
 - `NothrowStableEqualityComparable = StableEqualityComparable &&
-  NothrowCollectionElement` is the map-key / set-element admission contract.
+  NothrowCollectionElement` is the map-key / set-element storage contract.
+- `NothrowEqualityComparable = StableEqualityComparable &&
+  concepts_detail::nothrow_equality_v<T>` additionally requires a non-throwing
+  `operator==`. Because `equal` / `not_equal` are `noexcept`, a value whose
+  comparison may throw is rejected by contract (added 2026-10-02).
+
+## Fallthrough domain and rejection diagnostics
+
+The non-cljonic `equal` operand fallthrough is the closed value domain:
+arithmetic scalars, scoped enumerations, aggregate-like structs with a
+non-throwing `==`, and `cljonic::Variant` composites. Unscoped enums, pointers,
+standard range/container types, and `std::variant` are rejected at any depth
+(2026-10-02). Out-of-domain operands produce one targeted `RejectionDiagnostic`
+(REQ-DIAG-009) instead of a list of rejected concept candidates; domain support
+is detected through the admission concepts, never `requires { call(...) }`.
 
 ## Three equality surfaces, one rule shape
 
@@ -64,16 +80,22 @@ equality that compares a materialized or observed sequence fails at compile
 time. The prohibition covers produced sequences only; parameter-structural
 producer equality is explicitly exempt because it is O(1) and cannot hang.
 
-## Composite values (std::variant)
+## Composite values (cljonic::Variant)
 
-Alternative-strict equality: same alternative AND that alternative's values
-compare equal. No cross-type numeric unification (`variant<int,long>{1}` is not
-`variant<int,long>{1L}`), no hash-based equality. The composite key/element
-domain includes scalars, scoped enums, collections, and producers with stable
-parameters, all subject to recursive component analysis.
+`cljonic::Variant` is the nominal cljonic composite (REQ-CAP-011); `std::variant`
+is retired from the cljonic value domain — it is rejected as an `equal` operand
+and as a Map key / Set element, and is permitted only as the internal backend of
+`cljonic::Variant`. Storage admission requires every alternative to satisfy
+`NothrowCollectionElement`; alternative-strict equality (`==` and `equal`) is
+provided only when every alternative satisfies `ComparableVariantAlternative`
+(`NothrowStableEqualityComparable && NothrowEqualityComparable`), so a
+float-bearing `Variant` is storable but not comparable. Same alternative AND
+that alternative's values compare equal. No cross-type numeric unification
+(`Variant<int,long>{1}` is not `Variant<int,long>{1L}`), no hash-based equality.
+`Variant` has no valueless state.
 
 **This decision is final (human decision, 2026-09-25):** alternative-strict is
-the only supported variant equality semantics. Cross-type numeric unification
+the only supported composite equality semantics. Cross-type numeric unification
 is permanently out of scope — there is no deferred "Stream D" and no reopen
 path; changing this would require a fresh spec-tend with full downstream
 propagation.
@@ -95,12 +117,12 @@ propagation.
    commit 93231aa): unary admits a single domain-admitted operand and returns
    true, the variadic form conjoins adjacent-pair equality left to right with
    short-circuit, and every adjacent pair is individually compile-time gated by
-   `equal_pair_admissible_v` (the lockstep mirror of the five binary overload
-   gates; SFINAE-safe via void-fallback detection traits). Cross-family and
+   the named family concepts and `EqualPairAdmissible` (SFINAE-safe via
+   void-fallback detection traits). Cross-family and
    mixed cljonic-to-non-cljonic pairs fail at compile time in every arity;
    termination (bounded-prefix, configured traversal cap) is uniform across
    arities. `not_equal` is implemented (REQ-FN-002H, 2026-09-29) as the thin
    negation of `equal`: same three arities, same compile-time gating (reusing
-   `equal_pair_admissible_v` and `all_adjacent_pairs_admissible_v`), unary
+   `EqualPairAdmissible` and `all_adjacent_pairs_admissible_v`), unary
    returns false for an admitted operand, the variadic form negates the
    adjacent-pair conjunction, and it is distinct from the native `operator!=`.
