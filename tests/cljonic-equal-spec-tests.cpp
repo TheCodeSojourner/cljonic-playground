@@ -1,8 +1,11 @@
 #include "cljonic-test-api.hpp"
+#include <array>
 #include <catch2/catch_test_macros.hpp>
 #include <concepts>
+#include <span>
 #include <type_traits>
 #include <variant>
+#include <vector>
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
@@ -53,6 +56,9 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     TRACE_ID("invariant.EqualFunction.ScalarOperandsCompareViaOperatorEquals");
     TRACE_ID("invariant.EqualFunction.ScalarFallthroughDomainIsClosedValueDomain");
     TRACE_ID("invariant.EqualFunction.StandardRangeTypesRejectedAsInteropSurface");
+    TRACE_ID("invariant.EqualFunction.StandardRangeComponentsRejectedAtAnyDepth");
+    TRACE_ID("invariant.EqualFunction.UnscopedEnumsAndPointersExcludedFromFallthrough");
+    TRACE_ID("invariant.EqualFunction.EqualityComparisonNonThrowingAtAnyDepth");
     TRACE_ID("invariant.EqualFunction.FloatingPointRejectedAtCompileTimeAtAnyDepth");
     TRACE_ID("invariant.EqualFunction.CljonicNonscalarPairsClassifiedByEqualityFamily");
     TRACE_ID("invariant.EqualFunction.SequentialFamilyMutuallyComparableByProducedSequence");
@@ -87,8 +93,33 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     STATIC_REQUIRE(!equal(Pixel{1, 2}, Pixel{1, 3}));
     STATIC_REQUIRE(equal(MapEntry<int, int>{1, 2}, MapEntry<int, int>{1, 2}));
     STATIC_REQUIRE(!equal(MapEntry<int, int>{1, 2}, MapEntry<int, int>{1, 3}));
-    STATIC_REQUIRE(equal(std::variant<int, long>{1}, std::variant<int, long>{1}));
-    STATIC_REQUIRE(!equal(std::variant<int, long>{1}, std::variant<int, long>{2}));
+    STATIC_REQUIRE(equal(cljonic::Variant<int, long>{1}, cljonic::Variant<int, long>{1}));
+    STATIC_REQUIRE(!equal(cljonic::Variant<int, long>{1}, cljonic::Variant<int, long>{2}));
+
+    // Tightened fallthrough domain: arithmetic scalars and scoped enums are in;
+    // unscoped enums and pointers are out
+    // (invariant UnscopedEnumsAndPointersExcludedFromFallthrough).
+    enum UnscopedColor { UnscopedRed, UnscopedGreen };
+    STATIC_REQUIRE(cljonic::concepts_detail::in_non_cljonic_fallthrough_domain_v<Color>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::in_non_cljonic_fallthrough_domain_v<UnscopedColor>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::in_non_cljonic_fallthrough_domain_v<int*>);
+
+    // Non-throwing equality at any depth
+    // (invariant EqualityComparisonNonThrowingAtAnyDepth): a comparison that
+    // may throw is stable but not admissible to noexcept operations.
+    struct ThrowingAggregate {
+        int x;
+        [[nodiscard]] auto operator==(const ThrowingAggregate& other) const -> bool {
+            return x == other.x;
+        }
+    };
+    STATIC_REQUIRE(cljonic::concepts::StableEqualityComparable<ThrowingAggregate>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowEqualityComparable<ThrowingAggregate>);
+
+    // Standard-range components are rejected at any depth
+    // (invariant StandardRangeComponentsRejectedAtAnyDepth).
+    STATIC_REQUIRE(cljonic::concepts_detail::contains_standard_range_v<cljonic::Variant<int, std::span<int>>>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::contains_standard_range_v<cljonic::Variant<int, long>>);
 
     // Floating-point rejection at compile time at any depth: the negative
     // compile-fail harness (scripts/check-equal-compile-failures.py) proves
@@ -96,7 +127,7 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     // Here the concept-level gate is asserted for the same domain.
     STATIC_REQUIRE_FALSE(cljonic::concepts::StableEqualityComparable<double>);
     STATIC_REQUIRE_FALSE(cljonic::concepts::StableEqualityComparable<Vector<float, 2>>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::StableEqualityComparable<std::variant<int, double>>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::StableEqualityComparable<cljonic::Variant<int, double>>);
 
     // ------------------------------------------------------------------------
     // Sequential family: mutual comparability by produced sequence.
@@ -154,7 +185,7 @@ TEST_CASE("equal implements general value equality over the supported domain", "
                          NestedVector{Range<int>{1, 3, 1}, Range<int>{1, 5, 2}}));
     STATIC_REQUIRE(!equal(NestedVector{Range<int>{1, 3, 1}, Range<int>{1, 5, 2}},
                           NestedVector{Range<int>{1, 3, 1}, Range<int>{1, 5, 3}}));
-    using VariantValue = std::variant<int, Vector<int, 4>>;
+    using VariantValue = cljonic::Variant<int, Vector<int, 4>>;
     using VariantVector = Vector<VariantValue, 4>;
     STATIC_REQUIRE(equal(VariantVector{VariantValue{1}, VariantValue{Vector<int, 4>{2, 3}}},
                          VariantVector{VariantValue{1}, VariantValue{Vector<int, 4>{2, 3}}}));

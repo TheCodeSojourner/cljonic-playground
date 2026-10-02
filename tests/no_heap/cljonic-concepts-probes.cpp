@@ -18,11 +18,11 @@ namespace cljonic::no_heap::probes {
     // Composite stable equality (REQ-CAP-010): variants over scalars and
     // collections admit stable equality; floating-point and callable components
     // and function-pointer components are rejected.
-    using alt = std::variant<int, long>;
+    using alt = cljonic::Variant<int, long>;
     constexpr auto composite = concepts::StableEqualityComparable<alt> &&
-                               concepts::StableEqualityComparable<std::variant<int, Vector<int, 4>>> &&
-                               !concepts::StableEqualityComparable<std::variant<int, double>> &&
-                               !concepts::StableEqualityComparable<std::variant<int, int (*)(int)>> &&
+                               concepts::StableEqualityComparable<cljonic::Variant<int, Vector<int, 4>>> &&
+                               !concepts::StableEqualityComparable<cljonic::Variant<int, double>> &&
+                               !concepts::StableEqualityComparable<cljonic::Variant<int, int (*)(int)>> &&
                                concepts::StableEqualityComparable<Vector<int, 4>> &&
                                !concepts::StableEqualityComparable<Vector<double, 4>> &&
                                !concepts::StableEqualityComparable<MapEntry<int, double>>;

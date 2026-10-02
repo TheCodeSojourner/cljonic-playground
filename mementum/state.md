@@ -1,9 +1,74 @@
 ## Session State
 
-- last_session_id: 59abeb60-d44b-458b-93ba-862f63a872c7
-- current_timestamp: 2026-09-29
+- last_session_id: fd3522cd-6d0a-4782-ae03-2be453291d76
+- current_timestamp: 2026-10-02
 - recover: 1
 - session_complete: true
+
+Task:
+1. Equality constraint refactor — COMPLETE: added five private family concepts and `EqualPairAdmissible` in `src/cljonic-equal.hpp`; binary overloads and shared unary/binary/variadic gates use the named concepts. Updated `src/cljonic-not-equal.hpp` unary/binary gates to use `EqualPairAdmissible`. No runtime equality semantics changed.
+2. C++23 review — COMPLETE: confirmed `StableEqualityComparable` admits a potentially-throwing `operator==`, while `equal` is declared `noexcept`; a throwing comparison therefore terminates. Also found that Doxygen's `EXTRACT_ALL=YES` publishes the `concepts_detail` concepts. Scalar-domain breadth (`std::is_scalar_v`, including unscoped enums and pointers) remains to be reconciled against intent.
+3. gybis-fini closeout — COMPLETE: state upsert and Mementum-only commit.
+
+Questions:
+1. No human disposition received while user unavailable. Before changing behavior, decide whether throwing equality is rejected by contract, remains a caller precondition under `noexcept`, or makes `equal` potentially throwing; inspect recursive composite/variant implications.
+2. Decide whether `concepts_detail` equality concepts should remain visible in generated docs or be hidden consistently with internal-detail policy.
+3. Clarify whether unscoped enums and pointer scalars belong to `equal`'s non-cljonic fallthrough domain.
+4. Proposed memory `noexcept-equality-requires-nothrow-comparator` was not approved; no memory file created.
+
+Decisions:
+1. Keep equality-family gates in `concepts_detail`; do not move them to `src/cljonic-concepts.hpp` or introduce ordering semantics.
+2. Convert the shared pair admission gate into `EqualPairAdmissible`; preserve the current accepted domain and `noexcept` signatures pending a requirements/spec decision.
+3. Leave Doxygen visibility and scalar-domain policy unchanged pending human disposition.
+4. Keep the code and generated-doc changes uncommitted; fini commit is limited to Mementum state.
+
+Validation:
+1. Final `make git` passed after re-reading the user-touched `src/cljonic-equal.hpp`: format, lint, complexity, all compile-failure harnesses, header guards, sanitizers, 100.0% coverage, traceability, no-heap, docs, 28 compiled doc examples (6 deferred skipped), and full tests.
+2. `make equal-compile-fail`, `make not-equal-compile-fail`, `make cljonic-test`, and `make upsert-gate-strict UPSERT_COVERAGE_FILE=cljonic-equal.hpp` passed during the refactor.
+
+Next:
+1. Reconcile the `noexcept` versus potentially-throwing equality contract at requirements/spec level before changing the supported domain.
+2. Resolve internal-concept documentation visibility and scalar-domain scope.
+3. Refresh `mementum/knowledge/value-equality-domain.md`, which still refers to `equal_pair_admissible_v` rather than the new `EqualPairAdmissible` concept.
+4. Continue deferred comparison-family or `REQ-SEQ-022` work only when selected.
+
+## Previous Session State
+
+- last_session_id: 55f47254-5bfa-42c5-be15-e3b9289e0a3a
+- current_timestamp: 2026-10-01
+- recover: 1
+- session_complete: true
+
+Task:
+1. Requirements description under the revised gybis-req-describe contract — CANCELED per human direction (2026-10-01): do not restore or carry forward the requested root-level `requirements-description.md`.
+2. gybis-fini closeout — COMPLETE: updated this state record and committed Mementum.
+
+Questions:
+1. No new blocking questions. The previously proposed artifact-boundary knowledge synthesis remains awaiting explicit human approval.
+
+Decisions:
+1. Requirements-description deliverable: canceled per human direction (2026-10-01); no restoration is expected.
+
+Decisions:
+1. Requirements-description scope: all seven dependency-ordered modules; output mode: default repository-root Markdown file, explicitly selected by the human.
+2. Revised requirements-description contract: connected stakeholder prose only, no requirement designators or per-requirement bullets; supplied rationales use `because:` and analysis-derived rationales are attributed.
+3. The fini workflow writes only `mementum/state.md`; record the absent output file as the next recovery item rather than expanding the closeout write boundary.
+
+Validation:
+1. Requirements description during authoring: 289 source clauses; 31 source rationales and 31 rendered `because:` statements; four analysis-derived rationales; seven module headings; two deferred sections; no requirement designators or clause bullets; `git diff --check` clean.
+2. Closeout inspection: branch and worktree were clean; `requirements-description.md` was not present. No code or test gates were run.
+
+Next:
+1. Resume deferred comparison-family work (`equal_by`/`identical`, then the ordering comparisons) when selected.
+2. Reconcile operation-level specifications for `REQ-SEQ-022` per `mementum/knowledge/cljonic-next-agenda.md`.
+3. Ask for approval before creating the pending artifact-boundary knowledge synthesis.
+
+Task:
+1. gybis-init orientation — COMPLETE.
+2. Layer-order adoption — COMPLETE (uncommitted): durability order is now `req > vocab > arch > spec > tests > code` (human decision). GYBIS-DEV-WORKFLOW.md upserted: loop line updated, new step 2 "Honor Requirements", steps renumbered 1–9, checklist item added. Human decision: NO S6 VSM layer — requirements are a document lane, not a VSM layer; VSM.md (nucleus) remains the basis of architecture.md with five layers (S5>S4>S3>S2>S1); requirements enter through S3/S5 gating (S3_domain_boundary → explicit_approved_requirement).
+
+Decisions:
+1. Layer order (human, 2026-09-29): `req > vocab > arch > spec > tests > code`. The req layer is an authority ordering between documents, not a VSM layer; no S6 added.
 
 Task:
 1. `Equal` public doc comment refinement — COMPLETE (commits 75d2b68 + 5606804): removed all Clojure references (brief no longer "modeled on Clojure's `=`"); rewrote the prose to be user-facing and contract-first (dropped REQ-FN-002G/REQ-NUM-006/REQ-FN-014B/REQ-COLL-021 IDs, the `\ref StableEqualityComparable` link, and equality-family/gating jargon); restated the three rules as user-visible behavior (single value always true; ordinary values by same-type `==` with example types; producer comparison bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`; matching element/key/value types; order-insensitive Map/Set); fixed a merged list bullet; reformatted the sample to the bare (non-asterisk) `~~~~~{.cpp}` fence so scripts/compile-doc-samples.py actually extracts and compiles it (docs-examples:compiled 13→14).

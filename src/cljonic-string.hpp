@@ -281,4 +281,7 @@ struct contains_floating_point<String<CapacityValue>> : std::false_type {};
 template <std::size_t CapacityValue>
 struct contains_callable<String<CapacityValue>> : std::false_type {};
 
+template <std::size_t CapacityValue>
+struct contains_standard_range<String<CapacityValue>> : std::false_type {};
+
 } // namespace cljonic::concepts_detail

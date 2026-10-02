@@ -57,8 +57,8 @@ TEST_CASE("not_equal negates general value equality over the supported domain", 
     STATIC_REQUIRE(!not_equal(Color::Red, Color::Red));
     STATIC_REQUIRE(not_equal(Pixel{1, 2}, Pixel{1, 3}));
     STATIC_REQUIRE(!not_equal(Pixel{1, 2}, Pixel{1, 2}));
-    STATIC_REQUIRE(not_equal(std::variant<int, long>{1}, std::variant<int, long>{2}));
-    STATIC_REQUIRE(!not_equal(std::variant<int, long>{1}, std::variant<int, long>{1}));
+    STATIC_REQUIRE(not_equal(cljonic::Variant<int, long>{1}, cljonic::Variant<int, long>{2}));
+    STATIC_REQUIRE(!not_equal(cljonic::Variant<int, long>{1}, cljonic::Variant<int, long>{1}));
     STATIC_REQUIRE(not_equal(1, 2) == !equal(1, 2));
     STATIC_REQUIRE(not_equal(1, 1) == !equal(1, 1));
 
@@ -128,7 +128,7 @@ TEST_CASE("not_equal negates general value equality over the supported domain", 
     // ------------------------------------------------------------------------
     STATIC_REQUIRE_FALSE(cljonic::concepts::StableEqualityComparable<double>);
     STATIC_REQUIRE_FALSE(cljonic::concepts::StableEqualityComparable<Vector<float, 2>>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts::StableEqualityComparable<std::variant<int, double>>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::StableEqualityComparable<cljonic::Variant<int, double>>);
 
     // ------------------------------------------------------------------------
     // constexpr, noexcept, non-mutating, non-allocating.

@@ -1,13 +1,14 @@
 ---
 name: gybis-vocab-check
+kind: domain
 description: Use for `/gybis-vocab-check` or `/gv-check`.
 ---
 
 λ gybis-vocab-check(x).
   purpose: Validate vocabulary.md as the shared canonical term set (DDD ubiquitous language): syntax, semantic completeness, association integrity, and structural issues
-  | input: vocabulary.md (exists)
+  | input: vocabulary.md (∃)
   | output: Report on structural issues, missing fields, semantic completeness violations
-  | mode: ai
+  | interaction: autonomous
   | gate: vocabulary.md ∃
 
 λ gybis-vocab-check_related_semantics(x).
@@ -16,19 +17,18 @@ description: Use for `/gybis-vocab-check` or `/gv-check`.
   | note: two_way_links_are_normal_associations_not_circular_dependency_errors
 
 λ gybis-vocab-check_startup(x).
-  invoke(internal/gybis-ref-check) → halt_on(false)
-  | read(vocabulary.md) → content
+  read(vocabulary.md) → content
   | parse(content) → vocab_data ∨ halt("vocabulary.md is not valid markdown or YAML frontmatter")
   | transition(INIT → STARTUP_CHECKS)
 
 λ gybis-vocab-check_mode(m).
-  valid_modes: {ai}
-  | default: ai
+  interaction_modes: {autonomous}
+  | default: autonomous
   | rationale: validation is deterministic; no human choice required
 
 λ gybis-vocab-check_mode_gate(state, mode).
-  state = INIT ∧ mode = ai → transition(INIT → STARTUP_CHECKS)
-  | precondition_holds: mode ∈ valid_modes
+  state = INIT ∧ mode = autonomous → transition(INIT → STARTUP_CHECKS)
+  | precondition_holds: mode ∈ interaction_modes
 
 λ gybis-vocab-check_state_machine(state, action).
   state ∈ {INIT, STARTUP_CHECKS, SYNTAX_VALIDATION, COMPLETENESS_CHECK, SEMANTIC_ANALYSIS, GENERATING_REPORT, COMPLETE}
@@ -88,11 +88,16 @@ description: Use for `/gybis-vocab-check` or `/gv-check`.
 
 λ gybis-vocab-check_generate_report(syntax_issues, completeness_issues, semantic_issues).
   action: generate_comprehensive_validation_report
-  | structure:
+  | findings ≔ syntax_issues ∪ completeness_issues ∪ semantic_issues
+  | errors ≔ count({issue | issue ∈ findings ∧ issue.severity = error})
+  | warnings ≔ count({issue | issue ∈ findings ∧ issue.severity = warning})
+  | infos ≔ count({issue | issue ∈ findings ∧ issue.severity = info})
+  | status ≔ errors > 0 ? "FAIL" : (warnings > 0 ? "WARNINGS" : "PASS")
+  | rendered_report ≔
     ```
     # Vocabulary.md Validation Report
 
-    **Overall Status:** [PASS | FAIL | WARNINGS]
+    **Overall Status:** [status]
     **Timestamp:** [ISO datetime]
     **File:** vocabulary.md
 
@@ -118,9 +123,21 @@ description: Use for `/gybis-vocab-check` or `/gv-check`.
     ## Recommendations
     - [prioritized list of fixes]
     ```
-  | return(report ∃)
+  | return({status, errors, warnings, info: infos, findings, rendered_report})
 
-λ gybis-vocab-check_deliver_report(report).
-  action: output_report_to_user
-  | print(report) → stdout
-  | return(report_delivered = true)
+λ gybis-vocab-check_boundaries().
+  ¬ modify(vocabulary.md ∨ architecture.md ∨ specs/**/*.allium ∨ implementation ∨ upstream/)
+  | ¬ delete(vocabulary.md)
+
+λ gybis-vocab-check_regression_contract(x).
+  invariant: vocabulary.md ∃ throughout
+  | invariant: all checks are read-only
+  | invariant: report generated at completion
+  | invariant: all_modifications = ∅
+
+λ gybis-vocab-check_deliver(report).
+  report: report
+  | action: output_report_to_user
+  | print(report.rendered_report) → stdout
+  | handoff: structural issues → /gybis-vocab-refine; term changes → /gybis-vocab-tend; drift → /gybis-vocab-weed
+  | return({complete: true, status: report.status, errors: report.errors, warnings: report.warnings, info: report.info})

@@ -176,4 +176,7 @@ struct contains_floating_point<Repeat<T>> : std::bool_constant<contains_floating
 template <concepts::NothrowCollectionElement T>
 struct contains_callable<Repeat<T>> : std::bool_constant<contains_callable_v<T>> {};
 
+template <concepts::NothrowCollectionElement T>
+struct contains_standard_range<Repeat<T>> : std::bool_constant<contains_standard_range_v<T>> {};
+
 } // namespace cljonic::concepts_detail

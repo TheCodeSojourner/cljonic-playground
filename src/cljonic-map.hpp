@@ -106,6 +106,7 @@ namespace cljonic {
  */
 template <concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType,
           std::size_t CapacityValue>
+    requires(!concepts_detail::is_std_variant_v<KeyType>)
 class Map {
   public:
     using key_type = KeyType;
@@ -280,5 +281,9 @@ struct contains_floating_point<Map<KeyType, ValueType, CapacityValue>>
 template <typename KeyType, typename ValueType, std::size_t CapacityValue>
 struct contains_callable<Map<KeyType, ValueType, CapacityValue>>
     : std::bool_constant<contains_callable_v<KeyType> || contains_callable_v<ValueType>> {};
+
+template <typename KeyType, typename ValueType, std::size_t CapacityValue>
+struct contains_standard_range<Map<KeyType, ValueType, CapacityValue>>
+    : std::bool_constant<contains_standard_range_v<KeyType> || contains_standard_range_v<ValueType>> {};
 
 } // namespace cljonic::concepts_detail

@@ -215,6 +215,7 @@
 #include <cljonic-repeatedly.hpp>
 #include <cljonic-set.hpp>
 #include <cljonic-string.hpp>
+#include <cljonic-variant.hpp>
 #include <cljonic-vector.hpp>
 
 namespace cljonic::core {}

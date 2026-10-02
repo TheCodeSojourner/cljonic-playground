@@ -170,4 +170,8 @@ template <concepts::NothrowCollectionElement T, typename Step>
     requires concepts::IterateStep<T, Step>
 struct contains_floating_point<Iterate<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
 
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_standard_range<Iterate<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
+
 } // namespace cljonic::concepts_detail

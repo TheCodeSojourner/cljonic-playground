@@ -202,4 +202,7 @@ struct contains_floating_point<Cycle<Source>> : std::bool_constant<contains_floa
 template <concepts::CljonicSource Source>
 struct contains_callable<Cycle<Source>> : std::bool_constant<contains_callable_v<Source>> {};
 
+template <concepts::CljonicSource Source>
+struct contains_standard_range<Cycle<Source>> : std::bool_constant<contains_standard_range_v<Source>> {};
+
 } // namespace cljonic::concepts_detail

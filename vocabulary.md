@@ -387,9 +387,9 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Equal
-- **Definition:** The canonical named general-equality free function mapped conceptually to Clojure's `=`. It implements GeneralEquality over the supported stable-equality domain in the three arities of Clojure's `=`: a unary form that returns true for a single domain-admitted operand, a binary form that compares a pair, and a variadic form that holds exactly when every adjacent operand pair compares equal by the same family rules, evaluated left to right and short-circuited at the first unequal pair, with every adjacent pair and the unary operand individually compile-time gated. Non-collection, non-producer values compare via `==`; floating-point values are rejected at compile time at any depth, including nested inside any operand in any arity; cljonic collections and producers compare by their equality family, with the SequentialEquality family mutually comparable by produced sequence and Map, Set, and String comparable only to their own kind; incompatible-family and mixed cljonic-to-non-cljonic pairs fail at compile time. Comparison is recursive over nested values, lazy and element-wise for sequential operands, terminates at the first differing element pair, and compares configured observable traversal caps when both operands are unbounded so every call terminates.
+- **Definition:** The canonical named general-equality free function mapped conceptually to Clojure's `=`. It implements GeneralEquality over the supported stable-equality domain in the three arities of Clojure's `=`: a unary form that returns true for a single domain-admitted operand, a binary form that compares a pair, and a variadic form that holds exactly when every adjacent operand pair compares equal by the same family rules, evaluated left to right and short-circuited at the first unequal pair, with every adjacent pair and the unary operand individually compile-time gated. Non-collection, non-producer values compare via `==` over the closed value domain of arithmetic scalars, scoped enumerations, aggregate-like structs with a non-throwing `operator==`, and `cljonic::Variant` composites; unscoped enumerations and pointer types are rejected; floating-point values are rejected at compile time at any depth, including nested inside any operand in any arity; the comparison is non-throwing at any depth so the `noexcept` guarantee cannot be violated; standard-library range and container types are rejected at any depth because `equal` is not the C++ interoperability surface, and `std::variant` is rejected because it is not a supported cljonic value type; cljonic collections and producers compare by their equality family, with the SequentialEquality family mutually comparable by produced sequence and Map, Set, and String comparable only to their own kind; incompatible-family and mixed cljonic-to-non-cljonic pairs fail at compile time. Comparison is recursive over nested values, lazy and element-wise for sequential operands, terminates at the first differing element pair, and compares configured observable traversal caps when both operands are unbounded so every call terminates.
 - **Deprecated Synonyms:** `=`, general equality function, Clojure equals
-- **Related:** GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, ProducerParameterEquality, FiniteDeepEquality, AlternativeStrictEquality, CompileTimeFailure
+- **Related:** GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, NothrowEqualityComparable, ProducerParameterEquality, FiniteDeepEquality, AlternativeStrictEquality, CompileTimeFailure
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `equal(1, 1)` is true by scalar comparison; `equal(1)` is true as the unary arity; `equal(1, 1, 1)` is true as the variadic arity over adjacent pairs; `equal(1, 2, 1)` is false at the second adjacent pair; `equal(Vector<int, 3>{1, 2, 3}, Range<int>{0, 3, 1})` is true by sequential equality; `equal(map, map)` compares key/value mappings without entry order; `equal(1.0, 1.0)` and `equal(Vector<float, 2>{}, Vector<float, 2>{})` fail at compile time under the floating-point rule; `equal(Vector<int, 2>{1}, 1)` fails at compile time because a collection is never equal to a scalar; `equal(1, Vector<int, 2>{1}, 2)` fails at compile time because every adjacent pair in the variadic form is gated. Producer `==` and `parameters_equal` remain producer parameter equality and are distinct from `equal`, which may compare produced sequences at the top level.
 
@@ -397,7 +397,7 @@ producer building blocks used across all higher-order algorithms.
 ### NotEqual
 - **Definition:** The canonical named general-inequality free function; the negation counterpart of `Equal`, mapped conceptually to Clojure's `not=`. Its C++ free-function spelling is `not_equal`. It implements the negation of GeneralEquality over the same supported stable-equality domain and in the same three arities as `Equal`: a unary form that returns false for a single domain-admitted operand, a binary form that holds exactly when the two operands do not compare equal, and a variadic form that holds exactly when at least one adjacent operand pair does not compare equal, evaluated left to right and short-circuited at the first unequal pair, with every adjacent pair and the unary operand individually compile-time gated. It is a named free-function operation distinct from the native `!=` operators, `constexpr`, `noexcept`, non-mutating, and non-allocating.
 - **Deprecated Synonyms:** `not=`, inequality function, Clojure not-equals
-- **Related:** Equal, GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, CompileTimeFailure
+- **Related:** Equal, GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, NothrowEqualityComparable, CompileTimeFailure
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `not_equal(1, 2)` is true; `not_equal(1, 1)` is false; `not_equal(1)` is false as the unary arity; `not_equal(1, 2, 1)` is true at the first unequal adjacent pair; `not_equal(Vector<int, 4>{1, 2, 3}, Range<int>{0, 3, 1})` is false by sequential equality; `not_equal(1.0, 1.0)` fails at compile time under the floating-point rule.
 
@@ -941,6 +941,14 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** An oversized Vector initializer and an oversized finite Range constructed in a constexpr context are both CompileTimeFailure outcomes.
 
 
+### RejectionDiagnostic
+- **Definition:** A targeted compile-time diagnostic for a public free function whose supported domain is closed and expressible through named capability concepts. Primary admission remains concept-based; the RejectionDiagnostic is a diagnostic overload constrained on the negation of the admission gate, provided for each supported arity, that never returns a value and is never a supported call target. It exists so that an argument outside the supported domain fails with a single targeted diagnostic that names the operation, the rejected operand types, and the violated domain rule, instead of a list of rejected concept candidates. Message content states the meaning and the violated constraint rather than depending on compiler-specific wording. Compile-time detection of domain support uses the named admission concepts and their `*_admissible_v` predicates, never callability detection such as `requires { call(...) }`.
+- **Deprecated Synonyms:** diagnostic fallback, rejection fallback, diagnostic overload, targeted rejection diagnostic
+- **Related:** CompileTimeFailure, CapacityConstruction, Equal, NotEqual, Variant
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `equal(1.0, 1.0)`, `equal(Vector<int, 2>{1}, 1)`, and `not_equal(1.0, 1.0)` each resolve to a diagnostic overload whose `static_assert` names the operation and the violated equality-domain rule; the valid overloads are still selected for admitted operands.
+
+
 ## Behavioral Specification Vocabulary
 
 
@@ -1181,7 +1189,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** stable_equality_comparable, stable equality comparable concept
 - **Related:** StableEquality, TotalOrder, TotallyOrdered, AggregateLikeStruct, AlternativeStrictEquality, ProducerParameterEquality, Map, Set, MapEntry
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `StableEqualityComparable<T>` is satisfied when `a == b` returns `bool`, `T` is not a floating-point type, and every component of a composite `T` (such as a `std::variant` alternative, a cljonic collection element, or a producer's stored parameter) is itself stable-equality comparable. A callable component is never admitted.
+- **Examples:** `StableEqualityComparable<T>` is satisfied when `a == b` returns `bool`, `T` is not a floating-point type, and every component of a composite `T` (such as a `cljonic::Variant` alternative, a cljonic collection element, or a producer's stored parameter) is itself stable-equality comparable. A callable component is never admitted.
 
 
 ### ProducerParameterEquality
@@ -1192,12 +1200,20 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `Range{1, 5, 2} == Range{1, 5, 2}` is true and `parameters_equal(Range{1, 5, 2}, Range{1, 5, 2})` is true; `Range{0, 5, 0} != Range{0, 7, 0}` even though both produce an infinite sequence of zeros; `parameters_equal(Repeat{7}, Repeat{7, 0U})` is false because the unbounded and finite-empty forms have different stored parameters; `Iterate` and `Repeatedly` never provide parameter equality because their step is a callable component.
 
 
+### Variant
+- **Definition:** The cljonic nominal composite value type `cljonic::Variant<Alternatives...>` holding exactly one alternative at a time. Every alternative satisfies the NothrowCollectionElement storage contract, so a Variant is admissible as a map value, a vector element, and a queue element; floating-point and callable alternatives are admissible for storage but not for equality. A Variant provides alternative-strict value equality through `==` and `equal` exactly when every alternative satisfies NothrowStableEqualityComparable and compares without throwing; otherwise it provides no `==` and fails at compile time in any equality position, mirroring a storable-but-not-comparable element such as `Vector<float, N>`. A Variant has no valueless state and no throwing access path, and every operation is `constexpr`, `noexcept`, non-allocating, and RTTI-free. Its free-function API — `index`, `holds`, `get`, `get_if`, `emplace`, `swap`, `visit`, plus `variant_size` and `variant_alternative` — mirrors a backing member method, and ordering operators are provided exactly when every alternative satisfies TotallyOrdered. `std::variant` is not a cljonic value type: it is rejected as a cljonic value or equality operand, and `cljonic::Variant` is used instead.
+- **Deprecated Synonyms:** cljonic variant, constrained variant, nothrow variant, constrained composite
+- **Related:** AlternativeStrictEquality, NothrowStableEqualityComparable, StableEqualityComparable, TotallyOrdered, MapEntry, Map, Set, Vector, ProducerParameterEquality
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `cljonic::Variant<int, long>` is storable and comparable; `cljonic::Variant<int, double>` is storable but not comparable; `cljonic::Variant<int, long>{5}` (int alternative) is not equal to `cljonic::Variant<int, long>{5L}` (long alternative); `index`, `holds<int>`, `get<int>`, `get_if<int>`, and `emplace<long>(...)` expose and rebind the active alternative without throwing or allocating; `std::variant<int, long>` is rejected at compile time as a cljonic value.
+
+
 ### AlternativeStrictEquality
-- **Definition:** The equality semantics applied to `std::variant` values used as map keys or set elements: two variant values are equal only when they hold the same alternative and that alternative's values compare equal. Variants holding different alternatives compare unequal even when the alternative values would compare conventionally equal. Cross-type numeric unification and hash-based equality are not part of this capability.
+- **Definition:** The equality semantics applied to `cljonic::Variant` values used as map keys or set elements: two variant values are equal only when they hold the same alternative and that alternative's values compare equal. Variants holding different alternatives compare unequal even when the alternative values would compare conventionally equal. Cross-type numeric unification and hash-based equality are not part of this capability.
 - **Deprecated Synonyms:** alternative-strict equality, same-alternative equality
-- **Related:** StableEqualityComparable, StableEquality, Map, Set, MapEntry
+- **Related:** StableEqualityComparable, StableEquality, Variant, Map, Set, MapEntry
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `variant<int, long>{5}` (int alternative) is not equal to `variant<int, long>{5L}` (long alternative); two `variant<int, long>{5}` values are equal.
+- **Examples:** `cljonic::Variant<int, long>{5}` (int alternative) is not equal to `cljonic::Variant<int, long>{5L}` (long alternative); two `cljonic::Variant<int, long>{5}` values are equal.
 
 
 ### TotallyOrdered
@@ -1208,12 +1224,20 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `TotallyOrdered<T>` requires `a < b` in addition to stable equality.
 
 
+### NothrowEqualityComparable
+- **Definition:** The C++ concept identifier refining StableEqualityComparable with a non-throwing equality comparison, the value-domain admission capability behind operations declared `noexcept` (such as `Equal` and `NotEqual`) so that a comparison which can throw is rejected at compile time rather than terminating the program at run time. The type's own `operator==` must be `noexcept`; for a composite whose relational operators are not themselves declared `noexcept`, satisfaction recurses over its stored components.
+- **Deprecated Synonyms:** nothrow_equality_comparable, non-throwing equality concept
+- **Related:** StableEqualityComparable, StableEquality, Equal, NotEqual, AlternativeStrictEquality, Variant, NoExceptionConstraint
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `NothrowEqualityComparable<int>` is satisfied; an aggregate whose `operator==` is not `noexcept` is rejected; `NothrowEqualityComparable<cljonic::Variant<int, long>>` is satisfied because the `cljonic::Variant` declares a non-throwing `operator==` and its alternatives compare without throwing.
+
+
 ### NothrowStableEqualityComparable
 - **Definition:** The C++ concept identifier combining StableEqualityComparable with NothrowCollectionElement, the shared admission contract for map keys and set elements. The stable-equality component is recursive: every stored component of a composite key or set element must admit stable equality, and callable components are never admitted.
 - **Deprecated Synonyms:** nothrow_stable_equality_comparable, map key concept, set element concept
-- **Related:** StableEqualityComparable, NothrowCollectionElement, Map, Set, MapEntry, AlternativeStrictEquality
+- **Related:** StableEqualityComparable, NothrowCollectionElement, Map, Set, MapEntry, AlternativeStrictEquality, Variant
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `NothrowStableEqualityComparable<int>` is satisfied; a type with a throwing copy assignment is rejected even if it defines `operator==`; a `std::variant` containing a callable alternative is rejected because callable components never admit stable equality.
+- **Examples:** `NothrowStableEqualityComparable<int>` is satisfied; a type with a throwing copy assignment is rejected even if it defines `operator==`; a `cljonic::Variant` containing a callable alternative is rejected because callable components never admit stable equality.
 
 
 ### StaticInspectableStorage

@@ -7,6 +7,9 @@ Covers the EqualFunction spec invariants:
 - CrossFamilyAndMixedPairsRejectedAtCompileTime
 - OutsideSupportedDomainRejectedAtCompileTime
 - StandardRangeTypesRejectedAsInteropSurface
+- StandardRangeComponentsRejectedAtAnyDepth
+- UnscopedEnumsAndPointersExcludedFromFallthrough
+- EqualityComparisonNonThrowingAtAnyDepth
 - SequentialElementsRequireIdenticalElementTypes
 - NoCrossTypeNumericUnification (pinned NumericEquality rule)
 - UnaryFormAdmitsSingleSupportedDomainOperand
@@ -49,6 +52,21 @@ FAILURE_CASES = {
     "Equal-std-string-view": ("(void)cljonic::equal(std::string_view{\"a\"}, "
                               "std::string_view{\"a\"});"),
     "Equal-std-map": "(void)cljonic::equal(std::map<int, int>{}, std::map<int, int>{});",
+    # The standard-library variant is not a cljonic value type.
+    "Equal-std-variant": ("(void)cljonic::equal(std::variant<int, long>{1}, "
+                          "std::variant<int, long>{1});"),
+    # Standard-range components are rejected at any depth.
+    "Equal-nested-std-range-variant": ("(void)cljonic::equal(std::variant<int, std::vector<int>>{1}, "
+                                        "std::variant<int, std::vector<int>>{1});"),
+    "Equal-nested-std-range-collection": ("(void)cljonic::equal(cljonic::Vector<std::array<int, 2>, 2>{}, "
+                                          "cljonic::Vector<std::array<int, 2>, 2>{});"),
+    # Unscoped enums and pointers are outside the fallthrough domain.
+    "Equal-unscoped-enum": ("(void)cljonic::equal(EqualUnscopedColor::EqualUnscopedRed, "
+                            "EqualUnscopedColor::EqualUnscopedRed);"),
+    "Equal-pointer": "int x = 0; int y = 0; (void)cljonic::equal(&x, &y);",
+    # A throwing operator== is outside the non-throwing equality domain.
+    "Equal-throwing-aggregate": ("ThrowingEqual a{}; ThrowingEqual b{}; "
+                                  "(void)cljonic::equal(a, b);"),
     # Cross-type numeric and element-type rules.
     "Equal-scalar-cross-type": "(void)cljonic::equal(1, 1L);",
     "Equal-sequential-element-cross-type": ("(void)cljonic::equal(cljonic::Vector<int, 2>{1}, "
@@ -83,8 +101,8 @@ PASS_CASES = {
     "Equal-scalar": "(void)cljonic::equal(1, 1);",
     "Equal-enum": ("enum class EqualColor { Red, Green }; "
                    "(void)cljonic::equal(EqualColor::Red, EqualColor::Red);"),
-    "Equal-variant": ("(void)cljonic::equal(std::variant<int, long>{1}, "
-                      "std::variant<int, long>{1});"),
+    "Equal-cljonic-variant": ("(void)cljonic::equal(cljonic::Variant<int, long>{1}, "
+                              "cljonic::Variant<int, long>{1});"),
     "Equal-map-entry": ("(void)cljonic::equal(cljonic::MapEntry<int, int>{1, 2}, "
                         "cljonic::MapEntry<int, int>{1, 2});"),
     "Equal-vector-vs-range": ("(void)cljonic::equal(cljonic::Vector<int, 4>{1, 2, 3}, "
@@ -128,12 +146,22 @@ struct EqualPixel {
         return x == other.x && y == other.y;
     }
 };
+
+struct ThrowingEqual {
+    int x;
+    [[nodiscard]] auto operator==(const ThrowingEqual& other) const -> bool {
+        return x == other.x;
+    }
+};
+
+enum EqualUnscopedColor { EqualUnscopedRed, EqualUnscopedGreen };
 """
 
 
 def compile_case(compiler: list[str], include_dir: str, header: str, body: str, preamble: str = "") -> bool:
     source = "\n".join(
         (
+            "#include <array>",
             "#include <map>",
             "#include <span>",
             "#include <string>",
@@ -158,6 +186,35 @@ def compile_case(compiler: list[str], include_dir: str, header: str, body: str, 
     return result.returncode == 0
 
 
+# Out-of-domain calls must report the targeted RejectionDiagnostic message
+# (REQ-DIAG-009) rather than a raw list of rejected concept candidates.
+DIAGNOSTIC_CASES = {
+    "Equal-float-diagnostic": "(void)cljonic::equal(1.0, 1.0);",
+    "Equal-mixed-diagnostic": "(void)cljonic::equal(cljonic::Vector<int, 2>{1}, 1);",
+}
+
+
+def diagnostic_message_reported(compiler: list[str], include_dir: str, header: str, body: str) -> bool:
+    source = "\n".join(
+        (
+            "#include <vector>",
+            f'#include "{header}"',
+            "int main() {",
+            f"  {body}",
+            "  return 0;",
+            "}",
+        )
+    )
+    result = subprocess.run(
+        [*compiler, "-std=c++23", "-fsyntax-only", "-I", include_dir, "-x", "c++", "-"],
+        input=source,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return result.returncode != 0 and "outside the supported equality domain" in (result.stdout + result.stderr)
+
+
 def main() -> int:
     compiler = os.environ.get("CXX", "c++").split()
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -172,6 +229,10 @@ def main() -> int:
         for name, body in PASS_CASES.items():
             if not compile_case(compiler, include_dir, header, body, preamble=PREAMBLE):
                 failures.append(f"{configuration}/{name}: expected to compile, but failed")
+
+        for name, body in DIAGNOSTIC_CASES.items():
+            if not diagnostic_message_reported(compiler, include_dir, header, body):
+                failures.append(f"{configuration}/{name}: targeted rejection diagnostic not reported")
 
     if failures:
         print("equal-compile-fail:failures:")

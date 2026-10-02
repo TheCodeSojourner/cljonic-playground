@@ -278,4 +278,7 @@ struct contains_floating_point<Range<T>> : std::bool_constant<contains_floating_
 template <typename T>
 struct contains_callable<Range<T>> : std::bool_constant<contains_callable_v<T>> {};
 
+template <typename T>
+struct contains_standard_range<Range<T>> : std::bool_constant<contains_standard_range_v<T>> {};
+
 } // namespace cljonic::concepts_detail

@@ -11,22 +11,25 @@ import os
 import subprocess
 
 FAILURE_CASES = {
-    "Map-variant-float": ("cljonic::Map<std::variant<int, double>, int, 4>", ""),
-    "Set-variant-float": ("cljonic::Set<std::variant<int, float>, 4>", ""),
-    "MapEntry-variant-float": ("cljonic::Set<cljonic::MapEntry<std::variant<int, double>, int>, 4>", ""),
+    "Map-variant-float": ("cljonic::Map<cljonic::Variant<int, double>, int, 4>", ""),
+    "Set-variant-float": ("cljonic::Set<cljonic::Variant<int, float>, 4>", ""),
+    "MapEntry-variant-float": ("cljonic::Set<cljonic::MapEntry<cljonic::Variant<int, double>, int>, 4>", ""),
     "Vector-float-key": ("cljonic::Set<cljonic::Vector<double, 3>, 4>", ""),
     "Map-vector-float-value": ("cljonic::Map<cljonic::Vector<double, 3>, int, 4>", ""),
-    "Variant-callable": ("cljonic::Set<std::variant<int, int (*)(int)>, 4>", ""),
+    "Variant-callable": ("cljonic::Set<cljonic::Variant<int, int (*)(int)>, 4>", ""),
     "Iterate-callable": ("cljonic::Set<cljonic::Iterate<int, int (*)(int)>, 4>", ""),
     "Repeat-float-set-element": ("cljonic::Set<cljonic::Repeat<double>, 4>", ""),
     "Cycle-float-source-set-element": ("cljonic::Set<cljonic::Cycle<cljonic::Vector<double, 3>>, 4>", ""),
-    "Variant-float-repeat": ("cljonic::Set<std::variant<int, cljonic::Repeat<double>>, 4>", ""),
-    "Variant-iterate-callable": ("cljonic::Set<std::variant<int, cljonic::Iterate<int, int (*)(int)>>, 4>", ""),
+    "Variant-float-repeat": ("cljonic::Set<cljonic::Variant<int, cljonic::Repeat<double>>, 4>", ""),
+    "Variant-iterate-callable": ("cljonic::Set<cljonic::Variant<int, cljonic::Iterate<int, int (*)(int)>>, 4>", ""),
+    # The standard-library variant is not a cljonic value type.
+    "Map-std-variant-key": ("cljonic::Map<std::variant<int, long>, int, 4>", ""),
+    "Set-std-variant-element": ("cljonic::Set<std::variant<int, long>, 4>", ""),
 }
 
 PASS_CASES = {
-    "Map-float-variant-value": "cljonic::Map<int, std::variant<int, double>, 4>{};",
-    "Set-variant-collection": "cljonic::Set<std::variant<int, cljonic::Vector<int, 3>>, 4>{};",
+    "Map-float-variant-value": "cljonic::Map<int, cljonic::Variant<int, double>, 4>{};",
+    "Set-variant-collection": "cljonic::Set<cljonic::Variant<int, cljonic::Vector<int, 3>>, 4>{};",
     "Map-collection-key": "cljonic::Map<cljonic::Vector<int, 3>, int, 4>{};",
     "Vector-float-element": "cljonic::Vector<double, 4>{1.0, 2.0};",
     "Map-float-value": "cljonic::Map<int, double, 4>{};",
@@ -37,7 +40,7 @@ PASS_CASES = {
     "Range-map-key": "cljonic::Map<cljonic::Range<int>, int, 4>{cljonic::MapEntry<cljonic::Range<int>, int>{cljonic::Range<int>{1, 5, 2}, 10}};",
     "Repeat-set-element": "cljonic::Set<cljonic::Repeat<int>, 4>{cljonic::Repeat<int>{7, 3U}, cljonic::Repeat<int>{8, 2U}};",
     "Cycle-set-element": "cljonic::Set<cljonic::Cycle<cljonic::Vector<int, 4>>, 4>{cljonic::cycle(cljonic::Vector<int, 4>{1, 2, 3}), cljonic::cycle(cljonic::Vector<int, 4>{1, 2, 4})};",
-    "Variant-producer-key": "cljonic::Set<std::variant<int, cljonic::Range<int>>, 4>{};",
+    "Variant-producer-key": "cljonic::Set<cljonic::Variant<int, cljonic::Range<int>>, 4>{};",
     "Vector-of-producers-equality": "cljonic::Vector<cljonic::Range<int>, 4> a{cljonic::Range<int>{1, 5, 2}, cljonic::Range<int>{2, 4}}; cljonic::Vector<cljonic::Range<int>, 4> b{cljonic::Range<int>{1, 5, 2}, cljonic::Range<int>{2, 4}}; (void)(a == b);",
     "Parameters-equal-call": "(void)cljonic::parameters_equal(cljonic::Range<int>{1, 5, 2}, cljonic::Range<int>{1, 5, 2}); (void)cljonic::parameters_equal(cljonic::Repeat<int>{7, 3U}, cljonic::Repeat<int>{7, 3U}); (void)cljonic::parameters_equal(cljonic::cycle(cljonic::Vector<int, 4>{1, 2, 3}), cljonic::cycle(cljonic::Vector<int, 4>{1, 2, 3}));",
 }

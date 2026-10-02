@@ -47,6 +47,9 @@ FAILURE_CASES = {
     "NotEqual-std-string-view": ("(void)cljonic::not_equal(std::string_view{\"a\"}, "
                                  "std::string_view{\"a\"});"),
     "NotEqual-std-map": "(void)cljonic::not_equal(std::map<int, int>{}, std::map<int, int>{});",
+    # The standard-library variant is not a cljonic value type.
+    "NotEqual-std-variant": ("(void)cljonic::not_equal(std::variant<int, long>{1}, "
+                             "std::variant<int, long>{1});"),
     # Cross-type numeric and element-type rules.
     "NotEqual-scalar-cross-type": "(void)cljonic::not_equal(1, 1L);",
     "NotEqual-sequential-element-cross-type": ("(void)cljonic::not_equal(cljonic::Vector<int, 2>{1}, "
@@ -81,8 +84,8 @@ PASS_CASES = {
     "NotEqual-scalar": "(void)cljonic::not_equal(1, 1);",
     "NotEqual-enum": ("enum class NotEqualColor { Red, Green }; "
                       "(void)cljonic::not_equal(NotEqualColor::Red, NotEqualColor::Red);"),
-    "NotEqual-variant": ("(void)cljonic::not_equal(std::variant<int, long>{1}, "
-                         "std::variant<int, long>{1});"),
+    "NotEqual-cljonic-variant": ("(void)cljonic::not_equal(cljonic::Variant<int, long>{1}, "
+                                 "cljonic::Variant<int, long>{1});"),
     "NotEqual-map-entry": ("(void)cljonic::not_equal(cljonic::MapEntry<int, int>{1, 2}, "
                            "cljonic::MapEntry<int, int>{1, 2});"),
     "NotEqual-vector-vs-range": ("(void)cljonic::not_equal(cljonic::Vector<int, 4>{1, 2, 3}, "

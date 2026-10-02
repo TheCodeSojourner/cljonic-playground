@@ -241,7 +241,7 @@ TEST_CASE("Recursive collection equality over variant and nested collections", "
     STATIC_REQUIRE(m1 == m2); // order-insensitive even over nested keys
 
     // Alternative-strict variant keys: same alternative equal, different not.
-    using alt = std::variant<int, long>;
+    using alt = cljonic::Variant<int, long>;
     constexpr cljonic::Map<alt, int, 4> vm{cljonic::MapEntry<alt, int>{alt{1}, 10}};
     STATIC_REQUIRE(vm(alt{1}) == 10);
     STATIC_REQUIRE(vm(alt{1L}, -1) == -1); // NoCrossTypeNumericUnification
