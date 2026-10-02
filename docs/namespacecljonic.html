@@ -110,6 +110,7 @@ Namespaces</h2></td></tr>
 <tr class="memitem:concepts_5Fdetail" id="r_concepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a></td></tr>
 <tr class="memitem:core" id="r_core"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1core.html">core</a></td></tr>
 <tr class="memitem:equal_5Fmatch_5Fdetail" id="r_equal_5Fmatch_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1equal__match__detail.html">equal_match_detail</a></td></tr>
+<tr class="memitem:variant_5Fdetail" id="r_variant_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1variant__detail.html">variant_detail</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -123,6 +124,8 @@ Classes</h2></td></tr>
 <tr class="memitem:Repeatedly" id="r_Repeatedly"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a></td></tr>
 <tr class="memitem:Set" id="r_Set"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_set.html">Set</a></td></tr>
 <tr class="memitem:String" id="r_String"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_string.html">String</a></td></tr>
+<tr class="memitem:Variant" id="r_Variant"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_variant.html">Variant</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A composite value holding exactly one of several alternatives.  <a href="classcljonic_1_1_variant.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Vector" id="r_Vector"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
@@ -161,40 +164,37 @@ requires concepts::NothrowCollectionElement&lt;std::ranges::range_value_t&lt;con
 <tr class="memitem:a2936b6921ca67e4b8ae5f221c095bde0" id="r_a2936b6921ca67e4b8ae5f221c095bde0"><td class="memTemplParams" colspan="2">template&lt;concepts::SequenceableCollection C&gt; </td></tr>
 <tr class="memitem:a2936b6921ca67e4b8ae5f221c095bde0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a2936b6921ca67e4b8ae5f221c095bde0">empty</a> (const C &amp;) noexcept -&gt; C</td></tr>
 <tr class="memdesc:a2936b6921ca67e4b8ae5f221c095bde0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an empty owning value of the same collection type as the input.  <br /></td></tr>
-<tr class="memitem:a6a29b4012b64c65ddfbede692b0ac398" id="r_a6a29b4012b64c65ddfbede692b0ac398"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a334c4a4c42fdb79d7ebc3e73b517e6f8">concepts_detail::equality_family::none</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a334c4a4c42fdb79d7ebc3e73b517e6f8">concepts_detail::equality_family::none</a>) &amp;&amp;<br class="typebreak" />
- <a class="el" href="namespacecljonic_1_1concepts__detail.html#a455ccaa3a11af58fca779e4b0ced6e95">concepts_detail::in_non_cljonic_fallthrough_domain_v</a>&lt;Lhs&gt; &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a455ccaa3a11af58fca779e4b0ced6e95">concepts_detail::in_non_cljonic_fallthrough_domain_v</a>&lt;Rhs&gt; &amp;&amp;<br class="typebreak" />
- std::same_as&lt;Lhs, Rhs&gt; &amp;&amp; concepts::StableEqualityComparable&lt;Lhs&gt;)</td></tr>
-<tr class="memitem:a6a29b4012b64c65ddfbede692b0ac398 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
-<tr class="memdesc:a6a29b4012b64c65ddfbede692b0ac398"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares one or more values for equality.  <br /></td></tr>
-<tr class="memitem:a13319b73b7caecf6491b81f8ac0f7db7" id="r_a13319b73b7caecf6491b81f8ac0f7db7"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a6ec7489017b25b5fff20d353b6d2162e">concepts_detail::equality_family::sequential</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a6ec7489017b25b5fff20d353b6d2162e">concepts_detail::equality_family::sequential</a>) &amp;&amp; std::same_as&lt;typename <br class="typebreak" />
-Lhs::value_type, typename Rhs::value_type&gt; &amp;&amp; concepts::StableEqualityComparable&lt;typename Lhs::value_type&gt;)</td></tr>
-<tr class="memitem:a13319b73b7caecf6491b81f8ac0f7db7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a13319b73b7caecf6491b81f8ac0f7db7">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
-<tr class="memitem:af4785d4de5ef5939549ccfb34a5343b8" id="r_af4785d4de5ef5939549ccfb34a5343b8"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39ab45cffe084dd3d20d928bee85e7b0f21">concepts_detail::equality_family::string</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39ab45cffe084dd3d20d928bee85e7b0f21">concepts_detail::equality_family::string</a>))</td></tr>
-<tr class="memitem:af4785d4de5ef5939549ccfb34a5343b8 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af4785d4de5ef5939549ccfb34a5343b8">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
-<tr class="memitem:a8467803a2b17de0700e5bb87676dc5e1" id="r_a8467803a2b17de0700e5bb87676dc5e1"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a1d78dc8ed51214e518b5114fe24490ae">concepts_detail::equality_family::map</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a1d78dc8ed51214e518b5114fe24490ae">concepts_detail::equality_family::map</a>) &amp;&amp; std::same_as&lt;typename <br class="typebreak" />
-Lhs::key_type, typename Rhs::key_type&gt; &amp;&amp; std::same_as&lt;typename Lhs::association_value_type, typename <br class="typebreak" />
-Rhs::association_value_type&gt; &amp;&amp; concepts::StableEqualityComparable&lt;typename Lhs::key_type&gt; &amp;&amp;<br class="typebreak" />
- concepts::StableEqualityComparable&lt;typename Lhs::association_value_type&gt;)</td></tr>
-<tr class="memitem:a8467803a2b17de0700e5bb87676dc5e1 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a8467803a2b17de0700e5bb87676dc5e1">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
-<tr class="memitem:a9414d46356f14e16218269b27839541a" id="r_a9414d46356f14e16218269b27839541a"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39acdaeeeba9b4a4c5ebf042c0215a7bb0e">concepts_detail::equality_family::set</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39acdaeeeba9b4a4c5ebf042c0215a7bb0e">concepts_detail::equality_family::set</a>) &amp;&amp; std::same_as&lt;typename <br class="typebreak" />
-Lhs::value_type, typename Rhs::value_type&gt; &amp;&amp; concepts::StableEqualityComparable&lt;typename Lhs::value_type&gt;)</td></tr>
-<tr class="memitem:a9414d46356f14e16218269b27839541a template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a9414d46356f14e16218269b27839541a">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
-<tr class="memitem:a4d20aa2ad95d30b7e71e2043c03f6c62" id="r_a4d20aa2ad95d30b7e71e2043c03f6c62"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
-requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2be51a4f2f34f470cb41e721ef">concepts_detail::equal_pair_admissible_v</a>&lt;T, T&gt;)</td></tr>
-<tr class="memitem:a4d20aa2ad95d30b7e71e2043c03f6c62 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4d20aa2ad95d30b7e71e2043c03f6c62">equal</a> (const T &amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a3379aa2a8b5ffa4566662c4b4a1455c2" id="r_a3379aa2a8b5ffa4566662c4b4a1455c2"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</td></tr>
+<tr class="memitem:a3379aa2a8b5ffa4566662c4b4a1455c2 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memdesc:a3379aa2a8b5ffa4566662c4b4a1455c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares one or more values for equality.  <br /></td></tr>
+<tr class="memitem:a68d73a8d85fd9c24a725a7e1a6ab9265" id="r_a68d73a8d85fd9c24a725a7e1a6ab9265"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualSequentialPairAdmissible&lt;Lhs, Rhs&gt;</td></tr>
+<tr class="memitem:a68d73a8d85fd9c24a725a7e1a6ab9265 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a68d73a8d85fd9c24a725a7e1a6ab9265">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a8dfc454dd9c083e77b10d6e77a59244b" id="r_a8dfc454dd9c083e77b10d6e77a59244b"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualStringPairAdmissible&lt;Lhs, Rhs&gt;</td></tr>
+<tr class="memitem:a8dfc454dd9c083e77b10d6e77a59244b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a8dfc454dd9c083e77b10d6e77a59244b">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:aeddd1ae6ddb0d4d4b3b925fbbd387d39" id="r_aeddd1ae6ddb0d4d4b3b925fbbd387d39"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualMapPairAdmissible&lt;Lhs, Rhs&gt;</td></tr>
+<tr class="memitem:aeddd1ae6ddb0d4d4b3b925fbbd387d39 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aeddd1ae6ddb0d4d4b3b925fbbd387d39">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ac2a6b2fd45f146dc143af8e24f1111ff" id="r_ac2a6b2fd45f146dc143af8e24f1111ff"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualSetPairAdmissible&lt;Lhs, Rhs&gt;</td></tr>
+<tr class="memitem:ac2a6b2fd45f146dc143af8e24f1111ff template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac2a6b2fd45f146dc143af8e24f1111ff">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:af542d229ebb788632f3f3712e1c16740" id="r_af542d229ebb788632f3f3712e1c16740"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</td></tr>
+<tr class="memitem:af542d229ebb788632f3f3712e1c16740 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af542d229ebb788632f3f3712e1c16740">equal</a> (const T &amp;value) noexcept -&gt; bool</td></tr>
 <tr class="memitem:a6b6442c36597826d84d04d35af7c6cfe" id="r_a6b6442c36597826d84d04d35af7c6cfe"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
 requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;)</td></tr>
 <tr class="memitem:a6b6442c36597826d84d04d35af7c6cfe template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a6b6442c36597826d84d04d35af7c6cfe">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ab79680955f942d9efa0877ffe69508e3" id="r_ab79680955f942d9efa0877ffe69508e3"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires (!concepts_detail::EqualPairAdmissible&lt;T, T&gt;)</td></tr>
+<tr class="memitem:ab79680955f942d9efa0877ffe69508e3 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ab79680955f942d9efa0877ffe69508e3">equal</a> (const T &amp;value) -&gt; bool</td></tr>
+<tr class="memitem:aaa53fc5c7107a80f07244cf122b53110" id="r_aaa53fc5c7107a80f07244cf122b53110"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</td></tr>
+<tr class="memitem:aaa53fc5c7107a80f07244cf122b53110 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aaa53fc5c7107a80f07244cf122b53110">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) -&gt; bool</td></tr>
+<tr class="memitem:a704f218bb170baf07cc716a95c592f01" id="r_a704f218bb170baf07cc716a95c592f01"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
+requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;))</td></tr>
+<tr class="memitem:a704f218bb170baf07cc716a95c592f01 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a704f218bb170baf07cc716a95c592f01">equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs, const Rest &amp;... rest) -&gt; bool</td></tr>
 <tr class="memitem:a873d28380c259fbc2ee183eb7d0c7328" id="r_a873d28380c259fbc2ee183eb7d0c7328"><td class="memTemplParams" colspan="2">template&lt;typename KeyType, typename ValueType&gt; </td></tr>
 <tr class="memitem:a873d28380c259fbc2ee183eb7d0c7328 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a873d28380c259fbc2ee183eb7d0c7328">first</a> (const <a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a>&lt; KeyType, ValueType &gt; &amp;entry) noexcept -&gt; const KeyType &amp;</td></tr>
 <tr class="memdesc:a873d28380c259fbc2ee183eb7d0c7328"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first element of a sequenceable collection, or the key of a <a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a>.  <br /></td></tr>
@@ -232,16 +232,25 @@ requires (Extent != std::dynamic_extent)</td></tr>
 <tr class="memitem:a8180deddc8b1aa7386990604604648f0" id="r_a8180deddc8b1aa7386990604604648f0"><td class="memTemplParams" colspan="2">template&lt;concepts::SequenceableCollection C&gt; </td></tr>
 <tr class="memitem:a8180deddc8b1aa7386990604604648f0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a> (const C &amp;collection) noexcept -&gt; C</td></tr>
 <tr class="memdesc:a8180deddc8b1aa7386990604604648f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value.  <br /></td></tr>
-<tr class="memitem:a5569ba9d89a070579878cd759311a261" id="r_a5569ba9d89a070579878cd759311a261"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
-requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2be51a4f2f34f470cb41e721ef">concepts_detail::equal_pair_admissible_v</a>&lt;T, T&gt;)</td></tr>
-<tr class="memitem:a5569ba9d89a070579878cd759311a261 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5569ba9d89a070579878cd759311a261">not_equal</a> (const T &amp;value) noexcept -&gt; bool</td></tr>
-<tr class="memdesc:a5569ba9d89a070579878cd759311a261"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares one or more values for inequality.  <br /></td></tr>
-<tr class="memitem:a3a8a90fba2d6f902dc60dd3ac834692e" id="r_a3a8a90fba2d6f902dc60dd3ac834692e"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
-requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2be51a4f2f34f470cb41e721ef">concepts_detail::equal_pair_admissible_v</a>&lt;Lhs, Rhs&gt;)</td></tr>
-<tr class="memitem:a3a8a90fba2d6f902dc60dd3ac834692e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a3a8a90fba2d6f902dc60dd3ac834692e">not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a52f3ba9511cd0e5899669f9450adbdfb" id="r_a52f3ba9511cd0e5899669f9450adbdfb"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</td></tr>
+<tr class="memitem:a52f3ba9511cd0e5899669f9450adbdfb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a> (const T &amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memdesc:a52f3ba9511cd0e5899669f9450adbdfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares one or more values for inequality.  <br /></td></tr>
+<tr class="memitem:a04f227c4e7c672ed4242b3998e0406c7" id="r_a04f227c4e7c672ed4242b3998e0406c7"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;</td></tr>
+<tr class="memitem:a04f227c4e7c672ed4242b3998e0406c7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a04f227c4e7c672ed4242b3998e0406c7">not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
 <tr class="memitem:af7cb99bd9ad0db9b7b321444b45cbba5" id="r_af7cb99bd9ad0db9b7b321444b45cbba5"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
 requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;)</td></tr>
 <tr class="memitem:af7cb99bd9ad0db9b7b321444b45cbba5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af7cb99bd9ad0db9b7b321444b45cbba5">not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a30537f378955869f2262e93570e6c9e9" id="r_a30537f378955869f2262e93570e6c9e9"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires (!concepts_detail::EqualPairAdmissible&lt;T, T&gt;)</td></tr>
+<tr class="memitem:a30537f378955869f2262e93570e6c9e9 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a30537f378955869f2262e93570e6c9e9">not_equal</a> (const T &amp;value) -&gt; bool</td></tr>
+<tr class="memitem:ac81c8dd9893bc940406c86e32ec60eee" id="r_ac81c8dd9893bc940406c86e32ec60eee"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</td></tr>
+<tr class="memitem:ac81c8dd9893bc940406c86e32ec60eee template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac81c8dd9893bc940406c86e32ec60eee">not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) -&gt; bool</td></tr>
+<tr class="memitem:a04b820028ce48bb450346106b43b6683" id="r_a04b820028ce48bb450346106b43b6683"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
+requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;))</td></tr>
+<tr class="memitem:a04b820028ce48bb450346106b43b6683 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a04b820028ce48bb450346106b43b6683">not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs, const Rest &amp;... rest) -&gt; bool</td></tr>
 <tr class="memitem:a154b02fc5978c390177002efc2458ecb" id="r_a154b02fc5978c390177002efc2458ecb"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
 <tr class="memitem:a154b02fc5978c390177002efc2458ecb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a154b02fc5978c390177002efc2458ecb">peek</a> (const C &amp;collection) noexcept</td></tr>
 <tr class="memdesc:a154b02fc5978c390177002efc2458ecb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observes the accessible element without removal.  <br /></td></tr>
@@ -349,7 +358,7 @@ template&lt;typename C, typename K, typename V&gt; </div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a1985f084fdf102fe981bcf4d6a72c124">contains</a>(m1, 2) &amp;&amp; m1(2) == 200) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00109">cljonic-map.hpp:109</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00110">cljonic-map.hpp:110</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a1985f084fdf102fe981bcf4d6a72c124"><div class="ttname"><a href="#a1985f084fdf102fe981bcf4d6a72c124">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept -&gt; bool</div><div class="ttdoc">Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure&#39;s co...</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00053">cljonic-contains.hpp:53</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_ab8272bbb9a27e6139cbfb276fb8b317f"><div class="ttname"><a href="#ab8272bbb9a27e6139cbfb276fb8b317f">cljonic::assoc</a></div><div class="ttdeci">constexpr auto assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept</div><div class="ttdoc">Associates a key and value in an associative collection or index in a vector.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00032">cljonic-assoc.hpp:32</a></div></div>
@@ -461,7 +470,7 @@ template&lt;typename C, typename... Args&gt; </div>
 <div class="line">  <span class="keywordflow">return</span> (q_ok &amp;&amp; s_ok) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00086">cljonic-queue.hpp:86</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00096">cljonic-set.hpp:96</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00097">cljonic-set.hpp:97</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_affd9a34d9568a940de23e1b3cbe619e9"><div class="ttname"><a href="#affd9a34d9568a940de23e1b3cbe619e9">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection, Args &amp;&amp;... args) noexcept -&gt; bool</div><div class="ttdoc">Checks if conj can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00035">cljonic-can-conj.hpp:35</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00035">35</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
@@ -838,16 +847,48 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 
 </div>
 </div>
-<a id="a9414d46356f14e16218269b27839541a" name="a9414d46356f14e16218269b27839541a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9414d46356f14e16218269b27839541a">&#9670;&#160;</a></span>equal() <span class="overload">[1/7]</span></h2>
+<a id="aaa53fc5c7107a80f07244cf122b53110" name="aaa53fc5c7107a80f07244cf122b53110"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa53fc5c7107a80f07244cf122b53110">&#9670;&#160;</a></span>equal() <span class="overload">[1/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39acdaeeeba9b4a4c5ebf042c0215a7bb0e">concepts_detail::equality_family::set</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39acdaeeeba9b4a4c5ebf042c0215a7bb0e">concepts_detail::equality_family::set</a>) &amp;&amp; std::same_as&lt;typename <br class="typebreak" />
-Lhs::value_type, typename Rhs::value_type&gt; &amp;&amp; concepts::StableEqualityComparable&lt;typename Lhs::value_type&gt;)</div>
+requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::equal </td>
+          <td>(</td>
+          <td class="paramtype">const Lhs &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rhs &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00360">360</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac2a6b2fd45f146dc143af8e24f1111ff" name="ac2a6b2fd45f146dc143af8e24f1111ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2a6b2fd45f146dc143af8e24f1111ff">&#9670;&#160;</a></span>equal() <span class="overload">[2/10]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualSetPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -870,22 +911,18 @@ Lhs::value_type, typename Rhs::value_type&gt; &amp;&amp; concepts::StableEqualit
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00319">319</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00321">321</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a8467803a2b17de0700e5bb87676dc5e1" name="a8467803a2b17de0700e5bb87676dc5e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8467803a2b17de0700e5bb87676dc5e1">&#9670;&#160;</a></span>equal() <span class="overload">[2/7]</span></h2>
+<a id="aeddd1ae6ddb0d4d4b3b925fbbd387d39" name="aeddd1ae6ddb0d4d4b3b925fbbd387d39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeddd1ae6ddb0d4d4b3b925fbbd387d39">&#9670;&#160;</a></span>equal() <span class="overload">[3/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a1d78dc8ed51214e518b5114fe24490ae">concepts_detail::equality_family::map</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a1d78dc8ed51214e518b5114fe24490ae">concepts_detail::equality_family::map</a>) &amp;&amp; std::same_as&lt;typename <br class="typebreak" />
-Lhs::key_type, typename Rhs::key_type&gt; &amp;&amp; std::same_as&lt;typename Lhs::association_value_type, typename <br class="typebreak" />
-Rhs::association_value_type&gt; &amp;&amp; concepts::StableEqualityComparable&lt;typename Lhs::key_type&gt; &amp;&amp;<br class="typebreak" />
- concepts::StableEqualityComparable&lt;typename Lhs::association_value_type&gt;)</div>
+requires concepts_detail::EqualMapPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -908,19 +945,18 @@ Rhs::association_value_type&gt; &amp;&amp; concepts::StableEqualityComparable&lt
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00307">307</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00312">312</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
-<a id="af4785d4de5ef5939549ccfb34a5343b8" name="af4785d4de5ef5939549ccfb34a5343b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4785d4de5ef5939549ccfb34a5343b8">&#9670;&#160;</a></span>equal() <span class="overload">[3/7]</span></h2>
+<a id="a8dfc454dd9c083e77b10d6e77a59244b" name="a8dfc454dd9c083e77b10d6e77a59244b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8dfc454dd9c083e77b10d6e77a59244b">&#9670;&#160;</a></span>equal() <span class="overload">[4/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39ab45cffe084dd3d20d928bee85e7b0f21">concepts_detail::equality_family::string</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39ab45cffe084dd3d20d928bee85e7b0f21">concepts_detail::equality_family::string</a>))</div>
+requires concepts_detail::EqualStringPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -943,20 +979,18 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e4
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00296">296</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00306">306</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a13319b73b7caecf6491b81f8ac0f7db7" name="a13319b73b7caecf6491b81f8ac0f7db7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13319b73b7caecf6491b81f8ac0f7db7">&#9670;&#160;</a></span>equal() <span class="overload">[4/7]</span></h2>
+<a id="a68d73a8d85fd9c24a725a7e1a6ab9265" name="a68d73a8d85fd9c24a725a7e1a6ab9265"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68d73a8d85fd9c24a725a7e1a6ab9265">&#9670;&#160;</a></span>equal() <span class="overload">[5/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a6ec7489017b25b5fff20d353b6d2162e">concepts_detail::equality_family::sequential</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a6ec7489017b25b5fff20d353b6d2162e">concepts_detail::equality_family::sequential</a>) &amp;&amp; std::same_as&lt;typename <br class="typebreak" />
-Lhs::value_type, typename Rhs::value_type&gt; &amp;&amp; concepts::StableEqualityComparable&lt;typename Lhs::value_type&gt;)</div>
+requires concepts_detail::EqualSequentialPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -979,21 +1013,18 @@ Lhs::value_type, typename Rhs::value_type&gt; &amp;&amp; concepts::StableEqualit
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00289">289</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00300">300</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a6a29b4012b64c65ddfbede692b0ac398" name="a6a29b4012b64c65ddfbede692b0ac398"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a29b4012b64c65ddfbede692b0ac398">&#9670;&#160;</a></span>equal() <span class="overload">[5/7]</span></h2>
+<a id="a3379aa2a8b5ffa4566662c4b4a1455c2" name="a3379aa2a8b5ffa4566662c4b4a1455c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3379aa2a8b5ffa4566662c4b4a1455c2">&#9670;&#160;</a></span>equal() <span class="overload">[6/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Lhs, typename Rhs&gt; <br />
-requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Lhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a334c4a4c42fdb79d7ebc3e73b517e6f8">concepts_detail::equality_family::none</a>) &amp;&amp;<br class="typebreak" />
- (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">concepts_detail::equal_family_of_v</a>&lt;Rhs&gt; == <a class="el" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a334c4a4c42fdb79d7ebc3e73b517e6f8">concepts_detail::equality_family::none</a>) &amp;&amp;<br class="typebreak" />
- <a class="el" href="namespacecljonic_1_1concepts__detail.html#a455ccaa3a11af58fca779e4b0ced6e95">concepts_detail::in_non_cljonic_fallthrough_domain_v</a>&lt;Lhs&gt; &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a455ccaa3a11af58fca779e4b0ced6e95">concepts_detail::in_non_cljonic_fallthrough_domain_v</a>&lt;Rhs&gt; &amp;&amp;<br class="typebreak" />
- std::same_as&lt;Lhs, Rhs&gt; &amp;&amp; concepts::StableEqualityComparable&lt;Lhs&gt;)</div>
+requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1020,13 +1051,13 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e4
 <p><a class="anchor" id="Equal"></a> </p>
 <p><b>Equal</b> compares values by their contents:</p>
 <ul>
-<li>Calling <span class="tt"><a class="el" href="#a6a29b4012b64c65ddfbede692b0ac398" title="Compares one or more values for equality.">equal</a></span> with one value always returns true. - Two ordinary values compare equal when they are the same type and compare equal with <span class="tt">==</span> (e.g., <span class="tt">int</span>, a scoped enum, or a simple struct with an explicit or defaulted <span class="tt">operator==</span>).</li>
-<li>Vectors, Queues, Ranges, Repeats, Cycles, Iterates, and Repeatedlys compare equal when they contain or produce the same elements in the same order. Producers are compared by what they produce, one element at a time, and comparison always finishes: no producer yields more than <span class="tt"><a class="el" href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a></span> elements, so two unbounded producers are compared over that configured maximum.</li>
+<li>Calling <span class="tt"><a class="el" href="#a3379aa2a8b5ffa4566662c4b4a1455c2" title="Compares one or more values for equality.">equal</a></span> with one value always returns true. - Two ordinary values compare equal when they are the same type and compare equal with <span class="tt">==</span> (e.g., <span class="tt">int</span>, a scoped enum, or a simple struct with an explicit or defaulted <span class="tt">operator==</span>). The comparison must not throw, so a type whose <span class="tt">==</span> can throw is not supported; pointers and unscoped enums are not supported either.</li>
+<li>Vectors, Queues, Ranges, Repeats, Cycles, and the <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a> and <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a> producers compare equal when they contain or produce the same elements in the same order. Producers are compared by what they produce, one element at a time, and comparison always finishes: no producer yields more than <span class="tt"><a class="el" href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a></span> elements, so two unbounded producers are compared over that configured maximum.</li>
 <li>Maps compare equal when they hold the same entries, regardless of insertion order.</li>
 <li>Sets compare equal when they hold the same elements, regardless of insertion order.</li>
 <li>Strings compare equal when they hold the same characters.</li>
 </ul>
-<p>Compared collections and sets must have matching element types, and compared maps must have matching key and value types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as floating-point numbers, are not supported. Nested collections and composite values compare by the same rules.</p>
+<p>Compared collections and sets must have matching element types, and compared maps must have matching key and value types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as floating-point numbers, are not supported. Standard-library range and container types are not supported at any depth. Nested collections and composite values compare by the same rules; a nested producer is compared by its stored parameters.</p>
 <p>With more than two arguments, every adjacent pair is compared, from left to right, stopping at the first unequal pair.</p>
 <p><b>Examples</b> </p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
@@ -1046,36 +1077,75 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3ed7e4
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2 = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{1, 2, 3};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> str1 = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;8&gt;</a>{<span class="stringliteral">&quot;abc&quot;</span>};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> str2 = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;16&gt;</a>{<span class="stringliteral">&quot;abc&quot;</span>};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(1, 1));</div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(1, 2));</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(1));        <span class="comment">// single value</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(1, 1, 1));  <span class="comment">// multiple values, all equal</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(1, 2, 1)); <span class="comment">// stops at the first unequal pair</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(v, r, q));  <span class="comment">// Vector, Range, and Queue with the</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1, 1));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1, 2));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1));        <span class="comment">// single value</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1, 1, 1));  <span class="comment">// multiple values, all equal</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1, 2, 1)); <span class="comment">// stops at the first unequal pair</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(v, r, q));  <span class="comment">// Vector, Range, and Queue with the</span></div>
 <div class="line">                                  <span class="comment">// same elements compare equal</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(v, r));     <span class="comment">// Vector vs Range</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(v, q));     <span class="comment">// Vector vs Queue</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1, 1, 1}, rep));</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(m1, m2));     <span class="comment">// Map equality ignores entry order</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(s1, s2));     <span class="comment">// Set equality ignores element order</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(str1, str2)); <span class="comment">// String equality compares content</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(<a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat&lt;int&gt;</a>{}, <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat&lt;int&gt;</a>{})); <span class="comment">// bounded prefix</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(v, r));     <span class="comment">// Vector vs Range</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(v, q));     <span class="comment">// Vector vs Queue</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1, 1, 1}, rep));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(m1, m2));     <span class="comment">// Map equality ignores entry order</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(s1, s2));     <span class="comment">// Set equality ignores element order</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(str1, str2)); <span class="comment">// String equality compares content</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(<a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat&lt;int&gt;</a>{}, <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat&lt;int&gt;</a>{})); <span class="comment">// bounded prefix</span></div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> runtime_v = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1, 2, 3};</div>
 <div class="line">  <span class="keyword">auto</span> runtime_r = <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a>{1, 4, 1};</div>
-<div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#a6a29b4012b64c65ddfbede692b0ac398">equal</a>(runtime_v, runtime_r) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(runtime_v, runtime_r) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_repeat_html"><div class="ttname"><a href="classcljonic_1_1_repeat.html">cljonic::Repeat</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00062">cljonic-repeat.hpp:62</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a6a29b4012b64c65ddfbede692b0ac398"><div class="ttname"><a href="#a6a29b4012b64c65ddfbede692b0ac398">cljonic::equal</a></div><div class="ttdeci">constexpr auto equal(const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</div><div class="ttdoc">Compares one or more values for equality.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-equal_8hpp_source.html#l00280">cljonic-equal.hpp:280</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a3379aa2a8b5ffa4566662c4b4a1455c2"><div class="ttname"><a href="#a3379aa2a8b5ffa4566662c4b4a1455c2">cljonic::equal</a></div><div class="ttdeci">constexpr auto equal(const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</div><div class="ttdoc">Compares one or more values for equality.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-equal_8hpp_source.html#l00294">cljonic-equal.hpp:294</a></div></div>
 <div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00033">cljonic-map-entry.hpp:33</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00280">280</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00294">294</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a704f218bb170baf07cc716a95c592f01" name="a704f218bb170baf07cc716a95c592f01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a704f218bb170baf07cc716a95c592f01">&#9670;&#160;</a></span>equal() <span class="overload">[7/10]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
+requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;))</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::equal </td>
+          <td>(</td>
+          <td class="paramtype">const Lhs &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rhs &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00373">373</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a6b6442c36597826d84d04d35af7c6cfe" name="a6b6442c36597826d84d04d35af7c6cfe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b6442c36597826d84d04d35af7c6cfe">&#9670;&#160;</a></span>equal() <span class="overload">[6/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b6442c36597826d84d04d35af7c6cfe">&#9670;&#160;</a></span>equal() <span class="overload">[8/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1109,18 +1179,48 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; <a class="el" href="namespacecljo
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00334">334</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00336">336</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a4d20aa2ad95d30b7e71e2043c03f6c62" name="a4d20aa2ad95d30b7e71e2043c03f6c62"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d20aa2ad95d30b7e71e2043c03f6c62">&#9670;&#160;</a></span>equal() <span class="overload">[7/7]</span></h2>
+<a id="ab79680955f942d9efa0877ffe69508e3" name="ab79680955f942d9efa0877ffe69508e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab79680955f942d9efa0877ffe69508e3">&#9670;&#160;</a></span>equal() <span class="overload">[9/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; <br />
-requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2be51a4f2f34f470cb41e721ef">concepts_detail::equal_pair_admissible_v</a>&lt;T, T&gt;)</div>
+requires (!concepts_detail::EqualPairAdmissible&lt;T, T&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::equal </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td> -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00349">349</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af542d229ebb788632f3f3712e1c16740" name="af542d229ebb788632f3f3712e1c16740"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af542d229ebb788632f3f3712e1c16740">&#9670;&#160;</a></span>equal() <span class="overload">[10/10]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; <br />
+requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1139,7 +1239,7 @@ requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00328">328</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00330">330</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -1635,14 +1735,48 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 
 </div>
 </div>
-<a id="a3a8a90fba2d6f902dc60dd3ac834692e" name="a3a8a90fba2d6f902dc60dd3ac834692e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a8a90fba2d6f902dc60dd3ac834692e">&#9670;&#160;</a></span>not_equal() <span class="overload">[1/3]</span></h2>
+<a id="ac81c8dd9893bc940406c86e32ec60eee" name="ac81c8dd9893bc940406c86e32ec60eee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac81c8dd9893bc940406c86e32ec60eee">&#9670;&#160;</a></span>not_equal() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Lhs, typename Rhs&gt; <br />
-requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2be51a4f2f34f470cb41e721ef">concepts_detail::equal_pair_admissible_v</a>&lt;Lhs, Rhs&gt;)</div>
+requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::not_equal </td>
+          <td>(</td>
+          <td class="paramtype">const Lhs &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rhs &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00094">94</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a04f227c4e7c672ed4242b3998e0406c7" name="a04f227c4e7c672ed4242b3998e0406c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04f227c4e7c672ed4242b3998e0406c7">&#9670;&#160;</a></span>not_equal() <span class="overload">[2/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1669,8 +1803,47 @@ requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2
 
 </div>
 </div>
+<a id="a04b820028ce48bb450346106b43b6683" name="a04b820028ce48bb450346106b43b6683"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04b820028ce48bb450346106b43b6683">&#9670;&#160;</a></span>not_equal() <span class="overload">[3/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
+requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;))</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::not_equal </td>
+          <td>(</td>
+          <td class="paramtype">const Lhs &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rhs &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00104">104</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+
+</div>
+</div>
 <a id="af7cb99bd9ad0db9b7b321444b45cbba5" name="af7cb99bd9ad0db9b7b321444b45cbba5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7cb99bd9ad0db9b7b321444b45cbba5">&#9670;&#160;</a></span>not_equal() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af7cb99bd9ad0db9b7b321444b45cbba5">&#9670;&#160;</a></span>not_equal() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1708,14 +1881,44 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; <a class="el" href="namespacecljo
 
 </div>
 </div>
-<a id="a5569ba9d89a070579878cd759311a261" name="a5569ba9d89a070579878cd759311a261"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5569ba9d89a070579878cd759311a261">&#9670;&#160;</a></span>not_equal() <span class="overload">[3/3]</span></h2>
+<a id="a30537f378955869f2262e93570e6c9e9" name="a30537f378955869f2262e93570e6c9e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30537f378955869f2262e93570e6c9e9">&#9670;&#160;</a></span>not_equal() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; <br />
-requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2be51a4f2f34f470cb41e721ef">concepts_detail::equal_pair_admissible_v</a>&lt;T, T&gt;)</div>
+requires (!concepts_detail::EqualPairAdmissible&lt;T, T&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::not_equal </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td> -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00085">85</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a52f3ba9511cd0e5899669f9450adbdfb" name="a52f3ba9511cd0e5899669f9450adbdfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52f3ba9511cd0e5899669f9450adbdfb">&#9670;&#160;</a></span>not_equal() <span class="overload">[6/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; <br />
+requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1738,12 +1941,12 @@ requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2
 <p><a class="anchor" id="NotEqual"></a> </p>
 <p><b>NotEqual</b> is the negation of <a class="el" href="#Equal" title="Equal">Equal</a> : it answers the same question and returns the opposite result, over the same values and by the same rules.</p>
 <ul>
-<li>Calling <span class="tt"><a class="el" href="#a5569ba9d89a070579878cd759311a261" title="Compares one or more values for inequality.">not_equal</a></span> with one value always returns false, because a value is never unequal to itself.</li>
+<li>Calling <span class="tt"><a class="el" href="#a52f3ba9511cd0e5899669f9450adbdfb" title="Compares one or more values for inequality.">not_equal</a></span> with one value always returns false, because a value is never unequal to itself.</li>
 <li>Two ordinary values are unequal when they are the same type and compare unequal with <span class="tt">==</span>.</li>
 <li>Vectors, Queues, Ranges, Repeats, Cycles, Iterates, and Repeatedlys are unequal when they do not contain or produce the same elements in the same order; producers are compared by what they produce, one element at a time, and the comparison always finishes.</li>
 <li>Maps are unequal when they do not hold the same entries, regardless of insertion order; Sets are unequal when they do not hold the same elements, regardless of insertion order; Strings are unequal when they do not hold the same characters.</li>
 </ul>
-<p>The supported values are exactly those of <a class="el" href="#Equal" title="Equal">Equal</a> : mismatched collection element types, collections compared to ordinary values, and values that cannot be compared stably (such as floating-point numbers) are rejected. With more than two arguments, <span class="tt"><a class="el" href="#a5569ba9d89a070579878cd759311a261" title="Compares one or more values for inequality.">not_equal</a></span> is true when at least one adjacent pair is unequal.</p>
+<p>The supported values are exactly those of <a class="el" href="#Equal" title="Equal">Equal</a> : mismatched collection element types, collections compared to ordinary values, and values that cannot be compared stably (such as floating-point numbers) are rejected. With more than two arguments, <span class="tt"><a class="el" href="#a52f3ba9511cd0e5899669f9450adbdfb" title="Compares one or more values for inequality.">not_equal</a></span> is true when at least one adjacent pair is unequal.</p>
 <p><b>Examples</b> </p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -1757,23 +1960,23 @@ requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m2 = <a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a>{<a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry&lt;int, int&gt;</a>{2, 20}};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1 = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{3, 1, 2};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2 = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{1, 2, 3};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(1, 2));</div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(1, 1));</div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(1));                      <span class="comment">// single value</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(1, 2, 1));                 <span class="comment">// one unequal pair</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(1, 1, 1));                <span class="comment">// every pair equal</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(v, r));                   <span class="comment">// same elements</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(v, q) == <a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(q, v)); <span class="comment">// symmetric</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(v, <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1, 2, 4}));</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(m1, m2));  <span class="comment">// different entries</span></div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(s1, s2)); <span class="comment">// same elements</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(1, 2));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(1, 1));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(1));                      <span class="comment">// single value</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(1, 2, 1));                 <span class="comment">// one unequal pair</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(1, 1, 1));                <span class="comment">// every pair equal</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(v, r));                   <span class="comment">// same elements</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(v, q) == <a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(q, v)); <span class="comment">// symmetric</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(v, <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1, 2, 4}));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(m1, m2));  <span class="comment">// different entries</span></div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(s1, s2)); <span class="comment">// same elements</span></div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> runtime_v = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1, 2, 3};</div>
 <div class="line">  <span class="keyword">auto</span> runtime_r = <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a>{0, 3, 1}; <span class="comment">// produces 0, 1, 2</span></div>
-<div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#a5569ba9d89a070579878cd759311a261">not_equal</a>(runtime_v, runtime_r) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(runtime_v, runtime_r) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a5569ba9d89a070579878cd759311a261"><div class="ttname"><a href="#a5569ba9d89a070579878cd759311a261">cljonic::not_equal</a></div><div class="ttdeci">constexpr auto not_equal(const T &amp;value) noexcept -&gt; bool</div><div class="ttdoc">Compares one or more values for inequality.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-equal_8hpp_source.html#l00065">cljonic-not-equal.hpp:65</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a52f3ba9511cd0e5899669f9450adbdfb"><div class="ttname"><a href="#a52f3ba9511cd0e5899669f9450adbdfb">cljonic::not_equal</a></div><div class="ttdeci">constexpr auto not_equal(const T &amp;value) noexcept -&gt; bool</div><div class="ttdoc">Compares one or more values for inequality.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-equal_8hpp_source.html#l00065">cljonic-not-equal.hpp:65</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00065">65</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 

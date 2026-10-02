@@ -115,16 +115,25 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a5569ba9d89a070579878cd759311a261" id="r_a5569ba9d89a070579878cd759311a261"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
-requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2be51a4f2f34f470cb41e721ef">concepts_detail::equal_pair_admissible_v</a>&lt;T, T&gt;)</td></tr>
-<tr class="memitem:a5569ba9d89a070579878cd759311a261 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a5569ba9d89a070579878cd759311a261">cljonic::not_equal</a> (const T &amp;value) noexcept -&gt; bool</td></tr>
-<tr class="memdesc:a5569ba9d89a070579878cd759311a261"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares one or more values for inequality.  <br /></td></tr>
-<tr class="memitem:a3a8a90fba2d6f902dc60dd3ac834692e" id="r_a3a8a90fba2d6f902dc60dd3ac834692e"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
-requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#a75679f2be51a4f2f34f470cb41e721ef">concepts_detail::equal_pair_admissible_v</a>&lt;Lhs, Rhs&gt;)</td></tr>
-<tr class="memitem:a3a8a90fba2d6f902dc60dd3ac834692e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a3a8a90fba2d6f902dc60dd3ac834692e">cljonic::not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a52f3ba9511cd0e5899669f9450adbdfb" id="r_a52f3ba9511cd0e5899669f9450adbdfb"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</td></tr>
+<tr class="memitem:a52f3ba9511cd0e5899669f9450adbdfb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a52f3ba9511cd0e5899669f9450adbdfb">cljonic::not_equal</a> (const T &amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memdesc:a52f3ba9511cd0e5899669f9450adbdfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares one or more values for inequality.  <br /></td></tr>
+<tr class="memitem:a04f227c4e7c672ed4242b3998e0406c7" id="r_a04f227c4e7c672ed4242b3998e0406c7"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;</td></tr>
+<tr class="memitem:a04f227c4e7c672ed4242b3998e0406c7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a04f227c4e7c672ed4242b3998e0406c7">cljonic::not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
 <tr class="memitem:af7cb99bd9ad0db9b7b321444b45cbba5" id="r_af7cb99bd9ad0db9b7b321444b45cbba5"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
 requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;)</td></tr>
 <tr class="memitem:af7cb99bd9ad0db9b7b321444b45cbba5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af7cb99bd9ad0db9b7b321444b45cbba5">cljonic::not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a30537f378955869f2262e93570e6c9e9" id="r_a30537f378955869f2262e93570e6c9e9"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires (!concepts_detail::EqualPairAdmissible&lt;T, T&gt;)</td></tr>
+<tr class="memitem:a30537f378955869f2262e93570e6c9e9 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a30537f378955869f2262e93570e6c9e9">cljonic::not_equal</a> (const T &amp;value) -&gt; bool</td></tr>
+<tr class="memitem:ac81c8dd9893bc940406c86e32ec60eee" id="r_ac81c8dd9893bc940406c86e32ec60eee"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; <br />
+requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</td></tr>
+<tr class="memitem:ac81c8dd9893bc940406c86e32ec60eee template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ac81c8dd9893bc940406c86e32ec60eee">cljonic::not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) -&gt; bool</td></tr>
+<tr class="memitem:a04b820028ce48bb450346106b43b6683" id="r_a04b820028ce48bb450346106b43b6683"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
+requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;))</td></tr>
+<tr class="memitem:a04b820028ce48bb450346106b43b6683 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a04b820028ce48bb450346106b43b6683">cljonic::not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs, const Rest &amp;... rest) -&gt; bool</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

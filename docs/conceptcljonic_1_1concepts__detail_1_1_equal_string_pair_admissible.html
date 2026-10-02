@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::concepts_detail::contains_callable&lt; std::variant&lt; Alternatives... &gt; &gt; Struct Template Reference</title>
+<title>cljonic: cljonic::concepts_detail::EqualStringPairAdmissible Concept Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -94,26 +94,27 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a></li><li class="navelem"><a href="structcljonic_1_1concepts__detail_1_1contains__callable_3_01std_1_1variant_3_01_alternatives_8_8_8_01_4_01_4.html">contains_callable&lt; std::variant&lt; Alternatives... &gt; &gt;</a></li>  </ul>
+<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts__detail_1_1_equal_string_pair_admissible.html">EqualStringPairAdmissible</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">cljonic::concepts_detail::contains_callable&lt; std::variant&lt; Alternatives... &gt; &gt; Struct Template Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic::concepts_detail::EqualStringPairAdmissible Concept Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code></p>
-
-<p>Inherits std::false_type, and std::bool_constant&lt;(contains_callable_v&lt; Alternatives &gt;||...)&gt;.</p>
-<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename... Alternatives&gt;<br />
-struct cljonic::concepts_detail::contains_callable&lt; std::variant&lt; Alternatives... &gt; &gt;</div>
-<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00129">129</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/home/pauwhi/Downloads/junk/cljonic-playground/src/<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a></li>
-</ul>
-</div><!-- contents -->
+<p><code>#include &lt;<a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>&gt;</code></p>
+<h2 id="header-conceptdef" class="groupheader">Concept definition</h2>
+<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Lhs, <span class="keyword">typename</span> Rhs&gt;</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_equal_string_pair_admissible.html">EqualStringPairAdmissible</a> =</div>
+<div class="line">    <a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">equal_family_of_v&lt;Lhs&gt;</a> == <a class="code hl_enumvalue" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39ab45cffe084dd3d20d928bee85e7b0f21">equality_family::string</a> &amp;&amp; <a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">equal_family_of_v&lt;Rhs&gt;</a> == <a class="code hl_enumvalue" href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39ab45cffe084dd3d20d928bee85e7b0f21">equality_family::string</a></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_equal_string_pair_admissible_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_equal_string_pair_admissible.html">cljonic::concepts_detail::EqualStringPairAdmissible</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-equal_8hpp_source.html#l00115">cljonic-equal.hpp:115</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a3ed7e407136a560445c71d669f768152"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#a3ed7e407136a560445c71d669f768152">cljonic::concepts_detail::equal_family_of_v</a></div><div class="ttdeci">constexpr equality_family equal_family_of_v</div><div class="ttdef"><b>Definition</b> <a href="cljonic-equal_8hpp_source.html#l00028">cljonic-equal.hpp:28</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_ac021cea1f07aaa9ffdaf2830762bea39ab45cffe084dd3d20d928bee85e7b0f21"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39ab45cffe084dd3d20d928bee85e7b0f21">cljonic::concepts_detail::equality_family::string</a></div><div class="ttdeci">@ string</div><div class="ttdef"><b>Definition</b> <a href="cljonic-equal_8hpp_source.html#l00009">cljonic-equal.hpp:9</a></div></div>
+</div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock">
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00115">115</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated on <span class="timestamp"></span> for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0
