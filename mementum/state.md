@@ -1,5 +1,39 @@
 ## Session State
 
+- last_session_id: fd3522cd-6d0a-4782-ae03-2be453291d76
+- current_timestamp: 2026-10-02
+- recover: 1
+- session_complete: true
+
+Task:
+1. Equality constraint refactor — COMPLETE: added five private family concepts and `EqualPairAdmissible` in `src/cljonic-equal.hpp`; binary overloads and shared unary/binary/variadic gates use the named concepts. Updated `src/cljonic-not-equal.hpp` unary/binary gates to use `EqualPairAdmissible`. No runtime equality semantics changed.
+2. C++23 review — COMPLETE: confirmed `StableEqualityComparable` admits a potentially-throwing `operator==`, while `equal` is declared `noexcept`; a throwing comparison therefore terminates. Also found that Doxygen's `EXTRACT_ALL=YES` publishes the `concepts_detail` concepts. Scalar-domain breadth (`std::is_scalar_v`, including unscoped enums and pointers) remains to be reconciled against intent.
+3. gybis-fini closeout — COMPLETE: state upsert and Mementum-only commit.
+
+Questions:
+1. No human disposition received while user unavailable. Before changing behavior, decide whether throwing equality is rejected by contract, remains a caller precondition under `noexcept`, or makes `equal` potentially throwing; inspect recursive composite/variant implications.
+2. Decide whether `concepts_detail` equality concepts should remain visible in generated docs or be hidden consistently with internal-detail policy.
+3. Clarify whether unscoped enums and pointer scalars belong to `equal`'s non-cljonic fallthrough domain.
+4. Proposed memory `noexcept-equality-requires-nothrow-comparator` was not approved; no memory file created.
+
+Decisions:
+1. Keep equality-family gates in `concepts_detail`; do not move them to `src/cljonic-concepts.hpp` or introduce ordering semantics.
+2. Convert the shared pair admission gate into `EqualPairAdmissible`; preserve the current accepted domain and `noexcept` signatures pending a requirements/spec decision.
+3. Leave Doxygen visibility and scalar-domain policy unchanged pending human disposition.
+4. Keep the code and generated-doc changes uncommitted; fini commit is limited to Mementum state.
+
+Validation:
+1. Final `make git` passed after re-reading the user-touched `src/cljonic-equal.hpp`: format, lint, complexity, all compile-failure harnesses, header guards, sanitizers, 100.0% coverage, traceability, no-heap, docs, 28 compiled doc examples (6 deferred skipped), and full tests.
+2. `make equal-compile-fail`, `make not-equal-compile-fail`, `make cljonic-test`, and `make upsert-gate-strict UPSERT_COVERAGE_FILE=cljonic-equal.hpp` passed during the refactor.
+
+Next:
+1. Reconcile the `noexcept` versus potentially-throwing equality contract at requirements/spec level before changing the supported domain.
+2. Resolve internal-concept documentation visibility and scalar-domain scope.
+3. Refresh `mementum/knowledge/value-equality-domain.md`, which still refers to `equal_pair_admissible_v` rather than the new `EqualPairAdmissible` concept.
+4. Continue deferred comparison-family or `REQ-SEQ-022` work only when selected.
+
+## Previous Session State
+
 - last_session_id: 55f47254-5bfa-42c5-be15-e3b9289e0a3a
 - current_timestamp: 2026-10-01
 - recover: 1
