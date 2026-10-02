@@ -19,7 +19,7 @@ namespace cljonic::no_heap::probes {
     const auto view_imported = Map<int, int, 2>{std::views::all(static_source)};
 
     // Alternative-strict variant map keys (REQ-CAP-010).
-    using alt = std::variant<int, long>;
+    using alt = cljonic::Variant<int, long>;
     const auto variant_map = Map<alt, int, 4>{MapEntry<alt, int>{alt{1}, 100}};
     const auto variant_hit = variant_map(alt{1}) == 100;
     const auto variant_miss = variant_map(alt{1L}, -1) == -1;
