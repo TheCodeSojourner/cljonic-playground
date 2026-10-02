@@ -11,7 +11,13 @@
 -- operation carries the three arities of Clojure's `=`: unary returns true for
 -- a single domain-admitted operand, binary compares a pair by family, and the
 -- variadic form conjoins adjacent-pair equality left to right with
--- short-circuit, every adjacent pair compile-time gated.
+-- short-circuit, every adjacent pair compile-time gated. The comparison is
+-- non-throwing at any depth so the noexcept guarantee cannot be violated, and
+-- standard-library range components are rejected at any depth because `equal`
+-- is not the C++ interoperability surface. The scalar fallthrough domain is
+-- arithmetic scalars, scoped enums, aggregate-like structs with a non-throwing
+-- operator==, and std::variant composites; unscoped enums and pointers are
+-- excluded.
 
 entity EqualFunction {
     general_value_equality_operation: Boolean
@@ -25,6 +31,9 @@ entity EqualFunction {
     scalar_operands_compare_via_operator_equals: Boolean
     scalar_fallthrough_domain_is_closed_value_domain: Boolean
     standard_range_types_rejected_as_interop_surface: Boolean
+    standard_range_components_rejected_at_any_depth: Boolean
+    unscoped_enums_and_pointers_excluded_from_fallthrough: Boolean
+    equality_comparison_non_throwing_at_any_depth: Boolean
     floating_point_rejected_at_compile_time_at_any_depth: Boolean
     cljonic_nonscalar_pairs_classified_by_equality_family: Boolean
     sequential_family_mutually_comparable_by_produced_sequence: Boolean
@@ -87,6 +96,18 @@ entity EqualFunction {
 
     invariant StandardRangeTypesRejectedAsInteropSurface {
         this.standard_range_types_rejected_as_interop_surface = true
+    }
+
+    invariant StandardRangeComponentsRejectedAtAnyDepth {
+        this.standard_range_components_rejected_at_any_depth = true
+    }
+
+    invariant UnscopedEnumsAndPointersExcludedFromFallthrough {
+        this.unscoped_enums_and_pointers_excluded_from_fallthrough = true
+    }
+
+    invariant EqualityComparisonNonThrowingAtAnyDepth {
+        this.equality_comparison_non_throwing_at_any_depth = true
     }
 
     invariant FloatingPointRejectedAtCompileTimeAtAnyDepth {

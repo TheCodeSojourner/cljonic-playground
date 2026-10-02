@@ -1,0 +1,60 @@
+-- allium: 3
+
+-- lifecycle: deferred
+
+-- cljonic::Variant free-function API (REQ-CAP-012).
+-- Slice B: the cljonic free-function surface backing every cljonic::Variant
+-- capability (index, holds, get, get_if, emplace, swap, visit, variant_size,
+-- variant_alternative), consistent with std::variant's capability set filtered
+-- by cljonic's embedded constraints. Deferred until the slice-B implementation;
+-- excluded from the spec-to-code obligation snapshot while deferred.
+
+entity VariantFreeFunctionApi {
+    every_capability_exposed_as_free_function: Boolean
+    free_function_backed_by_member_method: Boolean
+    access_and_rebinding_non_throwing: Boolean
+    no_bad_variant_access: Boolean
+    rebinding_leaves_no_valueless_state: Boolean
+    excludes_valueless_by_exception: Boolean
+    excludes_exception_based_get: Boolean
+    excludes_multi_variant_visit: Boolean
+    provides_single_alternative_deduction_guide: Boolean
+
+    invariant EveryCapabilityExposedAsFreeFunction {
+        this.every_capability_exposed_as_free_function = true
+    }
+
+    invariant FreeFunctionBackedByMemberMethod {
+        this.free_function_backed_by_member_method = true
+    }
+
+    invariant AccessAndRebindingNonThrowing {
+        this.access_and_rebinding_non_throwing = true
+    }
+
+    invariant NoBadVariantAccess {
+        this.no_bad_variant_access = true
+    }
+
+    invariant RebindingLeavesNoValuelessState {
+        this.rebinding_leaves_no_valueless_state = true
+    }
+
+    invariant ExcludesValuelessByException {
+        this.excludes_valueless_by_exception = true
+    }
+
+    invariant ExcludesExceptionBasedGet {
+        this.excludes_exception_based_get = true
+    }
+
+    invariant ExcludesMultiVariantVisit {
+        this.excludes_multi_variant_visit = true
+    }
+
+    invariant ProvidesSingleAlternativeDeductionGuide {
+        this.provides_single_alternative_deduction_guide = true
+    }
+}
+
+actor VariantFreeFunctionApiOperator { identified_by: VariantFreeFunctionApi }

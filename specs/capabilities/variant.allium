@@ -1,0 +1,143 @@
+-- allium: 3
+
+-- cljonic::Variant composite value type (REQ-CAP-011, REQ-CAP-012).
+-- The nominal cljonic composite that replaces std::variant as the supported
+-- composite in the cljonic value domain. It holds exactly one alternative at a
+-- time, admits only nothrow-storable alternatives, has no valueless state, and
+-- provides alternative-strict equality only when every alternative admits
+-- nothrow stable equality. std::variant is not a cljonic value type: it is
+-- rejected as an equal operand and as a map key or set element, and is
+-- permitted only as an internal implementation detail.
+
+entity CljonicVariant {
+    nominal_admission_requires_cljonic_owned_trait: Boolean
+    distinct_domain_from_standard_library_variant: Boolean
+    holds_exactly_one_alternative: Boolean
+    no_valueless_state: Boolean
+    no_throwing_access_path: Boolean
+    constexpr_noexcept_nonmutating_nonallocating: Boolean
+    no_rtti: Boolean
+    nestable_composite_component: Boolean
+
+    invariant NominalAdmissionRequiresCljonicOwnedTrait {
+        this.nominal_admission_requires_cljonic_owned_trait = true
+    }
+
+    invariant DistinctDomainFromStandardLibraryVariant {
+        this.distinct_domain_from_standard_library_variant = true
+    }
+
+    invariant HoldsExactlyOneAlternative {
+        this.holds_exactly_one_alternative = true
+    }
+
+    invariant NoValuelessState {
+        this.no_valueless_state = true
+    }
+
+    invariant NoThrowingAccessPath {
+        this.no_throwing_access_path = true
+    }
+
+    invariant ConstexprNoexceptNonmutatingNonallocating {
+        this.constexpr_noexcept_nonmutating_nonallocating = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NestableCompositeComponent {
+        this.nestable_composite_component = true
+    }
+}
+
+entity VariantStorageAdmission {
+    every_alternative_nothrow_collection_element: Boolean
+    admits_float_and_callable_alternatives_for_storage: Boolean
+    storable_as_map_value_vector_element_queue_element: Boolean
+    rejects_non_nothrow_storable_alternative: Boolean
+
+    invariant EveryAlternativeNothrowCollectionElement {
+        this.every_alternative_nothrow_collection_element = true
+    }
+
+    invariant AdmitsFloatAndCallableAlternativesForStorage {
+        this.admits_float_and_callable_alternatives_for_storage = true
+    }
+
+    invariant StorableAsMapValueVectorElementQueueElement {
+        this.storable_as_map_value_vector_element_queue_element = true
+    }
+
+    invariant RejectsNonNothrowStorableAlternative {
+        this.rejects_non_nothrow_storable_alternative = true
+    }
+}
+
+entity VariantEqualityAdmission {
+    equality_requires_all_alternatives_nothrow_comparable: Boolean
+    omits_equality_when_alternative_not_equality_admissible: Boolean
+    equality_position_usage_rejected_at_compile_time: Boolean
+    ordering_requires_all_alternatives_totally_ordered: Boolean
+    alternative_strict_equality: Boolean
+    no_cross_type_numeric_unification: Boolean
+    no_hash_based_equality: Boolean
+
+    invariant EqualityRequiresAllAlternativesNothrowComparable {
+        this.equality_requires_all_alternatives_nothrow_comparable = true
+    }
+
+    invariant OmitsEqualityWhenAlternativeNotEqualityAdmissible {
+        this.omits_equality_when_alternative_not_equality_admissible = true
+    }
+
+    invariant EqualityPositionUsageRejectedAtCompileTime {
+        this.equality_position_usage_rejected_at_compile_time = true
+    }
+
+    invariant OrderingRequiresAllAlternativesTotallyOrdered {
+        this.ordering_requires_all_alternatives_totally_ordered = true
+    }
+
+    invariant AlternativeStrictEquality {
+        this.alternative_strict_equality = true
+    }
+
+    invariant NoCrossTypeNumericUnification {
+        this.no_cross_type_numeric_unification = true
+    }
+
+    invariant NoHashBasedEquality {
+        this.no_hash_based_equality = true
+    }
+}
+
+entity StandardVariantRejection {
+    standard_library_variant_is_not_cljonic_value_type: Boolean
+    rejects_standard_variant_as_equal_operand: Boolean
+    rejects_standard_variant_as_map_key_or_set_element: Boolean
+    permits_standard_variant_as_internal_implementation_detail: Boolean
+
+    invariant StandardLibraryVariantIsNotCljonicValueType {
+        this.standard_library_variant_is_not_cljonic_value_type = true
+    }
+
+    invariant RejectsStandardVariantAsEqualOperand {
+        this.rejects_standard_variant_as_equal_operand = true
+    }
+
+    invariant RejectsStandardVariantAsMapKeyOrSetElement {
+        this.rejects_standard_variant_as_map_key_or_set_element = true
+    }
+
+    invariant PermitsStandardVariantAsInternalImplementationDetail {
+        this.permits_standard_variant_as_internal_implementation_detail = true
+    }
+}
+
+actor CljonicVariantOperator { identified_by: CljonicVariant }
+actor VariantStorageAdmissionOperator { identified_by: VariantStorageAdmission }
+actor VariantEqualityAdmissionOperator { identified_by: VariantEqualityAdmission }
+actor VariantFreeFunctionApiOperator { identified_by: VariantFreeFunctionApi }
+actor StandardVariantRejectionOperator { identified_by: StandardVariantRejection }
