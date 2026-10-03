@@ -81,6 +81,11 @@ sub format_doxygen_block {
         } elsif ($line =~ /^[ \t]*\*\s?(?:\\(?:param|tparam|return|throws|note|warning|anchor)\b|@)/) {
             $flush_paragraph->();
             push @formatted, $line;
+        } elsif ($line =~ /^[ \t]*\*\s?-\s/) {
+            # A Doxygen/Markdown list item starts a new paragraph so that
+            # consecutive one-line bullets are never joined during reflow.
+            $flush_paragraph->();
+            push @paragraph, $line;
         } else {
             push @paragraph, $line;
         }

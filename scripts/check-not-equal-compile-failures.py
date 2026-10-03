@@ -15,6 +15,7 @@ The rejection set is deliberately identical to `equal`'s
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 
 FAILURE_CASES = {
@@ -119,6 +120,38 @@ PASS_CASES = {
                                       "cljonic::Map<int, int, 4>{cljonic::MapEntry<int, int>{1, 10}});"),
 }
 
+# Out-of-domain calls must report the targeted RejectionDiagnostic message
+# (REQ-DIAG-009) rather than a raw list of rejected concept candidates. The
+# message content is asserted, not just its stability: REQ-DIAG-009 requires the
+# fallback to name the operation and the violated domain rule. The taxonomy is
+# shared with scripts/check-equal-compile-failures.py.
+DIAGNOSTIC_ANCHOR = "outside the supported equality domain"
+DIAGNOSTIC_OPERATION = "cljonic::not_equal:"
+DIAGNOSTIC_SHARED_DOMAIN = "shares with cljonic::equal"
+DIAGNOSTIC_TAXONOMY = (
+    "Floating-point values",
+    "callables",
+    "pointers",
+    "unscoped enums",
+    "standard-library range and container types",
+    "the standard-library variant",
+)
+
+# name -> (probe body, case-specific required substrings)
+DIAGNOSTIC_CASES = {
+    "NotEqual-unary-diagnostic": ("(void)cljonic::not_equal(1.0);", ()),
+    "NotEqual-binary-diagnostic": (
+        "(void)cljonic::not_equal(cljonic::Vector<int, 2>{1}, 1);",
+        ("mutually comparable cljonic family pair",
+         "sequential [Vector, Queue, and all producers]"),
+    ),
+    "NotEqual-variadic-diagnostic": (
+        "(void)cljonic::not_equal(1, cljonic::Vector<int, 2>{1}, 2);",
+        ("With three or more operands",
+         "sequential [Vector, Queue, and all producers]"),
+    ),
+}
+
 # Injected before main(): an aggregate-like struct with stable equality.
 PREAMBLE = """
 struct NotEqualPixel {
@@ -131,8 +164,8 @@ struct NotEqualPixel {
 """
 
 
-def compile_case(compiler: list[str], include_dir: str, header: str, body: str, preamble: str = "") -> bool:
-    source = "\n".join(
+def build_source(header: str, preamble: str, body: str) -> str:
+    return "\n".join(
         (
             "#include <map>",
             "#include <span>",
@@ -148,6 +181,10 @@ def compile_case(compiler: list[str], include_dir: str, header: str, body: str, 
             "}",
         )
     )
+
+
+def compile_case(compiler: list[str], include_dir: str, header: str, body: str, preamble: str = "") -> bool:
+    source = build_source(header, preamble, body)
     result = subprocess.run(
         [*compiler, "-std=c++23", "-fsyntax-only", "-I", include_dir, "-x", "c++", "-"],
         input=source,
@@ -156,6 +193,34 @@ def compile_case(compiler: list[str], include_dir: str, header: str, body: str, 
         check=False,
     )
     return result.returncode == 0
+
+
+def _normalized(text: str) -> str:
+    return re.sub(r"\s+", " ", text)
+
+
+def diagnostic_message_reported(
+    compiler: list[str], include_dir: str, header: str, body: str, required: tuple[str, ...]
+) -> bool:
+    source = build_source(header, "", body)
+    result = subprocess.run(
+        [*compiler, "-std=c++23", "-fsyntax-only", "-I", include_dir, "-x", "c++", "-"],
+        input=source,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode == 0:
+        return False
+    output = _normalized(result.stdout + result.stderr)
+    needles = (
+        DIAGNOSTIC_OPERATION,
+        DIAGNOSTIC_ANCHOR,
+        DIAGNOSTIC_SHARED_DOMAIN,
+        *DIAGNOSTIC_TAXONOMY,
+        *required,
+    )
+    return all(_normalized(needle) in output for needle in needles)
 
 
 def main() -> int:
@@ -172,6 +237,10 @@ def main() -> int:
         for name, body in PASS_CASES.items():
             if not compile_case(compiler, include_dir, header, body, preamble=PREAMBLE):
                 failures.append(f"{configuration}/{name}: expected to compile, but failed")
+
+        for name, (body, required) in DIAGNOSTIC_CASES.items():
+            if not diagnostic_message_reported(compiler, include_dir, header, body, required):
+                failures.append(f"{configuration}/{name}: targeted rejection diagnostic content not reported")
 
     if failures:
         print("not-equal-compile-fail:failures:")

@@ -1051,7 +1051,8 @@ requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <p><a class="anchor" id="Equal"></a> </p>
 <p><b>Equal</b> compares values by their contents:</p>
 <ul>
-<li>Calling <span class="tt"><a class="el" href="#a3379aa2a8b5ffa4566662c4b4a1455c2" title="Compares one or more values for equality.">equal</a></span> with one value always returns true. - Two ordinary values compare equal when they are the same type and compare equal with <span class="tt">==</span> (e.g., <span class="tt">int</span>, a scoped enum, or a simple struct with an explicit or defaulted <span class="tt">operator==</span>). The comparison must not throw, so a type whose <span class="tt">==</span> can throw is not supported; pointers and unscoped enums are not supported either.</li>
+<li>Calling <span class="tt"><a class="el" href="#a3379aa2a8b5ffa4566662c4b4a1455c2" title="Compares one or more values for equality.">equal</a></span> with one value always returns true.</li>
+<li>Two ordinary values compare equal when they are the same type and compare equal with <span class="tt">==</span> (e.g., <span class="tt">int</span>, a scoped enum, or a simple struct with an explicit or defaulted <span class="tt">operator==</span>). The comparison must not throw, so a type whose <span class="tt">==</span> can throw is not supported; pointers and unscoped enums are not supported either.</li>
 <li>Vectors, Queues, Ranges, Repeats, Cycles, and the <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a> and <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a> producers compare equal when they contain or produce the same elements in the same order. Producers are compared by what they produce, one element at a time, and comparison always finishes: no producer yields more than <span class="tt"><a class="el" href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a></span> elements, so two unbounded producers are compared over that configured maximum.</li>
 <li>Maps compare equal when they hold the same entries, regardless of insertion order.</li>
 <li>Sets compare equal when they hold the same elements, regardless of insertion order.</li>
@@ -1140,7 +1141,7 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecl
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00373">373</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00374">374</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -1765,7 +1766,7 @@ requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00094">94</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00096">96</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -1838,7 +1839,7 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecl
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00104">104</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00110">110</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 
 </div>
 </div>

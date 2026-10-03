@@ -1,5 +1,52 @@
 ## Session State
 
+- last_session_id: c1ef7071-fad8-4316-ae67-95a4f24685e7
+- current_timestamp: 2026-10-03
+- recover: 1
+- session_complete: true
+
+Task:
+1. gybis-init orientation — COMPLETE: oriented on state.md, recent memories, and the value-equality-domain / cljonic-next-agenda / artifact-boundary-discipline knowledge pages.
+2. REQ-DIAG-009 diagnostic message refinement — COMPLETE (uncommitted): the binary fallback now names the sequential family structurally as `sequential [Vector, Queue, and all producers]` (mirrors `equal_family_of_v`'s two admission paths; drift-resistant, unlike enumerating all seven producer types); the variadic fallback is now self-contained, stating the positive rule and rejection taxonomy inline instead of deferring to "the same domain rules as the two-operand form". Text-only: no behavior, req/vocab/arch/spec change.
+3. Memory stored — COMPLETE: `mementum/memories/rejection-diagnostic-message-anchor.md` (harnesses assert only the anchor phrase; wording is refinable but has no drift protection).
+4. `not_equal` diagnostic parity — COMPLETE (uncommitted): applied Option A to all three `not_equal` fallback messages in `src/cljonic-not-equal.hpp` so each is self-contained (states the shared-with-`equal` domain, the positive rule, and the rejection taxonomy) instead of cross-referencing `cljonic::equal`; reused the structural naming `sequential [Vector, Queue, and all producers]`. Added `DIAGNOSTIC_CASES` + `diagnostic_message_reported` to `scripts/check-not-equal-compile-failures.py`, asserting the same `"outside the supported equality domain"` anchor as the equal harness (unary, binary, variadic cases).
+5. Doxygen bullet reflow fix — COMPLETE (uncommitted): `scripts/format-doc-samples.pl`'s `format_doxygen_block` treated every `* ` line as paragraph text, so consecutive one-line `* - bullet` items were joined into a single bullet during reflow (reproduced minimally; also observed as `equal`'s first two bullets fusing). Added a list-marker branch that flushes the current paragraph and starts a new one on `^[ \t]*\*\s?-\s`, preserving list structure; verified bullet-preserving and idempotent, and re-applied the fused `equal` bullet split (now formatter-stable).
+6. Memory stored — COMPLETE: `mementum/memories/doxygen-reflow-must-respect-list-markers.md` (the doc-sample formatter is the only prose-reflowing tool; list markers are paragraph boundaries).
+7. Diagnostic content assertion — COMPLETE (uncommitted): the REQ-DIAG-009 harnesses previously asserted only the anchor phrase `"outside the supported equality domain"`, leaving the rest of the message without drift protection. Both `scripts/check-equal-compile-failures.py` and `scripts/check-not-equal-compile-failures.py` now assert content with whitespace-normalized matching: operation identity (`cljonic::equal:` / `cljonic::not_equal:`), the anchor, the rejection taxonomy (six categories), per-case rule substrings (`sequential [Vector, Queue, and all producers]`, `With three or more operands`, `mutually comparable cljonic family pair`), and (for not_equal) the `shares with cljonic::equal` nod. Drift detection verified with a negative simulation. `rejection-diagnostic-message-anchor.md` memory updated: content drift now FAILS the gate; only per-arity nuance beyond pinned substrings remains unasserted.
+
+Questions:
+1. None blocking. Slice B (`cljonic::Variant` free-function API) awaits selection.
+
+Decisions:
+1. Diagnostic wording (human, 2026-10-03): keep the family-level abstraction rather than a bare type dump; name the sequential members structurally as `Vector, Queue, and all producers` (human preferred "and all producers" over "and the producer families"); ASCII brackets, no em dash. The variadic message must be self-contained (state the rule and taxonomy, not merely cross-reference another arity).
+2. Message text is REQ-DIAG-009 governance, not a behavioral-spec invariant; changes are approved per-write and are not gated by traceability.
+3. `not_equal` parity (human, 2026-10-03): Option A — mirror `equal`'s self-contained wording (REQ-DIAG-009/004 name both functions and require the message to state the violated rule), keep a short nod to the shared domain for the `\ref Equal` relationship, and add matching `DIAGNOSTIC_CASES` to the not-equal harness. REJECTED for now: Option B (shared message macro) and Option C (hybrid delegating the taxonomy).
+4. Doxygen reflow (2026-10-03): the doc-sample formatter must treat a list marker (`* - `) as a paragraph boundary; bullet integrity is a formatter responsibility in this repo, not a hand-authoring invariant. `clang-format` does not reflow comment prose, so this lives in `format-doc-samples.pl`.
+5. Diagnostic assertions (2026-10-03): REQ-DIAG-009 requires the fallback to name the operation and the violated domain rule; the harnesses assert that content with whitespace-normalized matching so compiler line-wrapping cannot cause false failures. Drift in asserted content is now a gate failure, not a silent free text.
+
+Validation:
+1. `make upsert-gate-strict` EXIT=0: lint:ok, complexity:ok, range/variant/equal/not-equal compile-fail:ok (equal includes the diagnostic-message assertions), header-guards:ok, sanitizer:ok, coverage:lines=100.0%, traceability-spec-to-code:ok, no-heap-src/symbols:ok.
+2. `make cljonic` regenerated the amalgamated header; `clang-format --dry-run --Werror src/cljonic-equal.hpp` clean.
+3. docs/ not regenerated (deferred to final git per defer-doc-regeneration-until-final-git).
+4. `not_equal` parity: `make not-equal-compile-fail:ok` (with the new diagnostic-message assertions) and `make upsert-gate-strict` EXIT=0.
+5. Doxygen reflow fix: `scripts/format-doc-samples.pl` bullet-preservation verified by minimal repro (bullets preserved, second run no-op); repo-wide `make format` clean; `equal-compile-fail:ok`, `not-equal-compile-fail:ok`, `docs-examples:compiled=29` (+6 deferred).
+6. Diagnostic content assertion: both harnesses `:ok` with the strengthened checks; drift-detection proven by a negative simulation (a mutated taxonomy token fails the assertion).
+
+Next:
+1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
+2. Extend the REQ-DIAG-009 rejection-diagnostic policy to other closed-domain public free functions when they gain a fallback.
+3. Deferred comparison family (`equal_by`/`identical`, `less`, `less_equal`, `greater`, `greater_equal`) and `REQ-SEQ-022` operation-level reconciliation remain candidates.
+4. Diagnostic message changes are uncommitted; `/gybis-fini` owns the commit (Mementum-only by default). Human declined fini for this session; tree left for review.
+5. Candidate synthesis (proposed 2026-10-03, awaiting human approval): the doc-tooling memory family now exceeds the ≥3 threshold — a `mementum/knowledge/doxygen-doc-tooling.md` page from doxygen-reflow-must-respect-list-markers, doc-sample-extraction-requires-unindented-fence, doxygen-legacy-blocks-require-explicit-change, docs-examples-must-be-runnable-programs, and defer-doc-regeneration-until-final-git.
+
+Carry-forward (unaddressed, remember for later):
+1. `equal_by`/`identical` and the remaining REQ-FN-002C comparison family remain deferred.
+2. User-defined aggregates with float members are unanalyzable (no reflection) — REQ-NUM-007 recursion cannot be enforced for them.
+3. Set duplicate-insertion in a constexpr context hits std::abort().
+4. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
+
+## Previous Session State
+
 - last_session_id: 171c64d2-e025-4eb9-9ee1-732dd7840fa5
 - current_timestamp: 2026-10-02
 - recover: 1
@@ -32,7 +79,7 @@ Next:
 2. Extend the REQ-DIAG-009 rejection-diagnostic policy to other closed-domain public free functions when they gain a fallback.
 3. Deferred comparison family (`equal_by`/`identical`, `less`, `less_equal`, `greater`, `greater_equal`) and `REQ-SEQ-022` operation-level reconciliation remain candidates.
 
-## Previous Session State
+## Older Session State
 
 - last_session_id: fd3522cd-6d0a-4782-ae03-2be453291d76
 - current_timestamp: 2026-10-02
@@ -66,7 +113,7 @@ Next:
 3. Refresh `mementum/knowledge/value-equality-domain.md`, which still refers to `equal_pair_admissible_v` rather than the new `EqualPairAdmissible` concept.
 4. Continue deferred comparison-family or `REQ-SEQ-022` work only when selected.
 
-## Older Session State
+## Earlier Session State
 
 - last_session_id: 55f47254-5bfa-42c5-be15-e3b9289e0a3a
 - current_timestamp: 2026-10-01

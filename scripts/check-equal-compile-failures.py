@@ -20,6 +20,7 @@ Covers the EqualFunction spec invariants:
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 
 FAILURE_CASES = {
@@ -187,14 +188,44 @@ def compile_case(compiler: list[str], include_dir: str, header: str, body: str, 
 
 
 # Out-of-domain calls must report the targeted RejectionDiagnostic message
-# (REQ-DIAG-009) rather than a raw list of rejected concept candidates.
+# (REQ-DIAG-009) rather than a raw list of rejected concept candidates. The
+# message content is asserted, not just its stability: REQ-DIAG-009 requires the
+# fallback to name the operation and the violated domain rule, so the checks
+# below pin the operation identity and the rejected-category taxonomy.
+DIAGNOSTIC_ANCHOR = "outside the supported equality domain"
+DIAGNOSTIC_OPERATION = "cljonic::equal:"
+DIAGNOSTIC_TAXONOMY = (
+    "Floating-point values",
+    "callables",
+    "pointers",
+    "unscoped enums",
+    "standard-library range and container types",
+    "the standard-library variant",
+)
+
+# name -> (probe body, case-specific required substrings)
 DIAGNOSTIC_CASES = {
-    "Equal-float-diagnostic": "(void)cljonic::equal(1.0, 1.0);",
-    "Equal-mixed-diagnostic": "(void)cljonic::equal(cljonic::Vector<int, 2>{1}, 1);",
+    "Equal-unary-diagnostic": ("(void)cljonic::equal(1.0);", ()),
+    "Equal-binary-diagnostic": (
+        "(void)cljonic::equal(cljonic::Vector<int, 2>{1}, 1);",
+        ("mutually comparable cljonic family pair",
+         "sequential [Vector, Queue, and all producers]"),
+    ),
+    "Equal-variadic-diagnostic": (
+        "(void)cljonic::equal(1, cljonic::Vector<int, 2>{1}, 2);",
+        ("With three or more operands",
+         "sequential [Vector, Queue, and all producers]"),
+    ),
 }
 
 
-def diagnostic_message_reported(compiler: list[str], include_dir: str, header: str, body: str) -> bool:
+def _normalized(text: str) -> str:
+    return re.sub(r"\s+", " ", text)
+
+
+def diagnostic_message_reported(
+    compiler: list[str], include_dir: str, header: str, body: str, required: tuple[str, ...]
+) -> bool:
     source = "\n".join(
         (
             "#include <vector>",
@@ -212,7 +243,11 @@ def diagnostic_message_reported(compiler: list[str], include_dir: str, header: s
         capture_output=True,
         check=False,
     )
-    return result.returncode != 0 and "outside the supported equality domain" in (result.stdout + result.stderr)
+    if result.returncode == 0:
+        return False
+    output = _normalized(result.stdout + result.stderr)
+    needles = (DIAGNOSTIC_OPERATION, DIAGNOSTIC_ANCHOR, *DIAGNOSTIC_TAXONOMY, *required)
+    return all(_normalized(needle) in output for needle in needles)
 
 
 def main() -> int:
@@ -230,9 +265,9 @@ def main() -> int:
             if not compile_case(compiler, include_dir, header, body, preamble=PREAMBLE):
                 failures.append(f"{configuration}/{name}: expected to compile, but failed")
 
-        for name, body in DIAGNOSTIC_CASES.items():
-            if not diagnostic_message_reported(compiler, include_dir, header, body):
-                failures.append(f"{configuration}/{name}: targeted rejection diagnostic not reported")
+        for name, (body, required) in DIAGNOSTIC_CASES.items():
+            if not diagnostic_message_reported(compiler, include_dir, header, body, required):
+                failures.append(f"{configuration}/{name}: targeted rejection diagnostic content not reported")
 
     if failures:
         print("equal-compile-fail:failures:")

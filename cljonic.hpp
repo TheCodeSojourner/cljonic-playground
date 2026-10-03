@@ -1704,8 +1704,8 @@ namespace cljonic {
  *
  * \b Equal compares values by their contents:
  *
- * - Calling `equal` with one value always returns true. - Two ordinary values compare equal when they are the same
- * type and compare
+ * - Calling `equal` with one value always returns true.
+ * - Two ordinary values compare equal when they are the same type and compare
  *   equal with `==` (e.g., `int`, a scoped enum, or a simple struct with an
  *   explicit or defaulted `operator==`). The comparison must not throw, so a
  *   type whose `==` can throw is not supported; pointers and unscoped enums
@@ -1843,13 +1843,14 @@ template <typename T>
 template <typename Lhs, typename Rhs>
     requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
-    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
-                  "cljonic::equal: operands are outside the supported equality domain. The two "
-                  "operands must be the same admitted type, or a mutually comparable cljonic "
-                  "family pair (sequential, map, set, or string). Floating-point values, "
-                  "callables, pointers, unscoped enums, standard-library range and container "
-                  "types, the standard-library variant, values whose equality may throw, and "
-                  "mixed cljonic/non-cljonic pairs are rejected.");
+    static_assert(
+        concepts_detail::dependent_false<Lhs, Rhs>,
+        "cljonic::equal: operands are outside the supported equality domain. The two "
+        "operands must be the same admitted type, or a mutually comparable cljonic "
+        "family pair (sequential [Vector, Queue, and all producers], map, set, or "
+        "string). Floating-point values, callables, pointers, unscoped enums, standard-library range and container "
+        "types, the standard-library variant, values whose equality may throw, and "
+        "mixed cljonic/non-cljonic pairs are rejected.");
     return false;
 }
 
@@ -1859,8 +1860,13 @@ template <typename Lhs, typename Rhs, typename... Rest>
                                    [[maybe_unused]] const Rest&... rest) -> bool {
     static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
                   "cljonic::equal: at least one adjacent operand pair is outside the supported "
-                  "equality domain. Every adjacent pair in the variadic form must individually "
-                  "satisfy the same domain rules as the two-operand form.");
+                  "equality domain. With three or more operands, every adjacent pair must "
+                  "individually satisfy the same rules as the two-operand form: two identical "
+                  "admitted ordinary values, or a mutually comparable cljonic family pair "
+                  "(sequential [Vector, Queue, and all producers], map, set, or string). "
+                  "Floating-point values, callables, pointers, unscoped enums, standard-library "
+                  "range and container types, the standard-library variant, values whose "
+                  "equality may throw, and mixed cljonic/non-cljonic pairs are rejected.");
     return false;
 }
 
@@ -2644,14 +2650,16 @@ template <typename Lhs, typename Rhs, typename... Rest>
     return !equal(lhs, rhs, rest...);
 }
 
-// Diagnostic fallbacks (REQ-DIAG-009): targeted messages over the same domain as
-// `equal`; never a supported call target.
+// Diagnostic fallbacks (REQ-DIAG-009): self-contained targeted messages over the
+// domain `not_equal` shares with `equal`; never a supported call target.
 template <typename T>
     requires(!concepts_detail::EqualPairAdmissible<T, T>)
 [[nodiscard]] constexpr auto not_equal([[maybe_unused]] const T& value) -> bool {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::not_equal: operand is outside the supported equality domain. It must "
-                  "satisfy the same domain as cljonic::equal.");
+                  "cljonic::not_equal: operand is outside the supported equality domain, which "
+                  "not_equal shares with cljonic::equal. Floating-point values, callables, "
+                  "pointers, unscoped enums, standard-library range and container types, the "
+                  "standard-library variant, and values whose equality may throw are rejected.");
     return false;
 }
 
@@ -2659,9 +2667,13 @@ template <typename Lhs, typename Rhs>
     requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
 [[nodiscard]] constexpr auto not_equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
     static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
-                  "cljonic::not_equal: operands are outside the supported equality domain. They "
-                  "must satisfy the same two-operand domain as cljonic::equal (same admitted "
-                  "type, or a mutually comparable cljonic family pair).");
+                  "cljonic::not_equal: operands are outside the supported equality domain, which "
+                  "not_equal shares with cljonic::equal. The two operands must be the same "
+                  "admitted type, or a mutually comparable cljonic family pair (sequential "
+                  "[Vector, Queue, and all producers], map, set, or string). Floating-point "
+                  "values, callables, pointers, unscoped enums, standard-library range and "
+                  "container types, the standard-library variant, values whose equality may "
+                  "throw, and mixed cljonic/non-cljonic pairs are rejected.");
     return false;
 }
 
@@ -2671,8 +2683,14 @@ template <typename Lhs, typename Rhs, typename... Rest>
                                        [[maybe_unused]] const Rest&... rest) -> bool {
     static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
                   "cljonic::not_equal: at least one adjacent operand pair is outside the "
-                  "supported equality domain. Every adjacent pair must individually satisfy the "
-                  "same domain rules as cljonic::equal.");
+                  "supported equality domain, which not_equal shares with cljonic::equal. With "
+                  "three or more operands, every adjacent pair must individually satisfy the "
+                  "same rules as the two-operand form: two identical admitted ordinary values, "
+                  "or a mutually comparable cljonic family pair (sequential [Vector, Queue, and "
+                  "all producers], map, set, or string). Floating-point values, callables, "
+                  "pointers, unscoped enums, standard-library range and container types, the "
+                  "standard-library variant, values whose equality may throw, and mixed "
+                  "cljonic/non-cljonic pairs are rejected.");
     return false;
 }
 
