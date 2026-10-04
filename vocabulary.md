@@ -147,19 +147,35 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### SourceConstruction
-- **Definition:** Construction of an owning cljonic collection directly from an external range or view source, copying source elements into the collection's bounded storage without retaining the source or borrowing its lifetime.
+- **Definition:** Construction of an owning cljonic collection directly from an external non-cljonic range or view source, copying source elements into the collection's bounded storage without retaining the source or borrowing its lifetime. A cljonic collection or producer argument is not a SourceConstruction source; it is admissible only as a single element of exactly that element type (`SameTypeArgumentIsOneElement`) or enclosed by `EnclosureConstruction`.
 - **Deprecated Synonyms:** direct source import, bounded source import
-- **Related:** Collection, Capacity, BoundedStorage, OwningValue, PlatformInteroperability, RangeViewMaterialization
+- **Related:** Collection, Capacity, BoundedStorage, OwningValue, PlatformInteroperability, RangeViewMaterialization, EnclosureConstruction, SameTypeArgumentIsOneElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `Vector<int, 4>{source_range}`, `Map<Key, Value, 4>{source_view}`, and analogous constructors for `Set`, `Queue`, and `String` perform SourceConstruction.
 
 
 ### SameTypeArgumentIsOneElement
-- **Definition:** The constructor-selection rule that a single constructor argument whose type is exactly the collection's element type is pack construction of one element, and is never treated as a range or view source to materialize. Complete materialization of a range or producer argument remains the role of `into` and `fits_into`.
+- **Definition:** The constructor-selection rule that a single constructor argument whose type is exactly the collection's element type is pack construction of one element, and is never treated as a range or view source to materialize. A cljonic collection or producer argument that is not exactly the element type is rejected as a source argument; complete materialization remains the role of `into` and `fits_into`.
 - **Deprecated Synonyms:** pack preference, single-argument disambiguation
-- **Related:** SourceConstruction, RangeViewMaterialization, ProducerMaterialization, CapacityConstruction, Conj
+- **Related:** SourceConstruction, RangeViewMaterialization, ProducerMaterialization, CapacityConstruction, Conj, EnclosureConstruction
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `Vector<Range<int>, 4>{r}` constructs a vector containing the single producer value `r`; `into(Vector<int, 4>{}, Range<int>{0, 3, 1})` materializes the producer's elements.
+
+
+### EnclosureConstruction
+- **Definition:** The class-template-argument-deduction form (no explicit template argument list) in which a sole cljonic collection or producer argument deduces a destination whose element type is that argument's type and whose capacity is one, producing a one-element value that encloses the argument. EnclosureConstruction mirrors a Clojure collection literal (`[v]`, `#{v}`) and performs neither a copy nor element materialization; same-type copy construction requires an explicit template argument list naming the argument's own type and capacity.
+- **Deprecated Synonyms:** nesting construction, wrapping construction
+- **Related:** SameTypeArgumentIsOneElement, SourceConstruction, Collection, Producer, CapacityConstruction
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector{Vector<int, 2>{1, 2}}` deduces `Vector<Vector<int, 2>, 1>` containing one element; `Vector<int, 2>{v}` copies `v`.
+
+
+### SourceConstructionDiagnostic
+- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection, the violated source-construction rule, and the correct alternatives (`into`/`fits_into` for materialization, or the enclosure form for a single element). It never produces a value and is never a supported call target.
+- **Deprecated Synonyms:** constructor rejection message, source-construction fallback
+- **Related:** SourceConstruction, EnclosureConstruction, RejectionDiagnostic, SameTypeArgumentIsOneElement
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** Passing `Range<int>` to a `Vector<int, N>` source constructor reports a `SourceConstructionDiagnostic` directing the caller to `into`/`fits_into` instead of a generic element-conversion error.
 
 
 ### RangeViewMaterialization
