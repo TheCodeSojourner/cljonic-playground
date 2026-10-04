@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail header-guards _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail source-construction-compile-fail header-guards _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -49,6 +49,7 @@ help:
 	@printf '%-12s %s\n' 'variant-compile-fail' 'Verify composite keys with floating-point or callable components and non-storable producers fail for all header variants'
 	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
 	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
+	@printf '%-12s %s\n' 'source-construction-compile-fail' 'Verify cljonic collections/producers are rejected as source-constructor arguments and enclosure still works'
 	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and modular/generated parallel test run'
 	@printf '%-12s %s\n' 'traceability-category-report' 'Non-blocking obligation-family diagnostics from snapshot vs test TRACE_ID coverage'
 	@printf '%-12s %s\n' 'traceability-spec-to-code' 'Strict spec-to-code traceability gate (set-scoped allium, snapshot sync, test macro trace coverage)'
@@ -147,6 +148,9 @@ equal-compile-fail: cljonic scripts/check-equal-compile-failures.py
 
 not-equal-compile-fail: cljonic scripts/check-not-equal-compile-failures.py
 	@python3 scripts/check-not-equal-compile-failures.py
+
+source-construction-compile-fail: cljonic scripts/check-source-construction-compile-failures.py
+	@python3 scripts/check-source-construction-compile-failures.py
 
 header-guards:
 	@python3 scripts/check-header-guards.py
@@ -328,6 +332,7 @@ upsert-gate:
 	@$(MAKE) --no-print-directory -s variant-compile-fail
 	@$(MAKE) --no-print-directory -s equal-compile-fail
 	@$(MAKE) --no-print-directory -s not-equal-compile-fail
+	@$(MAKE) --no-print-directory -s source-construction-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
@@ -352,6 +357,7 @@ validate:
 	@$(MAKE) --no-print-directory -s variant-compile-fail
 	@$(MAKE) --no-print-directory -s equal-compile-fail
 	@$(MAKE) --no-print-directory -s not-equal-compile-fail
+	@$(MAKE) --no-print-directory -s source-construction-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
@@ -367,6 +373,7 @@ git:
 	@$(MAKE) --no-print-directory -s variant-compile-fail
 	@$(MAKE) --no-print-directory -s equal-compile-fail
 	@$(MAKE) --no-print-directory -s not-equal-compile-fail
+	@$(MAKE) --no-print-directory -s source-construction-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
