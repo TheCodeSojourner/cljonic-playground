@@ -124,7 +124,9 @@
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → classify_as(BoundedPrefixResult) ∧ bound_synthesis_by(CollectionMaximumElementCount)
   | SourceConstruction(x) → classify_as(BoundedResult) ∧ require(owned_copy ∧ no_checked_constructor)
+  | SourceConstruction(x) → admit_only(external_non_cljonic_range_or_view(x)) ∧ ¬admit(cljonic_collection(x) ∨ cljonic_producer(x))
   | SameTypeArgumentIsOneElement(x) → single_argument_same_type_as_element(x) → select_pack_construction(x) ∧ ¬select(SourceConstruction(x))
+  | EnclosureConstruction(x) → deduce_element_type_from_argument(x) ∧ capacity_one(x) ∧ produce_one_element(x) ∧ ¬copy(x) ∧ ¬materialize(x) ∧ mirrors(Clojure_literal_enclosure)
   | RangeViewMaterialization(x) → direct_source_construction(x) ∧ copy_prefix_to(destination_capacity(x))
   | static_extent_source_overflow(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | runtime_extent_source_overflow(x) → classify_as(BoundedPrefixResult) ∧ preserve(source_traversal_order)
@@ -146,7 +148,7 @@
   | vocabulary_consistency_gate(x) → enforce(canonical_vocabulary_governs) ∧ traces_to(S5_identity)
   | vocabulary_consistency_gate_fails(x) → reject_change(x)
 
-λ S3_rejection_diagnostic(x). public_free_function(x) ∧ closed_domain(x)
+λ S3_rejection_diagnostic(x). (public_free_function(x) ∨ public_source_constructor(x)) ∧ closed_domain(x)
     ∧ expressible_through_named_capability_concepts(x)
   → require(concept_based_primary_admission(x))
   | diagnostic_overload(x) → provide(one_per_supported_arity(x))
@@ -159,8 +161,9 @@
   | domain_support_detection(x) → use(named_admission_concepts ∧ admissible_predicates(x))
     ∧ ¬use(callability_detection(x))
     ∧ callability_of_rejected_argument(x) → ¬supported_interface(x)
-  | applies_to(equal ∧ not_equal)(x)
-  | rejection_diagnostic(x) → trace_to(REQ-DIAG-009 ∧ REQ-DIAG-001 ∧ REQ-DIAG-003)
+  | applies_to(equal ∧ not_equal ∧ collection_source_constructors)(x)
+  | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ direct_to(into ∨ fits_into ∨ enclosure_form)
+  | rejection_diagnostic(x) → trace_to(REQ-DIAG-009 ∧ REQ-DIAG-010 ∧ REQ-DIAG-001 ∧ REQ-DIAG-003)
 
 ## S2 - Coordination
 
@@ -766,8 +769,9 @@ concept IndexedProducer =
   | literal_deduced(x) → ctad_deduction_guides(x)
   | explicit_capacity(x) → empty_default_construction_valid(x)
   | oversized_initializer(x) → compile_time_failure(x)
-  | SourceConstruction(x) → copy_into(owned_bounded_storage(x)) ∧ ¬retain(source_lifetime(x))
+  | SourceConstruction(x) → copy_into(owned_bounded_storage(x)) ∧ ¬retain(source_lifetime(x)) ∧ admit_only(external_non_cljonic_range_or_view(x))
   | SameTypeArgumentIsOneElement(x) → single_argument_whose_type_is_element_type(x) → construct_one_element(x) ∧ ¬materialize(x)
+  | EnclosureConstruction(x) → sole_cljonic_argument_without_explicit_template_arguments(x) → deduce(element_type ← argument_type ∧ capacity ← one) ∧ produce_one_element(x) ∧ ¬copy(x) ∧ ¬materialize(x)
   | RangeViewMaterialization(x) → preserve(source_traversal_order) ∧ bounded_by(destination_capacity(x))
   | static_extent_source_overflow(x) → compile_time_failure(x)
   | runtime_extent_source_overflow(x) → materialize_as(BoundedPrefixResult)
