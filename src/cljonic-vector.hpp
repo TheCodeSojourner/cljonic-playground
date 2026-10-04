@@ -16,8 +16,9 @@ namespace cljonic {
  * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more initializers than the available capacity is rejected at
- * compile time. A single constructor argument whose type is exactly the element type constructs one element (never a
- * source to materialize); use \b into or \b fits_into to materialize a range or producer source.
+ * compile time. A non-cljonic C++ range or view source is copied into the Vector; a cljonic collection or producer is
+ * not a source -- \b Vector{Vector{...}} encloses it as a single element. Use \b into or \b fits_into to materialize a
+ * range, view, or producer.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -172,8 +173,14 @@ class Vector {
         initialize_storage_if_valid(std::forward<Args>(args)...);
     }
 
+    // A cljonic collection or producer is not a SourceConstruction source
+    // (REQ-FN-027A): it is admissible only as one element of exactly its own
+    // type (the pack constructor) or enclosed via EnclosureConstruction;
+    // materializing it is the role of into/fits_into. A lone argument that is
+    // exactly ElementType likewise stays with the pack constructor.
     template <std::ranges::input_range SourceRange>
-        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Vector> &&
+        requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
+                 !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, ElementType>)
     constexpr Vector(SourceRange&& source) noexcept(
         (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
@@ -193,6 +200,21 @@ class Vector {
             storage_[copy_count++] = value_type{std::forward<decltype(item)>(item)};
         }
         logical_size_ = copy_count;
+    }
+
+    // Diagnostic fallback (REQ-DIAG-010): a cljonic collection or producer is
+    // not a SourceConstruction source. This overload exists only to explain the
+    // rejection -- it produces no value and is never a supported call target.
+    template <typename SourceValue>
+        requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
+                  concepts_detail::is_cljonic_producer_v<SourceValue>) &&
+                 !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
+    constexpr Vector([[maybe_unused]] SourceValue&& source) noexcept {
+        static_assert(concepts_detail::dependent_false<SourceValue>,
+                      "Vector: a cljonic collection or producer is valid here only as one element of exactly "
+                      "the element type; it is never a source to materialize. This argument's type is not the "
+                      "element type. Use into(destination, source) or fits_into(destination, source) to "
+                      "materialize it, or write Vector{...} to enclose it as one element.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -294,6 +316,11 @@ class Vector {
 
 template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
+
+// EnclosureConstruction (REQ-FN-027A): a sole Vector argument wraps as one
+// element rather than being copied, mirroring a Clojure literal ([v]).
+template <typename ElementType, std::size_t CapacityValue>
+Vector(Vector<ElementType, CapacityValue>) -> Vector<Vector<ElementType, CapacityValue>, 1>;
 
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)

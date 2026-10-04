@@ -143,8 +143,11 @@ class Queue {
         ((*this = conj(T{std::forward<Args>(args)})), ...);
     }
 
+    // A cljonic collection or producer is not a SourceConstruction source
+    // (REQ-FN-027A); materialize it via into/fits_into.
     template <std::ranges::input_range SourceRange>
-        requires(!std::same_as<std::remove_cvref_t<SourceRange>, Queue> &&
+        requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
+                 !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
     constexpr Queue(SourceRange&& source) noexcept(
         (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
@@ -161,6 +164,21 @@ class Queue {
             }
             *this = conj(value_type{std::forward<decltype(item)>(item)});
         }
+    }
+
+    // Diagnostic fallback (REQ-DIAG-010): a cljonic collection or producer is
+    // not a SourceConstruction source. This overload exists only to explain the
+    // rejection -- it produces no value and is never a supported call target.
+    template <typename SourceValue>
+        requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
+                  concepts_detail::is_cljonic_producer_v<SourceValue>) &&
+                 !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
+    constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
+        static_assert(concepts_detail::dependent_false<SourceValue>,
+                      "Queue: a cljonic collection or producer is valid here only as one element of exactly "
+                      "the element type; it is never a source to materialize. This argument's type is not the "
+                      "element type. Use into(destination, source) or fits_into(destination, source) to "
+                      "materialize it, or write Queue{...} to enclose it as one element.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -245,6 +263,10 @@ class Queue {
 
 template <typename First, typename... Rest>
 Queue(First, Rest...) -> Queue<First, 1 + sizeof...(Rest)>;
+
+// EnclosureConstruction (REQ-FN-027A): a sole Queue argument wraps as one element.
+template <typename ElementType, std::size_t CapacityValue>
+Queue(Queue<ElementType, CapacityValue>) -> Queue<Queue<ElementType, CapacityValue>, 1>;
 
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
