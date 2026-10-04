@@ -300,6 +300,15 @@ This module establishes the C++20 concept capability framework, result status ou
   rationale: maximally informative compile-time diagnostics are a global library goal, and a single targeted diagnostic is more accurate to a reader than a list of rejected concept candidates
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
+λ REQ-DIAG-010(x).
+  ∀ public_constructor whose source domain is closed and expressible through named constraints (for example a cljonic collection's direct source constructor, which admits only non-cljonic C++ range or view sources — `REQ-FN-027A`):
+  ∧ primary admission: expressed through named constraints at the constructor boundary, so a cljonic collection or producer argument that is not the destination's element type is excluded from source construction
+  ∧ preferred diagnostic fallback: an additional constructor overload constrained on the negation of the source-admission rule, so that a rejected cljonic collection or producer argument fails with one targeted `static_assert` that names the collection, states the violated source-construction rule, and directs the caller to `into`/`fits_into` for materialization or to the enclosure form for a single element (`REQ-DIAG-003`)
+  ∧ the diagnostic fallback exists to explain rejection, not to accept it: it never produces a value and is never a supported call target
+  ∧ ∀ diagnostic_fallback message: states the meaning and the violated constraint in user-facing terms rather than relying on a generic element-conversion message, and does not depend on compiler-specific wording (`REQ-DIAG-004`)
+  rationale: without the fallback the rejected argument falls through to the pack constructor's generic conversion diagnostic (for example "could not convert a producer to the element type"), which misleads the caller because no element conversion was intended; one targeted, educational diagnostic is more accurate and keeps the rejection reason discoverable
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+
 ## Compile-Time Evaluation
 
 λ REQ-CONST-001(x).

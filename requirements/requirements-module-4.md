@@ -218,6 +218,10 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∧ ∀ String span import: applies the String invalid-byte replacement policy, including replacing embedded null bytes and bytes above `0x7F` with `'.'`
   ∧ ∀ source extent that is a compile-time constant greater than the destination capacity: construction fails at compile time ∧ ∀ source extent known only at runtime that exceeds capacity: direct construction returns the deterministic bounded prefix permitted by the destination capacity
   ∧ ∀ direct_source_construction: documented as bounded construction rather than complete materialization ∧ ¬∃ introduction of an optional, result, exception, or other checked-constructor error channel
+  ∧ ∀ constructor_argument: a cljonic_collection ∨ cljonic_producer is admitted only when its type is exactly the destination's element type — in that case it is one element (pack construction), mirroring a Clojure collection literal whose contents are elements (`#{(range 10)}`)
+  ∧ ∀ constructor_argument whose type is a cljonic_collection ∨ cljonic_producer that is ¬the destination's element type: ¬∃ admitted as a direct source constructor argument — materializing a cljonic collection or producer source is the role of `into` ∧ `fits_into` (`REQ-FN-027`), never the constructor; the direct source constructor admits only non-cljonic C++ interoperability sources
+  ∧ ∀ enclosure_construction (a class-template-argument-deduction form, no explicit template argument list) whose sole argument is a cljonic_collection ∨ cljonic_producer: deduces the destination with that source value as its element type and a capacity of one, producing a one-element value that encloses the argument — mirroring a Clojure collection literal (`[v]`, `#{v}`) — ¬∃ copy or element materialization
+  ∧ ∀ same-type_copy_construction (an explicit template argument list naming the argument's own destination type and capacity): remains a copy of the argument, distinct from enclosure_construction
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 ## Deferred Internal Range and View Implementation Support
