@@ -123,9 +123,14 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:acf3e2037031663681f0b8a33d3e261d2" id="r_acf3e2037031663681f0b8a33d3e261d2"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:acf3e2037031663681f0b8a33d3e261d2 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#acf3e2037031663681f0b8a33d3e261d2">Queue</a> (Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; T, Args &gt; &amp;&amp;...))</td></tr>
-<tr class="memitem:af4422d8bc6df64a5385e9ff77b74ab05" id="r_af4422d8bc6df64a5385e9ff77b74ab05"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range SourceRange&gt; <br />
-requires (!std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, Queue&gt; &amp;&amp; !std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, <a class="el" href="#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a>&gt;)</td></tr>
-<tr class="memitem:af4422d8bc6df64a5385e9ff77b74ab05 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#af4422d8bc6df64a5385e9ff77b74ab05">Queue</a> (SourceRange &amp;&amp;source) noexcept((concepts::NothrowElementConstruction&lt; <a class="el" href="#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a>, std::ranges::range_value_t&lt; SourceRange &gt; &gt;))</td></tr>
+<tr class="memitem:a73dde29e99c0476b12adc1f0c123ddfc" id="r_a73dde29e99c0476b12adc1f0c123ddfc"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range SourceRange&gt; <br />
+requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceRange&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceRange&gt; &amp;&amp;<br class="typebreak" />
+ !std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, <a class="el" href="#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a>&gt;)</td></tr>
+<tr class="memitem:a73dde29e99c0476b12adc1f0c123ddfc template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a73dde29e99c0476b12adc1f0c123ddfc">Queue</a> (SourceRange &amp;&amp;source) noexcept((concepts::NothrowElementConstruction&lt; <a class="el" href="#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a>, std::ranges::range_value_t&lt; SourceRange &gt; &gt;))</td></tr>
+<tr class="memitem:aeabb785c0e607d624e56f3c1e5780338" id="r_aeabb785c0e607d624e56f3c1e5780338"><td class="memTemplParams" colspan="2">template&lt;typename SourceValue&gt; <br />
+requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceValue&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceValue&gt;) &amp;&amp;<br class="typebreak" />
+ !std::same_as&lt;std::remove_cvref_t&lt;SourceValue&gt;, <a class="el" href="#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a>&gt;)</td></tr>
+<tr class="memitem:aeabb785c0e607d624e56f3c1e5780338 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#aeabb785c0e607d624e56f3c1e5780338">Queue</a> (SourceValue &amp;&amp;source) noexcept</td></tr>
 <tr class="memitem:add8227bce3ff33890e2bce09c35b6244" id="r_add8227bce3ff33890e2bce09c35b6244"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#add8227bce3ff33890e2bce09c35b6244">count</a> () const noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:a2663ea00782f7664e15bba3f90dcce94" id="r_a2663ea00782f7664e15bba3f90dcce94"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a2663ea00782f7664e15bba3f90dcce94">is_empty</a> () const noexcept -&gt; bool</td></tr>
 <tr class="memitem:ae4e86e883fb710c650ddf39f87116a61" id="r_ae4e86e883fb710c650ddf39f87116a61"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ae4e86e883fb710c650ddf39f87116a61">operator==</a> (const <a class="el" href="#acf3e2037031663681f0b8a33d3e261d2">Queue</a> &amp;other) const noexcept -&gt; bool</td></tr>
@@ -227,7 +232,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </div>
 <a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="acf3e2037031663681f0b8a33d3e261d2" name="acf3e2037031663681f0b8a33d3e261d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf3e2037031663681f0b8a33d3e261d2">&#9670;&#160;</a></span>Queue() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#acf3e2037031663681f0b8a33d3e261d2">&#9670;&#160;</a></span>Queue() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -257,8 +262,8 @@ template&lt;typename... Args&gt; </div>
 
 </div>
 </div>
-<a id="af4422d8bc6df64a5385e9ff77b74ab05" name="af4422d8bc6df64a5385e9ff77b74ab05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4422d8bc6df64a5385e9ff77b74ab05">&#9670;&#160;</a></span>Queue() <span class="overload">[2/2]</span></h2>
+<a id="a73dde29e99c0476b12adc1f0c123ddfc" name="a73dde29e99c0476b12adc1f0c123ddfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73dde29e99c0476b12adc1f0c123ddfc">&#9670;&#160;</a></span>Queue() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -266,7 +271,8 @@ template&lt;typename... Args&gt; </div>
 template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
 <div class="memtemplate">
 template&lt;std::ranges::input_range SourceRange&gt; <br />
-requires (!std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, Queue&gt; &amp;&amp; !std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, <a class="el" href="#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a>&gt;)</div>
+requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceRange&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceRange&gt; &amp;&amp;<br class="typebreak" />
+ !std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, <a class="el" href="#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a>&gt;)</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -285,7 +291,40 @@ requires (!std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, Queue&gt; &am
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00149">149</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00152">152</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aeabb785c0e607d624e56f3c1e5780338" name="aeabb785c0e607d624e56f3c1e5780338"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeabb785c0e607d624e56f3c1e5780338">&#9670;&#160;</a></span>Queue() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; </div>
+<div class="memtemplate">
+template&lt;typename SourceValue&gt; <br />
+requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceValue&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceValue&gt;) &amp;&amp;<br class="typebreak" />
+ !std::same_as&lt;std::remove_cvref_t&lt;SourceValue&gt;, <a class="el" href="#a4f7ab05a1116c878fb3eb1ff346534e8">value_type</a>&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcljonic_1_1_queue.html">cljonic::Queue</a>&lt; T, CapacityValue &gt;::Queue </td>
+          <td>(</td>
+          <td class="paramtype">SourceValue &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00176">176</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -315,7 +354,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00194">194</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00212">212</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -345,7 +384,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Returns true when there is room for at least one more element. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00203">203</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00221">221</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -374,7 +413,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00166">166</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00184">184</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -404,7 +443,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Adds an element to the back of a copy of the queue (enqueue). Returns an unchanged copy when full. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00209">209</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00227">227</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -433,7 +472,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00170">170</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00188">188</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -462,7 +501,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00198">198</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00216">216</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -491,7 +530,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00174">174</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00192">192</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -520,7 +559,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00178">178</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00196">196</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -550,7 +589,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Peeks at the front element without removing it. Returns default-constructed value when empty. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00223">223</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00241">241</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -580,7 +619,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Removes the front element from a copy of the queue (dequeue). Returns an unchanged copy when empty. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00229">229</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00247">247</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>

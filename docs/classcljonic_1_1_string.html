@@ -123,10 +123,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae3e26d18bb8bc456e6acd07b28ec73b2" id="r_ae3e26d18bb8bc456e6acd07b28ec73b2"><td class="memTemplParams" colspan="2">template&lt;std::size_t N&gt; </td></tr>
 <tr class="memitem:ae3e26d18bb8bc456e6acd07b28ec73b2 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ae3e26d18bb8bc456e6acd07b28ec73b2">String</a> (const char(&amp;arr)[N]) noexcept</td></tr>
 <tr class="memitem:a0262899e1fa653fdb875f3be9b7f9fe6" id="r_a0262899e1fa653fdb875f3be9b7f9fe6"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a0262899e1fa653fdb875f3be9b7f9fe6">String</a> (std::string_view source) noexcept</td></tr>
-<tr class="memitem:a4c1e9b2ca453358ee6afee69547b9cd1" id="r_a4c1e9b2ca453358ee6afee69547b9cd1"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range SourceRange&gt; <br />
-requires (!std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, String&gt; &amp;&amp; std::same_as&lt;std::remove_cv_t&lt;std::ranges::range_value_t<br class="typebreak" />
-&lt;SourceRange&gt;&gt;, char&gt;)</td></tr>
-<tr class="memitem:a4c1e9b2ca453358ee6afee69547b9cd1 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a4c1e9b2ca453358ee6afee69547b9cd1">String</a> (SourceRange &amp;&amp;source) noexcept</td></tr>
+<tr class="memitem:ad7fb6c31f6de54c4c2be00cf07049bdf" id="r_ad7fb6c31f6de54c4c2be00cf07049bdf"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range SourceRange&gt; <br />
+requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceRange&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceRange&gt; &amp;&amp;<br class="typebreak" />
+ std::same_as&lt;std::remove_cv_t&lt;std::ranges::range_value_t&lt;SourceRange&gt;&gt;, char&gt;)</td></tr>
+<tr class="memitem:ad7fb6c31f6de54c4c2be00cf07049bdf template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ad7fb6c31f6de54c4c2be00cf07049bdf">String</a> (SourceRange &amp;&amp;source) noexcept</td></tr>
+<tr class="memitem:a38bf3febaacafbfd8610c10d5baaef38" id="r_a38bf3febaacafbfd8610c10d5baaef38"><td class="memTemplParams" colspan="2">template&lt;typename SourceValue&gt; <br />
+requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceValue&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceValue&gt;) &amp;&amp;<br class="typebreak" />
+ !std::same_as&lt;std::remove_cvref_t&lt;SourceValue&gt;, <a class="el" href="#a1e5c5ec072faa23dddc279673c881708">value_type</a>&gt;)</td></tr>
+<tr class="memitem:a38bf3febaacafbfd8610c10d5baaef38 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a38bf3febaacafbfd8610c10d5baaef38">String</a> (SourceValue &amp;&amp;source) noexcept</td></tr>
 <tr class="memitem:ad95ac0056030f593c4dd89bfc7e42db4" id="r_ad95ac0056030f593c4dd89bfc7e42db4"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ad95ac0056030f593c4dd89bfc7e42db4">count</a> () const noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:a190fa72953a5d1af8b352e8976118351" id="r_a190fa72953a5d1af8b352e8976118351"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a190fa72953a5d1af8b352e8976118351">is_empty</a> () const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a28517a781023d895bf768d52f867ec45" id="r_a28517a781023d895bf768d52f867ec45"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a28517a781023d895bf768d52f867ec45">operator==</a> (const <a class="el" href="#a7ea679911d132d5b5c601904153c8d64">String</a> &amp;other) const noexcept -&gt; bool</td></tr>
@@ -302,7 +306,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div>
 <a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a7ea679911d132d5b5c601904153c8d64" name="a7ea679911d132d5b5c601904153c8d64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ea679911d132d5b5c601904153c8d64">&#9670;&#160;</a></span>String() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ea679911d132d5b5c601904153c8d64">&#9670;&#160;</a></span>String() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -331,7 +335,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div>
 </div>
 <a id="ae3e26d18bb8bc456e6acd07b28ec73b2" name="ae3e26d18bb8bc456e6acd07b28ec73b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3e26d18bb8bc456e6acd07b28ec73b2">&#9670;&#160;</a></span>String() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3e26d18bb8bc456e6acd07b28ec73b2">&#9670;&#160;</a></span>String() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -363,7 +367,7 @@ template&lt;std::size_t N&gt; </div>
 </div>
 </div>
 <a id="a0262899e1fa653fdb875f3be9b7f9fe6" name="a0262899e1fa653fdb875f3be9b7f9fe6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0262899e1fa653fdb875f3be9b7f9fe6">&#9670;&#160;</a></span>String() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0262899e1fa653fdb875f3be9b7f9fe6">&#9670;&#160;</a></span>String() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -391,8 +395,8 @@ template&lt;std::size_t CapacityValue&gt; </div>
 
 </div>
 </div>
-<a id="a4c1e9b2ca453358ee6afee69547b9cd1" name="a4c1e9b2ca453358ee6afee69547b9cd1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c1e9b2ca453358ee6afee69547b9cd1">&#9670;&#160;</a></span>String() <span class="overload">[4/4]</span></h2>
+<a id="ad7fb6c31f6de54c4c2be00cf07049bdf" name="ad7fb6c31f6de54c4c2be00cf07049bdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7fb6c31f6de54c4c2be00cf07049bdf">&#9670;&#160;</a></span>String() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -400,8 +404,8 @@ template&lt;std::size_t CapacityValue&gt; </div>
 template&lt;std::size_t CapacityValue&gt; </div>
 <div class="memtemplate">
 template&lt;std::ranges::input_range SourceRange&gt; <br />
-requires (!std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, String&gt; &amp;&amp; std::same_as&lt;std::remove_cv_t&lt;std::ranges::range_value_t<br class="typebreak" />
-&lt;SourceRange&gt;&gt;, char&gt;)</div>
+requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceRange&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceRange&gt; &amp;&amp;<br class="typebreak" />
+ std::same_as&lt;std::remove_cv_t&lt;std::ranges::range_value_t&lt;SourceRange&gt;&gt;, char&gt;)</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -420,7 +424,40 @@ requires (!std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, String&gt; &a
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00131">131</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00134">134</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a38bf3febaacafbfd8610c10d5baaef38" name="a38bf3febaacafbfd8610c10d5baaef38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38bf3febaacafbfd8610c10d5baaef38">&#9670;&#160;</a></span>String() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t CapacityValue&gt; </div>
+<div class="memtemplate">
+template&lt;typename SourceValue&gt; <br />
+requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceValue&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceValue&gt;) &amp;&amp;<br class="typebreak" />
+ !std::same_as&lt;std::remove_cvref_t&lt;SourceValue&gt;, <a class="el" href="#a1e5c5ec072faa23dddc279673c881708">value_type</a>&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcljonic_1_1_string.html">cljonic::String</a>&lt; CapacityValue &gt;::String </td>
+          <td>(</td>
+          <td class="paramtype">SourceValue &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00156">156</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -456,7 +493,7 @@ template&lt;std::integral IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00204">204</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00222">222</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -485,7 +522,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00170">170</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00188">188</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -516,7 +553,7 @@ template&lt;std::integral IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00198">198</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00216">216</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -545,7 +582,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00146">146</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00164">164</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -577,7 +614,7 @@ template&lt;std::integral IndexType&gt; </div>
 </div><div class="memdoc">
 <p>Returns true when index falls within logical bounds (not counting null terminator). Mirrors Clojure contains? over string indices. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00185">185</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00203">203</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -606,7 +643,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00150">150</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00168">168</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -635,7 +672,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00174">174</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00192">192</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -664,7 +701,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00154">154</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00172">172</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -700,7 +737,7 @@ template&lt;std::integral IndexType&gt; </div>
 </div><div class="memdoc">
 <p>Callable index access with custom fallback value on invalid index. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00192">192</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00210">210</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -729,7 +766,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00176">176</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -765,7 +802,7 @@ template&lt;std::integral IndexType&gt; </div>
 </div><div class="memdoc">
 <p>Returns a fresh <a class="el" href="classcljonic_1_1_string.html">String</a> with the character at index replaced. Out-of-bounds indices leave copy unchanged. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00220">220</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00238">238</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -794,7 +831,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00178">178</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00196">196</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>

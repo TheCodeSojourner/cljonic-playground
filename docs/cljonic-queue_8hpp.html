@@ -136,6 +136,8 @@ Namespaces</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a1ccca56ddfbbc85bcfba4064a08761d3" id="r_a1ccca56ddfbbc85bcfba4064a08761d3"><td class="memTemplParams" colspan="2">template&lt;typename First, typename... Rest&gt; </td></tr>
 <tr class="memitem:a1ccca56ddfbbc85bcfba4064a08761d3 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a1ccca56ddfbbc85bcfba4064a08761d3">cljonic::Queue</a> (First, Rest...) -&gt; Queue&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
+<tr class="memitem:a44b34db5eafc1d524d79f26d82784b20" id="r_a44b34db5eafc1d524d79f26d82784b20"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t CapacityValue&gt; </td></tr>
+<tr class="memitem:a44b34db5eafc1d524d79f26d82784b20 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a44b34db5eafc1d524d79f26d82784b20">cljonic::Queue</a> (Queue&lt; ElementType, CapacityValue &gt;) -&gt; Queue&lt; Queue&lt; ElementType, CapacityValue &gt;, 1 &gt;</td></tr>
 <tr class="memitem:a55bddea4174ca0026b4178b2623c67ef" id="r_a55bddea4174ca0026b4178b2623c67ef"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; <br />
 requires (Extent != std::dynamic_extent)</td></tr>
 <tr class="memitem:a55bddea4174ca0026b4178b2623c67ef template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a55bddea4174ca0026b4178b2623c67ef">cljonic::Queue</a> (std::span&lt; SourceElement, Extent &gt;) -&gt; Queue&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td></tr>
