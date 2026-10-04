@@ -205,3 +205,42 @@ TEST_CASE("Map, Set, and Queue accept bounded range and view sources", "[source-
     const auto copied_queue_view_fit = Queue<int, 4>{tripled};
     REQUIRE(copied_queue_view_fit.count() == 4U);
 }
+
+TEST_CASE("Cljonic sources are enclosed as one element, never a source constructor argument",
+          "[source-construction][enclosure]") {
+    using cljonic::Queue;
+    using cljonic::Range;
+    using cljonic::Set;
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.CollectionSourceConstruction");
+    TRACE_ID("invariant.CollectionSourceConstruction.CljonicSourceIsNotConstructorSource");
+    TRACE_ID("invariant.CollectionSourceConstruction.SoleArgumentEnclosureYieldsOneElement");
+    TRACE_ID("invariant.CollectionSourceConstruction.CljonicSourceRejectionUsesTargetedDiagnostic");
+
+    // EnclosureConstruction (REQ-FN-027A): a sole cljonic argument derives the
+    // destination with that argument's type as the element type and a capacity
+    // of one, enclosing the argument as ONE element (mirrors [v] / #{v}).
+    STATIC_REQUIRE(Vector{Vector<int, 2>{1, 2}}.count() == 1U);
+    STATIC_REQUIRE(Set{Set<int, 2>{1, 2}}.count() == 1U);
+    STATIC_REQUIRE(Queue{Queue<int, 2>{1, 2}}.count() == 1U);
+
+    STATIC_REQUIRE(
+        std::is_same_v<std::remove_cvref_t<decltype(Vector{Vector<int, 2>{1, 2}})>, Vector<Vector<int, 2>, 1>>);
+    STATIC_REQUIRE(std::is_same_v<std::remove_cvref_t<decltype(Set{Set<int, 2>{1, 2}})>, Set<Set<int, 2>, 1>>);
+    STATIC_REQUIRE(std::is_same_v<std::remove_cvref_t<decltype(Queue{Queue<int, 2>{1, 2}})>, Queue<Queue<int, 2>, 1>>);
+
+    // Cross-class enclosure also yields one element via the pack guide.
+    STATIC_REQUIRE(Vector{Set<int, 2>{1, 2}}.count() == 1U);
+    STATIC_REQUIRE(Set{Vector<int, 2>{1, 2}}.count() == 1U);
+    STATIC_REQUIRE(Set{Range<int>{0, 3, 1}}.count() == 1U);
+
+    // Same-type copy remains available through an explicit template argument
+    // list (copy construction), distinct from enclosure.
+    STATIC_REQUIRE(Vector<int, 2>{Vector<int, 2>{1, 2}}.count() == 2U);
+    STATIC_REQUIRE(Set<int, 2>{Set<int, 2>{1, 2}}.count() == 2U);
+
+    // The rejection form (a cljonic value that is not the element type) must
+    // fail to compile; that is proven by
+    // scripts/check-source-construction-compile-failures.py.
+}
