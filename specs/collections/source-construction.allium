@@ -12,6 +12,9 @@ entity CollectionSourceConstruction {
     complete_materialization_uses_into: Boolean
     checked_constructor_is_not_required: Boolean
     single_element_type_argument_yields_pack_construction: Boolean
+    cljonic_source_is_not_a_constructor_source: Boolean
+    sole_argument_enclosure_yields_one_element: Boolean
+    cljonic_source_rejection_uses_targeted_diagnostic: Boolean
 
     invariant DirectSourceConstructionIsOwned {
         this.direct_source_construction_is_owned = true
@@ -55,6 +58,18 @@ entity CollectionSourceConstruction {
 
     invariant SingleElementTypeArgumentYieldsPackConstruction {
         this.single_element_type_argument_yields_pack_construction = true
+    }
+
+    invariant CljonicSourceIsNotConstructorSource {
+        this.cljonic_source_is_not_a_constructor_source = true
+    }
+
+    invariant SoleArgumentEnclosureYieldsOneElement {
+        this.sole_argument_enclosure_yields_one_element = true
+    }
+
+    invariant CljonicSourceRejectionUsesTargetedDiagnostic {
+        this.cljonic_source_rejection_uses_targeted_diagnostic = true
     }
 }
 
