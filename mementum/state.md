@@ -1,5 +1,67 @@
 ## Session State
 
+- last_session_id: baa5e0a4-57f6-40d4-9d5f-c4a72d93962b
+- current_timestamp: 2026-10-03
+- recover: 1
+- session_complete: true
+
+Task:
+1. gybis-init orientation — COMPLETE: oriented on state.md, recent memories, and the value-equality-domain / cljonic-next-agenda / collection-source-interoperability knowledge pages.
+2. Catch2 generator question — COMPLETE (decision only, task 3): evaluated `GENERATE`/`TEMPLATE_TEST_CASE` parametrization; recommendation was a bounded adoption, but the human decided NOT to adopt generators.
+3. Test-parametrization decision — COMPLETE (commit ffc4ae9): created `mementum/memories/no-generator-test-parametrization.md` and updated `mementum/knowledge/verification-signal-discipline.md` in place, retracting the prior "Prefer Catch2 GENERATE-based parametrization" rule and its tuple-GENERATE guidance.
+4. Vector doc-prose refinement — COMPLETE (commit 1fff6dd): removed the confusing "single argument exactly the element type" sentence (self-evident, and the rationale now lives as an inline comment) and, after analysis, rewrote the source sentence to state the real rule; also added an inline comment at the source-constructor `requires` clause recording why a lone element-typed arg stays with the pack constructor.
+5. Source-construction Clojure-enclosure slice — COMPLETE (commits: req c0336c7, spec 13fa54e/73b81cd, code 1fff6dd, harness+Makefile f239e43), full chain `req > vocab > arch > spec > tests > code`:
+   - req: REQ-FN-027A extended — a cljonic collection/producer is admitted only as one element of exactly the element type; otherwise never a source constructor argument (materialize via `into`/`fits_into`); the direct source constructor admits only non-cljonic C++ range/view sources; plus enclosure-vs-same-type-copy clauses.
+   - vocab: updated `SourceConstruction` and `SameTypeArgumentIsOneElement`; added `EnclosureConstruction`.
+   - arch: `S3_result_contract_policy` + `S1_construction` — source admission only for non-cljonic C++ sources; `EnclosureConstruction` deduces element type + capacity one, one element, no copy/materialize.
+   - spec: `specs/collections/source-construction.allium` — added `CljonicSourceIsNotConstructorSource`, `SoleArgumentEnclosureYieldsOneElement` (+ entity fields).
+   - code: narrowed all five source ctors (`!is_cljonic_collection_v && !is_cljonic_producer_v`); added same-class CTAD enclosure guides to Vector/Set/Queue; Vector prose updated.
+   - tests: enclosure matrix added to `tests/cljonic-source-construction-spec-tests.cpp`; new `scripts/check-source-construction-compile-failures.py` (rejection + enclosure/interop positive controls); Makefile target `source-construction-compile-fail` wired into `.PHONY`/help/upsert-gate/validate/git.
+6. REQ-DIAG-010 constructor diagnostic fallback — COMPLETE (commits: req c0336c7, spec 13fa54e, code 1fff6dd, harness f239e43), full chain:
+   - req: new REQ-DIAG-010 extending the rejection-diagnostic policy from public free functions (REQ-DIAG-009) to public source constructors.
+   - vocab: added `SourceConstructionDiagnostic`.
+   - arch: `S3_rejection_diagnostic` extended to `public_source_constructor` (still traces REQ-DIAG-009 ∧ 010 ∧ 001 ∧ 003).
+   - spec: `CljonicSourceRejectionUsesTargetedDiagnostic` invariant.
+   - code: diagnostic fallback ctor in Vector/Set/Queue/Map/String (constrained on the rejected case, `dependent_false` static_assert, parameter `[[maybe_unused]]`); message states the conditional rule, the reason (argument type ≠ element type), and both alternatives.
+   - tests: TRACE_ID added; harness asserts the message anchor `"it is never a source to materialize"` (whitespace-normalized) so wording drift fails the gate.
+7. Memories stored — COMPLETE (commit c774542): `ctad-copy-deduction-vs-enclosure-guides.md` (standard rule: user guide beats copy-deduction candidate; verified GCC 16.2 + clang 22.1) and `source-construction-diagnostic-fallback.md` (REQ-DIAG-010 mechanism + why the gate alone is not a teacher).
+8. Recovery incident — COMPLETE: an accidental `git checkout -- src/cljonic-vector.hpp` (intended to revert a scratch demo) discarded all uncommitted Vector work on that file; recovered by re-applying the three edits and re-verifying. General lesson recorded in user memory (`/memories/git-scratch-experiments.md`): back up or stage a file before temporarily editing it, and prefer /tmp scratch probes.
+
+Questions:
+1. None blocking. Slice B (`cljonic::Variant` free-function API) awaits selection.
+2. None. All code/req/vocab/arch/spec/test/docs work from this session is committed (see Task); only the Mementum memory deltas remain for this fini.
+
+Decisions:
+1. Generator testing (human, 2026-10-03): NOT adopted. Reversed the prior "Prefer Catch2 GENERATE-based parametrization" guidance; rationale: no coverage gain at 100.0%, recurring sanitizer/coverage cost across the several builds, runtime `auto` cannot feed `STATIC_REQUIRE`, and `random()` injects unstated distribution assumptions.
+2. Source-construction admission (human, 2026-10-03): the direct source constructor admits only non-cljonic C++ range/view sources; a cljonic collection or producer is admissible only as one element of exactly the element type (pack) — mirroring a Clojure literal whose contents are elements (`#{(range 10)}`) — or via enclosure; materializing a cljonic source is the role of `into`/`fits_into`. Applies to same-kind as well (e.g. `Set<int,4>{Set<int,2>{…}}` is rejected). Supported by Clojure evidence: `#{(range 10)}` succeeds (one element); `#{(range)}` fails; `(into #{} …)` is the materializing form.
+3. Enclosure (human, 2026-10-03): achieve as-close-as-possible Clojure enclosure. Implemented with same-class CTAD deduction guides (`Vector(Vector<T,N>) -> Vector<Vector<T,N>,1>`), which out-prefer the implicit copy-deduction candidate. Verified standard-sanctioned ([over.match.best]: a guide as specialized as the copy candidate is preferred; matches the standard's own `A(A<T>) -> A<A<T>>` example) and cross-compiler (GCC 16.2, clang 22.1). Accepted tradeoff: CTAD `Vector{v}` where `v` is a `Vector` now encloses (one element) rather than copying; same-type copy remains via an explicit argument list (`Vector<int,2>{v}`).
+4. REQ-DIAG-010 (human, 2026-10-03): approved extending the rejection-diagnostic policy to constructors. The `requires` clause is a gate, not a teacher — without a fallback the rejected argument falls through to the pack constructor's generic element-conversion message, which misleads. Message wording must be conditional ("valid here only as one element of exactly the element type"), not a universal claim, because the pack/enclosure path is valid when the argument IS the element type.
+5. Scope (human, 2026-10-03): implemented REQ-DIAG-010 for all five collections (not Vector-only), as part of this slice.
+6. Gate discipline (human, 2026-10-03): do not re-run `upsert-gate-strict` during this session; stop running the full test battery after every small change.
+
+Validation:
+1. `make test` → 188/188 passed; `make lint` → lint:ok; `make complexity` → 0 warnings; `make cljonic` regenerated the single header.
+2. `python3 scripts/check-source-construction-compile-failures.py` → `source-construction-compile-fail:ok` (10 rejection cases + 5 positive controls × modular/single-header; message content asserted).
+3. `make traceability-spec-to-code` → ok (snapshot regenerated with the new obligation IDs).
+4. `make cljonic-test` → ok; an independent accepted-paths probe (`/tmp/regress.cpp`: enclosure same/cross-class, element pack, scalars, span interop) → REGRESS:OK.
+5. `make git` (user-run) green end-to-end: format, lint, complexity, range/variant/equal/not-equal/source-construction compile-fail, header-guards, sanitizer, coverage lines=100.0%, traceability, no-heap, docs, docs-examples:compiled=29, cljonic-test. (No `upsert-gate-strict` run, per decision 6.)
+6. Diagnostic demonstration on real headers: before = generic "could not convert 'cljonic::Range<int>' to 'int'"; after = targeted per-collection message.
+
+Next:
+1. (None — the source-construction enclosure and REQ-DIAG-010 slices are committed: 1fff6dd (code), f239e43 (harness+Makefile), c0336c7 (req), 13fa54e/73b81cd (spec), c774542 (memories), cc5d813 (docs). This fini commits only the Mementum state delta.)
+2. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
+3. Extend the REQ-DIAG-010 constructor-diagnostic policy to any other public constructor whose source domain is closed.
+4. Candidate synthesis (PROPOSED, awaiting human approval): `mementum/knowledge/collection-source-interoperability.md` is likely STALE — it predates the enclosure/REQ-DIAG-010 changes and the non-cljonic-source restriction. Propose updating it (or a new `source-construction` knowledge page) from `ctad-copy-deduction-vs-enclosure-guides.md`, `source-construction-diagnostic-fallback.md`, `same-type-constructor-pack-preference.md`, `defer-vector-construction-spec.md`.
+5. Candidate synthesis (still pending from prior session): `doxygen-doc-tooling.md` from the ≥3 doc-tooling memories.
+
+Carry-forward (unaddressed, remember for later):
+1. `equal_by`/`identical` and the remaining REQ-FN-002C comparison family remain deferred.
+2. User-defined aggregates with float members are unanalyzable (no reflection) — REQ-NUM-007 recursion cannot be enforced for them.
+3. Set duplicate-insertion in a constexpr context hits std::abort().
+4. Map/String as enclosure outer types were deferred (different element model); only Vector/Set/Queue have same-class enclosure guides.
+
+## Previous Session State
+
 - last_session_id: c1ef7071-fad8-4316-ae67-95a4f24685e7
 - current_timestamp: 2026-10-03
 - recover: 1
@@ -45,7 +107,7 @@ Carry-forward (unaddressed, remember for later):
 3. Set duplicate-insertion in a constexpr context hits std::abort().
 4. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
 
-## Previous Session State
+## Older Session State
 
 - last_session_id: 171c64d2-e025-4eb9-9ee1-732dd7840fa5
 - current_timestamp: 2026-10-02
@@ -79,7 +141,7 @@ Next:
 2. Extend the REQ-DIAG-009 rejection-diagnostic policy to other closed-domain public free functions when they gain a fallback.
 3. Deferred comparison family (`equal_by`/`identical`, `less`, `less_equal`, `greater`, `greater_equal`) and `REQ-SEQ-022` operation-level reconciliation remain candidates.
 
-## Older Session State
+## Earlier Session State
 
 - last_session_id: fd3522cd-6d0a-4782-ae03-2be453291d76
 - current_timestamp: 2026-10-02
@@ -113,7 +175,7 @@ Next:
 3. Refresh `mementum/knowledge/value-equality-domain.md`, which still refers to `equal_pair_admissible_v` rather than the new `EqualPairAdmissible` concept.
 4. Continue deferred comparison-family or `REQ-SEQ-022` work only when selected.
 
-## Earlier Session State
+## Archived Session State
 
 - last_session_id: 55f47254-5bfa-42c5-be15-e3b9289e0a3a
 - current_timestamp: 2026-10-01
