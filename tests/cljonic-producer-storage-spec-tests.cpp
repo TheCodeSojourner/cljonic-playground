@@ -128,7 +128,8 @@ TEST_CASE("Producers may be stored as map values, vector elements, and queue ele
 
     // Producers may be nested inside collections without materialization.
     // (A single collection/producer argument matching the element type is one
-    // element; use into/fits_into to materialize a producer as a source.)
+    // element; use into to materialize a producer as a source, preflighted by
+    // fits_into.)
     const auto inner = cljonic::Vector<cljonic::Repeat<int>, 2>{cljonic::Repeat<int>{9, 2U}, cljonic::Repeat<int>{}};
     const auto nested = cljonic::Vector<cljonic::Vector<cljonic::Repeat<int>, 2>, 2>{inner};
     CHECK(nested.count() == 1U);

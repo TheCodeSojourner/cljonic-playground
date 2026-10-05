@@ -56,7 +56,8 @@ TEST_CASE("Single element-type argument selects pack construction", "[source-con
 
     // A single argument whose type is exactly the element type is one element
     // (pack construction), never a source to materialize. Complete
-    // materialization of a producer remains the role of into/fits_into.
+    // materialization of a producer remains the role of into, preflighted by
+    // fits_into.
     constexpr auto producer = Range<int>{0, 3, 1};
     constexpr auto vector_of_one_range = Vector<Range<int>, 4>{producer};
     STATIC_REQUIRE(vector_of_one_range.count() == 1U);

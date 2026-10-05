@@ -9,7 +9,8 @@ namespace cljonic::no_heap::probes {
 [[nodiscard]] auto same_type_argument_probe() noexcept -> bool {
     // Same-Type-Argument Is One Element: a single constructor argument whose
     // type is exactly the element type is pack construction (one element),
-    // never source materialization. Materialization remains into/fits_into.
+    // never source materialization. Materialization remains into, preflighted
+    // by fits_into.
     constexpr auto range = Range<int>{0, 3, 1};
     constexpr auto vector_of_one_range = Vector<Range<int>, 4>{range};
     static_assert(vector_of_one_range.count() == 1U);
