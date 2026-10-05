@@ -4,7 +4,7 @@
 
 λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
   ∧ direct_construction(x) ∧ member_observation(x)
-  ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ fits_into)(x)
+  ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ preflight(fits_into))(x)
   | collection_callable_lookup(x) → Vector ∨ Map ∨ Set ∨ String
   | module3(x) → concrete_array_backed_bounded_types(x)
     ∧ contiguous_storage_strategies(x) ∧ linear_scan_lookup(x)
@@ -162,7 +162,7 @@
     ∧ ¬use(callability_detection(x))
     ∧ callability_of_rejected_argument(x) → ¬supported_interface(x)
   | applies_to(equal ∧ not_equal ∧ collection_source_constructors)(x)
-  | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ direct_to(into ∨ fits_into ∨ enclosure_form)
+  | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ direct_to(into ∨ enclosure_form) ∧ preflight(fits_into)
   | rejection_diagnostic(x) → trace_to(REQ-DIAG-009 ∧ REQ-DIAG-010 ∧ REQ-DIAG-001 ∧ REQ-DIAG-003)
 
 ## S2 - Coordination
@@ -467,7 +467,7 @@ concept CljonicVector =
   | ConstInputRange(x) ≡ std::ranges::input_range<const x>
   | NothrowConstInputRange(x) ≡ ConstInputRange(x) ∧ noexcept(begin ∧ end ∧ dereference ∧ increment ∧ sentinel_compare(x))
   | CljonicSource(x) ≡ (CljonicCollection(x) ∨ CljonicProducer(x)) ∧ NothrowConstInputRange(x)
-  | materialization_operations(into ∧ fits_into) → constrain_source_by(CljonicSource)
+  | materialization_operations(into ∧ preflight(fits_into)) → constrain_source_by(CljonicSource)
   | producer_observation_api(x) → expose(member(is_finite))
 
 ```cpp
@@ -775,7 +775,7 @@ concept IndexedProducer =
   | RangeViewMaterialization(x) → preserve(source_traversal_order) ∧ bounded_by(destination_capacity(x))
   | static_extent_source_overflow(x) → compile_time_failure(x)
   | runtime_extent_source_overflow(x) → materialize_as(BoundedPrefixResult)
-  | complete_source_materialization(x) → use(fits_into ∧ into)
+  | complete_source_materialization(x) → preflight(fits_into) ∧ apply(into)
   | checked_constructor_error_channel(x) → reject(x)
 
 λ S1_type_expression_policy(x). public_template_constraints(x) → prefer(concepts)
