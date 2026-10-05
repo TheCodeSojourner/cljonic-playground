@@ -49,7 +49,7 @@ help:
 	@printf '%-12s %s\n' 'variant-compile-fail' 'Verify composite keys with floating-point or callable components and non-storable producers fail for all header variants'
 	@printf '%-12s %s\n' 'sanitizer' 'Build with ASan+UBSan and run tests'
 	@printf '%-12s %s\n' 'sanitizer-cli' 'Quiet ASan+UBSan run for loops; prints sanitizer:ok on pass'
-	@printf '%-12s %s\n' 'source-construction-compile-fail' 'Verify cljonic collections/producers are rejected as source-constructor arguments and enclosure still works'
+	@printf '%-12s %s\n' 'source-construction-compile-fail' 'Verify source-construction admission: cljonic sources rejected unless element-type or enclosure; C++ range/view sources admitted'
 	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and modular/generated parallel test run'
 	@printf '%-12s %s\n' 'traceability-category-report' 'Non-blocking obligation-family diagnostics from snapshot vs test TRACE_ID coverage'
 	@printf '%-12s %s\n' 'traceability-spec-to-code' 'Strict spec-to-code traceability gate (set-scoped allium, snapshot sync, test macro trace coverage)'

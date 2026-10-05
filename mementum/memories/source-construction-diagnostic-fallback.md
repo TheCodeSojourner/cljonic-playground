@@ -20,7 +20,8 @@ Mechanism (verified on GCC 16.2 + clang 22.1, real headers):
 - Add a single-argument constructor constrained on the rejected case
   (`(is_cljonic_collection_v || is_cljonic_producer_v) && !same_as<…, value_type>`),
   body `static_assert(dependent_false<SourceValue>, "…is not a constructor
-  source. Use into/fits_into … or write X{…} to enclose it as one element.")`.
+  source. Use into … (preflighted by fits_into), or write X{…} to enclose it as
+  one element.")`.
 - It is more specialized than the variadic pack constructor, so it wins exactly
   the rejected case and never affects accepted paths (enclosure, element pack,
   scalars, span interop all still compile).
