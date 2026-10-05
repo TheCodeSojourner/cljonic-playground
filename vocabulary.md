@@ -14,7 +14,7 @@ and `Repeatedly`
 producers,
 the active unbounded `cycle(source)` producer, their direct construction,
 member-observation, callable collection forms, current primitive free-function
-operations, and explicit producer materialization through `into` and
+operations, and explicit producer materialization through `into`, preflighted by
 `fits_into`. Semantic sequence operations remain deferred future work for every
 collection;
 const range traversal and read-only C++ interoperability are active
@@ -155,7 +155,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### SameTypeArgumentIsOneElement
-- **Definition:** The constructor-selection rule that a single constructor argument whose type is exactly the collection's element type is pack construction of one element, and is never treated as a range or view source to materialize. A cljonic collection or producer argument that is not exactly the element type is rejected as a source argument; complete materialization remains the role of `into` and `fits_into`.
+- **Definition:** The constructor-selection rule that a single constructor argument whose type is exactly the collection's element type is pack construction of one element, and is never treated as a range or view source to materialize. A cljonic collection or producer argument that is not exactly the element type is rejected as a source argument; complete materialization remains the role of `into`, preflighted by `fits_into`.
 - **Deprecated Synonyms:** pack preference, single-argument disambiguation
 - **Related:** SourceConstruction, RangeViewMaterialization, ProducerMaterialization, CapacityConstruction, Conj, EnclosureConstruction
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -171,11 +171,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### SourceConstructionDiagnostic
-- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection, the violated source-construction rule, and the correct alternatives (`into`/`fits_into` for materialization, or the enclosure form for a single element). It never produces a value and is never a supported call target.
+- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection, the violated source-construction rule, and the correct alternatives (`into` for materialization, preflighted by `fits_into`, or the enclosure form for a single element). It never produces a value and is never a supported call target.
 - **Deprecated Synonyms:** constructor rejection message, source-construction fallback
 - **Related:** SourceConstruction, EnclosureConstruction, RejectionDiagnostic, SameTypeArgumentIsOneElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** Passing `Range<int>` to a `Vector<int, N>` source constructor reports a `SourceConstructionDiagnostic` directing the caller to `into`/`fits_into` instead of a generic element-conversion error.
+- **Examples:** Passing `Range<int>` to a `Vector<int, N>` source constructor reports a `SourceConstructionDiagnostic` directing the caller to `into` for materialization (preflighted by `fits_into`) instead of a generic element-conversion error.
 
 
 ### RangeViewMaterialization
@@ -267,7 +267,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### PartialResult
-- **Definition:** A result that does not contain the operation's complete result because a documented capacity or result policy limits what can be represented; the canonical cljonic term is `BoundedPrefixResult`. Direct source construction may intentionally produce this bounded result, while complete source materialization uses `fits_into` and `into`.
+- **Definition:** A result that does not contain the operation's complete result because a documented capacity or result policy limits what can be represented; the canonical cljonic term is `BoundedPrefixResult`. Direct source construction may intentionally produce this bounded result, while complete source materialization uses `into`, with `fits_into` deciding whether the complete result fits.
 - **Deprecated Synonyms:** partial output, truncated result
 - **Related:** BoundedPrefixResult, CompleteResult, FitsInto
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -847,7 +847,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** producer realization, producer into-materialization
 - **Related:** UnboundedProducer, PreflightPredicate, ProducerIteration
 - **Usage:** Requirements, specification, implementation, tests, and documentation
-- **Examples:** `into(destination, producer)` plus `fits_into(destination, producer)` defines producer materialization completeness.
+- **Examples:** `into(destination, producer)`, preflighted by `fits_into(destination, producer)`, defines producer materialization completeness.
 
 
 ### ProducerIteration
