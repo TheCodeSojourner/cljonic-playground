@@ -66,7 +66,11 @@ template <std::size_t Index = 0, typename Variant>
  * - Equality is provided only when every alternative is comparable without
  *   throwing; otherwise `==` is not provided and the value cannot be used in an
  *   equality position. A `Variant` may therefore be storable without being
- *   comparable, exactly like a collection of floating-point numbers.
+ *   comparable, exactly like a collection of floating-point numbers. When it is
+ *   comparable, a `Variant` takes part in cljonic equality: as an `equal` or
+ *   `not_equal` operand, as a map key or set element, and as a stored member of a
+ *   collection or producer whose own equality is used; when it is not, all of
+ *   those equality positions reject it.
  * - A `Variant` always holds an active alternative: it has no empty or
  *   valueless state.
  *
