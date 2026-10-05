@@ -33,7 +33,7 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 
 4. **[requirements-module-4.md](requirements-module-4.md)** — *Sequence Producers & Materialization Pipeline*
    - **Purpose**: Adds explicit materialization, non-collection generator values, and standard view interop.
-   - **Scope**: Active generator producers (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`); direct producer consumption by source-taking free functions; materialization free functions (`into`, `fits_into`); deferred const logical-range traversal; and deferred conditional C++ interoperability accessors (`std::span<const T>`-like and `std::string_view`-like representations) (`REQ-VAL-014`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C` incl. `013A`–`013D`, `REQ-FN-027`–`027A`, deferred `REQ-PLAT-017`–`023` incl. `017A`, `022A`).
+   - **Scope**: Active generator producers (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`); direct producer consumption by source-taking free functions; materialization free function (`into`) and its completeness preflight (`fits_into`); deferred const logical-range traversal; and deferred conditional C++ interoperability accessors (`std::span<const T>`-like and `std::string_view`-like representations) (`REQ-VAL-014`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C` incl. `013A`–`013D`, `REQ-FN-027`–`027A`, deferred `REQ-PLAT-017`–`023` incl. `017A`, `022A`).
 
 5. **[requirements-module-5.md](requirements-module-5.md)** — *Higher-Order Algorithms & Traversal*
    - **Purpose**: Implements generic sequence transformation algorithms over any `cljonic_source`.

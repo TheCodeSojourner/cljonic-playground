@@ -245,7 +245,7 @@ This module establishes the C++20 concept capability framework, result status ou
 λ REQ-ERR-008(x).
   ∀ overflow_policy: operation-specific but follows one general contract — compile-time-known capacity or representability overflow rejected at compile time ∧ runtime-detectable overflow provides a non-throwing, non-allocating preflight predicate ∧ the corresponding operation leaves its input unchanged when the predicate is false ∧ returns its documented default or bounded result
   ∧ ∀ context: `into` is the explicit partial-prefix exception and uses `fits_into` as specified elsewhere
-  ∧ ∀ direct_source_constructor whose documented operation is bounded-prefix construction: not a complete materialization operation ∧ does not require a separate preflight predicate; complete source materialization remains governed by `fits_into` and `into`
+  ∧ ∀ direct_source_constructor whose documented operation is bounded-prefix construction: not a complete materialization operation ∧ does not require a separate preflight predicate; complete source materialization remains governed by `into`, preflighted by `fits_into`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 ## Compile-Time Diagnostics
@@ -303,7 +303,7 @@ This module establishes the C++20 concept capability framework, result status ou
 λ REQ-DIAG-010(x).
   ∀ public_constructor whose source domain is closed and expressible through named constraints (for example a cljonic collection's direct source constructor, which admits only non-cljonic C++ range or view sources — `REQ-FN-027A`):
   ∧ primary admission: expressed through named constraints at the constructor boundary, so a cljonic collection or producer argument that is not the destination's element type is excluded from source construction
-  ∧ preferred diagnostic fallback: an additional constructor overload constrained on the negation of the source-admission rule, so that a rejected cljonic collection or producer argument fails with one targeted `static_assert` that names the collection, states the violated source-construction rule, and directs the caller to `into`/`fits_into` for materialization or to the enclosure form for a single element (`REQ-DIAG-003`)
+  ∧ preferred diagnostic fallback: an additional constructor overload constrained on the negation of the source-admission rule, so that a rejected cljonic collection or producer argument fails with one targeted `static_assert` that names the collection, states the violated source-construction rule, and directs the caller to `into` for materialization (preflighted by `fits_into`) or to the enclosure form for a single element (`REQ-DIAG-003`)
   ∧ the diagnostic fallback exists to explain rejection, not to accept it: it never produces a value and is never a supported call target
   ∧ ∀ diagnostic_fallback message: states the meaning and the violated constraint in user-facing terms rather than relying on a generic element-conversion message, and does not depend on compiler-specific wording (`REQ-DIAG-004`)
   rationale: without the fallback the rejected argument falls through to the pack constructor's generic conversion diagnostic (for example "could not convert a producer to the element type"), which misleads the caller because no element conversion was intended; one targeted, educational diagnostic is more accurate and keeps the rejection reason discoverable
@@ -385,4 +385,4 @@ This module establishes the C++20 concept capability framework, result status ou
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: C++20 concepts, preflight predicates, compile-time assertions, and result status type definitions.
-- **Governed REQs**: `REQ-CAP-001`–`010`, `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`008`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.
+- **Governed REQs**: `REQ-CAP-001`–`012`, `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`010`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.
