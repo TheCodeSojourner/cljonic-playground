@@ -24,8 +24,10 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // CTAD infers String<3> from the initializer count.
+   // CTAD infers String<2> from the string literal: capacity counts content
+   // characters, excluding the automatic null terminator.
    [[maybe_unused]] constexpr auto inferred = String{"Hi"};
+   static_assert(inferred.capacity() == 2);
 
    // Explicit capacity permits a partially populated String and an empty String.
    constexpr auto literal = String<10>{"Hello"};
@@ -126,7 +128,7 @@ class String {
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into/fits_into.
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -155,10 +157,10 @@ class String {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "String: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it.");
+                      "cljonic::String: a cljonic collection or producer is not a construction source. "
+                      "A String is built from its characters or from a non-cljonic C++ range or view. "
+                      "To copy this argument's contents into a String, use into(destination, source); "
+                      "call fits_into(destination, source) first to check whether the whole source fits.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

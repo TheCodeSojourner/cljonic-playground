@@ -18,8 +18,9 @@ namespace cljonic {
  * \b Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more values than the available capacity is rejected at compile
- * time. A single constructor argument whose type is exactly the element type constructs one element (never a source to
- * materialize); use \b into or \b fits_into to materialize a range or producer source.
+ * time. A non-cljonic C++ range or view source is copied into the Set; a cljonic collection or producer is not a
+ * source -- \b Set{Set{...}} encloses it as a single element. To materialize one, use \b into; \b fits_into is the
+ * preflight predicate for whether the whole source fits.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -121,7 +122,7 @@ class Set {
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into/fits_into.
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -153,10 +154,11 @@ class Set {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "Set: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it, or write Set{...} to enclose it as one element.");
+                      "cljonic::Set: a cljonic collection or producer is not a construction source. "
+                      "A Set is built from its individual elements or from a non-cljonic C++ range or "
+                      "view. To copy this argument's contents into a Set, use into(destination, source) "
+                      "(call fits_into(destination, source) first to check whether the whole source fits); "
+                      "to keep it as a single element, write Set{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

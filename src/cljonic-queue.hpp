@@ -16,9 +16,9 @@ namespace cljonic {
 /** \anchor Queue
  * \b Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
  * way to operate on the collection is through the library's free-function API. Construction with more values than the
- * available capacity is rejected at compile time. A single constructor argument whose type is exactly the element type
- * constructs one element (never a source to materialize); use \b into or \b fits_into to materialize a range or
- * producer source.
+ * available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the Queue; a
+ * cljonic collection or producer is not a source -- \b Queue{Queue{...}} encloses it as a single element. To
+ * materialize one, use \b into; \b fits_into is the preflight predicate for whether the whole source fits.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -144,7 +144,7 @@ class Queue {
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into/fits_into.
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -175,10 +175,11 @@ class Queue {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "Queue: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it, or write Queue{...} to enclose it as one element.");
+                      "cljonic::Queue: a cljonic collection or producer is not a construction source. "
+                      "A Queue is built from its individual elements or from a non-cljonic C++ range or "
+                      "view. To copy this argument's contents into a Queue, use into(destination, source) "
+                      "(call fits_into(destination, source) first to check whether the whole source fits); "
+                      "to keep it as a single element, write Queue{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

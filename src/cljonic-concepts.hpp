@@ -312,7 +312,7 @@ concept RepeatedlyStep = NothrowCollectionElement<T> && std::copy_constructible<
                          };
 
 /** Admits either a stored collection or a producer to the combined source
- *  domain used by materialization operations (`into`, `fits_into`). */
+ *  domain used by `into` materialization and its `fits_into` preflight. */
 template <typename T>
 concept CljonicSource = (CljonicCollection<T> || CljonicProducer<T>) && NothrowConstInputRange<T>;
 

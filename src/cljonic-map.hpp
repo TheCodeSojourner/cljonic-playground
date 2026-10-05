@@ -16,9 +16,9 @@ namespace cljonic {
  * \b Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
  * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
  * return a modified copy without changing the original collection. Construction with more entries than the available
- * capacity is rejected at compile time. A single constructor argument whose type is exactly the element type (a
- * MapEntry) constructs one element (never a source to materialize); use \b into or \b fits_into to materialize a range
- * or producer source.
+ * capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the Map; a cljonic
+ * collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight predicate for
+ * whether the whole source fits.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -131,7 +131,7 @@ class Map {
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into/fits_into.
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -163,10 +163,10 @@ class Map {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "Map: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it.");
+                      "cljonic::Map: a cljonic collection or producer is not a construction source. "
+                      "A Map is built from MapEntry elements or from a non-cljonic C++ range or view. "
+                      "To copy this argument's contents into a Map, use into(destination, source); "
+                      "call fits_into(destination, source) first to check whether the whole source fits.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
