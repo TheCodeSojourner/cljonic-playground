@@ -517,7 +517,7 @@ concept RepeatedlyStep = NothrowCollectionElement<T> && std::copy_constructible<
                          };
 
 /** Admits either a stored collection or a producer to the combined source
- *  domain used by materialization operations (`into`, `fits_into`). */
+ *  domain used by `into` materialization and its `fits_into` preflight. */
 template <typename T>
 concept CljonicSource = (CljonicCollection<T> || CljonicProducer<T>) && NothrowConstInputRange<T>;
 
@@ -903,8 +903,8 @@ namespace cljonic {
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more initializers than the available capacity is rejected at
  * compile time. A non-cljonic C++ range or view source is copied into the Vector; a cljonic collection or producer is
- * not a source -- \b Vector{Vector{...}} encloses it as a single element. Use \b into or \b fits_into to materialize a
- * range, view, or producer.
+ * not a source -- \b Vector{Vector{...}} encloses it as a single element. To materialize one, use \b into; \b
+ * fits_into is the preflight predicate for whether the whole source fits.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -1062,8 +1062,9 @@ class Vector {
     // A cljonic collection or producer is not a SourceConstruction source
     // (REQ-FN-027A): it is admissible only as one element of exactly its own
     // type (the pack constructor) or enclosed via EnclosureConstruction;
-    // materializing it is the role of into/fits_into. A lone argument that is
-    // exactly ElementType likewise stays with the pack constructor.
+    // materializing it is the role of into, preflighted by fits_into. A lone
+    // argument that is exactly ElementType likewise stays with the pack
+    // constructor.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -1097,10 +1098,11 @@ class Vector {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Vector([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "Vector: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it, or write Vector{...} to enclose it as one element.");
+                      "cljonic::Vector: a cljonic collection or producer is not a construction source. "
+                      "A Vector is built from its individual elements or from a non-cljonic C++ range or "
+                      "view. To copy this argument's contents into a Vector, use into(destination, source) "
+                      "(call fits_into(destination, source) first to check whether the whole source fits); "
+                      "to keep it as a single element, write Vector{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2325,9 +2327,9 @@ namespace cljonic {
  * \b Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
  * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
  * return a modified copy without changing the original collection. Construction with more entries than the available
- * capacity is rejected at compile time. A single constructor argument whose type is exactly the element type (a
- * MapEntry) constructs one element (never a source to materialize); use \b into or \b fits_into to materialize a range
- * or producer source.
+ * capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the Map; a cljonic
+ * collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight predicate for
+ * whether the whole source fits.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -2440,7 +2442,7 @@ class Map {
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into/fits_into.
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -2472,10 +2474,10 @@ class Map {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "Map: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it.");
+                      "cljonic::Map: a cljonic collection or producer is not a construction source. "
+                      "A Map is built from MapEntry elements or from a non-cljonic C++ range or view. "
+                      "To copy this argument's contents into a Map, use into(destination, source); "
+                      "call fits_into(destination, source) first to check whether the whole source fits.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2830,9 +2832,9 @@ namespace cljonic {
 /** \anchor Queue
  * \b Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
  * way to operate on the collection is through the library's free-function API. Construction with more values than the
- * available capacity is rejected at compile time. A single constructor argument whose type is exactly the element type
- * constructs one element (never a source to materialize); use \b into or \b fits_into to materialize a range or
- * producer source.
+ * available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the Queue; a
+ * cljonic collection or producer is not a source -- \b Queue{Queue{...}} encloses it as a single element. To
+ * materialize one, use \b into; \b fits_into is the preflight predicate for whether the whole source fits.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -2958,7 +2960,7 @@ class Queue {
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into/fits_into.
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -2989,10 +2991,11 @@ class Queue {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "Queue: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it, or write Queue{...} to enclose it as one element.");
+                      "cljonic::Queue: a cljonic collection or producer is not a construction source. "
+                      "A Queue is built from its individual elements or from a non-cljonic C++ range or "
+                      "view. To copy this argument's contents into a Queue, use into(destination, source) "
+                      "(call fits_into(destination, source) first to check whether the whole source fits); "
+                      "to keep it as a single element, write Queue{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -3775,8 +3778,9 @@ namespace cljonic {
  * \b Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more values than the available capacity is rejected at compile
- * time. A single constructor argument whose type is exactly the element type constructs one element (never a source to
- * materialize); use \b into or \b fits_into to materialize a range or producer source.
+ * time. A non-cljonic C++ range or view source is copied into the Set; a cljonic collection or producer is not a
+ * source -- \b Set{Set{...}} encloses it as a single element. To materialize one, use \b into; \b fits_into is the
+ * preflight predicate for whether the whole source fits.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -3878,7 +3882,7 @@ class Set {
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into/fits_into.
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -3910,10 +3914,11 @@ class Set {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "Set: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it, or write Set{...} to enclose it as one element.");
+                      "cljonic::Set: a cljonic collection or producer is not a construction source. "
+                      "A Set is built from its individual elements or from a non-cljonic C++ range or "
+                      "view. To copy this argument's contents into a Set, use into(destination, source) "
+                      "(call fits_into(destination, source) first to check whether the whole source fits); "
+                      "to keep it as a single element, write Set{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -4084,8 +4089,10 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // CTAD infers String<3> from the initializer count.
+   // CTAD infers String<2> from the string literal: capacity counts content
+   // characters, excluding the automatic null terminator.
    [[maybe_unused]] constexpr auto inferred = String{"Hi"};
+   static_assert(inferred.capacity() == 2);
 
    // Explicit capacity permits a partially populated String and an empty String.
    constexpr auto literal = String<10>{"Hello"};
@@ -4186,7 +4193,7 @@ class String {
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into/fits_into.
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
@@ -4215,10 +4222,10 @@ class String {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "String: a cljonic collection or producer is valid here only as one element of exactly "
-                      "the element type; it is never a source to materialize. This argument's type is not the "
-                      "element type. Use into(destination, source) or fits_into(destination, source) to "
-                      "materialize it.");
+                      "cljonic::String: a cljonic collection or producer is not a construction source. "
+                      "A String is built from its characters or from a non-cljonic C++ range or view. "
+                      "To copy this argument's contents into a String, use into(destination, source); "
+                      "call fits_into(destination, source) first to check whether the whole source fits.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
