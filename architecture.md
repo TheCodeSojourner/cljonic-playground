@@ -161,8 +161,11 @@
   | domain_support_detection(x) → use(named_admission_concepts ∧ admissible_predicates(x))
     ∧ ¬use(callability_detection(x))
     ∧ callability_of_rejected_argument(x) → ¬supported_interface(x)
-  | applies_to(equal ∧ not_equal ∧ collection_source_constructors)(x)
+  | applies_to(equal ∧ not_equal ∧ collection_source_constructors ∧ producer_factory_functions)(x)
+  | producer_factory_functions(x) ≡ repeat ∧ cycle ∧ iterate ∧ repeatedly
   | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ direct_to(into ∨ enclosure_form) ∧ preflight(fits_into)
+  | producer_factory_rejection(x) → name(operation ∧ violated_producer_admission_rule(x)) ∧ state_correct_usage(x)
+  | ¬require(producer_factory_diagnostic(x)) for(Range ∧ class_template_element_constraint(x))
   | rejection_diagnostic(x) → trace_to(REQ-DIAG-009 ∧ REQ-DIAG-010 ∧ REQ-DIAG-001 ∧ REQ-DIAG-003)
 
 ## S2 - Coordination
