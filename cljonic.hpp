@@ -1275,8 +1275,13 @@ namespace cljonic {
 /** \anchor Cycle
  * \b Cycle is an unbounded producer over an owned source value. A finite source sequence is repeated from the
  * beginning after exhaustion; an unbounded source preserves its observable prefix without requiring a complete source
- * result. The approved public form is `cycle(source)` only, and traversal terminates only at the observable cap used
- * for bounded materialization.
+ * result. The source must be a cljonic collection or producer -- an external C++ range or view is rejected -- and the
+ * source's element type must have a default value and be copyable, assignable, and destructible without throwing. The
+ * approved public form is `cycle(source)` only, and traversal terminates only at the observable cap used for bounded
+ * materialization. Cycle observation is bounded by the configured collection maximum or by an explicit destination
+ * capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Cycle values can
+ * be passed directly to cljonic operations that accept a source, or converted into an owning destination with `into`
+ * when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3199,7 +3204,10 @@ namespace cljonic {
  * \b Range is a bounded producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end
  * by a fixed \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking
  * precedence over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p
- * end produces an empty range.
+ * end produces an empty range. Range observation is bounded by its finite span, by the configured collection maximum
+ * for a zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both
+ * constant evaluation and runtime code. Range values can be passed directly to cljonic operations that accept a
+ * source, or converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3472,7 +3480,6 @@ struct contains_standard_range<Range<T>> : std::bool_constant<contains_standard_
 // Begin cljonic-repeat.hpp
 #pragma once
 
-#include <concepts>
 #include <cstddef>
 #include <type_traits>
 #include <utility>
@@ -3482,7 +3489,10 @@ namespace cljonic {
 
 /** \anchor Repeat
  * \b Repeat is a producer that owns one value and yields copies of it. `repeat(value)` is unbounded, while
- * `repeat(value, count)` yields exactly \p count values.
+ * `repeat(value, count)` yields exactly \p count values. Repeat observation is bounded by the configured collection
+ * maximum, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal
+ * in both constant evaluation and runtime code. Repeat values can be passed directly to cljonic operations that accept
+ * a source, or converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

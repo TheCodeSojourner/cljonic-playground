@@ -1,6 +1,5 @@
 #pragma once
 
-#include <concepts>
 #include <cstddef>
 #include <type_traits>
 #include <utility>
@@ -12,7 +11,10 @@ namespace cljonic {
 
 /** \anchor Repeat
  * \b Repeat is a producer that owns one value and yields copies of it. `repeat(value)` is unbounded, while
- * `repeat(value, count)` yields exactly \p count values.
+ * `repeat(value, count)` yields exactly \p count values. Repeat observation is bounded by the configured collection
+ * maximum, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal
+ * in both constant evaluation and runtime code. Repeat values can be passed directly to cljonic operations that accept
+ * a source, or converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

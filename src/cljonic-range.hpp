@@ -13,7 +13,10 @@ namespace cljonic {
  * \b Range is a bounded producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end
  * by a fixed \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking
  * precedence over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p
- * end produces an empty range.
+ * end produces an empty range. Range observation is bounded by its finite span, by the configured collection maximum
+ * for a zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both
+ * constant evaluation and runtime code. Range values can be passed directly to cljonic operations that accept a
+ * source, or converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
