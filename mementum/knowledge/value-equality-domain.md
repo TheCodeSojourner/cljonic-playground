@@ -11,7 +11,7 @@ related:
   - /mementum/memories/nothrow-stable-equality-comparable-concept.md
   - /mementum/memories/rejection-diagnostic-fallback.md
   - /mementum/memories/cljonic-design-notes.md
-depends-on: [requirements/cljonic-requirements-module-2.md, requirements/cljonic-requirements-module-3.md, requirements/cljonic-requirements-module-4.md]
+depends-on: [requirements/requirements-module-2.md, requirements/requirements-module-3.md, requirements/requirements-module-4.md]
 ---
 
 # Value Equality Domain
