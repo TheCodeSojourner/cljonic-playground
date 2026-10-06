@@ -291,12 +291,14 @@ This module establishes the C++20 concept capability framework, result status ou
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-DIAG-009(x).
-  ∀ public_free_function whose supported domain is closed and expressible through named capability concepts (for example `equal` and `not_equal`):
+  ∀ public_free_function whose supported domain is closed and expressible through named capability concepts (for example `equal` and `not_equal`, and the producer factory functions `repeat`, `cycle`, `iterate`, and `repeatedly`):
   ∧ primary admission: expressed through named capability concepts at the public API boundary (`REQ-DIAG-001`, `REQ-DIAG-002`, `REQ-DIAG-005`)
   ∧ preferred diagnostic fallback: a diagnostic overload constrained on the negation of the admission gate, provided for each supported arity, so that an argument outside the supported domain fails with one targeted `static_assert` that names the operation, the rejected operand types, and the violated domain rule (`REQ-DIAG-003`)
   ∧ the diagnostic fallback exists to explain rejection, not to accept it: it never returns a value and is never a supported call target
   ∧ ∀ diagnostic_fallback message: states the meaning and the violated constraint rather than depending on compiler-specific wording (`REQ-DIAG-004`)
   ∧ detectability contract: compile-time detection of domain support uses the named admission concepts and their `*_admissible_v` predicates, ¬∃ callability detection such as `requires { call(...) }`; a domain-rejected argument MAY satisfy callability once a diagnostic fallback is provided, and that callability is not a supported interface
+  ∧ ∀ producer_factory_free_function ∈ {`repeat`, `cycle`, `iterate`, `repeatedly`}: primary admission is expressed through its product-specific named capability concept (`NothrowCollectionElement` for `repeat`; `CljonicSource` for `cycle`; `IterateStep` for `iterate`; `RepeatedlyStep` for `repeatedly`) ∧ an argument outside the closed producer domain fails with one targeted `static_assert` naming the operation, the violated producer-admission rule, and the correct usage, replacing the compiler's list of rejected concept candidates
+  ∧ ∀ `Range`: excluded — its element domain is a class-template constraint (`signed_integral`) that already fails with a single named constraint diagnostic before any constructor is considered, so no diagnostic fallback is required; a `Range` diagnostic fallback is for a future `range()` factory function, not the type's constructors
   rationale: maximally informative compile-time diagnostics are a global library goal, and a single targeted diagnostic is more accurate to a reader than a list of rejected concept candidates
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
