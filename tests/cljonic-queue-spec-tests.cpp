@@ -56,7 +56,7 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     STATIC_REQUIRE(q.is_empty());
     STATIC_REQUIRE(q.count() == 0U);
     STATIC_REQUIRE(q.capacity() == 4U);
-    STATIC_REQUIRE(q.can_conj()); // empty → room available
+    STATIC_REQUIRE(q.can_conj(1)); // empty → room available
 
     // Pack-literal construction: explicit capacity, CTAD, and FIFO order
     // matching argument order, folded over conj.
@@ -83,7 +83,7 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
 
     constexpr auto q4 = q3.conj(4);
     STATIC_REQUIRE(q4.count() == 4U);
-    STATIC_REQUIRE_FALSE(q4.can_conj()); // full
+    STATIC_REQUIRE_FALSE(q4.can_conj(1)); // full
 
     // conj on full queue returns unchanged copy
     constexpr auto q5 = q4.conj(99);
@@ -136,7 +136,7 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     REQUIRE(rq.is_empty());
     REQUIRE(rq.count() == 0U);
     REQUIRE(rq.capacity() == 4U);
-    REQUIRE(rq.can_conj());
+    REQUIRE(rq.can_conj(1));
     REQUIRE(rq.peek() == 0);
     REQUIRE(rq.pop().is_empty());
 
@@ -155,7 +155,7 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
 
     auto rq_full = rq_popped.conj(30).conj(40).conj(50);
     REQUIRE(rq_full.count() == 4U);
-    REQUIRE_FALSE(rq_full.can_conj());
+    REQUIRE_FALSE(rq_full.can_conj(1));
     REQUIRE(rq_full.conj(60).count() == 4U); // rejected overflow
 
     volatile int literal_v1_raw = 10;

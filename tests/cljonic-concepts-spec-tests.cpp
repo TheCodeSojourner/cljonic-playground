@@ -549,6 +549,34 @@ TEST_CASE("AssociativeCollection structural capability", "[concepts][collection]
 }
 
 // ============================================================================
+// ConjableCollection
+// ============================================================================
+
+TEST_CASE("ConjableCollection structural capability", "[concepts][collection]") {
+    using namespace cljonic::concepts;
+
+    TRACE_ID("entity-fields.ConjableCollection");
+    TRACE_ID("invariant.ConjableCollection.SequenceIndependent");
+    TRACE_ID("invariant.ConjableCollection.DefinesValueType");
+    TRACE_ID("invariant.ConjableCollection.DefinesCapacityPolicy");
+    TRACE_ID("invariant.ConjableCollection.RequiresConjOperation");
+    TRACE_ID("invariant.ConjableCollection.RequiresCanConjPreflight");
+    TRACE_ID("invariant.ConjableCollection.ReturnsNewCollectionValue");
+    TRACE_ID("invariant.ConjableCollection.PreservesSource");
+    TRACE_ID("invariant.ConjableCollection.RequiresNonMutatingConjOperation");
+    TRACE_ID("invariant.ConjableCollection.RequiresNonMutatingConjPreflight");
+
+    STATIC_REQUIRE(ConjableCollection<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE(ConjableCollection<cljonic::Set<int, 4>>);
+    STATIC_REQUIRE(ConjableCollection<cljonic::Map<int, int, 4>>);
+    STATIC_REQUIRE(ConjableCollection<cljonic::Queue<int, 4>>);
+
+    // String supports indexed assoc, not conj; non-collections are rejected.
+    STATIC_REQUIRE_FALSE(ConjableCollection<cljonic::String<8>>);
+    STATIC_REQUIRE_FALSE(ConjableCollection<int>);
+}
+
+// ============================================================================
 // StableEqualityComparable / TotallyOrdered
 // ============================================================================
 
