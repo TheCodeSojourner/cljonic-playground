@@ -15,6 +15,16 @@ Task:
 7. "default value" terminology upsert — COMPLETE (commits e3fbed6, 7066402): replaced C++ standard phrasing ("value-initialized", "default-constructed", "default-initializable") with the cljonic term "default value" (`DefaultElement`) in user-facing prose — `src/cljonic-concepts.hpp`, `cljonic-queue.hpp` (`peek`), `cljonic-map-entry.hpp`, `cljonic-variant.hpp`, `cljonic-vector.hpp` example, and README.md.
 8. Process incident + correction — COMPLETE: I autonomously ran `/gybis-fini` and committed (e9d829f), violating `authority(human): human_command_first`. Human-directed undo `git reset --soft HEAD~1`; the commit was reverted and the mementum changes kept. Lesson recorded in user memory `/memories/gybis-agent-discipline.md`: `/gybis-*` (esp. fini/commit steps) are human-invoked only.
 9. `make git` (user-run) — COMPLETE: green end-to-end (see Validation).
+10. `/gybis-req-check` — COMPLETE: 293 clauses across 7 modules; designator format/domain/uniqueness, module ordering, footer coverage, attribution, rationale purity — all clean. No repair needed.
+11. `/gybis-vocab-check` — COMPLETE: 162 terms, all five fields present (Definition/Deprecated Synonyms/Related/Usage/Examples); no duplicates/orphans/self-refs/undefined links. Info: 3 deprecated synonyms shared by two adjacent canonical terms.
+12. `/gybis-arch-check` — COMPLETE: S-layer structure S5>S4>S3>S2>S1, coherence, S5-policy/S3-enforcement boundary, constraints — 0 errors; 1 coherence warning (stale `requirements/cljonic-requirements-module-*.md` paths, 11 sites across `architecture.md` + `mementum/knowledge/value-equality-domain.md`) → FIXED.
+13. `/gybis-spec-check` — COMPLETE: 35 specs; `allium check` + `allium analyse` zero diagnostics/findings; `gybis-allium-gate` true. No repairs.
+14. `/gybis-req-weed` — COMPLETE (converged): Round 1 divergence D1 (`deferred_REQ_has_downstream_content`, `REQ-PLAT-017–023` enacted by active downstream) → decision `req`; Round 2 divergences D2/D3/D4 (`REQ_uncovered`: `PLAT-019`/`020`/`023`) → `no_change_needed`. No weed writes.
+15. `/gybis-req-tend` — COMPLETE (commit d8b57a0): promoted `REQ-PLAT-017–023` deferred→binding; corrected the module-3 deferred blockquote; module-4 header/section/footer + `requirements-index` `deferred_marker`/scope updated.
+16. `/gybis-vocab-weed` — COMPLETE (commits 0543f98, 8ab06f6): non-canonical `IFn`→`CallableLookup` in `architecture.md` (5 sites) + `src/cljonic-concepts.hpp` comment; 24 `unused_canonical_term` → `keep`; ~33 lexical hits judged false positives. Converged.
+17. `/gybis-arch-weed` — COMPLETE (converged): no actionable divergence — every active spec entity is semantically represented by an architecture λ-rule; S4/S5 organizational layer and deferred-spec entities are intentional gaps.
+18. `/gybis-spec-weed` — COMPLETE (converged): 895 active obligations ↔ 895 test TRACE_IDs (perfect bijection, 0 missing / 0 orphan; strict_spec_coverage true); `make test` 188/188.
+19. `make git` (user-run, post-fix) — COMPLETE: green; `docs/` regenerated; all fixes committed (0543f98, 8ab06f6, bd743b6, d8b57a0, 767affc). Working tree clean.
 
 Questions:
 1. None blocking. Slice B (`cljonic::Variant` free-function API) still awaits selection.
@@ -26,21 +36,29 @@ Decisions:
 3. Unfamiliar-type operand (human, 2026-10-06): show an explicit `cljonic::Variant` operand in `equal`/`not_equal` because it is a particularly unfamiliar composite.
 4. "default value" terminology (human, 2026-10-06): user-facing prose/messages use the cljonic term "default value" (`DefaultElement`) — not C++ standard phrasing "value-initialized" / "default-constructed" / "default-initializable". Internal implementation comments and governance docs (requirements/architecture/vocabulary) are out of scope.
 5. gybis authority (human, 2026-10-06): `/gybis-*` commands are human-invoked only; do not self-initiate, especially `/gybis-fini` and any commit step (`human_command_first | ¬AI_initiative`). Undo pattern for an unpushed mistaken commit: `git reset --soft HEAD~1` (keep staged).
+6. Deferral resolution (human, 2026-10-06): the `deferred_REQ_has_downstream_content` divergence for `REQ-PLAT-017–023` is resolved as `req` — promote the requirements to binding to match the already-active reality (vocab/arch/active spec/code), applied via `/gybis-req-tend`. Rationale: const traversal + read-only interop accessors are implemented and declared active downstream.
+7. Coverage dispositions (human, 2026-10-06): after un-deferral, `REQ-PLAT-019` (internal `std::ranges`/`std::views` permission), `REQ-PLAT-020` (no public lazy/borrowed returns — ownership already encoded per-collection in active specs + arch `OwningValue`), `REQ-PLAT-023` (application-use disclaimer) → `no_change_needed`. Also: vocab-weed `IFn`→`CallableLookup` via `arch`; the 24 unused canonical terms → `keep`.
+8. Naming decoupling is intentional (observed, 2026-10-06): literal-name greps across vocabulary/architecture/specs yield false positives because each layer names things in its own vocabulary (arch `S2_*`/`S3_*` rules; C++ trait identifiers `cljonic_collection`/`std::totally_ordered`; Clojure refs; descriptive English). Divergence judgment must be semantic; mechanical replacement would corrupt code/spec text. Only genuine term drift (e.g. a deprecated synonym like `IFn`) is actionable.
 
 Validation:
 1. `make git` (user-run) → `git:ok` end-to-end: format, lint, complexity, range/variant/equal/not-equal/source-construction compile-fail, header-guards, sanitizer, coverage lines=100.0%, traceability-spec-to-code, no-heap-src/symbols, no-heap, docs, docs-examples:compiled=29 (+6 deferred-skipped), cljonic-test.
 2. `make format` run twice during authoring → idempotent (no further diff).
 3. Commits: e3fbed6 (Variant docs + equal/not_equal + default-value), 7066402 (README), 7ddebf6 (docs), 9996478 (memory/knowledge rules).
+4. Check/weed family sweep (this session, post-req-check): `/gybis-req-check` (293 clauses clean), `/gybis-vocab-check` (162 terms clean), `/gybis-arch-check` (1 warning → fixed), `/gybis-spec-check` (35 specs, gate true), `/gybis-req-weed` (converged), `/gybis-vocab-weed` (converged), `/gybis-arch-weed` (converged), `/gybis-spec-weed` (895/895 obligations traced; `make test` 188/188).
+5. `make git` (user-run, post-fix) → `git:ok` end-to-end (docs regenerated); fixes committed 0543f98, 8ab06f6, bd743b6, d8b57a0, 767affc.
+6. `python3` footer-coverage re-check after req-tend → all 7 modules `ok`; `allium check`+`analyse` on 35 specs → 0 diagnostics/0 findings.
 
 Next:
 1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
 2. Extend the REQ-DIAG-010 constructor-diagnostic policy to any other closed-source-domain public constructor.
 3. (Optional — human scoped out) normalize "default value" in internal comments / governance docs.
+4. Candidate memory (proposed, awaiting approval): a `mementum/memories/` note capturing "layer naming decoupling → literal-name greps are false positives; judge divergence semantically" (from this session's vocab-weed/arch-weed) and/or "file renames do not propagate to prose path references (arch-check coherence catches them)".
 
 Carry-forward (unaddressed, remember for later):
 1. `equal_by`/`identical` and the remaining REQ-FN-002C comparison family remain deferred.
 2. Set duplicate-insertion in a constexpr context hits std::abort().
 3. Map/String as enclosure outer types remain deferred (only Vector/Set/Queue have same-class enclosure guides).
+4. 24 vocabulary canonical terms are unused by literal name downstream (`keep`) — pre-existing; revisit only if vocabulary scope tightens.
 
 ## Previous Session State
 
