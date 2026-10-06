@@ -2,7 +2,8 @@
 
 -- RejectionDiagnostic (REQ-DIAG-009): the targeted compile-time diagnostic
 -- fallback for public free functions whose supported domain is closed and
--- expressible through named capability concepts (equal, not_equal). Primary
+-- expressible through named capability concepts (equal, not_equal, and the
+-- producer factory functions repeat, cycle, iterate, and repeatedly). Primary
 -- admission remains concept-based; the fallback is a diagnostic overload
 -- constrained on the negation of the admission gate, one per supported arity,
 -- that never returns a value and is never a supported call target. It turns a
@@ -20,6 +21,7 @@ entity RejectionDiagnostic {
     constrained_on_negation_of_admission_gate: Boolean
     detection_uses_named_concepts_not_callability: Boolean
     applies_to_equal_and_not_equal: Boolean
+    applies_to_producer_factory_functions: Boolean
 
     invariant PrimaryAdmissionRemainsConceptBased {
         this.primary_admission_remains_concept_based = true
@@ -39,6 +41,10 @@ entity RejectionDiagnostic {
 
     invariant AppliesToEqualAndNotEqual {
         this.applies_to_equal_and_not_equal = true
+    }
+
+    invariant AppliesToProducerFactoryFunctions {
+        this.applies_to_producer_factory_functions = true
     }
 }
 
