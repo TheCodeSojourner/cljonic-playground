@@ -25,6 +25,7 @@ TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics
     TRACE_ID("invariant.RejectionDiagnostic.DetectionUsesNamedConceptsNotCallability");
     TRACE_ID("invariant.RejectionDiagnostic.AppliesToEqualAndNotEqual");
     TRACE_ID("invariant.RejectionDiagnostic.AppliesToProducerFactoryFunctions");
+    TRACE_ID("invariant.RejectionDiagnostic.AppliesToCollectionPrimitives");
 
     // PrimaryAdmissionRemainsConceptBased: supported operands are admitted by
     // the named capability concepts, and valid calls resolve to the real
@@ -67,4 +68,11 @@ TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics
     STATIC_REQUIRE(requires { cljonic::iterate(42, 1); });
     STATIC_REQUIRE(requires { cljonic::repeat(NonStorable{}); });
     STATIC_REQUIRE(requires { cljonic::repeat(NonStorable{}, 3); });
+
+    // AppliesToCollectionPrimitives: a collection primitive exposes a
+    // diagnostic fallback for an out-of-domain argument (assoc demonstrated
+    // here; proved by scripts/check-assoc-compile-failures.py).
+    STATIC_REQUIRE_FALSE(cljonic::concepts::AssociativeCollection<cljonic::Set<int, 4>>);
+    STATIC_REQUIRE(requires { cljonic::assoc(cljonic::Set<int, 4>{}, 1, 1); });
+    STATIC_REQUIRE(requires { cljonic::assoc(cljonic::Map<int, int, 4>{}, 1, 100, 2); });
 }

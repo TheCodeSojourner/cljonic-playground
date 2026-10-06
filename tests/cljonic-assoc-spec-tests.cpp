@@ -4,9 +4,16 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+namespace {
+
+struct NotConvertible {};
+
+} // namespace
+
 TEST_CASE("Assoc free function operations", "[assoc]") {
     using cljonic::assoc;
     using cljonic::Map;
+    using cljonic::Set;
     using cljonic::String;
     using cljonic::Vector;
 
@@ -16,6 +23,13 @@ TEST_CASE("Assoc free function operations", "[assoc]") {
     TRACE_ID("invariant.Assoc.SupportsMapAssoc");
     TRACE_ID("invariant.Assoc.SupportsVectorAssoc");
     TRACE_ID("invariant.Assoc.SupportsStringAssoc");
+    TRACE_ID("invariant.Assoc.SupportsVariadicAssoc");
+    TRACE_ID("invariant.Assoc.VariadicFoldsPairsLeftToRight");
+    TRACE_ID("invariant.Assoc.VariadicRequiresAtLeastTwoPairs");
+    TRACE_ID("invariant.Assoc.VariadicPairAdmittedUnderCollectionDomain");
+    TRACE_ID("invariant.Assoc.VariadicOutOfDomainPairRejectedAtCompileTime");
+    TRACE_ID("invariant.Assoc.VariadicOverCapacityPairIsNoOpAndContinues");
+    TRACE_ID("invariant.Assoc.VariadicOddTrailingArgumentCountRejected");
     TRACE_ID("invariant.Assoc.KeyDomainIsValidated");
     TRACE_ID("invariant.Assoc.SupportsCollectionSpecificAppendPolicy");
     TRACE_ID("invariant.Assoc.SupportsReplaceOrAppendPolicy");
@@ -82,4 +96,46 @@ TEST_CASE("Assoc free function operations", "[assoc]") {
     const char invalid = invalid_raw;
     const auto runtime_string = assoc(s0, 1U, invalid);
     REQUIRE(runtime_string.view() == "a.");
+
+    // Variadic form (REQ-FN-002U): left-to-right fold.
+    constexpr auto mv = assoc(Map<int, int, 4>{}, 1, 100, 2, 200, 3, 300);
+    STATIC_REQUIRE(count(mv) == 3U);
+    STATIC_REQUIRE(mv(3) == 300);
+    STATIC_REQUIRE(mv(2) == assoc(assoc(assoc(Map<int, int, 4>{}, 1, 100), 2, 200), 3, 300)(2));
+
+    // A repeated key keeps the last value.
+    constexpr auto mdup = assoc(Map<int, int, 4>{}, 1, 100, 1, 999);
+    STATIC_REQUIRE(mdup(1) == 999);
+    STATIC_REQUIRE(count(mdup) == 1U);
+
+    // A pair that cannot be applied at full capacity is a no-op; later pairs still apply.
+    constexpr auto mo = assoc(Map<int, int, 2>{}, 1, 100, 2, 200, 3, 300);
+    STATIC_REQUIRE(count(mo) == 2U);
+    constexpr auto mo2 = assoc(Map<int, int, 2>{}, 1, 100, 2, 200, 3, 300, 1, 111);
+    STATIC_REQUIRE(count(mo2) == 2U);
+    STATIC_REQUIRE(mo2(1) == 111);
+
+    // Vector and String variadic forms.
+    constexpr auto vv = assoc(Vector<int, 4>{10, 20}, 1, 200, 2, 300, 3, 400);
+    STATIC_REQUIRE(count(vv) == 4U);
+    STATIC_REQUIRE(vv(3) == 400);
+    constexpr auto sv = assoc(String<8>{"ab"}, 2U, 'c', 3U, 'd');
+    STATIC_REQUIRE(sv.view() == "abcd");
+
+    // Rejections are detected through the admission concepts, not callability
+    // (REQ-DIAG-009 detectability contract): an odd trailing argument, an
+    // out-of-domain value, and a non-associative collection are all rejected.
+    STATIC_REQUIRE(!cljonic::concepts_detail::all_assoc_pairs_admissible_v<Map<int, int, 4>, int, int, int>);
+    STATIC_REQUIRE(!cljonic::concepts_detail::AssocPairAdmissible<Map<int, int, 4>, int, NotConvertible>);
+    STATIC_REQUIRE(!cljonic::concepts::AssociativeCollection<Set<int, 4>>);
+    STATIC_REQUIRE(cljonic::concepts_detail::all_assoc_pairs_admissible_v<Map<int, int, 4>, int, int>);
+
+    // Runtime coverage for the variadic fold.
+    volatile int rk1_raw = 5;
+    volatile int rk2_raw = 6;
+    const int rk1 = rk1_raw;
+    const int rk2 = rk2_raw;
+    const auto rm = assoc(Map<int, int, 4>{}, rk1, 500, rk2, 600);
+    REQUIRE(rm(rk1) == 500);
+    REQUIRE(rm(rk2) == 600);
 }
