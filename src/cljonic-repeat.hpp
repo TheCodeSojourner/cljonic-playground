@@ -160,6 +160,30 @@ template <typename T>
     return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value), count};
 }
 
+// Diagnostic fallback (REQ-DIAG-009): the value argument is outside the closed
+// producer domain. This overload explains the rejection; it never returns a
+// value and is never a supported call target.
+template <typename T>
+    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
+constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::repeat: the value argument is outside the supported producer domain. "
+                  "The repeated value must satisfy NothrowCollectionElement: default-constructible, "
+                  "copyable, and destructible without throwing.");
+    return {};
+}
+
+template <typename T>
+    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
+constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] std::size_t count) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::repeat: the value argument is outside the supported producer domain. "
+                  "The repeated value must satisfy NothrowCollectionElement: default-constructible, "
+                  "copyable, and destructible without throwing.");
+    return {};
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {

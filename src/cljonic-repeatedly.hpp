@@ -155,6 +155,34 @@ template <typename Step, typename T = std::invoke_result_t<const std::decay_t<St
     return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step), count};
 }
 
+// Diagnostic fallback (REQ-DIAG-009): the step argument is outside the closed
+// producer domain. This overload explains the rejection; it never returns a
+// value and is never a supported call target.
+template <typename Step>
+    requires(!concepts_detail::ValidRepeatedlyStep<Step>)
+constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Step>,
+                  "cljonic::repeatedly: the step argument is outside the supported producer domain. "
+                  "The step must be a copyable, non-throwing callable that takes no arguments and "
+                  "whose result is a nothrow-storable element type. Pass a function, lambda, or "
+                  "function object; to repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeat(value, count).");
+    return {};
+}
+
+template <typename Step>
+    requires(!concepts_detail::ValidRepeatedlyStep<Step>)
+constexpr auto repeatedly([[maybe_unused]] std::size_t count, [[maybe_unused]] Step&& step) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Step>,
+                  "cljonic::repeatedly: the step argument is outside the supported producer domain. "
+                  "The step must be a copyable, non-throwing callable that takes no arguments and "
+                  "whose result is a nothrow-storable element type. Pass a function, lambda, or "
+                  "function object; to repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeat(value, count).");
+    return {};
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {

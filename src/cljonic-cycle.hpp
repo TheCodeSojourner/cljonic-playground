@@ -179,6 +179,19 @@ template <concepts::CljonicSource Source>
     return Cycle<Source>{std::move(source)};
 }
 
+// Diagnostic fallback (REQ-DIAG-009): the source argument is outside the closed
+// producer domain. This overload explains the rejection; it never returns a
+// value and is never a supported call target.
+template <typename Source>
+    requires(!concepts_detail::ValidCycleSource<Source>)
+constexpr auto cycle([[maybe_unused]] Source source) noexcept -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Source>,
+                  "cljonic::cycle: the source argument is outside the supported producer domain. "
+                  "The source must be a cljonic collection or producer whose element type is "
+                  "nothrow-storable and which provides non-throwing const traversal.");
+    return {};
+}
+
 template <concepts::CljonicSource Source>
     requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>> &&
              concepts::StableEqualityComparable<Source>

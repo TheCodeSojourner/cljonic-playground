@@ -148,6 +148,22 @@ template <typename Step, typename T>
     return Iterate<std::remove_cvref_t<T>, std::decay_t<Step>>{std::forward<T>(initial), std::forward<Step>(step)};
 }
 
+// Diagnostic fallback (REQ-DIAG-009): the (step, initial) arguments are outside
+// the closed producer domain. This overload explains the rejection; it never
+// returns a value and is never a supported call target.
+template <typename Step, typename T>
+    requires(!(concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
+               concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>))
+constexpr auto iterate([[maybe_unused]] Step&& step, [[maybe_unused]] T&& initial) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Step, T>,
+                  "cljonic::iterate: the (step, initial) arguments are outside the supported producer "
+                  "domain. The initial value must be a nothrow-storable element, and the step must be a "
+                  "copyable, non-throwing callable that takes one value of that element type and "
+                  "returns the same type. Note the argument order is iterate(step, initial).");
+    return {};
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {

@@ -608,6 +608,38 @@ concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t
 
 } // namespace concepts
 
+namespace concepts_detail {
+
+// Guarded admission helpers for the REQ-DIAG-009 producer-factory diagnostics.
+// Each derives the element type internally, so an argument outside the producer
+// domain yields `false` rather than an ill-formed substitution; the negation is
+// therefore usable as a diagnostic-fallback constraint.
+
+/** Placeholder return type for producer-factory diagnostic fallbacks
+ *  (REQ-DIAG-009): a rejected call never produces a value; the fallback exists
+ *  only to emit the targeted static_assert. A concrete type keeps `auto`
+ *  deduction well-formed so the static_assert is the sole diagnostic. */
+struct RejectedProducerFactory {};
+
+/** Guarded `repeatedly` admission: a copyable, nothrow-copy-constructible
+ *  callable whose non-throwing zero-argument invocation produces a
+ *  nothrow-storable element. */
+template <typename Step>
+concept ValidRepeatedlyStep =
+    std::copy_constructible<std::decay_t<Step>> && std::is_nothrow_copy_constructible_v<std::decay_t<Step>> &&
+    requires(const std::decay_t<Step>& step) {
+        { std::invoke(step) } noexcept;
+        requires concepts::NothrowCollectionElement<std::invoke_result_t<const std::decay_t<Step>&>>;
+    };
+
+/** Guarded `cycle` admission: a cljonic source whose element type is
+ *  nothrow-storable. */
+template <typename Source>
+concept ValidCycleSource =
+    concepts::CljonicSource<Source> && concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>;
+
+} // namespace concepts_detail
+
 } // namespace cljonic
 // End cljonic-concepts.hpp
 #include <utility>
@@ -1408,6 +1440,19 @@ template <concepts::CljonicSource Source>
     requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>
 [[nodiscard]] constexpr auto cycle(Source source) noexcept -> Cycle<Source> {
     return Cycle<Source>{std::move(source)};
+}
+
+// Diagnostic fallback (REQ-DIAG-009): the source argument is outside the closed
+// producer domain. This overload explains the rejection; it never returns a
+// value and is never a supported call target.
+template <typename Source>
+    requires(!concepts_detail::ValidCycleSource<Source>)
+constexpr auto cycle([[maybe_unused]] Source source) noexcept -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Source>,
+                  "cljonic::cycle: the source argument is outside the supported producer domain. "
+                  "The source must be a cljonic collection or producer whose element type is "
+                  "nothrow-storable and which provides non-throwing const traversal.");
+    return {};
 }
 
 template <concepts::CljonicSource Source>
@@ -2221,6 +2266,22 @@ template <typename Step, typename T>
 [[nodiscard]] constexpr auto iterate(Step&& step, T&& initial) noexcept
     -> Iterate<std::remove_cvref_t<T>, std::decay_t<Step>> {
     return Iterate<std::remove_cvref_t<T>, std::decay_t<Step>>{std::forward<T>(initial), std::forward<Step>(step)};
+}
+
+// Diagnostic fallback (REQ-DIAG-009): the (step, initial) arguments are outside
+// the closed producer domain. This overload explains the rejection; it never
+// returns a value and is never a supported call target.
+template <typename Step, typename T>
+    requires(!(concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
+               concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>))
+constexpr auto iterate([[maybe_unused]] Step&& step, [[maybe_unused]] T&& initial) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Step, T>,
+                  "cljonic::iterate: the (step, initial) arguments are outside the supported producer "
+                  "domain. The initial value must be a nothrow-storable element, and the step must be a "
+                  "copyable, non-throwing callable that takes one value of that element type and "
+                  "returns the same type. Note the argument order is iterate(step, initial).");
+    return {};
 }
 
 } // namespace cljonic
@@ -3569,6 +3630,30 @@ template <typename T>
     return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value), count};
 }
 
+// Diagnostic fallback (REQ-DIAG-009): the value argument is outside the closed
+// producer domain. This overload explains the rejection; it never returns a
+// value and is never a supported call target.
+template <typename T>
+    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
+constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::repeat: the value argument is outside the supported producer domain. "
+                  "The repeated value must satisfy NothrowCollectionElement: default-constructible, "
+                  "copyable, and destructible without throwing.");
+    return {};
+}
+
+template <typename T>
+    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
+constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] std::size_t count) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::repeat: the value argument is outside the supported producer domain. "
+                  "The repeated value must satisfy NothrowCollectionElement: default-constructible, "
+                  "copyable, and destructible without throwing.");
+    return {};
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -3744,6 +3829,34 @@ template <typename Step, typename T = std::invoke_result_t<const std::decay_t<St
     requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
 [[nodiscard]] constexpr auto repeatedly(std::size_t count, Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
     return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step), count};
+}
+
+// Diagnostic fallback (REQ-DIAG-009): the step argument is outside the closed
+// producer domain. This overload explains the rejection; it never returns a
+// value and is never a supported call target.
+template <typename Step>
+    requires(!concepts_detail::ValidRepeatedlyStep<Step>)
+constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Step>,
+                  "cljonic::repeatedly: the step argument is outside the supported producer domain. "
+                  "The step must be a copyable, non-throwing callable that takes no arguments and "
+                  "whose result is a nothrow-storable element type. Pass a function, lambda, or "
+                  "function object; to repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeat(value, count).");
+    return {};
+}
+
+template <typename Step>
+    requires(!concepts_detail::ValidRepeatedlyStep<Step>)
+constexpr auto repeatedly([[maybe_unused]] std::size_t count, [[maybe_unused]] Step&& step) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Step>,
+                  "cljonic::repeatedly: the step argument is outside the supported producer domain. "
+                  "The step must be a copyable, non-throwing callable that takes no arguments and "
+                  "whose result is a nothrow-storable element type. Pass a function, lambda, or "
+                  "function object; to repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeat(value, count).");
+    return {};
 }
 
 } // namespace cljonic
