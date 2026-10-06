@@ -54,15 +54,48 @@ admission gate** whose body is
 
 ## Two governing requirements
 
-- **REQ-DIAG-009 — public free functions.** `equal`, `not_equal`, and the
-  producer factory functions `repeat`, `cycle`, `iterate`, `repeatedly`.
+- **REQ-DIAG-009 — public free functions (universal + future-binding).** Binds
+  **every** public free function, present or added later, whose domain is closed:
+  `equal`, `not_equal`, the producer factories `repeat`/`cycle`/`iterate`/
+  `repeatedly`, and the collection primitives (`assoc`, `can_assoc`, `conj`,
+  `can_conj`, `get`, `contains`, `count`, `dissoc`, `disj`, `peek`, `pop`,
+  `is_empty`, `into`, `fits_into`). Two clauses qualify it:
+  - **whenever_possible** — a fallback is required wherever a distinct overload
+    can be formed that is viable only for a rejected call; where none can (the
+    domain is gated before any call candidate is considered, or no sibling
+    candidate exists) a **documented exclusion** is recorded instead.
+  - **forward_binding** — an un-gated / un-taught / un-excluded rejection
+    surface is a conformance defect surfaced by the diagnostic-coverage gate.
   Producer admission uses the product-specific concept: `NothrowCollectionElement`
   (`repeat`), `CljonicSource` (`cycle`), `IterateStep` (`iterate`),
-  `RepeatedlyStep` (`repeatedly`).
+  `RepeatedlyStep` (`repeatedly`). Primitives gate on their capability concept
+  (`AssociativeCollection`, `ConjableCollection`, `LookupCollection`, …).
 - **REQ-DIAG-010 — public source constructors.** The five collections' direct
   source constructors. The message directs the caller to `into` for
   materialization (preflighted by `fits_into`) or to the enclosure form for a
   single element.
+
+## Diagnostic-coverage gate
+
+`scripts/check-free-function-diagnostics.py` (`make diagnostic-coverage`) makes
+the obligation enforceable. It classifies every `src/cljonic-*.hpp` header as
+`fallback` (verified to contain `dependent_false`), `pending` (subject but not
+yet taught — reported, non-fatal, the application backlog), `excluded`
+(document/design exclusion: `range`, `map-entry`, `variant`, and the six
+deferred non-public sequence headers), or `non_subject` (infra). An
+**unclassified** header fails the gate — that is the forward-binding mechanism.
+A primitive "graduates" from `pending` to `fallback` when its fallback lands.
+Currently `pending` = the 12 remaining primitives.
+
+## Minimal fallback for a primitive (worked pattern)
+
+A primitive whose domain is expressible through its named capability concept
+usually needs two fallbacks: (1) the collection is not capable
+(`!AssociativeCollection<C>` etc.), and (2) the key/value argument is outside the
+collection's domain. Add a named admission concept for (2) (e.g.
+`CanAssocKeyAdmissible`, `AssocPairAdmissible`) so the negative constraint reads
+clearly and the message can name the violated rule. See `src/cljonic-assoc.hpp`
+and `src/cljonic-can-assoc.hpp`.
 
 ## SFINAE-friendly capability concepts
 

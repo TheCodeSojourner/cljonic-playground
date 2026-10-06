@@ -11,26 +11,37 @@ Task:
 3. Doc-example `using namespace cljonic;` convention (human-requested) — COMPLETE: hoisted the statement to file scope (just below the `#include`, outside `main()`) in all 19 headers that still had it inside `main`; the other 15 already conformed.
 4. Enforcement (human-approved optional) — COMPLETE: `scripts/compile-doc-samples.py` now validates every extracted doc block before compiling — an indented or missing `using namespace cljonic;` fails `make docs-examples` with a targeted message.
 5. Memories — COMPLETE: added the `using namespace` rule to `docs-user-facing-example-style.md`; added the rule plus its enforcement to `doxygen-doc-tooling.md`.
+6. Variadic `assoc` slice (human-approved) — COMPLETE: new `REQ-FN-002U` (variadic `assoc(coll, k₁,v₁, k₂,v₂, …)` over `AssociativeCollection`, left-to-right fold, ≥2 pairs, per-pair domain admission, over-capacity pair = no-op-and-continues, odd arity rejected); `specs/primitives/assoc.allium` fields/invariants; arch `S2_associative_contract` fold rule; vocab `Assoc` extended; code = variadic overload + `AssocPairAdmissible`/`all_assoc_pairs_admissible`/`fold_assoc_pairs_into`; tests + snapshot. **Latent bug found+fixed**: the fold-concept base case was `std::true_type`, so a lone trailing key was concept-admissible; now `false` with `<C>` (empty tail) = true.
+7. Slice G — universal diagnostic policy (human-approved) — COMPLETE: `REQ-DIAG-009` made explicit-universal (`present ∨ added_in_future`) + `whenever_possible` (fallback else documented exclusion) + `forward_binding`; arch `S3_rejection_diagnostic` generalized; vocab `RejectionDiagnostic` extended; new enforcement gate `scripts/check-free-function-diagnostics.py` (classifies every `src/` header, fails on unclassified, reports `pending`) wired into `upsert-gate`/`upsert-gate-fast`/`validate`/`git`.
+8. A1 — `assoc` diagnostic fallback (4 rejection modes) + `scripts/check-assoc-compile-failures.py` — COMPLETE.
+9. A2 — `can_assoc` diagnostic fallback (2 modes) + `scripts/check-can-assoc-compile-failures.py` — COMPLETE; `diagnostic-coverage` pending 14→12.
+10. Code work committed by the human: ba0e3b4, 0364419, 4ad7e82.
 
 Questions:
 1. Slice B (`cljonic::Variant` free-function API) still awaits selection.
+2. None blocking for the diagnostic-coverage sweep; the remaining 12 primitives continue next session.
 
 Decisions:
 1. assoc doc precision (human, 2026-10-06): `Map` names key replacement; `Vector` uses user-facing "appends at the end" (not impl-facing "appends at the logical count"); a named policy in user-facing prose is taught inline (the invalid-character policy states its rule).
 2. `using namespace cljonic;` placement (human, 2026-10-06): file scope, immediately after `#include "cljonic.hpp"`, outside `main()` — never inside `main()`.
 3. Enforcement (human-approved, 2026-10-06): extend the existing doc-sample checker (`compile-doc-samples.py`) rather than add a new target/script; validate every extracted block (including the six deferred headers) before compiling.
+4. Diagnostic universality (human, 2026-10-06): `REQ-DIAG-009` binds every public free function, present or future, whenever a rejected-only fallback overload can be formed; otherwise a documented exclusion. Enforced by the diagnostic-coverage gate.
+5. Harness shape (human, 2026-10-06): the remaining primitives use ONE consolidated `check-primitive-compile-failures.py` + a single Makefile target; consider migrating the existing `check-assoc…`/`check-can-assoc…` into it.
+6. Fallback message wording (human, 2026-10-06): approved as written (the `assoc`/`can_assoc` texts, incl. "use conj to add an element to a Set or Queue").
 
 Validation:
 1. `make format` (idempotent, `format:ok`), `make cljonic` (`cljonic:ok:header=cljonic.hpp`).
 2. `make docs-examples` → `compiled=29`, `deferred-skipped=6`, `docs-examples:ok`; negative probes (isolated `/tmp` source dir) proved both violation modes fail with targeted messages (exit 1) before compilation.
 3. `make git` (user-run) → `git:ok` end-to-end (format, lint, complexity, all compile-fail harnesses, header-guards, sanitizer, coverage lines=100.0%, traceability, no-heap, docs, docs-examples:compiled=29, cljonic-test).
-4. Commits (not yet pushed): 1ee1309 (assoc doc + using hoist + amalgamation), eb8575f (enforcement + memory/knowledge), 0a7137f (docs).
+4. Commits: 1ee1309, eb8575f, 0a7137f (doc work); ba0e3b4, 0364419, 4ad7e82 (variadic assoc + diagnostic fallbacks + gate wiring).
+5. Variadic assoc + Slice G + A1 + A2: `make sanitizer` 190/190, `coverage-cli` 100.0%, `traceability-spec-to-code:ok` (snapshot +8 for variadic assoc obligations), `no-heap:ok`, `docs-examples:compiled=29`, `diagnostic-coverage:ok` (pending 14→12).
+6. `assoc-compile-fail:ok` and `can-assoc-compile-fail:ok` (message content asserted, modular + single-header); negative gate probe: an unclassified `src/` header fails with exit 1.
 
 Next:
-1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
-2. Optional: constrain the `disj`/`peek`/`pop` headers at the boundary (same treatment as the reviewed `conj`/`dissoc`/`can_assoc`/`contains`).
-3. Optional: family-wide REQ-DIAG-009 diagnostic fallbacks for the collection primitives (Upsert-3); `REQ-COLL-020R` `value_type`→`association_value_type` wording (Upsert-4).
-4. Candidate memory (proposed, awaiting approval): extend `doxygen-prose-must-be-user-facing.md` — "a user-facing doc that names a policy must state the rule inline, and prefer the user-facing term over the implementation-facing one (e.g. 'end', not 'logical count')". Evidence: the `assoc` `String`/`Vector` clauses.
+1. **Continue the diagnostic-coverage sweep** — the remaining 12 `pending` primitives: `can-conj`, `conj`, `contains`, `count`, `disj`, `dissoc`, `fits-into`, `get`, `into`, `is-empty`, `peek`, `pop`. Use ONE consolidated `scripts/check-primitive-compile-failures.py` + a single Makefile target (human-approved 2026-10-06); consider migrating `check-assoc…`/`check-can-assoc…` into it. Each flip `pending`→`fallback` in the registry.
+2. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
+3. `REQ-COLL-020R` `value_type`→`association_value_type` wording (Upsert-4).
+4. Candidate memory (proposed, awaiting approval): (a) a fold-concept base case must be `false` (empty tail `true`) or an odd trailing argument is concept-admissible — evidence: the variadic `assoc` bug; (b) the diagnostic-coverage gate pattern (registry + forward-binding).
 
 Carry-forward (unaddressed, remember for later):
 1. `equal_by`/`identical` and the remaining REQ-FN-002C comparison family remain deferred.
