@@ -136,6 +136,10 @@ Functions</h2></td></tr>
 requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt; &amp;&amp; concepts::IterateStep&lt;std::remove_cvref_t&lt;T&gt;, std::decay_t<br class="typebreak" />
 &lt;Step&gt;&gt;</td></tr>
 <tr class="memitem:a63314a7947b7251553be23329779260a template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a63314a7947b7251553be23329779260a">cljonic::iterate</a> (Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a>&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</td></tr>
+<tr class="memitem:a01988f5cd37139ca5c6a65fb3277459b" id="r_a01988f5cd37139ca5c6a65fb3277459b"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T&gt; <br />
+requires (!(concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt; &amp;&amp; concepts::IterateStep&lt;std::remove_cvref_t&lt;T&gt;,<br class="typebreak" />
+ std::decay_t&lt;Step&gt;&gt;))</td></tr>
+<tr class="memitem:a01988f5cd37139ca5c6a65fb3277459b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a01988f5cd37139ca5c6a65fb3277459b">cljonic::iterate</a> (Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

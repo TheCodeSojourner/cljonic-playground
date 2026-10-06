@@ -138,6 +138,12 @@ requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</td></tr>
 <tr class="memitem:a3f461517779626ecb7fa5ef3920ab701" id="r_a3f461517779626ecb7fa5ef3920ab701"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
 requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</td></tr>
 <tr class="memitem:a3f461517779626ecb7fa5ef3920ab701 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a3f461517779626ecb7fa5ef3920ab701">cljonic::repeatedly</a> (std::size_t count, Step &amp;&amp;step) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a>&lt; T, std::decay_t&lt; Step &gt; &gt;</td></tr>
+<tr class="memitem:aa6fbe811d718b447de3e57f7e46b6eba" id="r_aa6fbe811d718b447de3e57f7e46b6eba"><td class="memTemplParams" colspan="2">template&lt;typename Step&gt; <br />
+requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt;)</td></tr>
+<tr class="memitem:aa6fbe811d718b447de3e57f7e46b6eba template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aa6fbe811d718b447de3e57f7e46b6eba">cljonic::repeatedly</a> (Step &amp;&amp;step) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
+<tr class="memitem:aece91f6abc7b2c5f50fa217a1d8fe379" id="r_aece91f6abc7b2c5f50fa217a1d8fe379"><td class="memTemplParams" colspan="2">template&lt;typename Step&gt; <br />
+requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt;)</td></tr>
+<tr class="memitem:aece91f6abc7b2c5f50fa217a1d8fe379 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aece91f6abc7b2c5f50fa217a1d8fe379">cljonic::repeatedly</a> (std::size_t count, Step &amp;&amp;step) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

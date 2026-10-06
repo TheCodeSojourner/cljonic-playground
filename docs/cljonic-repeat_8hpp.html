@@ -140,6 +140,12 @@ requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;<
 <tr class="memitem:af6ddc48c44e50988e74fbe959e5697b5" id="r_af6ddc48c44e50988e74fbe959e5697b5"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
 requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</td></tr>
 <tr class="memitem:af6ddc48c44e50988e74fbe959e5697b5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af6ddc48c44e50988e74fbe959e5697b5">cljonic::repeat</a> (T &amp;&amp;value, std::size_t count) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td></tr>
+<tr class="memitem:afb5b53b26d1289977d662c878565ec78" id="r_afb5b53b26d1289977d662c878565ec78"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;)</td></tr>
+<tr class="memitem:afb5b53b26d1289977d662c878565ec78 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#afb5b53b26d1289977d662c878565ec78">cljonic::repeat</a> (T &amp;&amp;value) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
+<tr class="memitem:a32f34dfb5d48ddad3e3fd5dce7b480bc" id="r_a32f34dfb5d48ddad3e3fd5dce7b480bc"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;)</td></tr>
+<tr class="memitem:a32f34dfb5d48ddad3e3fd5dce7b480bc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a32f34dfb5d48ddad3e3fd5dce7b480bc">cljonic::repeat</a> (T &amp;&amp;value, std::size_t count) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
