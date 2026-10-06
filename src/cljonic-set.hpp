@@ -2,7 +2,6 @@
 
 #include <array>
 #include <cstddef>
-#include <cstdlib>
 #include <ranges>
 #include <span>
 #include <type_traits>
@@ -116,7 +115,7 @@ class Set {
 
         if consteval {
             if (duplicate) {
-                std::abort();
+                rejected_duplicate_value_at_compile_time();
             }
         }
     }
@@ -268,6 +267,14 @@ class Set {
         }
         return logical_size_;
     }
+
+    // Compile-time-only rejection trap (REQ-COLL-019B): a Set pack construction
+    // with a duplicate value is ill-formed when evaluated as a constant
+    // expression, mirroring Clojure's reader error for a `#{...}` literal with a
+    // duplicate key. Declared but never defined, and reached only inside
+    // `if consteval`, so ordinary runtime construction deduplicates
+    // (REQ-COLL-019) without a runtime diagnostic.
+    static void rejected_duplicate_value_at_compile_time() noexcept;
 
     std::array<value_type, CapacityValue> elements_{};
     std::size_t logical_size_{0};

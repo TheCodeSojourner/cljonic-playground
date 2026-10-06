@@ -25,9 +25,13 @@ namespace cljonic {
 
  int main() {
    // CTAD infers String<2> from the string literal: capacity counts content
-   // characters, excluding the automatic null terminator.
+   // characters, excluding the automatic null terminator. The inferred capacity
+   // is observed through the callable lookup form.
    [[maybe_unused]] constexpr auto inferred = String{"Hi"};
-   static_assert(inferred.capacity() == 2);
+   static_assert(
+       std::same_as<std::remove_cvref_t<decltype(inferred)>, String<2>>);
+   static_assert(inferred(1) == 'i');
+   static_assert(inferred(2, 'Z') == 'Z');
 
    // Explicit capacity permits a partially populated String and an empty String.
    constexpr auto literal = String<10>{"Hello"};
