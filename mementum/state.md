@@ -30,8 +30,9 @@ Validation:
 
 Next:
 1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
-2. Candidate synthesis (pending human approval): `mementum/knowledge/collection-source-interoperability.md` is STALE — it predates enclosure, the non-cljonic-source restriction, and the `fits_into`-as-preflight clarification. Update it from `ctad-copy-deduction-vs-enclosure-guides.md`, `source-construction-diagnostic-fallback.md`, `same-type-constructor-pack-preference.md`, and the new `materializer-vs-preflight-terminology.md`.
+2. Candidate synthesis — DONE (2026-10-06, commit 71025d7): `mementum/knowledge/collection-source-interoperability.md` updated in place from `ctad-copy-deduction-vs-enclosure-guides.md`, `source-construction-diagnostic-fallback.md`, `same-type-constructor-pack-preference.md`, and `materializer-vs-preflight-terminology.md`. Status `designing` → `active`; rewrote around the three admission paths (SourceConstruction / SameTypeArgumentIsOneElement / EnclosureConstruction), the `into`/`fits_into` pair, bounds/overflow, the REQ-DIAG-010 diagnostic, and a corrected open-work list.
 3. Extend the REQ-DIAG-010 constructor-diagnostic policy to any other closed-source-domain public constructor.
+4. Candidate synthesis (still pending): `doxygen-doc-tooling.md` from the ≥3 doc-tooling memories.
 
 Carry-forward (unaddressed, remember for later):
 1. `equal_by`/`identical` and the remaining REQ-FN-002C comparison family remain deferred.
