@@ -6,6 +6,13 @@ entity Assoc {
     supports_map_assoc: Boolean
     supports_vector_assoc: Boolean
     supports_string_assoc: Boolean
+    supports_variadic_assoc: Boolean
+    variadic_folds_pairs_left_to_right: Boolean
+    variadic_requires_at_least_two_pairs: Boolean
+    variadic_pair_admitted_under_collection_domain: Boolean
+    variadic_out_of_domain_pair_rejected_at_compile_time: Boolean
+    variadic_over_capacity_pair_is_no_op_and_continues: Boolean
+    variadic_odd_trailing_argument_count_rejected: Boolean
     key_domain_is_validated: Boolean
     supports_collection_specific_append_policy: Boolean
     supports_replace_or_append_policy: Boolean
@@ -44,6 +51,34 @@ entity Assoc {
 
     invariant SupportsStringAssoc {
         this.supports_string_assoc = true
+    }
+
+    invariant SupportsVariadicAssoc {
+        this.supports_variadic_assoc = true
+    }
+
+    invariant VariadicFoldsPairsLeftToRight {
+        this.variadic_folds_pairs_left_to_right = true
+    }
+
+    invariant VariadicRequiresAtLeastTwoPairs {
+        this.variadic_requires_at_least_two_pairs = true
+    }
+
+    invariant VariadicPairAdmittedUnderCollectionDomain {
+        this.variadic_pair_admitted_under_collection_domain = true
+    }
+
+    invariant VariadicOutOfDomainPairRejectedAtCompileTime {
+        this.variadic_out_of_domain_pair_rejected_at_compile_time = true
+    }
+
+    invariant VariadicOverCapacityPairIsNoOpAndContinues {
+        this.variadic_over_capacity_pair_is_no_op_and_continues = true
+    }
+
+    invariant VariadicOddTrailingArgumentCountRejected {
+        this.variadic_odd_trailing_argument_count_rejected = true
     }
 
     invariant KeyDomainIsValidated {
