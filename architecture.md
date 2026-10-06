@@ -252,7 +252,7 @@
   | invalid_association_key_or_full_append(x) → return(unchanged_source(x))
     ∧ not(throw ∨ allocate ∨ mutate_source(x))
   | associative_operation(x) → classify_as(RequirementsBacked)
-    ∧ trace_to(requirements/cljonic-requirements-module-2.md ∧ requirements/cljonic-requirements-module-3.md)
+    ∧ trace_to(requirements/requirements-module-2.md ∧ requirements/requirements-module-3.md)
 
 λ S2_conj_contract(x). conj(collection, value) → return(new_collection_value(x))
   | conj(x) ∧ can_conj(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
@@ -268,7 +268,7 @@
   | full_conj_or_invalid_conj(x) → return(unchanged_source(x))
     ∧ not(throw ∨ allocate ∨ mutate_source(x))
   | conj_operation(x) ∧ can_conj(x) → classify_as(RequirementsBacked)
-    ∧ trace_to(requirements/cljonic-requirements-module-3.md)
+    ∧ trace_to(requirements/requirements-module-3.md)
 
 λ S2_composite_value_domain(x). composite_value(x) ≡ cljonic_variant_over(
     scalar_literals ∨ scoped_enumerations ∨ supported_collections ∨ producers_with_stable_parameters
@@ -632,8 +632,8 @@ concept SequenceableProducer =
   | capability(x) → layered_on(CljonicProducer_admission(x))
   | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_available_index_predicate(x)
   | Indexed(x) ≡ efficient_O1_positional_access(x) ∧ ¬require(traversal(x)) matching(Clojure_Indexed_interface(x))
-  | Indexed(x) ¬imply(IFn(x)) because(Range_is_Indexed_and_Counted_but_not_invocable_in_Clojure(x))
-  | ¬expose(callable_operator_parenthesis(x)) on(producer(x)) because(operator_parenthesis_reserved_for_IFn_mirroring(x))
+  | Indexed(x) ¬imply(CallableLookup(x)) because(Range_is_Indexed_and_Counted_but_not_invocable_in_Clojure(x))
+  | ¬expose(callable_operator_parenthesis(x)) on(producer(x)) because(operator_parenthesis_reserved_for_CallableLookup_mirroring(x))
   | positional_value_retrieval(x) → remain(deferred_future_work) until(Module5_nth_approved(x))
   | eligible_producers(x) ≡ Range(x)
   | ineligible_producers(x) ≡ Cycle(x) ∨ Iterate(x) ∨ Repeat(x) ∨ Repeatedly(x) because(never_efficiently_indexed_or_counted_in_Clojure(x))
@@ -744,14 +744,14 @@ concept IndexedProducer =
   | unbounded_cycle_source(source) → preserve(source_observable_prefix) ∧ ¬require(complete_source_result)
   | Repeat(value) → store_owned(value) ∧ represent(unbounded)
   | Repeat(value ∧ count) → store_owned(value) ∧ store(runtime_count) ∧ represent(finite)
-  | Repeat(x) → exclude(IndexedProducer ∧ IFn ∧ Lookup)
+  | Repeat(x) → exclude(IndexedProducer ∧ CallableLookup ∧ Lookup)
   | Repeat_materialization(x) → emit_owned_value_copy_per_element(x) ∧ use(runtime_count) when(finite(x))
   | Iterate(step ∧ initial) → store(decay(step) ∧ initial) ∧ require(NothrowCollectionElement(initial)) ∧ require(const_step_invocation_is_noexcept_T_to_T(step))
   | Iterate(x) → emit(initial(x)) ∧ apply(step_to_previous_value(x)) ∧ represent(unbounded) ∧ support(constexpr ∧ runtime)
-  | Iterate(x) → permit(named_function ∨ lambda ∨ function_object) ∧ satisfy(CljonicSource) ∧ exclude(IndexedProducer ∧ IFn ∧ Lookup)
+  | Iterate(x) → permit(named_function ∨ lambda ∨ function_object) ∧ satisfy(CljonicSource) ∧ exclude(IndexedProducer ∧ CallableLookup ∧ Lookup)
   | Repeatedly(step) → store(decay(step)) ∧ require(NothrowCollectionElement(element)) ∧ require(const_step_invocation_is_noexcept_nullary_to_T(step))
   | Repeatedly(count ∧ step) → store(decay(step) ∧ runtime_count) ∧ represent(finite) ∧ invoke(step_once_per_produced_element) ∧ mirror(Clojure_repeatedly_n_f)
-  | Repeatedly(x) → permit(named_function ∨ lambda ∨ function_object) ∧ satisfy(CljonicSource) ∧ exclude(IndexedProducer ∧ IFn ∧ Lookup) ∧ exclude(step_evaluation_during_construction)
+  | Repeatedly(x) → permit(named_function ∨ lambda ∨ function_object) ∧ satisfy(CljonicSource) ∧ exclude(IndexedProducer ∧ CallableLookup ∧ Lookup) ∧ exclude(step_evaluation_during_construction)
   | semantically_infinite_producer(x) → materialize_at_most(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
@@ -825,14 +825,14 @@ concept IndexedProducer =
 
 ## Traceability
 
-λ traceability_authorities(x). foundation_authority(x) ≡ requirements/cljonic-requirements-module-1.md ∧ Module1(nominal ∧ storage ∧ no_runtime_service ∧ persistent_value boundaries)
-  | capability_authority(x) ≡ requirements/cljonic-requirements-module-2.md ∧ Module2(concept ∧ result_status ∧ preflight ∧ diagnostic ∧ constant_evaluation ∧ vocabulary requirements)
+λ traceability_authorities(x). foundation_authority(x) ≡ requirements/requirements-module-1.md ∧ Module1(nominal ∧ storage ∧ no_runtime_service ∧ persistent_value boundaries)
+  | capability_authority(x) ≡ requirements/requirements-module-2.md ∧ Module2(concept ∧ result_status ∧ preflight ∧ diagnostic ∧ constant_evaluation ∧ vocabulary requirements)
   | vocabulary_authority(x) ≡ vocabulary.md ∧ canonical_terms(x) → govern(public_names ∧ architecture_references ∧ specifications ∧ tests)
-  | module3_stored_collection_authority(x) ≡ requirements/cljonic-requirements-module-3.md → govern(concrete_storage ∧ linear_scan ∧ swap_and_remove ∧ primitive_free_functions)
-  | module4_producer_authority(x) ≡ requirements/cljonic-requirements-module-4.md → govern(producers ∧ materialization ∧ interop)
-  | module5_algorithm_authority(x) ≡ requirements/cljonic-requirements-module-5.md → govern(composition ∧ traversal_family)
-  | module6_numeric_authority(x) ≡ requirements/cljonic-requirements-module-6.md → govern(checked_arithmetic ∧ callables)
-  | module7_extended_domain_authority(x) ≡ requirements/cljonic-requirements-module-7.md → govern(relations ∧ regex ∧ state ∧ formatting)
+  | module3_stored_collection_authority(x) ≡ requirements/requirements-module-3.md → govern(concrete_storage ∧ linear_scan ∧ swap_and_remove ∧ primitive_free_functions)
+  | module4_producer_authority(x) ≡ requirements/requirements-module-4.md → govern(producers ∧ materialization ∧ interop)
+  | module5_algorithm_authority(x) ≡ requirements/requirements-module-5.md → govern(composition ∧ traversal_family)
+  | module6_numeric_authority(x) ≡ requirements/requirements-module-6.md → govern(checked_arithmetic ∧ callables)
+  | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ regex ∧ state ∧ formatting)
 
 λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ into ∧ fits_into
   | approved_but_unimplemented(algorithms ∨ regexes) → remain_outside(active_surface(x))
