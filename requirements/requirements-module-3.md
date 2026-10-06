@@ -444,11 +444,13 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-002M(x).
-  ∀ `can_conj(collection, value)`: returns true when `conj` can produce its documented result without capacity failure, including when a set already contains the value
+  ∀ `can_conj(collection, value)` defined for every `Conjable` collection (`Vector`, `Set`, `Map`, `Queue`): returns true when `conj` can produce its documented result without capacity failure
+  ∧ ∀ (`Set` ∧ `Map`): an element or key already present returns true — insertion is a no-op or a replacement that needs no capacity — ∧ a new element or key returns true only when capacity remains
+  ∧ ∀ (`Vector` ∧ `Queue`): returns true only when capacity remains; the value argument does not affect the outcome
   ∧ ∀ `can_assoc(collection, key)` defined for every `Associative` collection: agrees with that collection's `assoc` key-domain and capacity policy ∧ ¬∃ acceptance of a value argument, because the value being associated never affects whether `assoc` can succeed
   ∧ ∀ `Map`: an existing key returns true ∧ a new key returns true only when capacity is available
   ∧ ∀ (`Vector` ∧ `String`): an existing logical index returns true ∧ the logical-count append index returns true only when capacity remains
-  rationale: the value being associated never affects whether `assoc` can succeed, so a value parameter would invite misuse
+  rationale: the value being associated never affects whether `assoc` can succeed, so a value parameter would invite misuse; for `conj`, a `Set` element or `Map` key already present makes insertion succeed without capacity
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-002P(x).
@@ -474,6 +476,16 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∀ callable `String<N>` lookup operation specified by `REQ-COLL-012A`: equivalent to `get(string, index)` and `get(string, index, fallback)`, with the fallback defaulting to `char{}` when omitted
   ∧ ∀ `contains(string, index)`: non-throwing ∧ non-allocating ∧ consistent with the callable lookup operation ∧ the null terminator remains outside the lookup domain
   {source: stakeholder_decided, decided_by: original_spec_author}
+
+λ REQ-FN-002T(x).
+  ∀ context: `conj` is supported on every `Conjable` collection — `Vector`, `Set`, `Map`, and `Queue` — matching Clojure's `conj` surface over vectors, sets, maps, and queues
+  ∧ ∀ `Vector`: appends the value at the end (the highest logical index) when capacity remains ∧ a full vector returns an unchanged copy
+  ∧ ∀ `Queue`: enqueues the value at the rear/tail, preserving FIFO order ∧ a full queue returns an unchanged copy
+  ∧ ∀ `Set`: adds the element when absent ∧ an element already present is a successful no-op that preserves the count (`REQ-COLL-005A`) ∧ a full set returns an unchanged copy
+  ∧ ∀ `Map`: `conj(map, entry)` associates the entry's key with its value — an existing key replaces its associated value without increasing count, a new key is added only when capacity remains (`REQ-COLL-004A`) ∧ the argument is a `MapEntry<K, V>` ∧ a full map with a new key returns an unchanged copy
+  ∧ ∀ `conj`: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ returns a new collection value ∧ preserves the source
+  rationale: Clojure's `conj` adds to every sequential and associative collection, so cljonic exposes the same four-collection surface with collection-specific insertion semantics and duplicate handling
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-003(x).
   ∀ generic_free_function: constrained by explicit concepts or equivalent compile-time requirements
