@@ -64,6 +64,30 @@ admission gate** whose body is
   materialization (preflighted by `fits_into`) or to the enclosure form for a
   single element.
 
+## SFINAE-friendly capability concepts
+
+A capability concept that a free function is constrained on must itself be
+SFINAE-friendly. Naming a member type in the requires-expression **parameter
+list** breaks that: for a type lacking the member, substitution hard-errors
+(`no type named 'lookup_type'`) instead of yielding `false`. Put the member type
+in the requires-expression **body** and reference it through `std::declval`:
+
+```cpp
+template <typename C>
+concept LookupCollection = CljonicCollection<C> && requires(const C& c) {
+    typename C::lookup_type;
+    { c(std::declval<const typename C::lookup_type&>()) } noexcept;
+    { c.contains(std::declval<const typename C::lookup_type&>()) } noexcept -> std::same_as<bool>;
+};
+```
+
+`AssociativeCollection` additionally must use `association_value_type` (not
+`value_type`) — for `Map`, `value_type = MapEntry<K,V>` but `assoc` takes the
+mapped `V`. `ConjableCollection` follows the same body form. This is what lets
+`assoc`/`get`/`conj`/`can_assoc`/`can_conj` be gated on the named concept *and*
+produce a clean rejection. See
+`/mementum/memories/capability-concept-member-types-belong-in-body.md`.
+
 ## Which axis decides whether a fallback is needed
 
 Fallback necessity tracks **which axis** the closed domain is gated on — **not**
