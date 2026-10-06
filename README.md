@@ -70,8 +70,8 @@ The developer using **cljonic** should be able to write **safe** code that is **
 ### Default Element
 
 Every **cljonic collection** has a **default element** that is returned whenever a valid collection element can't be returned.
-The value of a collection's **default element** is a default initialized instance of the type of the collection's values
-(e.g., T{}). This approach is taken to avoid using exceptions, error codes/states, `std::optional`, and/or `std::expected`.
+The value of a collection's **default element** is the **default value** of the type of the collection's values
+(e.g., `T{}`). This approach is taken to avoid using exceptions, error codes/states, `std::optional`, and/or `std::expected`.
 
 > **Note**
 > The design choice to use a **default element** means that **cljonic** users must take care to ensure that they know
