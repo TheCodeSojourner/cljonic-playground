@@ -14,11 +14,11 @@ concept HasCallableLookup = requires(const T& value) { value(0U); };
 template <typename T>
 concept HasGet = requires(const T& value) { cljonic::get(value, 0U); };
 
-template <typename Step>
-concept CanIterate = requires(Step step) { cljonic::iterate(step, 0); };
-
-template <typename Element, typename Step>
-concept CanIterateWith = requires(Step step, Element value) { cljonic::iterate(step, value); };
+// NOTE: rejection is asserted against the admission concept directly, not via a
+// `requires { iterate(...) }` callability probe: REQ-DIAG-009 provides a
+// diagnostic fallback for out-of-domain arguments, so the call expression is
+// well-formed (callable) even when the argument is rejected. Callability is not
+// a supported-interface signal.
 
 constexpr auto add_one(int value) noexcept -> int {
     return value + 1;
@@ -148,11 +148,11 @@ TEST_CASE("Iterate owns a copyable step and exposes bounded unbounded traversal"
     STATIC_REQUIRE_FALSE(HasContains<decltype(sequence)>);
     STATIC_REQUIRE_FALSE(HasCallableLookup<decltype(sequence)>);
     STATIC_REQUIRE_FALSE(HasGet<decltype(sequence)>);
-    STATIC_REQUIRE_FALSE(CanIterate<MoveOnlyStep>);
-    STATIC_REQUIRE_FALSE(CanIterate<ThrowingStep>);
-    STATIC_REQUIRE_FALSE(CanIterate<NonConstStep>);
-    STATIC_REQUIRE_FALSE(CanIterate<WrongResultStep>);
-    STATIC_REQUIRE_FALSE(CanIterateWith<ThrowingElement, ThrowingElementStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::IterateStep<int, MoveOnlyStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::IterateStep<int, ThrowingStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::IterateStep<int, NonConstStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::IterateStep<int, WrongResultStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::IterateStep<ThrowingElement, ThrowingElementStep>);
 
     constexpr auto copied_sequence = sequence;
     constexpr auto copied_result = into(Vector<int, 3>{}, copied_sequence);

@@ -14,11 +14,11 @@ concept HasCallableLookup = requires(const T& value) { value(0U); };
 template <typename T>
 concept HasGet = requires(const T& value) { cljonic::get(value, 0U); };
 
-template <typename Step>
-concept CanRepeatedly = requires(Step step) { cljonic::repeatedly(step); };
-
-template <typename Element, typename Step>
-concept CanRepeatedlyWith = requires(Step step, std::size_t count) { cljonic::repeatedly(step, count); };
+// NOTE: rejection is asserted against the admission concept directly, not via a
+// `requires { repeatedly(...) }` callability probe: REQ-DIAG-009 provides a
+// diagnostic fallback for out-of-domain arguments, so the call expression is
+// well-formed (callable) even when the argument is rejected. Callability is not
+// a supported-interface signal.
 
 constexpr auto five() noexcept -> int {
     return 5;
@@ -160,10 +160,10 @@ TEST_CASE("Repeatedly owns a copyable zero-argument step and exposes counted unc
     STATIC_REQUIRE_FALSE(HasContains<decltype(uncounted)>);
     STATIC_REQUIRE_FALSE(HasCallableLookup<decltype(uncounted)>);
     STATIC_REQUIRE_FALSE(HasGet<decltype(uncounted)>);
-    STATIC_REQUIRE_FALSE(CanRepeatedly<MoveOnlyStep>);
-    STATIC_REQUIRE_FALSE(CanRepeatedly<ThrowingStep>);
-    STATIC_REQUIRE_FALSE(CanRepeatedly<NonConstStep>);
-    STATIC_REQUIRE_FALSE(CanRepeatedlyWith<ThrowingElement, ThrowingElementStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<MoveOnlyStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<ThrowingStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<NonConstStep>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<ThrowingElementStep>);
 
     constexpr auto copied_counted = counted;
     constexpr auto copied_result = into(Vector<int, 4>{}, copied_counted);

@@ -3,6 +3,17 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+namespace {
+
+// A type that is not a NothrowCollectionElement (its copy constructor is
+// deleted), used to exercise the repeat factory's diagnostic fallback.
+struct NonStorable {
+    NonStorable() = default;
+    NonStorable(const NonStorable&) = delete;
+};
+
+} // namespace
+
 TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics]") {
     using cljonic::equal;
     using cljonic::not_equal;
@@ -13,6 +24,7 @@ TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics
     TRACE_ID("invariant.RejectionDiagnostic.ConstrainedOnNegationOfAdmissionGate");
     TRACE_ID("invariant.RejectionDiagnostic.DetectionUsesNamedConceptsNotCallability");
     TRACE_ID("invariant.RejectionDiagnostic.AppliesToEqualAndNotEqual");
+    TRACE_ID("invariant.RejectionDiagnostic.AppliesToProducerFactoryFunctions");
 
     // PrimaryAdmissionRemainsConceptBased: supported operands are admitted by
     // the named capability concepts, and valid calls resolve to the real
@@ -43,4 +55,16 @@ TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics
     STATIC_REQUIRE(requires { not_equal(1.0); });
     STATIC_REQUIRE(requires { not_equal(1.0, 1.0); });
     STATIC_REQUIRE(requires { not_equal(1.0, 1.0, 1.0); });
+
+    // AppliesToProducerFactoryFunctions: the producer factories repeat, cycle,
+    // iterate, and repeatedly expose a diagnostic fallback for an out-of-domain
+    // argument, so the rejected call expression is still well-formed and the
+    // targeted static_assert fires at instantiation (proved by
+    // scripts/check-producer-compile-failures.py).
+    STATIC_REQUIRE(requires { cljonic::cycle(42); });
+    STATIC_REQUIRE(requires { cljonic::repeatedly(42); });
+    STATIC_REQUIRE(requires { cljonic::repeatedly(3, 42); });
+    STATIC_REQUIRE(requires { cljonic::iterate(42, 1); });
+    STATIC_REQUIRE(requires { cljonic::repeat(NonStorable{}); });
+    STATIC_REQUIRE(requires { cljonic::repeat(NonStorable{}, 3); });
 }
