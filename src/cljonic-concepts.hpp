@@ -180,7 +180,7 @@ namespace concepts {
 // Storage & Element Capability Concepts
 // ============================================================================
 
-/** Requires that \p T is default-initializable and copyable. */
+/** Requires that \p T has a default value and is copyable. */
 template <typename T>
 concept CopyableElement = std::default_initializable<T> && std::copyable<T>;
 

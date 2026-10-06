@@ -385,7 +385,7 @@ namespace concepts {
 // Storage & Element Capability Concepts
 // ============================================================================
 
-/** Requires that \p T is default-initializable and copyable. */
+/** Requires that \p T has a default value and is copyable. */
 template <typename T>
 concept CopyableElement = std::default_initializable<T> && std::copyable<T>;
 
@@ -970,8 +970,8 @@ namespace cljonic {
    static_assert(lvalue_constructed(0).category == 1);
    static_assert(rvalue_constructed(0).category == 2);
 
-   // Without a fallback, an invalid lookup returns value_type{}; Pixel's
-   // default-constructed int members are zero.
+   // Without a fallback, an invalid lookup returns value_type{}; Pixel's int
+   // members have a default value of zero.
    static_assert(pixels_populated(-1).x == 0);
    static_assert(pixels_populated(-1).y == 0);
 
@@ -1796,6 +1796,13 @@ namespace cljonic {
    static_assert(equal(str1, str2)); // String equality compares content
    static_assert(equal(Repeat<int>{}, Repeat<int>{})); // bounded prefix
 
+   // Variant equality is alternative-strict
+   constexpr auto var_int = Variant<int, long>{1};
+   static_assert(
+       equal(var_int, Variant<int, long>{1})); // same alternative and value
+   static_assert(
+       !equal(var_int, Variant<int, long>{1L})); // different alternative
+
    // Runtime demonstration.
    auto runtime_v = Vector<int, 4>{1, 2, 3};
    auto runtime_r = Range<int>{1, 4, 1};
@@ -2260,8 +2267,8 @@ namespace cljonic {
 
 /** \anchor MapEntry
  * \b MapEntry is a value-semantic pair representing a single key-value association. Keys must support reliable,
- * non-throwing equality comparison and non-throwing storage operations. Values must be default-constructible,
- * copyable, assignable, and destructible without throwing so the entry remains safe to copy and update in bounded
+ * non-throwing equality comparison and non-throwing storage operations. Values must have a default value, and be
+ * copyable, assignable, and destructible without throwing, so the entry remains safe to copy and update in bounded
  * collections.
  *
  * \b Examples
@@ -2672,6 +2679,13 @@ namespace cljonic {
    static_assert(not_equal(m1, m2));  // different entries
    static_assert(!not_equal(s1, s2)); // same elements
 
+   // Variant inequality follows alternative-strict equality
+   constexpr auto var_int = Variant<int, long>{1};
+   static_assert(
+       not_equal(var_int, Variant<int, long>{1L})); // different alternative
+   static_assert(
+       !not_equal(var_int, Variant<int, long>{1})); // same alternative and value
+
    // Runtime demonstration.
    auto runtime_v = Vector<int, 4>{1, 2, 3};
    auto runtime_r = Range<int>{0, 3, 1}; // produces 0, 1, 2
@@ -3053,8 +3067,8 @@ class Queue {
         return result;
     }
 
-    /** Peeks at the front element without removing it. Returns
-     * default-constructed value when empty. */
+    /** Peeks at the front element without removing it. Returns the
+     * default value when empty. */
     [[nodiscard]] constexpr auto peek() const noexcept -> T {
         return (logical_size_ > 0) ? elements_[head_] : T{};
     }
@@ -4430,7 +4444,7 @@ template <std::size_t Index = 0, typename Variant>
  * \b Variant is the cljonic composite: it holds exactly one of its alternatives at a time and is the supported
  * composite in the cljonic value domain.
  *
- * - Every alternative must be default-constructible and copyable without
+ * - Every alternative must have a default value and be copyable without
  *   throwing, so a `Variant` is a storable value: it can be a map value, a
  *   vector element, or a queue element.
  * - Two values compare equal only when they hold the same alternative and that
@@ -4454,11 +4468,29 @@ template <std::size_t Index = 0, typename Variant>
  using namespace cljonic;
 
  int main() {
-   constexpr auto v = Variant<int, long>{1};
-   static_assert(v.index() == 0);
-   static_assert(v.holds<int>());
-   static_assert(v == Variant<int, long>{1});
-   static_assert(Variant<int, long>{1} != Variant<int, long>{1L});
+   // Default construction holds the first alternative at its default value; the
+   // first alternative here is int, whose default value is 0.
+   [[maybe_unused]] constexpr auto defaulted = Variant<int, long>{};
+
+   // A converting construction selects the alternative matching the argument's
+   // decayed type; an argument matching no alternative is rejected at compile
+   // time.
+   [[maybe_unused]] constexpr auto as_int = Variant<int, long>{1};
+   [[maybe_unused]] constexpr auto as_long = Variant<int, long>{1L};
+
+   // Copy construction preserves the active alternative and its value.
+   [[maybe_unused]] constexpr auto copied = Variant<int, long>{as_int};
+
+   // A Variant nests inside another Variant and is storable as a collection
+   // element or a map key.
+   [[maybe_unused]] constexpr auto nested =
+       Variant<Variant<int, long>, char>{as_int};
+   [[maybe_unused]] constexpr auto as_vector_element =
+       Vector{Variant<int, long>{1}, Variant<int, long>{2L}};
+   [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
+   [[maybe_unused]] constexpr auto as_map_key =
+       MapEntry<Variant<int, long>, int>{as_int, 1};
+
    return 0;
  }
  ~~~~~

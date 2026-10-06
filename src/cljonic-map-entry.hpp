@@ -6,8 +6,8 @@ namespace cljonic {
 
 /** \anchor MapEntry
  * \b MapEntry is a value-semantic pair representing a single key-value association. Keys must support reliable,
- * non-throwing equality comparison and non-throwing storage operations. Values must be default-constructible,
- * copyable, assignable, and destructible without throwing so the entry remains safe to copy and update in bounded
+ * non-throwing equality comparison and non-throwing storage operations. Values must have a default value, and be
+ * copyable, assignable, and destructible without throwing, so the entry remains safe to copy and update in bounded
  * collections.
  *
  * \b Examples

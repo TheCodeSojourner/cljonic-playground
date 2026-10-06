@@ -84,8 +84,8 @@ namespace cljonic {
    static_assert(lvalue_constructed(0).category == 1);
    static_assert(rvalue_constructed(0).category == 2);
 
-   // Without a fallback, an invalid lookup returns value_type{}; Pixel's
-   // default-constructed int members are zero.
+   // Without a fallback, an invalid lookup returns value_type{}; Pixel's int
+   // members have a default value of zero.
    static_assert(pixels_populated(-1).x == 0);
    static_assert(pixels_populated(-1).y == 0);
 

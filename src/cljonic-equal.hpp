@@ -282,6 +282,13 @@ namespace cljonic {
    static_assert(equal(str1, str2)); // String equality compares content
    static_assert(equal(Repeat<int>{}, Repeat<int>{})); // bounded prefix
 
+   // Variant equality is alternative-strict
+   constexpr auto var_int = Variant<int, long>{1};
+   static_assert(
+       equal(var_int, Variant<int, long>{1})); // same alternative and value
+   static_assert(
+       !equal(var_int, Variant<int, long>{1L})); // different alternative
+
    // Runtime demonstration.
    auto runtime_v = Vector<int, 4>{1, 2, 3};
    auto runtime_r = Range<int>{1, 4, 1};

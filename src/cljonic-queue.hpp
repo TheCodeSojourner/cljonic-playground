@@ -237,8 +237,8 @@ class Queue {
         return result;
     }
 
-    /** Peeks at the front element without removing it. Returns
-     * default-constructed value when empty. */
+    /** Peeks at the front element without removing it. Returns the
+     * default value when empty. */
     [[nodiscard]] constexpr auto peek() const noexcept -> T {
         return (logical_size_ > 0) ? elements_[head_] : T{};
     }

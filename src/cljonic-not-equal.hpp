@@ -53,6 +53,13 @@ namespace cljonic {
    static_assert(not_equal(m1, m2));  // different entries
    static_assert(!not_equal(s1, s2)); // same elements
 
+   // Variant inequality follows alternative-strict equality
+   constexpr auto var_int = Variant<int, long>{1};
+   static_assert(
+       not_equal(var_int, Variant<int, long>{1L})); // different alternative
+   static_assert(
+       !not_equal(var_int, Variant<int, long>{1})); // same alternative and value
+
    // Runtime demonstration.
    auto runtime_v = Vector<int, 4>{1, 2, 3};
    auto runtime_r = Range<int>{0, 3, 1}; // produces 0, 1, 2

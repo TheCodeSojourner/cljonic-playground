@@ -57,7 +57,7 @@ template <std::size_t Index = 0, typename Variant>
  * \b Variant is the cljonic composite: it holds exactly one of its alternatives at a time and is the supported
  * composite in the cljonic value domain.
  *
- * - Every alternative must be default-constructible and copyable without
+ * - Every alternative must have a default value and be copyable without
  *   throwing, so a `Variant` is a storable value: it can be a map value, a
  *   vector element, or a queue element.
  * - Two values compare equal only when they hold the same alternative and that
@@ -81,11 +81,29 @@ template <std::size_t Index = 0, typename Variant>
  using namespace cljonic;
 
  int main() {
-   constexpr auto v = Variant<int, long>{1};
-   static_assert(v.index() == 0);
-   static_assert(v.holds<int>());
-   static_assert(v == Variant<int, long>{1});
-   static_assert(Variant<int, long>{1} != Variant<int, long>{1L});
+   // Default construction holds the first alternative at its default value; the
+   // first alternative here is int, whose default value is 0.
+   [[maybe_unused]] constexpr auto defaulted = Variant<int, long>{};
+
+   // A converting construction selects the alternative matching the argument's
+   // decayed type; an argument matching no alternative is rejected at compile
+   // time.
+   [[maybe_unused]] constexpr auto as_int = Variant<int, long>{1};
+   [[maybe_unused]] constexpr auto as_long = Variant<int, long>{1L};
+
+   // Copy construction preserves the active alternative and its value.
+   [[maybe_unused]] constexpr auto copied = Variant<int, long>{as_int};
+
+   // A Variant nests inside another Variant and is storable as a collection
+   // element or a map key.
+   [[maybe_unused]] constexpr auto nested =
+       Variant<Variant<int, long>, char>{as_int};
+   [[maybe_unused]] constexpr auto as_vector_element =
+       Vector{Variant<int, long>{1}, Variant<int, long>{2L}};
+   [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
+   [[maybe_unused]] constexpr auto as_map_key =
+       MapEntry<Variant<int, long>, int>{as_int, 1};
+
    return 0;
  }
  ~~~~~
