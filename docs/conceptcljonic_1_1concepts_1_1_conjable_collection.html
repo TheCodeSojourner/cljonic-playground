@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::concepts_detail::contains_standard_range&lt; Map&lt; KeyType, ValueType, CapacityValue &gt; &gt; Struct Template Reference</title>
+<title>cljonic: cljonic::concepts::ConjableCollection Concept Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -94,26 +94,30 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a></li><li class="navelem"><a href="structcljonic_1_1concepts__detail_1_1contains__standard__range_3_01_map_3_01_key_type_00_01_valuef58e3b311ad0f495787a2528242b225.html">contains_standard_range&lt; Map&lt; KeyType, ValueType, CapacityValue &gt; &gt;</a></li>  </ul>
+<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts.html">concepts</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts_1_1_conjable_collection.html">ConjableCollection</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">cljonic::concepts_detail::contains_standard_range&lt; Map&lt; KeyType, ValueType, CapacityValue &gt; &gt; Struct Template Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic::concepts::ConjableCollection Concept Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code></p>
+<h2 id="header-conceptdef" class="groupheader">Concept definition</h2>
+<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C&gt;</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_conjable_collection.html">ConjableCollection</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html">CljonicCollection&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; c) {</div>
+<div class="line">    <span class="keyword">typename</span> C::value_type;</div>
+<div class="line">    { c.conj(std::declval&lt;const typename C::value_type&amp;&gt;()) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;C&gt;;</div>
+<div class="line">    { c.can_conj(std::declval&lt;const typename C::value_type&amp;&gt;()) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
+<div class="line">}</div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html">cljonic::concepts::CljonicCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00268">cljonic-concepts.hpp:268</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_conjable_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_conjable_collection.html">cljonic::concepts::ConjableCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00403">cljonic-concepts.hpp:403</a></div></div>
+</div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Requires that an admitted collection provides immutable element insertion plus its matching capacity/element preflight operation. A <span class="tt">Conjable</span> collection is one of Vector, Set, Map, or Queue — String has no <span class="tt">conj</span> and is excluded. The value-type reference lives in the requires-expression body, never its parameter list, so the concept stays SFINAE-friendly (REQ-DIAG-001). </p>
 
-<p>Inherits std::bool_constant&lt; std::ranges::range&lt; Map&lt; KeyType, ValueType, CapacityValue &gt; &gt; &amp;&amp;!is_cljonic_collection_v&lt; Map&lt; KeyType, ValueType, CapacityValue &gt; &gt; &amp;&amp;!is_cljonic_producer_v&lt; Map&lt; KeyType, ValueType, CapacityValue &gt; &gt; &gt;, and std::bool_constant&lt; contains_standard_range_v&lt; KeyType &gt;||contains_standard_range_v&lt; ValueType &gt; &gt;.</p>
-<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename KeyType, typename ValueType, std::size_t CapacityValue&gt;<br />
-struct cljonic::concepts_detail::contains_standard_range&lt; Map&lt; KeyType, ValueType, CapacityValue &gt; &gt;</div>
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00317">317</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/home/pauwhi/Downloads/junk/cljonic-playground/src/<a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a></li>
-</ul>
-</div><!-- contents -->
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00403">403</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated on <span class="timestamp"></span> for cljonic by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0

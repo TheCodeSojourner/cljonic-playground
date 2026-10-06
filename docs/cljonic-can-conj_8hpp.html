@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
-<code>#include &lt;utility&gt;</code><br />
 </div>
 <p><a href="cljonic-can-conj_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -116,9 +115,11 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:affd9a34d9568a940de23e1b3cbe619e9" id="r_affd9a34d9568a940de23e1b3cbe619e9"><td class="memTemplParams" colspan="2">template&lt;typename C, typename... Args&gt; </td></tr>
-<tr class="memitem:affd9a34d9568a940de23e1b3cbe619e9 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#affd9a34d9568a940de23e1b3cbe619e9">cljonic::can_conj</a> (const C &amp;collection, Args &amp;&amp;... args) noexcept -&gt; bool</td></tr>
-<tr class="memdesc:affd9a34d9568a940de23e1b3cbe619e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if conj can succeed without capacity overflow.  <br /></td></tr>
+<tr class="memitem:ac6296079272be6cc39017a9254a4404d" id="r_ac6296079272be6cc39017a9254a4404d"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const V&amp; value) { { collection.can_conj(value) <br class="typebreak" />
+} noexcept -&gt; std::same_as&lt;bool&gt;; }</td></tr>
+<tr class="memitem:ac6296079272be6cc39017a9254a4404d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ac6296079272be6cc39017a9254a4404d">cljonic::can_conj</a> (const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</td></tr>
+<tr class="memdesc:ac6296079272be6cc39017a9254a4404d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow.  <br /></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -105,23 +105,27 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <a href="cljonic-assoc_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;<a class="code" href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="foldopen" id="foldopen00006" data-start="{" data-end="}">
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="namespacecljonic.html">    6</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K, <span class="keyword">typename</span> V&gt;</div>
-<div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="namespacecljonic.html#ab8272bbb9a27e6139cbfb276fb8b317f">   32</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#ab8272bbb9a27e6139cbfb276fb8b317f">assoc</a>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key, <span class="keyword">const</span> V&amp; value) <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">return</span> collection.assoc(key, value);</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="foldopen" id="foldopen00005" data-start="{" data-end="}">
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno"><a class="line" href="namespacecljonic.html">    5</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K, <span class="keyword">typename</span> V&gt;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keyword">requires</span> <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_associative_collection.html">concepts::AssociativeCollection&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key, <span class="keyword">const</span> V&amp; value) {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        { collection.assoc(key, value) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;C&gt;;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    }</div>
+<div class="foldopen" id="foldopen00042" data-start="{" data-end="}">
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a2fb743a916443eaa52b84a83056cc872">   42</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a2fb743a916443eaa52b84a83056cc872">assoc</a>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key,</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                                   <span class="keyword">const</span> V&amp; value) <span class="keyword">noexcept</span>(<span class="keyword">noexcept</span>(collection.assoc(key, value))) -&gt; C {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">return</span> collection.assoc(key, value);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>}</div>
 </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>} <span class="comment">// namespace cljonic</span></div>
 </div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
-<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ab8272bbb9a27e6139cbfb276fb8b317f"><div class="ttname"><a href="namespacecljonic.html#ab8272bbb9a27e6139cbfb276fb8b317f">cljonic::assoc</a></div><div class="ttdeci">constexpr auto assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept</div><div class="ttdoc">Associates a key and value in an associative collection or index in a vector.</div><div class="ttdef"><b>Definition</b> <a href="#l00032">cljonic-assoc.hpp:32</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_associative_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_associative_collection.html">cljonic::concepts::AssociativeCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00387">cljonic-concepts.hpp:387</a></div></div>
+<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="#l00005">cljonic-assoc.hpp:5</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a2fb743a916443eaa52b84a83056cc872"><div class="ttname"><a href="namespacecljonic.html#a2fb743a916443eaa52b84a83056cc872">cljonic::assoc</a></div><div class="ttdeci">constexpr auto assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.assoc(key, value))) -&gt; C</div><div class="ttdoc">Associates a value with a key in a Map, or with an index in an indexed collection (Vector,...</div><div class="ttdef"><b>Definition</b> <a href="#l00042">cljonic-assoc.hpp:42</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

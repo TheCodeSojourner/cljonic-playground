@@ -136,7 +136,7 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
 <tr class="memitem:ae4e86e883fb710c650ddf39f87116a61" id="r_ae4e86e883fb710c650ddf39f87116a61"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ae4e86e883fb710c650ddf39f87116a61">operator==</a> (const <a class="el" href="#acf3e2037031663681f0b8a33d3e261d2">Queue</a> &amp;other) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a7cf92cc69c5da81bd041f50d2c3e7810" id="r_a7cf92cc69c5da81bd041f50d2c3e7810"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7cf92cc69c5da81bd041f50d2c3e7810">begin</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_queue_1_1const__iterator.html">const_iterator</a></td></tr>
 <tr class="memitem:a77a1ec1283f68fb2d83a945165c99e24" id="r_a77a1ec1283f68fb2d83a945165c99e24"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a77a1ec1283f68fb2d83a945165c99e24">end</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_queue_1_1const__iterator.html">const_iterator</a></td></tr>
-<tr class="memitem:a7bc3d9162166aac4fb948c54a7709d9e" id="r_a7bc3d9162166aac4fb948c54a7709d9e"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7bc3d9162166aac4fb948c54a7709d9e">can_conj</a> () const noexcept -&gt; bool</td></tr>
+<tr class="memitem:adb92d2976d3d75479cff0fb5409e25cb" id="r_adb92d2976d3d75479cff0fb5409e25cb"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#adb92d2976d3d75479cff0fb5409e25cb">can_conj</a> (const T &amp;value) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a351e7be209764b31bd4fd0c350225ee1" id="r_a351e7be209764b31bd4fd0c350225ee1"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a351e7be209764b31bd4fd0c350225ee1">conj</a> (const T &amp;element) const noexcept -&gt; <a class="el" href="#acf3e2037031663681f0b8a33d3e261d2">Queue</a></td></tr>
 <tr class="memitem:a5f306ec2a9ba4a3cb703289b4162eb4b" id="r_a5f306ec2a9ba4a3cb703289b4162eb4b"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5f306ec2a9ba4a3cb703289b4162eb4b">peek</a> () const noexcept -&gt; T</td></tr>
 <tr class="memitem:a32407b5e0f44ef39bf07b5c18fee3c9c" id="r_a32407b5e0f44ef39bf07b5c18fee3c9c"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a32407b5e0f44ef39bf07b5c18fee3c9c">pop</a> () const noexcept -&gt; <a class="el" href="#acf3e2037031663681f0b8a33d3e261d2">Queue</a></td></tr>
@@ -208,7 +208,7 @@ class cljonic::Queue&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Que
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00086">cljonic-queue.hpp:86</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_queue_html_acf3e2037031663681f0b8a33d3e261d2"><div class="ttname"><a href="#acf3e2037031663681f0b8a33d3e261d2">cljonic::Queue::Queue</a></div><div class="ttdeci">constexpr Queue(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; T, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00137">cljonic-queue.hpp:137</a></div></div>
-<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
+<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00005">cljonic-assoc.hpp:5</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00086">86</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
@@ -358,8 +358,8 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 
 </div>
 </div>
-<a id="a7bc3d9162166aac4fb948c54a7709d9e" name="a7bc3d9162166aac4fb948c54a7709d9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7bc3d9162166aac4fb948c54a7709d9e">&#9670;&#160;</a></span>can_conj()</h2>
+<a id="adb92d2976d3d75479cff0fb5409e25cb" name="adb92d2976d3d75479cff0fb5409e25cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb92d2976d3d75479cff0fb5409e25cb">&#9670;&#160;</a></span>can_conj()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -372,7 +372,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
         <tr>
           <td class="memname">auto <a class="el" href="classcljonic_1_1_queue.html">cljonic::Queue</a>&lt; T, CapacityValue &gt;::can_conj </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
           <td> const -&gt; bool</td>
         </tr>
       </table>
@@ -382,9 +382,9 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns true when there is room for at least one more element. </p>
+<p>Returns true when there is room for one more element; the value does not affect the result. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00222">222</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00223">223</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -443,7 +443,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Adds an element to the back of a copy of the queue (enqueue). Returns an unchanged copy when full. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00228">228</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00229">229</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -589,7 +589,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Peeks at the front element without removing it. Returns the default value when empty. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00242">242</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00243">243</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>
@@ -619,7 +619,7 @@ template&lt;concepts::NothrowCollectionElement T, std::size_t CapacityValue&gt; 
 </div><div class="memdoc">
 <p>Removes the front element from a copy of the queue (dequeue). Returns an unchanged copy when empty. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00248">248</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-queue_8hpp_source.html#l00249">249</a> of file <a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>.</p>
 
 </div>
 </div>

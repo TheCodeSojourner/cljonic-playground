@@ -105,21 +105,24 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <a href="cljonic-dissoc_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;<a class="code" href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K&gt;</div>
-<div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="namespacecljonic.html#aa55ceba1b9159d10da10e590e784c6fa">   32</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#aa55ceba1b9159d10da10e590e784c6fa">dissoc</a>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key) <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">return</span> collection.dissoc(key);</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K&gt;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keyword">requires</span> <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_cljonic_map.html">concepts::CljonicMap&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key) {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        { collection.dissoc(key) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;C&gt;;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    }</div>
+<div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a83efc0b362080fa3ab987a921a9d0aa7">   33</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a83efc0b362080fa3ab987a921a9d0aa7">dissoc</a>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key) <span class="keyword">noexcept</span>(<span class="keyword">noexcept</span>(collection.dissoc(key))) -&gt; C {</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordflow">return</span> collection.dissoc(key);</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}</div>
 </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>} <span class="comment">// namespace cljonic</span></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
-<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_aa55ceba1b9159d10da10e590e784c6fa"><div class="ttname"><a href="namespacecljonic.html#aa55ceba1b9159d10da10e590e784c6fa">cljonic::dissoc</a></div><div class="ttdeci">constexpr auto dissoc(const C &amp;collection, const K &amp;key) noexcept</div><div class="ttdoc">Disassociates a key from a map.</div><div class="ttdef"><b>Definition</b> <a href="#l00032">cljonic-dissoc.hpp:32</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_cljonic_map_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_cljonic_map.html">cljonic::concepts::CljonicMap</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00326">cljonic-concepts.hpp:326</a></div></div>
+<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00005">cljonic-assoc.hpp:5</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a83efc0b362080fa3ab987a921a9d0aa7"><div class="ttname"><a href="namespacecljonic.html#a83efc0b362080fa3ab987a921a9d0aa7">cljonic::dissoc</a></div><div class="ttdeci">constexpr auto dissoc(const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.dissoc(key))) -&gt; C</div><div class="ttdoc">Disassociates a key from a map.</div><div class="ttdef"><b>Definition</b> <a href="#l00033">cljonic-dissoc.hpp:33</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

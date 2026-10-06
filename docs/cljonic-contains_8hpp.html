@@ -115,9 +115,11 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1985f084fdf102fe981bcf4d6a72c124" id="r_a1985f084fdf102fe981bcf4d6a72c124"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; </td></tr>
-<tr class="memitem:a1985f084fdf102fe981bcf4d6a72c124 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a1985f084fdf102fe981bcf4d6a72c124">cljonic::contains</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; bool</td></tr>
-<tr class="memdesc:a1985f084fdf102fe981bcf4d6a72c124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure's <span class="tt"><a class="el" href="namespacecljonic.html#a1985f084fdf102fe981bcf4d6a72c124" title="Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure&#39;s co...">contains</a>?</span> predicate.  <br /></td></tr>
+<tr class="memitem:a8539a215219d827ab41956f6b29912a1" id="r_a8539a215219d827ab41956f6b29912a1"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; requires(const C&amp; collection, const K&amp; key) <br class="typebreak" />
+{ { collection.contains(key) } noexcept -&gt; std::same_as&lt;bool&gt;; }</td></tr>
+<tr class="memitem:a8539a215219d827ab41956f6b29912a1 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a8539a215219d827ab41956f6b29912a1">cljonic::contains</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.contains(key))) -&gt; bool</td></tr>
+<tr class="memdesc:a8539a215219d827ab41956f6b29912a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure's <span class="tt"><a class="el" href="namespacecljonic.html#a8539a215219d827ab41956f6b29912a1" title="Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure&#39;s co...">contains</a>?</span> predicate.  <br /></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

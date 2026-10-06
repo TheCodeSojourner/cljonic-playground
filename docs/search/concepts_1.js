@@ -14,6 +14,7 @@ var searchData=
   ['cljonicstring_11',['CljonicString',['../conceptcljonic_1_1concepts_1_1_cljonic_string.html',1,'cljonic::concepts']]],
   ['cljonicvector_12',['CljonicVector',['../conceptcljonic_1_1concepts_1_1_cljonic_vector.html',1,'cljonic::concepts']]],
   ['comparablevariantalternative_13',['ComparableVariantAlternative',['../conceptcljonic_1_1concepts_1_1_comparable_variant_alternative.html',1,'cljonic::concepts']]],
-  ['constinputrange_14',['ConstInputRange',['../conceptcljonic_1_1concepts_1_1_const_input_range.html',1,'cljonic::concepts']]],
-  ['copyableelement_15',['CopyableElement',['../conceptcljonic_1_1concepts_1_1_copyable_element.html',1,'cljonic::concepts']]]
+  ['conjablecollection_14',['ConjableCollection',['../conceptcljonic_1_1concepts_1_1_conjable_collection.html',1,'cljonic::concepts']]],
+  ['constinputrange_15',['ConstInputRange',['../conceptcljonic_1_1concepts_1_1_const_input_range.html',1,'cljonic::concepts']]],
+  ['copyableelement_16',['CopyableElement',['../conceptcljonic_1_1concepts_1_1_copyable_element.html',1,'cljonic::concepts']]]
 ];

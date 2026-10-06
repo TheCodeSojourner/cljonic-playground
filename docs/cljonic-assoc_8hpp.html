@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
-<code>#include &lt;utility&gt;</code><br />
 </div>
 <p><a href="cljonic-assoc_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -116,9 +115,11 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ab8272bbb9a27e6139cbfb276fb8b317f" id="r_ab8272bbb9a27e6139cbfb276fb8b317f"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; </td></tr>
-<tr class="memitem:ab8272bbb9a27e6139cbfb276fb8b317f template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ab8272bbb9a27e6139cbfb276fb8b317f">cljonic::assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept</td></tr>
-<tr class="memdesc:ab8272bbb9a27e6139cbfb276fb8b317f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associates a key and value in an associative collection or index in a vector.  <br /></td></tr>
+<tr class="memitem:a2fb743a916443eaa52b84a83056cc872" id="r_a2fb743a916443eaa52b84a83056cc872"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key, const V&amp; value) { { collection.assoc(key,<br class="typebreak" />
+ value) } noexcept -&gt; std::same_as&lt;C&gt;; }</td></tr>
+<tr class="memitem:a2fb743a916443eaa52b84a83056cc872 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a2fb743a916443eaa52b84a83056cc872">cljonic::assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.assoc(key, value))) -&gt; C</td></tr>
+<tr class="memdesc:a2fb743a916443eaa52b84a83056cc872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associates a value with a key in a <a class="el" href="classcljonic_1_1_map.html">Map</a>, or with an index in an indexed collection (<a class="el" href="classcljonic_1_1_vector.html">Vector</a>, <a class="el" href="classcljonic_1_1_string.html">String</a>).  <br /></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

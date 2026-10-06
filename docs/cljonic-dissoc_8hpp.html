@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
-<code>#include &lt;utility&gt;</code><br />
 </div>
 <p><a href="cljonic-dissoc_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -116,9 +115,11 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa55ceba1b9159d10da10e590e784c6fa" id="r_aa55ceba1b9159d10da10e590e784c6fa"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; </td></tr>
-<tr class="memitem:aa55ceba1b9159d10da10e590e784c6fa template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aa55ceba1b9159d10da10e590e784c6fa">cljonic::dissoc</a> (const C &amp;collection, const K &amp;key) noexcept</td></tr>
-<tr class="memdesc:aa55ceba1b9159d10da10e590e784c6fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disassociates a key from a map.  <br /></td></tr>
+<tr class="memitem:a83efc0b362080fa3ab987a921a9d0aa7" id="r_a83efc0b362080fa3ab987a921a9d0aa7"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires concepts::CljonicMap&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key) { { collection.dissoc(key) } noexcept -&gt;<br class="typebreak" />
+ std::same_as&lt;C&gt;; }</td></tr>
+<tr class="memitem:a83efc0b362080fa3ab987a921a9d0aa7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a83efc0b362080fa3ab987a921a9d0aa7">cljonic::dissoc</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.dissoc(key))) -&gt; C</td></tr>
+<tr class="memdesc:a83efc0b362080fa3ab987a921a9d0aa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disassociates a key from a map.  <br /></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
