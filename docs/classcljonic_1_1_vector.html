@@ -214,8 +214,8 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="keyword">static_assert</span>(lvalue_constructed(0).category == 1);</div>
 <div class="line">  <span class="keyword">static_assert</span>(rvalue_constructed(0).category == 2);</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Without a fallback, an invalid lookup returns value_type{}; Pixel&#39;s</span></div>
-<div class="line">  <span class="comment">// default-constructed int members are zero.</span></div>
+<div class="line">  <span class="comment">// Without a fallback, an invalid lookup returns value_type{}; Pixel&#39;s int</span></div>
+<div class="line">  <span class="comment">// members have a default value of zero.</span></div>
 <div class="line">  <span class="keyword">static_assert</span>(pixels_populated(-1).x == 0);</div>
 <div class="line">  <span class="keyword">static_assert</span>(pixels_populated(-1).y == 0);</div>
 <div class="line"> </div>
