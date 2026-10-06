@@ -82,6 +82,14 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `Map`, `Vector`, and `String` are `Associative`; `Set` is not associative because its supported update is `conj`, and `Queue` has no access or association capability by default.
 
 
+### Conjable
+- **Definition:** A semantic capability for non-mutating insertion of one element into a collection, producing a new collection value. A `Conjable` collection defines its value type and capacity policy, preserves its source, and provides `conj` together with its `can_conj` preflight predicate. Insertion is collection-specific: `Vector` and `Queue` append at the logical end and rear respectively, `Set` inserts the element unless already present, and `Map` associates a `MapEntry` entry, replacing an existing key's value. `Conjable` does not by itself imply `Associative`, `Indexed`, or `Lookup`.
+- **Deprecated Synonyms:** conjable capability, conj capability
+- **Related:** Conj, CanConj, CopyOnModifyCollection, CapabilityConcept, Vector, Set, Map, Queue
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `Vector`, `Set`, `Map`, and `Queue` are `Conjable`; `String` is not because it supports indexed `assoc` rather than `conj`.
+
+
 ### Traversal
 - **Definition:** Observation of a collection or producer's active elements through its documented traversal mechanism and bounds, without implying materialization, mutation, indexed access, or a semantic ordering guarantee. The repeatable sequence used during observation is named `LogicalTraversalOrder`.
 - **Deprecated Synonyms:** sequence traversal, iteration
@@ -582,7 +590,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** bounded queue, fixed-capacity queue, FIFO queue
 - **Related:** Sequence, CopyOnModifyCollection, Traversal, ConstRangeTraversal, LogicalTraversalOrder, ContiguousStorage, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `can_conj()` reports whether another value fits, and `conj()` on a full queue returns an unchanged copy. `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order. `begin()`/`end()` preserve that order after physical storage wraps.
+- **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `can_conj(q, x)` reports whether another value fits, and `conj()` on a full queue returns an unchanged copy. `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order. `begin()`/`end()` preserve that order after physical storage wraps.
 
 
 ### String
@@ -626,11 +634,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Conj
-- **Definition:** The primitive collection free function that returns a new collection with one or more elements added according to the target collection's type conventions (rear for `Vector` and `Queue`, membership insertion for `Set`).
+- **Definition:** The primitive collection free function that returns a new collection with one element added according to the target collection's type conventions (end of a `Vector`, rear of a `Queue`, membership insertion for a `Set`, entry association for a `Map`). `Set` and `Map` handle a duplicate element or key by ignoring it or replacing its value; `Vector` and `Queue` always append when capacity remains.
 - **Deprecated Synonyms:** conjoin, insert element
-- **Related:** CopyOnModifyCollection, CanConj, PreflightPredicate, Vector, Set, Queue
+- **Related:** CopyOnModifyCollection, CanConj, PreflightPredicate, ConjableCollection, Vector, Set, Map, Queue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `conj(xs, 4)` appends 4 to a Vector; `conj(s, 4)` adds 4 to a Set if not already present.
+- **Examples:** `conj(xs, 4)` appends 4 to the end of a Vector; `conj(s, 4)` adds 4 to a Set if not already present; `conj(q, 4)` enqueues 4 at the rear; `conj(m, MapEntry<int, int>{1, 100})` associates key 1 with value 100.
 
 
 ### Assoc
@@ -682,11 +690,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### CanConj
-- **Definition:** The canonical preflight capability predicate (`can_conj`) checking whether `conj` can succeed without capacity overflow, returning true if capacity is available or if the item is an existing set element.
+- **Definition:** The canonical preflight capability predicate (`can_conj`) checking whether `conj` can succeed without capacity overflow. For `Set` and `Map`, an element or key already present returns true because insertion is a no-op or a value replacement that needs no capacity; for `Vector` and `Queue` the result depends only on remaining capacity, independent of the value.
 - **Deprecated Synonyms:** can_conj, can-conj predicate
-- **Related:** Conj, CapabilityPredicate, PreflightPredicate, FullState, Set
+- **Related:** Conj, Conjable, CapabilityPredicate, PreflightPredicate, FullState, Vector, Set, Map, Queue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `can_conj(s, x)` returns true if `s` is not full or if `s` already contains `x`.
+- **Examples:** `can_conj(s, x)` returns true if `s` is not full or if `s` already contains `x`; `can_conj(m, entry)` is true for a present key or an insertable new key; `can_conj(q, x)` is true only when the queue has room.
 
 
 ### CanAssoc
@@ -1145,9 +1153,9 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### CapabilityConcept
-- **Definition:** A C++20 concept that expresses one of the named semantic capabilities a cljonic collection or producer must expose (`Indexed`, `Lookup`, `Seqable`, or `Associative`) in order to participate in an operation, layered on top of nominal identity.
+- **Definition:** A C++20 concept that expresses one of the named semantic capabilities a cljonic collection or producer must expose (`Indexed`, `Lookup`, `Seqable`, `Associative`, or `Conjable`) in order to participate in an operation, layered on top of nominal identity.
 - **Deprecated Synonyms:** capability concept, semantic capability gate
-- **Related:** CollectionConcept, ProducerConcept, Indexed, Lookup, Seqable, Associative, CapabilityPredicate, SequenceableCollection, IndexedCollection, LookupCollection, AssociativeCollection, SequenceableProducer, IndexedProducer
+- **Related:** CollectionConcept, ProducerConcept, Indexed, Lookup, Seqable, Associative, Conjable, CapabilityPredicate, SequenceableCollection, IndexedCollection, LookupCollection, AssociativeCollection, ConjableCollection, SequenceableProducer, IndexedProducer
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `SequenceableCollection<C>` is a CapabilityConcept requiring non-throwing `is_empty` and `count` observation.
 
@@ -1182,6 +1190,14 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** CapabilityConcept, Associative, Lookup, SequenceableCollection, CljonicCollection, Contains, Assoc, CanAssoc
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `AssociativeCollection<C>` requires `c(k)` and `c.contains(k)`.
+
+
+### ConjableCollection
+- **Definition:** The C++ concept identifier implementing the `Conjable` CapabilityConcept, requiring a `conj` insertion operation and its matching `can_conj` preflight predicate that return a new collection value and preserve the source.
+- **Deprecated Synonyms:** conjable_cljonic_collection, conjable collection concept
+- **Related:** CapabilityConcept, Conjable, Conj, CanConj, SequenceableCollection, CljonicCollection, Vector, Set, Map, Queue
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `ConjableCollection<C>` requires `c.conj(v)` and `c.can_conj(v)`.
 
 
 ### SequenceableProducer
