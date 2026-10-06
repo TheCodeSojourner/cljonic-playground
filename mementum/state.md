@@ -1,5 +1,51 @@
 ## Session State
 
+- last_session_id: d90d74df-0016-4a33-97c7-2d10d8b11659
+- current_timestamp: 2026-10-06
+- recover: 1
+- session_complete: true
+
+Task:
+1. gybis-init orientation — COMPLETE: oriented on state.md at HEAD 96b992b (worktree clean); identified that commit 96b992b had stored the three memory candidates proposed by the prior session (layer-naming decoupling, file-rename prose refs, fallback-callability SFINAE).
+2. Redundant include removal — COMPLETE (commit 685b0ec): removed `#include <concepts>` from `src/cljonic-repeat.hpp` (IDE-flagged). Verified no name from `<concepts>` is used directly — concepts arrive via `cljonic-concepts.hpp`; other std names come from `<cstddef>` (`ptrdiff_t`/`size_t`), `<utility>` (`move`/`forward`), `<type_traits>` (`remove_cvref_t`/`bool_constant`). Confirmed the four sibling headers that include `<concepts>` all genuinely need it (`cljonic-concepts.hpp`; `iterate`/`repeatedly` use `std::default_initializable`; `range` uses `std::signed_integral`). Regenerated `cljonic.hpp` (`<concepts>` occurrences 5→4).
+3. Producer-contract prose consistency (option B, human-approved) — COMPLETE (commit 685b0ec): the generic producer-contract paragraph ("observation is bounded by …, supports const C++ range traversal in constant evaluation and runtime code, values pass directly to source-accepting operations, or convert into an owning destination with `into`") existed in only 2 of 5 producers (`Iterate`/`Repeatedly`). Added a tailored paragraph to `Range`, `Repeat`, and `Cycle`, each bounded by its actual model (Range: finite span / zero-step collection max / destination capacity; Repeat & Repeatedly: collection max / requested count / destination capacity; Iterate & Cycle: collection max / destination capacity).
+4. `Cycle` source/element constraint documented (human-approved) — COMPLETE (commit 685b0ec): added "The source must be a cljonic collection or producer -- an external C++ range or view is rejected -- and the source's element type must have a default value and be copyable, assignable, and destructible without throwing." Previously stated only in the diagnostic fallback, so the `cycle(std::vector<int>{…})` rejection was invisible in the doc.
+5. `MapEntry` diagnostic-fallback analysis — COMPLETE (no change): concluded MapEntry needs NO diagnostic fallback. (a) It is an aggregate (no user-declared constructors); any fallback constructor would destroy aggregate-ness (`AggregateLikeStruct` canonical term + the `MapEntry<int,int>{1,100}` / structured-binding idiom). (b) Its domain is gated at the class-template constraint, which already emits a single named constraint-failure diagnostic (probe: `MapEntry<double,int>` → template constraint failure naming `StableEqualityComparable`/`contains_floating_point`), structurally identical to REQ-DIAG-009's explicit `Range` exclusion. (c) REQ-DIAG-010 targets source-construction repurposing, which does not exist for aggregate member init.
+6. Format/regenerate/syntax-check loop after each edit — COMPLETE: `make format` ×2 (idempotent), `make cljonic`, and per-header `g++ -std=c++23 -fsyntax-only` for `range`/`repeat`/`cycle`/`iterate`/`repeatedly` + the single header (all ok).
+
+Questions:
+1. None blocking. Slice B (`cljonic::Variant` free-function API) still awaits selection.
+2. `docs/**` is STALE relative to the `src/` comment edits in commit 685b0ec (that commit did not regenerate docs; the last docs commit 61efb9b precedes it). Awaiting the human's next `make git`/`make docs`.
+
+Decisions:
+1. Producer-contract prose (human, 2026-10-06): option B — all five producers carry a *tailored* producer-contract sentence (not verbatim duplication, and not a single centralized statement).
+2. `Cycle` constraint documentation (human, 2026-10-06): item 1 adopted — document the source/element constraint in `Cycle`'s prose. Item 2 (a centralized statement of the universal element contract for all types) was NOT adopted.
+3. `MapEntry` diagnostic fallback (human, 2026-10-06): NOT needed — aggregate status would be destroyed by any constructor, and the class-template constraint already yields a single named diagnostic (same structural rationale as REQ-DIAG-009's `Range` carve-out; REQ-DIAG-010's source-repurposing failure mode is absent). Optional future: an explicit REQ-DIAG-010 carve-out for aggregate-like types (requirements-layer, not requested).
+4. Redundant include (human-flagged via IDE, 2026-10-06): removed the unused `#include <concepts>` from `cljonic-repeat.hpp` (IWYU-correct; the concepts resolve transitively through `cljonic-concepts.hpp`).
+
+Validation:
+1. `make format` ×2 → idempotent (`format:ok`).
+2. `make cljonic` → `cljonic:ok:header=cljonic.hpp`.
+3. `g++ -std=c++23 -fsyntax-only` on modular `cljonic-{range,repeat,cycle,iterate,repeatedly}.hpp` + the single header → all ok.
+4. No gate pins the producer-doc prose (grepped `scripts/`, `specs/`, `requirements/` → empty).
+5. Human ran `make git` (green end-to-end) and committed 685b0ec (`cljonic.hpp`, `src/cljonic-{cycle,range,repeat}.hpp`). NOTE: not docs-regenerating, so `docs/` is stale.
+6. `MapEntry` probe (`/tmp/me_probe.cpp`) confirmed the single named constraint diagnostic and the accurate (non-misleading) conversion error for `MapEntry<int,int>{"x",2}`.
+
+Next:
+1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
+2. Extend the REQ-DIAG-010 constructor-diagnostic policy to any other closed-source-domain public constructor.
+3. Regenerate `docs/**` (stale after commit 685b0ec) — expected via the next `make git`/`make docs`.
+4. Candidate memory (proposed, awaiting approval): a 💡/🎯 insight generalizing "a rejection-diagnostic fallback is unnecessary (and often impossible) when the closed domain is gated by a class-template constraint — C++ already emits one named constraint-failure diagnostic; additionally, adding a constructor would destroy aggregate status". Evidence: REQ-DIAG-009's `Range` carve-out + the MapEntry analysis. Related: `rejection-diagnostic-fallback.md`, `source-construction-diagnostic-fallback.md`, `requires-expression-constrained-template-sfinae-limitation.md`.
+
+Carry-forward (unaddressed, remember for later):
+1. `equal_by`/`identical` and the remaining REQ-FN-002C comparison family remain deferred.
+2. Map/String as enclosure outer types remain deferred (only Vector/Set/Queue have same-class enclosure guides).
+3. 24 vocabulary canonical terms are unused by literal name downstream (`keep`) — pre-existing.
+4. Only 4 of 5 producers have diagnostic fallbacks; `Range` is excluded by design.
+5. Producer-doc prose is now a per-producer patchwork (option B); a future option-A centralization of the generic producer contract remains available if asymmetry reappears.
+
+## Previous Session State
+
 - last_session_id: 8f825781-f11a-4e95-a563-511c58990e7d
 - current_timestamp: 2026-10-06
 - recover: 1
@@ -71,7 +117,7 @@ Carry-forward (unaddressed, remember for later):
 3. 24 vocabulary canonical terms are unused by literal name downstream (`keep`) — pre-existing; revisit only if vocabulary scope tightens.
 4. Only 4 of 5 producers have diagnostic fallbacks; `Range` is excluded by design (see decision 9).
 
-## Previous Session State
+## Older Session State
 
 - last_session_id: a840a25b-2c2a-4ff5-b3f4-3e62debf0b74
 - current_timestamp: 2026-10-05
@@ -112,7 +158,7 @@ Carry-forward (unaddressed, remember for later):
 2. Set duplicate-insertion in a constexpr context hits std::abort().
 3. Map/String as enclosure outer types remain deferred (only Vector/Set/Queue have same-class enclosure guides).
 
-## Older Session State
+## Earlier Session State
 
 - last_session_id: baa5e0a4-57f6-40d4-9d5f-c4a72d93962b
 - current_timestamp: 2026-10-03
@@ -174,7 +220,7 @@ Carry-forward (unaddressed, remember for later):
 3. Set duplicate-insertion in a constexpr context hits std::abort().
 4. Map/String as enclosure outer types were deferred (different element model); only Vector/Set/Queue have same-class enclosure guides.
 
-## Earlier Session State
+## Archived Session State
 
 - last_session_id: c1ef7071-fad8-4316-ae67-95a4f24685e7
 - current_timestamp: 2026-10-03
@@ -221,7 +267,7 @@ Carry-forward (unaddressed, remember for later):
 3. Set duplicate-insertion in a constexpr context hits std::abort().
 4. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
 
-## Archived Session State
+## Earliest Session State
 
 - last_session_id: 171c64d2-e025-4eb9-9ee1-732dd7840fa5
 - current_timestamp: 2026-10-02
@@ -255,7 +301,7 @@ Next:
 2. Extend the REQ-DIAG-009 rejection-diagnostic policy to other closed-domain public free functions when they gain a fallback.
 3. Deferred comparison family (`equal_by`/`identical`, `less`, `less_equal`, `greater`, `greater_equal`) and `REQ-SEQ-022` operation-level reconciliation remain candidates.
 
-## Earliest Session State
+## Oldest Session State
 
 - last_session_id: fd3522cd-6d0a-4782-ae03-2be453291d76
 - current_timestamp: 2026-10-02
@@ -288,8 +334,6 @@ Next:
 2. Resolve internal-concept documentation visibility and scalar-domain scope.
 3. Refresh `mementum/knowledge/value-equality-domain.md`, which still refers to `equal_pair_admissible_v` rather than the new `EqualPairAdmissible` concept.
 4. Continue deferred comparison-family or `REQ-SEQ-022` work only when selected.
-
-## Oldest Session State
 
 - last_session_id: 55f47254-5bfa-42c5-be15-e3b9289e0a3a
 - current_timestamp: 2026-10-01
