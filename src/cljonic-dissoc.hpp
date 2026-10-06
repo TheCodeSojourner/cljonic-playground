@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cljonic-concepts.hpp>
-#include <utility>
 
 namespace cljonic {
 
@@ -29,7 +28,10 @@ namespace cljonic {
  ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto dissoc(const C& collection, const K& key) noexcept {
+    requires concepts::CljonicMap<C> && requires(const C& collection, const K& key) {
+        { collection.dissoc(key) } noexcept -> std::same_as<C>;
+    }
+[[nodiscard]] constexpr auto dissoc(const C& collection, const K& key) noexcept(noexcept(collection.dissoc(key))) -> C {
     return collection.dissoc(key);
 }
 

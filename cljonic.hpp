@@ -568,23 +568,48 @@ concept IndexedCollection = CljonicCollection<C> && requires(const C& c, std::si
 };
 
 /** Requires an admitted collection to expose a named lookup
- * domain, callable lookup, and matching membership predicate. */
+ * domain, callable lookup, and matching membership predicate. The member-type
+ * reference lives in the requires-expression body, never its parameter list, so
+ * the concept stays SFINAE-friendly for a type that lacks `lookup_type`
+ * (REQ-DIAG-001): naming it in the parameter list makes evaluation hard-error
+ * instead of yielding false, which would break boundary-constrained free
+ * functions such as `get`. */
 template <typename C>
-concept LookupCollection = CljonicCollection<C> && requires(const C& c, const C::lookup_type& key) {
-    { c(key) } noexcept;
-    { c.contains(key) } noexcept -> std::same_as<bool>;
+concept LookupCollection = CljonicCollection<C> && requires(const C& c) {
+    typename C::lookup_type;
+    { c(std::declval<const typename C::lookup_type&>()) } noexcept;
+    { c.contains(std::declval<const typename C::lookup_type&>()) } noexcept -> std::same_as<bool>;
 };
 
 /** Requires that an admitted collection provides immutable association and
- *  its key-domain/capacity preflight operation. */
+ *  its key-domain/capacity preflight operation. The member-type references live
+ *  in the requires-expression body, never its parameter list, so the concept
+ *  stays SFINAE-friendly for a type that lacks `key_type`/
+ *  `association_value_type` (REQ-DIAG-001): naming them in the parameter list
+ *  makes evaluation hard-error instead of yielding false, which would break
+ *  boundary-constrained free functions such as `assoc`. */
 template <typename C>
-concept AssociativeCollection =
-    CljonicCollection<C> && requires(const C& c, const C::key_type& key, const C::association_value_type& value) {
-        typename C::key_type;
-        typename C::association_value_type;
-        { c.can_assoc(key) } noexcept -> std::same_as<bool>;
-        { c.assoc(key, value) } noexcept -> std::same_as<C>;
-    };
+concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
+    typename C::key_type;
+    typename C::association_value_type;
+    { c.can_assoc(std::declval<const typename C::key_type&>()) } noexcept -> std::same_as<bool>;
+    {
+        c.assoc(std::declval<const typename C::key_type&>(), std::declval<const typename C::association_value_type&>())
+    } noexcept -> std::same_as<C>;
+};
+
+/** Requires that an admitted collection provides immutable element insertion
+ *  plus its matching capacity/element preflight operation. A `Conjable`
+ *  collection is one of Vector, Set, Map, or Queue — String has no `conj` and
+ *  is excluded. The value-type reference lives in the requires-expression body,
+ *  never its parameter list, so the concept stays SFINAE-friendly
+ *  (REQ-DIAG-001). */
+template <typename C>
+concept ConjableCollection = CljonicCollection<C> && requires(const C& c) {
+    typename C::value_type;
+    { c.conj(std::declval<const typename C::value_type&>()) } noexcept -> std::same_as<C>;
+    { c.can_conj(std::declval<const typename C::value_type&>()) } noexcept -> std::same_as<bool>;
+};
 
 /** Requires that an admitted producer provides non-throwing count() effective-size
  *  observation, returning std::size_t. count() for a producer is a conservative
@@ -642,12 +667,17 @@ concept ValidCycleSource =
 
 } // namespace cljonic
 // End cljonic-concepts.hpp
-#include <utility>
 
 namespace cljonic {
 
 /** \anchor Assoc
- * \brief Associates a key and value in an associative collection or index in a vector.
+ * \brief Associates a value with a key in a Map, or with an index in an indexed
+ *        collection (Vector, String).
+ *
+ * Supported for `Map` (key/value association), `Vector` (index association; appends at the logical count when capacity
+ * remains), and `String` (index association, applying the invalid-character policy). `Set` and `Queue` provide no
+ * associative capability and are rejected by the boundary constraint. The result is a distinct collection value; the
+ * source is unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -658,19 +688,25 @@ namespace cljonic {
 
    // Compile-time demonstration.
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
-   static_assert(contains(m_const, 1));
    static_assert(m_const(1) == 100);
+
+   constexpr auto v_const = assoc(Vector<int, 4>{10, 20}, 1, 200);
+   static_assert(v_const(1) == 200);
 
    // Runtime demonstration.
    auto m_runtime = Map<int, int, 4>{};
-   auto m1 = assoc(m_runtime, 2, 200);
+   const auto m1 = assoc(m_runtime, 2, 200);
 
    return (contains(m1, 2) && m1(2) == 200) ? 0 : 1;
  }
  ~~~~~
  */
 template <typename C, typename K, typename V>
-[[nodiscard]] constexpr auto assoc(const C& collection, const K& key, const V& value) noexcept {
+    requires concepts::AssociativeCollection<C> && requires(const C& collection, const K& key, const V& value) {
+        { collection.assoc(key, value) } noexcept -> std::same_as<C>;
+    }
+[[nodiscard]] constexpr auto assoc(const C& collection, const K& key,
+                                   const V& value) noexcept(noexcept(collection.assoc(key, value))) -> C {
     return collection.assoc(key, value);
 }
 
@@ -679,7 +715,6 @@ template <typename C, typename K, typename V>
 // Begin cljonic-can-assoc.hpp
 #pragma once
 
-#include <utility>
 
 namespace cljonic {
 
@@ -706,7 +741,11 @@ namespace cljonic {
  ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key) noexcept -> bool {
+    requires concepts::AssociativeCollection<C> && requires(const C& collection, const K& key) {
+        { collection.can_assoc(key) } noexcept -> std::same_as<bool>;
+    }
+[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key) noexcept(noexcept(collection.can_assoc(key)))
+    -> bool {
     return collection.can_assoc(key);
 }
 
@@ -715,12 +754,14 @@ template <typename C, typename K>
 // Begin cljonic-can-conj.hpp
 #pragma once
 
-#include <utility>
 
 namespace cljonic {
 
 /** \anchor CanConj
- * \brief Checks if conj can succeed without capacity overflow.
+ * \brief Checks whether conj can succeed without capacity overflow.
+ *
+ * For a `Set` element or `Map` key already present, returns true because insertion is a no-op or a value replacement
+ * that needs no capacity; for `Vector` and `Queue` the result depends only on remaining capacity.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -731,23 +772,27 @@ namespace cljonic {
 
    // Compile-time demonstration.
    constexpr Queue<int, 4> q_const{};
-   static_assert(can_conj(q_const));
+   static_assert(can_conj(q_const, 1));
    constexpr Set<int, 4> s_const{};
    static_assert(can_conj(s_const, 1));
+   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   static_assert(can_conj(m_const, MapEntry<int, int>{1, 999}));
 
    // Runtime demonstration.
    auto q_runtime = Queue<int, 4>{};
-   auto s_runtime = Set<int, 4>{};
-   const auto q_ok = can_conj(q_runtime);
-   const auto s_ok = can_conj(s_runtime, 10);
+   const auto q_ok = can_conj(q_runtime, 1);
 
-   return (q_ok && s_ok) ? 0 : 1;
+   return q_ok ? 0 : 1;
  }
  ~~~~~
  */
-template <typename C, typename... Args>
-[[nodiscard]] constexpr auto can_conj(const C& collection, Args&&... args) noexcept -> bool {
-    return collection.can_conj(std::forward<Args>(args)...);
+template <typename C, typename V>
+    requires concepts::ConjableCollection<C> && requires(const C& collection, const V& value) {
+        { collection.can_conj(value) } noexcept -> std::same_as<bool>;
+    }
+[[nodiscard]] constexpr auto can_conj(const C& collection,
+                                      const V& value) noexcept(noexcept(collection.can_conj(value))) -> bool {
+    return collection.can_conj(value);
 }
 
 } // namespace cljonic
@@ -755,12 +800,15 @@ template <typename C, typename... Args>
 // Begin cljonic-conj.hpp
 #pragma once
 
-#include <utility>
 
 namespace cljonic {
 
 /** \anchor Conj
  * \brief Adds an element to a collection according to its type conventions.
+ *
+ * Appends at the end of a `Vector`, the rear of a `Queue`, inserts into a `Set` unless the element is already present,
+ * and associates a `MapEntry` into a `Map` (replacing an existing key's value). `String` supports indexed `assoc`, not
+ * `conj`. The result is a distinct collection value; the source is unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -775,18 +823,24 @@ namespace cljonic {
    static_assert(peek(q_const) == 10);
    static_assert(contains(s_const, 20));
 
+   constexpr auto v_const = conj(Vector<int, 4>{10, 20}, 30);
+   static_assert(v_const(2) == 30);
+   constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry<int, int>{1, 100});
+   static_assert(m_const(1) == 100);
+
    // Runtime demonstration.
    auto q_runtime = Queue<int, 4>{};
-   auto q1 = conj(q_runtime, 100);
-   auto s_runtime = Set<int, 4>{};
-   auto s1 = conj(s_runtime, 200);
+   const auto q1 = conj(q_runtime, 100);
 
-   return (peek(q1) == 100 && contains(s1, 200)) ? 0 : 1;
+   return (peek(q1) == 100) ? 0 : 1;
  }
  ~~~~~
  */
 template <typename C, typename T>
-[[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept {
+    requires concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
+        { collection.conj(value) } noexcept -> std::same_as<C>;
+    }
+[[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept(noexcept(collection.conj(value))) -> C {
     return collection.conj(value);
 }
 
@@ -844,7 +898,12 @@ namespace cljonic {
  ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept -> bool {
+    requires(concepts::CljonicCollection<C> || concepts::CljonicProducer<C>) &&
+            requires(const C& collection, const K& key) {
+                { collection.contains(key) } noexcept -> std::same_as<bool>;
+            }
+[[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept(noexcept(collection.contains(key)))
+    -> bool {
     return collection.contains(key);
 }
 
@@ -1179,6 +1238,23 @@ class Vector {
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
+    }
+
+    /** Returns true when there is room for one more element; the value does not
+     *  affect the result. */
+    [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const value_type& value) const noexcept -> bool {
+        return logical_size_ < CapacityValue;
+    }
+
+    /** Appends the value at the end (the highest logical index) of a copy when
+     *  capacity remains; returns an unchanged copy when full. */
+    [[nodiscard]] constexpr auto conj(const value_type& value) const noexcept -> Vector {
+        Vector result = *this;
+        if (result.logical_size_ < CapacityValue) {
+            result.storage_[result.logical_size_] = value;
+            ++result.logical_size_;
+        }
+        return result;
     }
 
     [[nodiscard]] constexpr auto operator==(const Vector& other) const noexcept -> bool
@@ -1528,7 +1604,6 @@ template <typename C, typename T>
 // Begin cljonic-dissoc.hpp
 #pragma once
 
-#include <utility>
 
 namespace cljonic {
 
@@ -1556,7 +1631,10 @@ namespace cljonic {
  ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto dissoc(const C& collection, const K& key) noexcept {
+    requires concepts::CljonicMap<C> && requires(const C& collection, const K& key) {
+        { collection.dissoc(key) } noexcept -> std::same_as<C>;
+    }
+[[nodiscard]] constexpr auto dissoc(const C& collection, const K& key) noexcept(noexcept(collection.dissoc(key))) -> C {
     return collection.dissoc(key);
 }
 
@@ -2605,6 +2683,19 @@ class Map {
         return result;
     }
 
+    /** Returns true when the entry's key is present or the map has room for one
+     *  more entry. */
+    [[nodiscard]] constexpr auto can_conj(const value_type& entry) const noexcept -> bool {
+        return contains(entry.key) || (logical_size_ < CapacityValue);
+    }
+
+    /** Associates the entry's key with its value on a copy: an existing key
+     *  replaces its value without increasing count; an absent key is added only
+     *  when capacity remains. Returns an unchanged copy when full. */
+    [[nodiscard]] constexpr auto conj(const value_type& entry) const noexcept -> Map {
+        return assoc(entry.key, entry.value);
+    }
+
     [[nodiscard]] constexpr auto dissoc(const KeyType& key) const noexcept -> Map {
         Map result = *this;
         const auto idx = result.find_index(key);
@@ -3114,8 +3205,9 @@ class Queue {
         return {this, logical_size_};
     }
 
-    /** Returns true when there is room for at least one more element. */
-    [[nodiscard]] constexpr auto can_conj() const noexcept -> bool {
+    /** Returns true when there is room for one more element; the value does not
+     *  affect the result. */
+    [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const T& value) const noexcept -> bool {
         return logical_size_ < CapacityValue;
     }
 

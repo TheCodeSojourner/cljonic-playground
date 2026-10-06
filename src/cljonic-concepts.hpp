@@ -363,23 +363,48 @@ concept IndexedCollection = CljonicCollection<C> && requires(const C& c, std::si
 };
 
 /** Requires an admitted collection to expose a named lookup
- * domain, callable lookup, and matching membership predicate. */
+ * domain, callable lookup, and matching membership predicate. The member-type
+ * reference lives in the requires-expression body, never its parameter list, so
+ * the concept stays SFINAE-friendly for a type that lacks `lookup_type`
+ * (REQ-DIAG-001): naming it in the parameter list makes evaluation hard-error
+ * instead of yielding false, which would break boundary-constrained free
+ * functions such as `get`. */
 template <typename C>
-concept LookupCollection = CljonicCollection<C> && requires(const C& c, const C::lookup_type& key) {
-    { c(key) } noexcept;
-    { c.contains(key) } noexcept -> std::same_as<bool>;
+concept LookupCollection = CljonicCollection<C> && requires(const C& c) {
+    typename C::lookup_type;
+    { c(std::declval<const typename C::lookup_type&>()) } noexcept;
+    { c.contains(std::declval<const typename C::lookup_type&>()) } noexcept -> std::same_as<bool>;
 };
 
 /** Requires that an admitted collection provides immutable association and
- *  its key-domain/capacity preflight operation. */
+ *  its key-domain/capacity preflight operation. The member-type references live
+ *  in the requires-expression body, never its parameter list, so the concept
+ *  stays SFINAE-friendly for a type that lacks `key_type`/
+ *  `association_value_type` (REQ-DIAG-001): naming them in the parameter list
+ *  makes evaluation hard-error instead of yielding false, which would break
+ *  boundary-constrained free functions such as `assoc`. */
 template <typename C>
-concept AssociativeCollection =
-    CljonicCollection<C> && requires(const C& c, const C::key_type& key, const C::association_value_type& value) {
-        typename C::key_type;
-        typename C::association_value_type;
-        { c.can_assoc(key) } noexcept -> std::same_as<bool>;
-        { c.assoc(key, value) } noexcept -> std::same_as<C>;
-    };
+concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
+    typename C::key_type;
+    typename C::association_value_type;
+    { c.can_assoc(std::declval<const typename C::key_type&>()) } noexcept -> std::same_as<bool>;
+    {
+        c.assoc(std::declval<const typename C::key_type&>(), std::declval<const typename C::association_value_type&>())
+    } noexcept -> std::same_as<C>;
+};
+
+/** Requires that an admitted collection provides immutable element insertion
+ *  plus its matching capacity/element preflight operation. A `Conjable`
+ *  collection is one of Vector, Set, Map, or Queue — String has no `conj` and
+ *  is excluded. The value-type reference lives in the requires-expression body,
+ *  never its parameter list, so the concept stays SFINAE-friendly
+ *  (REQ-DIAG-001). */
+template <typename C>
+concept ConjableCollection = CljonicCollection<C> && requires(const C& c) {
+    typename C::value_type;
+    { c.conj(std::declval<const typename C::value_type&>()) } noexcept -> std::same_as<C>;
+    { c.can_conj(std::declval<const typename C::value_type&>()) } noexcept -> std::same_as<bool>;
+};
 
 /** Requires that an admitted producer provides non-throwing count() effective-size
  *  observation, returning std::size_t. count() for a producer is a conservative

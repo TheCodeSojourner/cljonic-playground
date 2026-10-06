@@ -221,6 +221,19 @@ class Map {
         return result;
     }
 
+    /** Returns true when the entry's key is present or the map has room for one
+     *  more entry. */
+    [[nodiscard]] constexpr auto can_conj(const value_type& entry) const noexcept -> bool {
+        return contains(entry.key) || (logical_size_ < CapacityValue);
+    }
+
+    /** Associates the entry's key with its value on a copy: an existing key
+     *  replaces its value without increasing count; an absent key is added only
+     *  when capacity remains. Returns an unchanged copy when full. */
+    [[nodiscard]] constexpr auto conj(const value_type& entry) const noexcept -> Map {
+        return assoc(entry.key, entry.value);
+    }
+
     [[nodiscard]] constexpr auto dissoc(const KeyType& key) const noexcept -> Map {
         Map result = *this;
         const auto idx = result.find_index(key);

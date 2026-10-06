@@ -50,7 +50,12 @@ namespace cljonic {
  ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept -> bool {
+    requires(concepts::CljonicCollection<C> || concepts::CljonicProducer<C>) &&
+            requires(const C& collection, const K& key) {
+                { collection.contains(key) } noexcept -> std::same_as<bool>;
+            }
+[[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept(noexcept(collection.contains(key)))
+    -> bool {
     return collection.contains(key);
 }
 

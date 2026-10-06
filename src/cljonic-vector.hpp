@@ -263,6 +263,23 @@ class Vector {
         return logical_size_ == 0U;
     }
 
+    /** Returns true when there is room for one more element; the value does not
+     *  affect the result. */
+    [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const value_type& value) const noexcept -> bool {
+        return logical_size_ < CapacityValue;
+    }
+
+    /** Appends the value at the end (the highest logical index) of a copy when
+     *  capacity remains; returns an unchanged copy when full. */
+    [[nodiscard]] constexpr auto conj(const value_type& value) const noexcept -> Vector {
+        Vector result = *this;
+        if (result.logical_size_ < CapacityValue) {
+            result.storage_[result.logical_size_] = value;
+            ++result.logical_size_;
+        }
+        return result;
+    }
+
     [[nodiscard]] constexpr auto operator==(const Vector& other) const noexcept -> bool
         requires concepts::StableEqualityComparable<ElementType>
     {

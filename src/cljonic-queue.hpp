@@ -218,8 +218,9 @@ class Queue {
         return {this, logical_size_};
     }
 
-    /** Returns true when there is room for at least one more element. */
-    [[nodiscard]] constexpr auto can_conj() const noexcept -> bool {
+    /** Returns true when there is room for one more element; the value does not
+     *  affect the result. */
+    [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const T& value) const noexcept -> bool {
         return logical_size_ < CapacityValue;
     }
 

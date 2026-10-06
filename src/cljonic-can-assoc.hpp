@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cljonic-concepts.hpp>
-#include <utility>
 
 namespace cljonic {
 
@@ -28,7 +27,11 @@ namespace cljonic {
  ~~~~~
  */
 template <typename C, typename K>
-[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key) noexcept -> bool {
+    requires concepts::AssociativeCollection<C> && requires(const C& collection, const K& key) {
+        { collection.can_assoc(key) } noexcept -> std::same_as<bool>;
+    }
+[[nodiscard]] constexpr auto can_assoc(const C& collection, const K& key) noexcept(noexcept(collection.can_assoc(key)))
+    -> bool {
     return collection.can_assoc(key);
 }
 
