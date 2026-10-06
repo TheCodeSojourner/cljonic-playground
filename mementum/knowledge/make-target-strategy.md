@@ -23,6 +23,8 @@ depends-on: []
 - `make sanitizer-cli` — ASan/UBSan run (quiet mode)
 - `make traceability-spec-to-code` — Spec-to-code obligation validation
 
+**Interactive-only targets (never from an agent/script context):** the plain (non-`-cli`) variants render artifacts or open a browser. `make coverage` runs `genhtml` and launches `$BROWSER` on `build-coverage/coverage-report/` — use `make coverage-cli` instead. The aggregate gates (`git`, `validate`, `upsert-gate`) already call the `-cli` variants.
+
 **Coherent-Slice Gate (without docs):**
 - `make upsert-gate-fast` — lint, complexity, active strict traceability, and no-heap verification
 
