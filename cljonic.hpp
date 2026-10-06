@@ -598,7 +598,7 @@ concept SequenceableProducer = CljonicProducer<C> && requires(const C& c) {
 /** Requires that an admitted producer provides the contains(i) index-in-range predicate
  *  over the available bounded prefix, in O(1) without traversal (e.g. Range). Unlike
  *  IndexedCollection, this does not require callable value access: a
- *  Range is Indexed but not IFn (invocable), unlike Vector/Map/Set. Positional value
+ *  Range is Indexed but not CallableLookup (invocable), unlike Vector/Map/Set. Positional value
  *  retrieval is deferred future work. Cycle and Iterate never qualify; Repeat and
  *  Repeatedly never qualify either (they are not efficiently indexed in Clojure). */
 template <typename C>
