@@ -300,7 +300,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 ## Deferred Sequence Traversal Mechanics
 
-> **Deferred future work — non-binding.** The sequence traversal contracts below are approved future-work behavior, not current collection APIs. No supported collection currently exposes `seq`, `first`, `next`, `rest`, a collection-owned logical range, or a C++ interoperability traversal accessor. These contracts MUST remain deferred until a later increment separately propagates their implementation and tests for every collection family. Their presence here records the intended future behavior without making it implementation-ready now.
+> **Deferred future work — non-binding.** The sequence traversal contracts below are approved future-work behavior, not current collection APIs. No supported collection currently exposes the semantic sequence operations `seq`, `first`, `next`, or `rest`. These contracts MUST remain deferred until a later increment separately propagates their implementation and tests for every collection family. Their presence here records the intended future behavior without making it implementation-ready now.
 
 λ REQ-SEQ-001(x).
   ∀ context: the library defines sequence as a traversal behavior over immutable values in the cljonic collection family, not as a separate owning collection type

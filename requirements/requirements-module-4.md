@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization (`into`) and its completeness preflight (`fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`). Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, and explicit producer materialization through `into`, preflighted by `fits_into`. Collection-owned sequence traversal and interoperability accessors remain deferred future work and are not current collection APIs. Standard ranges and views MAY be used internally by future cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
+This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization (`into`) and its completeness preflight (`fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`). Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, and explicit producer materialization through `into`, preflighted by `fits_into`. The semantic sequence operations (`seq`, `first`, `next`, `rest`) remain deferred future work and are not current collection APIs; collection-owned const logical-range traversal and read-only C++ interoperability accessors are active. Standard ranges and views MAY be used internally by cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
 
 ## Materialization & Producer Invariants
 
@@ -224,9 +224,9 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∧ ∀ same-type_copy_construction (an explicit template argument list naming the argument's own destination type and capacity): remains a copy of the argument, distinct from enclosure_construction
   {source: stakeholder_decided, decided_by: original_spec_author}
 
-## Deferred Internal Range and View Implementation Support
+## Internal Range and View Implementation Support
 
-> **Deferred future work — non-binding.** The following range and interoperability requirements are approved future-work contracts. They do not require any current collection to expose a traversal interface or interoperability accessor.
+The following range and interoperability requirements are binding contracts: every supported collection provides a const range-compatible logical traversal mechanism and a read-only C++ interoperability accessor.
 
 λ REQ-PLAT-017(x).
   ∀ supported collection type ∈ {`Vector`, `Map`, `Set`, `Queue`, `String`}: provides a const range-compatible logical traversal mechanism sufficient for cljonic free-function implementations to visit each active element without depending on collection-specific storage details
@@ -285,4 +285,4 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly` producer templates, `into`, `fits_into`, and internal collection traversal support.
-- **Governed REQs**: `REQ-VAL-014`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C` (incl. `013A`–`013D`), `REQ-FN-027`–`027A`, `REQ-PLAT-017`–`023` (incl. `017A`, `022A`; deferred).
+- **Governed REQs**: `REQ-VAL-014`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C` (incl. `013A`–`013D`), `REQ-FN-027`–`027A`, `REQ-PLAT-017`–`023` (incl. `017A`, `022A`).
