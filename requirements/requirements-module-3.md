@@ -487,6 +487,17 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   rationale: Clojure's `conj` adds to every sequential and associative collection, so cljonic exposes the same four-collection surface with collection-specific insertion semantics and duplicate handling
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
+λ REQ-FN-002U(x).
+  ∀ context: `assoc` also provides a variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` over every `Associative` collection (`Map`, `Vector`, `String`), matching Clojure's `(assoc coll k v & kvs)`
+  ∧ ∀ variadic form: folds its key-value pairs into the result left to right, so `assoc(c, k₁, v₁, k₂, v₂) ≡ assoc(assoc(c, k₁, v₁), k₂, v₂)` ∧ the result is a distinct collection value ∧ the source is unchanged
+  ∧ ∀ pair: individually admitted under the same collection-specific key/value domain as the single-pair form (`REQ-COLL-020G`) ∧ a pair outside that domain fails at compile time regardless of its position in the argument list
+  ∧ ∀ `String` pair: the character value follows the single-pair invalid-character policy (`REQ-COLL-020Q`) — compile-time rejection or runtime `'.'` replacement
+  ∧ ∀ pair whose key is valid for the collection but cannot produce its documented result because the accumulator is at full capacity for a new key (a map) or an append index (a vector or string): a per-pair no-op that leaves the accumulator unchanged ∧ does not prevent the remaining pairs from being applied ∧ neither a compile-time error nor a runtime exception, consistent with the total, non-throwing single-pair contract (`REQ-COLL-020J`, `REQ-COLL-020O`)
+  ∧ ∀ odd trailing argument count (a key with no following value): rejected at compile time
+  ∧ ∀ variadic form: requires at least two key-value pairs ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by `AssociativeCollection` ∧ the one-pair arity remains the existing single-pair form
+  rationale: Clojure's `assoc` folds an arbitrary number of key-value pairs into a map or vector; cljonic mirrors that surface while preserving its bounded, total, non-throwing association semantics — an over-capacity or otherwise invalid pair is a per-pair no-op rather than a Clojure-style throw
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+
 λ REQ-FN-003(x).
   ∀ generic_free_function: constrained by explicit concepts or equivalent compile-time requirements
   {source: stakeholder_decided, decided_by: original_spec_author}
