@@ -11,10 +11,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto q_const = conj(Queue<int, 4>{}, 99);
    static_assert(peek(q_const) == 99);

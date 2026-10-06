@@ -17,10 +17,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto v_const = Vector<int, 4>{10, 20, 30};
    constexpr MapEntry<int, int> e_const{1, 100};

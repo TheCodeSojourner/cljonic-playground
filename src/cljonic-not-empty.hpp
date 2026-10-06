@@ -15,10 +15,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto v_const = Vector<int, 4>{1};
    constexpr auto e_const = Vector<int, 4>{};

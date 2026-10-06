@@ -15,10 +15,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
    constexpr auto q1_const = rest(q0_const);

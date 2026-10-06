@@ -13,10 +13,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr Queue<int, 4> q_const{};
    static_assert(can_conj(q_const, 1));

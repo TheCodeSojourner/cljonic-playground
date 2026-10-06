@@ -10,10 +10,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr Map<int, int, 4> m_const{};
    static_assert(can_assoc(m_const, 1));

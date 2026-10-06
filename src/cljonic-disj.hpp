@@ -11,10 +11,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto s0_const = conj(Set<int, 4>{}, 42);
    constexpr auto s1_const = disj(s0_const, 42);

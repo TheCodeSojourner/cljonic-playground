@@ -10,10 +10,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto m0_const = assoc(Map<int, int, 4>{}, 1, 100);
    constexpr auto m1_const = dissoc(m0_const, 1);

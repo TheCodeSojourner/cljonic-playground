@@ -674,18 +674,18 @@ namespace cljonic {
  * \brief Associates a value with a key in a Map, or with an index in an indexed
  *        collection (Vector, String).
  *
- * Supported for `Map` (key/value association), `Vector` (index association; appends at the logical count when capacity
- * remains), and `String` (index association, applying the invalid-character policy). `Set` and `Queue` provide no
- * associative capability and are rejected by the boundary constraint. The result is a distinct collection value; the
- * source is unchanged.
+ * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association;
+ * appends at the end when capacity remains), and `String` (index association, applying the invalid-character policy: a
+ * non-ASCII or NUL character is rejected at compile time and replaced with `.` at runtime). `Set` and `Queue` provide
+ * no associative capability and are rejected by the boundary constraint. The result is a distinct collection value;
+ * the source is unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
    static_assert(m_const(1) == 100);
@@ -724,10 +724,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr Map<int, int, 4> m_const{};
    static_assert(can_assoc(m_const, 1));
@@ -766,10 +765,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr Queue<int, 4> q_const{};
    static_assert(can_conj(q_const, 1));
@@ -813,10 +811,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto q_const = conj(Queue<int, 4>{}, 10);
    constexpr auto s_const = conj(Set<int, 4>{}, 20);
@@ -870,10 +867,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto v_const = Vector<int, 4>{10, 20, 30};
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
@@ -940,10 +936,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto v_const = Vector<int, 4>{1, 2, 3};
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
@@ -1577,10 +1572,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto s0_const = conj(Set<int, 4>{}, 42);
    constexpr auto s1_const = disj(s0_const, 42);
@@ -1613,10 +1607,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto m0_const = assoc(Map<int, int, 4>{}, 1, 100);
    constexpr auto m1_const = dissoc(m0_const, 1);
@@ -2089,10 +2082,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto v_const = Vector<int, 4>{10, 20};
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
@@ -2177,10 +2169,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto e_const = Vector<int, 4>{};
    constexpr auto v_const = Vector<int, 4>{1};
@@ -2418,10 +2409,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr MapEntry<int, int> e_const{1, 100};
    static_assert(e_const == MapEntry<int, int>{1, 100});
@@ -2927,10 +2917,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto q_const = conj(Queue<int, 4>{}, 99);
    static_assert(peek(q_const) == 99);
@@ -2963,10 +2952,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
    constexpr auto q1_const = pop(q0_const);

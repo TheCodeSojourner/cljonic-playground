@@ -13,10 +13,9 @@ namespace cljonic {
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
+ using namespace cljonic;
 
  int main() {
-   using namespace cljonic;
-
    // Compile-time demonstration.
    constexpr MapEntry<int, int> e_const{1, 100};
    static_assert(e_const == MapEntry<int, int>{1, 100});
