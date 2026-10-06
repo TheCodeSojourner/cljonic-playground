@@ -2,6 +2,9 @@
 
 entity CanConj {
     supports_can_conj_preflight: Boolean
+    applies_to_all_conjable_collections: Boolean
+    set_or_map_existing_element_succeeds: Boolean
+    vector_or_queue_is_capacity_only: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -10,6 +13,18 @@ entity CanConj {
 
     invariant CanConjPreflightSupported {
         this.supports_can_conj_preflight = true
+    }
+
+    invariant AppliesToAllConjableCollections {
+        this.applies_to_all_conjable_collections = true
+    }
+
+    invariant SetOrMapExistingElementSucceeds {
+        this.set_or_map_existing_element_succeeds = true
+    }
+
+    invariant VectorOrQueueIsCapacityOnly {
+        this.vector_or_queue_is_capacity_only = true
     }
 
     invariant NoHeapAllocation {

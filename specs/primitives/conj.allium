@@ -2,6 +2,11 @@
 
 entity Conj {
     supports_conj_free_function: Boolean
+    supports_vector_conj: Boolean
+    supports_set_conj: Boolean
+    supports_map_conj: Boolean
+    supports_queue_conj: Boolean
+    replaces_duplicate_key_or_element: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -12,6 +17,26 @@ entity Conj {
 
     invariant ConjFreeFunctionSupported {
         this.supports_conj_free_function = true
+    }
+
+    invariant SupportsVectorConj {
+        this.supports_vector_conj = true
+    }
+
+    invariant SupportsSetConj {
+        this.supports_set_conj = true
+    }
+
+    invariant SupportsMapConj {
+        this.supports_map_conj = true
+    }
+
+    invariant SupportsQueueConj {
+        this.supports_queue_conj = true
+    }
+
+    invariant ReplacesDuplicateKeyOrElement {
+        this.replaces_duplicate_key_or_element = true
     }
 
     invariant NoHeapAllocation {

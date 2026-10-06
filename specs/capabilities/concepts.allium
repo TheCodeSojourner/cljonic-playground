@@ -230,6 +230,54 @@ entity AssociativeCollection {
     }
 }
 
+entity ConjableCollection {
+    sequence_independent: Boolean
+    defines_value_type: Boolean
+    defines_capacity_policy: Boolean
+    requires_conj_operation: Boolean
+    requires_can_conj_preflight: Boolean
+    returns_new_collection_value: Boolean
+    preserves_source: Boolean
+    requires_non_mutating_conj_operation: Boolean
+    requires_non_mutating_conj_preflight: Boolean
+
+    invariant SequenceIndependent {
+        this.sequence_independent = true
+    }
+
+    invariant DefinesValueType {
+        this.defines_value_type = true
+    }
+
+    invariant DefinesCapacityPolicy {
+        this.defines_capacity_policy = true
+    }
+
+    invariant RequiresConjOperation {
+        this.requires_conj_operation = true
+    }
+
+    invariant RequiresCanConjPreflight {
+        this.requires_can_conj_preflight = true
+    }
+
+    invariant ReturnsNewCollectionValue {
+        this.returns_new_collection_value = true
+    }
+
+    invariant PreservesSource {
+        this.preserves_source = true
+    }
+
+    invariant RequiresNonMutatingConjOperation {
+        this.requires_non_mutating_conj_operation = true
+    }
+
+    invariant RequiresNonMutatingConjPreflight {
+        this.requires_non_mutating_conj_preflight = true
+    }
+}
+
 entity StableEqualityComparable {
     requires_bool_equality: Boolean
     rejects_floating_point: Boolean
@@ -456,6 +504,7 @@ actor SequenceableCollectionOperator { identified_by: SequenceableCollection }
 actor IndexedCollectionOperator { identified_by: IndexedCollection }
 actor LookupCollectionOperator { identified_by: LookupCollection }
 actor AssociativeCollectionOperator { identified_by: AssociativeCollection }
+actor ConjableCollectionOperator { identified_by: ConjableCollection }
 actor StableEqualityComparableOperator { identified_by: StableEqualityComparable }
 actor AlternativeStrictEqualityOperator { identified_by: AlternativeStrictEquality }
 actor TotallyOrderedOperator { identified_by: TotallyOrdered }
