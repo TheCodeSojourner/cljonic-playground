@@ -32,7 +32,7 @@ Next:
 1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
 2. Candidate synthesis — DONE (2026-10-06, commit 71025d7): `mementum/knowledge/collection-source-interoperability.md` updated in place from `ctad-copy-deduction-vs-enclosure-guides.md`, `source-construction-diagnostic-fallback.md`, `same-type-constructor-pack-preference.md`, and `materializer-vs-preflight-terminology.md`. Status `designing` → `active`; rewrote around the three admission paths (SourceConstruction / SameTypeArgumentIsOneElement / EnclosureConstruction), the `into`/`fits_into` pair, bounds/overflow, the REQ-DIAG-010 diagnostic, and a corrected open-work list.
 3. Extend the REQ-DIAG-010 constructor-diagnostic policy to any other closed-source-domain public constructor.
-4. Candidate synthesis (still pending): `doxygen-doc-tooling.md` from the ≥3 doc-tooling memories.
+4. Candidate synthesis — DONE (2026-10-06): created `mementum/knowledge/doxygen-doc-tooling.md` (status: active) distilling the doc-tooling family: `doc/` source vs `docs/` generated, the two formatter/checker scripts (`format-doc-samples.pl`, `check-core-cheatsheet-format.py`), bare-fence example compilation + `DEFERRED_NON_PUBLIC_HEADERS` visible skip, example content rules (runnable `main()`, free-function API, types-construct vs functions-use), regeneration/preservation discipline, and the mainpage-entry rule.
 
 Carry-forward (unaddressed, remember for later):
 1. `equal_by`/`identical` and the remaining REQ-FN-002C comparison family remain deferred.
