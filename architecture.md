@@ -268,6 +268,9 @@
     ∧ require(capacity_for_new_value(x))
   | conj(Vector, value) → append_at_logical_count(x)
     ∧ require(capacity_for_new_value(x))
+  | conj(Map, entry) → associate_entry(key ∧ value)(x)
+    ∧ replace_value_when_key_present(x) ∧ require(capacity_for_new_key_when_absent(x))
+    ∧ entry ≡ MapEntry(key ∧ value)(x)
   | full_conj_or_invalid_conj(x) → return(unchanged_source(x))
     ∧ not(throw ∨ allocate ∨ mutate_source(x))
   | conj_operation(x) ∧ can_conj(x) → classify_as(RequirementsBacked)
@@ -593,21 +596,30 @@ concept IndexedCollection =
 template<class C>
 concept LookupCollection =
     CljonicCollection<C> &&
-    requires(const C& c, const typename C::lookup_type& key) {
-      { c(key) };
-      { c.contains(key) } -> std::same_as<bool>;
+    requires(const C& c) {
+      typename C::lookup_type;
+      { c(std::declval<const typename C::lookup_type&>()) };
+      { c.contains(std::declval<const typename C::lookup_type&>()) } -> std::same_as<bool>;
     };
 
 template<class C>
 concept AssociativeCollection =
     CljonicCollection<C> &&
-    requires(const C& c,
-             const typename C::key_type& key,
-             const typename C::value_type& value) {
+    requires(const C& c) {
       typename C::key_type;
+      typename C::association_value_type;
+      { c.can_assoc(std::declval<const typename C::key_type&>()) } -> std::same_as<bool>;
+      { c.assoc(std::declval<const typename C::key_type&>(),
+                std::declval<const typename C::association_value_type&>()) } -> std::same_as<C>;
+    };
+
+template<class C>
+concept ConjableCollection =
+    CljonicCollection<C> &&
+    requires(const C& c) {
       typename C::value_type;
-      { c.can_assoc(key) } -> std::same_as<bool>;
-      { c.assoc(key, value) } -> std::same_as<C>;
+      { c.conj(std::declval<const typename C::value_type&>()) } -> std::same_as<C>;
+      { c.can_conj(std::declval<const typename C::value_type&>()) } -> std::same_as<bool>;
     };
 ```
 
