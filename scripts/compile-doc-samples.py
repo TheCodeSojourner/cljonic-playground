@@ -12,6 +12,13 @@ import textwrap
 BLOCK_OPEN_RE = re.compile(r"^[ \t]*~~~~~\{\.cpp\}[ \t]*$", re.MULTILINE)
 BLOCK_CLOSE_RE = re.compile(r"^[ \t]*~~~~~[ \t]*$", re.MULTILINE)
 
+# Example-content rule: every doc C++ sample must bring cljonic names into scope
+# with `using namespace cljonic;` at file scope (after the #include, outside
+# main()). The extraction dedents a block, so an in-main occurrence is the only
+# indented one and the top-level occurrence is the only column-zero one.
+USING_TOP_LEVEL_RE = re.compile(r"(?m)^using namespace cljonic;[ \t]*$")
+USING_INDENTED_RE = re.compile(r"(?m)^[ \t]+using namespace cljonic;")
+
 # Doc examples are compiled against the public single-header API (cljonic.hpp),
 # which is generated from the cljonic-core.hpp umbrella. The sequence-shaping
 # free functions below are intentionally NOT part of that umbrella: they were
@@ -52,6 +59,20 @@ def extract_cpp_blocks(content: str) -> list[str]:
             current.append(line)
 
     return blocks
+
+
+def example_style_error(header_name: str, block_index: int, snippet: str) -> str | None:
+    if USING_INDENTED_RE.search(snippet):
+        return (
+            f"{header_name} example {block_index}: 'using namespace cljonic;' must be at file scope "
+            "(outside main()), not indented inside main()"
+        )
+    if not USING_TOP_LEVEL_RE.search(snippet):
+        return (
+            f"{header_name} example {block_index}: missing 'using namespace cljonic;' at file scope "
+            "(after the #include, outside main())"
+        )
+    return None
 
 
 def rewrite_public_header_include(snippet: str, header: str) -> str:
@@ -115,14 +136,28 @@ def main() -> int:
 
     build_dir.mkdir(parents=True, exist_ok=True)
 
+    headers = sorted(source_dir.glob("*.hpp"))
+    extracted: list[tuple[pathlib.Path, list[str]]] = [
+        (header_file, extract_cpp_blocks(header_file.read_text(encoding="utf-8"))) for header_file in headers
+    ]
+
+    style_errors = [
+        error
+        for header_file, blocks in extracted
+        for idx, block in enumerate(blocks, start=1)
+        if (error := example_style_error(header_file.name, idx, block)) is not None
+    ]
+    if style_errors:
+        for error in style_errors:
+            print(f"docs-examples:{error}", file=sys.stderr)
+        return 1
+
     example_count = 0
     deferred_skipped: list[str] = []
-    for header_file in sorted(source_dir.glob("*.hpp")):
+    for header_file, blocks in extracted:
         if header_file.name in DEFERRED_NON_PUBLIC_HEADERS:
             deferred_skipped.append(header_file.name)
             continue
-        content = header_file.read_text(encoding="utf-8")
-        blocks = extract_cpp_blocks(content)
         for idx, block in enumerate(blocks, start=1):
             snippet = rewrite_public_header_include(block, str(header_path))
             sample_base = f"{header_file.stem}-example-{idx}"

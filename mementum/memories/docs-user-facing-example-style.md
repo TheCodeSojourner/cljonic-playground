@@ -11,4 +11,5 @@ User-facing cljonic doc examples should be contract-first and avoid implementati
 - In construction-only samples, avoid surfacing methods that are intended to be documented via standalone functions.
 - For intentionally unused sample variables, prefer `[[maybe_unused]]` over `(void)var;`.
 - Keep example include usage consistent with library guidance (use `cljonic.hpp`, the generated single-header public entry point, in every user-facing example).
+- Put `using namespace cljonic;` at file scope, immediately after `#include "cljonic.hpp"` and outside `main()` — never inside `main()`. Enforced by `scripts/compile-doc-samples.py` (`make docs-examples`); applied repo-wide 2026-10-06.
 - Accept formatter-native wrapping unless formatting policy is explicitly changed.

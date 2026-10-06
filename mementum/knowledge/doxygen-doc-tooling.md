@@ -94,6 +94,10 @@ Operating model for the scripts and gates that guard cljonic's public docs.
 - Use `cljonic.hpp` in every user-facing example. Prefer named
   `const auto name = Type{...};`; mark intentionally unused variables
   `[[maybe_unused]]`, not `(void)var;`.
+- Put `using namespace cljonic;` at file scope, immediately after the
+  `#include` and outside `main()` — never inside `main()`. `compile-doc-samples.py`
+  enforces this: every extracted block must carry the statement at column 0
+  (an indented occurrence, or a missing one, fails `make docs-examples`).
 - Prose before `\b Examples` must be user-facing: what the type is, its
   defaults, one or two behavioral rules, and which free functions to call. Save
   capability-model/ownership reasoning (`Indexed`, `IFn`, `CljonicProducer`) for
