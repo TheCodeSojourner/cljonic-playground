@@ -149,6 +149,7 @@
   | vocabulary_consistency_gate_fails(x) → reject_change(x)
 
 λ S3_rejection_diagnostic(x). (public_free_function(x) ∨ public_source_constructor(x)) ∧ closed_domain(x)
+    ∧ present_or_added_in_future(x)
     ∧ expressible_through_named_capability_concepts(x)
   → require(concept_based_primary_admission(x))
   | diagnostic_overload(x) → provide(one_per_supported_arity(x))
@@ -161,7 +162,16 @@
   | domain_support_detection(x) → use(named_admission_concepts ∧ admissible_predicates(x))
     ∧ ¬use(callability_detection(x))
     ∧ callability_of_rejected_argument(x) → ¬supported_interface(x)
-  | applies_to(equal ∧ not_equal ∧ collection_source_constructors ∧ producer_factory_functions)(x)
+  | whenever_possible(x) → require(diagnostic_overload(x)) where(a_distinct_overload_viable_only_for_rejected_calls(x))
+    ∧ otherwise → require(documented_exclusion(x) recorded_in(requirement ∧ function_header(x)))
+  | forward_binding(x) → bind(every_future_public_free_function(x))
+    ∧ ¬(admitted_gated(x) ∧ fallback_taught(x) ∨ excluded(x)) → conformance_defect(x)
+    ∧ conformance_defect(x) → surface_by(diagnostic_coverage_gate(x))
+  | applies_to(all_public_free_functions_with_closed_domain ∧ collection_source_constructors)(x)
+  | illustrative_examples(x) ≡ equal ∧ not_equal ∧ producer_factory_functions ∧ collection_primitives
+  | collection_primitives(x) ≡ count ∧ get ∧ contains ∧ conj ∧ can_conj ∧ assoc ∧ can_assoc
+    ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ is_empty ∧ into ∧ fits_into
+  | collection_primitives(x) → ¬narrow(universal_obligation(x))
   | producer_factory_functions(x) ≡ repeat ∧ cycle ∧ iterate ∧ repeatedly
   | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ direct_to(into ∨ enclosure_form) ∧ preflight(fits_into)
   | producer_factory_rejection(x) → name(operation ∧ violated_producer_admission_rule(x)) ∧ state_correct_usage(x)
@@ -254,6 +264,15 @@
     ∧ replace_invalid_runtime_character_with_period(x)
   | invalid_association_key_or_full_append(x) → return(unchanged_source(x))
     ∧ not(throw ∨ allocate ∨ mutate_source(x))
+  | assoc(collection, key₁, value₁, key₂, value₂, …) → fold_assoc_pairs_left_to_right(x)
+    ∧ assoc(c, key₁, value₁, key₂, value₂) ≡ assoc(assoc(c, key₁, value₁), key₂, value₂)
+    ∧ pair(x) → admit_under(collection_key_value_domain(x))
+    ∧ pair_outside_domain(x) → reject_at_compile_time(x) regardless_of_argument_position(x)
+    ∧ pair_that_cannot_produce_documented_result_at_full_capacity(x)
+        → no_op(accumulator(x)) ∧ continue(remaining_pairs(x)) ∧ not(compile_time_error ∨ throw(x))
+    ∧ odd_trailing_argument_count(x) → reject_at_compile_time(x)
+    ∧ require(at_least_two_pairs(x)) ∧ require(single_pair_arity_unchanged(x))
+    ∧ constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | associative_operation(x) → classify_as(RequirementsBacked)
     ∧ trace_to(requirements/requirements-module-2.md ∧ requirements/requirements-module-3.md)
 
