@@ -1,5 +1,45 @@
 ## Session State
 
+- last_session_id: 9dcc52fd-d6ee-4681-afbf-3a14dc27f23a
+- current_timestamp: 2026-10-06
+- recover: 1
+- session_complete: true
+
+Task:
+1. gybis-init orientation — COMPLETE: oriented on `state.md` (HEAD 056b68f, worktree clean) and the three newest memories; confirmed Slice B still awaits selection.
+2. `assoc` doc-comment refinement (human-requested) — COMPLETE: `Map` clause now names key replacement ("replacing the value of an existing key"); `Vector` clause rewritten user-facing ("appends at the end when capacity remains", was "appends at the logical count"); `String` clause now teaches the invalid-character policy inline ("a non-ASCII or NUL character is rejected at compile time and replaced with `.` at runtime"). Verified the `Set`/`Queue` rejection claim (probe: `AssociativeCollection<Set|Queue>` false; `REQ-COLL-020G`; set/queue allium `rejects_associative_capability`).
+3. Doc-example `using namespace cljonic;` convention (human-requested) — COMPLETE: hoisted the statement to file scope (just below the `#include`, outside `main()`) in all 19 headers that still had it inside `main`; the other 15 already conformed.
+4. Enforcement (human-approved optional) — COMPLETE: `scripts/compile-doc-samples.py` now validates every extracted doc block before compiling — an indented or missing `using namespace cljonic;` fails `make docs-examples` with a targeted message.
+5. Memories — COMPLETE: added the `using namespace` rule to `docs-user-facing-example-style.md`; added the rule plus its enforcement to `doxygen-doc-tooling.md`.
+
+Questions:
+1. Slice B (`cljonic::Variant` free-function API) still awaits selection.
+
+Decisions:
+1. assoc doc precision (human, 2026-10-06): `Map` names key replacement; `Vector` uses user-facing "appends at the end" (not impl-facing "appends at the logical count"); a named policy in user-facing prose is taught inline (the invalid-character policy states its rule).
+2. `using namespace cljonic;` placement (human, 2026-10-06): file scope, immediately after `#include "cljonic.hpp"`, outside `main()` — never inside `main()`.
+3. Enforcement (human-approved, 2026-10-06): extend the existing doc-sample checker (`compile-doc-samples.py`) rather than add a new target/script; validate every extracted block (including the six deferred headers) before compiling.
+
+Validation:
+1. `make format` (idempotent, `format:ok`), `make cljonic` (`cljonic:ok:header=cljonic.hpp`).
+2. `make docs-examples` → `compiled=29`, `deferred-skipped=6`, `docs-examples:ok`; negative probes (isolated `/tmp` source dir) proved both violation modes fail with targeted messages (exit 1) before compilation.
+3. `make git` (user-run) → `git:ok` end-to-end (format, lint, complexity, all compile-fail harnesses, header-guards, sanitizer, coverage lines=100.0%, traceability, no-heap, docs, docs-examples:compiled=29, cljonic-test).
+4. Commits (not yet pushed): 1ee1309 (assoc doc + using hoist + amalgamation), eb8575f (enforcement + memory/knowledge), 0a7137f (docs).
+
+Next:
+1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
+2. Optional: constrain the `disj`/`peek`/`pop` headers at the boundary (same treatment as the reviewed `conj`/`dissoc`/`can_assoc`/`contains`).
+3. Optional: family-wide REQ-DIAG-009 diagnostic fallbacks for the collection primitives (Upsert-3); `REQ-COLL-020R` `value_type`→`association_value_type` wording (Upsert-4).
+4. Candidate memory (proposed, awaiting approval): extend `doxygen-prose-must-be-user-facing.md` — "a user-facing doc that names a policy must state the rule inline, and prefer the user-facing term over the implementation-facing one (e.g. 'end', not 'logical count')". Evidence: the `assoc` `String`/`Vector` clauses.
+
+Carry-forward (unaddressed, remember for later):
+1. `equal_by`/`identical` and the remaining REQ-FN-002C comparison family remain deferred.
+2. Map/String as enclosure outer types remain deferred (only Vector/Set/Queue have same-class enclosure guides).
+3. Producer-doc prose remains a per-producer patchwork (option B).
+4. Only 4 of 5 producers have diagnostic fallbacks; `Range` is excluded by design.
+
+## Previous Session State
+
 - last_session_id: 213539b2-dab2-499f-b589-3b4dbe9f441b
 - current_timestamp: 2026-10-06
 - recover: 1
@@ -58,7 +98,7 @@ Carry-forward (unaddressed, remember for later):
 4. Only 4 of 5 producers have diagnostic fallbacks; `Range` is excluded by design.
 5. `rejection-diagnostics.md` knowledge page is active; a broader diagnostic strategy page is not needed yet.
 
-## Previous Session State
+## Older Session State
 
 - last_session_id: d90d74df-0016-4a33-97c7-2d10d8b11659
 - current_timestamp: 2026-10-06
@@ -104,7 +144,7 @@ Carry-forward (unaddressed, remember for later):
 4. Only 4 of 5 producers have diagnostic fallbacks; `Range` is excluded by design.
 5. Producer-doc prose is now a per-producer patchwork (option B); a future option-A centralization of the generic producer contract remains available if asymmetry reappears.
 
-## Older Session State
+## Earlier Session State
 
 - last_session_id: 8f825781-f11a-4e95-a563-511c58990e7d
 - current_timestamp: 2026-10-06
@@ -177,7 +217,7 @@ Carry-forward (unaddressed, remember for later):
 3. 24 vocabulary canonical terms are unused by literal name downstream (`keep`) — pre-existing; revisit only if vocabulary scope tightens.
 4. Only 4 of 5 producers have diagnostic fallbacks; `Range` is excluded by design (see decision 9).
 
-## Earlier Session State
+## Archived Session State
 
 - last_session_id: a840a25b-2c2a-4ff5-b3f4-3e62debf0b74
 - current_timestamp: 2026-10-05
@@ -218,7 +258,7 @@ Carry-forward (unaddressed, remember for later):
 2. Set duplicate-insertion in a constexpr context hits std::abort().
 3. Map/String as enclosure outer types remain deferred (only Vector/Set/Queue have same-class enclosure guides).
 
-## Archived Session State
+## Earliest Session State
 
 - last_session_id: baa5e0a4-57f6-40d4-9d5f-c4a72d93962b
 - current_timestamp: 2026-10-03
@@ -280,7 +320,7 @@ Carry-forward (unaddressed, remember for later):
 3. Set duplicate-insertion in a constexpr context hits std::abort().
 4. Map/String as enclosure outer types were deferred (different element model); only Vector/Set/Queue have same-class enclosure guides.
 
-## Earliest Session State
+## Oldest Session State
 
 - last_session_id: c1ef7071-fad8-4316-ae67-95a4f24685e7
 - current_timestamp: 2026-10-03
@@ -327,7 +367,7 @@ Carry-forward (unaddressed, remember for later):
 3. Set duplicate-insertion in a constexpr context hits std::abort().
 4. REQ-SEQ-022 operation-level specification reconciliation (mementum/knowledge/cljonic-next-agenda.md).
 
-## Oldest Session State
+## Ancient Session State
 
 - last_session_id: 171c64d2-e025-4eb9-9ee1-732dd7840fa5
 - current_timestamp: 2026-10-02
@@ -360,8 +400,6 @@ Next:
 1. Slice B — `cljonic::Variant` free-function API (index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative); remove `lifecycle: deferred` from `specs/capabilities/variant-api.allium` when implemented.
 2. Extend the REQ-DIAG-009 rejection-diagnostic policy to other closed-domain public free functions when they gain a fallback.
 3. Deferred comparison family (`equal_by`/`identical`, `less`, `less_equal`, `greater`, `greater_equal`) and `REQ-SEQ-022` operation-level reconciliation remain candidates.
-
-## Ancient Session State
 
 - last_session_id: fd3522cd-6d0a-4782-ae03-2be453291d76
 - current_timestamp: 2026-10-02
