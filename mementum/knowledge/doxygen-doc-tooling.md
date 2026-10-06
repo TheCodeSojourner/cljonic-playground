@@ -74,21 +74,33 @@ Operating model for the scripts and gates that guard cljonic's public docs.
 ## Example content rules
 
 - Every example is a complete runnable program with a `main()`.
-- `\b Examples` blocks demonstrate the **free-function** API (`count(x)`,
-  `contains(x, k)`, `conj(x, v)`, `into(dest, src)`), never member-call syntax
-  (`x.count()`).
-- A **type's own** example (`Vector`, `Range`) shows only construction syntax
-  (CTAD, capacity/argument forms, per-type quirks) and calls no free functions;
-  each **function's own** header demonstrates that function across applicable
-  collections/producers. Split: types show how to construct, functions show how
-  to use.
+- `\b Examples` blocks interact with cljonic values only through value-level
+  syntax and the free-function API, never `<instance>.<method>` calls
+  (`x.count()`, `x.contains(k)`, `v.index()`). Member `.method` access exists to
+  implement the free functions. Allowed: construction, the instance-call
+  `operator()` where the type provides it (`values(0)` — required, not a member
+  call), documented interop accessors (`view()`, `begin()`), and free functions
+  in a free-function header.
+- A **type's own** example (`Vector`, `Range`, `Variant`, `MapEntry`) shows only
+  construction plus its own callable/interop surface and calls no free functions;
+  each **function's own** header demonstrates that function with a few
+  representative use cases. Split: types show how to construct, functions show
+  how to use. Examples are illustrative, not exhaustive — a handful of cases that
+  convey the basics suffice; do not enumerate every type, overload, or arity. A
+  type whose free-function API is deferred (e.g. `cljonic::Variant`, Slice B)
+  stays construction-only until that API exists; a particularly unfamiliar type
+  (`Variant`) is still worth one explicit operand in a relevant function's
+  example.
 - Use `cljonic.hpp` in every user-facing example. Prefer named
   `const auto name = Type{...};`; mark intentionally unused variables
   `[[maybe_unused]]`, not `(void)var;`.
 - Prose before `\b Examples` must be user-facing: what the type is, its
   defaults, one or two behavioral rules, and which free functions to call. Save
   capability-model/ownership reasoning (`Indexed`, `IFn`, `CljonicProducer`) for
-  architecture.md / vocabulary.md.
+  architecture.md / vocabulary.md. Terminology: describe the value a default
+  construction yields as the **default value** (the cljonic `DefaultElement`
+  term) — not "value-initialized", "default-constructed", or
+  "default-initializable".
 
 ## Regeneration & preservation discipline
 

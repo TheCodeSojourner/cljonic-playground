@@ -3,6 +3,27 @@ type: Decision
 symbol: 🎯
 title: doxygen-examples-use-free-functions
 ---
-Doxygen `\b Examples` / `~~~~~{.cpp}` code blocks in `src/*.hpp` MUST demonstrate the free-function API surface (`count(x)`, `contains(x, k)`, `conj(x, v)`, `into(dest, src)`), never direct member-call syntax (`x.count()`, `x.contains(k)`). The library's idiomatic usage is free functions; member calls are implementation detail, not user-facing style. This applies even when a member call would compile — rewrite it as the equivalent free-function call instead. When adding a new type (e.g. a producer), verify every free function used in its examples is actually constrained to accept that type's concept (e.g. `count()` was `SequenceableCollection`-only and didn't support `SequenceableProducer` until this was caught while fixing a Range doc example).
+Doxygen `\b Examples` blocks in `src/*.hpp` interact with cljonic values only
+through value-level syntax and the free-function API — never `<instance>.<method>`
+calls (`x.count()`, `x.contains(k)`, `v.index()`). Member `.method` access is
+implementation detail, meant only for the bodies of the free functions, not
+user-facing style — even when it compiles.
 
-Refinement: a collection/producer TYPE's own doc example (e.g. `Vector`, `Range`) must NOT call free functions at all — it demonstrates only construction syntax (CTAD, capacity/argument forms, per-type quirks like a producer's default/zero-step behavior), matching `Vector`'s existing example. Each free function's OWN doc file (`count.hpp`, `contains.hpp`, etc.) is where that function's usage is demonstrated, across every applicable collection and producer type. Don't duplicate free-function usage in a type's example; the split is: types show how to construct, functions show how to use.
+Allowed surface in an example: construction (CTAD, capacity/argument forms), the
+instance-call `operator()` where the type provides it (e.g. `Vector`'s callable
+lookup `values(0)` — required, and NOT a member call), documented interop
+accessors (`view()`, `begin()`) where the API requires documenting them, and
+free functions in a free-function header.
+
+Placement split (kept): a TYPE's own example (`Vector`, `Range`, `Variant`,
+`MapEntry`) shows only construction + its own callable/interop surface and calls
+NO free functions; each free function's OWN header demonstrates that function
+with a few representative use cases. Types show how to construct, functions show
+how to use. Examples are illustrative, not exhaustive: a handful of cases that
+convey the basics is enough; do not enumerate every type, overload, or arity.
+
+When a type's free-function API is still deferred (e.g. `cljonic::Variant`,
+Slice B), its type example stays construction-only until that API exists. A
+particularly unfamiliar type (e.g. `cljonic::Variant`) is worth showing
+explicitly in a relevant free function's example — `equal`/`not_equal` each
+include one `Variant` operand — even though not every type must appear.
