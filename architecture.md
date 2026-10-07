@@ -20,7 +20,7 @@
 λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_public_producer_surface ∧ current_free_function_surface)
   | CollectionConcept_layer(x) → admit(ClosedNominalCollectionDomain)
   | ProducerConcept_layer(x) → admit(CljonicProducer)
-  | CapabilityConcept_layer(x) → express(indexed ∨ associative semantic_capability)
+  | CapabilityConcept_layer(x) → express(indexed ∨ lookup ∨ associative ∨ conjable semantic_capability)
   | model_active(x) → true_for(current_value_surface(x))
 
 ## S5 - Identity
@@ -104,6 +104,17 @@
   | storage_admission(x) → not_imply(StableEquality ∨ TotalOrder ∨ hashing ∨ parsing ∨ traversal)
   | collection_storage_position(x) ≡ element ∨ map_key ∨ map_value
   | String(x) → apply(non_throwing_storage_and_destruction(x))
+
+λ S3_string_character_validity(character). valid(character) ≡ character ≠ NUL
+  ∧ unsigned_byte_value(character) ≤ 0x7F
+  | String::character_is_valid(character) ↔ valid(character)
+
+λ S2_character_is_valid(value). require(integral(value) ∧ ¬bool(value))
+  | not(in_range<char>(value)) → return(false)
+  | in_range<char>(value) → String::character_is_valid(convert_without_narrowing(value, char))
+  | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | unsupported_input_type(value) → targeted_dependent_static_assert(x)
+    ∧ not(supported_call_target(x))
 
 λ S3_cpp_interoperability(x). supported_collection(x)
   → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
@@ -221,7 +232,7 @@
   | public_concept_name(x) → identify(capability_or_constraint)
   | vague_concept_name(x) → reject(x)
 
-λ S2_canonical_capabilities(x). public_capability_names(x) ≡ Indexed ∧ Lookup ∧ Seqable ∧ Associative
+λ S2_canonical_capabilities(x). public_capability_names(x) ≡ Indexed ∧ Lookup ∧ Seqable ∧ Associative ∧ Conjable
   | Indexed(x) → ordered_integer_access(x) ∧ bounded_logical_index_domain(x)
     ∧ non_mutating_access(x) ∧ non_throwing_non_allocating_membership_predicate(x)
     ∧ negative_index_outside_domain_when_representable(x)
@@ -234,7 +245,7 @@
     ∧ preserve_source(x) ∧ define(key_value_and_capacity_policy(x))
     ∧ non_throwing_non_allocating_preflight(can_assoc(x))
   | capability_satisfaction(x) → compositional_and_operation_specific(x)
-    ∧ remain_distinct(Indexed ∧ Lookup ∧ Seqable ∧ Associative)
+    ∧ remain_distinct(Indexed ∧ Lookup ∧ Seqable ∧ Associative ∧ Conjable)
   | IndexedCollection(x) → refine(Lookup(integer_key_domain(x)))
   | IndexedProducer(x) → not_imply(Lookup(x)) ∧ require(explicit_positional_retrieval_specification_before_value_access(x))
   | Associative(x) → not_imply(Indexed ∨ Lookup) unless(concrete_collection_requirement(x))
@@ -242,11 +253,11 @@
   | public_operation(x) → require(only_capabilities_needed_by(documented_behavior(x)))
 
 λ S2_capability_participation(x). capability_matrix(x) ≡ {
-    Vector: Indexed ∧ Lookup ∧ Associative,
-    Map: Lookup ∧ Associative,
-    Set: Lookup,
-    String: Indexed ∧ Lookup ∧ Associative,
-    Queue: none_of(Indexed ∧ Lookup ∧ Associative)
+  Vector: Indexed ∧ Lookup ∧ Associative ∧ Conjable,
+  Map: Lookup ∧ Associative ∧ Conjable,
+  Set: Lookup ∧ Conjable,
+  String: Indexed ∧ Lookup ∧ Associative ∧ Conjable,
+  Queue: none_of(Indexed ∧ Lookup ∧ Associative) ∧ Conjable
   }
   | Seqable(x) → lifecycle_deferred_for(each_supported_collection(x))
     ∧ activate_only_when(sequence_requirements_are_implementation_backed(x))
@@ -280,6 +291,7 @@
   | conj(x) ∧ can_conj(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | can_conj(collection, value) ↔ conj(collection, value)_can_produce_documented_result
     ∧ true_when(duplicate_set_value_is_successful_noop(x))
+    ∧ can_conj(String, character) → capacity_only(x) ∧ valid_character_only(x)
   | conj(Set, value) → require(StableEquality(x) ∧ LinearScan(x))
     ∧ insert_when_absent_or_preserve_count_when_present(x)
     ∧ require(capacity_for_new_value_when_absent(x))
@@ -287,6 +299,10 @@
     ∧ require(capacity_for_new_value(x))
   | conj(Vector, value) → append_at_logical_count(x)
     ∧ require(capacity_for_new_value(x))
+  | conj(String, character) → append_at_logical_count(x)
+    ∧ require(capacity_for_new_character(x))
+    ∧ apply(String_character_validity_policy(x))
+    ∧ preserve(null_terminator(x))
   | conj(Map, entry) → associate_entry(key ∧ value)(x)
     ∧ replace_value_when_key_present(x) ∧ require(capacity_for_new_key_when_absent(x))
     ∧ entry ≡ MapEntry(key ∧ value)(x)
@@ -660,27 +676,20 @@ concept SequenceableProducer =
     };
 ```
 
-### Level 2C: IndexedProducer (producer efficient-index-in-range gate)
+### Level 2C: IndexedProducer (reserved producer positional-access gate)
 
-λ IndexedProducer_level(x). require(admitted_producer(x)) → expose(available_index_contains(x)) to(participate_in(operation(x)))
+λ IndexedProducer_level(x). require(admitted_producer(x)) → expose(positional_value_retrieval(x) ∧ available_index_predicate(x)) to(participate_in(operation(x)))
   | capability(x) → layered_on(CljonicProducer_admission(x))
-  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_available_index_predicate(x)
-  | Indexed(x) ≡ efficient_O1_positional_access(x) ∧ ¬require(traversal(x)) matching(Clojure_Indexed_interface(x))
-  | Indexed(x) ¬imply(CallableLookup(x)) because(Range_is_Indexed_and_Counted_but_not_invocable_in_Clojure(x))
+  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_bounded_observation_predicate(x)
+  | IndexedProducer(x) ≡ non_mutating_O1_positional_value_retrieval(x) ∧ available_index_predicate_over_same_bounded_domain(x)
+  | producer_contains(x) → bounded_observation_availability_only(x) ∧ ¬imply(positional_value_retrieval(x) ∨ IndexedProducer(x))
+  | Range(x) → provide(contains_for_bounded_observation(x)) ∧ ¬satisfy(Indexed ∨ IndexedProducer ∨ Lookup ∨ Associative)(x) ∧ ¬provide(get_or_callable_lookup(x))
+  | IndexedProducer(x) ¬imply(CallableLookup(x)) because(Indexed_access_does_not_imply_invocability(x))
   | ¬expose(callable_operator_parenthesis(x)) on(producer(x)) because(operator_parenthesis_reserved_for_CallableLookup_mirroring(x))
   | positional_value_retrieval(x) → remain(deferred_future_work) until(Module5_nth_approved(x))
-  | eligible_producers(x) ≡ Range(x)
-  | ineligible_producers(x) ≡ Cycle(x) ∨ Iterate(x) ∨ Repeat(x) ∨ Repeatedly(x) because(never_efficiently_indexed_or_counted_in_Clojure(x))
-  | ¬claim(IndexedProducer(x)) unless(genuinely_O1_available_index_test(x))
-
-```cpp
-template<class C>
-concept IndexedProducer =
-    CljonicProducer<C> &&
-    requires(const C& c, std::size_t i) {
-      { c.contains(i) } -> std::same_as<bool>;
-    };
-```
+  | current_producers(x) ≡ Range ∨ Repeat ∨ Cycle ∨ Iterate ∨ Repeatedly
+  | ∀ current_producer(x) → ¬satisfy(IndexedProducer(x))
+  | future_IndexedProducer(x) → require(explicit_positional_access_contract(x) ∧ matching_availability_predicate(x))
 
 ### Concept naming, scoping, and evolution
 
@@ -790,7 +799,7 @@ concept IndexedProducer =
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | effective_size(x) → authoritative_for(free_function_observation ∧ producer_iteration ∧ producer_materialization)
-  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_available_index_predicate(x) ∧ effective_endpoint_normalized_before_iteration(x) ∧ span_arithmetic_avoids_signed_overflow(x)
+  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_bounded_observation_predicate(x) ∧ effective_endpoint_normalized_before_iteration(x) ∧ span_arithmetic_avoids_signed_overflow(x)
   | range_member_accessors(start ∧ end ∧ step) → classify_as(non_canonical)
   | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
