@@ -136,8 +136,8 @@
  * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
  * when their requirements are approved.
  *
- * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref Conj "conj", \ref Contains
- * "contains", \ref Count "count"
+ * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref CharacterIsValid
+ * "character_is_valid", \ref Conj "conj", \ref Contains "contains", \ref Count "count"
  * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref Core_DefaultElement "DefaultElement",
  * \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref Dissoc
  * "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
@@ -600,8 +600,8 @@ concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
 
 /** Requires that an admitted collection provides immutable element insertion
  *  plus its matching capacity/element preflight operation. A `Conjable`
- *  collection is one of Vector, Set, Map, or Queue — String has no `conj` and
- *  is excluded. The value-type reference lives in the requires-expression body,
+ *  collection is one of Vector, Set, Map, Queue, or String. The value-type
+ *  reference lives in the requires-expression body,
  *  never its parameter list, so the concept stays SFINAE-friendly
  *  (REQ-DIAG-001). */
 template <typename C>
@@ -620,14 +620,14 @@ concept SequenceableProducer = CljonicProducer<C> && requires(const C& c) {
     { c.count() } noexcept -> std::same_as<std::size_t>;
 };
 
-/** Requires that an admitted producer provides the contains(i) index-in-range predicate
- *  over the available bounded prefix, in O(1) without traversal (e.g. Range). Unlike
- *  IndexedCollection, this does not require callable value access: a
- *  Range is Indexed but not CallableLookup (invocable), unlike Vector/Map/Set. Positional value
- *  retrieval is deferred future work. Cycle and Iterate never qualify; Repeat and
- *  Repeatedly never qualify either (they are not efficiently indexed in Clojure). */
+/** Requires that an admitted producer provides non-throwing positional value access
+ *  and a matching contains(i) predicate over the same bounded index domain. A
+ *  contains(i) predicate alone reports only bounded-observation availability and
+ *  does not make a producer Indexed. No currently supported producer provides
+ *  positional value retrieval. */
 template <typename C>
 concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t i) {
+    { c(i) } noexcept;
     { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 
@@ -676,10 +676,10 @@ namespace cljonic {
  *        collection (Vector, String).
  *
  * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association; an
- * index equal to the current count appends when capacity remains), and `String` (the same index and append rule,
- * applying the invalid-character policy: a non-ASCII or NUL character is rejected at compile time and replaced with
- * `.` at runtime). `Set` and `Queue` provide no associative capability and are rejected by the boundary constraint.
- * The result is a distinct collection value; the source is unchanged.
+ * index equal to the current count appends when capacity remains), and `String` (the same index and append rule;
+ * String validates and normalizes characters according to its own character policy). `Set` and `Queue` provide no
+ * associative capability and are rejected by the boundary constraint. The result is a distinct collection value; the
+ * source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
@@ -839,6 +839,12 @@ namespace cljonic {
 /** \anchor CanAssoc
  * \brief Checks if assoc can succeed without capacity overflow.
  *
+ * Supported for `Map` (an existing key can be replaced, or an absent key inserted when capacity remains), `Vector` (an
+ * existing index can be replaced, or an index equal to the current count can append when capacity remains), and
+ * `String` (the same index and append rule). `String` character validation and normalization are applied by `assoc` to
+ * the supplied value; this preflight checks only the index. `Set` and `Queue` provide no associative capability and
+ * are rejected by the boundary constraint. This preflight leaves the source unchanged.
+ *
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -910,8 +916,14 @@ namespace cljonic {
 /** \anchor CanConj
  * \brief Checks whether conj can succeed without capacity overflow.
  *
+ * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. For `Vector` and `Queue`, the result depends only on
+ * remaining capacity; the value does not affect the preflight. For `String`, both remaining capacity and a character
+ * that is not NUL and whose unsigned byte value is at most `0x7F` are required. An invalid character returns false
+ * even though runtime `conj` replaces it with `.`.
+ *
  * For a `Set` element or `Map` key already present, returns true because insertion is a no-op or a value replacement
- * that needs no capacity; for `Vector` and `Queue` the result depends only on remaining capacity.
+ * that needs no capacity. An absent element or key returns true only when capacity remains; when full, it returns
+ * false.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -922,9 +934,13 @@ namespace cljonic {
    // Compile-time demonstration.
    constexpr Queue<int, 4> q_const{};
    static_assert(can_conj(q_const, 1));
+   constexpr Queue<int, 1> q_full{1};
+   static_assert(!can_conj(q_full, 2));
    constexpr Set<int, 4> s_const{};
    static_assert(can_conj(s_const, 1));
-   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr String<4> text_const{"Hi"};
+   static_assert(can_conj(text_const, '!'));
+   constexpr Map<int, int, 4> m_const{MapEntry<int, int>{1, 100}};
    static_assert(can_conj(m_const, MapEntry<int, int>{1, 999}));
 
    // Runtime demonstration.
@@ -935,17 +951,476 @@ namespace cljonic {
  }
  ~~~~~
  */
+namespace concepts_detail {
+
 template <typename C, typename V>
-    requires concepts::ConjableCollection<C> && requires(const C& collection, const V& value) {
-        { collection.can_conj(value) } noexcept -> std::same_as<bool>;
-    }
+concept CanConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const V& value) {
+    { collection.can_conj(value) } noexcept -> std::same_as<bool>;
+};
+
+} // namespace concepts_detail
+
+template <typename C, typename V>
+    requires concepts_detail::CanConjValueAdmissible<C, V>
 [[nodiscard]] constexpr auto can_conj(const C& collection,
                                       const V& value) noexcept(noexcept(collection.can_conj(value))) -> bool {
     return collection.can_conj(value);
 }
 
+// Diagnostic fallback (REQ-DIAG-009): a cljonic collection or producer that
+// does not support conj is rejected at the public boundary.
+template <typename C, typename V>
+    requires(concepts::CljonicCollection<C> || concepts::CljonicProducer<C>) && (!concepts::ConjableCollection<C>)
+[[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V& value) noexcept
+    -> bool {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::can_conj: the first argument must be a Conjable collection -- Vector, Set, Map, Queue, or "
+                  "String.");
+    return false;
+}
+
+template <typename C, typename V>
+    requires concepts::ConjableCollection<C> && (!concepts_detail::CanConjValueAdmissible<C, V>)
+[[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V& value) noexcept
+    -> bool {
+    static_assert(concepts_detail::dependent_false<C, V>,
+                  "cljonic::can_conj: value must be admissible for the collection's conj operation.");
+    return false;
+}
+
 } // namespace cljonic
 // End cljonic-can-conj.hpp
+// Begin cljonic-character-is-valid.hpp
+#pragma once
+
+#include <cstdint>
+#include <limits>
+#include <type_traits>
+#include <utility>
+
+// Begin cljonic-string.hpp
+#pragma once
+
+#include <array>
+#include <cstddef>
+#include <ranges>
+#include <span>
+#include <string_view>
+
+// Begin cljonic-core-collection-maximum-element-count.hpp
+#pragma once
+
+#include <cstddef>
+
+
+namespace cljonic {
+
+/** \anchor CollectionMaximumElementCountValue
+ * \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE is a constexpr constant that captures the configured synthesis
+ * ceiling for bounded cljonic collections and semantically infinite producers. This type-safe constant can be used in
+ * compile-time expressions, static assertions, and constexpr functions while remaining fully overridable via the
+ * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro.
+ */
+constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE = CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
+
+} // namespace cljonic
+// End cljonic-core-collection-maximum-element-count.hpp
+
+namespace cljonic {
+
+/** \anchor String
+ * \b String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
+ * callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds `0x7F` are
+ * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
+ * original collection. Construction with content longer than the available capacity is rejected at compile time.
+ *
+ \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // CTAD infers String<2> from the string literal: capacity counts content
+   // characters, excluding the automatic null terminator. The inferred capacity
+   // is observed through the callable lookup form.
+   [[maybe_unused]] constexpr auto inferred = String{"Hi"};
+   static_assert(
+       std::same_as<std::remove_cvref_t<decltype(inferred)>, String<2>>);
+   static_assert(inferred(1) == 'i');
+
+   // Explicit capacity permits a partially populated String and an empty String.
+   constexpr auto literal = String<10>{"Hello"};
+   [[maybe_unused]] constexpr auto empty = String<8>{};
+
+   // String values can be used as a callable function, returning a default-
+   // value for invalid indexes or a supplied fallback when provided.
+   static_assert(literal(0) == 'H');
+   static_assert(literal(99, 'Z') == 'Z');
+
+   // Without a fallback, an invalid lookup returns '\0'.
+   static_assert(literal(5) == '\0');
+
+   // Runtime construction supports the same callable lookup and fallback
+   // behavior.
+   auto runtime = String<8>{"Hi"};
+   const auto first = runtime(0);
+   const auto missing = runtime(9, '!');
+
+   // -------------------------------------------------------------------------
+   // C++ interoperability: a String supports const traversal and exposes a
+   // non-owning std::string_view. Range/view sources are copied into owned
+   // storage, retaining only the bounded prefix that fits the capacity. A
+   // string_view's size is not part of its type, so view construction requires
+   // an explicit capacity.
+   // -------------------------------------------------------------------------
+   static constexpr std::string_view static_source{"from view"};
+   constexpr auto from_static_view = String<16>{static_source};
+   static_assert(from_static_view.view() == static_source);
+
+   const std::string_view runtime_source{"runtime view"};
+   const auto from_runtime_view = String<16>{runtime_source};
+   const auto runtime_view_copy = from_runtime_view.view();
+
+   // A standard view pipeline can use an existing String as its source and
+   // materialize transformed characters into another String.
+   const auto uppercase_view = runtime | std::views::transform([](char byte) {
+                                 return byte == 'i' ? 'I' : byte;
+                               });
+   const auto from_pipeline = String<8>{uppercase_view};
+
+   static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
+   static constexpr auto span_source{std::span<const char, 4>{char_source}};
+   constexpr auto from_char_span = String{span_source};
+   static_assert(from_char_span.view() == std::string_view{"span"});
+
+   static_assert(literal.view() == std::string_view{"Hello"});
+
+   // Use C++ interoperability to sum the bytes in a String.
+   int byte_sum = 0;
+   for (const auto byte : runtime) {
+     byte_sum += byte;
+   }
+
+   const auto runtime_view = runtime.view();
+
+   return (first == 'H' && missing == '!' && byte_sum == 'H' + 'i' &&
+           runtime_view == std::string_view{"Hi"} &&
+           runtime_view_copy == runtime_source &&
+           from_pipeline.view() == std::string_view{"HI"})
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <std::size_t CapacityValue>
+class String {
+  public:
+    using key_type = std::size_t;
+    using lookup_type = key_type;
+    using association_value_type = char;
+    using value_type = char;
+
+    static_assert(
+        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
+        "String CapacityValue exceeds "
+        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
+
+    constexpr String() noexcept {
+        data_[0] = '\0';
+    }
+
+    /** Construct from a character array literal. CapacityValue counts content
+     * characters; the null terminator is managed separately. */
+    template <std::size_t N>
+    constexpr String(const char (&arr)[N]) noexcept {
+        static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
+        copy_from_source(arr, N - 1U);
+    }
+
+    constexpr String(std::string_view source) noexcept {
+        if consteval {
+            if (source.size() > CapacityValue) {
+                rejected_oversized_string_source_at_compile_time();
+            }
+        }
+        copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
+    }
+
+    // Copy non-cljonic character ranges into owned storage, retaining the
+    // bounded prefix for dynamic extents; statically known extents must fit.
+    // A cljonic collection or producer is not a SourceConstruction source
+    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
+    template <std::ranges::input_range SourceRange>
+        requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
+                 !concepts_detail::is_cljonic_producer_v<SourceRange> &&
+                 std::same_as<std::remove_cv_t<std::ranges::range_value_t<SourceRange>>, char>)
+    constexpr String(SourceRange&& source) noexcept {
+        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
+                      "String static-extent range source exceeds String CapacityValue");
+
+        std::size_t copy_count = 0;
+        for (auto&& byte : std::forward<SourceRange>(source)) {
+            if (copy_count >= CapacityValue) {
+                break;
+            }
+            data_[copy_count++] = normalize_byte(static_cast<char>(byte));
+        }
+        logical_size_ = copy_count;
+        data_[logical_size_] = '\0';
+    }
+
+    // Diagnostic fallback (REQ-DIAG-010): a cljonic collection or producer is
+    // not a SourceConstruction source. This overload exists only to explain the
+    // rejection -- it produces no value and is never a supported call target.
+    template <typename SourceValue>
+        requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
+                  concepts_detail::is_cljonic_producer_v<SourceValue>) &&
+                 !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
+    constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
+        static_assert(concepts_detail::dependent_false<SourceValue>,
+                      "cljonic::String: a cljonic collection or producer is not a construction source. "
+                      "A String is built from its characters or from a non-cljonic C++ range or view. "
+                      "To copy this argument's contents into a String, use into(destination, source); "
+                      "call fits_into(destination, source) first to check whether the whole source fits.");
+    }
+
+    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
+        return CapacityValue;
+    }
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
+        return logical_size_ == 0U;
+    }
+
+    /** Returns whether the character is non-NUL ASCII. */
+    [[nodiscard]] static constexpr auto character_is_valid(char value) noexcept -> bool {
+        return value != '\0' && static_cast<unsigned char>(value) <= 0x7FU;
+    }
+
+    [[nodiscard]] constexpr auto operator==(const String& other) const noexcept -> bool {
+        if (logical_size_ != other.logical_size_) {
+            return false;
+        }
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            if (data_[i] != other.data_[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
+        return data_.data();
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
+        return data_.data() + logical_size_;
+    }
+
+    [[nodiscard]] constexpr auto view() const noexcept -> std::string_view {
+        return {data_.data(), logical_size_};
+    }
+
+    /** Returns true when index falls within logical bounds (not counting null
+     * terminator). Mirrors Clojure contains? over string indices. */
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_;
+    }
+
+    /** Callable index access with custom fallback value on invalid index. */
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto operator()(IndexType index, char fallback = '\0') const noexcept -> char {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && *normalized_index < logical_size_ ? data_[*normalized_index] : fallback;
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        return normalized_index && association_index_is_valid(*normalized_index);
+    }
+
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto assoc(IndexType index, char value) const noexcept -> String {
+        String result = *this;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && association_index_is_valid(*normalized_index)) {
+            result.data_[*normalized_index] = normalize_byte(value);
+            if (*normalized_index == logical_size_) {
+                ++result.logical_size_;
+                result.data_[result.logical_size_] = '\0';
+            }
+        }
+        return result;
+    }
+
+    [[nodiscard]] constexpr auto can_conj(char value) const noexcept -> bool {
+        return logical_size_ < CapacityValue && character_is_valid(value);
+    }
+
+    [[nodiscard]] constexpr auto conj(char value) const noexcept -> String {
+        String result = *this;
+        if (result.logical_size_ < CapacityValue) {
+            result.data_[result.logical_size_] = normalize_byte(value);
+            ++result.logical_size_;
+            result.data_[result.logical_size_] = '\0';
+        }
+        return result;
+    }
+
+    /** Returns a fresh String with the character at index replaced. Out-of-bounds
+     * indices leave copy unchanged. */
+    template <std::integral IndexType>
+    [[nodiscard]] constexpr auto put(IndexType index, char c) const noexcept -> String {
+        String result = *this;
+        const auto normalized_index = concepts_detail::try_normalize_index(index);
+        if (normalized_index && *normalized_index < logical_size_) {
+            result.data_[*normalized_index] = c;
+        }
+        return result;
+    }
+
+  private:
+    [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
+        return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
+    }
+
+    template <typename Source>
+    constexpr void copy_from_source(const Source& source, std::size_t copy_count) noexcept {
+        logical_size_ = copy_count;
+        for (std::size_t i = 0; i < logical_size_; ++i) {
+            data_[i] = normalize_byte(source[i]);
+        }
+        data_[logical_size_] = '\0';
+    }
+
+    [[nodiscard]] static constexpr auto normalize_byte(char byte) noexcept -> char {
+        if (!character_is_valid(byte)) {
+            if consteval {
+                rejected_invalid_string_byte_at_compile_time();
+            }
+            return '.';
+        }
+        return byte;
+    }
+
+    static void rejected_invalid_string_byte_at_compile_time() noexcept;
+    static void rejected_oversized_string_source_at_compile_time() noexcept;
+
+    // Internal array is CapacityValue+1 to hold null terminator
+    std::array<char, CapacityValue + 1> data_{};
+    std::size_t logical_size_{0};
+};
+
+template <std::size_t N>
+String(const char (&)[N]) -> String<N - 1U>;
+
+template <typename SourceElement, std::size_t Extent>
+    requires(Extent != std::dynamic_extent)
+String(std::span<SourceElement, Extent>) -> String<Extent>;
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <std::size_t CapacityValue>
+struct collection_traits<String<CapacityValue>> {
+    static constexpr bool is_cljonic_collection = true;
+    static constexpr collection_kind kind = collection_kind::string;
+};
+
+template <std::size_t CapacityValue>
+struct contains_floating_point<String<CapacityValue>> : std::false_type {};
+
+template <std::size_t CapacityValue>
+struct contains_callable<String<CapacityValue>> : std::false_type {};
+
+template <std::size_t CapacityValue>
+struct contains_standard_range<String<CapacityValue>> : std::false_type {};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-string.hpp
+
+namespace cljonic {
+
+namespace concepts_detail {
+
+template <typename T>
+concept CharacterValidityInput =
+    std::is_integral_v<std::remove_cvref_t<T>> && !std::is_same_v<std::remove_cvref_t<T>, bool>;
+
+template <typename T>
+[[nodiscard]] constexpr auto signed_value_fits_char(T value) noexcept -> bool {
+    if constexpr (std::is_signed_v<char>) {
+        return static_cast<std::intmax_t>(value) >= std::numeric_limits<char>::min() &&
+               static_cast<std::intmax_t>(value) <= std::numeric_limits<char>::max();
+    } else {
+        return value >= 0 && static_cast<std::uintmax_t>(value) <= std::numeric_limits<char>::max();
+    }
+}
+
+template <typename T>
+[[nodiscard]] constexpr auto unsigned_value_fits_char(T value) noexcept -> bool {
+    return static_cast<std::uintmax_t>(value) <= static_cast<std::uintmax_t>(std::numeric_limits<char>::max());
+}
+
+template <typename T>
+[[nodiscard]] constexpr auto value_fits_char(T value) noexcept -> bool {
+    if constexpr (std::is_signed_v<T>) {
+        return signed_value_fits_char(value);
+    } else {
+        return unsigned_value_fits_char(value);
+    }
+}
+
+} // namespace concepts_detail
+
+/** \anchor CharacterIsValid
+ * \brief Checks whether a value converts to a valid String character.
+ *
+ * Accepts non-`bool` integral values. Values outside the range representable by `char` return false without
+ * conversion; otherwise the character is valid when it is not NUL and its unsigned byte value is no greater than
+ * `0x7F`. Other input types are rejected at compile time with a targeted diagnostic.
+ *
+ * \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   static_assert(character_is_valid('A'));
+   static_assert(character_is_valid(65));
+   static_assert(!character_is_valid(300));
+   static_assert(!character_is_valid('\0'));
+   static_assert(!character_is_valid(static_cast<char>(0x80)));
+   return 0;
+ }
+ ~~~~~
+ */
+template <typename T>
+    requires concepts_detail::CharacterValidityInput<T>
+[[nodiscard]] constexpr auto character_is_valid(T value) noexcept -> bool {
+    if (!concepts_detail::value_fits_char(value)) {
+        return false;
+    }
+    return String<0>::character_is_valid(static_cast<char>(value));
+}
+
+template <typename T>
+    requires(!concepts_detail::CharacterValidityInput<T>)
+[[nodiscard]] constexpr auto character_is_valid([[maybe_unused]] T&& value) noexcept -> bool {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::character_is_valid: value must have a non-bool integral type.");
+    return false;
+}
+
+} // namespace cljonic// End cljonic-character-is-valid.hpp
 // Begin cljonic-conj.hpp
 #pragma once
 
@@ -955,9 +1430,12 @@ namespace cljonic {
 /** \anchor Conj
  * \brief Adds an element to a collection according to its type conventions.
  *
- * Appends at the end of a `Vector`, the rear of a `Queue`, inserts into a `Set` unless the element is already present,
- * and associates a `MapEntry` into a `Map` (replacing an existing key's value). `String` supports indexed `assoc`, not
- * `conj`. The result is a distinct collection value; the source is unchanged.
+ * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. `Vector` appends at the end. `Queue` enqueues at the
+ * rear. `String` appends at its logical count. For `String`, NUL and characters whose unsigned byte value exceeds
+ * `0x7F` are invalid; they are rejected at compile time and replaced with `.` at runtime. `Set` adds absent elements;
+ * duplicates are no-ops. `Map` associates a `MapEntry`; an existing key's value is replaced. At full capacity,
+ * `Vector`, `Queue`, and `String` return unchanged copies. A full `Set` or `Map` also returns an unchanged copy when
+ * the element or key is absent. Each operation returns a distinct collection value and preserves the source.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -973,6 +1451,8 @@ namespace cljonic {
 
    constexpr auto v_const = conj(Vector<int, 4>{10, 20}, 30);
    static_assert(v_const(2) == 30);
+   constexpr auto text_const = conj(String<4>{"Hi"}, '!');
+   static_assert(text_const(2) == '!');
    constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry<int, int>{1, 100});
    static_assert(m_const(1) == 100);
 
@@ -984,12 +1464,39 @@ namespace cljonic {
  }
  ~~~~~
  */
+namespace concepts_detail {
+
 template <typename C, typename T>
-    requires concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
-        { collection.conj(value) } noexcept -> std::same_as<C>;
-    }
+concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
+    { collection.conj(value) } noexcept -> std::same_as<C>;
+};
+
+} // namespace concepts_detail
+
+template <typename C, typename T>
+    requires concepts_detail::ConjValueAdmissible<C, T>
 [[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept(noexcept(collection.conj(value))) -> C {
     return collection.conj(value);
+}
+
+// Diagnostic fallback (REQ-DIAG-009): explain collection and value-domain
+// rejections without making either a supported call target.
+template <typename C, typename T>
+    requires concepts::CljonicCollection<C> && (!concepts::ConjableCollection<C>)
+[[nodiscard]] constexpr auto conj([[maybe_unused]] const C& collection, [[maybe_unused]] const T& value) noexcept -> C {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::conj: the first argument must be a Conjable collection -- Vector, Set, Map, Queue, or "
+                  "String.");
+    return collection;
+}
+
+template <typename C, typename T>
+    requires concepts::ConjableCollection<C> && (!concepts_detail::ConjValueAdmissible<C, T>)
+[[nodiscard]] constexpr auto conj([[maybe_unused]] const C& collection, [[maybe_unused]] const T& value) noexcept -> C {
+    static_assert(concepts_detail::dependent_false<C, T>,
+                  "cljonic::conj: value is outside this collection's conj domain. Map requires a MapEntry; other "
+                  "collections require an accepted element value.");
+    return collection;
 }
 
 } // namespace cljonic
@@ -1056,24 +1563,6 @@ template <typename C, typename K>
 
 } // namespace cljonic
 // End cljonic-contains.hpp
-// Begin cljonic-core-collection-maximum-element-count.hpp
-#pragma once
-
-#include <cstddef>
-
-
-namespace cljonic {
-
-/** \anchor CollectionMaximumElementCountValue
- * \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE is a constexpr constant that captures the configured synthesis
- * ceiling for bounded cljonic collections and semantically infinite producers. This type-safe constant can be used in
- * compile-time expressions, static assertions, and constexpr functions while remaining fully overridable via the
- * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT macro.
- */
-constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE = CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT;
-
-} // namespace cljonic
-// End cljonic-core-collection-maximum-element-count.hpp
 // Begin cljonic-count.hpp
 #pragma once
 
@@ -4440,316 +4929,6 @@ struct contains_standard_range<Set<T, CapacityValue>> : std::bool_constant<conta
 
 } // namespace cljonic::concepts_detail
 // End cljonic-set.hpp
-// Begin cljonic-string.hpp
-#pragma once
-
-#include <array>
-#include <cstddef>
-#include <ranges>
-#include <span>
-#include <string_view>
-
-
-namespace cljonic {
-
-/** \anchor String
- * \b String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
- * callable lookup with optional fallback values. The way to operate on the collection is through the library's
- * free-function API. Updates return a modified copy without changing the original collection. Construction with
- * content longer than the available capacity is rejected at compile time.
- *
- \b Examples
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   // CTAD infers String<2> from the string literal: capacity counts content
-   // characters, excluding the automatic null terminator. The inferred capacity
-   // is observed through the callable lookup form.
-   [[maybe_unused]] constexpr auto inferred = String{"Hi"};
-   static_assert(
-       std::same_as<std::remove_cvref_t<decltype(inferred)>, String<2>>);
-   static_assert(inferred(1) == 'i');
-   static_assert(inferred(2, 'Z') == 'Z');
-
-   // Explicit capacity permits a partially populated String and an empty String.
-   constexpr auto literal = String<10>{"Hello"};
-   [[maybe_unused]] constexpr auto empty = String<8>{};
-
-   // String values can be used as a callable function, returning a default-
-   // value for invalid indexes or a supplied fallback when provided.
-   static_assert(literal(0) == 'H');
-   static_assert(literal(99, 'Z') == 'Z');
-
-   // Without a fallback, an invalid lookup returns '\0'.
-   static_assert(literal(5) == '\0');
-
-   // Runtime construction supports the same callable lookup and fallback
-   // behavior.
-   auto runtime = String<8>{"Hi"};
-   const auto first = runtime(0);
-   const auto missing = runtime(9, '!');
-
-   // -------------------------------------------------------------------------
-   // C++ interoperability: a String supports const traversal and exposes a
-   // non-owning std::string_view. Range/view sources are copied into owned
-   // storage, retaining only the bounded prefix that fits the capacity. A
-   // string_view's size is not part of its type, so view construction requires
-   // an explicit capacity.
-   // -------------------------------------------------------------------------
-   static constexpr std::string_view static_source{"from view"};
-   constexpr auto from_static_view = String<16>{static_source};
-   static_assert(from_static_view.view() == static_source);
-
-   const std::string_view runtime_source{"runtime view"};
-   const auto from_runtime_view = String<16>{runtime_source};
-   const auto runtime_view_copy = from_runtime_view.view();
-
-   // A standard view pipeline can use an existing String as its source and
-   // materialize transformed characters into another String.
-   const auto uppercase_view = runtime | std::views::transform([](char byte) {
-                                 return byte == 'i' ? 'I' : byte;
-                               });
-   const auto from_pipeline = String<8>{uppercase_view};
-
-   static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
-   static constexpr auto span_source{std::span<const char, 4>{char_source}};
-   constexpr auto from_char_span = String{span_source};
-   static_assert(from_char_span.view() == std::string_view{"span"});
-
-   static_assert(literal.view() == std::string_view{"Hello"});
-
-   // Use C++ interoperability to sum the bytes in a String.
-   int byte_sum = 0;
-   for (const auto byte : runtime) {
-     byte_sum += byte;
-   }
-
-   const auto runtime_view = runtime.view();
-
-   return (first == 'H' && missing == '!' && byte_sum == 'H' + 'i' &&
-           runtime_view == std::string_view{"Hi"} &&
-           runtime_view_copy == runtime_source &&
-           from_pipeline.view() == std::string_view{"HI"})
-              ? 0
-              : 1;
- }
- ~~~~~
- */
-template <std::size_t CapacityValue>
-class String {
-  public:
-    using key_type = std::size_t;
-    using lookup_type = key_type;
-    using association_value_type = char;
-    using value_type = char;
-
-    static_assert(
-        CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "String CapacityValue exceeds "
-        "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
-
-    constexpr String() noexcept {
-        data_[0] = '\0';
-    }
-
-    /** Construct from a character array literal. CapacityValue counts content
-     * characters; the null terminator is managed separately. */
-    template <std::size_t N>
-    constexpr String(const char (&arr)[N]) noexcept {
-        static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
-        copy_from_source(arr, N - 1U);
-    }
-
-    constexpr String(std::string_view source) noexcept {
-        if consteval {
-            if (source.size() > CapacityValue) {
-                rejected_oversized_string_source_at_compile_time();
-            }
-        }
-        copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
-    }
-
-    // A cljonic collection or producer is not a SourceConstruction source
-    // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
-    template <std::ranges::input_range SourceRange>
-        requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
-                 !concepts_detail::is_cljonic_producer_v<SourceRange> &&
-                 std::same_as<std::remove_cv_t<std::ranges::range_value_t<SourceRange>>, char>)
-    constexpr String(SourceRange&& source) noexcept {
-        static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "String static-extent range source exceeds String CapacityValue");
-
-        std::size_t copy_count = 0;
-        for (auto&& byte : std::forward<SourceRange>(source)) {
-            if (copy_count >= CapacityValue) {
-                break;
-            }
-            data_[copy_count++] = normalize_byte(static_cast<char>(byte));
-        }
-        logical_size_ = copy_count;
-        data_[logical_size_] = '\0';
-    }
-
-    // Diagnostic fallback (REQ-DIAG-010): a cljonic collection or producer is
-    // not a SourceConstruction source. This overload exists only to explain the
-    // rejection -- it produces no value and is never a supported call target.
-    template <typename SourceValue>
-        requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
-                  concepts_detail::is_cljonic_producer_v<SourceValue>) &&
-                 !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
-        static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::String: a cljonic collection or producer is not a construction source. "
-                      "A String is built from its characters or from a non-cljonic C++ range or view. "
-                      "To copy this argument's contents into a String, use into(destination, source); "
-                      "call fits_into(destination, source) first to check whether the whole source fits.");
-    }
-
-    [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
-        return CapacityValue;
-    }
-
-    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
-        return logical_size_;
-    }
-
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
-    }
-
-    [[nodiscard]] constexpr auto operator==(const String& other) const noexcept -> bool {
-        if (logical_size_ != other.logical_size_) {
-            return false;
-        }
-        for (std::size_t i = 0; i < logical_size_; ++i) {
-            if (data_[i] != other.data_[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    [[nodiscard]] constexpr auto begin() const noexcept -> const value_type* {
-        return data_.data();
-    }
-
-    [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
-        return data_.data() + logical_size_;
-    }
-
-    [[nodiscard]] constexpr auto view() const noexcept -> std::string_view {
-        return {data_.data(), logical_size_};
-    }
-
-    /** Returns true when index falls within logical bounds (not counting null
-     * terminator). Mirrors Clojure contains? over string indices. */
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        return normalized_index && *normalized_index < logical_size_;
-    }
-
-    /** Callable index access with custom fallback value on invalid index. */
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto operator()(IndexType index, char fallback = '\0') const noexcept -> char {
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        return normalized_index && *normalized_index < logical_size_ ? data_[*normalized_index] : fallback;
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        return normalized_index && association_index_is_valid(*normalized_index);
-    }
-
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto assoc(IndexType index, char value) const noexcept -> String {
-        String result = *this;
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        if (normalized_index && association_index_is_valid(*normalized_index)) {
-            result.data_[*normalized_index] = normalize_byte(value);
-            if (*normalized_index == logical_size_) {
-                ++result.logical_size_;
-                result.data_[result.logical_size_] = '\0';
-            }
-        }
-        return result;
-    }
-
-    /** Returns a fresh String with the character at index replaced. Out-of-bounds
-     * indices leave copy unchanged. */
-    template <std::integral IndexType>
-    [[nodiscard]] constexpr auto put(IndexType index, char c) const noexcept -> String {
-        String result = *this;
-        const auto normalized_index = concepts_detail::try_normalize_index(index);
-        if (normalized_index && *normalized_index < logical_size_) {
-            result.data_[*normalized_index] = c;
-        }
-        return result;
-    }
-
-  private:
-    [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
-        return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
-    }
-
-    template <typename Source>
-    constexpr void copy_from_source(const Source& source, std::size_t copy_count) noexcept {
-        logical_size_ = copy_count;
-        for (std::size_t i = 0; i < logical_size_; ++i) {
-            data_[i] = normalize_byte(source[i]);
-        }
-        data_[logical_size_] = '\0';
-    }
-
-    [[nodiscard]] static constexpr auto normalize_byte(char byte) noexcept -> char {
-        if (byte == '\0' || static_cast<unsigned char>(byte) > 0x7FU) {
-            if consteval {
-                rejected_invalid_string_byte_at_compile_time();
-            }
-            return '.';
-        }
-        return byte;
-    }
-
-    static void rejected_invalid_string_byte_at_compile_time() noexcept;
-    static void rejected_oversized_string_source_at_compile_time() noexcept;
-
-    // Internal array is CapacityValue+1 to hold null terminator
-    std::array<char, CapacityValue + 1> data_{};
-    std::size_t logical_size_{0};
-};
-
-template <std::size_t N>
-String(const char (&)[N]) -> String<N - 1U>;
-
-template <typename SourceElement, std::size_t Extent>
-    requires(Extent != std::dynamic_extent)
-String(std::span<SourceElement, Extent>) -> String<Extent>;
-
-} // namespace cljonic
-
-namespace cljonic::concepts_detail {
-
-template <std::size_t CapacityValue>
-struct collection_traits<String<CapacityValue>> {
-    static constexpr bool is_cljonic_collection = true;
-    static constexpr collection_kind kind = collection_kind::string;
-};
-
-template <std::size_t CapacityValue>
-struct contains_floating_point<String<CapacityValue>> : std::false_type {};
-
-template <std::size_t CapacityValue>
-struct contains_callable<String<CapacityValue>> : std::false_type {};
-
-template <std::size_t CapacityValue>
-struct contains_standard_range<String<CapacityValue>> : std::false_type {};
-
-} // namespace cljonic::concepts_detail
-// End cljonic-string.hpp
 // Begin cljonic-variant.hpp
 #pragma once
 
