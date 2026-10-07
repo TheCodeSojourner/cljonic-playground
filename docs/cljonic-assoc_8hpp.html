@@ -100,18 +100,33 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#concepts">Concepts</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">cljonic-assoc.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
 </div>
 <p><a href="cljonic-assoc_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fassoc_5Fpairs_5Fadmissible_3C_20C_2C_20Pairs_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fassoc_5Fpairs_5Fadmissible_3C_20C_2C_20Pairs_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__assoc__pairs__admissible.html">cljonic::concepts_detail::all_assoc_pairs_admissible&lt; C, Pairs &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fassoc_5Fpairs_5Fadmissible_3C_20C_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fassoc_5Fpairs_5Fadmissible_3C_20C_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__assoc__pairs__admissible_3_01_c_01_4.html">cljonic::concepts_detail::all_assoc_pairs_admissible&lt; C &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fassoc_5Fpairs_5Fadmissible_3C_20C_2C_20K_2C_20V_2C_20Rest_2E_2E_2E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fassoc_5Fpairs_5Fadmissible_3C_20C_2C_20K_2C_20V_2C_20Rest_2E_2E_2E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__assoc__pairs__admissible_3_01_c_00_01_k_00_01_v_00_01_rest_8_8_8_01_4.html">cljonic::concepts_detail::all_assoc_pairs_admissible&lt; C, K, V, Rest... &gt;</a></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3AAssocPairAdmissible" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3AAssocPairAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_assoc_pair_admissible.html">cljonic::concepts_detail::AssocPairAdmissible</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -120,6 +135,30 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
  value) } noexcept -&gt; std::same_as&lt;C&gt;; }</td></tr>
 <tr class="memitem:a2fb743a916443eaa52b84a83056cc872 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a2fb743a916443eaa52b84a83056cc872">cljonic::assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.assoc(key, value))) -&gt; C</td></tr>
 <tr class="memdesc:a2fb743a916443eaa52b84a83056cc872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associates a value with a key in a <a class="el" href="classcljonic_1_1_map.html">Map</a>, or with an index in an indexed collection (<a class="el" href="classcljonic_1_1_vector.html">Vector</a>, <a class="el" href="classcljonic_1_1_string.html">String</a>).  <br /></td></tr>
+<tr class="memitem:ab8408f0ffc39c74c0c4da31e969a9f23" id="r_ab8408f0ffc39c74c0c4da31e969a9f23"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
+<tr class="memitem:ab8408f0ffc39c74c0c4da31e969a9f23 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#ab8408f0ffc39c74c0c4da31e969a9f23">cljonic::concepts_detail::fold_assoc_pairs_into</a> (C &amp;result) noexcept</td></tr>
+<tr class="memitem:a0772443ddf781e2f92adbb2ae712db64" id="r_a0772443ddf781e2f92adbb2ae712db64"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V, typename... Rest&gt; </td></tr>
+<tr class="memitem:a0772443ddf781e2f92adbb2ae712db64 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a0772443ddf781e2f92adbb2ae712db64">cljonic::concepts_detail::fold_assoc_pairs_into</a> (C &amp;result, const K &amp;key, const V &amp;value, const Rest &amp;... rest) noexcept</td></tr>
+<tr class="memitem:aa3191768d10daff5f62dfb10ab0f4551" id="r_aa3191768d10daff5f62dfb10ab0f4551"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a570dcc6213b05f494ff55d6be1497334">concepts_detail::all_assoc_pairs_admissible_v</a>&lt;C, K1, V1, K2, V2, Rest...&gt;</td></tr>
+<tr class="memitem:aa3191768d10daff5f62dfb10ab0f4551 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aa3191768d10daff5f62dfb10ab0f4551">cljonic::assoc</a> (const C &amp;collection, const K1 &amp;key1, const V1 &amp;value1, const K2 &amp;key2, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
+<tr class="memitem:a7ac59e51fb80ddc9901264fcbff00bc0" id="r_a7ac59e51fb80ddc9901264fcbff00bc0"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::AssociativeCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a7ac59e51fb80ddc9901264fcbff00bc0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a7ac59e51fb80ddc9901264fcbff00bc0">cljonic::assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept -&gt; C</td></tr>
+<tr class="memitem:a608f2ff4c627ff1c968a7d2defcce79b" id="r_a608f2ff4c627ff1c968a7d2defcce79b"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (!concepts_detail::AssocPairAdmissible&lt;C, K, V&gt;)</td></tr>
+<tr class="memitem:a608f2ff4c627ff1c968a7d2defcce79b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a608f2ff4c627ff1c968a7d2defcce79b">cljonic::assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept -&gt; C</td></tr>
+<tr class="memitem:af12d2ae213398640312e67f364415376" id="r_af12d2ae213398640312e67f364415376"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename V1, typename K2&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt;</td></tr>
+<tr class="memitem:af12d2ae213398640312e67f364415376 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af12d2ae213398640312e67f364415376">cljonic::assoc</a> (const C &amp;collection, const K1 &amp;key1, const V1 &amp;value1, const K2 &amp;key2) noexcept -&gt; C</td></tr>
+<tr class="memitem:a9ff06642383ef70ad83ccf806b74974a" id="r_a9ff06642383ef70ad83ccf806b74974a"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a570dcc6213b05f494ff55d6be1497334">concepts_detail::all_assoc_pairs_admissible_v</a>&lt;C, K1, V1, K2, V2, Rest...&gt;)</td></tr>
+<tr class="memitem:a9ff06642383ef70ad83ccf806b74974a template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a9ff06642383ef70ad83ccf806b74974a">cljonic::assoc</a> (const C &amp;collection, const K1 &amp;key1, const V1 &amp;value1, const K2 &amp;key2, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a570dcc6213b05f494ff55d6be1497334" id="r_a570dcc6213b05f494ff55d6be1497334"><td class="memTemplParams" colspan="2">template&lt;typename C, typename... Pairs&gt; </td></tr>
+<tr class="memitem:a570dcc6213b05f494ff55d6be1497334 template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a570dcc6213b05f494ff55d6be1497334">cljonic::concepts_detail::all_assoc_pairs_admissible_v</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1all__assoc__pairs__admissible.html">all_assoc_pairs_admissible</a>&lt;C, Pairs...&gt;::value</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

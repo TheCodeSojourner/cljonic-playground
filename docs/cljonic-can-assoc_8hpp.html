@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#concepts">Concepts</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">cljonic-can-assoc.hpp File Reference</div></div>
 </div><!--header-->
@@ -112,6 +113,11 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ACanAssocKeyAdmissible" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ACanAssocKeyAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible.html">cljonic::concepts_detail::CanAssocKeyAdmissible</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -120,6 +126,12 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 } noexcept -&gt; std::same_as&lt;bool&gt;; }</td></tr>
 <tr class="memitem:a4665aecc1138a24ba9756d4dd22b548d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a4665aecc1138a24ba9756d4dd22b548d">cljonic::can_assoc</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.can_assoc(key))) -&gt; bool</td></tr>
 <tr class="memdesc:a4665aecc1138a24ba9756d4dd22b548d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if assoc can succeed without capacity overflow.  <br /></td></tr>
+<tr class="memitem:a1a0cd702670fa4a05f3041550489157b" id="r_a1a0cd702670fa4a05f3041550489157b"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::AssociativeCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a1a0cd702670fa4a05f3041550489157b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a1a0cd702670fa4a05f3041550489157b">cljonic::can_assoc</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a66abeadc83a174b0f95113b1b9f8c627" id="r_a66abeadc83a174b0f95113b1b9f8c627"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanAssocKeyAdmissible&lt;C, K&gt;)</td></tr>
+<tr class="memitem:a66abeadc83a174b0f95113b1b9f8c627 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a66abeadc83a174b0f95113b1b9f8c627">cljonic::can_assoc</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; bool</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
