@@ -30,7 +30,9 @@ entity Range {
     equality_compares_start_end_step: Boolean
     provides_named_parameters_equal_operation: Boolean
     satisfies_nothrow_stable_equality_comparable: Boolean
-    contains_is_authoritative_available_index_predicate: Boolean
+    contains_is_authoritative_bounded_observation_predicate: Boolean
+    contains_does_not_provide_positional_value_retrieval: Boolean
+    does_not_satisfy_indexed_producer: Boolean
     contains_is_constant_time: Boolean
     satisfies_nothrow_collection_element: Boolean
     does_not_expose_callable_operator: Boolean
@@ -154,8 +156,16 @@ entity Range {
         this.satisfies_nothrow_stable_equality_comparable = true
     }
 
-    invariant ContainsIsAuthoritativeAvailableIndexPredicate {
-        this.contains_is_authoritative_available_index_predicate = true
+    invariant ContainsIsAuthoritativeBoundedObservationPredicate {
+        this.contains_is_authoritative_bounded_observation_predicate = true
+    }
+
+    invariant ContainsDoesNotProvidePositionalValueRetrieval {
+        this.contains_does_not_provide_positional_value_retrieval = true
+    }
+
+    invariant DoesNotSatisfyIndexedProducer {
+        this.does_not_satisfy_indexed_producer = true
     }
 
     invariant ContainsIsConstantTime {

@@ -5,6 +5,8 @@ entity CanConj {
     applies_to_all_conjable_collections: Boolean
     set_or_map_existing_element_succeeds: Boolean
     vector_or_queue_is_capacity_only: Boolean
+    string_requires_capacity_and_valid_character: Boolean
+    string_invalid_character_returns_false: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -25,6 +27,14 @@ entity CanConj {
 
     invariant VectorOrQueueIsCapacityOnly {
         this.vector_or_queue_is_capacity_only = true
+    }
+
+    invariant StringRequiresCapacityAndValidCharacter {
+        this.string_requires_capacity_and_valid_character = true
+    }
+
+    invariant StringInvalidCharacterReturnsFalse {
+        this.string_invalid_character_returns_false = true
     }
 
     invariant NoHeapAllocation {

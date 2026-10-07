@@ -6,6 +6,10 @@ entity Conj {
     supports_set_conj: Boolean
     supports_map_conj: Boolean
     supports_queue_conj: Boolean
+    supports_string_conj: Boolean
+    string_conj_appends_at_logical_count: Boolean
+    full_string_conj_returns_unchanged_copy: Boolean
+    string_conj_uses_string_character_policy: Boolean
     replaces_duplicate_key_or_element: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
@@ -33,6 +37,22 @@ entity Conj {
 
     invariant SupportsQueueConj {
         this.supports_queue_conj = true
+    }
+
+    invariant SupportsStringConj {
+        this.supports_string_conj = true
+    }
+
+    invariant StringConjAppendsAtLogicalCount {
+        this.string_conj_appends_at_logical_count = true
+    }
+
+    invariant FullStringConjReturnsUnchangedCopy {
+        this.full_string_conj_returns_unchanged_copy = true
+    }
+
+    invariant StringConjUsesStringCharacterPolicy {
+        this.string_conj_uses_string_character_policy = true
     }
 
     invariant ReplacesDuplicateKeyOrElement {

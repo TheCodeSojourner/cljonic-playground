@@ -14,6 +14,8 @@ entity String {
     null_terminator_is_uncounted: Boolean
     invalid_bytes_rejected_at_compile_time: Boolean
     runtime_invalid_bytes_replaced_with_period: Boolean
+    character_validity_policy_is_string_owned: Boolean
+    has_public_character_validity_method: Boolean
     supports_std_string_view_source_construction: Boolean
     string_view_source_copy_is_owned: Boolean
     string_view_source_is_non_allocating: Boolean
@@ -53,6 +55,13 @@ entity String {
     seqable_lifecycle_is_deferred: Boolean
     supports_assoc_update: Boolean
     supports_can_assoc_preflight: Boolean
+    supports_conj_operation: Boolean
+    supports_can_conj_preflight: Boolean
+    conj_appends_at_logical_count: Boolean
+    full_conj_returns_unchanged_string: Boolean
+    can_conj_requires_capacity_and_valid_character: Boolean
+    can_conj_rejects_invalid_character: Boolean
+    member_updates_use_string_character_policy: Boolean
     assoc_replaces_existing_character: Boolean
     assoc_appends_at_logical_count: Boolean
     invalid_assoc_index_returns_unchanged_string: Boolean
@@ -130,6 +139,14 @@ entity String {
 
     invariant RuntimeInvalidBytesReplacedWithPeriod {
         this.runtime_invalid_bytes_replaced_with_period = true
+    }
+
+    invariant CharacterValidityPolicyIsStringOwned {
+        this.character_validity_policy_is_string_owned = true
+    }
+
+    invariant HasPublicCharacterValidityMethod {
+        this.has_public_character_validity_method = true
     }
 
     invariant SupportsStdStringViewSourceConstruction {
@@ -286,6 +303,34 @@ entity String {
 
     invariant SupportsCanAssocPreflight {
         this.supports_can_assoc_preflight = true
+    }
+
+    invariant SupportsConjOperation {
+        this.supports_conj_operation = true
+    }
+
+    invariant SupportsCanConjPreflight {
+        this.supports_can_conj_preflight = true
+    }
+
+    invariant ConjAppendsAtLogicalCount {
+        this.conj_appends_at_logical_count = true
+    }
+
+    invariant FullConjReturnsUnchangedString {
+        this.full_conj_returns_unchanged_string = true
+    }
+
+    invariant CanConjRequiresCapacityAndValidCharacter {
+        this.can_conj_requires_capacity_and_valid_character = true
+    }
+
+    invariant CanConjRejectsInvalidCharacter {
+        this.can_conj_rejects_invalid_character = true
+    }
+
+    invariant MemberUpdatesUseStringCharacterPolicy {
+        this.member_updates_use_string_character_policy = true
     }
 
     invariant AssocReplacesExistingCharacter {
