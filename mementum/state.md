@@ -1,4 +1,33 @@
-## Session State
+## Current Session State
+
+- last_session_id: c00ababf-8631-4341-8c21-1a93bac20f08
+- current_timestamp: 2026-10-07
+- recover: 1
+- session_complete: true
+
+Task:
+1. `assoc` documentation — COMPLETE (commit `c638851`): clarified Map replacement and Vector/String index association, including append-at-count when capacity remains; kept String's character policy explicit. `make docs` completed in the following docs update (`55b5ca3`).
+2. `can_assoc` diagnostic/docs — COMPLETE (commit `c638851`): removed the unnecessary `conj` suggestion; `Set`/`Queue` rejection remains explicit. Confirmed String already implements `can_assoc(index)` and is covered by the capability and free-function tests.
+3. Variadic `can_assoc` exploration — DECLINED: a temporary keys-only variadic implementation and its requirement/spec/tests were removed at the human's direction. Public API remains unary.
+
+Questions:
+1. None blocking. The diagnostic-coverage sweep remains open for the 12 primitives listed below.
+2. Slice B (`cljonic::Variant` free-function API) still awaits selection.
+
+Decisions:
+1. `can_assoc` remains unary; do not add a variadic form.
+2. `can_assoc` diagnostics need not prescribe `conj`; its purpose is preflight, and `can_conj` is the corresponding insertion preflight.
+
+Validation:
+1. After reverting the variadic experiment: unary compile-fail harness passes for modular and single-header builds; `build/cljonic_tests '[can_assoc]'` passes (13 assertions); `allium check specs`, `make traceability-spec-to-code`, `make lint`, `make cljonic`, and `git diff --check` pass.
+2. `make docs` (human-run) → `docs:ok`; preceding `make docs-examples` → 29 compiled, 6 intentionally deferred.
+
+Next:
+1. Continue the diagnostic-coverage sweep: `can-conj`, `conj`, `contains`, `count`, `disj`, `dissoc`, `fits-into`, `get`, `into`, `is-empty`, `peek`, `pop`; use the approved consolidated harness/target strategy.
+2. Slice B — `cljonic::Variant` free-function API; remove its deferred lifecycle classification when implemented.
+3. Resolve `REQ-COLL-020R`'s `value_type` versus `association_value_type` wording.
+
+## Previous Session State
 
 - last_session_id: 9dcc52fd-d6ee-4681-afbf-3a14dc27f23a
 - current_timestamp: 2026-10-06
