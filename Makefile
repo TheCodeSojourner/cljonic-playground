@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail source-construction-compile-fail producer-compile-fail header-guards diagnostic-coverage _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail source-construction-compile-fail producer-compile-fail header-guards diagnostic-coverage _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -35,6 +35,9 @@ help:
 	@printf '%-12s %s\n' 'coverage' 'Build with instrumentation, run tests, enforce $(COVERAGE_THRESHOLD)% line coverage'
 	@printf '%-12s %s\n' 'coverage-cli' 'Same as coverage but print lines % to stdout; set COVERAGE_FILE=foo.hpp to narrow scope'
 	@printf '%-12s %s\n' 'docs' 'Generate Doxygen HTML documentation to docs/'
+	@printf '%-12s %s\n' 'character-is-valid-compile-fail' 'Verify unsupported character_is_valid inputs produce a targeted diagnostic'
+	@printf '%-12s %s\n' 'can-conj-compile-fail' 'Verify can_conj rejection diagnostics for unsupported collections and values'
+	@printf '%-12s %s\n' 'conj-compile-fail' 'Verify conj rejection diagnostics for unsupported collections and values'
 	@printf '%-12s %s\n' 'diagnostic-coverage' 'Verify every src/ public free-function header is classified as fallback, pending, or excluded (REQ-DIAG-009)'
 	@printf '%-12s %s\n' 'docs-examples' 'Compile Doxygen C++ sample blocks against generated $(CLJONIC_HEADER)'
 	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
@@ -156,6 +159,15 @@ assoc-compile-fail: cljonic scripts/check-assoc-compile-failures.py
 
 can-assoc-compile-fail: cljonic scripts/check-can-assoc-compile-failures.py
 	@python3 scripts/check-can-assoc-compile-failures.py
+
+can-conj-compile-fail: cljonic scripts/check-can-conj-compile-failures.py
+	@python3 scripts/check-can-conj-compile-failures.py
+
+conj-compile-fail: cljonic scripts/check-conj-compile-failures.py
+	@python3 scripts/check-conj-compile-failures.py
+
+character-is-valid-compile-fail: cljonic scripts/check-character-is-valid-compile-failures.py
+	@python3 scripts/check-character-is-valid-compile-failures.py
 
 source-construction-compile-fail: cljonic scripts/check-source-construction-compile-failures.py
 	@python3 scripts/check-source-construction-compile-failures.py
@@ -348,6 +360,9 @@ upsert-gate:
 	@$(MAKE) --no-print-directory -s not-equal-compile-fail
 	@$(MAKE) --no-print-directory -s assoc-compile-fail
 	@$(MAKE) --no-print-directory -s can-assoc-compile-fail
+	@$(MAKE) --no-print-directory -s can-conj-compile-fail
+	@$(MAKE) --no-print-directory -s conj-compile-fail
+	@$(MAKE) --no-print-directory -s character-is-valid-compile-fail
 	@$(MAKE) --no-print-directory -s source-construction-compile-fail
 	@$(MAKE) --no-print-directory -s producer-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
@@ -378,6 +393,9 @@ validate:
 	@$(MAKE) --no-print-directory -s not-equal-compile-fail
 	@$(MAKE) --no-print-directory -s assoc-compile-fail
 	@$(MAKE) --no-print-directory -s can-assoc-compile-fail
+	@$(MAKE) --no-print-directory -s can-conj-compile-fail
+	@$(MAKE) --no-print-directory -s conj-compile-fail
+	@$(MAKE) --no-print-directory -s character-is-valid-compile-fail
 	@$(MAKE) --no-print-directory -s source-construction-compile-fail
 	@$(MAKE) --no-print-directory -s producer-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
@@ -398,6 +416,9 @@ git:
 	@$(MAKE) --no-print-directory -s not-equal-compile-fail
 	@$(MAKE) --no-print-directory -s assoc-compile-fail
 	@$(MAKE) --no-print-directory -s can-assoc-compile-fail
+	@$(MAKE) --no-print-directory -s can-conj-compile-fail
+	@$(MAKE) --no-print-directory -s conj-compile-fail
+	@$(MAKE) --no-print-directory -s character-is-valid-compile-fail
 	@$(MAKE) --no-print-directory -s source-construction-compile-fail
 	@$(MAKE) --no-print-directory -s producer-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards

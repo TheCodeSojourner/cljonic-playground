@@ -36,6 +36,7 @@ REGISTRY: dict[str, str] = {
     "cljonic-not-equal.hpp": "fallback",
     "cljonic-assoc.hpp": "fallback",
     "cljonic-can-assoc.hpp": "fallback",
+    "cljonic-character-is-valid.hpp": "fallback",
     "cljonic-repeat.hpp": "fallback",
     "cljonic-cycle.hpp": "fallback",
     "cljonic-iterate.hpp": "fallback",
@@ -46,8 +47,8 @@ REGISTRY: dict[str, str] = {
     "cljonic-string.hpp": "fallback",
     "cljonic-vector.hpp": "fallback",
     # Subject to REQ-DIAG-009; fallback not yet added (application backlog).
-    "cljonic-can-conj.hpp": "pending",
-    "cljonic-conj.hpp": "pending",
+    "cljonic-can-conj.hpp": "fallback",
+    "cljonic-conj.hpp": "fallback",
     "cljonic-contains.hpp": "pending",
     "cljonic-count.hpp": "pending",
     "cljonic-disj.hpp": "pending",
