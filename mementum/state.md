@@ -1,5 +1,43 @@
 ## Current Session State
 
+- last_session_id: 3c954978-ca21-404b-883a-f448a326ca07
+- current_timestamp: 2026-10-07
+- recover: 1
+- session_complete: true
+
+Task:
+1. `/gybis-req-weed` scoped to requirements/vocabulary — COMPLETE for the agreed terms: added `Conjable` capability semantics/participation and `Indexed` constant-time wording; aligned `REQ-COLL-020B`, `REQ-CAP-007`, and lifecycle/traceability clauses. User confirmed `Range` is a producer and is not indexable; its `contains` only reports bounded-observation availability.
+2. `/gybis-vocab-weed` and `/gybis-arch-weed` for Range indexing — COMPLETE: vocabulary and architecture now reserve `IndexedProducer` for actual O(1) positional value retrieval plus matching availability. Range explicitly does not satisfy it; `contains` is not positional access. Added explicit Range spec invariants and synchronized both architecture Range-slice rules.
+3. `/gybis-specs-weed` — Allium gate PASS (36 specs, zero diagnostics/findings). `/gybis-spec-weed` — Range concept/spec/test aligned; all collection-shaping trace IDs were split into individual `TRACE_ID` calls without changing assertions. The full suite passes. Ten untraced `VariantFreeFunctionApi` obligations remain explicitly deferred; user selected `investigate`, so this weed is unresolved, not converged.
+4. `make git` complexity failure — COMPLETE: refactored `value_fits_char` into signed/unsigned helper functions without changing representability behavior; regenerated the obligation snapshot using the dedicated target. The final `make git` passes end-to-end.
+5. User declared `assoc`, `can_assoc`, `can_conj`, `character_is_valid`, and `conj` complete — confirmed against implementation, requirements-backed status, traceable tests, diagnostic harnesses, and no-heap probes.
+
+Questions:
+1. `VariantFreeFunctionApi` has ten plan obligations but remains `-- lifecycle: deferred`; `/gybis-spec-weed` decision is `investigate`. Resolve coverage treatment or activate the API before claiming spec/test/source convergence.
+2. The broader `diagnostic-coverage` gate still reports ten pending primitives: `contains`, `count`, `disj`, `dissoc`, `fits_into`, `get`, `into`, `is_empty`, `peek`, and `pop`.
+3. `REQ-COLL-020R`'s `value_type` versus `association_value_type` wording remains noted in prior state.
+
+Decisions:
+1. `Range` is not indexable. Its O(1) `contains` reports whether a position is available for bounded observation, not whether it can retrieve a value. `IndexedProducer` requires both positional retrieval and the availability predicate.
+2. `Conjable` applies to Vector, Set, Map, Queue, and String. String's `can_conj` rejects invalid characters while runtime `conj` applies String's replacement policy.
+3. The listed five free functions are considered complete within their documented scope.
+4. Do not invent implementation/tests for the deferred Variant free-function API; keep its current user decision unresolved pending investigation.
+
+Validation:
+1. Final `make git` -> `git:ok`, including format, lint, complexity, compile-fail suites, sanitizer, 100% line coverage, traceability, no-heap, docs, and docs examples.
+2. `ctest --test-dir build --output-on-failure` -> 190/190 passed.
+3. `make no-heap` -> source scan, modular/single-header probes, allocator-symbol scan all pass.
+4. Five targeted compile-fail harnesses pass: assoc, can_assoc, can_conj, conj, and character_is_valid.
+5. Allium gate -> 36 specs, zero errors/warnings/findings. Spec planning yields 1,559 obligations; 1,549 have trace IDs. The ten missing IDs are only from the explicitly deferred Variant API. Collection-shaping and Range obligations are traceable.
+6. VSM section order/coherence checks and `git diff --check` pass.
+
+Next:
+1. Resume `/gybis-spec-weed` at the unresolved Variant API coverage decision; do not describe the specs/tests/source set as converged until resolved.
+2. Continue the ten-item diagnostic-coverage backlog using the previously approved consolidated harness strategy.
+3. Resolve `REQ-COLL-020R` association return-type naming.
+
+## Previous Session State
+
 - last_session_id: c00ababf-8631-4341-8c21-1a93bac20f08
 - current_timestamp: 2026-10-07
 - recover: 1
