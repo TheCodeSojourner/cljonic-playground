@@ -53,7 +53,7 @@ template <typename C, typename K>
     -> bool {
     static_assert(concepts_detail::dependent_false<C>,
                   "cljonic::can_assoc: the first argument must be an associative collection -- Map, Vector, or "
-                  "String. Set and Queue are not associative; use conj to test adding an element to a Set or Queue.");
+                  "String. Set and Queue are not associative.");
     return false;
 }
 
