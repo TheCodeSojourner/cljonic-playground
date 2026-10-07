@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: /home/pauwhi/Downloads/junk/cljonic-playground/src/cljonic-range.hpp File Reference</title>
+<title>cljonic: /home/pauwhi/Downloads/junk/cljonic-playground/src/cljonic-character-is-valid.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -100,39 +100,45 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#concepts">Concepts</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">cljonic-range.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic-character-is-valid.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;concepts&gt;</code><br />
-<code>#include &lt;cstddef&gt;</code><br />
+<div class="textblock"><code>#include &lt;cstdint&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="cljonic-core-collection-maximum-element-count_8hpp_source.html">cljonic-core-collection-maximum-element-count.hpp</a>&gt;</code><br />
+<code>#include &lt;utility&gt;</code><br />
+<code>#include &lt;<a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>&gt;</code><br />
 </div>
-<p><a href="cljonic-range_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="cljonic-character-is-valid_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:cljonic_3A_3ARange_3C_20T_20_3E" id="r_cljonic_3A_3ARange_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_range.html">cljonic::Range&lt; T &gt;</a></td></tr>
-<tr class="memitem:cljonic_3A_3ARange_3C_20T_20_3E_3A_3Aconst_5Fiterator" id="r_cljonic_3A_3ARange_3C_20T_20_3E_3A_3Aconst_5Fiterator"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_range_1_1const__iterator.html">cljonic::Range&lt; T &gt;::const_iterator</a></td></tr>
-<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aproducer_5Ftraits_3C_20Range_3C_20T_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aproducer_5Ftraits_3C_20Range_3C_20T_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1producer__traits_3_01_range_3_01_t_01_4_01_4.html">cljonic::concepts_detail::producer_traits&lt; Range&lt; T &gt; &gt;</a></td></tr>
-<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Ffloating_5Fpoint_3C_20Range_3C_20T_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Ffloating_5Fpoint_3C_20Range_3C_20T_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1contains__floating__point_3_01_range_3_01_t_01_4_01_4.html">cljonic::concepts_detail::contains_floating_point&lt; Range&lt; T &gt; &gt;</a></td></tr>
-<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Fcallable_3C_20Range_3C_20T_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Fcallable_3C_20Range_3C_20T_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1contains__callable_3_01_range_3_01_t_01_4_01_4.html">cljonic::concepts_detail::contains_callable&lt; Range&lt; T &gt; &gt;</a></td></tr>
-<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Fstandard_5Frange_3C_20Range_3C_20T_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Fstandard_5Frange_3C_20Range_3C_20T_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1contains__standard__range_3_01_range_3_01_t_01_4_01_4.html">cljonic::concepts_detail::contains_standard_range&lt; Range&lt; T &gt; &gt;</a></td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
 <tr class="memdesc:namespacecljonic_1_1concepts__detail"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow. <br /></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ACharacterValidityInput" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ACharacterValidityInput"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_character_validity_input.html">cljonic::concepts_detail::CharacterValidityInput</a></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a45862729ffccec4459401f979e2b904c" id="r_a45862729ffccec4459401f979e2b904c"><td class="memTemplParams" colspan="2">template&lt;std::signed_integral T&gt; </td></tr>
-<tr class="memitem:a45862729ffccec4459401f979e2b904c template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a45862729ffccec4459401f979e2b904c">cljonic::parameters_equal</a> (const <a class="el" href="classcljonic_1_1_range.html">Range</a>&lt; T &gt; &amp;lhs, const <a class="el" href="classcljonic_1_1_range.html">Range</a>&lt; T &gt; &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a1af1e574036f6ebeb58fbd2ad84ec86f" id="r_a1af1e574036f6ebeb58fbd2ad84ec86f"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a1af1e574036f6ebeb58fbd2ad84ec86f template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a1af1e574036f6ebeb58fbd2ad84ec86f">cljonic::concepts_detail::signed_value_fits_char</a> (T value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a1fb29103b68deec639740ad527003d69" id="r_a1fb29103b68deec639740ad527003d69"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a1fb29103b68deec639740ad527003d69 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a1fb29103b68deec639740ad527003d69">cljonic::concepts_detail::unsigned_value_fits_char</a> (T value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a44caa6451a82185e99690a6b5b0aefbc" id="r_a44caa6451a82185e99690a6b5b0aefbc"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a44caa6451a82185e99690a6b5b0aefbc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a44caa6451a82185e99690a6b5b0aefbc">cljonic::concepts_detail::value_fits_char</a> (T value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ace3eca89e83fec40fe2e35e7fbf2cc45" id="r_ace3eca89e83fec40fe2e35e7fbf2cc45"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires concepts_detail::CharacterValidityInput&lt;T&gt;</td></tr>
+<tr class="memitem:ace3eca89e83fec40fe2e35e7fbf2cc45 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ace3eca89e83fec40fe2e35e7fbf2cc45">cljonic::character_is_valid</a> (T value) noexcept -&gt; bool</td></tr>
+<tr class="memdesc:ace3eca89e83fec40fe2e35e7fbf2cc45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a value converts to a valid <a class="el" href="classcljonic_1_1_string.html">String</a> character.  <br /></td></tr>
+<tr class="memitem:adae771d196893ef57a570e615271cbf5" id="r_adae771d196893ef57a570e615271cbf5"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires (!concepts_detail::CharacterValidityInput&lt;T&gt;)</td></tr>
+<tr class="memitem:adae771d196893ef57a570e615271cbf5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#adae771d196893ef57a570e615271cbf5">cljonic::character_is_valid</a> (T &amp;&amp;value) noexcept -&gt; bool</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

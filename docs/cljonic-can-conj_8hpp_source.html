@@ -108,22 +108,59 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> V&gt;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keyword">requires</span> <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_conjable_collection.html">concepts::ConjableCollection&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> V&amp; value) {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        { collection.can_conj(value) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
-<div class="foldopen" id="foldopen00039" data-start="{" data-end="}">
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="namespacecljonic.html#ac6296079272be6cc39017a9254a4404d">   39</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#ac6296079272be6cc39017a9254a4404d">can_conj</a>(<span class="keyword">const</span> C&amp; collection,</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>                                      <span class="keyword">const</span> V&amp; value) <span class="keyword">noexcept</span>(<span class="keyword">noexcept</span>(collection.can_conj(value))) -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">return</span> collection.can_conj(value);</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a> {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> V&gt;</div>
+<div class="foldopen" id="foldopen00048" data-start="{" data-end="}">
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="conceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible.html">   48</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible.html">CanConjValueAdmissible</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_conjable_collection.html">concepts::ConjableCollection&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> V&amp; value) {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    { collection.can_conj(value) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>};</div>
 </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>} <span class="comment">// namespace concepts_detail</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> V&gt;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keyword">requires</span> <a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible.html">concepts_detail::CanConjValueAdmissible&lt;C, V&gt;</a></div>
+<div class="foldopen" id="foldopen00056" data-start="{" data-end="}">
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a17088e15137ed905561f4020e75e17b0">   56</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a17088e15137ed905561f4020e75e17b0">can_conj</a>(<span class="keyword">const</span> C&amp; collection,</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>                                      <span class="keyword">const</span> V&amp; value) <span class="keyword">noexcept</span>(<span class="keyword">noexcept</span>(collection.can_conj(value))) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">return</span> collection.can_conj(value);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>}</div>
+</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment">// Diagnostic fallback (REQ-DIAG-009): a cljonic collection or producer that</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">// does not support conj is rejected at the public boundary.</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> V&gt;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keyword">requires</span>(concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</div>
+<div class="foldopen" id="foldopen00065" data-start="{" data-end="}">
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="namespacecljonic.html#aa65ee82488ac8c6993ff3f04cecc6d01">   65</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a17088e15137ed905561f4020e75e17b0">can_conj</a>([[maybe_unused]] <span class="keyword">const</span> C&amp; collection, [[maybe_unused]] <span class="keyword">const</span> V&amp; value) <span class="keyword">noexcept</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keyword">static_assert</span>(<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#ab8fd50010c5a1e2e4f202ac1d645d757">concepts_detail::dependent_false&lt;C&gt;</a>,</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                  <span class="stringliteral">&quot;cljonic::can_conj: the first argument must be a Conjable collection -- Vector, Set, Map, Queue, or &quot;</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                  <span class="stringliteral">&quot;String.&quot;</span>);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>}</div>
+</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> V&gt;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keyword">requires</span> concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanConjValueAdmissible&lt;C, V&gt;)</div>
+<div class="foldopen" id="foldopen00075" data-start="{" data-end="}">
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="namespacecljonic.html#af823627d08722d6cb69d5966e4cb10b5">   75</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a17088e15137ed905561f4020e75e17b0">can_conj</a>([[maybe_unused]] <span class="keyword">const</span> C&amp; collection, [[maybe_unused]] <span class="keyword">const</span> V&amp; value) <span class="keyword">noexcept</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keyword">static_assert</span>(<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#ab8fd50010c5a1e2e4f202ac1d645d757">concepts_detail::dependent_false&lt;C, V&gt;</a>,</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                  <span class="stringliteral">&quot;cljonic::can_conj: value must be admissible for the collection&#39;s conj operation.&quot;</span>);</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>}</div>
+</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>} <span class="comment">// namespace cljonic</span></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
 <div class="ttc" id="aconceptcljonic_1_1concepts_1_1_conjable_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_conjable_collection.html">cljonic::concepts::ConjableCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00403">cljonic-concepts.hpp:403</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible.html">cljonic::concepts_detail::CanConjValueAdmissible</a></div><div class="ttdef"><b>Definition</b> <a href="#l00048">cljonic-can-conj.hpp:48</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></div><div class="ttdoc">Checks whether conj can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00058">cljonic-assoc.hpp:58</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_ab8fd50010c5a1e2e4f202ac1d645d757"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#ab8fd50010c5a1e2e4f202ac1d645d757">cljonic::concepts_detail::dependent_false</a></div><div class="ttdeci">constexpr bool dependent_false</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00031">cljonic-concepts.hpp:31</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ac6296079272be6cc39017a9254a4404d"><div class="ttname"><a href="namespacecljonic.html#ac6296079272be6cc39017a9254a4404d">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</div><div class="ttdoc">Checks whether conj can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="#l00039">cljonic-can-conj.hpp:39</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a17088e15137ed905561f4020e75e17b0"><div class="ttname"><a href="namespacecljonic.html#a17088e15137ed905561f4020e75e17b0">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="#l00056">cljonic-can-conj.hpp:56</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
