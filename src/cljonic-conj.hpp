@@ -7,9 +7,12 @@ namespace cljonic {
 /** \anchor Conj
  * \brief Adds an element to a collection according to its type conventions.
  *
- * Appends at the end of a `Vector`, the rear of a `Queue`, inserts into a `Set` unless the element is already present,
- * and associates a `MapEntry` into a `Map` (replacing an existing key's value). `String` supports indexed `assoc`, not
- * `conj`. The result is a distinct collection value; the source is unchanged.
+ * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. `Vector` appends at the end. `Queue` enqueues at the
+ * rear. `String` appends at its logical count. For `String`, NUL and characters whose unsigned byte value exceeds
+ * `0x7F` are invalid; they are rejected at compile time and replaced with `.` at runtime. `Set` adds absent elements;
+ * duplicates are no-ops. `Map` associates a `MapEntry`; an existing key's value is replaced. At full capacity,
+ * `Vector`, `Queue`, and `String` return unchanged copies. A full `Set` or `Map` also returns an unchanged copy when
+ * the element or key is absent. Each operation returns a distinct collection value and preserves the source.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -25,6 +28,8 @@ namespace cljonic {
 
    constexpr auto v_const = conj(Vector<int, 4>{10, 20}, 30);
    static_assert(v_const(2) == 30);
+   constexpr auto text_const = conj(String<4>{"Hi"}, '!');
+   static_assert(text_const(2) == '!');
    constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry<int, int>{1, 100});
    static_assert(m_const(1) == 100);
 
@@ -36,12 +41,39 @@ namespace cljonic {
  }
  ~~~~~
  */
+namespace concepts_detail {
+
 template <typename C, typename T>
-    requires concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
-        { collection.conj(value) } noexcept -> std::same_as<C>;
-    }
+concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
+    { collection.conj(value) } noexcept -> std::same_as<C>;
+};
+
+} // namespace concepts_detail
+
+template <typename C, typename T>
+    requires concepts_detail::ConjValueAdmissible<C, T>
 [[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept(noexcept(collection.conj(value))) -> C {
     return collection.conj(value);
+}
+
+// Diagnostic fallback (REQ-DIAG-009): explain collection and value-domain
+// rejections without making either a supported call target.
+template <typename C, typename T>
+    requires concepts::CljonicCollection<C> && (!concepts::ConjableCollection<C>)
+[[nodiscard]] constexpr auto conj([[maybe_unused]] const C& collection, [[maybe_unused]] const T& value) noexcept -> C {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::conj: the first argument must be a Conjable collection -- Vector, Set, Map, Queue, or "
+                  "String.");
+    return collection;
+}
+
+template <typename C, typename T>
+    requires concepts::ConjableCollection<C> && (!concepts_detail::ConjValueAdmissible<C, T>)
+[[nodiscard]] constexpr auto conj([[maybe_unused]] const C& collection, [[maybe_unused]] const T& value) noexcept -> C {
+    static_assert(concepts_detail::dependent_false<C, T>,
+                  "cljonic::conj: value is outside this collection's conj domain. Map requires a MapEntry; other "
+                  "collections require an accepted element value.");
+    return collection;
 }
 
 } // namespace cljonic

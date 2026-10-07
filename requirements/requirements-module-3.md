@@ -194,7 +194,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020B(x).
-  ∀ context: the library models collection behavior using the Clojure-style capability definitions in `REQ-CAP-001` through `REQ-CAP-008`, including `Indexed`, `Lookup`, `Seqable`, and `Associative`, while preserving the bounded, non-allocating, value-semantic implementation model
+  ∀ context: the library models collection behavior using the Clojure-style capability definitions in `REQ-CAP-001` through `REQ-CAP-009` and `REQ-CAP-013`, including `Indexed`, `Lookup`, `Seqable`, `Associative`, and `Conjable`, while preserving the bounded, non-allocating, value-semantic implementation model
   ∧ ∀ `Seqable` capability ∧ its traversal operations: deferred according to the lifecycle rules in this module
   {source: stakeholder_decided, decided_by: original_spec_author}
 
@@ -266,18 +266,20 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020Q(x).
-  ∀ `String<N>` ∧ `assoc` operation whose character value is known to be invalid during constant evaluation: fails at compile time, matching the invalid-character rejection policy for a CTAD-inferred String literal
-  ∧ ∀ runtime `assoc` operation whose character value is invalid: stores `'.'` in place of that value ∧ the replacement preserves the operation's documented index, capacity, immutability, and null-terminator semantics
+  ∀ `String<N>`: String owns one character-validity policy for every operation that stores content
+  ∧ ∀ invalid_character (NUL ∨ non-ASCII): a String content update whose invalid character is known during constant evaluation fails at compile time
+  ∧ ∀ runtime String content update whose character is invalid: stores `'.'` in place of that character ∧ the replacement preserves the operation's documented index, capacity, immutability, and null-terminator semantics
+  ∧ ∀ `String::assoc` ∧ `String::conj`: applies the String-owned character policy
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020R(x).
-  ∀ context: the supported generic free-function signatures are `get(const C&, const K&) -> C::value_type`, `get(const C&, const K&, const C::value_type&) -> C::value_type`, and `contains(const C&, const K&) -> bool` for `Lookup` collections; `assoc(const C&, const K&, const C::value_type&) -> C` and `can_assoc(const C&, const K&) -> bool` for `Associative` collections
+  ∀ context: the supported generic free-function signatures are `get(const C&, const K&) -> C::value_type`, `get(const C&, const K&, const C::value_type&) -> C::value_type`, and `contains(const C&, const K&) -> bool` for `Lookup` collections; `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&) -> bool` for `Associative` collections
   ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by the required capability and collection-specific key/value domains
   ∧ ∀ `Indexed` collection: `K` is an accepted integer index type ∧ ∀ `String`: the value argument is `char`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020S(x).
-  ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, and `Associative`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, and `pop` over their supported collection inputs
+  ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, `Associative`, and `Conjable`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, and `pop` over their supported collection inputs
   ∧ ∀ (`Seqable` ∧ `seq` ∧ `first` ∧ `next` ∧ `rest`): remain `deferred` until the sequence requirements are implemented for the applicable collection inputs
   {source: stakeholder_decided, decided_by: original_spec_author}
 
@@ -444,13 +446,11 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-002M(x).
-  ∀ `can_conj(collection, value)` defined for every `Conjable` collection (`Vector`, `Set`, `Map`, `Queue`): returns true when `conj` can produce its documented result without capacity failure
+  ∀ `can_conj(collection, value)` defined for every `Conjable` collection (`Vector`, `Set`, `Map`, `Queue`, `String`): returns true when `conj` can produce its documented result without capacity failure
   ∧ ∀ (`Set` ∧ `Map`): an element or key already present returns true — insertion is a no-op or a replacement that needs no capacity — ∧ a new element or key returns true only when capacity remains
   ∧ ∀ (`Vector` ∧ `Queue`): returns true only when capacity remains; the value argument does not affect the outcome
-  ∧ ∀ `can_assoc(collection, key)` defined for every `Associative` collection: agrees with that collection's `assoc` key-domain and capacity policy ∧ ¬∃ acceptance of a value argument, because the value being associated never affects whether `assoc` can succeed
-  ∧ ∀ `Map`: an existing key returns true ∧ a new key returns true only when capacity is available
-  ∧ ∀ (`Vector` ∧ `String`): an existing logical index returns true ∧ the logical-count append index returns true only when capacity remains
-  rationale: the value being associated never affects whether `assoc` can succeed, so a value parameter would invite misuse; for `conj`, a `Set` element or `Map` key already present makes insertion succeed without capacity
+  ∧ ∀ `String`: returns true only when capacity remains and the character is valid (non-NUL ASCII) ∧ returns false for an invalid character even when capacity remains ∧ `conj` still applies the String-owned runtime replacement policy (`REQ-COLL-020Q`)
+  rationale: a `Set` element or `Map` key already present makes `conj` a successful insertion without requiring capacity
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-002P(x).
@@ -478,13 +478,14 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-002T(x).
-  ∀ context: `conj` is supported on every `Conjable` collection — `Vector`, `Set`, `Map`, and `Queue` — matching Clojure's `conj` surface over vectors, sets, maps, and queues
+  ∀ context: `conj` is supported on every `Conjable` collection — `Vector`, `Set`, `Map`, `Queue`, and `String`
   ∧ ∀ `Vector`: appends the value at the end (the highest logical index) when capacity remains ∧ a full vector returns an unchanged copy
   ∧ ∀ `Queue`: enqueues the value at the rear/tail, preserving FIFO order ∧ a full queue returns an unchanged copy
   ∧ ∀ `Set`: adds the element when absent ∧ an element already present is a successful no-op that preserves the count (`REQ-COLL-005A`) ∧ a full set returns an unchanged copy
   ∧ ∀ `Map`: `conj(map, entry)` associates the entry's key with its value — an existing key replaces its associated value without increasing count, a new key is added only when capacity remains (`REQ-COLL-004A`) ∧ the argument is a `MapEntry<K, V>` ∧ a full map with a new key returns an unchanged copy
+  ∧ ∀ `String`: `String::conj(char)` and `conj(string, char)` append the character at the logical count when capacity remains ∧ a full string returns an unchanged copy ∧ the character follows String's character-validity policy (`REQ-COLL-020Q`)
   ∧ ∀ `conj`: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ returns a new collection value ∧ preserves the source
-  rationale: Clojure's `conj` adds to every sequential and associative collection, so cljonic exposes the same four-collection surface with collection-specific insertion semantics and duplicate handling
+  rationale: `String` is a bounded indexed character collection whose `assoc` operation already appends at the logical count; `conj` exposes the same natural append behavior while preserving String's character policy
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-002U(x).
@@ -496,6 +497,22 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ odd trailing argument count (a key with no following value): rejected at compile time
   ∧ ∀ variadic form: requires at least two key-value pairs ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by `AssociativeCollection` ∧ the one-pair arity remains the existing single-pair form
   rationale: Clojure's `assoc` folds an arbitrary number of key-value pairs into a map or vector; cljonic mirrors that surface while preserving its bounded, total, non-throwing association semantics — an over-capacity or otherwise invalid pair is a per-pair no-op rather than a Clojure-style throw
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+
+λ REQ-FN-002V(x).
+  ∀ `String<N>`: provides public static `String<N>::character_is_valid(char)` returning true exactly when the character is non-NUL and its unsigned byte value is at most `0x7F`
+  ∧ ∀ free function `character_is_valid(value)`: admitted when the argument is an integral type other than `bool` ∧ returns false if the value is not representable by `char` ∧ otherwise converts without narrowing and returns the String character-validity result
+  ∧ ∀ function form: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating
+  ∧ ∀ unsupported input type (including `bool`, floating-point, enumeration, and user-defined conversion types): rejected with one targeted compile-time diagnostic
+  ∧ ∀ diagnostic fallback: constrained to unsupported input types, contains a targeted dependent `static_assert`, and is never a supported call target (`REQ-DIAG-003`, `REQ-DIAG-009`)
+  rationale: expose String's character-validity rule for direct checks while ensuring integer inputs are representable before conversion and rejecting implicit conversions that may lose information
+  {source: stakeholder_decided, decided_by: original_spec_author}
+
+λ REQ-FN-002W(x).
+  ∀ `can_assoc(collection, key)` defined for every `Associative` collection: agrees with that collection's `assoc` key-domain and capacity policy ∧ ¬∃ acceptance of a value argument, because the value being associated never affects whether `assoc` can succeed
+  ∧ ∀ `Map`: an existing key returns true ∧ an absent key returns true only when capacity remains
+  ∧ ∀ (`Vector` ∧ `String`): an existing logical index returns true ∧ the logical-count append index returns true only when capacity remains
+  rationale: the value being associated never affects whether `assoc` can succeed, so a value parameter would invite misuse
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-003(x).
@@ -541,5 +558,5 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 ## Traceability and Related Requirements
 
-- **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
+- **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
 - **Governed REQs**: `REQ-COLL-001`–`021`, `REQ-SEQ-001`–`014` (incl. `002A`–`002B`, deferred), `REQ-FN-001`–`008A`, `REQ-FN-026`.

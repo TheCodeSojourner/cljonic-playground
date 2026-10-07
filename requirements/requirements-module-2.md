@@ -7,7 +7,7 @@ This module establishes the C++20 concept capability framework, result status ou
 ## Collection Capability Definitions
 
 λ REQ-CAP-001(x).
-  ∀ context: `Indexed` means a capability for ordered, integer-indexed access to a collection's logical elements
+  ∀ context: `Indexed` means a capability for efficient (constant-time, non-traversing), integer-indexed access to a collection's logical elements
   ∧ ∀ Indexed_collection: defines a bounded logical index domain ∧ provides non-mutating access for an index in that domain ∧ provides a non-throwing, non-allocating predicate that determines whether an index is in that domain
   ∧ ∀ negative_index (representable by the accepted index type): outside the domain
   {source: stakeholder_decided, decided_by: original_spec_author}
@@ -36,24 +36,24 @@ This module establishes the C++20 concept capability framework, result status ou
 
 λ REQ-CAP-006(x).
   ∀ capability_satisfaction: compositional ∧ operation-specific
-  ∧ ∀ capabilities ∈ {`Indexed`, `Lookup`, `Seqable`, `Associative`}: distinct ∧ satisfying one does not imply another unless an explicit requirement states that relationship
+  ∧ ∀ capabilities ∈ {`Indexed`, `Lookup`, `Seqable`, `Associative`, `Conjable`}: distinct ∧ satisfying one does not imply another unless an explicit requirement states that relationship
   ∧ ∀ public_operation: requires only the capability or combination of capabilities needed by its documented behavior
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-CAP-007(x).
   ∀ context: `Indexed` refines `Lookup` for the integer lookup domain — every `Indexed` collection also satisfies `Lookup` with an integer key type ∧ indexed access and lookup agree for the same valid index
   ∧ ∀ context: `Associative` does not generally imply `Indexed` ∨ `Lookup`; its lookup-domain relationship is stated by the concrete collection requirement
-  ∧ ∀ context: `Seqable` remains independent of the other three capabilities
+  ∧ ∀ context: `Seqable` remains independent of the other four capabilities (`Indexed`, `Lookup`, `Associative`, and `Conjable`)
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-CAP-008(x).
-  ∀ supported_collection_family: required capability participation is — `Vector` satisfies `Indexed`, `Lookup`, and `Associative`; `Map` satisfies `Lookup` and `Associative`; `Set` satisfies `Lookup`; `String` satisfies `Indexed`, `Lookup`, and `Associative`; `Queue` satisfies none of these access or association capabilities by default
+  ∀ supported_collection_family: required capability participation is — `Vector` satisfies `Indexed`, `Lookup`, `Associative`, and `Conjable`; `Map` satisfies `Lookup`, `Associative`, and `Conjable`; `Set` satisfies `Lookup` and `Conjable`; `String` satisfies `Indexed`, `Lookup`, `Associative`, and `Conjable`; `Queue` satisfies `Conjable` and none of `Indexed`, `Lookup`, or `Associative` by default
   ∧ ∀ collection: satisfies `Seqable` only when the deferred sequence requirements are implemented for that collection
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-CAP-009(x).
-  ∀ public_capability_name ∈ {`Indexed`, `Lookup`, `Seqable`, `Associative`}: identifies the corresponding semantic capability in requirements, architecture, specifications, tests, source concepts, and generated documentation
-  ∧ ∀ context: `Seqable` remains lifecycle-independent from `Indexed`, `Lookup`, and `Associative`
+  ∀ public_capability_name ∈ {`Indexed`, `Lookup`, `Seqable`, `Associative`, `Conjable`}: identifies the corresponding semantic capability in requirements, architecture, specifications, tests, source concepts, and generated documentation
+  ∧ ∀ context: `Seqable` remains lifecycle-independent from `Indexed`, `Lookup`, `Associative`, and `Conjable`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-CAP-010(x).
@@ -85,6 +85,12 @@ This module establishes the C++20 concept capability framework, result status ou
   ∧ ∀ free_function: has the same behavior as its backing member method ∧ non-allocating ∧ non-mutating for query operations
   ∧ ∀ excluded_std_variant_capability ∈ {`valueless_by_exception`, exception-based `get`, multi-variant `visit`}: not provided
   ∧ ∀ class_template_argument_deduction: a single-alternative deduction guide is provided, consistent with the library's constructor-pack preference
+  {source: stakeholder_decided, decided_by: original_spec_author}
+
+λ REQ-CAP-013(x).
+  ∀ context: `Conjable` means a capability for non-mutating insertion of one value into a collection, producing a new collection value
+  ∧ ∀ Conjable_collection: defines its value type and capacity policy ∧ provides `conj` and a non-throwing, non-allocating `can_conj` preflight that agrees with `conj` for immutable inputs ∧ preserves its source collection
+  ∧ ∀ context: `Conjable` does not by itself imply `Associative`, `Indexed`, or `Lookup`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 ## Canonical Type, Result, and Status Model
@@ -161,7 +167,7 @@ This module establishes the C++20 concept capability framework, result status ou
 
 λ REQ-BOUNDS-010(x).
   ∀ context: the API provides `contains` as the canonical lookup-domain membership predicate across all collection kinds — for maps it tests key presence, for sets element presence, and for vector/string indexed collections it tests index-in-range (mirroring Clojure's `contains?`)
-  ∧ ∃ permitted_path: separately approved producer requirements extend `contains` to producer indexed domains while preserving the same non-throwing, non-allocating pre-access predicate discipline
+  ∧ ∃ permitted_path: separately approved producer requirements extend `contains` to producer bounded-observation positions while preserving the same non-throwing, non-allocating pre-access predicate discipline; this does not make a producer `Indexed` or provide positional value retrieval
   ∧ ∀ future free-function surface: provides `empty` for collection and sequence underflow checks ∧ `full` or an equivalent capacity inspection remains part of the current bounded insertion surface, along with membership or key-presence checks for key-based access where those capabilities apply
   rationale: mirrors Clojure's `contains?` so the canonical membership predicate reads consistently across collection kinds
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
@@ -392,4 +398,4 @@ This module establishes the C++20 concept capability framework, result status ou
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: C++20 concepts, preflight predicates, compile-time assertions, and result status type definitions.
-- **Governed REQs**: `REQ-CAP-001`–`012`, `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`010`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.
+- **Governed REQs**: `REQ-CAP-001`–`013`, `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`010`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.

@@ -135,9 +135,9 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-013A(x).
-  ∀ `Range`: provides a non-throwing, non-allocating, constant-time `contains` predicate over its available bounded-prefix index domain
-  ∧ ∀ `contains(range, index)`: reports whether the index is available for bounded observation, not whether the index is present as a produced value
-  ∧ ∀ `Range`: ¬∃ (key-based lookup ∨ `get` ∨ callable lookup); positional value retrieval remains deferred until explicitly approved
+  ∀ `Range`: provides a non-throwing, non-allocating, constant-time `contains` predicate over available bounded-observation positions; this predicate does not make `Range` `Indexed`
+  ∧ ∀ `contains(range, index)`: reports whether the position is available for bounded observation, not whether the index is present as a produced value
+  ∧ ∀ `Range`: ¬∃ (`Indexed` capability ∨ key-based lookup ∨ `get` ∨ callable lookup); positional value retrieval remains deferred until explicitly approved
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-013B(x).
