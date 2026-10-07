@@ -51,11 +51,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Indexed
-- **Definition:** A semantic capability for *efficient* (constant-time, non-traversing) integer-indexed access to a collection or producer's logical elements. An `Indexed` value defines a bounded logical index domain, provides non-mutating default-returning access for that domain, and provides `contains` as the non-throwing, non-allocating index-in-range predicate over that same integer domain. Negative indexes are outside the domain when representable by the accepted index type. `Indexed` refines `Lookup` for the integer lookup domain. `Indexed` is distinct from merely supporting positional access by traversal: a value that requires traversal to reach a position is not `Indexed`. `Indexed` also does not imply invocability (`IFn`, callable syntax): `Vector`/`Map`/`Set` are both `Indexed`/`Lookup`-family and invocable, but a producer such as `Range` can be `Indexed` without being invocable.
+- **Definition:** A semantic capability for *efficient* (constant-time, non-traversing) integer-indexed access to a collection's logical elements. An `Indexed` collection defines a bounded logical index domain, provides non-mutating default-returning access for that domain, and provides `contains` as the non-throwing, non-allocating index-in-range predicate over that same integer domain. Negative indexes are outside the domain when representable by the accepted index type. `Indexed` refines `Lookup` for the integer lookup domain. `Indexed` is distinct from merely supporting positional access by traversal: a collection that requires traversal to reach a position is not `Indexed`. `Indexed` does not imply invocability (`IFn`, callable syntax).
 - **Deprecated Synonyms:** indexed access, indexed collection access, index access capability
 - **Related:** Lookup, Contains, DefaultReturningResult, CapabilityConcept, Range
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector`, `String`, and `Range` are `Indexed`; `contains(xs, i)` distinguishes an invalid index from a valid position whose value equals its default element. `Range`'s indexed access is arithmetic and O(1) over its available bounded prefix, but `Range` is not invocable like `Vector`.
+- **Examples:** `Vector` and `String` are `Indexed`; `contains(xs, i)` distinguishes an invalid index from a valid position whose value equals its default element. Producers such as `Range` are not `Indexed`, even when they can test whether a position is available for bounded observation.
 
 
 ### Lookup
@@ -83,11 +83,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Conjable
-- **Definition:** A semantic capability for non-mutating insertion of one element into a collection, producing a new collection value. A `Conjable` collection defines its value type and capacity policy, preserves its source, and provides `conj` together with its `can_conj` preflight predicate. Insertion is collection-specific: `Vector` and `Queue` append at the logical end and rear respectively, `Set` inserts the element unless already present, and `Map` associates a `MapEntry` entry, replacing an existing key's value. `Conjable` does not by itself imply `Associative`, `Indexed`, or `Lookup`.
+- **Definition:** A semantic capability for non-mutating insertion of one element into a collection, producing a new collection value. A `Conjable` collection defines its value type and capacity policy, preserves its source, and provides `conj` together with its `can_conj` preflight predicate. Insertion is collection-specific: `Vector` and `Queue` append at the logical end and rear respectively, `String` appends a character at its logical count under the String character policy, `Set` inserts the element unless already present, and `Map` associates a `MapEntry` entry, replacing an existing key's value. `Conjable` does not by itself imply `Associative`, `Indexed`, or `Lookup`.
 - **Deprecated Synonyms:** conjable capability, conj capability
-- **Related:** Conj, CanConj, CopyOnModifyCollection, CapabilityConcept, Vector, Set, Map, Queue
+- **Related:** Conj, CanConj, CopyOnModifyCollection, CapabilityConcept, Vector, Set, Map, Queue, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector`, `Set`, `Map`, and `Queue` are `Conjable`; `String` is not because it supports indexed `assoc` rather than `conj`.
+- **Examples:** `Vector`, `Set`, `Map`, `Queue`, and `String` are `Conjable`; `String` appends a character with the same invalid-character policy as `assoc`.
 
 
 ### Traversal
@@ -251,7 +251,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Contains
-- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to the applicable lookup or indexed domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, for indexed collections (vector/string) it tests index-in-range, and for `Range` it tests whether an index is within the available bounded prefix.
+- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to the applicable lookup or indexed domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, and for indexed collections (vector/string) it tests index-in-range. For `Range`, it separately tests whether an integer position is available for bounded observation; this does not provide positional value access or make `Range` `Indexed`.
 - **Deprecated Synonyms:** `contains?`, contains predicate, key-presence check
 - **Related:** FreeFunction, Indexed, Lookup, PreflightPredicate, VerbPredicate, IndexedProducer, Range
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -347,7 +347,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Producer
-- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. `Range` is efficiently `Indexed`; `Repeat`, `Cycle`, `Iterate`, and `Repeatedly` are not `Indexed`. Cycle has only the public form `cycle(source)` and is always unbounded. Producers MUST NOT claim `Indexed` unless their positional access is genuinely O(1). Being `Indexed` does not imply invocability (`IFn`); no producer is invocable.
+- **Definition:** An explicit, self-contained value representing a sequence or materialization source without owning the storage of its eventual materialized result. A Producer owns its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. Every Module 4 Producer exposes non-throwing `count()`, `is_finite()`, and const `begin()`/`end()` traversal. Finite forms return their exact runtime count; unbounded forms return the configured observable traversal cap and report false from `is_finite()`. Producers are not `Indexed` collections: their elements are observed through traversal, and a bounded-observation predicate such as `Range::contains` does not provide positional value access. Cycle has only the public form `cycle(source)` and is always unbounded. No currently supported producer provides positional value retrieval.
 - **Deprecated Synonyms:** sequence producer, source producer
 - **Related:** Sequence, ProducerOnlyResult, UnboundedProducer, ProducerIteration, ProducerMaterialization, OwningValue, Indexed, Iterate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -363,9 +363,9 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Range
-- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. Finite Range forms return their exact count and `true` from `is_finite()`; zero-step forms return the configured traversal cap and `false`. `Range` exposes no canonical `start`/`end`/`step` observation; instead it is `Indexed`: `contains(r, i)` tests whether an index is within its available bounded prefix in O(1). Unlike `Vector`/`Map`/`Set`, `Range` is not invocable (not `IFn`); it exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
+- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. Finite Range forms return their exact count and `true` from `is_finite()`; zero-step forms return the configured traversal cap and `false`. `Range` exposes no canonical `start`/`end`/`step` observation and is not `Indexed`: `contains(r, i)` tests in O(1) whether position `i` is available for bounded observation, but does not retrieve its value. `Range` is not invocable (`IFn`), exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
 - **Deprecated Synonyms:** range producer, arithmetic range
-- **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount, Contains, Indexed, CljonicRange
+- **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount, Contains, CljonicRange
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `range(0, 5)` produces `0, 1, 2, 3, 4`; `range(0, 0, 0)` produces an infinite repetition of `0` rather than an empty range; when a range is larger than the system maximum, only the available bounded prefix is exposed.
 
@@ -618,7 +618,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### CallableLookup
-- **Definition:** Invocation of a collection instance via `operator()` providing concise read-only lookup with an optional fallback argument that defaults to the collection's default lookup result, behaviorally equivalent to `get`. CallableLookup mirrors Clojure's `IFn` invocability for `Vector`, `Map`, `Set`, and `String`; it MUST NOT be extended to a value that is not invocable in Clojure. A producer being `Indexed` does not by itself grant CallableLookup: `Range` is `Indexed` but not `IFn`, so it exposes no callable `operator()`.
+- **Definition:** Invocation of a collection instance via `operator()` providing concise read-only lookup with an optional fallback argument that defaults to the collection's default lookup result, behaviorally equivalent to `get`. CallableLookup mirrors Clojure's `IFn` invocability for `Vector`, `Map`, `Set`, and `String`; it MUST NOT be extended to a value that is not invocable in Clojure. A producer's bounded-observation predicate does not grant CallableLookup: `Range` is a producer, not an `Indexed` collection or `IFn` value, so it exposes no callable `operator()`.
 - **Deprecated Synonyms:** callable collection, functional lookup syntax, operator() lookup, IFn
 - **Related:** SentinelBasedAccess, DefaultElement, Indexed, Lookup
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -634,15 +634,15 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Conj
-- **Definition:** The primitive collection free function that returns a new collection with one element added according to the target collection's type conventions (end of a `Vector`, rear of a `Queue`, membership insertion for a `Set`, entry association for a `Map`). `Set` and `Map` handle a duplicate element or key by ignoring it or replacing its value; `Vector` and `Queue` always append when capacity remains.
+- **Definition:** The primitive collection free function that returns a new collection with one element added according to the target collection's type conventions (end of a `Vector` or `String`, rear of a `Queue`, membership insertion for a `Set`, entry association for a `Map`). `String` owns and applies its character-validity policy. `Set` and `Map` handle a duplicate element or key by ignoring it or replacing its value; sequence-like collections append when capacity remains.
 - **Deprecated Synonyms:** conjoin, insert element
-- **Related:** CopyOnModifyCollection, CanConj, PreflightPredicate, ConjableCollection, Vector, Set, Map, Queue
+- **Related:** CopyOnModifyCollection, CanConj, PreflightPredicate, ConjableCollection, Vector, Set, Map, Queue, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `conj(xs, 4)` appends 4 to the end of a Vector; `conj(s, 4)` adds 4 to a Set if not already present; `conj(q, 4)` enqueues 4 at the rear; `conj(m, MapEntry<int, int>{1, 100})` associates key 1 with value 100.
+- **Examples:** `conj(xs, 4)` appends 4 to a Vector; `conj(s, 4)` adds 4 to a Set if not already present; `conj(q, 4)` enqueues 4 at the rear; `conj(m, MapEntry<int, int>{1, 100})` associates key 1 with value 100; `conj(text, '!')` appends a character to a String.
 
 
 ### Assoc
-- **Definition:** The primitive `Associative` free function that returns a new collection with the supplied key-value association(s) added, replaced, or appended according to the collection's key-domain and capacity policy. Existing map keys, vector indexes, and string content indexes are replaced without increasing count; a vector or string key equal to logical count appends when capacity remains. The single-pair form takes one key and value; the variadic form takes two or more key-value pairs and applies them left to right, each pair following the same per-collection policy. Invalid keys and full-capacity append keys leave the accumulator unchanged without throwing, allocating, or mutating the source — for the variadic form this skips only the offending pair and the remaining pairs still apply. String character validity follows the documented replacement policy at runtime and constant-evaluation rejection policy.
+- **Definition:** The primitive `Associative` free function that returns a new collection with the supplied key-value association(s) added, replaced, or appended according to the collection's key-domain and capacity policy. Existing map keys, vector indexes, and string content indexes are replaced without increasing count; a vector or string key equal to logical count appends when capacity remains. The single-pair form takes one key and value; the variadic form takes two or more key-value pairs and applies them left to right, each pair following the same per-collection policy. Invalid keys and full-capacity append keys leave the accumulator unchanged without throwing, allocating, or mutating the source — for the variadic form this skips only the offending pair and the remaining pairs still apply. String validates associated characters using its own character-validity policy, which rejects invalid characters during constant evaluation and replaces them at runtime.
 - **Deprecated Synonyms:** associate, map assoc
 - **Related:** Associative, Lookup, Map, Vector, String, MapEntry, CanAssoc, Dissoc, CopyOnModifyCollection
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -690,11 +690,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### CanConj
-- **Definition:** The canonical preflight capability predicate (`can_conj`) checking whether `conj` can succeed without capacity overflow. For `Set` and `Map`, an element or key already present returns true because insertion is a no-op or a value replacement that needs no capacity; for `Vector` and `Queue` the result depends only on remaining capacity, independent of the value.
+- **Definition:** The canonical preflight capability predicate (`can_conj`) checking whether the supplied value can be accepted without capacity failure. For `Set` and `Map`, an element or key already present returns true because insertion is a no-op or a value replacement that needs no capacity; for `Vector` and `Queue` the result depends only on remaining capacity. For `String`, both capacity and a valid non-NUL ASCII character are required; invalid characters return false even though runtime `conj` normalizes them to `.`.
 - **Deprecated Synonyms:** can_conj, can-conj predicate
-- **Related:** Conj, Conjable, CapabilityPredicate, PreflightPredicate, FullState, Vector, Set, Map, Queue
+- **Related:** Conj, Conjable, CapabilityPredicate, PreflightPredicate, FullState, Vector, Set, Map, Queue, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `can_conj(s, x)` returns true if `s` is not full or if `s` already contains `x`; `can_conj(m, entry)` is true for a present key or an insertable new key; `can_conj(q, x)` is true only when the queue has room.
+- **Examples:** `can_conj(s, x)` returns true if `s` is not full or if `s` already contains `x`; `can_conj(m, entry)` is true for a present key or an insertable absent key; `can_conj(q, x)` is true only when the queue has room; `can_conj(text, ch)` requires room and a valid character, and returns false for NUL.
 
 
 ### CanAssoc
@@ -703,6 +703,14 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** Assoc, Associative, CapabilityPredicate, PreflightPredicate, FullState, Map, Vector, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `can_assoc(m, k)` is true for an existing key or an insertable new key; `can_assoc(v, count(v))` and `can_assoc(s, count(s))` are true only when capacity remains.
+
+
+### CharacterIsValid
+- **Definition:** The `String` character predicate available as `String<N>::character_is_valid(char)` and the free function `character_is_valid(value)`. The free function accepts non-`bool` integral values, returns false if a value is outside the range representable by `char`, and otherwise applies the String rule: NUL is invalid and unsigned byte values greater than `0x7F` are invalid. Unsupported types produce a targeted compile-time diagnostic.
+- **Deprecated Synonyms:** valid character predicate
+- **Related:** String, Conj, CanConj, Assoc
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `character_is_valid('A')` and `character_is_valid(65)` are true; `character_is_valid(300)`, `character_is_valid('\0')`, and `character_is_valid(static_cast<char>(0x80))` are false; a floating-point argument is rejected at compile time.
 
 
 ### Iterate
@@ -968,7 +976,7 @@ producer building blocks used across all higher-order algorithms.
 ### RejectionDiagnostic
 - **Definition:** A targeted compile-time diagnostic for any public free function whose supported domain is closed and expressible through named capability concepts — present or added later. Primary admission remains concept-based; the RejectionDiagnostic is a diagnostic overload constrained on the negation of the admission gate, provided for each supported arity, that never returns a value and is never a supported call target. It exists so that an argument outside the supported domain fails with a single targeted diagnostic that names the operation, the rejected operand types, and the violated domain rule, instead of a list of rejected concept candidates. Message content states the meaning and the violated constraint rather than depending on compiler-specific wording. Compile-time detection of domain support uses the named admission concepts and their `*_admissible_v` predicates, never callability detection such as `requires { call(...) }`. The obligation is universal and future-binding: a fallback is provided wherever a distinct overload can be formed that is viable only for a rejected call, and where none can (a domain gated before any call candidate is considered, or no sibling candidate exists) a documented exclusion is recorded instead and the single named constraint diagnostic is accepted.
 - **Deprecated Synonyms:** diagnostic fallback, rejection fallback, diagnostic overload, targeted rejection diagnostic
-- **Related:** CompileTimeFailure, CapacityConstruction, Equal, NotEqual, Variant, Assoc, Conj, Contains, Get, Count, Dissoc, Disj, Peek, Pop, CanAssoc, CanConj, IsEmpty, Into, FitsInto
+- **Related:** CompileTimeFailure, CapacityConstruction, Equal, NotEqual, Variant, Assoc, Conj, Contains, Lookup, SequenceableCollection, Dissoc, Disj, Peek, Pop, CanAssoc, CanConj, StatePredicate, ProducerMaterialization, FitsInto
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `equal(1.0, 1.0)`, `equal(Vector<int, 2>{1}, 1)`, and `not_equal(1.0, 1.0)` each resolve to a diagnostic overload whose `static_assert` names the operation and the violated equality-domain rule; the valid overloads are still selected for admitted operands. The collection primitives (`assoc`, `conj`, `get`, `contains`, `count`, `dissoc`, `disj`, `peek`, `pop`, `can_assoc`, `can_conj`, `is_empty`, `into`, `fits_into`) carry the same obligation, each with a fallback where its rejection surface admits one.
 
@@ -1195,7 +1203,7 @@ producer building blocks used across all higher-order algorithms.
 ### ConjableCollection
 - **Definition:** The C++ concept identifier implementing the `Conjable` CapabilityConcept, requiring a `conj` insertion operation and its matching `can_conj` preflight predicate that return a new collection value and preserve the source.
 - **Deprecated Synonyms:** conjable_cljonic_collection, conjable collection concept
-- **Related:** CapabilityConcept, Conjable, Conj, CanConj, SequenceableCollection, CljonicCollection, Vector, Set, Map, Queue
+- **Related:** CapabilityConcept, Conjable, Conj, CanConj, SequenceableCollection, CljonicCollection, Vector, Set, Map, Queue, String
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `ConjableCollection<C>` requires `c.conj(v)` and `c.can_conj(v)`.
 
@@ -1209,11 +1217,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### IndexedProducer
-- **Definition:** The C++ concept identifier implementing the `Indexed` CapabilityConcept for the producer domain, gated on `CljonicProducer` rather than `CljonicCollection`. It requires only `r.contains(i)` as the available-index predicate over the producer's bounded prefix, where `i` is an integer position, not a produced value. It deliberately does not require callable access, since a producer being `Indexed` does not imply it is invocable (`IFn`): `Range` is `Indexed` but not `IFn`, unlike `Vector`/`Map`/`Set`. Positional value retrieval (a `nth`-equivalent) remains deferred future work. Only producers with genuinely O(1) available-index testing may satisfy `IndexedProducer`; `Cycle`, `Iterate`, `Repeat`, and `Repeatedly` never do.
+- **Definition:** A reserved producer-domain concept for a producer that provides non-mutating positional value retrieval in O(1) time together with an availability predicate over the same bounded index domain. A producer's `contains` predicate alone is insufficient: `Range::contains` tests availability for bounded observation but does not retrieve a value, so `Range` is not an `IndexedProducer`. No currently supported producer provides positional value retrieval.
 - **Deprecated Synonyms:** indexed_cljonic_producer, indexed producer concept
 - **Related:** CapabilityConcept, CljonicProducer, CljonicRange, Indexed, IndexedCollection, Contains, SequenceableProducer
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `IndexedProducer<Range<int>>` requires `r.contains(i)`; testing whether a position is available in `Range<int>{0, 1000000000}` is O(1).
+- **Examples:** No currently supported producer satisfies `IndexedProducer`; a future producer would need to provide both O(1) positional value retrieval and its matching availability predicate.
 
 
 ### StableEqualityComparable
