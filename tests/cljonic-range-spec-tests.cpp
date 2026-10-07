@@ -60,14 +60,18 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     TRACE_ID("invariant.ProducerParameterEquality.DoesNotImplySequenceEquality");
     TRACE_ID("invariant.ProducerParameterEquality.DistinctParametersCompareUnequalEvenWhenSequencesCoincide");
     TRACE_ID("invariant.ProducerParameterEquality.ProducerAdmittedAsMapKeyAndSetElement");
-    TRACE_ID("invariant.Range.ContainsIsAuthoritativeAvailableIndexPredicate");
+    TRACE_ID("invariant.Range.ContainsIsAuthoritativeBoundedObservationPredicate");
+    TRACE_ID("invariant.Range.ContainsDoesNotProvidePositionalValueRetrieval");
+    TRACE_ID("invariant.Range.DoesNotSatisfyIndexedProducer");
     TRACE_ID("invariant.Range.ContainsIsConstantTime");
     TRACE_ID("invariant.Range.DoesNotExposeCallableOperator");
     TRACE_ID("invariant.Range.GetAndLookupAreExcluded");
     TRACE_ID("invariant.Range.FreeFunctionObservationIsCanonicalAccessPath");
     TRACE_ID("invariant.Range.StartEndStepMemberAccessorsAreNoncanonical");
 
-    // Range is Indexed but not IFn: no callable operator() exists, unlike Vector/Map/Set.
+    // Range contains() tests bounded-observation availability without providing value access.
+    STATIC_REQUIRE_FALSE(IndexedProducer<Range<int>>);
+    // Range has no callable operator() either, unlike Vector/Map/Set.
     STATIC_REQUIRE_FALSE(std::invocable<Range<int>, std::size_t>);
 
     // Default start 0 / step 1, inclusive start, exclusive end.
@@ -149,7 +153,7 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     STATIC_REQUIRE(CljonicProducer<Range<int>>);
     STATIC_REQUIRE(CljonicSource<Range<int>>);
     STATIC_REQUIRE(SequenceableProducer<Range<int>>);
-    STATIC_REQUIRE(IndexedProducer<Range<int>>);
+    STATIC_REQUIRE_FALSE(IndexedProducer<Range<int>>);
     STATIC_REQUIRE_FALSE(CljonicCollection<Range<int>>);
     STATIC_REQUIRE_FALSE(CljonicRange<Vector<int, 4>>);
     STATIC_REQUIRE(CljonicSource<Vector<int, 4>>);

@@ -570,9 +570,9 @@ TEST_CASE("ConjableCollection structural capability", "[concepts][collection]") 
     STATIC_REQUIRE(ConjableCollection<cljonic::Set<int, 4>>);
     STATIC_REQUIRE(ConjableCollection<cljonic::Map<int, int, 4>>);
     STATIC_REQUIRE(ConjableCollection<cljonic::Queue<int, 4>>);
+    STATIC_REQUIRE(ConjableCollection<cljonic::String<8>>);
 
-    // String supports indexed assoc, not conj; non-collections are rejected.
-    STATIC_REQUIRE_FALSE(ConjableCollection<cljonic::String<8>>);
+    // Non-collections are rejected.
     STATIC_REQUIRE_FALSE(ConjableCollection<int>);
 }
 

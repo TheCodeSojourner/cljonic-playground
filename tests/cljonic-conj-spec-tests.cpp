@@ -11,6 +11,7 @@ TEST_CASE("Conj free function operations", "[conj]") {
     using cljonic::MapEntry;
     using cljonic::Queue;
     using cljonic::Set;
+    using cljonic::String;
     using cljonic::Vector;
 
     TRACE_ID("entity-fields.Conj");
@@ -26,6 +27,10 @@ TEST_CASE("Conj free function operations", "[conj]") {
     TRACE_ID("invariant.Conj.SupportsSetConj");
     TRACE_ID("invariant.Conj.SupportsMapConj");
     TRACE_ID("invariant.Conj.SupportsQueueConj");
+    TRACE_ID("invariant.Conj.SupportsStringConj");
+    TRACE_ID("invariant.Conj.StringConjAppendsAtLogicalCount");
+    TRACE_ID("invariant.Conj.FullStringConjReturnsUnchangedCopy");
+    TRACE_ID("invariant.Conj.StringConjUsesStringCharacterPolicy");
     TRACE_ID("invariant.Conj.ReplacesDuplicateKeyOrElement");
 
     constexpr Queue<int, 4> q0{};
@@ -46,6 +51,12 @@ TEST_CASE("Conj free function operations", "[conj]") {
     STATIC_REQUIRE(v1(0) == 10);
     STATIC_REQUIRE(v0.count() == 2U);
 
+    constexpr String<4> text0{"AB"};
+    constexpr auto text1 = conj(text0, '!');
+    STATIC_REQUIRE(text1.count() == 3U);
+    STATIC_REQUIRE(text1(2) == '!');
+    STATIC_REQUIRE(text0.count() == 2U);
+
     // Map: conj associates one entry; an existing key replaces its value.
     constexpr auto m0 = assoc(Map<int, int, 4>{}, 1, 100);
     constexpr auto m_dup = conj(m0, MapEntry<int, int>{1, 999});
@@ -58,6 +69,8 @@ TEST_CASE("Conj free function operations", "[conj]") {
     // Full collections return unchanged copies.
     constexpr Vector<int, 2> v_full{1, 2};
     STATIC_REQUIRE(conj(v_full, 3).count() == 2U);
+    constexpr String<2> text_full{"AB"};
+    STATIC_REQUIRE(conj(text_full, '!').count() == 2U);
     constexpr auto m_full = assoc(Map<int, int, 1>{}, 1, 100);
     STATIC_REQUIRE(conj(m_full, MapEntry<int, int>{2, 200}).count() == 1U);
     STATIC_REQUIRE(conj(m_full, MapEntry<int, int>{1, 999})(1) == 999);

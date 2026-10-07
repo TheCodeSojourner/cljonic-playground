@@ -12,6 +12,8 @@
 
 TEST_CASE("String construction and indexed operations", "[string]") {
     using cljonic::assoc;
+    using cljonic::can_conj;
+    using cljonic::conj;
     using cljonic::get;
     using cljonic::String;
 
@@ -26,6 +28,8 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.NullTerminatorIsUncounted");
     TRACE_ID("invariant.String.InvalidBytesRejectedAtCompileTime");
     TRACE_ID("invariant.String.RuntimeInvalidBytesReplacedWithPeriod");
+    TRACE_ID("invariant.String.CharacterValidityPolicyIsStringOwned");
+    TRACE_ID("invariant.String.HasPublicCharacterValidityMethod");
     TRACE_ID("invariant.String.ConstCharSpanInvalidBytesAreReplacedWithPeriod");
     TRACE_ID("invariant.String.ConstCharSpanRuntimeExtentOverflowUsesBoundedPrefix");
     TRACE_ID("invariant.String.ConstCharSpanSourceCopyIsOwned");
@@ -69,6 +73,13 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.SeqableLifecycleIsDeferred");
     TRACE_ID("invariant.String.SupportsAssocUpdate");
     TRACE_ID("invariant.String.SupportsCanAssocPreflight");
+    TRACE_ID("invariant.String.SupportsConjOperation");
+    TRACE_ID("invariant.String.SupportsCanConjPreflight");
+    TRACE_ID("invariant.String.ConjAppendsAtLogicalCount");
+    TRACE_ID("invariant.String.FullConjReturnsUnchangedString");
+    TRACE_ID("invariant.String.CanConjRequiresCapacityAndValidCharacter");
+    TRACE_ID("invariant.String.CanConjRejectsInvalidCharacter");
+    TRACE_ID("invariant.String.MemberUpdatesUseStringCharacterPolicy");
     TRACE_ID("invariant.String.AssocReplacesExistingCharacter");
     TRACE_ID("invariant.String.AssocAppendsAtLogicalCount");
     TRACE_ID("invariant.String.InvalidAssocIndexReturnsUnchangedString");
@@ -151,6 +162,21 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     STATIC_REQUIRE(s_empty_cap.is_empty());
     STATIC_REQUIRE(s_empty_cap.count() == 0U);
     STATIC_REQUIRE(s_empty_cap(0) == '\0');
+    STATIC_REQUIRE_FALSE(can_conj(s_empty_cap, 'A'));
+
+    constexpr String<4> conj_source{"AB"};
+    constexpr auto conj_appended = conj(conj_source, 'C');
+    STATIC_REQUIRE(conj_appended.view() == std::string_view{"ABC"});
+    STATIC_REQUIRE(conj_appended.count() == 3U);
+    STATIC_REQUIRE(conj_source.view() == std::string_view{"AB"});
+    STATIC_REQUIRE(can_conj(conj_source, 'C'));
+    STATIC_REQUIRE_FALSE(can_conj(conj_source, '\0'));
+    STATIC_REQUIRE_FALSE(can_conj(conj_source, static_cast<char>(0x80)));
+
+    constexpr String<2> conj_full{"AB"};
+    STATIC_REQUIRE_FALSE(can_conj(conj_full, 'C'));
+    STATIC_REQUIRE_FALSE(can_conj(conj_full, '\0'));
+    STATIC_REQUIRE(conj(conj_full, 'C').view() == conj_full.view());
 
     // Runtime tests for code coverage instrumentation
     volatile std::size_t idx0_raw = 0;
@@ -181,6 +207,15 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     const auto rs_assoc_append = assoc(rs1, 2U, 'C');
     REQUIRE(rs_assoc_append.view() == std::string_view{"ABC"});
     REQUIRE(rs1.view() == std::string_view{"AB"});
+
+    const auto rs_conj_append = conj(rs1, 'C');
+    REQUIRE(rs_conj_append.view() == std::string_view{"ABC"});
+    REQUIRE(rs1.view() == std::string_view{"AB"});
+
+    volatile char invalid_conj_raw = static_cast<char>(0x80);
+    REQUIRE_FALSE(can_conj(rs1, invalid_conj_raw));
+    const auto rs_conj_normalized = conj(rs1, invalid_conj_raw);
+    REQUIRE(rs_conj_normalized.view() == std::string_view{"AB."});
 
     auto rs_put_oob = rs1.put(99, 'X');
     REQUIRE(rs_put_oob.count() == 2U);

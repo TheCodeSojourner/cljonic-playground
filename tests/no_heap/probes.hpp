@@ -7,6 +7,7 @@ namespace cljonic::no_heap::probes {
 [[nodiscard]] auto assoc_probe() noexcept -> bool;
 [[nodiscard]] auto can_assoc_probe() noexcept -> bool;
 [[nodiscard]] auto can_conj_probe() noexcept -> bool;
+[[nodiscard]] auto character_is_valid_probe() noexcept -> bool;
 [[nodiscard]] auto concepts_probe() noexcept -> bool;
 [[nodiscard]] auto cycle_probe() noexcept -> bool;
 [[nodiscard]] auto config_probe() noexcept -> bool;
