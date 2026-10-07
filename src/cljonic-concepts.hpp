@@ -395,8 +395,8 @@ concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
 
 /** Requires that an admitted collection provides immutable element insertion
  *  plus its matching capacity/element preflight operation. A `Conjable`
- *  collection is one of Vector, Set, Map, or Queue — String has no `conj` and
- *  is excluded. The value-type reference lives in the requires-expression body,
+ *  collection is one of Vector, Set, Map, Queue, or String. The value-type
+ *  reference lives in the requires-expression body,
  *  never its parameter list, so the concept stays SFINAE-friendly
  *  (REQ-DIAG-001). */
 template <typename C>
@@ -415,14 +415,14 @@ concept SequenceableProducer = CljonicProducer<C> && requires(const C& c) {
     { c.count() } noexcept -> std::same_as<std::size_t>;
 };
 
-/** Requires that an admitted producer provides the contains(i) index-in-range predicate
- *  over the available bounded prefix, in O(1) without traversal (e.g. Range). Unlike
- *  IndexedCollection, this does not require callable value access: a
- *  Range is Indexed but not CallableLookup (invocable), unlike Vector/Map/Set. Positional value
- *  retrieval is deferred future work. Cycle and Iterate never qualify; Repeat and
- *  Repeatedly never qualify either (they are not efficiently indexed in Clojure). */
+/** Requires that an admitted producer provides non-throwing positional value access
+ *  and a matching contains(i) predicate over the same bounded index domain. A
+ *  contains(i) predicate alone reports only bounded-observation availability and
+ *  does not make a producer Indexed. No currently supported producer provides
+ *  positional value retrieval. */
 template <typename C>
 concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t i) {
+    { c(i) } noexcept;
     { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 

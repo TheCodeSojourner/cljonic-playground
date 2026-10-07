@@ -10,10 +10,10 @@ namespace cljonic {
  *        collection (Vector, String).
  *
  * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association; an
- * index equal to the current count appends when capacity remains), and `String` (the same index and append rule,
- * applying the invalid-character policy: a non-ASCII or NUL character is rejected at compile time and replaced with
- * `.` at runtime). `Set` and `Queue` provide no associative capability and are rejected by the boundary constraint.
- * The result is a distinct collection value; the source is unchanged.
+ * index equal to the current count appends when capacity remains), and `String` (the same index and append rule;
+ * String validates and normalizes characters according to its own character policy). `Set` and `Queue` provide no
+ * associative capability and are rejected by the boundary constraint. The result is a distinct collection value; the
+ * source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or

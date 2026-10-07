@@ -14,9 +14,9 @@ namespace cljonic {
 
 /** \anchor String
  * \b String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
- * callable lookup with optional fallback values. The way to operate on the collection is through the library's
- * free-function API. Updates return a modified copy without changing the original collection. Construction with
- * content longer than the available capacity is rejected at compile time.
+ * callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds `0x7F` are
+ * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
+ * original collection. Construction with content longer than the available capacity is rejected at compile time.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -31,7 +31,6 @@ namespace cljonic {
    static_assert(
        std::same_as<std::remove_cvref_t<decltype(inferred)>, String<2>>);
    static_assert(inferred(1) == 'i');
-   static_assert(inferred(2, 'Z') == 'Z');
 
    // Explicit capacity permits a partially populated String and an empty String.
    constexpr auto literal = String<10>{"Hello"};
@@ -131,6 +130,8 @@ class String {
         copy_from_source(source, std::min<std::size_t>(source.size(), CapacityValue));
     }
 
+    // Copy non-cljonic character ranges into owned storage, retaining the
+    // bounded prefix for dynamic extents; statically known extents must fit.
     // A cljonic collection or producer is not a SourceConstruction source
     // (REQ-FN-027A); materialize it via into, preflighted by fits_into.
     template <std::ranges::input_range SourceRange>
@@ -177,6 +178,11 @@ class String {
 
     [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
         return logical_size_ == 0U;
+    }
+
+    /** Returns whether the character is non-NUL ASCII. */
+    [[nodiscard]] static constexpr auto character_is_valid(char value) noexcept -> bool {
+        return value != '\0' && static_cast<unsigned char>(value) <= 0x7FU;
     }
 
     [[nodiscard]] constexpr auto operator==(const String& other) const noexcept -> bool {
@@ -238,6 +244,20 @@ class String {
         return result;
     }
 
+    [[nodiscard]] constexpr auto can_conj(char value) const noexcept -> bool {
+        return logical_size_ < CapacityValue && character_is_valid(value);
+    }
+
+    [[nodiscard]] constexpr auto conj(char value) const noexcept -> String {
+        String result = *this;
+        if (result.logical_size_ < CapacityValue) {
+            result.data_[result.logical_size_] = normalize_byte(value);
+            ++result.logical_size_;
+            result.data_[result.logical_size_] = '\0';
+        }
+        return result;
+    }
+
     /** Returns a fresh String with the character at index replaced. Out-of-bounds
      * indices leave copy unchanged. */
     template <std::integral IndexType>
@@ -265,7 +285,7 @@ class String {
     }
 
     [[nodiscard]] static constexpr auto normalize_byte(char byte) noexcept -> char {
-        if (byte == '\0' || static_cast<unsigned char>(byte) > 0x7FU) {
+        if (!character_is_valid(byte)) {
             if consteval {
                 rejected_invalid_string_byte_at_compile_time();
             }

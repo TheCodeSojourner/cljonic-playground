@@ -7,11 +7,11 @@ namespace cljonic {
 /** \anchor CanAssoc
  * \brief Checks if assoc can succeed without capacity overflow.
  *
- * Supported for `Map` (an existing key can be replaced, or a new key inserted when capacity remains), `Vector` (an
+ * Supported for `Map` (an existing key can be replaced, or an absent key inserted when capacity remains), `Vector` (an
  * existing index can be replaced, or an index equal to the current count can append when capacity remains), and
  * `String` (the same index and append rule). `String` character validation and normalization are applied by `assoc` to
- * the supplied value; this preflight checks only the index. `Set` and `Queue` provide no associative capability and are
- * rejected by the boundary constraint. This preflight leaves the source unchanged.
+ * the supplied value; this preflight checks only the index. `Set` and `Queue` provide no associative capability and
+ * are rejected by the boundary constraint. This preflight leaves the source unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}

@@ -125,8 +125,8 @@
  * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
  * when their requirements are approved.
  *
- * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref Conj "conj", \ref Contains
- * "contains", \ref Count "count"
+ * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref CharacterIsValid
+ * "character_is_valid", \ref Conj "conj", \ref Contains "contains", \ref Count "count"
  * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref Core_DefaultElement "DefaultElement",
  * \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref Dissoc
  * "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
@@ -191,6 +191,7 @@
 #include <cljonic-assoc.hpp>
 #include <cljonic-can-assoc.hpp>
 #include <cljonic-can-conj.hpp>
+#include <cljonic-character-is-valid.hpp>
 #include <cljonic-concepts.hpp>
 #include <cljonic-conj.hpp>
 #include <cljonic-contains.hpp>
