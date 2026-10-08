@@ -9,7 +9,6 @@ namespace cljonic::no_heap::probes {
     using cljonic::conj;
     using cljonic::contains;
     using cljonic::Map;
-    using cljonic::Range;
     using cljonic::Set;
     using cljonic::String;
     using cljonic::Vector;
@@ -18,10 +17,8 @@ namespace cljonic::no_heap::probes {
     const auto s = conj(Set<int, 4>{}, 5);
     const auto v = Vector<int, 4>{10, 20, 30};
     const auto st = String<8>{"abc"};
-    const auto r = Range<int>{0, 5};
-
     return contains(m, 1) && !contains(m, 2) && contains(s, 5) && !contains(s, 8) && contains(v, 0U) &&
-           !contains(v, 3U) && contains(st, 1U) && !contains(st, 3U) && contains(r, 4U) && !contains(r, 5U);
+           !contains(v, 3U) && contains(st, 1U) && !contains(st, 3U);
 }
 
 } // namespace cljonic::no_heap::probes

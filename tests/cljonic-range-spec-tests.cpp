@@ -52,6 +52,8 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     TRACE_ID("invariant.Range.EqualityComparesStartEndStep");
     TRACE_ID("invariant.Range.ProvidesNamedParametersEqualOperation");
     TRACE_ID("invariant.Range.SatisfiesNothrowStableEqualityComparable");
+    TRACE_ID("invariant.Range.ContainsIsMemberOnlyPredicate");
+    TRACE_ID("invariant.Range.GenericContainsFreeFunctionIsExcluded");
     TRACE_ID("entity-fields.ProducerParameterEquality");
     TRACE_ID("invariant.ProducerParameterEquality.ComparesBoundedStoredParametersOnly");
     TRACE_ID("invariant.ProducerParameterEquality.OperatorEqualsUsesProducerParameterEquality");
