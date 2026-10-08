@@ -2,6 +2,7 @@
 
 entity Count {
     supports_count_free_function: Boolean
+    rejects_unsupported_domain_with_targeted_diagnostic: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -11,6 +12,10 @@ entity Count {
 
     invariant CountFreeFunctionSupported {
         this.supports_count_free_function = true
+    }
+
+    invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.rejects_unsupported_domain_with_targeted_diagnostic = true
     }
 
     invariant NoHeapAllocation {

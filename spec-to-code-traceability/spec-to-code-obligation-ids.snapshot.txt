@@ -274,6 +274,7 @@ invariant.Count.NoExceptions
 invariant.Count.NoHeapAllocation
 invariant.Count.NoRtti
 invariant.Count.ReferentialTransparency
+invariant.Count.RejectsUnsupportedDomainWithTargetedDiagnostic
 invariant.Count.ReturnsLogicalSize
 invariant.Count.SingleThreadedExecutionModel
 invariant.Cycle.AcceptsFiniteOrUnboundedSequenceSource
