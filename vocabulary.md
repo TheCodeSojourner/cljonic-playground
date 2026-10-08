@@ -658,11 +658,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Disj
-- **Definition:** The primitive set free function that returns a new `Set` with the specified element removed via swap-and-remove.
+- **Definition:** The primitive set free function that returns a new `Set` after removing zero or more specified elements via left-to-right swap-and-remove. Each value must exactly match the Set's declared element type; absent or repeated values are no-ops after any prior removal, and no values returns an unchanged copy.
 - **Deprecated Synonyms:** disjoin, set remove, erase element
-- **Related:** Set, Conj, SwapAndRemove, CopyOnModifyCollection
+- **Related:** Set, Conj, SwapAndRemove, CopyOnModifyCollection, RejectionDiagnostic
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `disj(s, val)` removes `val` from the set if present and decrements count.
+- **Examples:** `disj(s, 1, 3, 1)` removes `1` and `3`; the repeated `1` is a no-op because it is already absent. `disj(s)` returns an unchanged copy.
 
 
 ### Count
