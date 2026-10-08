@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-09-26
+last_updated: 2026-10-08
 status: draft
 ---
 
@@ -673,6 +673,14 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `count(Vector<int, 4>{1, 2})` and `count(Repeat{7, 3U})` return exact counts; `count(Repeat{7})` returns the `CollectionMaximumElementCount` observation cap.
 
 
+### IsEmpty
+- **Definition:** The non-throwing, non-allocating free-function predicate that returns `true` exactly when the `count(value)` observation is zero. It accepts `SequenceableCollection` and `SequenceableProducer` values and is not a member operation. For an unbounded producer, the count is the configured observation cap, not complete cardinality.
+- **Deprecated Synonyms:** empty predicate, emptiness check
+- **Related:** Collection, SequenceableCollection, SequenceableProducer, Count, FreeFunction, StatePredicate, SemanticPredicateName, RejectionDiagnostic
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `is_empty(Vector<int, 4>{})` is true; `is_empty(Vector<int, 4>{1})` is false; `is_empty(Range<int>{0, 3})` is false; a zero-step unbounded range has a nonzero observation count and is therefore not empty.
+
+
 ### Peek
 - **Definition:** The primitive sequential free function that observes the first or accessible element without removal (`Vector` top/last, `Queue` front) returning `DefaultElement` if empty.
 - **Deprecated Synonyms:** peek front, peek top
@@ -1189,15 +1197,15 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** capability concept, semantic capability gate
 - **Related:** CollectionConcept, ProducerConcept, Indexed, Lookup, Seqable, Associative, Conjable, CapabilityPredicate, SequenceableCollection, IndexedCollection, LookupCollection, AssociativeCollection, ConjableCollection, SequenceableProducer, IndexedProducer
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `SequenceableCollection<C>` is a CapabilityConcept requiring non-throwing `count()` observation; `is_empty(collection)` is derived from the count.
+- **Examples:** `SequenceableCollection<C>` is a CapabilityConcept requiring non-throwing `count()` observation; `is_empty(value)` also accepts `SequenceableProducer` and follows the same count observation.
 
 
 ### SequenceableCollection
-- **Definition:** The C++ concept identifier implementing the current sequenceable CapabilityConcept baseline, requiring non-throwing `count` observation on an admitted collection. The public `is_empty(collection)` free function derives emptiness from `count(collection) == 0`; no collection `is_empty()` member is required. SequenceableCollection is intentionally bootstrapped and may grow only when a public operation needs stronger sequence behavior; it is not the complete semantic definition of `Sequenceable` and does not by itself imply `ConstRangeTraversal`, indexed access, lookup, contiguous storage, or a particular iterator category.
+- **Definition:** The C++ concept identifier implementing the current collection sequenceable CapabilityConcept baseline, requiring non-throwing `count` observation on an admitted collection. The public `is_empty(value)` free function accepts either `SequenceableCollection` or `SequenceableProducer` and derives its result from `count(value) == 0`; no collection `is_empty()` member is required. SequenceableCollection is intentionally bootstrapped and may grow only when a public operation needs stronger sequence behavior; it is not the complete semantic definition of `Sequenceable` and does not by itself imply `ConstRangeTraversal`, indexed access, lookup, contiguous storage, or a particular iterator category.
 - **Deprecated Synonyms:** sequenceable_cljonic_collection, sequenceable collection concept
 - **Related:** CapabilityConcept, Sequenceable, Traversal, ConstRangeTraversal, CljonicCollection, IndexedCollection, LookupCollection, AssociativeCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `SequenceableCollection<C>` requires `c.count()`; `is_empty(c)` is derived from whether that count is zero.
+- **Examples:** `SequenceableCollection<C>` requires `c.count()`; `is_empty(c)` accepts a `SequenceableCollection` or `SequenceableProducer` and is derived from whether its count observation is zero.
 
 
 ### IndexedCollection
