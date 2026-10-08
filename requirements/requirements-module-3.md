@@ -273,9 +273,12 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020R(x).
-  ∀ context: the supported generic free-function signatures are `get(const C&, const K&) -> C::value_type`, `get(const C&, const K&, const C::value_type&) -> C::value_type`, and `contains(const C&, const K&) -> bool` for `Lookup` collections; `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&) -> bool` for `Associative` collections
+  ∀ context: the supported generic free-function signatures are `get(const C&, const K&) -> C::value_type`, `get(const C&, const K&, const C::value_type&) -> C::value_type`, and `contains(const C&, const K&) -> bool` for `Lookup` or `Indexed` collections; `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&) -> bool` for `Associative` collections
   ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by the required capability and collection-specific key/value domains
-  ∧ ∀ `Indexed` collection: `K` is an accepted integer index type ∧ ∀ `String`: the value argument is `char`
+  ∧ ∀ (`Map` ∨ `Set`): `contains` accepts only `K` exactly matching the collection's declared `lookup_type` after removing cv-qualification and references; no implicit conversion to that type is admitted
+  ∧ ∀ (`Vector` ∨ `String`): `contains` accepts an integral index type
+  ∧ ∀ `Range`: `contains(const Range&, const K&)` is not a supported free-function signature; `Range::contains(index)` remains the bounded-observation member predicate specified by `REQ-FN-013A`
+  ∧ ∀ `String`: the `assoc` value argument is `char`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020S(x).
@@ -506,7 +509,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ unsupported input type (including `bool`, floating-point, enumeration, and user-defined conversion types): rejected with one targeted compile-time diagnostic
   ∧ ∀ diagnostic fallback: constrained to unsupported input types, contains a targeted dependent `static_assert`, and is never a supported call target (`REQ-DIAG-003`, `REQ-DIAG-009`)
   rationale: expose String's character-validity rule for direct checks while ensuring integer inputs are representable before conversion and rejecting implicit conversions that may lose information
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-002W(x).
   ∀ `can_assoc(collection, key)` defined for every `Associative` collection: agrees with that collection's `assoc` key-domain and capacity policy ∧ ¬∃ acceptance of a value argument, because the value being associated never affects whether `assoc` can succeed
