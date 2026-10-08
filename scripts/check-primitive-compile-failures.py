@@ -37,6 +37,25 @@ PRIMITIVES = {
             "nonempty-range-producer": "(void)cljonic::is_empty(cljonic::Range<int>{0, 5});",
         },
     },
+    "disj": {
+        "diagnostic_anchor": "cljonic::disj:",
+        "diagnostic_cases": {
+            "non-set-collection": (
+                "(void)cljonic::disj(cljonic::Vector<int, 4>{}, 1);",
+                "first argument must be a Set collection",
+            ),
+            "convertible-but-not-exact-value": (
+                "(void)cljonic::disj(cljonic::Set<int, 4>{}, short{1});",
+                "must exactly match the Set's declared value_type",
+            ),
+        },
+        "pass_cases": {
+            "zero-values": "(void)cljonic::disj(cljonic::Set<int, 4>{1});",
+            "one-value": "(void)cljonic::disj(cljonic::Set<int, 4>{1}, 1);",
+            "multiple-values": "(void)cljonic::disj(cljonic::Set<int, 4>{1, 2}, 1, 2);",
+            "repeated-values": "(void)cljonic::disj(cljonic::Set<int, 4>{1, 2}, 1, 2, 1);",
+        },
+    },
     "contains": {
         "diagnostic_anchor": "cljonic::contains:",
         "diagnostic_cases": {
