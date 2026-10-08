@@ -9,6 +9,8 @@ TEST_CASE("IsEmpty free function operations", "[is_empty]") {
     using cljonic::count;
     using cljonic::is_empty;
     using cljonic::Queue;
+    using cljonic::Range;
+    using cljonic::Repeat;
     using cljonic::Vector;
 
     TRACE_ID("entity-fields.IsEmpty");
@@ -16,11 +18,27 @@ TEST_CASE("IsEmpty free function operations", "[is_empty]") {
     TRACE_ID("invariant.IsEmpty.IsEmptyDerivedFromZeroCount");
     TRACE_ID("invariant.IsEmpty.NoCollectionIsEmptyMember");
     TRACE_ID("invariant.IsEmpty.ReturnsBooleanPredicate");
+    TRACE_ID("invariant.IsEmpty.SupportsSequenceableCollectionDomain");
+    TRACE_ID("invariant.IsEmpty.SupportsSequenceableProducerDomain");
+    TRACE_ID("invariant.IsEmpty.ZeroCountMatchesEmptyObservation");
+    TRACE_ID("invariant.IsEmpty.FollowsProducerCountObservation");
+    TRACE_ID("invariant.IsEmpty.RejectsUnsupportedDomainWithTargetedDiagnostic");
+    TRACE_ID("invariant.IsEmpty.DiagnosticNamesRejectedOperandAndRequiredSequenceableDomain");
     TRACE_ID("invariant.IsEmpty.NoHeapAllocation");
     TRACE_ID("invariant.IsEmpty.NoRtti");
     TRACE_ID("invariant.IsEmpty.NoExceptions");
     TRACE_ID("invariant.IsEmpty.SingleThreadedExecutionModel");
     TRACE_ID("invariant.IsEmpty.ReferentialTransparency");
+
+    STATIC_REQUIRE(cljonic::concepts::SequenceableCollection<Vector<int, 4>>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::SequenceableCollection<Range<int>>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::SequenceableProducer<Vector<int, 4>>);
+    STATIC_REQUIRE(cljonic::concepts::SequenceableProducer<Range<int>>);
+    STATIC_REQUIRE(is_empty(Range<int>{0, 0}));
+    STATIC_REQUIRE(is_empty(Range<int>{4, 0}));
+    STATIC_REQUIRE_FALSE(is_empty(Range<int>{0, 3}));
+    STATIC_REQUIRE_FALSE(is_empty(Range<int>{0, 0, 0}));
+    STATIC_REQUIRE_FALSE(is_empty(Repeat<int>{1}));
 
     constexpr Vector<int, 4> e{};
     constexpr Vector<int, 4> v{1};
@@ -40,4 +58,7 @@ TEST_CASE("IsEmpty free function operations", "[is_empty]") {
     REQUIRE_FALSE(is_empty(rv));
     auto rev = Vector<int, 4>{};
     REQUIRE(is_empty(rev));
+    REQUIRE(is_empty(Range<int>{0, 0}));
+    REQUIRE_FALSE(is_empty(Range<int>{0, 3}));
+    REQUIRE_FALSE(is_empty(Repeat<int>{1}));
 }
