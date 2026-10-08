@@ -1,5 +1,45 @@
 ## Current Session State
 
+- last_session_id: 2a875c04-6cbd-44c8-959a-39f564cf0a67
+- current_timestamp: 2026-10-07
+- recover: 1
+- session_complete: true
+
+Task:
+1. `contains` API slice — COMPLETE: public free function supports only Map/Set/Vector/String; Map/Set require exact declared `lookup_type`, Vector/String accept integral indexes, and Range remains member-only. Added named admission predicates and targeted rejection fallbacks; updated requirements, architecture, Allium specs, tests, no-heap probes, diagnostics harness, vocabulary, generated single header, and Doxygen.
+2. Range/Contains architecture-spec sync — COMPLETE for agreed behavior: `Range::contains(index)` is bounded-observation availability, not positional value access; no `contains(range,index)` overload. The Range Allium invariant now clarifies that canonical free-function producer observation (count/materialization) does not make this predicate a free function.
+3. Requirements check — PASS with one accepted informational note: 298 clauses, unique/valid designators and domains, required footers and rationale provenance clean. User accepted Module 7's thematic REQ-FN ordering. Fixed missing `rationale_source: origin_artifact` on `REQ-FN-002V`.
+4. Vocabulary sync — COMPLETE in requirements/architecture direction: `REQ-VOCAB-001` now names the vocabulary's canonical predicate-prefix and lifecycle-status terms; architecture uses `ExcludedStatus` rather than the lowercase alias. Vocabulary itself was not changed by these syncs.
+5. Governance-vs-Allium decision — COMPLETE: user clarified Allium files specify executable/product behavior, not governance/development process. A temporary `specs/governance/quality-gates.allium` was added then removed at the user's direction; S5 change policy and S3 quality gates remain architecture-only. Allium specs: 36, valid.
+6. `/gybis-spec-weed` on Contains/Range — unresolved by explicit choice: Contains/Range contracts align. Ten `VariantFreeFunctionApi` obligations remain untraced because that API is deferred; user chose to keep it deferred and stop unresolved rather than activate the API or narrow its spec.
+7. Latest user-run `make git` — PASS: format, lint, complexity, compile-fail suites, sanitizer, 100% coverage, traceability, no-heap, docs, 30 doc examples, and cljonic-test all passed. Diagnostic coverage reports nine pending headers: count, disj, dissoc, fits_into, get, into, is_empty, peek, pop.
+
+Questions:
+1. `VariantFreeFunctionApi` remains deferred with ten untraced plan obligations; strict `/gybis-spec-weed` cannot converge until coverage policy or API lifecycle is explicitly revisited.
+2. Continue the nine-header diagnostic fallback backlog listed above.
+
+Decisions:
+1. `contains` domains are Map/Set/Vector/String only; Map/Set keys/elements must exactly match the declared lookup type; Vector/String indices are integral; Range uses only its member predicate.
+2. Keep `REQ-BOUNDS-010`'s separately approved future producer-extension permission, while the current Range free-function form remains excluded.
+3. Allium specs describe behavior with executable witnesses; governance and development-process invariants stay in architecture/gates. Do not recreate the removed governance spec without a new decision.
+4. Requirements should use vocabulary canonical names in `REQ-VOCAB-001`; lifecycle status values remain lowercase in behavioral clauses.
+5. Thematic ordering of `REQ-FN-002J` in Module 7 is accepted; do not renumber.
+6. Do not claim specs/tests/source convergence while the deferred Variant API has untraced obligations.
+
+Validation:
+1. Contains/Range Allium per-file and set-level checks pass; full specs check/analysis pass at 36 files after removing the governance-only spec.
+2. `make primitive-compile-fail` passes modular and single-header cases for the four-type domain, exact Map/Set lookup, integral indexes, and targeted diagnostics.
+3. `make traceability-spec-to-code`, `make lint`, `make no-heap`, `make sanitizer-cli` (190 tests), `make docs-examples` (30 compiled, six deferred), `make docs`, `make format`, and `git diff --check` pass.
+4. Rationale provenance audit: 37 rationale-bearing requirements, zero missing sources. Vocabulary check: 165 terms, zero errors/warnings/info. Architecture focused VSM/policy check passes for the edits made.
+5. Latest user-run `make git` exits `git:ok`.
+
+Next:
+1. Resume the nine-item diagnostic-coverage sweep using the approved consolidated `check-primitive-compile-failures.py` target.
+2. Keep the Variant API decision deferred; obtain a new human decision before changing its lifecycle or strict test-coverage treatment.
+3. No session commit has been created; commit only Mementum state below, per `/gybis-fini`.
+
+## Current Session State
+
 - last_session_id: 3c954978-ca21-404b-883a-f448a326ca07
 - current_timestamp: 2026-10-07
 - recover: 1
