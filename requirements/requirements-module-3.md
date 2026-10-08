@@ -523,6 +523,15 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   rationale: the value being associated never affects whether `assoc` can succeed, so a value parameter would invite misuse
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
+λ REQ-FN-002X(x).
+  ∀ `disj(set, values...)`: defined only for a `Set` and zero or more values each having exactly the Set's declared `value_type` ∧ any other first-argument or value type is rejected at the public API boundary
+  ∧ ∀ zero values: returns an unchanged copy of the Set
+  ∧ ∀ one or more values: removes each value if present, applying removals from left to right ∧ an absent value is a no-op ∧ repeated values are permitted and subsequent removal of a now-absent value remains a no-op ∧ result is equivalent to sequential application of the existing Set removal operation
+  ∧ ∀ arity: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ returns a collection value ∧ preserves the source
+  ∧ ∀ unsupported first-argument or value type: fails compilation with one targeted diagnostic naming `disj` and the violated Set/value-type domain (`REQ-DIAG-003`, `REQ-DIAG-009`)
+  rationale: Clojure's `disj` accepts zero or more values, returns the collection unchanged when given none, and sequentially removes each supplied member; exact element types avoid silently narrowing or converting membership queries
+  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+
 λ REQ-FN-003(x).
   ∀ generic_free_function: constrained by explicit concepts or equivalent compile-time requirements
   {source: stakeholder_decided, decided_by: original_spec_author}
