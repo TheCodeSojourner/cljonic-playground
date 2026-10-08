@@ -37,6 +37,37 @@ PRIMITIVES = {
             "nonempty-range-producer": "(void)cljonic::is_empty(cljonic::Range<int>{0, 5});",
         },
     },
+    "dissoc": {
+        "diagnostic_anchor": "cljonic::dissoc:",
+        "diagnostic_cases": {
+            "non-map-zero-keys": (
+                "(void)cljonic::dissoc(cljonic::Set<int, 4>{});",
+                "collection must be a Map; only Maps support dissoc",
+            ),
+            "non-map-with-key": (
+                "(void)cljonic::dissoc(cljonic::Set<int, 4>{}, 1);",
+                "first argument must be a Map; only Maps support dissoc",
+            ),
+            "non-map-multiple-keys": (
+                "(void)cljonic::dissoc(cljonic::Set<int, 4>{}, 1, 2);",
+                "first argument must be a Map; only Maps support dissoc",
+            ),
+            "non-convertible-key": (
+                "struct DissocNotConvertible {}; (void)cljonic::dissoc(cljonic::Map<int, int, 4>{}, DissocNotConvertible{});",
+                "each key must be convertible to the Map's key type",
+            ),
+            "non-convertible-trailing-key": (
+                "struct DissocNotConvertible {}; (void)cljonic::dissoc(cljonic::Map<int, int, 4>{}, 1, DissocNotConvertible{});",
+                "each key must be convertible to the Map's key type",
+            ),
+        },
+        "pass_cases": {
+            "zero-keys": "(void)cljonic::dissoc(cljonic::Map<int, int, 4>{});",
+            "present-map-key": "(void)cljonic::dissoc(cljonic::Map{cljonic::MapEntry{1, 10}}, 1);",
+            "absent-map-key": "(void)cljonic::dissoc(cljonic::Map<int, int, 4>{}, 1);",
+            "multiple-keys": "(void)cljonic::dissoc(cljonic::Map{cljonic::MapEntry{1, 10}, cljonic::MapEntry{2, 20}}, 1, short{2});",
+        },
+    },
     "disj": {
         "diagnostic_anchor": "cljonic::disj:",
         "diagnostic_cases": {
