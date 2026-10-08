@@ -205,6 +205,7 @@ Concepts</h2></td></tr>
 <tr class="memitem:ContainsIndexedCollection" id="r_ContainsIndexedCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_indexed_collection.html">ContainsIndexedCollection</a></td></tr>
 <tr class="memitem:ContainsLookupCollection" id="r_ContainsLookupCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_lookup_collection.html">ContainsLookupCollection</a></td></tr>
 <tr class="memitem:ContainsSupportedCollection" id="r_ContainsSupportedCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_supported_collection.html">ContainsSupportedCollection</a></td></tr>
+<tr class="memitem:DisjAdmissible" id="r_DisjAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_disj_admissible.html">DisjAdmissible</a></td></tr>
 <tr class="memitem:EqualDomainValue" id="r_EqualDomainValue"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_equal_domain_value.html">EqualDomainValue</a></td></tr>
 <tr class="memitem:EqualMapPairAdmissible" id="r_EqualMapPairAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_equal_map_pair_admissible.html">EqualMapPairAdmissible</a></td></tr>
 <tr class="memitem:EqualPairAdmissible" id="r_EqualPairAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_equal_pair_admissible.html">EqualPairAdmissible</a></td></tr>
@@ -312,6 +313,7 @@ Variables</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Checks whether conj can succeed without capacity overflow. </p>
+<p>Disjoins zero or more elements from a set.</p>
 <p>Tests key presence, element membership, or index validity in a <a class="el" href="classcljonic_1_1_map.html">Map</a>, <a class="el" href="classcljonic_1_1_set.html">Set</a>, <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, or <a class="el" href="classcljonic_1_1_string.html">String</a>.</p>
 <p>Adds an element to a collection according to its type conventions.</p>
 <p><a class="anchor" id="CanConj"></a> </p>
@@ -405,6 +407,32 @@ Variables</h2></td></tr>
 <div class="ttc" id="anamespacecljonic_html_a2c1c737c352027b41c8f7a0bbfecc2ac"><div class="ttname"><a href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">cljonic::Vector</a></div><div class="ttdeci">Vector(First, Rest...) -&gt; Vector&lt; First, 1+sizeof...(Rest)&gt;</div></div>
 <div class="ttc" id="anamespacecljonic_html_af20d169ef36288b54ca608a14eb6b557"><div class="ttname"><a href="namespacecljonic.html#af20d169ef36288b54ca608a14eb6b557">cljonic::Set</a></div><div class="ttdeci">Set(First, Rest...) -&gt; Set&lt; First, 1+sizeof...(Rest)&gt;</div></div>
 <div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00032">cljonic-map-entry.hpp:32</a></div></div>
+</div><!-- fragment --><p><a class="anchor" id="Disj"></a> </p>
+<p><span class="tt">disj(set, values...)</span> accepts only values whose type exactly matches the <a class="el" href="classcljonic_1_1_set.html">Set</a>'s <span class="tt">value_type</span>. Values are removed from left to right; absent or repeated values are no-ops after any prior removal. Calling <span class="tt">disj(set)</span> with no values returns an unchanged copy.</p>
+<p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
+<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s0_const = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{42, 7, 8};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1_const = <a class="code hl_function" href="namespacecljonic.html#a523eadba6652db67d95d3e910ec80008">disj</a>(s0_const, 42);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2_const = <a class="code hl_function" href="namespacecljonic.html#a523eadba6652db67d95d3e910ec80008">disj</a>(s1_const, 7, 8, 7);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s3_const = <a class="code hl_function" href="namespacecljonic.html#a523eadba6652db67d95d3e910ec80008">disj</a>(<a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{1, 3}, 1, 3, 1);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s4_const = <a class="code hl_function" href="namespacecljonic.html#a523eadba6652db67d95d3e910ec80008">disj</a>(s2_const);</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="namespacecljonic.html#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s1_const, 42));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="namespacecljonic.html#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(s2_const));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="namespacecljonic.html#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(s3_const));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="namespacecljonic.html#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(s4_const, s2_const));</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
+<div class="line">  <span class="keyword">auto</span> s0_runtime = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{99};</div>
+<div class="line">  <span class="keyword">auto</span> s1_runtime = <a class="code hl_function" href="namespacecljonic.html#a523eadba6652db67d95d3e910ec80008">disj</a>(s0_runtime, 99);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> (!<a class="code hl_function" href="namespacecljonic.html#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s1_runtime, 99) &amp;&amp; <a class="code hl_function" href="namespacecljonic.html#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(s1_runtime)) ? 0 : 1;</div>
+<div class="line">}</div>
+<div class="ttc" id="anamespacecljonic_html_a3379aa2a8b5ffa4566662c4b4a1455c2"><div class="ttname"><a href="namespacecljonic.html#a3379aa2a8b5ffa4566662c4b4a1455c2">cljonic::equal</a></div><div class="ttdeci">constexpr auto equal(const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</div><div class="ttdoc">Compares one or more values for equality.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-equal_8hpp_source.html#l00301">cljonic-equal.hpp:301</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a523eadba6652db67d95d3e910ec80008"><div class="ttname"><a href="namespacecljonic.html#a523eadba6652db67d95d3e910ec80008">cljonic::disj</a></div><div class="ttdeci">constexpr auto disj(const C &amp;collection, const Values &amp;... values) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-disj_8hpp_source.html#l00051">cljonic-disj.hpp:51</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_acc881adb41275d2d6cb0aed6b943ad5b"><div class="ttname"><a href="namespacecljonic.html#acc881adb41275d2d6cb0aed6b943ad5b">cljonic::is_empty</a></div><div class="ttdeci">constexpr auto is_empty(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdoc">Returns true when a collection or producer is empty.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-is-empty_8hpp_source.html#l00036">cljonic-is-empty.hpp:36</a></div></div>
 </div><!-- fragment --> </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
 <a id="a9ec0bbabc401295eef4c14d6b7ac411c" name="a9ec0bbabc401295eef4c14d6b7ac411c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9ec0bbabc401295eef4c14d6b7ac411c">&#9670;&#160;</a></span>equal_association_value_type_of_t</h2>
