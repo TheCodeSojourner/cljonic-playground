@@ -115,9 +115,13 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ad637ffe5ee8423fa106fbdfdb9ce9529" id="r_ad637ffe5ee8423fa106fbdfdb9ce9529"><td class="memTemplParams" colspan="2">template&lt;concepts::SequenceableCollection C&gt; </td></tr>
-<tr class="memitem:ad637ffe5ee8423fa106fbdfdb9ce9529 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ad637ffe5ee8423fa106fbdfdb9ce9529">cljonic::is_empty</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
-<tr class="memdesc:ad637ffe5ee8423fa106fbdfdb9ce9529"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true when the collection has no active elements.  <br /></td></tr>
+<tr class="memitem:acc881adb41275d2d6cb0aed6b943ad5b" id="r_acc881adb41275d2d6cb0aed6b943ad5b"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProducer&lt;C&gt;</td></tr>
+<tr class="memitem:acc881adb41275d2d6cb0aed6b943ad5b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#acc881adb41275d2d6cb0aed6b943ad5b">cljonic::is_empty</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
+<tr class="memdesc:acc881adb41275d2d6cb0aed6b943ad5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true when a collection or producer is empty.  <br /></td></tr>
+<tr class="memitem:a5288eeeb5a3825b4e6bde9649b936128" id="r_a5288eeeb5a3825b4e6bde9649b936128"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts::SequenceableCollection&lt;C&gt; &amp;&amp; !concepts::SequenceableProducer&lt;C&gt;)</td></tr>
+<tr class="memitem:a5288eeeb5a3825b4e6bde9649b936128 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a5288eeeb5a3825b4e6bde9649b936128">cljonic::is_empty</a> (const C &amp;collection) noexcept -&gt; void</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

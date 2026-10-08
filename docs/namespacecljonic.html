@@ -270,9 +270,13 @@ fallback) { collection(key, fallback); }</td></tr>
 <tr class="memitem:a2657ed445a742b6fa503dff183ac3a61" id="r_a2657ed445a742b6fa503dff183ac3a61"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; </td></tr>
 <tr class="memitem:a2657ed445a742b6fa503dff183ac3a61 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a2657ed445a742b6fa503dff183ac3a61">into</a> (const Dest &amp;destination, const Source &amp;source) noexcept -&gt; Dest</td></tr>
 <tr class="memdesc:a2657ed445a742b6fa503dff183ac3a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Materializes a source (collection or producer) into an explicit bounded destination, appending its elements.  <br /></td></tr>
-<tr class="memitem:ad637ffe5ee8423fa106fbdfdb9ce9529" id="r_ad637ffe5ee8423fa106fbdfdb9ce9529"><td class="memTemplParams" colspan="2">template&lt;concepts::SequenceableCollection C&gt; </td></tr>
-<tr class="memitem:ad637ffe5ee8423fa106fbdfdb9ce9529 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
-<tr class="memdesc:ad637ffe5ee8423fa106fbdfdb9ce9529"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true when the collection has no active elements.  <br /></td></tr>
+<tr class="memitem:acc881adb41275d2d6cb0aed6b943ad5b" id="r_acc881adb41275d2d6cb0aed6b943ad5b"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProducer&lt;C&gt;</td></tr>
+<tr class="memitem:acc881adb41275d2d6cb0aed6b943ad5b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
+<tr class="memdesc:acc881adb41275d2d6cb0aed6b943ad5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true when a collection or producer is empty.  <br /></td></tr>
+<tr class="memitem:a5288eeeb5a3825b4e6bde9649b936128" id="r_a5288eeeb5a3825b4e6bde9649b936128"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts::SequenceableCollection&lt;C&gt; &amp;&amp; !concepts::SequenceableProducer&lt;C&gt;)</td></tr>
+<tr class="memitem:a5288eeeb5a3825b4e6bde9649b936128 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5288eeeb5a3825b4e6bde9649b936128">is_empty</a> (const C &amp;collection) noexcept -&gt; void</td></tr>
 <tr class="memitem:a63314a7947b7251553be23329779260a" id="r_a63314a7947b7251553be23329779260a"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T&gt; <br />
 requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt; &amp;&amp; concepts::IterateStep&lt;std::remove_cvref_t&lt;T&gt;, std::decay_t<br class="typebreak" />
 &lt;Step&gt;&gt;</td></tr>
@@ -1396,11 +1400,11 @@ template&lt;typename C, typename T&gt; </div>
 <div class="line">  <span class="keyword">auto</span> s0_runtime = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{}, 99);</div>
 <div class="line">  <span class="keyword">auto</span> s1_runtime = <a class="code hl_function" href="#a208a537a25b84868835300afc4c14047">disj</a>(s0_runtime, 99);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s1_runtime, 99) &amp;&amp; <a class="code hl_function" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(s1_runtime)) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s1_runtime, 99) &amp;&amp; <a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(s1_runtime)) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00097">cljonic-set.hpp:97</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a208a537a25b84868835300afc4c14047"><div class="ttname"><a href="#a208a537a25b84868835300afc4c14047">cljonic::disj</a></div><div class="ttdeci">constexpr auto disj(const C &amp;collection, const T &amp;value) noexcept</div><div class="ttdoc">Disjoins an element from a set.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-disj_8hpp_source.html#l00031">cljonic-disj.hpp:31</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ad637ffe5ee8423fa106fbdfdb9ce9529"><div class="ttname"><a href="#ad637ffe5ee8423fa106fbdfdb9ce9529">cljonic::is_empty</a></div><div class="ttdeci">constexpr auto is_empty(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdoc">Returns true when the collection has no active elements.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-is-empty_8hpp_source.html#l00031">cljonic-is-empty.hpp:31</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_acc881adb41275d2d6cb0aed6b943ad5b"><div class="ttname"><a href="#acc881adb41275d2d6cb0aed6b943ad5b">cljonic::is_empty</a></div><div class="ttdeci">constexpr auto is_empty(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdoc">Returns true when a collection or producer is empty.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-is-empty_8hpp_source.html#l00036">cljonic-is-empty.hpp:36</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-disj_8hpp_source.html#l00031">31</a> of file <a class="el" href="cljonic-disj_8hpp_source.html">cljonic-disj.hpp</a>.</p>
 
@@ -1452,7 +1456,7 @@ requires concepts::CljonicMap&lt;C&gt; &amp;&amp; requires(const C&amp; collecti
 <div class="line">  <span class="keyword">auto</span> m0_runtime = <a class="code hl_function" href="#a2fb743a916443eaa52b84a83056cc872">assoc</a>(<a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a>{}, 2, 200);</div>
 <div class="line">  <span class="keyword">auto</span> m1_runtime = <a class="code hl_function" href="#a83efc0b362080fa3ab987a921a9d0aa7">dissoc</a>(m0_runtime, 2);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(m1_runtime, 2) &amp;&amp; <a class="code hl_function" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(m1_runtime)) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(m1_runtime, 2) &amp;&amp; <a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(m1_runtime)) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html_a83efc0b362080fa3ab987a921a9d0aa7"><div class="ttname"><a href="#a83efc0b362080fa3ab987a921a9d0aa7">cljonic::dissoc</a></div><div class="ttdeci">constexpr auto dissoc(const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.dissoc(key))) -&gt; C</div><div class="ttdoc">Disassociates a key from a map.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-dissoc_8hpp_source.html#l00033">cljonic-dissoc.hpp:33</a></div></div>
 </div><!-- fragment --> 
@@ -1496,13 +1500,13 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1, 2, 3};</div>
 <div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> e_const = <a class="code hl_function" href="#a2936b6921ca67e4b8ae5f221c095bde0">empty</a>(v_const);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(e_const));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(e_const));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> v_runtime = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10, 20};</div>
 <div class="line">  <span class="keyword">auto</span> e_runtime = <a class="code hl_function" href="#a2936b6921ca67e4b8ae5f221c095bde0">empty</a>(v_runtime);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(e_runtime) &amp;&amp; <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(v_runtime) == 2U) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(e_runtime) &amp;&amp; <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(v_runtime) == 2U) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html_a2936b6921ca67e4b8ae5f221c095bde0"><div class="ttname"><a href="#a2936b6921ca67e4b8ae5f221c095bde0">cljonic::empty</a></div><div class="ttdeci">constexpr auto empty(const C &amp;) noexcept -&gt; C</div><div class="ttdoc">Returns an empty owning value of the same collection type as the input.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-empty_8hpp_source.html#l00034">cljonic-empty.hpp:34</a></div></div>
 </div><!-- fragment --> 
@@ -2155,13 +2159,14 @@ template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; </d
 
 </div>
 </div>
-<a id="ad637ffe5ee8423fa106fbdfdb9ce9529" name="ad637ffe5ee8423fa106fbdfdb9ce9529"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad637ffe5ee8423fa106fbdfdb9ce9529">&#9670;&#160;</a></span>is_empty()</h2>
+<a id="acc881adb41275d2d6cb0aed6b943ad5b" name="acc881adb41275d2d6cb0aed6b943ad5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc881adb41275d2d6cb0aed6b943ad5b">&#9670;&#160;</a></span>is_empty() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::SequenceableCollection C&gt; </div>
+template&lt;typename C&gt; <br />
+requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProducer&lt;C&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2180,7 +2185,7 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Returns true when the collection has no active elements. </p>
+<p>Returns true when a collection or producer is empty. </p>
 <p><a class="anchor" id="IsEmpty"></a> </p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -2189,17 +2194,51 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> e_const = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(e_const));</div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(v_const));</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> empty_range = <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a>{0, 0};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded_repeat = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat&lt;int&gt;</a>{7};</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(e_const));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(v_const));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(empty_range));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(unbounded_repeat));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> v_runtime = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10};</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> empty_res = <a class="code hl_function" href="#ad637ffe5ee8423fa106fbdfdb9ce9529">is_empty</a>(v_runtime);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> empty_res = <a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(v_runtime);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (!empty_res) ? 0 : 1;</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-is-empty_8hpp_source.html#l00031">31</a> of file <a class="el" href="cljonic-is-empty_8hpp_source.html">cljonic-is-empty.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-is-empty_8hpp_source.html#l00036">36</a> of file <a class="el" href="cljonic-is-empty_8hpp_source.html">cljonic-is-empty.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5288eeeb5a3825b4e6bde9649b936128" name="a5288eeeb5a3825b4e6bde9649b936128"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5288eeeb5a3825b4e6bde9649b936128">&#9670;&#160;</a></span>is_empty() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires (!concepts::SequenceableCollection&lt;C&gt; &amp;&amp; !concepts::SequenceableProducer&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::is_empty </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-is-empty_8hpp_source.html#l00042">42</a> of file <a class="el" href="cljonic-is-empty_8hpp_source.html">cljonic-is-empty.hpp</a>.</p>
 
 </div>
 </div>
