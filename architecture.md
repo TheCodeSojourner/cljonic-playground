@@ -25,6 +25,8 @@
 
 ## S5 - Identity
 
+The embedded-first policy keeps resource bounds, deterministic outcomes, and value ownership auditable on constrained targets; weakening those guarantees would change cljonic's purpose.
+
 λ S5_identity_intro(x). identity(x) ≡ embedded_first ∧ HeaderOnlyDistribution ∧ C++23 ∧ functional_collection_system
   | identity(x) → bounded(x) ∧ deterministic(x) ∧ semantically_clear(x)
   | preserve_identity(x) → CopyOnModifyCollection(x) ∧ SentinelBasedAccess(x) ∧ ProbeFirstAccess(x) ∧ strict_resource_determinism(x)
@@ -40,6 +42,8 @@
 
 λ S5_values(x). clarity(x) ∧ predictability(x) ∧ safety(x)
   | clojure_parity_when_constraints_allow(x)
+
+λ S5_change_policy(x). public_change(x) → preserve(S5_identity(x))
 
 ## S4 - Intelligence
 
@@ -68,6 +72,7 @@
   | enforce_in_all_profiles(x)
 
 λ S3_quality(x). require(quality_gates(x))
+  | quality_gates(x) → enforce(S5_change_policy(x))
   | require(tests)
   | require(sanitizers_host_profiles)
   | require(clang_tidy)
@@ -176,7 +181,7 @@
   | whenever_possible(x) → require(diagnostic_overload(x)) where(a_distinct_overload_viable_only_for_rejected_calls(x))
     ∧ otherwise → require(documented_exclusion(x) recorded_in(requirement ∧ function_header(x)))
   | forward_binding(x) → bind(every_future_public_free_function(x))
-    ∧ ¬(admitted_gated(x) ∧ fallback_taught(x) ∨ excluded(x)) → conformance_defect(x)
+    ∧ ¬(admitted_gated(x) ∧ fallback_taught(x) ∨ ExcludedStatus(x)) → conformance_defect(x)
     ∧ conformance_defect(x) → surface_by(diagnostic_coverage_gate(x))
   | applies_to(all_public_free_functions_with_closed_domain ∧ collection_source_constructors)(x)
   | illustrative_examples(x) ≡ equal ∧ not_equal ∧ producer_factory_functions ∧ collection_primitives
@@ -468,7 +473,8 @@
     ∧ typed_absence_and_failure_policy_is_declared(x) ∧ result_status_is_declared(x)
     ∧ bounded_owning_results_are_preferred(x) ∧ maps_and_sets_are_semantically_unordered(x)
     ∧ transducers_and_hidden_lazy_sequences_are_unsupported(x))
-  | contains(x) → govern(applicable_lookup_or_indexed_domain(x))
+  | contains(x) → admit((LookupCollection ∧ exact_declared_lookup_type) ∨ (IndexedCollection ∧ integral_index))(x)
+    ∧ support(Map ∨ Set ∨ Vector ∨ String)(x) ∧ ¬support(Range)(x)
   | fits_into(x) → govern(complete_producer_materialization(x))
   | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
   | future_operation(x) → require(explicit_requirement_and_specification(x))
@@ -678,12 +684,17 @@ concept SequenceableProducer =
 
 ### Level 2C: IndexedProducer (reserved producer positional-access gate)
 
+λ range_slice_contract(x). Range(x) → provide(x.contains(index))
+  ∧ x.contains(index) ↔ index < x.count()
+  ∧ ¬provide(contains(x, index) ∨ get(x, key) ∨ x(index))
+  ∧ ¬satisfy(Indexed ∨ IndexedProducer ∨ Lookup ∨ Associative)(x)
+  ∧ ¬provide(positional_value_retrieval(x))
+
 λ IndexedProducer_level(x). require(admitted_producer(x)) → expose(positional_value_retrieval(x) ∧ available_index_predicate(x)) to(participate_in(operation(x)))
   | capability(x) → layered_on(CljonicProducer_admission(x))
-  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_bounded_observation_predicate(x)
+  | Range(x) → range_slice_contract(x)
   | IndexedProducer(x) ≡ non_mutating_O1_positional_value_retrieval(x) ∧ available_index_predicate_over_same_bounded_domain(x)
   | producer_contains(x) → bounded_observation_availability_only(x) ∧ ¬imply(positional_value_retrieval(x) ∨ IndexedProducer(x))
-  | Range(x) → provide(contains_for_bounded_observation(x)) ∧ ¬satisfy(Indexed ∨ IndexedProducer ∨ Lookup ∨ Associative)(x) ∧ ¬provide(get_or_callable_lookup(x))
   | IndexedProducer(x) ¬imply(CallableLookup(x)) because(Indexed_access_does_not_imply_invocability(x))
   | ¬expose(callable_operator_parenthesis(x)) on(producer(x)) because(operator_parenthesis_reserved_for_CallableLookup_mirroring(x))
   | positional_value_retrieval(x) → remain(deferred_future_work) until(Module5_nth_approved(x))
@@ -799,7 +810,7 @@ concept SequenceableProducer =
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | effective_size(x) → authoritative_for(free_function_observation ∧ producer_iteration ∧ producer_materialization)
-  | range_slice_contract(x) → free_function_observation_is_canonical(x) ∧ get_lookup_is_excluded(x) ∧ contains_authoritative_bounded_observation_predicate(x) ∧ effective_endpoint_normalized_before_iteration(x) ∧ span_arithmetic_avoids_signed_overflow(x)
+  | Range(x) → range_slice_contract(x) ∧ effective_endpoint_normalized_before_iteration(x) ∧ span_arithmetic_avoids_signed_overflow(x)
   | range_member_accessors(start ∧ end ∧ step) → classify_as(non_canonical)
   | bounded_collection_results(x) → require(explicit ProducerMaterialization)
   | implicit_unbounded_nested_materialization(x) → reject(x)
