@@ -456,6 +456,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | requirements_backed_operations(x) → classify_as(RequirementsBacked)
   | bounded_insertion_capacity_inspection(x) → classify_as(RequirementsBacked)
   | deferred_empty_operations(x) ≡ empty ∧ not_empty
+  | is_empty(value) → admit(SequenceableCollection ∨ SequenceableProducer) ∧ return(count(value) == 0)
+    ∧ non_throwing ∧ non_allocating ∧ provide(targeted_rejection_diagnostic(¬(SequenceableCollection ∨ SequenceableProducer)))
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
@@ -487,6 +489,11 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | UnboundedProducer(x) → return(CollectionMaximumElementCount)
     ∧ ¬claim(complete_cardinality(x))
   | count_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+
+λ S2_is_empty_function_contract(x). is_empty(value) → admit(SequenceableCollection ∨ SequenceableProducer)(x)
+  | return(count(value) == 0) ∧ inherit(collection_or_producer_count_semantics(value))
+  | unbounded_producer(value) → use(configured_observation_cap_not_complete_cardinality)
+  | is_empty_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
 
 λ traceability_coverage_policy(x). active_implementation_backed_specification(x)
   → require(every_obligation_has_traceable_test(x))
@@ -739,7 +746,7 @@ concept SequenceableProducer =
   | introduce_concept(x) → require(tested_api_boundary(x)) ∧ specify(consumers_and_diagnostics(x))
 
 λ concept_member_naming(x). canonical_cardinality_member(x) ≡ count
-  | is_empty(collection) ↔ count(collection) == 0
+  | is_empty(value) ↔ count(value) == 0
   | is_empty(x) → ¬require(collection_member_is_empty(x))
   | member_lookup(x) ≡ operator()(key, fallback = default_result) ∧ contains
   | index_bracket_lookup(x) → omitted_from_all_collections(x)
