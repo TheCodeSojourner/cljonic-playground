@@ -1,29 +1,31 @@
 ## Current Session State
 
-- last_session_id: 533820d1-2062-4aaf-a334-f3da6a453c7b
+- last_session_id: 7bfd7f7a-cef3-43da-a6e3-5c750e6851e6
 - current_timestamp: 2026-10-08
 - recover: 1
 - session_complete: true
 
 Task:
-1. `/gybis-init` — COMPLETE: read this state, recent IsEmpty memory/knowledge, repository history, and worktree context.
-2. `/gybis-fini` — IN PROGRESS: updated this state with the current durable status; committing only Mementum state now.
-3. Recent IsEmpty work — COMPLETE: `is_empty` supports `SequenceableCollection` and `SequenceableProducer`, returns `count(value) == 0`, and follows the configured observation cap for unbounded producers. The owning collection types remain without `is_empty()` members. Diagnostics and user-facing wording were revised; requirements, vocabulary, architecture, spec, tests, docs, generated header, and no-heap probes are aligned.
-4. Validation — PASS: Allium check/analysis; requirements structural audit (298 unique clauses); `make primitive-compile-fail`; focused `[is_empty]` tests (21 assertions); `make traceability-spec-to-code`; `make docs-examples` (30 compiled); `make docs`; `make no-heap`; diagnostic coverage (seven pending headers).
-5. `/cljonic-api-converge is_empty` — targeted Gybis sequence completed; no unresolved IsEmpty divergences were reported. The `/cljonic-api-converge` workflow now automatically dispatches applicable Gybis skills and pauses only for substantive human decisions.
+1. `/cljonic-api-complete disj` — COMPLETE: implemented zero-or-more `disj(Set, values...)` with exact element types, left-to-right removal, absent/repeated values as no-ops, and zero-argument unchanged-copy semantics. Requirements, vocabulary, architecture, Allium spec, implementation, tests, no-heap probe, diagnostics, generated header, docs, and traceability snapshot aligned. Documentation/test examples follow the project's free-function style and use CTAD.
+2. `/cljonic-api-converge disj` — COMPLETE: Allium, spec/test trace IDs, compile-fail diagnostics, focused modular/single-header tests, no-heap, docs examples, and full `make validate` passed (194 tests; 100% coverage). `make git` was not run.
+3. Reusable audit scripts — COMPLETE: added `scripts/check-requirements-structure.py` (unique designators, declared domain prefixes, attribution/rationale provenance), `scripts/check-vocabulary-structure.py` (fields, duplicate headings, Related validity), and `scripts/check-spec-test-trace-ids.py` (focused Allium-plan-to-tests check; supports multiple test files/directories and optional exact mode). Added self-tests, Make targets, README usage, and cljonic skill instructions. Removed the obsolete machine-specific heuristic `scripts/spec_weed_check.py` and updated the Mementum reference.
+4. Validation automation — COMPLETE: added `make requirements-structure`, `make vocabulary-structure`, `make audit-scripts`, and `make trace-id-check`; integrated structural audits/self-tests into `validate`, `upsert-gate`, `upsert-gate-fast`, and `git`. The authoritative set-scoped gate remains `make traceability-spec-to-code`.
+5. `/gybis-fini` — IN PROGRESS: state updated with current durable status; committing only `mementum/state.md` as closeout.
 
 Questions:
-1. Remaining diagnostic-fallback backlog: `disj`, `dissoc`, `fits_into`, `get`, `into`, `peek`, and `pop`.
-2. The complete repository `make git` gate was not run; run it before considering the overall working tree fully validated.
+1. Six diagnostic-fallback headers remain pending: `dissoc`, `fits_into`, `get`, `into`, `peek`, and `pop`.
+2. Deferred `VariantFreeFunctionApi` still has ten untraced plan obligations; do not change its lifecycle or strict test-coverage policy without a new human decision.
+3. The final repository `make git` gate was not run; it remains a user-owned action if desired.
 
 Decisions:
-1. `is_empty` shares `count`'s domains and zero-count semantics; it is a free function, not an owning-collection member.
-2. Unbounded-producer `count` is the configured observation cap, not complete cardinality.
-3. Gybis commands are human-invoked; convergence may dispatch Gybis skills after explicit user invocation but must preserve their approval gates.
-4. Do not commit product/code changes or run `make git` through API workflow skills. `/gybis-fini` committed only `mementum/state.md` as session closeout.
+1. Clojure-style repeated `disj` arguments are valid; subsequent removal of an already-absent value is a no-op.
+2. `disj` examples use CTAD and canonical free functions (`equal`, `contains`, `is_empty`), rather than operators/member setup operations.
+3. Focused repository audit scripts provide deterministic structural evidence only; they do not replace Gybis semantic checks or the global traceability gate.
+4. Retire the hard-coded legacy spec checker in favor of set-scoped Allium and traceability tooling.
+5. Do not create a memory from the user's exploratory question about upstream Gybis support scripts.
 
 Next:
-1. User-owned: review remaining worktree changes and run `make git` when ready.
+1. User-owned: review worktree and run `make git` when ready; otherwise continue the six-header diagnostic-fallback backlog, preserving the deferred Variant decision.
 
 ## Previous Session State
 
