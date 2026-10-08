@@ -100,26 +100,70 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#concepts">Concepts</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">cljonic-dissoc.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
 </div>
 <p><a href="cljonic-dissoc_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_2C_20Keys_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_2C_20Keys_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__dissoc__keys__admissible.html">cljonic::concepts_detail::all_dissoc_keys_admissible&lt; C, Keys &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__dissoc__keys__admissible_3_01_c_01_4.html">cljonic::concepts_detail::all_dissoc_keys_admissible&lt; C &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_2C_20K_2C_20Rest_2E_2E_2E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aall_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_2C_20K_2C_20Rest_2E_2E_2E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__dissoc__keys__admissible_3_01_c_00_01_k_00_01_rest_8_8_8_01_4.html">cljonic::concepts_detail::all_dissoc_keys_admissible&lt; C, K, Rest... &gt;</a></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
+<tr class="memdesc:namespacecljonic_1_1concepts__detail"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ADissocKeyAdmissible" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ADissocKeyAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_dissoc_key_admissible.html">cljonic::concepts_detail::DissocKeyAdmissible</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a83efc0b362080fa3ab987a921a9d0aa7" id="r_a83efc0b362080fa3ab987a921a9d0aa7"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
-requires concepts::CljonicMap&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key) { { collection.dissoc(key) } noexcept -&gt;<br class="typebreak" />
- std::same_as&lt;C&gt;; }</td></tr>
-<tr class="memitem:a83efc0b362080fa3ab987a921a9d0aa7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a83efc0b362080fa3ab987a921a9d0aa7">cljonic::dissoc</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.dissoc(key))) -&gt; C</td></tr>
-<tr class="memdesc:a83efc0b362080fa3ab987a921a9d0aa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disassociates a key from a map.  <br /></td></tr>
+<tr class="memitem:a039a85f3c6de2bd4f9718600b07ae8b4" id="r_a039a85f3c6de2bd4f9718600b07ae8b4"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
+<tr class="memitem:a039a85f3c6de2bd4f9718600b07ae8b4 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a039a85f3c6de2bd4f9718600b07ae8b4">cljonic::concepts_detail::fold_dissoc_keys_into</a> (C &amp;result) noexcept</td></tr>
+<tr class="memitem:a36db1cb962823291250b17046365c1a9" id="r_a36db1cb962823291250b17046365c1a9"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename... Rest&gt; </td></tr>
+<tr class="memitem:a36db1cb962823291250b17046365c1a9 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a36db1cb962823291250b17046365c1a9">cljonic::concepts_detail::fold_dissoc_keys_into</a> (C &amp;result, const K &amp;key, const Rest &amp;... rest) noexcept</td></tr>
+<tr class="memitem:adbd0f9877636930403e4c459d3873d0c" id="r_adbd0f9877636930403e4c459d3873d0c"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::CljonicMap&lt;C&gt;</td></tr>
+<tr class="memitem:adbd0f9877636930403e4c459d3873d0c template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#adbd0f9877636930403e4c459d3873d0c">cljonic::dissoc</a> (const C &amp;collection) noexcept -&gt; C</td></tr>
+<tr class="memitem:aeca551acb1ef97be6c2168636d6a577a" id="r_aeca551acb1ef97be6c2168636d6a577a"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires concepts_detail::DissocKeyAdmissible&lt;C, K&gt;</td></tr>
+<tr class="memitem:aeca551acb1ef97be6c2168636d6a577a template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aeca551acb1ef97be6c2168636d6a577a">cljonic::dissoc</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; C</td></tr>
+<tr class="memitem:acbd0b252f729225859b4d47ea7cf6d67" id="r_acbd0b252f729225859b4d47ea7cf6d67"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename K2, typename... Rest&gt; <br />
+requires concepts::CljonicMap&lt;C&gt; &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a62dcbd5e44e518bd16ca2489a0ab8c22">concepts_detail::all_dissoc_keys_admissible_v</a>&lt;C, K1, K2, Rest...&gt;</td></tr>
+<tr class="memitem:acbd0b252f729225859b4d47ea7cf6d67 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#acbd0b252f729225859b4d47ea7cf6d67">cljonic::dissoc</a> (const C &amp;collection, const K1 &amp;key1, const K2 &amp;key2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
+<tr class="memitem:a6a25b695be1738e6191ea816e5d41d2a" id="r_a6a25b695be1738e6191ea816e5d41d2a"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts::CljonicMap&lt;C&gt;)</td></tr>
+<tr class="memitem:a6a25b695be1738e6191ea816e5d41d2a template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a6a25b695be1738e6191ea816e5d41d2a">cljonic::dissoc</a> (const C &amp;collection) noexcept -&gt; C</td></tr>
+<tr class="memitem:a96ebb06ba2a51d312942011874335297" id="r_a96ebb06ba2a51d312942011874335297"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires (!concepts::CljonicMap&lt;C&gt;)</td></tr>
+<tr class="memitem:a96ebb06ba2a51d312942011874335297 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a96ebb06ba2a51d312942011874335297">cljonic::dissoc</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; C</td></tr>
+<tr class="memitem:a1fe3844013302db5040f0638ba01fafa" id="r_a1fe3844013302db5040f0638ba01fafa"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires concepts::CljonicMap&lt;C&gt; &amp;&amp; (!concepts_detail::DissocKeyAdmissible&lt;C, K&gt;)</td></tr>
+<tr class="memitem:a1fe3844013302db5040f0638ba01fafa template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a1fe3844013302db5040f0638ba01fafa">cljonic::dissoc</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; C</td></tr>
+<tr class="memitem:af890f2aaa5933624b0993d4f2cdfa160" id="r_af890f2aaa5933624b0993d4f2cdfa160"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename K2, typename... Rest&gt; <br />
+requires (!concepts::CljonicMap&lt;C&gt;)</td></tr>
+<tr class="memitem:af890f2aaa5933624b0993d4f2cdfa160 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af890f2aaa5933624b0993d4f2cdfa160">cljonic::dissoc</a> (const C &amp;collection, const K1 &amp;key1, const K2 &amp;key2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
+<tr class="memitem:ae237129f7ab9ff79ccbbbe3bd8bb902c" id="r_ae237129f7ab9ff79ccbbbe3bd8bb902c"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename K2, typename... Rest&gt; <br />
+requires concepts::CljonicMap&lt;C&gt; &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a62dcbd5e44e518bd16ca2489a0ab8c22">concepts_detail::all_dissoc_keys_admissible_v</a>&lt;C, K1, K2, Rest...&gt;)</td></tr>
+<tr class="memitem:ae237129f7ab9ff79ccbbbe3bd8bb902c template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ae237129f7ab9ff79ccbbbe3bd8bb902c">cljonic::dissoc</a> (const C &amp;collection, const K1 &amp;key1, const K2 &amp;key2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a62dcbd5e44e518bd16ca2489a0ab8c22" id="r_a62dcbd5e44e518bd16ca2489a0ab8c22"><td class="memTemplParams" colspan="2">template&lt;typename C, typename... Keys&gt; </td></tr>
+<tr class="memitem:a62dcbd5e44e518bd16ca2489a0ab8c22 template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a62dcbd5e44e518bd16ca2489a0ab8c22">cljonic::concepts_detail::all_dissoc_keys_admissible_v</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1all__dissoc__keys__admissible.html">all_dissoc_keys_admissible</a>&lt;C, Keys...&gt;::value</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
