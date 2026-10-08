@@ -27,7 +27,7 @@ Use this skill only when the user explicitly invokes `/cljonic-api-complete`. Th
 
 ## Layered Workflow
 
-Treat one slash invocation as a multi-turn workflow. Complete only one layer per checkpoint. After its focused check passes, summarize the edits and result, then pause for human review. Continue to the next layer only after the user explicitly says to proceed. If the check fails, repair the same slice and rerun that check before widening scope. If the workflow resumes after context loss or without a reliable current layer, reconstruct it from the latest checkpoint and worktree; ask rather than infer when ambiguous.
+Treat one slash invocation as an end-to-end workflow across all applicable layers. Complete and validate each layer in order, then continue to the next without pausing for approval between layers. Ask only when a substantive product decision remains unresolved or the available evidence is ambiguous; do not use layer boundaries as approval gates. If a focused check fails, repair the same slice and rerun that check before widening scope. If the workflow resumes after context loss or without a reliable current layer, reconstruct it from the latest checkpoint and worktree; ask only when the state is genuinely ambiguous.
 
 1. **Requirements:** Upsert the existing requirement where possible. Define admitted inputs, observable results, errors or diagnostics, and relevant resource constraints. Preserve identifiers, provenance, and lifecycle decisions. Run the narrowest existing structural audit for the changed requirement or module.
 2. **Vocabulary:** Add or refine the canonical term and its relationships. Check uniqueness, required fields, Related links, and frontmatter with the narrowest available audit.
