@@ -47,7 +47,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence capability
 - **Related:** Sequence, Seqable, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A collection may be sequenceable when the deferred `Seqable` capability is implemented; current collections expose `is_empty` and `count` without claiming the full sequence interface.
+- **Examples:** A collection may be sequenceable when the deferred `Seqable` capability is implemented; current collections provide `count()` and the `is_empty(collection)` free function without claiming the full sequence interface.
 
 
 ### Indexed
@@ -59,11 +59,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Lookup
-- **Definition:** A semantic capability for non-mutating access through a collection-defined lookup domain. A `Lookup` collection defines its lookup key type, returns the associated value for a present key or the documented default or fallback result when absent, and provides `contains` to distinguish presence without inspecting the returned value. `Lookup` does not imply map-style association or mutation.
+- **Definition:** A semantic capability for non-mutating access through a collection-defined lookup domain. A `Lookup` collection defines its lookup key type and returns its lookup result for a present key or the documented default or fallback result when absent; for `Map<K, V, N>`, that result is the mapped value `V`, not a `MapEntry<K, V>`. It provides `contains` to distinguish presence without inspecting the returned value. `Lookup` does not imply map-style association or mutation.
 - **Deprecated Synonyms:** lookup access, general lookup capability, associative access
 - **Related:** Indexed, Associative, Contains, DefaultReturningResult, CapabilityConcept
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Map` looks up keys, `Set` looks up values, and `Vector` and `String` look up integer indexes.
+- **Examples:** `get(map, key)` returns the mapped value; `get(set, value)` returns the stored matching value; `get(vector, index)` and `get(string, index)` return the element at that index.
 
 
 ### Seqable
@@ -387,7 +387,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### MapEntry
-- **Definition:** The bounded owning key-value pair representation used when a map operation exposes one map association as a value. Its key and value are named fields; typed `key` and `val` free functions are the planned user-facing accessors. Any future fixed two-element sequence behavior remains deferred until an indexed result representation is approved.
+- **Definition:** The bounded owning key-value pair representation used when a map association is explicitly constructed or exposed as an entry value, such as during map traversal. Its key and value are named fields; typed `key` and `val` free functions are the planned user-facing accessors. A Map lookup returns its mapped value `V`, not a `MapEntry<K, V>`. Any future fixed two-element sequence behavior remains deferred until an indexed result representation is approved.
 - **Deprecated Synonyms:** map entry, key-value entry
 - **Related:** Map, Lookup, Seqable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -570,7 +570,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Map
-- **Definition:** The cljonic fixed-capacity associative collection type mapping unique, stably comparable keys to values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates. Both keys and values satisfy the `NothrowCollectionElement` storage contract at template admission.
+- **Definition:** The cljonic fixed-capacity associative collection type mapping unique, stably comparable keys to mapped values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates. Key lookup through `operator()` or `get` returns the mapped value `V`; `MapEntry<K, V>` is a separate key-value pair representation used for entry construction and traversal. Both keys and values satisfy the `NothrowCollectionElement` storage contract at template admission.
 - **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
 - **Related:** MapEntry, Associative, Lookup, Contains, LinearScan, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
@@ -1040,6 +1040,14 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `CljonicProducer<T>` is a ProducerConcept that depends on cljonic-owned producer trait admission.
 
 
+### VariantConcept
+- **Definition:** A C++ concept category for nominal admission of `cljonic::Variant` types through cljonic-owned variant traits, distinct from collection and producer identity.
+- **Deprecated Synonyms:** nominal variant concept
+- **Related:** Variant, CljonicVariant, CollectionConcept, ProducerConcept
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicVariant<T>` implements the VariantConcept admission gate for the closed `cljonic::Variant` value family.
+
+
 ### CljonicCollection
 - **Definition:** The C++ concept identifier implementing the CollectionConcept for the full closed collection domain; it admits a type to the ClosedNominalCollectionDomain through cljonic-owned traits.
 - **Deprecated Synonyms:** cljonic_collection, cljonic collection concept
@@ -1086,6 +1094,14 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** CollectionConcept, CljonicCollection, String, CollectionKind
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `CljonicString<String<16>>` is satisfied while an external container is not.
+
+
+### CljonicVariant
+- **Definition:** The C++ concept identifier implementing VariantConcept and admitting only nominal `cljonic::Variant<Alternatives...>` types through cljonic-owned variant traits; structural similarity to `std::variant` does not satisfy it.
+- **Deprecated Synonyms:** cljonic_variant, cljonic variant concept
+- **Related:** Variant, VariantConcept, NothrowVariantAlternative, ComparableVariantAlternative
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** `CljonicVariant<cljonic::Variant<int, long>>` is satisfied, while `std::variant<int, long>` is not.
 
 
 ### CljonicProducer
@@ -1165,15 +1181,15 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** capability concept, semantic capability gate
 - **Related:** CollectionConcept, ProducerConcept, Indexed, Lookup, Seqable, Associative, Conjable, CapabilityPredicate, SequenceableCollection, IndexedCollection, LookupCollection, AssociativeCollection, ConjableCollection, SequenceableProducer, IndexedProducer
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `SequenceableCollection<C>` is a CapabilityConcept requiring non-throwing `is_empty` and `count` observation.
+- **Examples:** `SequenceableCollection<C>` is a CapabilityConcept requiring non-throwing `count()` observation; `is_empty(collection)` is derived from the count.
 
 
 ### SequenceableCollection
-- **Definition:** The C++ concept identifier implementing the current sequenceable CapabilityConcept baseline, requiring non-throwing `is_empty` and `count` observation on an admitted collection. SequenceableCollection is intentionally bootstrapped and may grow only when a public operation needs stronger sequence behavior; it is not the complete semantic definition of `Sequenceable` and does not by itself imply `ConstRangeTraversal`, indexed access, lookup, contiguous storage, or a particular iterator category.
+- **Definition:** The C++ concept identifier implementing the current sequenceable CapabilityConcept baseline, requiring non-throwing `count` observation on an admitted collection. The public `is_empty(collection)` free function derives emptiness from `count(collection) == 0`; no collection `is_empty()` member is required. SequenceableCollection is intentionally bootstrapped and may grow only when a public operation needs stronger sequence behavior; it is not the complete semantic definition of `Sequenceable` and does not by itself imply `ConstRangeTraversal`, indexed access, lookup, contiguous storage, or a particular iterator category.
 - **Deprecated Synonyms:** sequenceable_cljonic_collection, sequenceable collection concept
 - **Related:** CapabilityConcept, Sequenceable, Traversal, ConstRangeTraversal, CljonicCollection, IndexedCollection, LookupCollection, AssociativeCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `SequenceableCollection<C>` requires `c.is_empty()` and `c.count()`.
+- **Examples:** `SequenceableCollection<C>` requires `c.count()`; `is_empty(c)` is derived from whether that count is zero.
 
 
 ### IndexedCollection
@@ -1241,11 +1257,19 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Variant
-- **Definition:** The cljonic nominal composite value type `cljonic::Variant<Alternatives...>` holding exactly one alternative at a time. Every alternative satisfies the NothrowCollectionElement storage contract, so a Variant is admissible as a map value, a vector element, and a queue element; floating-point and callable alternatives are admissible for storage but not for equality. A Variant provides alternative-strict value equality through `==` and `equal` exactly when every alternative satisfies NothrowStableEqualityComparable and compares without throwing; otherwise it provides no `==` and fails at compile time in any equality position, mirroring a storable-but-not-comparable element such as `Vector<float, N>`. A Variant has no valueless state and no throwing access path, and every operation is `constexpr`, `noexcept`, non-allocating, and RTTI-free. Its free-function API — `index`, `holds`, `get`, `get_if`, `emplace`, `swap`, `visit`, plus `variant_size` and `variant_alternative` — mirrors a backing member method, and ordering operators are provided exactly when every alternative satisfies TotallyOrdered. `std::variant` is not a cljonic value type: it is rejected as a cljonic value or equality operand, and `cljonic::Variant` is used instead.
+- **Definition:** The cljonic nominal composite value type `cljonic::Variant<Alternatives...>` holding exactly one alternative at a time. Every alternative satisfies the NothrowCollectionElement storage contract, so a Variant is admissible as a map value, a vector element, and a queue element; floating-point and callable alternatives are admissible for storage but not for equality. A Variant provides alternative-strict value equality through `==` and `equal` exactly when every alternative satisfies NothrowStableEqualityComparable and compares without throwing; otherwise it provides no `==` and fails at compile time in any equality position, mirroring a storable-but-not-comparable element such as `Vector<float, N>`. A Variant has no valueless state and no throwing access path, and its supported operations are `constexpr`, `noexcept`, non-allocating, and RTTI-free. Its free-function API — `index`, `holds`, `get`, `get_if`, `emplace`, `swap`, `visit`, plus `variant_size` and `variant_alternative` — is deferred; when implemented, it is intended to mirror backing member methods. Ordering operators are provided exactly when every alternative satisfies TotallyOrdered. `std::variant` is not a cljonic value type: it is rejected as a cljonic value or equality operand, and `cljonic::Variant` is used instead.
 - **Deprecated Synonyms:** cljonic variant, constrained variant, nothrow variant, constrained composite
 - **Related:** AlternativeStrictEquality, NothrowStableEqualityComparable, StableEqualityComparable, TotallyOrdered, MapEntry, Map, Set, Vector, ProducerParameterEquality
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `cljonic::Variant<int, long>` is storable and comparable; `cljonic::Variant<int, double>` is storable but not comparable; `cljonic::Variant<int, long>{5}` (int alternative) is not equal to `cljonic::Variant<int, long>{5L}` (long alternative); `index`, `holds<int>`, `get<int>`, `get_if<int>`, and `emplace<long>(...)` expose and rebind the active alternative without throwing or allocating; `std::variant<int, long>` is rejected at compile time as a cljonic value.
+- **Examples:** `cljonic::Variant<int, long>` is storable and comparable; `cljonic::Variant<int, double>` is storable but not comparable; `cljonic::Variant<int, long>{5}` (int alternative) is not equal to `cljonic::Variant<int, long>{5L}` (long alternative); the deferred `index`, `holds<int>`, `get<int>`, `get_if<int>`, and `emplace<long>(...)` operations are intended to query and rebind the active alternative without throwing or allocating; `std::variant<int, long>` is rejected at compile time as a cljonic value.
+
+
+### ComparableVariantAlternative
+- **Definition:** The C++ concept identifier admitting a `Variant` alternative for value equality when it satisfies both `NothrowStableEqualityComparable` and `NothrowEqualityComparable`, ensuring alternative-strict Variant equality is non-throwing.
+- **Deprecated Synonyms:** comparable variant alternative, equality-admissible Variant alternative
+- **Related:** Variant, NothrowVariantAlternative, NothrowStableEqualityComparable, NothrowEqualityComparable
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** An alternative with stable, non-throwing equality satisfies `ComparableVariantAlternative`; a floating-point alternative or a type with potentially throwing equality does not.
 
 
 ### AlternativeStrictEquality
@@ -1278,6 +1302,14 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** StableEqualityComparable, NothrowCollectionElement, Map, Set, MapEntry, AlternativeStrictEquality, Variant
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `NothrowStableEqualityComparable<int>` is satisfied; a type with a throwing copy assignment is rejected even if it defines `operator==`; a `cljonic::Variant` containing a callable alternative is rejected because callable components never admit stable equality.
+
+
+### NothrowVariantAlternative
+- **Definition:** The C++ concept identifier admitting a `Variant` alternative for storage by requiring the `NothrowCollectionElement` contract; storage admission alone does not imply equality admission.
+- **Deprecated Synonyms:** nothrow variant alternative, storable Variant alternative
+- **Related:** Variant, CljonicVariant, ComparableVariantAlternative, NothrowCollectionElement
+- **Usage:** Architecture, specification, implementation, tests, and documentation
+- **Examples:** A nothrow-storable floating-point alternative can satisfy `NothrowVariantAlternative` while failing `ComparableVariantAlternative`.
 
 
 ### StaticInspectableStorage
