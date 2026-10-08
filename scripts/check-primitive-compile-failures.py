@@ -8,6 +8,19 @@ import re
 import subprocess
 
 PRIMITIVES = {
+    "count": {
+        "diagnostic_anchor": "cljonic::count:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::count(42);",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Cycle, Iterate, or Repeatedly value",
+            ),
+        },
+        "pass_cases": {
+            "vector-collection": "(void)cljonic::count(cljonic::Vector<int, 4>{1, 2});",
+            "range-producer": "(void)cljonic::count(cljonic::Range<int>{0, 5});",
+        },
+    },
     "contains": {
         "diagnostic_anchor": "cljonic::contains:",
         "diagnostic_cases": {
