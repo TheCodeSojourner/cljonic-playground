@@ -9,9 +9,46 @@ entity Dissoc {
     functional_immutability_preserved: Boolean
     referential_transparency: Boolean
     copy_on_modify_semantics: Boolean
+    supports_map_only_domain: Boolean
+    matches_map_member_key_admission: Boolean
+    supports_zero_or_more_keys: Boolean
+    removes_keys_left_to_right: Boolean
+    absent_or_repeated_keys_are_no_ops: Boolean
+    zero_keys_return_unchanged_copy: Boolean
+    removes_present_key_via_swap_and_remove: Boolean
+    unsupported_domains_are_rejected: Boolean
 
     invariant DissocFreeFunctionSupported {
         this.supports_dissoc_free_function = true
+    }
+
+    invariant MapMemberKeyAdmission {
+        this.supports_map_only_domain = true
+        this.matches_map_member_key_admission = true
+    }
+
+    invariant ZeroOrMoreKeys {
+        this.supports_zero_or_more_keys = true
+    }
+
+    invariant KeysAreRemovedLeftToRight {
+        this.removes_keys_left_to_right = true
+    }
+
+    invariant AbsentOrRepeatedKeysAreNoOps {
+        this.absent_or_repeated_keys_are_no_ops = true
+    }
+
+    invariant ZeroKeysReturnUnchangedCopy {
+        this.zero_keys_return_unchanged_copy = true
+    }
+
+    invariant PresentKeyIsRemovedViaSwapAndRemove {
+        this.removes_present_key_via_swap_and_remove = true
+    }
+
+    invariant UnsupportedDomainsAreRejected {
+        this.unsupported_domains_are_rejected = true
     }
 
     invariant NoHeapAllocation {
