@@ -650,11 +650,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Dissoc
-- **Definition:** The primitive associative free function that returns a new `Map` with the specified key and its associated value removed via swap-and-remove.
+- **Definition:** The primitive associative free function supported only for `Map`; zero keys return an unchanged copy, while one or more keys are removed left-to-right via the `Map::dissoc` member key parameter domain (including implicit conversions accepted by that member). Present keys are removed via swap-and-remove; absent or repeated keys are no-ops.
 - **Deprecated Synonyms:** disassociate, map remove, erase key
-- **Related:** Map, Assoc, SwapAndRemove, CopyOnModifyCollection
+- **Related:** Map, Assoc, SwapAndRemove, CopyOnModifyCollection, RejectionDiagnostic
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `dissoc(m, key)` removes `key` if present and decrements count, returning an unchanged copy if absent.
+- **Examples:** `dissoc(m)` returns an unchanged copy; `dissoc(m, key)` removes one key; `dissoc(m, key₁, key₂)` removes keys left-to-right. An absent or repeated key is a no-op. Keys may use implicit conversions accepted by `Map::dissoc`.
 
 
 ### Disj
