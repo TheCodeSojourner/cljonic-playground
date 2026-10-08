@@ -297,6 +297,13 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ behavioral contracts for `into` ∧ `fits_into`: approved by Module 2 and Module 4 ∧ both operations remain `deferred` until producer and materialization support is implementation-backed
   {source: stakeholder_decided, decided_by: original_spec_author}
 
+λ REQ-COLL-020U(x).
+  ∀ `dissoc(map, keys...)`: supported only for `Map` ∧ zero or more keys are accepted ∧ each key is admitted by the `Map::dissoc` member parameter domain, including implicit conversions accepted by that member
+  ∧ ∀ present key: returns a new map with that entry removed via swap-and-remove ∧ keys are applied left to right ∧ the source map remains unchanged
+  ∧ ∀ absent or repeated key: removal is a no-op ∧ zero keys returns an unchanged map copy
+  ∧ ∀ result: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ unsupported collection and key domains are rejected at the public API boundary
+  {source: stakeholder_decided, decided_by: original_spec_author}
+
 ## Collection Equality
 
 λ REQ-COLL-021(x).
