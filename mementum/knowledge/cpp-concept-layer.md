@@ -43,7 +43,7 @@ concept model.
   Gate on admission to `ClosedNominalCollectionDomain` and `CollectionKind`, not
   structural similarity to external containers. Keep the `Cljonic` prefix.
 - Level 2 `CapabilityConcept` (semantic gates layered on nominal identity):
-  - Structural: `SequenceableCollection` (`count`/`is_empty`),
+  - Structural: `SequenceableCollection` (`count`); free-function `is_empty` accepts `SequenceableCollection` or `SequenceableProducer`,
     `IndexedCollection` (`operator(i)`/`contains(index)`),
     `AssociativeCollection` (`operator(k)`/`contains`).
   - Value: `StableEqualityComparable` (base, rejects float/double),
