@@ -15,12 +15,16 @@ TEST_CASE("Count free function operations", "[count]") {
 
     TRACE_ID("entity-fields.Count");
     TRACE_ID("invariant.Count.CountFreeFunctionSupported");
+    TRACE_ID("invariant.Count.RejectsUnsupportedDomainWithTargetedDiagnostic");
     TRACE_ID("invariant.Count.NoHeapAllocation");
     TRACE_ID("invariant.Count.NoRtti");
     TRACE_ID("invariant.Count.NoExceptions");
     TRACE_ID("invariant.Count.SingleThreadedExecutionModel");
     TRACE_ID("invariant.Count.ReferentialTransparency");
     TRACE_ID("invariant.Count.ReturnsLogicalSize");
+
+    STATIC_REQUIRE_FALSE(cljonic::concepts::SequenceableCollection<int>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::SequenceableProducer<int>);
 
     constexpr Vector<int, 4> v{1, 2, 3};
     STATIC_REQUIRE(count(v) == 3U);
