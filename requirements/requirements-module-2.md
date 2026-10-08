@@ -173,8 +173,10 @@ This module establishes the C++20 concept capability framework, result status ou
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-BOUNDS-010A(x).
-  ∀ context: `is_empty(collection)` is a non-throwing, non-allocating boolean predicate returning `true` exactly when `count(collection) == 0`
+  ∀ sequenceable_value ∈ (SequenceableCollection ∨ SequenceableProducer): `is_empty(sequenceable_value)` is a non-throwing, non-allocating boolean predicate returning `true` exactly when `count(sequenceable_value) == 0`
+  ∧ ∀ unbounded_producer: `count(sequenceable_value)` is the configured observation cap rather than complete cardinality, and `is_empty` follows that count observation
   ∧ ∀ supported owning collection: exposes `is_empty` only as a free function ∧ ¬∃ `is_empty()` member requirement
+  ∧ ∀ unsupported input outside (SequenceableCollection ∨ SequenceableProducer): rejects with one targeted compile-time diagnostic naming the argument and required sequenceable domain (`REQ-DIAG-009`)
   ∧ ∀ future traversal_work: defines the corresponding sequence behavior
   ∧ ∀ deferred `empty` operation: returns an empty owning value of the same supported collection type as its input, preserving the input's capacity type where that capacity is part of the collection type
   ∧ ∀ deferred `not_empty` operation: returns an owning value of the same supported collection type as its input — an independently valid copy of the input when the input contains one or more elements and the corresponding empty value when the input contains zero elements ∧ ¬∃ boolean alias for `is_empty`

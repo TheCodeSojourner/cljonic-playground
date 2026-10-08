@@ -292,7 +292,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020T(x).
-  ∀ context: the lifecycle classification is also `requirements-backed` for `is_empty`, `can_conj`, and the `full` predicate or equivalent capacity inspection over their supported bounded collection inputs
+  ∀ context: the lifecycle classification is also `requirements-backed` for `is_empty` over its supported sequenceable collection and producer inputs, `can_conj`, and the `full` predicate or equivalent capacity inspection over their supported bounded collection inputs
   ∧ ∀ (`empty` ∧ `not_empty`): remain `deferred` until their owning-value behavior is implementation-backed
   ∧ ∀ behavioral contracts for `into` ∧ `fits_into`: approved by Module 2 and Module 4 ∧ both operations remain `deferred` until producer and materialization support is implementation-backed
   {source: stakeholder_decided, decided_by: original_spec_author}
