@@ -76,7 +76,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-COLL-007A(x).
   ∃ permitted_path: collection capacity is zero
-  ∧ ∀ zero_capacity_collection: valid empty owning value ∧ reports `count() == 0` ∧ `is_empty() == true` ∧ returns documented default or fallback values for access ∧ preserves its value when an insertion operation cannot add an element
+  ∧ ∀ zero_capacity_collection: valid empty owning value ∧ reports `count() == 0` ∧ `is_empty(collection) == true` ∧ returns documented default or fallback values for access ∧ preserves its value when an insertion operation cannot add an element
   ∧ ∀ future traversal_work: supports empty const traversal without accessing element storage, allocating, throwing, or invoking capacity-dependent arithmetic with zero as a divisor
   ∧ ∀ zero_capacity_collection: fails any compile-time construction that would require stored elements
   {source: stakeholder_decided, decided_by: original_spec_author}
@@ -273,7 +273,12 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020R(x).
-  ∀ context: the supported generic free-function signatures are `get(const C&, const K&) -> C::value_type`, `get(const C&, const K&, const C::value_type&) -> C::value_type`, and `contains(const C&, const K&) -> bool` for `Lookup` or `Indexed` collections; `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&) -> bool` for `Associative` collections
+  ∀ context: `get(const C&, const K&)` and `get(const C&, const K&, const R&)` are supported for `Lookup` or `Indexed` collections and return the same collection-specific result type as the corresponding callable lookup operation
+  ∧ ∀ supplied fallback `R`: has the same type as that collection-specific lookup result
+  ∧ ∀ `Map<K, V, N>`: the lookup result and `get` return type are the mapped value `V`, not `MapEntry<K, V>`
+  ∧ ∀ `Set<T, N>` ∨ `Vector<T, N>`: the lookup result and `get` return type are the stored element type `T`
+  ∧ ∀ `String<N>`: the lookup result and `get` return type are `char`
+  ∧ ∀ context: the other supported generic free-function signatures are `contains(const C&, const K&) -> bool` for `Lookup` or `Indexed` collections; `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&) -> bool` for `Associative` collections
   ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by the required capability and collection-specific key/value domains
   ∧ ∀ (`Map` ∨ `Set`): `contains` accepts only `K` exactly matching the collection's declared `lookup_type` after removing cv-qualification and references; no implicit conversion to that type is admitted
   ∧ ∀ (`Vector` ∨ `String`): `contains` accepts an integral index type

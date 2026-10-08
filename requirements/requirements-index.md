@@ -29,15 +29,15 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 
 3. **[requirements-module-3.md](requirements-module-3.md)** — *Core Collection Types & Primitive Free Functions*
    - **Purpose**: Implements concrete, array-backed, bounded collection types and their primitive member and free-function operations.
-   - **Scope**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String`, bounded array-backed storage, swap-and-remove mechanics, callable collection syntax (`v(idx)`, `m(key)`, `s(val)`), and current primitive free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`). Sequence primitives (`first`, `next`, `rest`, `seq`) remain deferred future work (`REQ-COLL-*`, deferred `REQ-SEQ-001`–`014` incl. `002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`).
+   - **Scope**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String`, bounded array-backed storage, swap-and-remove mechanics, callable collection syntax (`v(idx)`, `m(key)`, `s(val)`), and current primitive free functions (`character_is_valid`, `count`, `get`, `is_empty`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`). Sequence primitives (`first`, `next`, `rest`, `seq`) remain deferred future work (`REQ-COLL-*`, deferred `REQ-SEQ-001`–`014` incl. `002A`–`002B`, `REQ-FN-001`–`008A`, `REQ-FN-026`).
 
 4. **[requirements-module-4.md](requirements-module-4.md)** — *Sequence Producers & Materialization Pipeline*
    - **Purpose**: Adds explicit materialization, non-collection generator values, and standard view interop.
    - **Scope**: Active generator producers (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`); direct producer consumption by source-taking free functions; materialization free function (`into`) and its completeness preflight (`fits_into`); active const logical-range traversal; and active conditional C++ interoperability accessors (`std::span<const T>`-like and `std::string_view`-like representations) (`REQ-VAL-014`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C` incl. `013A`–`013D`, `REQ-FN-027`–`027A`, `REQ-PLAT-017`–`023` incl. `017A`, `022A`).
 
 5. **[requirements-module-5.md](requirements-module-5.md)** — *Higher-Order Algorithms & Traversal*
-   - **Purpose**: Implements generic sequence transformation algorithms over any `cljonic_source`.
-   - **Scope**: Multi-source mapping and right-to-left composition (`map`, `comp`), and the bounded collection-shaping/traversal family with individually named downstream behavioral specifications (`REQ-SEQ-022`, `REQ-FN-032`, `REQ-FN-033`).
+   - **Purpose**: Records future higher-order transformation requirements and the bounded collection-shaping/traversal family.
+   - **Scope**: The free-function APIs for multi-source mapping (`map`) and right-to-left composition (`comp`) are deferred and non-binding (`REQ-FN-032`–`033`); this does not defer the `cljonic::Map` type. The collection-shaping/traversal family is separately inventoried by `REQ-SEQ-022` and requires individually named downstream behavioral specifications before implementation.
 
 6. **[requirements-module-6.md](requirements-module-6.md)** — *Numeric & Callable Convenience*
    - **Purpose**: Adds scalar arithmetic, bitwise math, conversion/parsing controls, and functional closure builders.

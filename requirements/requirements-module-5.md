@@ -2,9 +2,13 @@
 
 ## Purpose and Scope
 
-This module specifies higher-order sequence transformation algorithms, function composition (`comp`), multi-source mapping, and collection shaping/traversal operations over any `cljonic_source`. Module 5 provides functional transformations while preserving value immutability, callback purity, and static bounds.
+This module records future higher-order sequence transformation requirements and specifies the collection-shaping/traversal inventory. The free-function APIs `map` (multi-source mapping) and `comp` are explicitly deferred; this does not defer the `cljonic::Map` collection type or its existing operations.
 
-## Function Composition (`comp`) & Multi-Source Operations
+## Deferred Higher-Order Free Functions (Non-binding)
+
+> **Deferred future work — non-binding.** The public free functions `map` (multi-source mapping) and `comp` are not part of the current supported API. Their requirements below record intended future behavior only; neither function is implementation-ready until its lifecycle is approved and its behavioral specification, tests, and implementation are propagated. This deferral does not apply to `cljonic::Map` or existing Map operations.
+
+### Function Composition (`comp`) & Multi-Source `map`
 
 λ REQ-FN-032(x).
   ∀ `map`: accepts its transforming function as the first argument, followed by one or more compatible source collections
