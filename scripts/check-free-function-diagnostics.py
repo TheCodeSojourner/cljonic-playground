@@ -49,7 +49,7 @@ REGISTRY: dict[str, str] = {
     # Subject to REQ-DIAG-009; fallback not yet added (application backlog).
     "cljonic-can-conj.hpp": "fallback",
     "cljonic-conj.hpp": "fallback",
-    "cljonic-contains.hpp": "pending",
+    "cljonic-contains.hpp": "fallback",
     "cljonic-count.hpp": "pending",
     "cljonic-disj.hpp": "pending",
     "cljonic-dissoc.hpp": "pending",
