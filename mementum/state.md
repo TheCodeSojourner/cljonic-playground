@@ -1,56 +1,29 @@
 ## Current Session State
 
-- last_session_id: 85299419-1542-4ca0-827e-356c9119bb6c
+- last_session_id: 533820d1-2062-4aaf-a334-f3da6a453c7b
 - current_timestamp: 2026-10-08
 - recover: 1
 - session_complete: true
 
 Task:
-1. Approved `is_empty` member removal — COMPLETE: retained the collection-only free function `is_empty(collection)`, implemented as `count(collection) == 0`; removed the `is_empty()` member from Vector, Map, Set, Queue, and String. `SequenceableCollection` now requires only non-throwing `count()`; producer capability and API domains are unchanged. Deferred `not_empty` now calls the free function.
-2. Contract and test synchronization — COMPLETE: requirements, architecture, vocabulary, Allium specs, trace IDs, and obligation snapshot now specify free-function-only emptiness. Collection tests and no-heap probes call `is_empty(collection)`. Concept tests prove count-only admission and absence of all five collection members.
-3. Validation — PASS: focused concept/is-empty tests (260 assertions, 33 cases); `allium check specs`; `allium analyse specs`; `make traceability-spec-to-code`; full `make git` (sanitizer, 100% line coverage, no-heap, docs, 30 compiled doc examples). Diagnostic coverage remains at nine pending headers, including `cljonic-is-empty.hpp`.
-4. Map lookup vocabulary clarification — COMPLETE: after user direction, `Lookup`, `Map`, and `MapEntry` distinguish the mapped value `V` returned by Map lookup from the `MapEntry<K, V>` representation used for entry construction and traversal. `get` is requirements-backed (`REQ-COLL-020S`), not deferred.
-5. `REQ-COLL-020R` lookup result clarification — COMPLETE: `get` returns the result type of the corresponding callable lookup; Map returns mapped `V`, Set and Vector return element `T`, and String returns `char`. A supplied fallback has the same type as the lookup result; `assoc` continues to use `association_value_type`.
-6. Higher-order API lifecycle — COMPLETE: user deferred the free-function `map` API and `comp`. Marked `REQ-FN-032` and `REQ-FN-033` non-binding/deferred in Module 5 and clarified the Module 5 index summary. This does not defer `cljonic::Map` or its current operations.
-7. Requirements-only recheck after deferral — PASS structurally: 298 clauses, zero malformed or duplicate designators, zero missing source footers or rationale provenance, and 406 explicit REQ references resolve. The 7 designator-order inversions and 15 definitional forward references remain informational; no renumbering or repairs were made.
-8. Requirements-index summary repair — COMPLETE after user delegated autonomous decision-making: added the supported `is_empty` free function to the Module 3 operation inventory. One requirements coverage warning remains: the latest diagnostic gate reports nine `REQ-DIAG-009` headers pending; not addressed in this requirements-only pass.
-9. Deferred-spec weed policy location — CORRECTED: reverted the local edit to vendored `.agents/skills/gybis-spec-weed/SKILL.md` so it matches repository HEAD. The project-owned `architecture.md` now states deferred behavioral specifications are excluded from active strict coverage, remain reportable future contracts, and are not claimed implemented/test-covered/converged. The existing Makefile traceability target already excludes files marked `-- lifecycle: deferred`.
-10. `count` diagnostic fallback — COMPLETE: added a complement-domain fallback for inputs that are neither `SequenceableCollection` nor `SequenceableProducer`, with a user-facing diagnostic listing Vector, Map, Set, Queue, String, Range, Repeat, Cycle, Iterate, and Repeatedly. Extended the Count Allium contract and test trace, added rejected scalar plus admitted Vector/Range cases to the consolidated primitive compile-fail harness, and moved `cljonic-count.hpp` from `pending` to `fallback` in the diagnostic registry.
-11. Count free-function API completion — COMPLETE: aligned requirements, vocabulary, architecture, Allium specification, and direct tests for both `SequenceableCollection` and `SequenceableProducer`. Collections and finite producers return exact counts; unbounded producers intentionally return the configured traversal cap. Added direct producer tests, producer examples, and producer no-heap coverage. The free-function implementation already admitted both domains, so no behavior change was needed. Refreshed generated header/docs and traceability artifacts.
-12. Reusable API workflow skills — COMPLETE: created `.agents/skills/cljonic-api-complete/SKILL.md` and `.agents/skills/cljonic-api-converge/SKILL.md` as explicit slash-only workflows. Added C++23/toolchain guidance, generated-output overwrite guards, targeted validation invalidation, a shared resume checkpoint, and fixed-point review guidance. Simplified both descriptions to their command triggers. Skill frontmatter and whitespace validations pass.
+1. `/gybis-init` — COMPLETE: read this state, recent IsEmpty memory/knowledge, repository history, and worktree context.
+2. `/gybis-fini` — IN PROGRESS: updated this state with the current durable status; committing only Mementum state now.
+3. Recent IsEmpty work — COMPLETE: `is_empty` supports `SequenceableCollection` and `SequenceableProducer`, returns `count(value) == 0`, and follows the configured observation cap for unbounded producers. The owning collection types remain without `is_empty()` members. Diagnostics and user-facing wording were revised; requirements, vocabulary, architecture, spec, tests, docs, generated header, and no-heap probes are aligned.
+4. Validation — PASS: Allium check/analysis; requirements structural audit (298 unique clauses); `make primitive-compile-fail`; focused `[is_empty]` tests (21 assertions); `make traceability-spec-to-code`; `make docs-examples` (30 compiled); `make docs`; `make no-heap`; diagnostic coverage (seven pending headers).
+5. `/cljonic-api-converge is_empty` — targeted Gybis sequence completed; no unresolved IsEmpty divergences were reported. The `/cljonic-api-converge` workflow now automatically dispatches applicable Gybis skills and pauses only for substantive human decisions.
 
 Questions:
-1. Durable Mementum notes `mementum/memories/count-is-empty-member-naming.md` and `mementum/knowledge/collection-api-surface-discipline.md` were updated in place after human approval to record the free-function-only `is_empty` contract.
-2. VS Code diagnostics reported parser errors in untouched `src/cljonic-repeatedly.hpp`; the full compiler/build gate passed. Revisit only if reproduced by a compiler-backed check.
-3. No open alias ambiguity remains in `REQ-COLL-020R`; its result types are now specified by lookup behavior and collection family.
-4. The final `make git` after the skill-only updates remains user-owned; no skill or assistant workflow may run it or create a commit.
+1. Remaining diagnostic-fallback backlog: `disj`, `dissoc`, `fits_into`, `get`, `into`, `peek`, and `pop`.
+2. The complete repository `make git` gate was not run; run it before considering the overall working tree fully validated.
 
 Decisions:
-1. `is_empty(collection)` remains public, collection-only, and equivalent to `count(collection) == 0`.
-2. Remove `is_empty()` members from the five owning collections; no `Countable` concept and no producer `is_empty` API.
-3. Leave `is_empty` diagnostic fallback coverage pending for the separate diagnostics sweep; do not classify the free-function header as excluded.
-4. Keep deferred `not_empty` lifecycle unchanged; only remove its dependency on the member.
-5. Map lookup returns the mapped value `V`; `MapEntry<K, V>` is not the lookup result.
-6. `map` (the free function) and `comp` are deferred; do not propagate specs, tests, or implementation until the user reopens their lifecycle.
-7. Treat Gybis skills as constant vendored entities; express repo-specific policy in project-owned artifacts and leave the skill files unchanged.
-8. Diagnostic fallback work follows REQ-DIAG-009: add one targeted fallback where a rejected-only overload is formable; retain an explicit documented exclusion only where it is not. Do not change the universal requirement or Gybis skill to advance a single primitive.
-9. The unbounded-producer `count` cap is intentional; it is the configured observation/traversal bound, not a claim of complete cardinality.
-10. Both new API skills are human-invoked. The convergence coordinator must not invoke Gybis commands itself; both skills must not commit or run `make git`.
-
-Validation:
-1. `allium check specs` and `allium analyse specs` report no diagnostics/findings.
-2. Focused `build/cljonic_tests '[is_empty],[concepts]'` passes (260 assertions, 33 cases); generated `cljonic.hpp` and `docs/` contain no collection member API.
-3. `make traceability-spec-to-code-update-snapshot` followed by `make traceability-spec-to-code` passes.
-4. `make git` exits `git:ok`; diagnostic coverage reports nine pending headers.
-5. Count fallback validation: `make primitive-compile-fail`, `allium check specs/primitives/count.allium`, `allium analyse specs`, traceability snapshot refresh/check, and final `make git` all pass; final diagnostic coverage has eight pending headers.
-6. Count producer coverage: `./build/cljonic_tests '[count]'` passes (20 assertions, 2 test cases); `make no-heap`, `make docs-examples` (30 compiled), `make docs`, strict traceability, and the full `make git` gate passed for the Count API slice.
-7. Both skill files pass YAML/frontmatter, required-content, and whitespace checks. The full `make git` gate was not rerun after the skill-only edits, per user direction.
+1. `is_empty` shares `count`'s domains and zero-count semantics; it is a free function, not an owning-collection member.
+2. Unbounded-producer `count` is the configured observation cap, not complete cardinality.
+3. Gybis commands are human-invoked; convergence may dispatch Gybis skills after explicit user invocation but must preserve their approval gates.
+4. Do not commit product/code changes or run `make git` through API workflow skills. `/gybis-fini` committed only `mementum/state.md` as session closeout.
 
 Next:
-1. The user owns the final `make git` after the latest skill edits; do not run it from these skills.
-2. Continue the eight-header diagnostic fallback sweep: `disj`, `dissoc`, `fits_into`, `get`, `into`, `is_empty`, `peek`, and `pop`.
-3. Keep the free-function `map` API and `comp` deferred unless the user reopens their lifecycle.
-4. Preserve the existing decision that `VariantFreeFunctionApi` remains deferred; its earlier unresolved coverage decision is not changed here.
+1. User-owned: review remaining worktree changes and run `make git` when ready.
 
 ## Previous Session State
 
