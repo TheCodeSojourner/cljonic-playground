@@ -2,6 +2,11 @@
 
 entity Count {
     supports_count_free_function: Boolean
+    supports_sequenceable_collection_domain: Boolean
+    supports_sequenceable_producer_domain: Boolean
+    returns_exact_collection_count: Boolean
+    finite_producer_count_is_exact: Boolean
+    unbounded_producer_count_is_observable_cap: Boolean
     rejects_unsupported_domain_with_targeted_diagnostic: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
@@ -12,6 +17,26 @@ entity Count {
 
     invariant CountFreeFunctionSupported {
         this.supports_count_free_function = true
+    }
+
+    invariant SupportsSequenceableCollectionDomain {
+        this.supports_sequenceable_collection_domain = true
+    }
+
+    invariant SupportsSequenceableProducerDomain {
+        this.supports_sequenceable_producer_domain = true
+    }
+
+    invariant ReturnsExactCollectionCount {
+        this.returns_exact_collection_count = true
+    }
+
+    invariant FiniteProducerCountIsExact {
+        this.finite_producer_count_is_exact = true
+    }
+
+    invariant UnboundedProducerCountIsObservableCap {
+        this.unbounded_producer_count_is_observable_cap = true
     }
 
     invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
