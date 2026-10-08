@@ -251,11 +251,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Contains
-- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to the applicable lookup or indexed domain without performing a default-returning access. For maps it tests key presence, for sets it tests element presence, and for indexed collections (vector/string) it tests index-in-range. For `Range`, it separately tests whether an integer position is available for bounded observation; this does not provide positional value access or make `Range` `Indexed`.
+- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to the applicable lookup or indexed domain without performing a default-returning access. For maps it tests key presence and accepts only the declared lookup type; for sets it tests element presence and accepts only the declared lookup type; for indexed collections (`Vector`/`String`) it tests whether an integral index is in range. `Range::contains` is a separate member predicate for bounded-observation availability and is not provided by the free function.
 - **Deprecated Synonyms:** `contains?`, contains predicate, key-presence check
 - **Related:** FreeFunction, Indexed, Lookup, PreflightPredicate, VerbPredicate, IndexedProducer, Range
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `contains(m, key)` tests a map key, `contains(s, value)` tests set membership, `contains(xs, index)` tests whether an indexed collection position is valid, and `contains(r, index)` tests whether a Range position is available.
+- **Examples:** `contains(m, key)` tests a map key, `contains(s, value)` tests set membership, and `contains(xs, index)` tests whether a Vector or String position is valid. A Range exposes `r.contains(index)` for bounded-observation availability.
 
 
 ### FitsInto
@@ -363,7 +363,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Range
-- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. Finite Range forms return their exact count and `true` from `is_finite()`; zero-step forms return the configured traversal cap and `false`. `Range` exposes no canonical `start`/`end`/`step` observation and is not `Indexed`: `contains(r, i)` tests in O(1) whether position `i` is available for bounded observation, but does not retrieve its value. `Range` is not invocable (`IFn`), exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
+- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. Finite Range forms return their exact count and `true` from `is_finite()`; zero-step forms return the configured traversal cap and `false`. `Range` exposes no canonical `start`/`end`/`step` observation and is not `Indexed`: `r.contains(i)` tests in O(1) whether position `i` is available for bounded observation, but does not retrieve its value. `Range` is not invocable (`IFn`), exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
 - **Deprecated Synonyms:** range producer, arithmetic range
 - **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount, Contains, CljonicRange
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
