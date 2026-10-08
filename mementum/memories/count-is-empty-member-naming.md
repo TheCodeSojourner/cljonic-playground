@@ -3,10 +3,11 @@ type: Decision
 symbol: 🎯
 title: count-is-empty-member-naming
 ---
-Container member operations use Clojure-parity names instead of STL names.
+Collection cardinality is exposed by the `count()` member; emptiness is a free-function-only operation.
 
-- Add `count()` and `is_empty()` to all five containers (`Vector`, `Map`, `Set`, `Queue`, `String`); remove `size()` and `empty()` entirely (no aliases).
-- Free functions `count(c)`/`is_empty(c)` dispatch on the `count()`/`is_empty()` members.
+- All five owning collections (`Vector`, `Map`, `Set`, `Queue`, `String`) provide `count()`; `size()` and `empty()` are not aliases.
+- `SequenceableCollection` requires non-throwing `count()` only. `is_empty(c)` is supported for collections and is equivalent to `count(c) == 0`; no `is_empty()` member is required or exposed.
+- Producers remain outside the `is_empty` free-function domain. Their `count()` may be a bounded observation cap rather than exact complete cardinality.
 - Scripts/spec_weed_check.py member whitelists must swap `size`/`empty` → `count`/`is_empty`.
 - String lookup aligns to the other containers: `operator()(i)`, `operator()(i, fallback)`, and `get`, gated by `contains(i)` (Clojure contains? index-in-range).
 - `operator[]` lookup is omitted from all collections (Clojure parity, not std::string).

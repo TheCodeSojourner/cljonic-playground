@@ -11,7 +11,8 @@ depends-on: []
 Collection-facing free operations should default to Clojure-like semantics and naming when embedded constraints allow it. This applies to operation families such as count/get/assoc/dissoc/conj/contains/first/rest.
 
 Rules:
-- Member operations use Clojure-parity names: `count()` and `is_empty()` replace `size()` and `empty()` entirely across all collections (`Vector`, `Map`, `Set`, `Queue`, `String`).
+- Collection cardinality uses the Clojure-parity `count()` member rather than `size()`; `size()` and `empty()` are not aliases. Emptiness is the free function `is_empty(collection)`, equivalent to `count(collection) == 0`, with no `is_empty()` member required or exposed on Vector, Map, Set, Queue, or String.
+- `SequenceableCollection` requires only non-throwing `count()` for sequence-size observation. Producers have a separate `SequenceableProducer` capability and are not admitted to `is_empty`; an unbounded producer's count can be an observation cap, not exact complete cardinality.
 - `operator[]` is omitted from all collections (Clojure parity, not std::string). Callable lookup uses `operator()(index)`, `operator()(index, fallback)`, and `get`, gated by `contains`.
 - `contains` is the single Clojure `contains?`-parity membership predicate across all collection kinds: map key presence, set element presence, vector/string index-in-range. `valid_index`/`valid()` are removed; `IndexedCollection` requires `c.contains(i)`.
 - C++ concept identifiers use PascalCase per C++ Core Guidelines `NL.17`: `Cljonic*` for nominal identity, `SequenceableCollection`/`IndexedCollection`/`AssociativeCollection` for capabilities, `StableEqualityComparable`/`TotallyOrdered`/`NothrowStableEqualityComparable` for values. `NothrowStableEqualityComparable` (`StableEqualityComparable<T> && NothrowCollectionElement<T>`) is the shared admission contract directly constraining `Map`'s and `MapEntry`'s `KeyType`.
