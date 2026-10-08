@@ -10,6 +10,12 @@ entity IsEmpty {
     single_threaded_execution_model: Boolean
     referential_transparency: Boolean
     returns_boolean_predicate: Boolean
+    supports_sequenceable_collection_domain: Boolean
+    supports_sequenceable_producer_domain: Boolean
+    zero_count_matches_empty_observation: Boolean
+    follows_producer_count_observation: Boolean
+    rejects_unsupported_domain_with_targeted_diagnostic: Boolean
+    diagnostic_names_rejected_operand_and_required_sequenceable_domain: Boolean
 
     invariant IsEmptyFreeFunctionSupported {
         this.supports_is_empty_free_function = true
@@ -25,6 +31,30 @@ entity IsEmpty {
 
     invariant ReturnsBooleanPredicate {
         this.returns_boolean_predicate = true
+    }
+
+    invariant SupportsSequenceableCollectionDomain {
+        this.supports_sequenceable_collection_domain = true
+    }
+
+    invariant SupportsSequenceableProducerDomain {
+        this.supports_sequenceable_producer_domain = true
+    }
+
+    invariant ZeroCountMatchesEmptyObservation {
+        this.zero_count_matches_empty_observation = true
+    }
+
+    invariant FollowsProducerCountObservation {
+        this.follows_producer_count_observation = true
+    }
+
+    invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.rejects_unsupported_domain_with_targeted_diagnostic = true
+    }
+
+    invariant DiagnosticNamesRejectedOperandAndRequiredSequenceableDomain {
+        this.diagnostic_names_rejected_operand_and_required_sequenceable_domain = true
     }
 
     invariant NoHeapAllocation {
