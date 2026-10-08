@@ -31,12 +31,15 @@ entity Range {
     provides_named_parameters_equal_operation: Boolean
     satisfies_nothrow_stable_equality_comparable: Boolean
     contains_is_authoritative_bounded_observation_predicate: Boolean
+    contains_is_member_only_predicate: Boolean
     contains_does_not_provide_positional_value_retrieval: Boolean
+    generic_contains_free_function_is_excluded: Boolean
     does_not_satisfy_indexed_producer: Boolean
     contains_is_constant_time: Boolean
     satisfies_nothrow_collection_element: Boolean
     does_not_expose_callable_operator: Boolean
     get_and_lookup_are_excluded: Boolean
+    -- Producer observation uses free-function operations such as count and materialization; Range::contains remains a member predicate, not a free-function overload.
     free_function_observation_is_canonical_access_path: Boolean
     start_end_step_member_accessors_are_noncanonical: Boolean
 
@@ -160,8 +163,16 @@ entity Range {
         this.contains_is_authoritative_bounded_observation_predicate = true
     }
 
+    invariant ContainsIsMemberOnlyPredicate {
+        this.contains_is_member_only_predicate = true
+    }
+
     invariant ContainsDoesNotProvidePositionalValueRetrieval {
         this.contains_does_not_provide_positional_value_retrieval = true
+    }
+
+    invariant GenericContainsFreeFunctionIsExcluded {
+        this.generic_contains_free_function_is_excluded = true
     }
 
     invariant DoesNotSatisfyIndexedProducer {

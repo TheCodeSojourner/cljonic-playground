@@ -259,12 +259,15 @@ invariant.Conj.SupportsStringConj
 invariant.Conj.SupportsVectorConj
 invariant.Contains.ContainsDoesNotPerformDefaultReturningAccess
 invariant.Contains.ContainsFreeFunctionSupported
+invariant.Contains.ExcludesRangeFreeFunction
 invariant.Contains.NoExceptions
 invariant.Contains.NoHeapAllocation
 invariant.Contains.NoRtti
 invariant.Contains.ReferentialTransparency
 invariant.Contains.ReturnsBooleanMembership
 invariant.Contains.SingleThreadedExecutionModel
+invariant.Contains.SupportsMapAndSetDeclaredLookupTypesOnly
+invariant.Contains.SupportsVectorAndStringIntegralIndices
 invariant.Contains.TestsApplicableLookupOrIndexedDomain
 invariant.Count.CountFreeFunctionSupported
 invariant.Count.NoExceptions
@@ -623,6 +626,7 @@ invariant.Range.ConstTraversalTerminatesAtCount
 invariant.Range.ContainsDoesNotProvidePositionalValueRetrieval
 invariant.Range.ContainsIsAuthoritativeBoundedObservationPredicate
 invariant.Range.ContainsIsConstantTime
+invariant.Range.ContainsIsMemberOnlyPredicate
 invariant.Range.DefaultFormIsValid
 invariant.Range.DefaultStartIsZero
 invariant.Range.DefaultStepIsOne
@@ -637,6 +641,7 @@ invariant.Range.EqualStartAndEndWithNonzeroStepIsEmptyRange
 invariant.Range.ExposesIsFinitePredicate
 invariant.Range.FiniteRangeReportsTrueIsFinite
 invariant.Range.FreeFunctionObservationIsCanonicalAccessPath
+invariant.Range.GenericContainsFreeFunctionIsExcluded
 invariant.Range.GetAndLookupAreExcluded
 invariant.Range.HeaderOnlyDistribution
 invariant.Range.NoExceptions

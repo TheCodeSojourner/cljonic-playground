@@ -9,6 +9,9 @@ entity Contains {
     referential_transparency: Boolean
     returns_boolean_membership: Boolean
     tests_applicable_lookup_or_indexed_domain: Boolean
+    supports_map_and_set_declared_lookup_types_only: Boolean
+    supports_vector_and_string_integral_indices: Boolean
+    excludes_range_free_function: Boolean
 
     invariant ContainsFreeFunctionSupported {
         this.supports_contains_free_function = true
@@ -20,6 +23,18 @@ entity Contains {
 
     invariant TestsApplicableLookupOrIndexedDomain {
         this.tests_applicable_lookup_or_indexed_domain = true
+    }
+
+    invariant SupportsMapAndSetDeclaredLookupTypesOnly {
+        this.supports_map_and_set_declared_lookup_types_only = true
+    }
+
+    invariant SupportsVectorAndStringIntegralIndices {
+        this.supports_vector_and_string_integral_indices = true
+    }
+
+    invariant ExcludesRangeFreeFunction {
+        this.excludes_range_free_function = true
     }
 
     invariant NoHeapAllocation {
