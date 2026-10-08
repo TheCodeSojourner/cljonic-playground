@@ -56,7 +56,7 @@ REGISTRY: dict[str, str] = {
     "cljonic-fits-into.hpp": "pending",
     "cljonic-get.hpp": "pending",
     "cljonic-into.hpp": "pending",
-    "cljonic-is-empty.hpp": "pending",
+    "cljonic-is-empty.hpp": "fallback",
     "cljonic-peek.hpp": "pending",
     "cljonic-pop.hpp": "pending",
     # Documented exclusions.

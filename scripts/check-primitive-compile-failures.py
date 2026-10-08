@@ -21,6 +21,22 @@ PRIMITIVES = {
             "range-producer": "(void)cljonic::count(cljonic::Range<int>{0, 5});",
         },
     },
+    "is_empty": {
+        "diagnostic_anchor": "cljonic::is_empty:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::is_empty(42);",
+                "value must be a collection or producer",
+            ),
+        },
+        "pass_cases": {
+            "vector-empty": "(void)cljonic::is_empty(cljonic::Vector<int, 4>{});",
+            "queue-empty": "(void)cljonic::is_empty(cljonic::Queue<int, 4>{});",
+            "string-empty": "(void)cljonic::is_empty(cljonic::String<4>{});",
+            "empty-range-producer": "(void)cljonic::is_empty(cljonic::Range<int>{0, 0});",
+            "nonempty-range-producer": "(void)cljonic::is_empty(cljonic::Range<int>{0, 5});",
+        },
+    },
     "contains": {
         "diagnostic_anchor": "cljonic::contains:",
         "diagnostic_cases": {
