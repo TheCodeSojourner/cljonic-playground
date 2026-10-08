@@ -177,10 +177,6 @@ class Map {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
-    }
-
     [[nodiscard]] constexpr auto operator==(const Map& other) const noexcept -> bool
         requires concepts::StableEqualityComparable<KeyType> && concepts::StableEqualityComparable<ValueType>
     {

@@ -345,11 +345,11 @@ concept CljonicString =
 // Level 2: CapabilityConcept (Structural Collection Capabilities)
 // ============================================================================
 
-/** Requires that an admitted nominal collection provides non-throwing
- * is_empty() and count() sequence observation, with count() returning std::size_t. */
+/** Requires that an admitted nominal collection provides non-throwing count()
+ * sequence observation, returning std::size_t. The is_empty free function is
+ * derived from this count. */
 template <typename C>
 concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
-    { c.is_empty() } noexcept -> std::same_as<bool>;
     { c.count() } noexcept -> std::same_as<std::size_t>;
 };
 

@@ -550,11 +550,11 @@ concept CljonicString =
 // Level 2: CapabilityConcept (Structural Collection Capabilities)
 // ============================================================================
 
-/** Requires that an admitted nominal collection provides non-throwing
- * is_empty() and count() sequence observation, with count() returning std::size_t. */
+/** Requires that an admitted nominal collection provides non-throwing count()
+ * sequence observation, returning std::size_t. The is_empty free function is
+ * derived from this count. */
 template <typename C>
 concept SequenceableCollection = CljonicCollection<C> && requires(const C& c) {
-    { c.is_empty() } noexcept -> std::same_as<bool>;
     { c.count() } noexcept -> std::same_as<std::size_t>;
 };
 
@@ -1190,10 +1190,6 @@ class String {
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
-    }
-
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
     }
 
     /** Returns whether the character is non-NUL ASCII. */
@@ -1902,10 +1898,6 @@ class Vector {
             }
         }
         return result;
-    }
-
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
     }
 
     /** Returns true when there is room for one more element; the value does not
@@ -2861,7 +2853,7 @@ namespace cljonic {
  */
 template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
-    return collection.is_empty();
+    return count(collection) == 0U;
 }
 
 } // namespace cljonic
@@ -3300,10 +3292,6 @@ class Map {
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
-    }
-
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
     }
 
     [[nodiscard]] constexpr auto operator==(const Map& other) const noexcept -> bool
@@ -3836,10 +3824,6 @@ class Queue {
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
-    }
-
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
     }
 
     [[nodiscard]] constexpr auto operator==(const Queue& other) const noexcept -> bool
@@ -4816,10 +4800,6 @@ class Set {
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return logical_size_;
-    }
-
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
     }
 
     [[nodiscard]] constexpr auto operator==(const Set& other) const noexcept -> bool

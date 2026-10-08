@@ -176,10 +176,6 @@ class String {
         return logical_size_;
     }
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
-    }
-
     /** Returns whether the character is non-NUL ASCII. */
     [[nodiscard]] static constexpr auto character_is_valid(char value) noexcept -> bool {
         return value != '\0' && static_cast<unsigned char>(value) <= 0x7FU;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cljonic-concepts.hpp>
+#include <cljonic-count.hpp>
 
 namespace cljonic {
 
@@ -29,7 +29,7 @@ namespace cljonic {
  */
 template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
-    return collection.is_empty();
+    return count(collection) == 0U;
 }
 
 } // namespace cljonic

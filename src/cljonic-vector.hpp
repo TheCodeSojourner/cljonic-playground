@@ -259,10 +259,6 @@ class Vector {
         return result;
     }
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return logical_size_ == 0U;
-    }
-
     /** Returns true when there is room for one more element; the value does not
      *  affect the result. */
     [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const value_type& value) const noexcept -> bool {
