@@ -9,9 +9,41 @@ entity Disj {
     functional_immutability_preserved: Boolean
     referential_transparency: Boolean
     copy_on_modify_semantics: Boolean
+    supports_zero_or_more_values: Boolean
+    requires_exact_set_value_type: Boolean
+    removes_values_left_to_right: Boolean
+    zero_values_return_unchanged_copy: Boolean
+    absent_values_are_no_ops: Boolean
+    duplicate_values_are_allowed: Boolean
+    unsupported_domains_are_rejected: Boolean
 
     invariant DisjFreeFunctionSupported {
         this.supports_disj_free_function = true
+    }
+
+    invariant ZeroOrMoreExactValues {
+        this.supports_zero_or_more_values = true
+        this.requires_exact_set_value_type = true
+    }
+
+    invariant RemovesValuesLeftToRight {
+        this.removes_values_left_to_right = true
+    }
+
+    invariant ZeroValuesReturnUnchangedCopy {
+        this.zero_values_return_unchanged_copy = true
+    }
+
+    invariant AbsentValuesAreNoOps {
+        this.absent_values_are_no_ops = true
+    }
+
+    invariant DuplicateValuesAreAllowed {
+        this.duplicate_values_are_allowed = true
+    }
+
+    invariant UnsupportedDomainsAreRejected {
+        this.unsupported_domains_are_rejected = true
     }
 
     invariant NoHeapAllocation {
