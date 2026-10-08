@@ -495,6 +495,14 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | unbounded_producer(value) → use(configured_observation_cap_not_complete_cardinality)
   | is_empty_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
 
+λ S2_disj_function_contract(x). disj(set, values...) → admit(CljonicSet(set) ∧ ∀ value: same_as(value, Set::value_type))
+  | arity(values) = 0 → return(unchanged_copy(set))
+  | arity(values) > 0 → fold(left_to_right, Set::disj, set, values)
+    ∧ absent_or_repeated_value → unchanged_accumulator
+  | disj_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | rejected_collection_or_value(x) → provide(targeted_rejection_diagnostic(x))
+  rationale: the canonical disj API accepts Clojure-style repeated removal values; Set removal is idempotent, so later occurrences are harmless absent-value no-ops
+
 λ traceability_coverage_policy(x). active_implementation_backed_specification(x)
   → require(every_obligation_has_traceable_test(x))
   | deferred_behavioral_specification(x) → classify_as(DeferredStatus)
