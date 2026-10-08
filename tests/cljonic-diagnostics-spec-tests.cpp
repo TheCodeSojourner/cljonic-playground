@@ -69,10 +69,14 @@ TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics
     STATIC_REQUIRE(requires { cljonic::repeat(NonStorable{}); });
     STATIC_REQUIRE(requires { cljonic::repeat(NonStorable{}, 3); });
 
-    // AppliesToCollectionPrimitives: a collection primitive exposes a
-    // diagnostic fallback for an out-of-domain argument (assoc demonstrated
-    // here; proved by scripts/check-assoc-compile-failures.py).
+    // AppliesToCollectionPrimitives: collection primitives expose diagnostic
+    // fallbacks for rejected domains. The targeted compile-fail harness checks
+    // dissoc's Map and exact-key rejection cases.
     STATIC_REQUIRE_FALSE(cljonic::concepts::AssociativeCollection<cljonic::Set<int, 4>>);
     STATIC_REQUIRE(requires { cljonic::assoc(cljonic::Set<int, 4>{}, 1, 1); });
     STATIC_REQUIRE(requires { cljonic::assoc(cljonic::Map<int, int, 4>{}, 1, 100, 2); });
+    STATIC_REQUIRE(requires { cljonic::dissoc(cljonic::Set<int, 4>{}); });
+    STATIC_REQUIRE(requires { cljonic::dissoc(cljonic::Set<int, 4>{}, 1); });
+    STATIC_REQUIRE(requires { cljonic::dissoc(cljonic::Set<int, 4>{}, 1, 2); });
+    STATIC_REQUIRE(requires { cljonic::dissoc(cljonic::Map<int, int, 4>{}, 1, short{2}); });
 }
