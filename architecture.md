@@ -481,6 +481,13 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | future_operation(x) → require(explicit_requirement_and_specification(x))
   | preserve(clojure_like_names_and_semantics_by_default(x))
 
+λ S2_count_function_contract(x). count(value) → admit(SequenceableCollection ∨ SequenceableProducer)(x)
+  | SequenceableCollection(x) → return(exact_logical_element_count(x))
+  | finite_producer(x) → return(exact_runtime_result_count(x))
+  | UnboundedProducer(x) → return(CollectionMaximumElementCount)
+    ∧ ¬claim(complete_cardinality(x))
+  | count_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+
 λ traceability_coverage_policy(x). active_implementation_backed_specification(x)
   → require(every_obligation_has_traceable_test(x))
   | deferred_behavioral_specification(x) → classify_as(DeferredStatus)
