@@ -2,6 +2,8 @@
 
 entity IsEmpty {
     supports_is_empty_free_function: Boolean
+    is_empty_derived_from_zero_count: Boolean
+    no_collection_is_empty_member: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -11,6 +13,14 @@ entity IsEmpty {
 
     invariant IsEmptyFreeFunctionSupported {
         this.supports_is_empty_free_function = true
+    }
+
+    invariant IsEmptyDerivedFromZeroCount {
+        this.is_empty_derived_from_zero_count = true
+    }
+
+    invariant NoCollectionIsEmptyMember {
+        this.no_collection_is_empty_member = true
     }
 
     invariant ReturnsBooleanPredicate {
