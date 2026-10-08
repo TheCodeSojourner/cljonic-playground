@@ -344,6 +344,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ const_operation(x) → non_mutating(x)
   | cljonic::Variant(x) → recurse_into_components(x) ∧ nestable(x) ∧ closed_value_domain_component(x)
   | variant_free_function_api(x) ≡ {index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative}
+    ∧ classify_as(DeferredStatus)
     ∧ ∀ api(x) → free_function(x) ∧ backed_by_member_method(x)
     ∧ access ∨ rebinding(x) → non_throwing(x) ∧ ¬∃ bad_variant_access(x) ∧ rebinding_leaves_no_valueless_state(x)
     ∧ ¬provide(valueless_by_exception ∨ exception_based_get ∨ multi_variant_visit)(x)
@@ -617,12 +618,12 @@ concept NothrowEqualityComparable =
     ∧ never_traverse_beyond(bounded_logical_count)
 
 // SequenceableCollection is the current observation baseline; it does not imply
-// the independent Seqable lifecycle capability.
+// the independent Seqable lifecycle capability. Emptiness is derived by the
+// is_empty free function from count(), not required as a collection member.
 template<class C>
 concept SequenceableCollection =
     CljonicCollection<C> &&
     requires(const C& c) {
-      { c.is_empty() } -> std::same_as<bool>;
       { c.count() } -> std::same_as<std::size_t>;
     };
 
@@ -727,7 +728,9 @@ concept SequenceableProducer =
   | future_requirements(x) → add_when_first_function_needs_them(x)
   | introduce_concept(x) → require(tested_api_boundary(x)) ∧ specify(consumers_and_diagnostics(x))
 
-λ concept_member_naming(x). canonical_capacity_observation(x) ≡ count ∧ is_empty
+λ concept_member_naming(x). canonical_cardinality_member(x) ≡ count
+  | is_empty(collection) ↔ count(collection) == 0
+  | is_empty(x) → ¬require(collection_member_is_empty(x))
   | member_lookup(x) ≡ operator()(key, fallback = default_result) ∧ contains
   | index_bracket_lookup(x) → omitted_from_all_collections(x)
 
