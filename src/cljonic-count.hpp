@@ -6,7 +6,9 @@
 namespace cljonic {
 
 /** \anchor Count
- * \brief Returns the logical size (number of active elements) of a collection.
+ * \brief Returns a collection's logical size or a producer's count observation. Collections and finite producers
+ * return their exact element count. Unbounded producers return the configured observable traversal cap, not their
+ * complete cardinality.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -19,10 +21,18 @@ namespace cljonic {
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
    constexpr auto q_const = conj(Queue<int, 4>{}, 9);
    constexpr Range<int> r_const{0, 5};
+   constexpr Repeat<int> finite_repeat{7, 3U};
+   constexpr Repeat<int> unbounded_repeat{7};
+   constexpr Range<int> unbounded_range{0, 0, 0};
    static_assert(count(v_const) == 3);
    static_assert(count(m_const) == 1);
    static_assert(count(q_const) == 1);
    static_assert(count(r_const) == 5);
+   static_assert(count(finite_repeat) == 3);
+   static_assert(count(unbounded_repeat) ==
+                 CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
+   static_assert(count(unbounded_range) ==
+                 CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
 
    // Runtime demonstration.
    auto v_runtime = Vector<int, 4>{10, 20};
