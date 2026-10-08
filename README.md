@@ -128,6 +128,7 @@ This repository enforces strict spec-to-code traceability in developer validatio
   `spec-to-code-traceability/spec-to-code-obligation-ids.snapshot.txt`
 - Tests must declare obligation coverage with `TRACE_ID("...")` in test source.
 - The union of `TRACE_ID` values in tests must exactly match the committed snapshot.
+- `scripts/check-spec-test-trace-ids.py <spec.allium> <test.cpp|test-directory> [more-tests...]` checks that every planned obligation appears in the supplied tests. Add `--exact` when the supplied tests are dedicated to that one spec. The `make traceability-spec-to-code` target remains authoritative because it validates all specs, snapshot alignment, and assertion presence.
 - JSON output may be generated ephemerally during gates, but only the text snapshot is committed.
 - Strict gate behavior fails when:
   - set-scoped allium validation fails,
@@ -151,6 +152,7 @@ changes. Assuming all tests pass, executing `make cljonic` will generate the **c
 #### Prerequisites
 
 - GNU Make
+- Python 3.9 or newer (repository validation scripts)
 - CMake 3.28 or newer
 - A C++ compiler with C++23 support or better
 - Network access during the first configure so CMake can fetch Catch2
@@ -179,6 +181,11 @@ changes. Assuming all tests pass, executing `make cljonic` will generate the **c
 | `make no-heap`                                   | Strict no-heap gate against modular and generated headers: source check, harness build, and symbol scan                      |
 | `make traceability-spec-to-code`                 | Strict spec-to-code traceability gate: set-scoped allium validation, snapshot drift check, and test traceability enforcement |
 | `make traceability-spec-to-code-update-snapshot` | Regenerate committed obligation snapshot from current specs                                                                  |
+| `make requirements-structure`                    | Check requirement designator uniqueness, declared domains, attribution, and rationale provenance                              |
+| `make vocabulary-structure`                      | Check vocabulary term metadata and `Related` references                                                                      |
+| `make audit-scripts`                             | Run regression self-tests for reusable repository audit scripts                                                               |
+| `make trace-id-check`                            | Focused Allium obligation-to-test check; set `SPEC`, `TESTS`, and optionally `EXACT=1`                                         |
+| `make trace-id-check`                            | Focused Allium obligation-to-test check; set `SPEC`, `TESTS`, and optionally `EXACT=1`                                         |
 | `make upsert-gate`                               | Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for `UPSERT_COVERAGE_FILE`                               |
 | `make upsert-gate-strict`                        | upsert-gate plus strict spec-to-code traceability and no-heap verification                                                   |
 

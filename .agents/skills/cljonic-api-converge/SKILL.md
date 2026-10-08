@@ -12,6 +12,10 @@ Use this skill only when the user explicitly invokes `/cljonic-api-converge`. Th
 
 This skill coordinates the user's final cross-layer review and automatically invokes the relevant Gybis skills through the skill tool. The user should not need to invoke those commands separately. The coordinator remains responsible for honoring any approval or decision gates raised by a Gybis skill.
 
+Use known repository command spellings rather than probing command-line options or guessing alternatives. For Allium, the supported forms are `allium check <file-or-directory>`, `allium analyse <file-or-directory>`, and `allium plan <file>`; use `analyse` (not `analyze`). For broader gates, inspect and invoke documented Make targets. Do not run `--help` merely to confirm a command whose syntax is specified here or in the repository.
+
+For API-specific quick audits, prefer `make requirements-structure` and `make vocabulary-structure` when those layers changed. Use `make trace-id-check SPEC=<spec.allium> TESTS="<test.cpp> [shared.cpp...]"` for the focused spec/test edge; add `EXACT=1` only when supplied tests are dedicated to that spec. Use `make traceability-spec-to-code` as the authoritative set-scoped traceability gate. The repository audit scripts can self-test via `make audit-scripts`.
+
 ## Hard Boundaries
 
 - Never create a Git commit, stage changes, or discard user changes.

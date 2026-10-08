@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail header-guards diagnostic-coverage _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail header-guards diagnostic-coverage requirements-structure vocabulary-structure audit-scripts trace-id-check _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -40,6 +40,10 @@ help:
 	@printf '%-12s %s\n' 'can-conj-compile-fail' 'Verify can_conj rejection diagnostics for unsupported collections and values'
 	@printf '%-12s %s\n' 'conj-compile-fail' 'Verify conj rejection diagnostics for unsupported collections and values'
 	@printf '%-12s %s\n' 'diagnostic-coverage' 'Verify every src/ public free-function header is classified as fallback, pending, or excluded (REQ-DIAG-009)'
+	@printf '%-12s %s\n' 'requirements-structure' 'Audit requirement IDs, declared domains, attribution, and rationale provenance'
+	@printf '%-12s %s\n' 'vocabulary-structure' 'Audit term metadata and Related links in vocabulary.md'
+	@printf '%-12s %s\n' 'audit-scripts' 'Run self-tests for reusable structural and trace-ID audit scripts'
+	@printf '%-12s %s\n' 'trace-id-check' 'Focused Allium obligation check; set SPEC=... TESTS="..." (optional EXACT=1 for dedicated tests)'
 	@printf '%-12s %s\n' 'docs-examples' 'Compile Doxygen C++ sample blocks against generated $(CLJONIC_HEADER)'
 	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
 	@printf '%-12s %s\n' 'format-doc-samples' 'Format Doxygen C++ sample blocks in src/* headers with clang-format'
@@ -184,6 +188,22 @@ header-guards:
 
 diagnostic-coverage:
 	@python3 scripts/check-free-function-diagnostics.py
+
+requirements-structure:
+	@python3 scripts/check-requirements-structure.py
+
+vocabulary-structure:
+	@python3 scripts/check-vocabulary-structure.py
+
+audit-scripts:
+	@python3 scripts/check-requirements-structure.py --self-test
+	@python3 scripts/check-vocabulary-structure.py --self-test
+	@python3 scripts/check-spec-test-trace-ids.py --self-test
+
+trace-id-check:
+	@test -n "$(SPEC)" || (echo "usage: make trace-id-check SPEC=specs/primitives/foo.allium TESTS=\"tests/foo.cpp tests/shared.cpp\"" >&2; exit 2)
+	@test -n "$(TESTS)" || (echo "trace-id-check: TESTS is required" >&2; exit 2)
+	@python3 scripts/check-spec-test-trace-ids.py $(if $(EXACT),--exact,) "$(SPEC)" $(TESTS)
 
 format:
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
@@ -356,6 +376,9 @@ upsert-fast:
 	@echo "upsert-fast:ok:file=$(UPSERT_FAST_FILE)"
 
 upsert-gate:
+	@$(MAKE) --no-print-directory -s requirements-structure
+	@$(MAKE) --no-print-directory -s vocabulary-structure
+	@$(MAKE) --no-print-directory -s audit-scripts
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s range-compile-fail
@@ -376,6 +399,9 @@ upsert-gate:
 	@$(MAKE) --no-print-directory -s coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
 
 upsert-gate-fast:
+	@$(MAKE) --no-print-directory -s requirements-structure
+	@$(MAKE) --no-print-directory -s vocabulary-structure
+	@$(MAKE) --no-print-directory -s audit-scripts
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s diagnostic-coverage
@@ -389,6 +415,9 @@ upsert-gate-strict:
 	@$(MAKE) --no-print-directory -s no-heap
 
 validate:
+	@$(MAKE) --no-print-directory -s requirements-structure
+	@$(MAKE) --no-print-directory -s vocabulary-structure
+	@$(MAKE) --no-print-directory -s audit-scripts
 	@$(MAKE) --no-print-directory -s format
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
@@ -413,6 +442,9 @@ validate:
 	@echo "validate:ok"
 
 git:
+	@$(MAKE) --no-print-directory -s requirements-structure
+	@$(MAKE) --no-print-directory -s vocabulary-structure
+	@$(MAKE) --no-print-directory -s audit-scripts
 	@$(MAKE) --no-print-directory -s format
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
