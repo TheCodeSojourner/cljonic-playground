@@ -483,8 +483,11 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
 
 λ traceability_coverage_policy(x). active_implementation_backed_specification(x)
   → require(every_obligation_has_traceable_test(x))
-  | deferred_behavioral_specification(x) → preserve(contract ∧ optional_contract_tests)
+  | deferred_behavioral_specification(x) → classify_as(DeferredStatus)
+    ∧ preserve(contract ∧ optional_contract_tests)
     ∧ exclude_from(strict_spec_to_code_gate(x))
+    ∧ report(deferred_obligations(x))
+    ∧ ¬claim(RequirementsBacked(x) ∨ test_covered(x) ∨ converged(x))
 
 ## Concept Architecture
 
