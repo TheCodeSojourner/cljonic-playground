@@ -292,6 +292,16 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | associative_operation(x) → classify_as(RequirementsBacked)
     ∧ trace_to(requirements/requirements-module-2.md ∧ requirements/requirements-module-3.md)
 
+λ S2_dissoc_contract(x). dissoc(map, keys...) → require(CljonicMap(map))
+  | zero_keys(x) → return(unchanged_map_copy(x))
+  | keys(x) → require(each_key_admitted_by(Map.dissoc_member_parameter)) ∧ preserve(implicit_conversion_domain_of(Map.dissoc))
+    ∧ apply_left_to_right(x)
+  | present_key(x) → return(new_map_without_entry_via_swap_and_remove(x))
+  | absent_or_repeated_key(x) → no_op(x)
+  | dissoc(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | unsupported_collection_or_key_domain(x) → reject_at_public_API_boundary_with_targeted_diagnostic(x)
+  | dissoc(x) → classify_as(RequirementsBacked) ∧ trace_to(requirements/requirements-module-3.md)
+
 λ S2_conj_contract(x). conj(collection, value) → return(new_collection_value(x))
   | conj(x) ∧ can_conj(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | can_conj(collection, value) ↔ conj(collection, value)_can_produce_documented_result
