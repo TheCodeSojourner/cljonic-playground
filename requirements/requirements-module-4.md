@@ -18,8 +18,9 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-VAL-016(x).
-  ∀ `count` applied to a materialized collection: returns the exact element count
-  ∧ ∀ Module 4 producer: exposes a non-throwing, non-allocating `count` for its bounded observable traversal — finite forms return their exact runtime result count ∧ unbounded forms return `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`
+  ∀ public free function `count(value)`: admits values satisfying `SequenceableCollection` or `SequenceableProducer` ∧ returns the non-throwing, non-allocating count observation defined for that value
+  ∧ ∀ materialized collection: `count` returns the exact logical element count
+  ∧ ∀ Module 4 producer: exposes a non-throwing, non-allocating count observation for its bounded traversal — finite forms return their exact runtime result count ∧ unbounded forms return `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`
   ∧ ∀ unbounded_count: a configured observable traversal cap ∧ ¬∃ claim that the producer has a finite complete result
   {source: stakeholder_decided, decided_by: original_spec_author}
 
