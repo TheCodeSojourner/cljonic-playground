@@ -120,6 +120,9 @@ Functions</h2></td></tr>
 requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProducer&lt;C&gt;</td></tr>
 <tr class="memitem:af5da07418b370bc5072eacf31957e0ee template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af5da07418b370bc5072eacf31957e0ee">cljonic::count</a> (const C &amp;collection) noexcept -&gt; std::size_t</td></tr>
 <tr class="memdesc:af5da07418b370bc5072eacf31957e0ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the logical size (number of active elements) of a collection.  <br /></td></tr>
+<tr class="memitem:a1af55b6f7900a18ec750f30a844d189e" id="r_a1af55b6f7900a18ec750f30a844d189e"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts::SequenceableCollection&lt;C&gt; &amp;&amp; !concepts::SequenceableProducer&lt;C&gt;)</td></tr>
+<tr class="memitem:a1af55b6f7900a18ec750f30a844d189e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a1af55b6f7900a18ec750f30a844d189e">cljonic::count</a> (const C &amp;collection) noexcept -&gt; std::size_t</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

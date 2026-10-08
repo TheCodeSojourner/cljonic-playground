@@ -200,6 +200,9 @@ requires concepts_detail::ContainsSupportedCollection&lt;C&gt; &amp;&amp; (!conc
 requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProducer&lt;C&gt;</td></tr>
 <tr class="memitem:af5da07418b370bc5072eacf31957e0ee template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af5da07418b370bc5072eacf31957e0ee">count</a> (const C &amp;collection) noexcept -&gt; std::size_t</td></tr>
 <tr class="memdesc:af5da07418b370bc5072eacf31957e0ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the logical size (number of active elements) of a collection.  <br /></td></tr>
+<tr class="memitem:a1af55b6f7900a18ec750f30a844d189e" id="r_a1af55b6f7900a18ec750f30a844d189e"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts::SequenceableCollection&lt;C&gt; &amp;&amp; !concepts::SequenceableProducer&lt;C&gt;)</td></tr>
+<tr class="memitem:a1af55b6f7900a18ec750f30a844d189e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1af55b6f7900a18ec750f30a844d189e">count</a> (const C &amp;collection) noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:ae3e6305e3e1c90eef86582f2181618fe" id="r_ae3e6305e3e1c90eef86582f2181618fe"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicSource Source&gt; <br />
 requires concepts::NothrowCollectionElement&lt;std::ranges::range_value_t&lt;const Source&gt;&gt;</td></tr>
 <tr class="memitem:ae3e6305e3e1c90eef86582f2181618fe template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ae3e6305e3e1c90eef86582f2181618fe">cycle</a> (Source source) noexcept -&gt; <a class="el" href="classcljonic_1_1_cycle.html">Cycle</a>&lt; Source &gt;</td></tr>
@@ -1192,8 +1195,38 @@ requires concepts_detail::ContainsAdmissible&lt;C, K&gt;</div>
 
 </div>
 </div>
+<a id="a1af55b6f7900a18ec750f30a844d189e" name="a1af55b6f7900a18ec750f30a844d189e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1af55b6f7900a18ec750f30a844d189e">&#9670;&#160;</a></span>count() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires (!concepts::SequenceableCollection&lt;C&gt; &amp;&amp; !concepts::SequenceableProducer&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::count </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; std::size_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-count_8hpp_source.html#l00043">43</a> of file <a class="el" href="cljonic-count_8hpp_source.html">cljonic-count.hpp</a>.</p>
+
+</div>
+</div>
 <a id="af5da07418b370bc5072eacf31957e0ee" name="af5da07418b370bc5072eacf31957e0ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af5da07418b370bc5072eacf31957e0ee">&#9670;&#160;</a></span>count()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af5da07418b370bc5072eacf31957e0ee">&#9670;&#160;</a></span>count() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1229,16 +1262,16 @@ requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProd
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2fb743a916443eaa52b84a83056cc872">assoc</a>(<a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a>{}, 1, 100);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 9);</div>
 <div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> r_const{0, 5};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(v_const) == 3U);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(m_const) == 1U);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(q_const) == 1U);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(r_const) == 5U);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(v_const) == 3);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(m_const) == 1);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(q_const) == 1);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(r_const) == 5);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> v_runtime = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10, 20};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> sz = <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(v_runtime);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (sz == 2U) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (sz == 2) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00086">cljonic-queue.hpp:86</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00068">cljonic-range.hpp:68</a></div></div>
