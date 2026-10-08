@@ -665,6 +665,14 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `disj(s, val)` removes `val` from the set if present and decrements count.
 
 
+### Count
+- **Definition:** The free function that reports the count observation of a `SequenceableCollection` or `SequenceableProducer`. Collections and finite producers return their exact logical element count. An unbounded producer returns its configured observable traversal cap, not its complete cardinality.
+- **Deprecated Synonyms:** element count function, count operation
+- **Related:** SequenceableCollection, SequenceableProducer, CollectionMaximumElementCount, ProducerIteration
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `count(Vector<int, 4>{1, 2})` and `count(Repeat{7, 3U})` return exact counts; `count(Repeat{7})` returns the `CollectionMaximumElementCount` observation cap.
+
+
 ### Peek
 - **Definition:** The primitive sequential free function that observes the first or accessible element without removal (`Vector` top/last, `Queue` front) returning `DefaultElement` if empty.
 - **Deprecated Synonyms:** peek front, peek top
