@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#concepts">Concepts</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">cljonic-contains.hpp File Reference</div></div>
 </div><!--header-->
@@ -112,14 +113,27 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
+<tr class="memdesc:namespacecljonic_1_1concepts__detail"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3AContainsLookupCollection" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3AContainsLookupCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_lookup_collection.html">cljonic::concepts_detail::ContainsLookupCollection</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3AContainsIndexedCollection" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3AContainsIndexedCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_indexed_collection.html">cljonic::concepts_detail::ContainsIndexedCollection</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3AContainsSupportedCollection" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3AContainsSupportedCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_supported_collection.html">cljonic::concepts_detail::ContainsSupportedCollection</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3AContainsAdmissible" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3AContainsAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_admissible.html">cljonic::concepts_detail::ContainsAdmissible</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8539a215219d827ab41956f6b29912a1" id="r_a8539a215219d827ab41956f6b29912a1"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
-requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; requires(const C&amp; collection, const K&amp; key) <br class="typebreak" />
-{ { collection.contains(key) } noexcept -&gt; std::same_as&lt;bool&gt;; }</td></tr>
-<tr class="memitem:a8539a215219d827ab41956f6b29912a1 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a8539a215219d827ab41956f6b29912a1">cljonic::contains</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.contains(key))) -&gt; bool</td></tr>
-<tr class="memdesc:a8539a215219d827ab41956f6b29912a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure's <span class="tt"><a class="el" href="namespacecljonic.html#a8539a215219d827ab41956f6b29912a1" title="Tests whether its argument belongs to the applicable lookup or indexed domain, mirroring Clojure&#39;s co...">contains</a>?</span> predicate.  <br /></td></tr>
+<tr class="memitem:a5b8275162678a23d519d3711df6d9a2b" id="r_a5b8275162678a23d519d3711df6d9a2b"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires concepts_detail::ContainsAdmissible&lt;C, K&gt;</td></tr>
+<tr class="memitem:a5b8275162678a23d519d3711df6d9a2b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a5b8275162678a23d519d3711df6d9a2b">cljonic::contains</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.contains(key))) -&gt; bool</td></tr>
+<tr class="memitem:a6715877094e92d2020ccadef0c6f2098" id="r_a6715877094e92d2020ccadef0c6f2098"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts_detail::ContainsSupportedCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a6715877094e92d2020ccadef0c6f2098 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a6715877094e92d2020ccadef0c6f2098">cljonic::contains</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a43071b22805d8d4faefc4b439edde014" id="r_a43071b22805d8d4faefc4b439edde014"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+requires concepts_detail::ContainsSupportedCollection&lt;C&gt; &amp;&amp; (!concepts_detail::ContainsAdmissible&lt;C, K&gt;)</td></tr>
+<tr class="memitem:a43071b22805d8d4faefc4b439edde014 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a43071b22805d8d4faefc4b439edde014">cljonic::contains</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; bool</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
