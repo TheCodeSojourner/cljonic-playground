@@ -6,12 +6,15 @@
 
 TEST_CASE("IsEmpty free function operations", "[is_empty]") {
     using cljonic::conj;
+    using cljonic::count;
     using cljonic::is_empty;
     using cljonic::Queue;
     using cljonic::Vector;
 
     TRACE_ID("entity-fields.IsEmpty");
     TRACE_ID("invariant.IsEmpty.IsEmptyFreeFunctionSupported");
+    TRACE_ID("invariant.IsEmpty.IsEmptyDerivedFromZeroCount");
+    TRACE_ID("invariant.IsEmpty.NoCollectionIsEmptyMember");
     TRACE_ID("invariant.IsEmpty.ReturnsBooleanPredicate");
     TRACE_ID("invariant.IsEmpty.NoHeapAllocation");
     TRACE_ID("invariant.IsEmpty.NoRtti");
@@ -22,11 +25,14 @@ TEST_CASE("IsEmpty free function operations", "[is_empty]") {
     constexpr Vector<int, 4> e{};
     constexpr Vector<int, 4> v{1};
     STATIC_REQUIRE(is_empty(e));
+    STATIC_REQUIRE(is_empty(e) == (count(e) == 0U));
     STATIC_REQUIRE_FALSE(is_empty(v));
+    STATIC_REQUIRE(is_empty(v) == (count(v) == 0U));
 
     constexpr Queue<int, 4> q{};
     constexpr auto q1 = conj(q, 5);
     STATIC_REQUIRE(is_empty(q));
+    STATIC_REQUIRE(is_empty(q) == (count(q) == 0U));
     STATIC_REQUIRE_FALSE(is_empty(q1));
 
     // Runtime tests for code coverage instrumentation

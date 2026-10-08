@@ -63,20 +63,20 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     TRACE_ID("invariant.Set.DefaultAccessHasPreflightPredicate");
 
     constexpr Set<int, 4> s{};
-    STATIC_REQUIRE(s.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(s));
     STATIC_REQUIRE(s.count() == 0U);
     STATIC_REQUIRE(s.capacity() == 4U);
 
     constexpr Set<int, 0> zero_capacity{};
-    STATIC_REQUIRE(zero_capacity.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(zero_capacity));
     STATIC_REQUIRE(zero_capacity.count() == 0U);
     STATIC_REQUIRE(zero_capacity.capacity() == 0U);
     STATIC_REQUIRE_FALSE(zero_capacity.contains(1));
     STATIC_REQUIRE(zero_capacity(1) == 0);
     STATIC_REQUIRE(zero_capacity(1, -1) == -1);
     STATIC_REQUIRE_FALSE(zero_capacity.can_conj(1));
-    STATIC_REQUIRE(zero_capacity.conj(1).is_empty());
-    STATIC_REQUIRE(zero_capacity.disj(1).is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(zero_capacity.conj(1)));
+    STATIC_REQUIRE(cljonic::is_empty(zero_capacity.disj(1)));
 
     // Pack-literal construction: explicit capacity and CTAD for unique values.
     constexpr Set<int, 4> explicit_literal{1, 2, 3};
@@ -94,7 +94,7 @@ TEST_CASE("Set construction and basic operations", "[set]") {
 
     // conj adds elements (copy-on-modify semantics)
     constexpr auto s1 = s.conj(10);
-    STATIC_REQUIRE_FALSE(s1.is_empty());
+    STATIC_REQUIRE_FALSE(cljonic::is_empty(s1));
     STATIC_REQUIRE(s1.count() == 1U);
     STATIC_REQUIRE(s1.contains(10));
     STATIC_REQUIRE_FALSE(s1.contains(20));
@@ -153,7 +153,7 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     int sv1 = sv1_raw;
     int sv2 = sv2_raw;
     auto rs = Set<int, 4>{};
-    REQUIRE(rs.is_empty());
+    REQUIRE(cljonic::is_empty(rs));
     REQUIRE(rs.count() == 0U);
     REQUIRE(rs.capacity() == 4U);
     REQUIRE_FALSE(rs.contains(sv1));
@@ -162,7 +162,7 @@ TEST_CASE("Set construction and basic operations", "[set]") {
     REQUIRE(rs.can_conj(sv1));
 
     auto rs1 = rs.conj(sv1);
-    REQUIRE_FALSE(rs1.is_empty());
+    REQUIRE_FALSE(cljonic::is_empty(rs1));
     REQUIRE(rs1.count() == 1U);
     REQUIRE(rs1.contains(sv1));
     REQUIRE(rs1(sv1) == 100);

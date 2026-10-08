@@ -73,7 +73,7 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     STATIC_REQUIRE(Vector<int, 4>::capacity() == 4U);
     STATIC_REQUIRE(zero_capacity.capacity() == 0U);
     STATIC_REQUIRE(zero_capacity.count() == 0U);
-    STATIC_REQUIRE(zero_capacity.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(zero_capacity));
     STATIC_REQUIRE(zero_capacity(0U) == 0);
     STATIC_REQUIRE(zero_capacity(0U, 99) == 99);
     STATIC_REQUIRE_FALSE(zero_capacity.contains(0U));
@@ -89,7 +89,7 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     const auto runtime_values = Vector<int, 4>{1, 2};
     CHECK(runtime_values.count() == 2U);
     CHECK(runtime_values.capacity() == 4U);
-    CHECK(zero_capacity.is_empty());
+    CHECK(cljonic::is_empty(zero_capacity));
     CHECK_FALSE(zero_capacity.contains(0U));
     CHECK(inferred.count() == explicit_inferred_equivalent.count());
     CHECK(inferred(2U) == explicit_inferred_equivalent(2U));
@@ -134,15 +134,15 @@ TEST_CASE("Vector canonical preflight predicates model index validity and emptin
     STATIC_REQUIRE(values.contains(0U));
     STATIC_REQUIRE(values.contains(1U));
     STATIC_REQUIRE_FALSE(values.contains(2U));
-    STATIC_REQUIRE(empty_values.is_empty());
-    STATIC_REQUIRE_FALSE(values.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(empty_values));
+    STATIC_REQUIRE_FALSE(cljonic::is_empty(values));
 
     const auto runtime_values = Vector<int, 4>{10, 20};
     CHECK(runtime_values.contains(0U));
     CHECK(runtime_values.contains(1U));
     CHECK_FALSE(runtime_values.contains(2U));
-    CHECK(Vector<int, 4>{}.is_empty());
-    CHECK_FALSE(runtime_values.is_empty());
+    CHECK(cljonic::is_empty(Vector<int, 4>{}));
+    CHECK_FALSE(cljonic::is_empty(runtime_values));
 }
 
 TEST_CASE("Vector indexed access handles valid and invalid indexes", "[vector][indexed-access]") {

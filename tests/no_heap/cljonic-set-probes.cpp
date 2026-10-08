@@ -19,10 +19,10 @@ namespace cljonic::no_heap::probes {
     const std::span<const int> dynamic_source{source};
     const auto imported = Set<int, 2>{dynamic_source};
     const auto view_imported = Set<int, 2>{std::views::all(static_source)};
-    return s1.count() == 1U && s1.contains(1) && s1(1) == 1 && literal.count() == 3U && zero_capacity.is_empty() &&
-           !zero_capacity.can_conj(1) && zero_after_conj.is_empty() && zero_after_disj.is_empty() &&
-           imported.count() == 2U && imported.contains(4) && imported.contains(5) && static_imported.contains(8) &&
-           view_imported.contains(9);
+    return s1.count() == 1U && s1.contains(1) && s1(1) == 1 && literal.count() == 3U &&
+           cljonic::is_empty(zero_capacity) && !zero_capacity.can_conj(1) && cljonic::is_empty(zero_after_conj) &&
+           cljonic::is_empty(zero_after_disj) && imported.count() == 2U && imported.contains(4) &&
+           imported.contains(5) && static_imported.contains(8) && view_imported.contains(9);
 }
 
 } // namespace cljonic::no_heap::probes

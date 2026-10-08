@@ -15,6 +15,9 @@
 
 namespace {
 
+template <typename C>
+concept HasIsEmptyMember = requires(const C& collection) { collection.is_empty(); };
+
 // ============================================================================
 // Test-local nominal scaffolding types.
 //
@@ -29,9 +32,6 @@ struct VectorLike {
     using key_type = std::size_t;
     using value_type = int;
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return true;
-    }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
     }
@@ -56,9 +56,6 @@ struct MapLike {
     using association_value_type = int;
     using value_type = int;
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return true;
-    }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
     }
@@ -82,9 +79,6 @@ struct SetLike {
     using value_type = int;
     using lookup_type = SetLookupKey;
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return true;
-    }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
     }
@@ -101,9 +95,6 @@ struct SetLike {
 struct QueueLike {
     using value_type = int;
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return true;
-    }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
     }
@@ -114,9 +105,6 @@ struct StringLike {
     using association_value_type = char;
     using value_type = char;
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return true;
-    }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
     }
@@ -140,9 +128,6 @@ struct StringLike {
 struct ExternalLike {
     using value_type = int;
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return true;
-    }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
     }
@@ -154,8 +139,7 @@ struct ExternalLike {
     }
 };
 
-// Admitted collection using size()/empty() instead of count()/is_empty().
-// Verifies the capability surface requires count()/is_empty() members.
+// Admitted collection using size()/empty() instead of the required count().
 struct SizeEmptyLike {
     using value_type = int;
 
@@ -172,9 +156,6 @@ struct SizeEmptyLike {
 struct BracketLike {
     using value_type = int;
 
-    [[nodiscard]] constexpr auto is_empty() const noexcept -> bool {
-        return true;
-    }
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return 0;
     }
@@ -445,11 +426,10 @@ TEST_CASE("SequenceableCollection structural capability", "[concepts][collection
     using namespace cljonic::concepts;
 
     TRACE_ID("entity-fields.SequenceableCollection");
-    TRACE_ID("invariant.SequenceableCollection.RequiresNonThrowingIsEmpty");
     TRACE_ID("invariant.SequenceableCollection.RequiresNonThrowingCount");
     TRACE_ID("invariant.SequenceableCollection.LayeredOnNominalAdmission");
 
-    // RequiresNonThrowingIsEmpty + RequiresNonThrowingCount.
+    // RequiresNonThrowingCount: VectorLike has no is_empty() member.
     STATIC_REQUIRE(SequenceableCollection<VectorLike>);
     STATIC_REQUIRE(SequenceableCollection<MapLike>);
     STATIC_REQUIRE(SequenceableCollection<cljonic::Vector<int, 4>>);
@@ -805,12 +785,13 @@ TEST_CASE("ConceptMemberNaming surface", "[concepts][collection]") {
     using namespace cljonic::concepts;
 
     TRACE_ID("entity-fields.ConceptMemberNaming");
-    TRACE_ID("invariant.ConceptMemberNaming.UsesCountIsEmptyMembers");
+    TRACE_ID("invariant.ConceptMemberNaming.UsesCountMemberForCardinality");
     TRACE_ID("invariant.ConceptMemberNaming.OmitsIndexBracketLookup");
     TRACE_ID("invariant.ConceptMemberNaming.UsesContainsPredicate");
+    TRACE_ID("invariant.IsEmpty.IsEmptyDerivedFromZeroCount");
+    TRACE_ID("invariant.IsEmpty.NoCollectionIsEmptyMember");
 
-    // UsesCountIsEmptyMembers: count()/is_empty() are required; size()/empty()
-    // alone do not satisfy the sequenceable surface.
+    // count() is the only required sequence-size member; is_empty is a free function.
     STATIC_REQUIRE(SequenceableCollection<VectorLike>);
     STATIC_REQUIRE(SequenceableCollection<cljonic::Vector<int, 4>>);
     STATIC_REQUIRE(SequenceableCollection<cljonic::Map<int, int, 4>>);
@@ -818,6 +799,11 @@ TEST_CASE("ConceptMemberNaming surface", "[concepts][collection]") {
     STATIC_REQUIRE(SequenceableCollection<cljonic::Queue<int, 4>>);
     STATIC_REQUIRE(SequenceableCollection<cljonic::String<8>>);
     STATIC_REQUIRE_FALSE(SequenceableCollection<SizeEmptyLike>);
+    STATIC_REQUIRE_FALSE(HasIsEmptyMember<cljonic::Vector<int, 4>>);
+    STATIC_REQUIRE_FALSE(HasIsEmptyMember<cljonic::Map<int, int, 4>>);
+    STATIC_REQUIRE_FALSE(HasIsEmptyMember<cljonic::Set<int, 4>>);
+    STATIC_REQUIRE_FALSE(HasIsEmptyMember<cljonic::Queue<int, 4>>);
+    STATIC_REQUIRE_FALSE(HasIsEmptyMember<cljonic::String<8>>);
 
     // OmitsIndexBracketLookup: operator[] is not used; operator()(size_t) is.
     STATIC_REQUIRE(IndexedCollection<VectorLike>);

@@ -71,12 +71,12 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     TRACE_ID("invariant.Map.DefaultAccessHasPreflightPredicate");
 
     constexpr Map<int, int, 4> m{};
-    STATIC_REQUIRE(m.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(m));
     STATIC_REQUIRE(m.count() == 0U);
     STATIC_REQUIRE(m.capacity() == 4U);
 
     constexpr Map<int, int, 0> zero_capacity{};
-    STATIC_REQUIRE(zero_capacity.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(zero_capacity));
     STATIC_REQUIRE(zero_capacity.count() == 0U);
     STATIC_REQUIRE(zero_capacity(1) == 0);
     STATIC_REQUIRE(zero_capacity(1, -1) == -1);
@@ -100,7 +100,7 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     STATIC_REQUIRE(duplicate_key_literal(1) == 20);
 
     constexpr auto m1 = m.assoc(10, 100);
-    STATIC_REQUIRE_FALSE(m1.is_empty());
+    STATIC_REQUIRE_FALSE(cljonic::is_empty(m1));
     STATIC_REQUIRE(m1.count() == 1U);
     STATIC_REQUIRE(m1.contains(10));
     STATIC_REQUIRE_FALSE(m1.contains(20));
@@ -129,7 +129,7 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     int mk2 = mk2_raw;
     int mv2 = mv2_raw;
     auto rm = Map<int, int, 4>{};
-    REQUIRE(rm.is_empty());
+    REQUIRE(cljonic::is_empty(rm));
     REQUIRE(rm.count() == 0U);
     REQUIRE(rm.capacity() == 4U);
     REQUIRE_FALSE(rm.contains(mk1));
@@ -138,7 +138,7 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     REQUIRE(rm.can_assoc(mk1));
 
     auto rm1 = rm.assoc(mk1, mv1);
-    REQUIRE_FALSE(rm1.is_empty());
+    REQUIRE_FALSE(cljonic::is_empty(rm1));
     REQUIRE(rm1.count() == 1U);
     REQUIRE(rm1.contains(mk1));
     REQUIRE(rm1(mk1) == 100);

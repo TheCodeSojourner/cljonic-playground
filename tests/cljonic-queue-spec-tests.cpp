@@ -53,7 +53,7 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     TRACE_ID("invariant.Queue.RuntimeCapacityFailuresHaveDocumentedPolicy");
 
     constexpr Queue<int, 4> q{};
-    STATIC_REQUIRE(q.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(q));
     STATIC_REQUIRE(q.count() == 0U);
     STATIC_REQUIRE(q.capacity() == 4U);
     STATIC_REQUIRE(q.can_conj(1)); // empty → room available
@@ -71,7 +71,7 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
 
     // conj enqueues to back
     constexpr auto q1 = q.conj(1);
-    STATIC_REQUIRE_FALSE(q1.is_empty());
+    STATIC_REQUIRE_FALSE(cljonic::is_empty(q1));
     STATIC_REQUIRE(q1.count() == 1U);
     STATIC_REQUIRE(q1.peek() == 1);
 
@@ -104,7 +104,7 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     STATIC_REQUIRE(qp3.peek() == 4); // 3 removed
 
     constexpr auto qp4 = qp3.pop();
-    STATIC_REQUIRE(qp4.is_empty()); // 4 removed
+    STATIC_REQUIRE(cljonic::is_empty(qp4)); // 4 removed
     STATIC_REQUIRE(qp4.count() == 0U);
 
     // Empty queue: peek returns default-constructed value
@@ -112,7 +112,7 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
 
     // Empty queue: pop returns unchanged copy
     constexpr auto q_empty_pop = q.pop();
-    STATIC_REQUIRE(q_empty_pop.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(q_empty_pop));
     STATIC_REQUIRE(q_empty_pop.count() == 0U);
 
     // Pop on empty returns identical state
@@ -133,15 +133,15 @@ TEST_CASE("Queue FIFO construction and operations", "[queue]") {
     int v1 = v1_raw;
     int v2 = v2_raw;
     auto rq = Queue<int, 4>{};
-    REQUIRE(rq.is_empty());
+    REQUIRE(cljonic::is_empty(rq));
     REQUIRE(rq.count() == 0U);
     REQUIRE(rq.capacity() == 4U);
     REQUIRE(rq.can_conj(1));
     REQUIRE(rq.peek() == 0);
-    REQUIRE(rq.pop().is_empty());
+    REQUIRE(cljonic::is_empty(rq.pop()));
 
     auto rq1 = rq.conj(v1);
-    REQUIRE_FALSE(rq1.is_empty());
+    REQUIRE_FALSE(cljonic::is_empty(rq1));
     REQUIRE(rq1.count() == 1U);
     REQUIRE(rq1.peek() == 10);
 

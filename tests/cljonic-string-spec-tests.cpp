@@ -105,7 +105,7 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     // Empty construction with explicit capacity
     constexpr String<8> s{};
-    STATIC_REQUIRE(s.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(s));
     STATIC_REQUIRE(s.count() == 0U);
     STATIC_REQUIRE(s.capacity() == 8U);
     STATIC_REQUIRE(s(0) == '\0');           // out-of-bounds returns '\0'
@@ -113,7 +113,7 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     // Literal construction deduces size from initializer
     constexpr String<8> s1{"Hello"}; // "Hello" = 5 chars + null terminator
-    STATIC_REQUIRE_FALSE(s1.is_empty());
+    STATIC_REQUIRE_FALSE(cljonic::is_empty(s1));
     STATIC_REQUIRE(s1.count() == 5U); // logical size excludes null terminator
     STATIC_REQUIRE(s1(0) == 'H');
     STATIC_REQUIRE(s1(4) == 'o');
@@ -159,7 +159,7 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     // Capacity zero: can only hold empty/null
     constexpr String<0> s_empty_cap{};
-    STATIC_REQUIRE(s_empty_cap.is_empty());
+    STATIC_REQUIRE(cljonic::is_empty(s_empty_cap));
     STATIC_REQUIRE(s_empty_cap.count() == 0U);
     STATIC_REQUIRE(s_empty_cap(0) == '\0');
     STATIC_REQUIRE_FALSE(can_conj(s_empty_cap, 'A'));
@@ -182,14 +182,14 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     volatile std::size_t idx0_raw = 0;
     std::size_t idx0 = idx0_raw;
     auto rs = String<8>{};
-    REQUIRE(rs.is_empty());
+    REQUIRE(cljonic::is_empty(rs));
     REQUIRE(rs.count() == 0U);
     REQUIRE(rs.capacity() == 8U);
     REQUIRE(rs(idx0) == '\0');
     REQUIRE_FALSE(rs.contains(idx0));
 
     auto rs1 = String<8>{"AB"};
-    REQUIRE_FALSE(rs1.is_empty());
+    REQUIRE_FALSE(cljonic::is_empty(rs1));
     REQUIRE(rs1.count() == 2U);
     REQUIRE(rs1(idx0) == 'A');
     REQUIRE(rs1(1) == 'B');
