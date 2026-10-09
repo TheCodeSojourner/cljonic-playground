@@ -6,8 +6,8 @@
 namespace cljonic {
 
 /** \anchor Count
- * \brief Returns a collection's logical size or a producer's observable count. Collections and finite producers
- * return their exact element count. Unbounded producers return their observable count.
+ * \brief Returns a collection's logical size or a producer's observable count. Collections and finite producers return
+ * their exact element count. Unbounded producers return their observable count.
  *
  * \b Examples
  ~~~~~{.cpp}
