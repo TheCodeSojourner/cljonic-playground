@@ -31,5 +31,7 @@ Mechanism (verified on GCC 16.2 + clang 22.1, real headers):
   readability-named-parameter; named-but-unused trips -Wunused-parameter.
 
 Applied to Vector/Set/Queue/Map/String. Harness asserts the message anchor
-"is not a constructor source" (whitespace-normalized), so wording drift fails
-the gate.
+"you cannot construct a" (whitespace-normalized), so wording drift fails
+the gate. The anchor was reworded on 2026-10-09 from "is not a construction
+source" under the user-facing terminology decision — see
+user-facing-diagnostic-messages.md.

@@ -21,6 +21,12 @@ Consequence:
 - Residual unasserted surface: per-arity nuance beyond the pinned substrings
   (e.g. exact wording of `mixed cljonic/non-cljonic pairs`), which is free.
 
-When refining a diagnostic, keep the anchor phrase intact, state the rule
+When refining a diagnostic, state the rule
 positively (admissible forms) plus the rejection taxonomy, and make each arity's
 message self-contained rather than cross-referencing another arity's message.
+
+2026-10-09 update: anchors were reworded to plain user-facing language by human
+decision — see user-facing-diagnostic-messages.md. The examples above are
+superseded ("outside the supported equality domain" → "cannot be compared for
+equality"/"inequality"; assoc/conj anchors likewise). The lockstep rule below is
+unchanged and remains the operative constraint.
