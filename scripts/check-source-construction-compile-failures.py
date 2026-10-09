@@ -24,7 +24,7 @@ import subprocess
 # (content-asserted, whitespace-normalized) rather than a generic element
 # conversion error. Each case also pins the collection's operation token so a
 # rejection routed through the wrong collection's overload cannot pass.
-REQUIRED_MESSAGE_ANCHOR = "is not a construction source"
+REQUIRED_MESSAGE_ANCHOR = "you cannot construct a"
 
 # name -> (probe body, expected diagnostic operation token). Each entry must
 # FAIL to compile: a cljonic collection or producer whose type is not the

@@ -6,7 +6,7 @@ modular and single-header builds.
 
 The message content is asserted, not just its stability: REQ-DIAG-009 requires
 the fallback to name the operation and the violated producer-admission rule, so
-the checks below pin the operation identity and the shared anchor.
+the checks below pin the operation identity and its required rule text.
 """
 
 from __future__ import annotations
@@ -44,15 +44,16 @@ struct NonStorable {
 } // namespace
 """
 
-# Shared anchor for the producer-factory rejection message (REQ-DIAG-009).
-DIAGNOSTIC_ANCHOR = "outside the supported producer domain"
-
-# name -> (probe body, required operation identity)
+# name -> (probe body, required operation identity, required rule substring)
 DIAGNOSTIC_CASES = {
-    "Cycle-diagnostic": ("(void)cljonic::cycle(42);", "cljonic::cycle:"),
-    "Repeatedly-diagnostic": ("(void)cljonic::repeatedly(42);", "cljonic::repeatedly:"),
-    "Iterate-diagnostic": ("(void)cljonic::iterate(42, 1);", "cljonic::iterate:"),
-    "Repeat-diagnostic": ("(void)cljonic::repeat(NonStorable{});", "cljonic::repeat:"),
+    "Cycle-diagnostic": ("(void)cljonic::cycle(42);", "cljonic::cycle:", "cannot be used to build a Cycle"),
+    "Repeatedly-diagnostic": (
+        "(void)cljonic::repeatedly(42);",
+        "cljonic::repeatedly:",
+        "cannot be used to build a Repeatedly",
+    ),
+    "Iterate-diagnostic": ("(void)cljonic::iterate(42, 1);", "cljonic::iterate:", "cannot be used to build an Iterate"),
+    "Repeat-diagnostic": ("(void)cljonic::repeat(NonStorable{});", "cljonic::repeat:", "cannot be repeated"),
 }
 
 
@@ -82,7 +83,7 @@ def _normalized(text: str) -> str:
 
 
 def diagnostic_message_reported(
-    compiler: list[str], include_dir: str, header: str, body: str, operation: str
+    compiler: list[str], include_dir: str, header: str, body: str, operation: str, required: str
 ) -> bool:
     source = "\n".join(
         (
@@ -104,10 +105,7 @@ def diagnostic_message_reported(
     if result.returncode == 0:
         return False
     output = _normalized(result.stdout + result.stderr)
-    return all(
-        _normalized(needle) in output
-        for needle in (operation, DIAGNOSTIC_ANCHOR)
-    )
+    return all(_normalized(needle) in output for needle in (operation, required))
 
 
 def main() -> int:
@@ -128,8 +126,8 @@ def main() -> int:
             if not compile_case(compiler, include_dir, header, body, preamble=PREAMBLE):
                 failures.append(f"{configuration}/{name}: expected to compile, but failed")
 
-        for name, (body, operation) in DIAGNOSTIC_CASES.items():
-            if not diagnostic_message_reported(compiler, include_dir, header, body, operation):
+        for name, (body, operation, required) in DIAGNOSTIC_CASES.items():
+            if not diagnostic_message_reported(compiler, include_dir, header, body, operation, required):
                 failures.append(f"{configuration}/{name}: targeted rejection diagnostic content not reported")
 
     if failures:

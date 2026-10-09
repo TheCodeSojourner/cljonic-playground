@@ -24,7 +24,7 @@ DIAGNOSTIC_CASES = {
 }
 
 DIAGNOSTIC_ANCHOR = "cljonic::character_is_valid:"
-DIAGNOSTIC_MESSAGE = "value must have a non-bool integral type"
+DIAGNOSTIC_MESSAGE = "must be an integer character code"
 
 
 def build_source(header: str, body: str) -> str:

@@ -21,15 +21,15 @@ struct CanAssocNotConvertible {};
 DIAGNOSTIC_CASES = {
     "CanAssoc-non-associative-collection": (
         "(void)cljonic::can_assoc(cljonic::Set<int, 4>{}, 1);",
-        ("must be an associative collection", "Set and Queue are not associative"),
+        ("must be a Map, a Vector, or a String", "not supported"),
     ),
     "CanAssoc-inadmissible-key-vector": (
         "(void)cljonic::can_assoc(cljonic::Vector<int, 4>{}, CanAssocNotConvertible{});",
-        ("outside this collection's association domain", "integer index"),
+        ("has a type the collection cannot associate", "integer index"),
     ),
     "CanAssoc-inadmissible-key-map": (
         "(void)cljonic::can_assoc(cljonic::Map<int, int, 4>{}, CanAssocNotConvertible{});",
-        ("outside this collection's association domain", "Map takes a key"),
+        ("has a type the collection cannot associate", "Map takes a key"),
     ),
 }
 

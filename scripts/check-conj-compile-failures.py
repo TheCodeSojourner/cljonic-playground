@@ -23,23 +23,23 @@ struct collection_traits<ConjNonConjableCollection> {
 DIAGNOSTIC_CASES = {
     "non-conjable-cljonic-collection": (
         "(void)cljonic::conj(ConjNonConjableCollection{}, 1);",
-        "first argument must be a Conjable collection",
+        "must be a Vector, a Set, a Map, a Queue, or a String",
     ),
     "inadmissible-vector-value": (
         "(void)cljonic::conj(cljonic::Vector<int, 4>{}, ConjNotConvertible{});",
-        "value is outside this collection's conj domain",
+        "cannot be added to the collection with conj",
     ),
     "inadmissible-set-value": (
         "(void)cljonic::conj(cljonic::Set<int, 4>{}, ConjNotConvertible{});",
-        "value is outside this collection's conj domain",
+        "cannot be added to the collection with conj",
     ),
     "inadmissible-map-value": (
         "(void)cljonic::conj(cljonic::Map<int, int, 4>{}, 1);",
-        "Map requires a MapEntry",
+        "A Map takes a MapEntry",
     ),
     "inadmissible-string-value": (
         "(void)cljonic::conj(cljonic::String<4>{}, ConjNotConvertible{});",
-        "value is outside this collection's conj domain",
+        "cannot be added to the collection with conj",
     ),
 }
 

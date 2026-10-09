@@ -125,9 +125,9 @@ PASS_CASES = {
 # message content is asserted, not just its stability: REQ-DIAG-009 requires the
 # fallback to name the operation and the violated domain rule. The taxonomy is
 # shared with scripts/check-equal-compile-failures.py.
-DIAGNOSTIC_ANCHOR = "outside the supported equality domain"
+DIAGNOSTIC_ANCHOR = "cannot be compared for inequality"
 DIAGNOSTIC_OPERATION = "cljonic::not_equal:"
-DIAGNOSTIC_SHARED_DOMAIN = "shares with cljonic::equal"
+DIAGNOSTIC_SHARED_DOMAIN = "supports the same values as equal"
 DIAGNOSTIC_TAXONOMY = (
     "Floating-point values",
     "callables",
@@ -142,13 +142,13 @@ DIAGNOSTIC_CASES = {
     "NotEqual-unary-diagnostic": ("(void)cljonic::not_equal(1.0);", ()),
     "NotEqual-binary-diagnostic": (
         "(void)cljonic::not_equal(cljonic::Vector<int, 2>{1}, 1);",
-        ("mutually comparable cljonic family pair",
-         "sequential [Vector, Queue, and all producers]"),
+        ("two values from the same cljonic family",
+         "Vector, Queue, and all producers (the sequential family)"),
     ),
     "NotEqual-variadic-diagnostic": (
         "(void)cljonic::not_equal(1, cljonic::Vector<int, 2>{1}, 2);",
         ("With three or more operands",
-         "sequential [Vector, Queue, and all producers]"),
+         "Vector, Queue, and all producers (the sequential family)"),
     ),
 }
 

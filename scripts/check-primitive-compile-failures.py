@@ -73,11 +73,11 @@ PRIMITIVES = {
         "diagnostic_cases": {
             "non-set-collection": (
                 "(void)cljonic::disj(cljonic::Vector<int, 4>{}, 1);",
-                "first argument must be a Set collection",
+                "first argument must be a Set",
             ),
             "convertible-but-not-exact-value": (
                 "(void)cljonic::disj(cljonic::Set<int, 4>{}, short{1});",
-                "must exactly match the Set's declared value_type",
+                "must have exactly the same type as the set's elements",
             ),
         },
         "pass_cases": {
@@ -100,19 +100,19 @@ PRIMITIVES = {
             ),
             "map-convertible-key": (
                 "(void)cljonic::contains(cljonic::Map<int, int, 4>{}, short{1});",
-                "must exactly match the declared lookup type",
+                "must have exactly the same type as the map's keys or the set's elements",
             ),
             "set-convertible-element": (
                 "(void)cljonic::contains(cljonic::Set<int, 4>{}, short{1});",
-                "must exactly match the declared lookup type",
+                "must have exactly the same type as the map's keys or the set's elements",
             ),
             "vector-non-integral-index": (
                 "(void)cljonic::contains(cljonic::Vector<int, 4>{}, 1.5);",
-                "indexes must have an integral type",
+                "index must be an integer type",
             ),
             "string-non-integral-index": (
                 "(void)cljonic::contains(cljonic::String<4>{}, 1.5);",
-                "indexes must have an integral type",
+                "index must be an integer type",
             ),
         },
         "pass_cases": {

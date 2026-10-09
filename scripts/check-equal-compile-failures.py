@@ -192,7 +192,7 @@ def compile_case(compiler: list[str], include_dir: str, header: str, body: str, 
 # message content is asserted, not just its stability: REQ-DIAG-009 requires the
 # fallback to name the operation and the violated domain rule, so the checks
 # below pin the operation identity and the rejected-category taxonomy.
-DIAGNOSTIC_ANCHOR = "outside the supported equality domain"
+DIAGNOSTIC_ANCHOR = "cannot be compared for equality"
 DIAGNOSTIC_OPERATION = "cljonic::equal:"
 DIAGNOSTIC_TAXONOMY = (
     "Floating-point values",
@@ -208,13 +208,13 @@ DIAGNOSTIC_CASES = {
     "Equal-unary-diagnostic": ("(void)cljonic::equal(1.0);", ()),
     "Equal-binary-diagnostic": (
         "(void)cljonic::equal(cljonic::Vector<int, 2>{1}, 1);",
-        ("mutually comparable cljonic family pair",
-         "sequential [Vector, Queue, and all producers]"),
+        ("two values from the same cljonic family",
+         "Vector, Queue, and all producers (the sequential family)"),
     ),
     "Equal-variadic-diagnostic": (
         "(void)cljonic::equal(1, cljonic::Vector<int, 2>{1}, 2);",
         ("With three or more operands",
-         "sequential [Vector, Queue, and all producers]"),
+         "Vector, Queue, and all producers (the sequential family)"),
     ),
 }
 

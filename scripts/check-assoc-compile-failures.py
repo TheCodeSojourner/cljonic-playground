@@ -22,11 +22,11 @@ struct AssocNotConvertible {};
 DIAGNOSTIC_CASES = {
     "Assoc-non-associative-collection": (
         "(void)cljonic::assoc(cljonic::Set<int, 4>{}, 1, 1);",
-        ("must be an associative collection", "Set and Queue are not associative"),
+        ("must be a Map, a Vector, or a String", "is not supported"),
     ),
     "Assoc-inadmissible-pair": (
         "(void)cljonic::assoc(cljonic::Vector<int, 4>{}, AssocNotConvertible{}, 1);",
-        ("outside this collection's association domain",),
+        ("both have a type this collection cannot associate",),
     ),
     "Assoc-key-without-value": (
         "(void)cljonic::assoc(cljonic::Map<int, int, 4>{}, 1, 100, 2);",
@@ -38,7 +38,7 @@ DIAGNOSTIC_CASES = {
     ),
     "Assoc-bad-variadic-pair": (
         "(void)cljonic::assoc(cljonic::Map<int, int, 4>{}, 1, 100, 2, AssocNotConvertible{}, 3, 3);",
-        ("complete key/value pairs", "outside the collection's association domain"),
+        ("complete key/value pairs", "has a type the collection cannot associate"),
     ),
 }
 
