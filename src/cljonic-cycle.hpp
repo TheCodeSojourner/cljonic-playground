@@ -191,9 +191,8 @@ template <typename Source>
     requires(!concepts_detail::ValidCycleSource<Source>)
 constexpr auto cycle([[maybe_unused]] Source source) noexcept -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Source>,
-                  "cljonic::cycle: the source argument is outside the supported producer domain. "
-                  "The source must be a cljonic collection or producer whose element type is "
-                  "nothrow-storable and which provides non-throwing const traversal.");
+                  "cljonic::cycle: the source argument cannot be used to build a Cycle. The source must be a cljonic "
+                  "collection or producer whose values can be stored and read without throwing.");
     return {};
 }
 

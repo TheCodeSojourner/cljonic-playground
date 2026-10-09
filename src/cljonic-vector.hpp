@@ -211,12 +211,12 @@ class Vector {
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Vector([[maybe_unused]] SourceValue&& source) noexcept {
-        static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::Vector: a cljonic collection or producer is not a construction source. "
-                      "A Vector is built from its individual elements or from a non-cljonic C++ range or "
-                      "view. To copy this argument's contents into a Vector, use into(destination, source) "
-                      "(call fits_into(destination, source) first to check whether the whole source fits); "
-                      "to keep it as a single element, write Vector{...}.");
+        static_assert(
+            concepts_detail::dependent_false<SourceValue>,
+            "cljonic::Vector: you cannot construct a Vector from a cljonic collection or producer. A Vector is built "
+            "from its individual elements, or from a non-cljonic C++ range or view. To copy this argument's contents "
+            "into a Vector, use into(destination, source) (call fits_into(destination, source) first to check whether "
+            "the whole source fits); to keep it as a single element, write Vector{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

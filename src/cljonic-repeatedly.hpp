@@ -162,10 +162,9 @@ template <typename Step>
     requires(!concepts_detail::ValidRepeatedlyStep<Step>)
 constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Step>,
-                  "cljonic::repeatedly: the step argument is outside the supported producer domain. "
-                  "The step must be a copyable, non-throwing callable that takes no arguments and "
-                  "whose result is a nothrow-storable element type. Pass a function, lambda, or "
-                  "function object; to repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
+                  "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
+                  "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
                   "cljonic::repeat(value, count).");
     return {};
 }
@@ -175,10 +174,9 @@ template <typename Step>
 constexpr auto repeatedly([[maybe_unused]] std::size_t count, [[maybe_unused]] Step&& step) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Step>,
-                  "cljonic::repeatedly: the step argument is outside the supported producer domain. "
-                  "The step must be a copyable, non-throwing callable that takes no arguments and "
-                  "whose result is a nothrow-storable element type. Pass a function, lambda, or "
-                  "function object; to repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
+                  "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
+                  "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
                   "cljonic::repeat(value, count).");
     return {};
 }

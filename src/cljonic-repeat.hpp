@@ -169,9 +169,8 @@ template <typename T>
     requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
 constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::repeat: the value argument is outside the supported producer domain. "
-                  "The repeated value must satisfy NothrowCollectionElement: default-constructible, "
-                  "copyable, and destructible without throwing.");
+                  "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
+                  "safe to create, store, and destroy without throwing.");
     return {};
 }
 
@@ -180,9 +179,8 @@ template <typename T>
 constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] std::size_t count) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::repeat: the value argument is outside the supported producer domain. "
-                  "The repeated value must satisfy NothrowCollectionElement: default-constructible, "
-                  "copyable, and destructible without throwing.");
+                  "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
+                  "safe to create, store, and destroy without throwing.");
     return {};
 }
 

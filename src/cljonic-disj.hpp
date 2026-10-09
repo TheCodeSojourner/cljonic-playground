@@ -61,11 +61,10 @@ template <typename C, typename... Values>
 [[nodiscard]] constexpr auto disj([[maybe_unused]] const C& collection,
                                   [[maybe_unused]] const Values&... values) noexcept {
     if constexpr (!concepts::CljonicSet<C>) {
-        static_assert(concepts_detail::dependent_false<C>,
-                      "cljonic::disj: the first argument must be a Set collection.");
+        static_assert(concepts_detail::dependent_false<C>, "cljonic::disj: the first argument must be a Set.");
     } else {
         static_assert(concepts_detail::dependent_false<C, Values...>,
-                      "cljonic::disj: every removal value must exactly match the Set's declared value_type.");
+                      "cljonic::disj: every value to remove must have exactly the same type as the set's elements.");
     }
 }
 

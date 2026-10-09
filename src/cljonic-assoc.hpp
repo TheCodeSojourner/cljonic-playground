@@ -10,10 +10,9 @@ namespace cljonic {
  *        collection (Vector, String).
  *
  * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association; an
- * index equal to the current count appends when capacity remains), and `String` (the same index and append rule;
- * String validates and normalizes characters according to its own character policy). `Set` and `Queue` provide no
- * associative capability and are rejected by the boundary constraint. The result is a distinct collection value; the
- * source is unchanged.
+ * index equal to the current count appends when capacity remains), and `String` (the same index and append rule as
+ * Vector; see String for character validation and normalization policy). `Set` and `Queue` provide no associative
+ * capability and are rejected. The result is a distinct collection value; the source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
@@ -120,8 +119,8 @@ template <typename C, typename K, typename V>
 [[nodiscard]] constexpr auto assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key,
                                    [[maybe_unused]] const V& value) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::assoc: the first argument must be an associative collection -- Map, Vector, or String. "
-                  "Set and Queue are not associative; use conj to add an element to a Set or Queue.");
+                  "cljonic::assoc: the first argument must be a Map, a Vector, or a String. A Set or Queue is not "
+                  "supported; use conj to add an element to a Set or Queue.");
     return C{};
 }
 
@@ -130,9 +129,9 @@ template <typename C, typename K, typename V>
 [[nodiscard]] constexpr auto assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key,
                                    [[maybe_unused]] const V& value) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::assoc: the (key, value) pair is outside this collection's association domain. Map "
-                  "associates a key with a value of its element type; Vector and String associate an integer index "
-                  "with a value.");
+                  "cljonic::assoc: the key, the value, or both have a type this collection cannot associate. A Map "
+                  "takes a key and a value of the types it stores; a Vector or a String takes an integer index and a "
+                  "value of the type it stores.");
     return C{};
 }
 
@@ -155,10 +154,9 @@ template <typename C, typename K1, typename V1, typename K2, typename V2, typena
                                    [[maybe_unused]] const V2& value2, [[maybe_unused]] const Rest&... rest) noexcept
     -> C {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::assoc: the trailing arguments must be complete key/value pairs, each admissible for this "
-                  "collection. A key is missing its value, or a (key, value) pair is outside the collection's "
-                  "association domain: Map associates a key and value; Vector and String associate an integer index "
-                  "and a value.");
+                  "cljonic::assoc: the arguments after the collection must be complete key/value pairs this collection "
+                  "can associate. A key is missing its value, or the key or value has a type the collection cannot "
+                  "associate. A Map takes a key and a value; a Vector or a String takes an integer index and a value.");
     return C{};
 }
 

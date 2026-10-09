@@ -8,9 +8,8 @@ namespace cljonic {
  * \brief Checks whether conj can succeed without capacity overflow.
  *
  * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. For `Vector` and `Queue`, the result depends only on
- * remaining capacity; the value does not affect the preflight. For `String`, both remaining capacity and a character
- * that is not NUL and whose unsigned byte value is at most `0x7F` are required. An invalid character returns false
- * even though runtime `conj` replaces it with `.`.
+ * remaining capacity; the value does not affect the preflight. For `String`, both remaining capacity and a valid
+ * character are required; see String for character validation policy. An invalid character returns false.
  *
  * For a `Set` element or `Map` key already present, returns true because insertion is a no-op or a value replacement
  * that needs no capacity. An absent element or key returns true only when capacity remains; when full, it returns
@@ -65,8 +64,8 @@ template <typename C, typename V>
 [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V& value) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::can_conj: the first argument must be a Conjable collection -- Vector, Set, Map, Queue, or "
-                  "String.");
+                  "cljonic::can_conj: the first argument must be a Vector, a Set, a Map, a Queue, or a String -- a "
+                  "collection that supports conj.");
     return false;
 }
 
@@ -75,7 +74,8 @@ template <typename C, typename V>
 [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V& value) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C, V>,
-                  "cljonic::can_conj: value must be admissible for the collection's conj operation.");
+                  "cljonic::can_conj: this value cannot be added to the collection with conj. A Map takes a MapEntry; "
+                  "other collections take a value of the type they store.");
     return false;
 }
 

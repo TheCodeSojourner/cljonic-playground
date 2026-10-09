@@ -82,11 +82,11 @@ template <typename C, typename K>
     -> bool {
     if constexpr (concepts_detail::ContainsLookupCollection<C>) {
         static_assert(concepts_detail::dependent_false<C, K>,
-                      "cljonic::contains: Map and Set lookup arguments must exactly match the declared lookup type; "
-                      "implicit conversions are not accepted.");
+                      "cljonic::contains: for a Map or a Set, the value you look up must have exactly the same type as "
+                      "the map's keys or the set's elements; conversions are not accepted.");
     } else {
         static_assert(concepts_detail::dependent_false<C, K>,
-                      "cljonic::contains: Vector and String indexes must have an integral type.");
+                      "cljonic::contains: a Vector or a String index must be an integer type.");
     }
     return false;
 }

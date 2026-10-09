@@ -9,9 +9,8 @@ namespace cljonic {
  *
  * Supported for `Map` (an existing key can be replaced, or an absent key inserted when capacity remains), `Vector` (an
  * existing index can be replaced, or an index equal to the current count can append when capacity remains), and
- * `String` (the same index and append rule). `String` character validation and normalization are applied by `assoc` to
- * the supplied value; this preflight checks only the index. `Set` and `Queue` provide no associative capability and
- * are rejected by the boundary constraint. This preflight leaves the source unchanged.
+ * `String` (the same index and append rule as Vector). `Set` and `Queue` provide no associative capability and are
+ * rejected. This preflight leaves the source unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -58,8 +57,8 @@ template <typename C, typename K>
 [[nodiscard]] constexpr auto can_assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::can_assoc: the first argument must be an associative collection -- Map, Vector, or "
-                  "String. Set and Queue are not associative.");
+                  "cljonic::can_assoc: the first argument must be a Map, a Vector, or a String. A Set or Queue is "
+                  "not supported.");
     return false;
 }
 
@@ -68,8 +67,8 @@ template <typename C, typename K>
 [[nodiscard]] constexpr auto can_assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::can_assoc: the key is outside this collection's association domain. Map takes a key; "
-                  "Vector and String take an integer index.");
+                  "cljonic::can_assoc: this key has a type the collection cannot associate. A Map takes a key; a "
+                  "Vector or a String takes an integer index.");
     return false;
 }
 

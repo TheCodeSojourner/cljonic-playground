@@ -76,7 +76,8 @@ template <typename T>
     requires(!concepts_detail::CharacterValidityInput<T>)
 [[nodiscard]] constexpr auto character_is_valid([[maybe_unused]] T&& value) noexcept -> bool {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::character_is_valid: value must have a non-bool integral type.");
+                  "cljonic::character_is_valid: the value must be an integer character code, not a bool, a "
+                  "floating-point number, an enumeration, or another type.");
     return false;
 }
 

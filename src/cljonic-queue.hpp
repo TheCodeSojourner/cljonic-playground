@@ -174,12 +174,12 @@ class Queue {
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
-        static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::Queue: a cljonic collection or producer is not a construction source. "
-                      "A Queue is built from its individual elements or from a non-cljonic C++ range or "
-                      "view. To copy this argument's contents into a Queue, use into(destination, source) "
-                      "(call fits_into(destination, source) first to check whether the whole source fits); "
-                      "to keep it as a single element, write Queue{...}.");
+        static_assert(
+            concepts_detail::dependent_false<SourceValue>,
+            "cljonic::Queue: you cannot construct a Queue from a cljonic collection or producer. A Queue is built from "
+            "its individual elements, or from a non-cljonic C++ range or view. To copy this argument's contents into a "
+            "Queue, use into(destination, source) (call fits_into(destination, source) first to check whether the "
+            "whole source fits); to keep it as a single element, write Queue{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

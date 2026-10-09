@@ -162,10 +162,10 @@ class String {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::String: a cljonic collection or producer is not a construction source. "
-                      "A String is built from its characters or from a non-cljonic C++ range or view. "
-                      "To copy this argument's contents into a String, use into(destination, source); "
-                      "call fits_into(destination, source) first to check whether the whole source fits.");
+                      "cljonic::String: you cannot construct a String from a cljonic collection or producer. A String "
+                      "is built from its characters, or from a non-cljonic C++ range or view. To copy this argument's "
+                      "contents into a String, use into(destination, source); call fits_into(destination, source) "
+                      "first to check whether the whole source fits.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

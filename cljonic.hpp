@@ -676,10 +676,9 @@ namespace cljonic {
  *        collection (Vector, String).
  *
  * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association; an
- * index equal to the current count appends when capacity remains), and `String` (the same index and append rule;
- * String validates and normalizes characters according to its own character policy). `Set` and `Queue` provide no
- * associative capability and are rejected by the boundary constraint. The result is a distinct collection value; the
- * source is unchanged.
+ * index equal to the current count appends when capacity remains), and `String` (the same index and append rule as
+ * Vector; see String for character validation and normalization policy). `Set` and `Queue` provide no associative
+ * capability and are rejected. The result is a distinct collection value; the source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
@@ -786,8 +785,8 @@ template <typename C, typename K, typename V>
 [[nodiscard]] constexpr auto assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key,
                                    [[maybe_unused]] const V& value) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::assoc: the first argument must be an associative collection -- Map, Vector, or String. "
-                  "Set and Queue are not associative; use conj to add an element to a Set or Queue.");
+                  "cljonic::assoc: the first argument must be a Map, a Vector, or a String. A Set or Queue is not "
+                  "supported; use conj to add an element to a Set or Queue.");
     return C{};
 }
 
@@ -796,9 +795,9 @@ template <typename C, typename K, typename V>
 [[nodiscard]] constexpr auto assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key,
                                    [[maybe_unused]] const V& value) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::assoc: the (key, value) pair is outside this collection's association domain. Map "
-                  "associates a key with a value of its element type; Vector and String associate an integer index "
-                  "with a value.");
+                  "cljonic::assoc: the key, the value, or both have a type this collection cannot associate. A Map "
+                  "takes a key and a value of the types it stores; a Vector or a String takes an integer index and a "
+                  "value of the type it stores.");
     return C{};
 }
 
@@ -821,10 +820,9 @@ template <typename C, typename K1, typename V1, typename K2, typename V2, typena
                                    [[maybe_unused]] const V2& value2, [[maybe_unused]] const Rest&... rest) noexcept
     -> C {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::assoc: the trailing arguments must be complete key/value pairs, each admissible for this "
-                  "collection. A key is missing its value, or a (key, value) pair is outside the collection's "
-                  "association domain: Map associates a key and value; Vector and String associate an integer index "
-                  "and a value.");
+                  "cljonic::assoc: the arguments after the collection must be complete key/value pairs this collection "
+                  "can associate. A key is missing its value, or the key or value has a type the collection cannot "
+                  "associate. A Map takes a key and a value; a Vector or a String takes an integer index and a value.");
     return C{};
 }
 
@@ -841,9 +839,8 @@ namespace cljonic {
  *
  * Supported for `Map` (an existing key can be replaced, or an absent key inserted when capacity remains), `Vector` (an
  * existing index can be replaced, or an index equal to the current count can append when capacity remains), and
- * `String` (the same index and append rule). `String` character validation and normalization are applied by `assoc` to
- * the supplied value; this preflight checks only the index. `Set` and `Queue` provide no associative capability and
- * are rejected by the boundary constraint. This preflight leaves the source unchanged.
+ * `String` (the same index and append rule as Vector). `Set` and `Queue` provide no associative capability and are
+ * rejected. This preflight leaves the source unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -890,8 +887,8 @@ template <typename C, typename K>
 [[nodiscard]] constexpr auto can_assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::can_assoc: the first argument must be an associative collection -- Map, Vector, or "
-                  "String. Set and Queue are not associative.");
+                  "cljonic::can_assoc: the first argument must be a Map, a Vector, or a String. A Set or Queue is "
+                  "not supported.");
     return false;
 }
 
@@ -900,8 +897,8 @@ template <typename C, typename K>
 [[nodiscard]] constexpr auto can_assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::can_assoc: the key is outside this collection's association domain. Map takes a key; "
-                  "Vector and String take an integer index.");
+                  "cljonic::can_assoc: this key has a type the collection cannot associate. A Map takes a key; a "
+                  "Vector or a String takes an integer index.");
     return false;
 }
 
@@ -917,9 +914,8 @@ namespace cljonic {
  * \brief Checks whether conj can succeed without capacity overflow.
  *
  * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. For `Vector` and `Queue`, the result depends only on
- * remaining capacity; the value does not affect the preflight. For `String`, both remaining capacity and a character
- * that is not NUL and whose unsigned byte value is at most `0x7F` are required. An invalid character returns false
- * even though runtime `conj` replaces it with `.`.
+ * remaining capacity; the value does not affect the preflight. For `String`, both remaining capacity and a valid
+ * character are required; see String for character validation policy. An invalid character returns false.
  *
  * For a `Set` element or `Map` key already present, returns true because insertion is a no-op or a value replacement
  * that needs no capacity. An absent element or key returns true only when capacity remains; when full, it returns
@@ -974,8 +970,8 @@ template <typename C, typename V>
 [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V& value) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::can_conj: the first argument must be a Conjable collection -- Vector, Set, Map, Queue, or "
-                  "String.");
+                  "cljonic::can_conj: the first argument must be a Vector, a Set, a Map, a Queue, or a String -- a "
+                  "collection that supports conj.");
     return false;
 }
 
@@ -984,7 +980,8 @@ template <typename C, typename V>
 [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V& value) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C, V>,
-                  "cljonic::can_conj: value must be admissible for the collection's conj operation.");
+                  "cljonic::can_conj: this value cannot be added to the collection with conj. A Map takes a MapEntry; "
+                  "other collections take a value of the type they store.");
     return false;
 }
 
@@ -1178,10 +1175,10 @@ class String {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::String: a cljonic collection or producer is not a construction source. "
-                      "A String is built from its characters or from a non-cljonic C++ range or view. "
-                      "To copy this argument's contents into a String, use into(destination, source); "
-                      "call fits_into(destination, source) first to check whether the whole source fits.");
+                      "cljonic::String: you cannot construct a String from a cljonic collection or producer. A String "
+                      "is built from its characters, or from a non-cljonic C++ range or view. To copy this argument's "
+                      "contents into a String, use into(destination, source); call fits_into(destination, source) "
+                      "first to check whether the whole source fits.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -1412,7 +1409,8 @@ template <typename T>
     requires(!concepts_detail::CharacterValidityInput<T>)
 [[nodiscard]] constexpr auto character_is_valid([[maybe_unused]] T&& value) noexcept -> bool {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::character_is_valid: value must have a non-bool integral type.");
+                  "cljonic::character_is_valid: the value must be an integer character code, not a bool, a "
+                  "floating-point number, an enumeration, or another type.");
     return false;
 }
 
@@ -1427,11 +1425,11 @@ namespace cljonic {
  * \brief Adds an element to a collection according to its type conventions.
  *
  * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. `Vector` appends at the end. `Queue` enqueues at the
- * rear. `String` appends at its logical count. For `String`, NUL and characters whose unsigned byte value exceeds
- * `0x7F` are invalid; they are rejected at compile time and replaced with `.` at runtime. `Set` adds absent elements;
- * duplicates are no-ops. `Map` associates a `MapEntry`; an existing key's value is replaced. At full capacity,
- * `Vector`, `Queue`, and `String` return unchanged copies. A full `Set` or `Map` also returns an unchanged copy when
- * the element or key is absent. Each operation returns a distinct collection value and preserves the source.
+ * rear. `String` appends at its logical count. For `String`, invalid characters are rejected at compile time and
+ * replaced with `.` at runtime; see String for character validation and normalization policy. `Set` adds absent
+ * elements; duplicates are no-ops. `Map` associates a `MapEntry`; an existing key's value is replaced. At full
+ * capacity, `Vector`, `Queue`, and `String` return unchanged copies. A full `Set` or `Map` also returns an unchanged
+ * copy when the element or key is absent. Each operation returns a distinct collection value and preserves the source.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -1480,9 +1478,8 @@ template <typename C, typename T>
 template <typename C, typename T>
     requires concepts::CljonicCollection<C> && (!concepts::ConjableCollection<C>)
 [[nodiscard]] constexpr auto conj([[maybe_unused]] const C& collection, [[maybe_unused]] const T& value) noexcept -> C {
-    static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::conj: the first argument must be a Conjable collection -- Vector, Set, Map, Queue, or "
-                  "String.");
+    static_assert(concepts_detail::dependent_false<C>, "cljonic::conj: the first argument must be a Vector, a Set, a "
+                                                       "Map, a Queue, or a String -- a collection that supports conj.");
     return collection;
 }
 
@@ -1490,8 +1487,8 @@ template <typename C, typename T>
     requires concepts::ConjableCollection<C> && (!concepts_detail::ConjValueAdmissible<C, T>)
 [[nodiscard]] constexpr auto conj([[maybe_unused]] const C& collection, [[maybe_unused]] const T& value) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C, T>,
-                  "cljonic::conj: value is outside this collection's conj domain. Map requires a MapEntry; other "
-                  "collections require an accepted element value.");
+                  "cljonic::conj: this value cannot be added to the collection with conj. A Map takes a MapEntry; "
+                  "other collections take a value of the type they store.");
     return collection;
 }
 
@@ -1581,11 +1578,11 @@ template <typename C, typename K>
     -> bool {
     if constexpr (concepts_detail::ContainsLookupCollection<C>) {
         static_assert(concepts_detail::dependent_false<C, K>,
-                      "cljonic::contains: Map and Set lookup arguments must exactly match the declared lookup type; "
-                      "implicit conversions are not accepted.");
+                      "cljonic::contains: for a Map or a Set, the value you look up must have exactly the same type as "
+                      "the map's keys or the set's elements; conversions are not accepted.");
     } else {
         static_assert(concepts_detail::dependent_false<C, K>,
-                      "cljonic::contains: Vector and String indexes must have an integral type.");
+                      "cljonic::contains: a Vector or a String index must be an integer type.");
     }
     return false;
 }
@@ -1600,9 +1597,8 @@ template <typename C, typename K>
 namespace cljonic {
 
 /** \anchor Count
- * \brief Returns a collection's logical size or a producer's count observation. Collections and finite producers
- * return their exact element count. Unbounded producers return the configured observable traversal cap, not their
- * complete cardinality.
+ * \brief Returns a collection's logical size or a producer's observable count. Collections and finite producers
+ * return their exact element count. Unbounded producers return their observable count.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -1871,12 +1867,12 @@ class Vector {
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Vector([[maybe_unused]] SourceValue&& source) noexcept {
-        static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::Vector: a cljonic collection or producer is not a construction source. "
-                      "A Vector is built from its individual elements or from a non-cljonic C++ range or "
-                      "view. To copy this argument's contents into a Vector, use into(destination, source) "
-                      "(call fits_into(destination, source) first to check whether the whole source fits); "
-                      "to keep it as a single element, write Vector{...}.");
+        static_assert(
+            concepts_detail::dependent_false<SourceValue>,
+            "cljonic::Vector: you cannot construct a Vector from a cljonic collection or producer. A Vector is built "
+            "from its individual elements, or from a non-cljonic C++ range or view. To copy this argument's contents "
+            "into a Vector, use into(destination, source) (call fits_into(destination, source) first to check whether "
+            "the whole source fits); to keep it as a single element, write Vector{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2209,9 +2205,8 @@ template <typename Source>
     requires(!concepts_detail::ValidCycleSource<Source>)
 constexpr auto cycle([[maybe_unused]] Source source) noexcept -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Source>,
-                  "cljonic::cycle: the source argument is outside the supported producer domain. "
-                  "The source must be a cljonic collection or producer whose element type is "
-                  "nothrow-storable and which provides non-throwing const traversal.");
+                  "cljonic::cycle: the source argument cannot be used to build a Cycle. The source must be a cljonic "
+                  "collection or producer whose values can be stored and read without throwing.");
     return {};
 }
 
@@ -2306,11 +2301,10 @@ template <typename C, typename... Values>
 [[nodiscard]] constexpr auto disj([[maybe_unused]] const C& collection,
                                   [[maybe_unused]] const Values&... values) noexcept {
     if constexpr (!concepts::CljonicSet<C>) {
-        static_assert(concepts_detail::dependent_false<C>,
-                      "cljonic::disj: the first argument must be a Set collection.");
+        static_assert(concepts_detail::dependent_false<C>, "cljonic::disj: the first argument must be a Set.");
     } else {
         static_assert(concepts_detail::dependent_false<C, Values...>,
-                      "cljonic::disj: every removal value must exactly match the Set's declared value_type.");
+                      "cljonic::disj: every value to remove must have exactly the same type as the set's elements.");
     }
 }
 
@@ -2819,24 +2813,21 @@ template <typename T>
     requires(!concepts_detail::EqualPairAdmissible<T, T>)
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const T& value) -> bool {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::equal: operand is outside the supported equality domain. "
-                  "Floating-point values, callables, pointers, unscoped enums, standard-library "
-                  "range and container types, the standard-library variant, and values whose "
-                  "equality may throw are rejected.");
+                  "cljonic::equal: this value cannot be compared for equality. Floating-point values, callables, "
+                  "pointers, unscoped enums, standard-library range and container types, the standard-library variant, "
+                  "and values whose equality can throw are not supported.");
     return false;
 }
 
 template <typename Lhs, typename Rhs>
     requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
-    static_assert(
-        concepts_detail::dependent_false<Lhs, Rhs>,
-        "cljonic::equal: operands are outside the supported equality domain. The two "
-        "operands must be the same admitted type, or a mutually comparable cljonic "
-        "family pair (sequential [Vector, Queue, and all producers], map, set, or "
-        "string). Floating-point values, callables, pointers, unscoped enums, standard-library range and container "
-        "types, the standard-library variant, values whose equality may throw, and "
-        "mixed cljonic/non-cljonic pairs are rejected.");
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::equal: these two values cannot be compared for equality. They must both be ordinary values "
+                  "of the same type, or two values from the same cljonic family -- Vector, Queue, and all producers "
+                  "(the sequential family), a Map, a Set, or a String. Floating-point values, callables, pointers, "
+                  "unscoped enums, standard-library range and container types, the standard-library variant, values "
+                  "whose equality can throw, and pairs that mix cljonic and non-cljonic values are not supported.");
     return false;
 }
 
@@ -2844,15 +2835,14 @@ template <typename Lhs, typename Rhs, typename... Rest>
     requires((sizeof...(Rest) >= 1) && (!concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>))
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs,
                                    [[maybe_unused]] const Rest&... rest) -> bool {
-    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
-                  "cljonic::equal: at least one adjacent operand pair is outside the supported "
-                  "equality domain. With three or more operands, every adjacent pair must "
-                  "individually satisfy the same rules as the two-operand form: two identical "
-                  "admitted ordinary values, or a mutually comparable cljonic family pair "
-                  "(sequential [Vector, Queue, and all producers], map, set, or string). "
-                  "Floating-point values, callables, pointers, unscoped enums, standard-library "
-                  "range and container types, the standard-library variant, values whose "
-                  "equality may throw, and mixed cljonic/non-cljonic pairs are rejected.");
+    static_assert(
+        concepts_detail::dependent_false<Lhs, Rhs>,
+        "cljonic::equal: at least one adjacent pair of values cannot be compared for equality. With three or more "
+        "operands, every adjacent pair must follow the same rule as the two-operand form -- both ordinary values of "
+        "the same type, or two values from the same cljonic family -- Vector, Queue, and all producers (the sequential "
+        "family), a Map, a Set, or a String. Floating-point values, callables, pointers, unscoped enums, "
+        "standard-library range and container types, the standard-library variant, values whose equality can throw, "
+        "and pairs that mix cljonic and non-cljonic values are not supported.");
     return false;
 }
 
@@ -3190,11 +3180,11 @@ template <typename Step, typename T>
                concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>))
 constexpr auto iterate([[maybe_unused]] Step&& step, [[maybe_unused]] T&& initial) noexcept
     -> concepts_detail::RejectedProducerFactory {
-    static_assert(concepts_detail::dependent_false<Step, T>,
-                  "cljonic::iterate: the (step, initial) arguments are outside the supported producer "
-                  "domain. The initial value must be a nothrow-storable element, and the step must be a "
-                  "copyable, non-throwing callable that takes one value of that element type and "
-                  "returns the same type. Note the argument order is iterate(step, initial).");
+    static_assert(
+        concepts_detail::dependent_false<Step, T>,
+        "cljonic::iterate: the (step, initial) arguments cannot be used to build an Iterate. The initial value must be "
+        "safe to store without throwing, and the step must be a callable that takes one value of that type and returns "
+        "the same type without throwing. Note the argument order is iterate(step, initial).");
     return {};
 }
 
@@ -3455,10 +3445,10 @@ class Map {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::Map: a cljonic collection or producer is not a construction source. "
-                      "A Map is built from MapEntry elements or from a non-cljonic C++ range or view. "
-                      "To copy this argument's contents into a Map, use into(destination, source); "
-                      "call fits_into(destination, source) first to check whether the whole source fits.");
+                      "cljonic::Map: you cannot construct a Map from a cljonic collection or producer. A Map is built "
+                      "from MapEntry elements, or from a non-cljonic C++ range or view. To copy this argument's "
+                      "contents into a Map, use into(destination, source); call fits_into(destination, source) first "
+                      "to check whether the whole source fits.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -3699,11 +3689,11 @@ template <typename Lhs, typename Rhs, typename... Rest>
 template <typename T>
     requires(!concepts_detail::EqualPairAdmissible<T, T>)
 [[nodiscard]] constexpr auto not_equal([[maybe_unused]] const T& value) -> bool {
-    static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::not_equal: operand is outside the supported equality domain, which "
-                  "not_equal shares with cljonic::equal. Floating-point values, callables, "
-                  "pointers, unscoped enums, standard-library range and container types, the "
-                  "standard-library variant, and values whose equality may throw are rejected.");
+    static_assert(
+        concepts_detail::dependent_false<T>,
+        "cljonic::not_equal: this value cannot be compared for inequality. not_equal supports the same values as "
+        "equal. Floating-point values, callables, pointers, unscoped enums, standard-library range and container "
+        "types, the standard-library variant, and values whose equality can throw are not supported.");
     return false;
 }
 
@@ -3711,13 +3701,12 @@ template <typename Lhs, typename Rhs>
     requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
 [[nodiscard]] constexpr auto not_equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
     static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
-                  "cljonic::not_equal: operands are outside the supported equality domain, which "
-                  "not_equal shares with cljonic::equal. The two operands must be the same "
-                  "admitted type, or a mutually comparable cljonic family pair (sequential "
-                  "[Vector, Queue, and all producers], map, set, or string). Floating-point "
-                  "values, callables, pointers, unscoped enums, standard-library range and "
-                  "container types, the standard-library variant, values whose equality may "
-                  "throw, and mixed cljonic/non-cljonic pairs are rejected.");
+                  "cljonic::not_equal: these two values cannot be compared for inequality. not_equal supports the same "
+                  "values as equal -- both must be ordinary values of the same type, or two values from the same "
+                  "cljonic family: Vector, Queue, and all producers (the sequential family), a Map, a Set, or a "
+                  "String. Floating-point values, callables, pointers, unscoped enums, standard-library range and "
+                  "container types, the standard-library variant, values whose equality can throw, and pairs that mix "
+                  "cljonic and non-cljonic values are not supported.");
     return false;
 }
 
@@ -3726,15 +3715,13 @@ template <typename Lhs, typename Rhs, typename... Rest>
 [[nodiscard]] constexpr auto not_equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs,
                                        [[maybe_unused]] const Rest&... rest) -> bool {
     static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
-                  "cljonic::not_equal: at least one adjacent operand pair is outside the "
-                  "supported equality domain, which not_equal shares with cljonic::equal. With "
-                  "three or more operands, every adjacent pair must individually satisfy the "
-                  "same rules as the two-operand form: two identical admitted ordinary values, "
-                  "or a mutually comparable cljonic family pair (sequential [Vector, Queue, and "
-                  "all producers], map, set, or string). Floating-point values, callables, "
-                  "pointers, unscoped enums, standard-library range and container types, the "
-                  "standard-library variant, values whose equality may throw, and mixed "
-                  "cljonic/non-cljonic pairs are rejected.");
+                  "cljonic::not_equal: at least one adjacent pair of values cannot be compared for inequality. "
+                  "not_equal supports the same values as equal. With three or more operands, every adjacent pair must "
+                  "follow the same rule as the two-operand form -- both ordinary values of the same type, or two "
+                  "values from the same cljonic family -- Vector, Queue, and all producers (the sequential family), a "
+                  "Map, a Set, or a String. Floating-point values, callables, pointers, unscoped enums, "
+                  "standard-library range and container types, the standard-library variant, values whose equality can "
+                  "throw, and pairs that mix cljonic and non-cljonic values are not supported.");
     return false;
 }
 
@@ -3985,12 +3972,12 @@ class Queue {
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
-        static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::Queue: a cljonic collection or producer is not a construction source. "
-                      "A Queue is built from its individual elements or from a non-cljonic C++ range or "
-                      "view. To copy this argument's contents into a Queue, use into(destination, source) "
-                      "(call fits_into(destination, source) first to check whether the whole source fits); "
-                      "to keep it as a single element, write Queue{...}.");
+        static_assert(
+            concepts_detail::dependent_false<SourceValue>,
+            "cljonic::Queue: you cannot construct a Queue from a cljonic collection or producer. A Queue is built from "
+            "its individual elements, or from a non-cljonic C++ range or view. To copy this argument's contents into a "
+            "Queue, use into(destination, source) (call fits_into(destination, source) first to check whether the "
+            "whole source fits); to keep it as a single element, write Queue{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -4559,9 +4546,8 @@ template <typename T>
     requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
 constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::repeat: the value argument is outside the supported producer domain. "
-                  "The repeated value must satisfy NothrowCollectionElement: default-constructible, "
-                  "copyable, and destructible without throwing.");
+                  "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
+                  "safe to create, store, and destroy without throwing.");
     return {};
 }
 
@@ -4570,9 +4556,8 @@ template <typename T>
 constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] std::size_t count) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::repeat: the value argument is outside the supported producer domain. "
-                  "The repeated value must satisfy NothrowCollectionElement: default-constructible, "
-                  "copyable, and destructible without throwing.");
+                  "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
+                  "safe to create, store, and destroy without throwing.");
     return {};
 }
 
@@ -4760,10 +4745,9 @@ template <typename Step>
     requires(!concepts_detail::ValidRepeatedlyStep<Step>)
 constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Step>,
-                  "cljonic::repeatedly: the step argument is outside the supported producer domain. "
-                  "The step must be a copyable, non-throwing callable that takes no arguments and "
-                  "whose result is a nothrow-storable element type. Pass a function, lambda, or "
-                  "function object; to repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
+                  "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
+                  "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
                   "cljonic::repeat(value, count).");
     return {};
 }
@@ -4773,10 +4757,9 @@ template <typename Step>
 constexpr auto repeatedly([[maybe_unused]] std::size_t count, [[maybe_unused]] Step&& step) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Step>,
-                  "cljonic::repeatedly: the step argument is outside the supported producer domain. "
-                  "The step must be a copyable, non-throwing callable that takes no arguments and "
-                  "whose result is a nothrow-storable element type. Pass a function, lambda, or "
-                  "function object; to repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
+                  "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
+                  "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
                   "cljonic::repeat(value, count).");
     return {};
 }
@@ -4962,11 +4945,10 @@ class Set {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::Set: a cljonic collection or producer is not a construction source. "
-                      "A Set is built from its individual elements or from a non-cljonic C++ range or "
-                      "view. To copy this argument's contents into a Set, use into(destination, source) "
-                      "(call fits_into(destination, source) first to check whether the whole source fits); "
-                      "to keep it as a single element, write Set{...}.");
+                      "cljonic::Set: you cannot construct a Set from a cljonic collection or producer. A Set is built "
+                      "from its individual elements, or from a non-cljonic C++ range or view. To copy this argument's "
+                      "contents into a Set, use into(destination, source) (call fits_into(destination, source) first "
+                      "to check whether the whole source fits); to keep it as a single element, write Set{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

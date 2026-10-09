@@ -163,10 +163,10 @@ class Map {
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
     constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
-                      "cljonic::Map: a cljonic collection or producer is not a construction source. "
-                      "A Map is built from MapEntry elements or from a non-cljonic C++ range or view. "
-                      "To copy this argument's contents into a Map, use into(destination, source); "
-                      "call fits_into(destination, source) first to check whether the whole source fits.");
+                      "cljonic::Map: you cannot construct a Map from a cljonic collection or producer. A Map is built "
+                      "from MapEntry elements, or from a non-cljonic C++ range or view. To copy this argument's "
+                      "contents into a Map, use into(destination, source); call fits_into(destination, source) first "
+                      "to check whether the whole source fits.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

@@ -355,24 +355,21 @@ template <typename T>
     requires(!concepts_detail::EqualPairAdmissible<T, T>)
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const T& value) -> bool {
     static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::equal: operand is outside the supported equality domain. "
-                  "Floating-point values, callables, pointers, unscoped enums, standard-library "
-                  "range and container types, the standard-library variant, and values whose "
-                  "equality may throw are rejected.");
+                  "cljonic::equal: this value cannot be compared for equality. Floating-point values, callables, "
+                  "pointers, unscoped enums, standard-library range and container types, the standard-library variant, "
+                  "and values whose equality can throw are not supported.");
     return false;
 }
 
 template <typename Lhs, typename Rhs>
     requires(!concepts_detail::EqualPairAdmissible<Lhs, Rhs>)
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs) -> bool {
-    static_assert(
-        concepts_detail::dependent_false<Lhs, Rhs>,
-        "cljonic::equal: operands are outside the supported equality domain. The two "
-        "operands must be the same admitted type, or a mutually comparable cljonic "
-        "family pair (sequential [Vector, Queue, and all producers], map, set, or "
-        "string). Floating-point values, callables, pointers, unscoped enums, standard-library range and container "
-        "types, the standard-library variant, values whose equality may throw, and "
-        "mixed cljonic/non-cljonic pairs are rejected.");
+    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
+                  "cljonic::equal: these two values cannot be compared for equality. They must both be ordinary values "
+                  "of the same type, or two values from the same cljonic family -- Vector, Queue, and all producers "
+                  "(the sequential family), a Map, a Set, or a String. Floating-point values, callables, pointers, "
+                  "unscoped enums, standard-library range and container types, the standard-library variant, values "
+                  "whose equality can throw, and pairs that mix cljonic and non-cljonic values are not supported.");
     return false;
 }
 
@@ -380,15 +377,14 @@ template <typename Lhs, typename Rhs, typename... Rest>
     requires((sizeof...(Rest) >= 1) && (!concepts_detail::all_adjacent_pairs_admissible_v<Lhs, Rhs, Rest...>))
 [[nodiscard]] constexpr auto equal([[maybe_unused]] const Lhs& lhs, [[maybe_unused]] const Rhs& rhs,
                                    [[maybe_unused]] const Rest&... rest) -> bool {
-    static_assert(concepts_detail::dependent_false<Lhs, Rhs>,
-                  "cljonic::equal: at least one adjacent operand pair is outside the supported "
-                  "equality domain. With three or more operands, every adjacent pair must "
-                  "individually satisfy the same rules as the two-operand form: two identical "
-                  "admitted ordinary values, or a mutually comparable cljonic family pair "
-                  "(sequential [Vector, Queue, and all producers], map, set, or string). "
-                  "Floating-point values, callables, pointers, unscoped enums, standard-library "
-                  "range and container types, the standard-library variant, values whose "
-                  "equality may throw, and mixed cljonic/non-cljonic pairs are rejected.");
+    static_assert(
+        concepts_detail::dependent_false<Lhs, Rhs>,
+        "cljonic::equal: at least one adjacent pair of values cannot be compared for equality. With three or more "
+        "operands, every adjacent pair must follow the same rule as the two-operand form -- both ordinary values of "
+        "the same type, or two values from the same cljonic family -- Vector, Queue, and all producers (the sequential "
+        "family), a Map, a Set, or a String. Floating-point values, callables, pointers, unscoped enums, "
+        "standard-library range and container types, the standard-library variant, values whose equality can throw, "
+        "and pairs that mix cljonic and non-cljonic values are not supported.");
     return false;
 }
 
