@@ -14,14 +14,17 @@ TEST_CASE("CanAssoc free function operations", "[can_assoc]") {
 
     TRACE_ID("entity-fields.CanAssoc");
     TRACE_ID("invariant.CanAssoc.CanAssocPreflightSupported");
-    TRACE_ID("invariant.CanAssoc.DependsOnlyOnCollectionAndKey");
+    TRACE_ID("invariant.CanAssoc.ChecksCompleteAssocArguments");
     TRACE_ID("invariant.CanAssoc.SupportsMapCanAssoc");
     TRACE_ID("invariant.CanAssoc.SupportsVectorCanAssoc");
     TRACE_ID("invariant.CanAssoc.SupportsStringCanAssoc");
     TRACE_ID("invariant.CanAssoc.TrueForExistingKeyOrIndex");
     TRACE_ID("invariant.CanAssoc.TrueForCountAppendWhenCapacityRemains");
     TRACE_ID("invariant.CanAssoc.FalseForInvalidOrFullCapacityKeyOrIndex");
-    TRACE_ID("invariant.CanAssoc.ValueIndependentResult");
+    TRACE_ID("invariant.CanAssoc.FalseForInvalidStringCharacter");
+    TRACE_ID("invariant.Map.CanAssocUsesSuppliedAssociationValue");
+    TRACE_ID("invariant.Vector.CanAssocAcceptsAssociationValue");
+    TRACE_ID("invariant.String.CanAssocFalseForInvalidCharacter");
     TRACE_ID("invariant.CanAssoc.NonThrowingNonAllocatingPreflight");
     TRACE_ID("invariant.CanAssoc.ConstexprExecutionModel");
     TRACE_ID("invariant.CanAssoc.NoexceptExecutionModel");
@@ -34,28 +37,30 @@ TEST_CASE("CanAssoc free function operations", "[can_assoc]") {
     TRACE_ID("invariant.CanAssoc.ReferentialTransparency");
 
     constexpr Map<int, int, 4> m0{};
-    STATIC_REQUIRE(can_assoc(m0, 1));
+    STATIC_REQUIRE(can_assoc(m0, 1, 10));
 
     // Runtime tests for code coverage instrumentation
     volatile int k_raw = 1;
     int k = k_raw;
     auto rm = Map<int, int, 4>{};
-    REQUIRE(can_assoc(rm, k));
+    REQUIRE(can_assoc(rm, k, 100));
 
     constexpr Vector<int, 2> vector{1};
-    STATIC_REQUIRE(can_assoc(vector, 0U));
-    STATIC_REQUIRE(can_assoc(vector, 1U));
-    STATIC_REQUIRE_FALSE(can_assoc(vector, 2U));
-    STATIC_REQUIRE_FALSE(can_assoc(vector, -1));
+    STATIC_REQUIRE(can_assoc(vector, 0U, 5));
+    STATIC_REQUIRE(can_assoc(vector, 1U, 6));
+    STATIC_REQUIRE_FALSE(can_assoc(vector, 2U, 7));
+    STATIC_REQUIRE_FALSE(can_assoc(vector, -1, 8));
 
     constexpr String<2> string{"a"};
-    STATIC_REQUIRE(can_assoc(string, 0U));
-    STATIC_REQUIRE(can_assoc(string, 1U));
-    STATIC_REQUIRE_FALSE(can_assoc(string, 2U));
-    STATIC_REQUIRE_FALSE(can_assoc(string, -1));
-    STATIC_REQUIRE_FALSE(can_assoc(string, std::numeric_limits<unsigned long long>::max()));
+    STATIC_REQUIRE(can_assoc(string, 0U, 'x'));
+    STATIC_REQUIRE(can_assoc(string, 1U, 'y'));
+    STATIC_REQUIRE_FALSE(can_assoc(string, 2U, 'z'));
+    STATIC_REQUIRE_FALSE(can_assoc(string, -1, 'w'));
+    STATIC_REQUIRE_FALSE(can_assoc(string, std::numeric_limits<unsigned long long>::max(), 'v'));
+    STATIC_REQUIRE_FALSE(can_assoc(string, 0U, '\0'));
+    STATIC_REQUIRE_FALSE(can_assoc(string, 0U, static_cast<char>(0x80)));
 
     constexpr Map<int, int, 1> full_map{cljonic::MapEntry<int, int>{1, 1}};
-    STATIC_REQUIRE(can_assoc(full_map, 1));
-    STATIC_REQUIRE_FALSE(can_assoc(full_map, 2));
+    STATIC_REQUIRE(can_assoc(full_map, 1, 2));
+    STATIC_REQUIRE_FALSE(can_assoc(full_map, 2, 3));
 }

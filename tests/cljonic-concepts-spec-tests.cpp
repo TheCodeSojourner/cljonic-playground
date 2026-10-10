@@ -41,7 +41,7 @@ struct VectorLike {
     [[nodiscard]] constexpr auto contains(std::size_t) const noexcept -> bool {
         return false;
     }
-    [[nodiscard]] constexpr auto can_assoc(key_type) const noexcept -> bool {
+    [[nodiscard]] constexpr auto can_assoc(key_type, const value_type&) const noexcept -> bool {
         return true;
     }
     [[nodiscard]] constexpr auto assoc(key_type, const value_type&) const noexcept -> VectorLike {
@@ -65,7 +65,7 @@ struct MapLike {
     [[nodiscard]] constexpr auto contains(const int&) const noexcept -> bool {
         return false;
     }
-    [[nodiscard]] constexpr auto can_assoc(const key_type&) const noexcept -> bool {
+    [[nodiscard]] constexpr auto can_assoc(const key_type&, const value_type&) const noexcept -> bool {
         return true;
     }
     [[nodiscard]] constexpr auto assoc(const key_type&, const value_type&) const noexcept -> MapLike {
@@ -114,7 +114,7 @@ struct StringLike {
     [[nodiscard]] constexpr auto contains(std::size_t) const noexcept -> bool {
         return false;
     }
-    [[nodiscard]] constexpr auto can_assoc(key_type) const noexcept -> bool {
+    [[nodiscard]] constexpr auto can_assoc(key_type, const value_type&) const noexcept -> bool {
         return true;
     }
     [[nodiscard]] constexpr auto assoc(key_type, const value_type&) const noexcept -> StringLike {
@@ -510,7 +510,7 @@ TEST_CASE("AssociativeCollection structural capability", "[concepts][collection]
     TRACE_ID("invariant.AssociativeCollection.DefinesValueType");
     TRACE_ID("invariant.AssociativeCollection.DefinesCapacityPolicy");
     TRACE_ID("invariant.AssociativeCollection.RequiresAssocOperation");
-    TRACE_ID("invariant.AssociativeCollection.RequiresCanAssocPreflight");
+    TRACE_ID("invariant.AssociativeCollection.RequiresKeyValueCanAssocPreflight");
     TRACE_ID("invariant.AssociativeCollection.ReturnsNewCollectionValue");
     TRACE_ID("invariant.AssociativeCollection.PreservesSource");
     TRACE_ID("invariant.AssociativeCollection.RequiresNonMutatingAssocOperation");

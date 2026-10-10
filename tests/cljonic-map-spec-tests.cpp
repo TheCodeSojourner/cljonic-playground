@@ -80,7 +80,7 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     STATIC_REQUIRE(zero_capacity.count() == 0U);
     STATIC_REQUIRE(zero_capacity(1) == 0);
     STATIC_REQUIRE(zero_capacity(1, -1) == -1);
-    STATIC_REQUIRE_FALSE(zero_capacity.can_assoc(1));
+    STATIC_REQUIRE_FALSE(zero_capacity.can_assoc(1, 0));
 
     // Pack-literal construction: explicit capacity, CTAD, and duplicate-key
     // replacement folded over assoc in argument order. Every argument must be
@@ -135,7 +135,7 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     REQUIRE_FALSE(rm.contains(mk1));
     REQUIRE(rm(mk1) == 0);
     REQUIRE(rm(mk1, -1) == -1);
-    REQUIRE(rm.can_assoc(mk1));
+    REQUIRE(rm.can_assoc(mk1, 0));
 
     auto rm1 = rm.assoc(mk1, mv1);
     REQUIRE_FALSE(cljonic::is_empty(rm1));
@@ -154,7 +154,7 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
 
     auto rm_full = rm2.assoc(30, 300).assoc(40, 400);
     REQUIRE(rm_full.count() == 4U);
-    REQUIRE_FALSE(rm_full.can_assoc(50));
+    REQUIRE_FALSE(rm_full.can_assoc(50, 0));
     REQUIRE(rm_full.assoc(50, 500).count() == 4U); // rejected overflow
 
     auto rm_dissoc_first = rm2.dissoc(mk1);
