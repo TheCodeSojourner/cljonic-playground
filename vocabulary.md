@@ -634,11 +634,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Conj
-- **Definition:** The primitive collection free function that returns a new collection with one element added according to the target collection's type conventions (end of a `Vector` or `String`, rear of a `Queue`, membership insertion for a `Set`, entry association for a `Map`). `String` owns and applies its character-validity policy. `Set` and `Map` handle a duplicate element or key by ignoring it or replacing its value; sequence-like collections append when capacity remains.
+- **Definition:** The primitive collection free function that returns a new collection with element(s) added according to the target collection's type conventions (end of a `Vector` or `String`, rear of a `Queue`, membership insertion for a `Set`, entry association for a `Map`). `String` owns and applies its character-validity policy. `Set` and `Map` handle a duplicate element or key by ignoring it or replacing its value; sequence-like collections append when capacity remains. The zero-value form `conj(coll)` returns an unchanged copy, matching Clojure's `(conj coll)`; the one-value form adds a single element; the variadic form takes two or more values and applies them left to right, each value following the same per-collection policy. A value that cannot be added because the accumulator is full leaves the accumulator unchanged without throwing, allocating, or mutating the source — for the variadic form this skips only the offending value and the remaining values still apply.
 - **Deprecated Synonyms:** conjoin, insert element
 - **Related:** CopyOnModifyCollection, CanConj, PreflightPredicate, ConjableCollection, Vector, Set, Map, Queue, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `conj(xs, 4)` appends 4 to a Vector; `conj(s, 4)` adds 4 to a Set if not already present; `conj(q, 4)` enqueues 4 at the rear; `conj(m, MapEntry<int, int>{1, 100})` associates key 1 with value 100; `conj(text, '!')` appends a character to a String.
+- **Examples:** `conj(xs, 4)` appends 4 to a Vector; `conj(s, 4)` adds 4 to a Set if not already present; `conj(q, 4)` enqueues 4 at the rear; `conj(m, MapEntry<int, int>{1, 100})` associates key 1 with value 100; `conj(text, '!')` appends a character to a String; `conj(xs)` returns an unchanged copy of the Vector; `conj(xs, 4, 5)` folds two values into a new Vector left to right.
 
 
 ### Assoc
