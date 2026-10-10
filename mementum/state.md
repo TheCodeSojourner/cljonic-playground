@@ -1,5 +1,34 @@
 ## Current Session State
 
+- last_session_id: 490cd960-459c-403e-8f85-8cda06ac078d
+- current_timestamp: 2026-10-09
+- recover: 1
+- session_complete: true
+
+Task:
+1. Doxygen documentation attachment defect — COMPLETE: moved the documentation blocks in `cljonic-can-conj.hpp`, `cljonic-conj.hpp`, `cljonic-contains.hpp`, `cljonic-disj.hpp`, and `cljonic-dissoc.hpp` from before `namespace concepts_detail` to immediately before each public function declaration. Non-comment code is unchanged.
+2. Generated documentation — COMPLETE: regenerated `docs/`; verified anchors/descriptions are on `namespacecljonic.html`, removed from `concepts_detail`, namespace listing no longer mislabels the internal namespace, and cheatsheet links point to the public namespace.
+3. Feed-forward memory — COMPLETE with human approval: added and committed `mementum/memories/doxygen-doc-block-target-is-next-entity.md` (`67fc269`), describing Doxygen's following-declaration attachment behavior and the safe header layout.
+
+Questions:
+1. None; no follow-up remains for this task.
+
+Decisions:
+1. Public function documentation follows internal helper declarations and the closing `namespace concepts_detail`, immediately before the first public declaration.
+2. Record this recurring Doxygen attachment failure mode as a repository-portable Mementum insight.
+
+Validation:
+1. `make format` run twice; formatter output was idempotent.
+2. `make docs` passes; generated HTML assertions confirm all four reported symptoms are resolved.
+3. `make docs-examples` passes: 30 compiled, six intentionally deferred.
+4. Source `git diff --check` passes; all five changed headers compare identical outside comments after whitespace normalization.
+5. Doxygen-generated HTML includes trailing spaces in example closing fragments; a repo-wide `git diff --check` flags those generated lines.
+
+Next:
+1. No follow-up required.
+
+## Current Session State
+
 - last_session_id: 342393f9-f748-44fd-9c38-89b0caa7f380
 - current_timestamp: 2026-10-08
 - recover: 1
