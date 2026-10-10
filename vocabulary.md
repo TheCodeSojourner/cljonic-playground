@@ -75,7 +75,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Associative
-- **Definition:** A semantic capability for non-mutating association of a key and value into a collection, producing a new collection value. An `Associative` collection defines its key and value types, valid-key and capacity policy, preserves its source, and provides `can_assoc` as a non-throwing, non-allocating preflight predicate that agrees with `assoc` for immutable inputs. `Associative` does not by itself imply `Indexed` or `Lookup`; each concrete collection's lookup relationship is explicit.
+- **Definition:** A semantic capability for non-mutating association of a key and value into a collection, producing a new collection value. An `Associative` collection defines its key and value types, valid-key and capacity policy, preserves its source, and provides `can_assoc` as a non-throwing, non-allocating preflight predicate over the complete key/value argument set that agrees with `assoc` for immutable inputs. `Associative` does not by itself imply `Indexed` or `Lookup`; each concrete collection's lookup relationship is explicit.
 - **Deprecated Synonyms:** associative capability, associative collection access
 - **Related:** Lookup, Assoc, CanAssoc, CopyOnModifyCollection, CapabilityConcept
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -714,11 +714,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### CanAssoc
-- **Definition:** The canonical `Associative` preflight predicate (`can_assoc`) checking whether `assoc` can produce its documented result without key-domain or capacity failure. It depends only on the collection and key, not the value. For `Map`, existing keys are valid and new keys require spare capacity; for `Vector` and `String`, existing indexes are valid and the logical-count append index is valid only when capacity remains. Invalid and full-capacity append keys return false.
+- **Definition:** The canonical `Associative` preflight predicate (`can_assoc`) checking whether `assoc` can produce its documented result without key-domain, capacity, or value-domain failure. For `Map`, existing keys are valid and new keys require spare capacity; for `Vector`, existing indexes are valid and the logical-count append index is valid only when capacity remains; for `String`, the same index rules apply and the character value must be non-NUL ASCII. Invalid, full-capacity append keys, and invalid String characters return false.
 - **Deprecated Synonyms:** can_assoc, can-assoc predicate
 - **Related:** Assoc, Associative, CapabilityPredicate, PreflightPredicate, FullState, Map, Vector, String
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `can_assoc(m, k)` is true for an existing key or an insertable new key; `can_assoc(v, count(v))` and `can_assoc(s, count(s))` are true only when capacity remains.
+- **Examples:** `can_assoc(m, k, v)` is true for an existing key or an insertable new key; `can_assoc(v, count(v), value)` is true only when capacity remains; `can_assoc(s, count(s), c)` is true only when capacity remains and `c` is a valid character.
 
 
 ### CharacterIsValid
