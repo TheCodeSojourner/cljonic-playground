@@ -122,6 +122,8 @@ Classes</h2></td></tr>
 <tr class="memitem:all_5Fassoc_5Fpairs_5Fadmissible" id="r_all_5Fassoc_5Fpairs_5Fadmissible"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__assoc__pairs__admissible.html">all_assoc_pairs_admissible</a></td></tr>
 <tr class="memitem:all_5Fassoc_5Fpairs_5Fadmissible_3C_20C_20_3E" id="r_all_5Fassoc_5Fpairs_5Fadmissible_3C_20C_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__assoc__pairs__admissible_3_01_c_01_4.html">all_assoc_pairs_admissible&lt; C &gt;</a></td></tr>
 <tr class="memitem:all_5Fassoc_5Fpairs_5Fadmissible_3C_20C_2C_20K_2C_20V_2C_20Rest_2E_2E_2E_20_3E" id="r_all_5Fassoc_5Fpairs_5Fadmissible_3C_20C_2C_20K_2C_20V_2C_20Rest_2E_2E_2E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__assoc__pairs__admissible_3_01_c_00_01_k_00_01_v_00_01_rest_8_8_8_01_4.html">all_assoc_pairs_admissible&lt; C, K, V, Rest... &gt;</a></td></tr>
+<tr class="memitem:all_5Fconj_5Fvalues_5Fadmissible" id="r_all_5Fconj_5Fvalues_5Fadmissible"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__conj__values__admissible.html">all_conj_values_admissible</a></td></tr>
+<tr class="memitem:all_5Fconj_5Fvalues_5Fadmissible_3C_20C_2C_20T_2C_20Rest_2E_2E_2E_20_3E" id="r_all_5Fconj_5Fvalues_5Fadmissible_3C_20C_2C_20T_2C_20Rest_2E_2E_2E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__conj__values__admissible_3_01_c_00_01_t_00_01_rest_8_8_8_01_4.html">all_conj_values_admissible&lt; C, T, Rest... &gt;</a></td></tr>
 <tr class="memitem:all_5Fdissoc_5Fkeys_5Fadmissible" id="r_all_5Fdissoc_5Fkeys_5Fadmissible"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__dissoc__keys__admissible.html">all_dissoc_keys_admissible</a></td></tr>
 <tr class="memitem:all_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_20_3E" id="r_all_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__dissoc__keys__admissible_3_01_c_01_4.html">all_dissoc_keys_admissible&lt; C &gt;</a></td></tr>
 <tr class="memitem:all_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_2C_20K_2C_20Rest_2E_2E_2E_20_3E" id="r_all_5Fdissoc_5Fkeys_5Fadmissible_3C_20C_2C_20K_2C_20Rest_2E_2E_2E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1all__dissoc__keys__admissible_3_01_c_00_01_k_00_01_rest_8_8_8_01_4.html">all_dissoc_keys_admissible&lt; C, K, Rest... &gt;</a></td></tr>
@@ -273,6 +275,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a44caa6451a82185e99690a6b5b0aefbc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a44caa6451a82185e99690a6b5b0aefbc">value_fits_char</a> (T value) noexcept -&gt; bool</td></tr>
 <tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6" id="r_a4ca1374dc952d90d209ac69dbee803c6"><td class="memTemplParams" colspan="2">template&lt;std::integral IndexType&gt; </td></tr>
 <tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4ca1374dc952d90d209ac69dbee803c6">try_normalize_index</a> (IndexType index) noexcept -&gt; std::optional&lt; std::size_t &gt;</td></tr>
+<tr class="memitem:afa5131551ae8ca8b54874c62dfaeee36" id="r_afa5131551ae8ca8b54874c62dfaeee36"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
+<tr class="memitem:afa5131551ae8ca8b54874c62dfaeee36 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="#afa5131551ae8ca8b54874c62dfaeee36">fold_conj_values_into</a> (C &amp;result) noexcept</td></tr>
+<tr class="memitem:a57cc2613eb4edaa719daef2956b187ec" id="r_a57cc2613eb4edaa719daef2956b187ec"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T, typename... Rest&gt; </td></tr>
+<tr class="memitem:a57cc2613eb4edaa719daef2956b187ec template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="#a57cc2613eb4edaa719daef2956b187ec">fold_conj_values_into</a> (C &amp;result, const T &amp;value, const Rest &amp;... rest) noexcept</td></tr>
 <tr class="memitem:a039a85f3c6de2bd4f9718600b07ae8b4" id="r_a039a85f3c6de2bd4f9718600b07ae8b4"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
 <tr class="memitem:a039a85f3c6de2bd4f9718600b07ae8b4 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="#a039a85f3c6de2bd4f9718600b07ae8b4">fold_dissoc_keys_into</a> (C &amp;result) noexcept</td></tr>
 <tr class="memitem:a36db1cb962823291250b17046365c1a9" id="r_a36db1cb962823291250b17046365c1a9"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename... Rest&gt; </td></tr>
@@ -310,6 +316,8 @@ Variables</h2></td></tr>
 <tr class="memitem:a210dd0fe90998bcf4288f103c1192a8a template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="#a210dd0fe90998bcf4288f103c1192a8a">nothrow_equality_v</a></td></tr>
 <tr class="memitem:ac7d9cc6d8edebd6ba1c77039b2b2ec5f" id="r_ac7d9cc6d8edebd6ba1c77039b2b2ec5f"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:ac7d9cc6d8edebd6ba1c77039b2b2ec5f template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="#ac7d9cc6d8edebd6ba1c77039b2b2ec5f">contains_standard_range_v</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1contains__standard__range.html">contains_standard_range</a>&lt;std::remove_cvref_t&lt;T&gt;&gt;::value</td></tr>
+<tr class="memitem:a0e5ef1ed76de5a2bd3b484a006305a74" id="r_a0e5ef1ed76de5a2bd3b484a006305a74"><td class="memTemplParams" colspan="2">template&lt;typename C, typename... Values&gt; </td></tr>
+<tr class="memitem:a0e5ef1ed76de5a2bd3b484a006305a74 template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="#a0e5ef1ed76de5a2bd3b484a006305a74">all_conj_values_admissible_v</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1all__conj__values__admissible.html">all_conj_values_admissible</a>&lt;C, Values...&gt;::value</td></tr>
 <tr class="memitem:a62dcbd5e44e518bd16ca2489a0ab8c22" id="r_a62dcbd5e44e518bd16ca2489a0ab8c22"><td class="memTemplParams" colspan="2">template&lt;typename C, typename... Keys&gt; </td></tr>
 <tr class="memitem:a62dcbd5e44e518bd16ca2489a0ab8c22 template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="#a62dcbd5e44e518bd16ca2489a0ab8c22">all_dissoc_keys_admissible_v</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1all__dissoc__keys__admissible.html">all_dissoc_keys_admissible</a>&lt;C, Keys...&gt;::value</td></tr>
 <tr class="memitem:a455ccaa3a11af58fca779e4b0ced6e95" id="r_a455ccaa3a11af58fca779e4b0ced6e95"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
@@ -576,6 +584,73 @@ template&lt;typename C, typename K, typename V, typename... Rest&gt; </div>
 
 </div>
 </div>
+<a id="afa5131551ae8ca8b54874c62dfaeee36" name="afa5131551ae8ca8b54874c62dfaeee36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa5131551ae8ca8b54874c62dfaeee36">&#9670;&#160;</a></span>fold_conj_values_into() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cljonic::concepts_detail::fold_conj_values_into </td>
+          <td>(</td>
+          <td class="paramtype">C &amp;</td>          <td class="paramname"><span class="paramname"><em>result</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00099">99</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a57cc2613eb4edaa719daef2956b187ec" name="a57cc2613eb4edaa719daef2956b187ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57cc2613eb4edaa719daef2956b187ec">&#9670;&#160;</a></span>fold_conj_values_into() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename T, typename... Rest&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cljonic::concepts_detail::fold_conj_values_into </td>
+          <td>(</td>
+          <td class="paramtype">C &amp;</td>          <td class="paramname"><span class="paramname"><em>result</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00103">103</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a039a85f3c6de2bd4f9718600b07ae8b4" name="a039a85f3c6de2bd4f9718600b07ae8b4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a039a85f3c6de2bd4f9718600b07ae8b4">&#9670;&#160;</a></span>fold_dissoc_keys_into() <span class="overload">[1/2]</span></h2>
 
@@ -809,6 +884,32 @@ template&lt;typename C, typename... Pairs&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="cljonic-assoc_8hpp_source.html#l00083">83</a> of file <a class="el" href="cljonic-assoc_8hpp_source.html">cljonic-assoc.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0e5ef1ed76de5a2bd3b484a006305a74" name="a0e5ef1ed76de5a2bd3b484a006305a74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e5ef1ed76de5a2bd3b484a006305a74">&#9670;&#160;</a></span>all_conj_values_admissible_v</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename... Values&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cljonic::concepts_detail::all_conj_values_admissible_v = <a class="el" href="structcljonic_1_1concepts__detail_1_1all__conj__values__admissible.html">all_conj_values_admissible</a>&lt;C, Values...&gt;::value</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00091">91</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
 
 </div>
 </div>

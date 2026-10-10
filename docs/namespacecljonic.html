@@ -186,12 +186,27 @@ requires (!concepts_detail::CharacterValidityInput&lt;T&gt;)</td></tr>
 requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</td></tr>
 <tr class="memitem:ac6a4465d9a31351eb793d28aae002543 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a> (const C &amp;collection, const T &amp;value) noexcept(noexcept(collection.conj(value))) -&gt; C</td></tr>
 <tr class="memdesc:ac6a4465d9a31351eb793d28aae002543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an element to a collection according to its type conventions.  <br /></td></tr>
+<tr class="memitem:a3b119cb2f185da1f106fcffd0be1e55b" id="r_a3b119cb2f185da1f106fcffd0be1e55b"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt;</td></tr>
+<tr class="memitem:a3b119cb2f185da1f106fcffd0be1e55b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a3b119cb2f185da1f106fcffd0be1e55b">conj</a> (const C &amp;collection) noexcept -&gt; C</td></tr>
+<tr class="memitem:a6bfd7e12c018f23387de98c5f1ab6b99" id="r_a6bfd7e12c018f23387de98c5f1ab6b99"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T1, typename T2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a0e5ef1ed76de5a2bd3b484a006305a74">concepts_detail::all_conj_values_admissible_v</a>&lt;C, T1, T2, Rest...&gt;</td></tr>
+<tr class="memitem:a6bfd7e12c018f23387de98c5f1ab6b99 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a6bfd7e12c018f23387de98c5f1ab6b99">conj</a> (const C &amp;collection, const T1 &amp;value1, const T2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
 <tr class="memitem:a3c22a83f7f6ac6f17743db5d6c90161e" id="r_a3c22a83f7f6ac6f17743db5d6c90161e"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T&gt; <br />
 requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
 <tr class="memitem:a3c22a83f7f6ac6f17743db5d6c90161e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a3c22a83f7f6ac6f17743db5d6c90161e">conj</a> (const C &amp;collection, const T &amp;value) noexcept -&gt; C</td></tr>
 <tr class="memitem:a6033d27b65c93d2ef4a145b155749bc7" id="r_a6033d27b65c93d2ef4a145b155749bc7"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T&gt; <br />
 requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::ConjValueAdmissible&lt;C, T&gt;)</td></tr>
 <tr class="memitem:a6033d27b65c93d2ef4a145b155749bc7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a6033d27b65c93d2ef4a145b155749bc7">conj</a> (const C &amp;collection, const T &amp;value) noexcept -&gt; C</td></tr>
+<tr class="memitem:a1e998407f0e1be9d6fd8b38d3535d0b6" id="r_a1e998407f0e1be9d6fd8b38d3535d0b6"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a1e998407f0e1be9d6fd8b38d3535d0b6 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1e998407f0e1be9d6fd8b38d3535d0b6">conj</a> (const C &amp;collection) noexcept -&gt; C</td></tr>
+<tr class="memitem:ac5865666eeb61dea77ae240ddf40f0d8" id="r_ac5865666eeb61dea77ae240ddf40f0d8"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T1, typename T2, typename... Rest&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:ac5865666eeb61dea77ae240ddf40f0d8 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac5865666eeb61dea77ae240ddf40f0d8">conj</a> (const C &amp;collection, const T1 &amp;value1, const T2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
+<tr class="memitem:a6c80cb17dc17d653a87e7829f730701c" id="r_a6c80cb17dc17d653a87e7829f730701c"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T1, typename T2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a0e5ef1ed76de5a2bd3b484a006305a74">concepts_detail::all_conj_values_admissible_v</a>&lt;C, T1, T2, Rest...&gt;)</td></tr>
+<tr class="memitem:a6c80cb17dc17d653a87e7829f730701c template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a6c80cb17dc17d653a87e7829f730701c">conj</a> (const C &amp;collection, const T1 &amp;value1, const T2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
 <tr class="memitem:a5b8275162678a23d519d3711df6d9a2b" id="r_a5b8275162678a23d519d3711df6d9a2b"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
 requires concepts_detail::ContainsAdmissible&lt;C, K&gt;</td></tr>
 <tr class="memitem:a5b8275162678a23d519d3711df6d9a2b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.contains(key))) -&gt; bool</td></tr>
@@ -1112,8 +1127,69 @@ requires concepts_detail::CharacterValidityInput&lt;T&gt;</div>
 
 </div>
 </div>
+<a id="a1e998407f0e1be9d6fd8b38d3535d0b6" name="a1e998407f0e1be9d6fd8b38d3535d0b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e998407f0e1be9d6fd8b38d3535d0b6">&#9670;&#160;</a></span>conj() <span class="overload">[1/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; C</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00143">143</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3b119cb2f185da1f106fcffd0be1e55b" name="a3b119cb2f185da1f106fcffd0be1e55b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b119cb2f185da1f106fcffd0be1e55b">&#9670;&#160;</a></span>conj() <span class="overload">[2/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; C</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Zero-value <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543" title="Adds an element to a collection according to its type conventions.">conj</a></span>: returns an unchanged copy of the collection, matching Clojure's <span class="tt">(<a class="el" href="#ac6a4465d9a31351eb793d28aae002543" title="Adds an element to a collection according to its type conventions.">conj</a> coll)</span>. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00075">75</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a6033d27b65c93d2ef4a145b155749bc7" name="a6033d27b65c93d2ef4a145b155749bc7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6033d27b65c93d2ef4a145b155749bc7">&#9670;&#160;</a></span>conj() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6033d27b65c93d2ef4a145b155749bc7">&#9670;&#160;</a></span>conj() <span class="overload">[3/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1142,12 +1218,12 @@ requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::Con
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00071">71</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00134">134</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a3c22a83f7f6ac6f17743db5d6c90161e" name="a3c22a83f7f6ac6f17743db5d6c90161e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c22a83f7f6ac6f17743db5d6c90161e">&#9670;&#160;</a></span>conj() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c22a83f7f6ac6f17743db5d6c90161e">&#9670;&#160;</a></span>conj() <span class="overload">[4/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1176,12 +1252,12 @@ requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::ConjableCol
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00063">63</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00126">126</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
 
 </div>
 </div>
 <a id="ac6a4465d9a31351eb793d28aae002543" name="ac6a4465d9a31351eb793d28aae002543"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6a4465d9a31351eb793d28aae002543">&#9670;&#160;</a></span>conj() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6a4465d9a31351eb793d28aae002543">&#9670;&#160;</a></span>conj() <span class="overload">[5/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1213,6 +1289,7 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <p>Adds an element to a collection according to its type conventions. </p>
 <p><a class="anchor" id="Conj"></a> </p>
 <p>Supported for <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>. <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> appends at the end. <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span> enqueues at the rear. <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span> appends at its logical count. For <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>, invalid characters are rejected at compile time and replaced with <span class="tt">.</span> at runtime; see <a class="el" href="classcljonic_1_1_string.html">String</a> for character validation and normalization policy. <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> adds absent elements; duplicates are no-ops. <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> associates a <span class="tt"><a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a></span>; an existing key's value is replaced. At full capacity, <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span> return unchanged copies. A full <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> or <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> also returns an unchanged copy when the element or key is absent. Each operation returns a distinct collection value and preserves the source.</p>
+<p>Three arities are provided: <span class="tt">conj(collection)</span> returns an unchanged copy, <span class="tt">conj(collection, value)</span> adds one value, and <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543" title="Adds an element to a collection according to its type conventions.">conj</a>(collection, value₁, value₂, …)</span> adds two or more values left to right, so <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543" title="Adds an element to a collection according to its type conventions.">conj</a>(c, x₁, x₂)</span> equals <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543" title="Adds an element to a collection according to its type conventions.">conj</a>(<a class="el" href="#ac6a4465d9a31351eb793d28aae002543" title="Adds an element to a collection according to its type conventions.">conj</a>(c, x₁), x₂)</span>. Each value must be one the collection can hold, as described above; a value that does not fit because the collection is full is skipped, and the remaining values are still added.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -1230,6 +1307,14 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a>{}, <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry&lt;int, int&gt;</a>{1, 100});</div>
 <div class="line">  <span class="keyword">static_assert</span>(m_const(1) == 100);</div>
 <div class="line"> </div>
+<div class="line">  <span class="comment">// Zero-value and variadic arities.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_same = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(v_const);</div>
+<div class="line">  <span class="keyword">static_assert</span>(v_same.count() == 3U);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_many = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10}, 20, 30);</div>
+<div class="line">  <span class="keyword">static_assert</span>(v_many(2) == 30);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_many = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a>{<span class="stringliteral">&quot;H&quot;</span>}, <span class="charliteral">&#39;i&#39;</span>, <span class="charliteral">&#39;!&#39;</span>);</div>
+<div class="line">  <span class="keyword">static_assert</span>(text_many(2) == <span class="charliteral">&#39;!&#39;</span>);</div>
+<div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> q_runtime = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> q1 = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(q_runtime, 100);</div>
@@ -1237,9 +1322,142 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1) == 100) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html_a154b02fc5978c390177002efc2458ecb"><div class="ttname"><a href="#a154b02fc5978c390177002efc2458ecb">cljonic::peek</a></div><div class="ttdeci">constexpr auto peek(const C &amp;collection) noexcept</div><div class="ttdoc">Observes the accessible element without removal.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-peek_8hpp_source.html#l00030">cljonic-peek.hpp:30</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ac6a4465d9a31351eb793d28aae002543"><div class="ttname"><a href="#ac6a4465d9a31351eb793d28aae002543">cljonic::conj</a></div><div class="ttdeci">constexpr auto conj(const C &amp;collection, const T &amp;value) noexcept(noexcept(collection.conj(value))) -&gt; C</div><div class="ttdoc">Adds an element to a collection according to its type conventions.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-conj_8hpp_source.html#l00055">cljonic-conj.hpp:55</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_ac6a4465d9a31351eb793d28aae002543"><div class="ttname"><a href="#ac6a4465d9a31351eb793d28aae002543">cljonic::conj</a></div><div class="ttdeci">constexpr auto conj(const C &amp;collection, const T &amp;value) noexcept(noexcept(collection.conj(value))) -&gt; C</div><div class="ttdoc">Adds an element to a collection according to its type conventions.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-conj_8hpp_source.html#l00068">cljonic-conj.hpp:68</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00055">55</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00068">68</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6c80cb17dc17d653a87e7829f730701c" name="a6c80cb17dc17d653a87e7829f730701c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c80cb17dc17d653a87e7829f730701c">&#9670;&#160;</a></span>conj() <span class="overload">[6/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename T1, typename T2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a0e5ef1ed76de5a2bd3b484a006305a74">concepts_detail::all_conj_values_admissible_v</a>&lt;C, T1, T2, Rest...&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; C</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00161">161</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac5865666eeb61dea77ae240ddf40f0d8" name="ac5865666eeb61dea77ae240ddf40f0d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5865666eeb61dea77ae240ddf40f0d8">&#9670;&#160;</a></span>conj() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename T1, typename T2, typename... Rest&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; C</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00151">151</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6bfd7e12c018f23387de98c5f1ab6b99" name="a6bfd7e12c018f23387de98c5f1ab6b99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bfd7e12c018f23387de98c5f1ab6b99">&#9670;&#160;</a></span>conj() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename T1, typename T2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a0e5ef1ed76de5a2bd3b484a006305a74">concepts_detail::all_conj_values_admissible_v</a>&lt;C, T1, T2, Rest...&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; C</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Variadic <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543" title="Adds an element to a collection according to its type conventions.">conj</a></span>: adds two or more values left to right, as if they were added one at a time. Each value must be one the collection can hold; a value that does not fit because the collection is full is skipped, and the remaining values are still added. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00115">115</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
 
 </div>
 </div>
