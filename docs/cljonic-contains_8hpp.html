@@ -114,7 +114,6 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
-<tr class="memdesc:namespacecljonic_1_1concepts__detail"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
 Concepts</h2></td></tr>
@@ -128,6 +127,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a5b8275162678a23d519d3711df6d9a2b" id="r_a5b8275162678a23d519d3711df6d9a2b"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
 requires concepts_detail::ContainsAdmissible&lt;C, K&gt;</td></tr>
 <tr class="memitem:a5b8275162678a23d519d3711df6d9a2b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a5b8275162678a23d519d3711df6d9a2b">cljonic::contains</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.contains(key))) -&gt; bool</td></tr>
+<tr class="memdesc:a5b8275162678a23d519d3711df6d9a2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests key presence, element membership, or index validity in a <a class="el" href="classcljonic_1_1_map.html">Map</a>, <a class="el" href="classcljonic_1_1_set.html">Set</a>, <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, or <a class="el" href="classcljonic_1_1_string.html">String</a>.  <br /></td></tr>
 <tr class="memitem:a6715877094e92d2020ccadef0c6f2098" id="r_a6715877094e92d2020ccadef0c6f2098"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
 requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts_detail::ContainsSupportedCollection&lt;C&gt;)</td></tr>
 <tr class="memitem:a6715877094e92d2020ccadef0c6f2098 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a6715877094e92d2020ccadef0c6f2098">cljonic::contains</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; bool</td></tr>

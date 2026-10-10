@@ -114,7 +114,6 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
-<tr class="memdesc:namespacecljonic_1_1concepts__detail"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
 Concepts</h2></td></tr>
@@ -125,6 +124,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0" id="r_a17088e15137ed905561f4020e75e17b0"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires concepts_detail::CanConjValueAdmissible&lt;C, V&gt;</td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a17088e15137ed905561f4020e75e17b0">cljonic::can_conj</a> (const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</td></tr>
+<tr class="memdesc:a17088e15137ed905561f4020e75e17b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow.  <br /></td></tr>
 <tr class="memitem:aa65ee82488ac8c6993ff3f04cecc6d01" id="r_aa65ee82488ac8c6993ff3f04cecc6d01"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
 <tr class="memitem:aa65ee82488ac8c6993ff3f04cecc6d01 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aa65ee82488ac8c6993ff3f04cecc6d01">cljonic::can_conj</a> (const C &amp;collection, const V &amp;value) noexcept -&gt; bool</td></tr>
