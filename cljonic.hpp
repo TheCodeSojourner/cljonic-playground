@@ -839,12 +839,14 @@ template <typename C, typename K1, typename V1, typename K2, typename V2, typena
 namespace cljonic {
 
 /** \anchor CanAssoc
- * \brief Checks if assoc with a key and a value can succeed without capacity overflow.
+ * \brief Checks whether one or more assoc pairs can be applied without capacity overflow.
  *
  * Supported for `Map` (an existing key can be replaced, or an absent key inserted when capacity remains), `Vector` (an
  * existing index can be replaced, or an index equal to the current count can append when capacity remains), and
  * `String` (the same index and append rule as Vector, with an invalid character returning false). `Set` and `Queue`
- * provide no associative capability and are rejected. This preflight leaves the source unchanged.
+ * provide no associative capability and are rejected. The variadic form checks pairs left to right against the state
+ * produced by earlier pairs, returning true only when every pair preflight succeeds. All forms leave the source
+ * unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -855,6 +857,7 @@ namespace cljonic {
    // Compile-time demonstration.
    constexpr Map<int, int, 4> m_const{};
    static_assert(can_assoc(m_const, 1, 10));
+   static_assert(can_assoc(m_const, 1, 10, 2, 20));
 
    // Runtime demonstration.
    auto m_runtime = Map<int, int, 4>{};
@@ -889,7 +892,45 @@ concept CanAssocValueAdmissible =
         { collection.can_assoc(key, value) } noexcept -> std::same_as<bool>;
     };
 
+template <typename C, typename... Arguments>
+struct all_assoc_arguments_admissible : std::false_type {};
+
+template <typename C>
+struct all_assoc_arguments_admissible<C> : std::true_type {};
+
+template <typename C, typename K, typename V, typename... Rest>
+struct all_assoc_arguments_admissible<C, K, V, Rest...>
+    : std::bool_constant<CanAssocKeyAdmissible<C, K> && CanAssocValueAdmissible<C, V> &&
+                         all_assoc_arguments_admissible<C, Rest...>::value> {};
+
+template <typename C, typename... Arguments>
+inline constexpr bool all_assoc_arguments_admissible_v = all_assoc_arguments_admissible<C, Arguments...>::value;
+
+template <typename C>
+constexpr auto can_assoc_pairs_in_order([[maybe_unused]] C& collection) noexcept -> bool {
+    return true;
+}
+
+template <typename C, typename K, typename V, typename... Rest>
+constexpr auto can_assoc_pairs_in_order(C& collection, const K& key, const V& value, const Rest&... rest) noexcept
+    -> bool {
+    if (!collection.can_assoc(key, value)) {
+        return false;
+    }
+    collection = collection.assoc(key, value);
+    return can_assoc_pairs_in_order(collection, rest...);
+}
+
 } // namespace concepts_detail
+
+template <typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest>
+    requires concepts::AssociativeCollection<C> && (sizeof...(Rest) % 2 == 0) &&
+             concepts_detail::all_assoc_arguments_admissible_v<C, K1, V1, K2, V2, Rest...>
+[[nodiscard]] constexpr auto can_assoc(const C& collection, const K1& key1, const V1& value1, const K2& key2,
+                                       const V2& value2, const Rest&... rest) noexcept -> bool {
+    C accumulator = collection;
+    return concepts_detail::can_assoc_pairs_in_order(accumulator, key1, value1, key2, value2, rest...);
+}
 
 // Diagnostic fallbacks (REQ-DIAG-009): one targeted message per rejection mode;
 // never a supported call target.
@@ -924,6 +965,43 @@ template <typename C, typename K, typename V>
     return false;
 }
 
+template <typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest>
+    requires concepts::CljonicCollection<C> && (!concepts::AssociativeCollection<C>) && (sizeof...(Rest) % 2 == 0)
+[[nodiscard]] constexpr auto can_assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K1& key1,
+                                       [[maybe_unused]] const V1& value1, [[maybe_unused]] const K2& key2,
+                                       [[maybe_unused]] const V2& value2, [[maybe_unused]] const Rest&... rest) noexcept
+    -> bool {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::can_assoc: the first argument must be a Map, a Vector, or a String. A Set or Queue is "
+                  "not supported.");
+    return false;
+}
+
+template <typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest>
+    requires concepts::AssociativeCollection<C> && (sizeof...(Rest) % 2 == 0) &&
+             (!concepts_detail::all_assoc_arguments_admissible_v<C, K1, V1, K2, V2, Rest...>)
+[[nodiscard]] constexpr auto can_assoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K1& key1,
+                                       [[maybe_unused]] const V1& value1, [[maybe_unused]] const K2& key2,
+                                       [[maybe_unused]] const V2& value2, [[maybe_unused]] const Rest&... rest) noexcept
+    -> bool {
+    static_assert(concepts_detail::dependent_false<C, K1, V1, K2, V2, Rest...>,
+                  "cljonic::can_assoc: every key/value pair must use types this collection can associate. A Map "
+                  "takes its declared key and value types; a Vector or String takes an integer index and its stored "
+                  "value type.");
+    return false;
+}
+
+template <typename C, typename... Arguments>
+    requires concepts::CljonicCollection<C> && concepts::AssociativeCollection<C> && (sizeof...(Arguments) >= 3) &&
+             (sizeof...(Arguments) % 2 == 1)
+[[nodiscard]] constexpr auto can_assoc([[maybe_unused]] const C& collection,
+                                       [[maybe_unused]] const Arguments&... arguments) noexcept -> bool {
+    static_assert(concepts_detail::dependent_false<C, Arguments...>,
+                  "cljonic::can_assoc: supply complete key/value pairs; the variadic form cannot end with a key "
+                  "without a value.");
+    return false;
+}
+
 } // namespace cljonic
 // End cljonic-can-assoc.hpp
 // Begin cljonic-can-conj.hpp
@@ -939,10 +1017,31 @@ concept CanConjValueAdmissible = concepts::ConjableCollection<C> && requires(con
     { collection.can_conj(value) } noexcept -> std::same_as<bool>;
 };
 
+template <typename C, typename... Values>
+concept CanConjValuesAdmissible = (CanConjValueAdmissible<C, Values> && ...);
+
+template <typename C>
+constexpr auto can_conj_values_in_order([[maybe_unused]] C& collection) noexcept -> bool {
+    return true;
+}
+
+template <typename C, typename V, typename... Rest>
+constexpr auto can_conj_values_in_order(C& collection, const V& value, const Rest&... rest) noexcept -> bool {
+    if (!collection.can_conj(value)) {
+        return false;
+    }
+    collection = collection.conj(value);
+    return can_conj_values_in_order(collection, rest...);
+}
+
 } // namespace concepts_detail
 
 /** \anchor CanConj
  * \brief Checks whether conj can succeed without capacity overflow.
+ *
+ * `can_conj(collection)` returns true. The one-value form checks that value against the collection. The variadic form
+ * checks each value left to right against the state produced by the preceding values, and returns true only if every
+ * preflight succeeds. All forms preserve the source.
  *
  * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. For `Vector` and `Queue`, the result depends only on
  * remaining capacity; the value does not affect the preflight. For `String`, both remaining capacity and a valid
@@ -960,7 +1059,9 @@ concept CanConjValueAdmissible = concepts::ConjableCollection<C> && requires(con
  int main() {
    // Compile-time demonstration.
    constexpr Queue<int, 4> q_const{};
+   static_assert(can_conj(q_const));
    static_assert(can_conj(q_const, 1));
+   static_assert(can_conj(Queue<int, 2>{}, 1, 2));
    constexpr Queue<int, 1> q_full{1};
    static_assert(!can_conj(q_full, 2));
    constexpr Set<int, 4> s_const{};
@@ -978,6 +1079,12 @@ concept CanConjValueAdmissible = concepts::ConjableCollection<C> && requires(con
  }
  ~~~~~
  */
+template <typename C>
+    requires concepts::ConjableCollection<C>
+[[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection) noexcept -> bool {
+    return true;
+}
+
 template <typename C, typename V>
     requires concepts_detail::CanConjValueAdmissible<C, V>
 [[nodiscard]] constexpr auto can_conj(const C& collection,
@@ -985,15 +1092,30 @@ template <typename C, typename V>
     return collection.can_conj(value);
 }
 
+template <typename C, typename V1, typename V2, typename... Rest>
+    requires concepts::ConjableCollection<C> && concepts_detail::CanConjValuesAdmissible<C, V1, V2, Rest...>
+[[nodiscard]] constexpr auto can_conj(const C& collection, const V1& value1, const V2& value2,
+                                      const Rest&... rest) noexcept -> bool {
+    C accumulator = collection;
+    return concepts_detail::can_conj_values_in_order(accumulator, value1, value2, rest...);
+}
+
 // Diagnostic fallback (REQ-DIAG-009): a cljonic collection or producer that
 // does not support conj is rejected at the public boundary.
+template <typename C>
+    requires(concepts::CljonicCollection<C> || concepts::CljonicProducer<C>) && (!concepts::ConjableCollection<C>)
+[[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection) noexcept -> bool {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::can_conj: the first argument must be a Vector, a Set, a Map, a Queue, or a String.");
+    return false;
+}
+
 template <typename C, typename V>
     requires(concepts::CljonicCollection<C> || concepts::CljonicProducer<C>) && (!concepts::ConjableCollection<C>)
 [[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V& value) noexcept
     -> bool {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::can_conj: the first argument must be a Vector, a Set, a Map, a Queue, or a String -- a "
-                  "collection that supports conj.");
+                  "cljonic::can_conj: the first argument must be a Vector, a Set, a Map, a Queue, or a String.");
     return false;
 }
 
@@ -1004,6 +1126,27 @@ template <typename C, typename V>
     static_assert(concepts_detail::dependent_false<C, V>,
                   "cljonic::can_conj: this value cannot be added to the collection with conj. A Map takes a MapEntry; "
                   "other collections take a value of the type they store.");
+    return false;
+}
+
+template <typename C, typename V1, typename V2, typename... Rest>
+    requires(concepts::CljonicCollection<C> || concepts::CljonicProducer<C>) && (!concepts::ConjableCollection<C>)
+[[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V1& value1,
+                                      [[maybe_unused]] const V2& value2, [[maybe_unused]] const Rest&... rest) noexcept
+    -> bool {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::can_conj: the first argument must be a Vector, a Set, a Map, a Queue, or a String.");
+    return false;
+}
+
+template <typename C, typename V1, typename V2, typename... Rest>
+    requires concepts::ConjableCollection<C> && (!concepts_detail::CanConjValuesAdmissible<C, V1, V2, Rest...>)
+[[nodiscard]] constexpr auto can_conj([[maybe_unused]] const C& collection, [[maybe_unused]] const V1& value1,
+                                      [[maybe_unused]] const V2& value2, [[maybe_unused]] const Rest&... rest) noexcept
+    -> bool {
+    static_assert(concepts_detail::dependent_false<C, V1, V2, Rest...>,
+                  "cljonic::can_conj: every value after the collection must be one this collection can add. A Map "
+                  "takes MapEntry values; other collections take a value of the type they store.");
     return false;
 }
 
@@ -1725,7 +1868,7 @@ namespace cljonic {
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
    constexpr auto q_const = conj(Queue<int, 4>{}, 9);
    constexpr Range<int> r_const{0, 5};
-   constexpr Repeat<int> finite_repeat{7, 3U};
+   constexpr Repeat<int> finite_repeat{7, 3};
    constexpr Repeat<int> unbounded_repeat{7};
    constexpr Range<int> unbounded_range{0, 0, 0};
    static_assert(count(v_const) == 3);
