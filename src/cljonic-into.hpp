@@ -28,10 +28,11 @@ template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
 [[nodiscard]] constexpr auto into(const Dest& destination, const Source& source) noexcept -> Dest {
     Dest result = destination;
     for (auto&& item : source) {
-        if (!result.can_assoc(result.count())) {
+        const auto index = result.count();
+        if (!result.can_assoc(index, item)) {
             break;
         }
-        result = result.assoc(result.count(), item);
+        result = result.assoc(index, item);
     }
     return result;
 }

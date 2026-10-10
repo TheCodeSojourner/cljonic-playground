@@ -221,9 +221,9 @@ class String {
     }
 
     template <std::integral IndexType>
-    [[nodiscard]] constexpr auto can_assoc(IndexType index) const noexcept -> bool {
+    [[nodiscard]] constexpr auto can_assoc(IndexType index, char value) const noexcept -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
-        return normalized_index && association_index_is_valid(*normalized_index);
+        return normalized_index && association_index_is_valid(*normalized_index) && character_is_valid(value);
     }
 
     template <std::integral IndexType>

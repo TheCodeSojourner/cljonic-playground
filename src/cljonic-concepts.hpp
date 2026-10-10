@@ -377,17 +377,21 @@ concept LookupCollection = CljonicCollection<C> && requires(const C& c) {
 };
 
 /** Requires that an admitted collection provides immutable association and
- *  its key-domain/capacity preflight operation. The member-type references live
- *  in the requires-expression body, never its parameter list, so the concept
- *  stays SFINAE-friendly for a type that lacks `key_type`/
- *  `association_value_type` (REQ-DIAG-001): naming them in the parameter list
- *  makes evaluation hard-error instead of yielding false, which would break
- *  boundary-constrained free functions such as `assoc`. */
+ *  its key/value/capacity preflight operation over the complete association
+ *  argument set. The member-type references live in the requires-expression
+ *  body, never its parameter list, so the concept stays SFINAE-friendly for a
+ *  type that lacks `key_type`/`association_value_type` (REQ-DIAG-001): naming
+ *  them in the parameter list makes evaluation hard-error instead of yielding
+ *  false, which would break boundary-constrained free functions such as
+ *  `assoc`. */
 template <typename C>
 concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
     typename C::key_type;
     typename C::association_value_type;
-    { c.can_assoc(std::declval<const typename C::key_type&>()) } noexcept -> std::same_as<bool>;
+    {
+        c.can_assoc(std::declval<const typename C::key_type&>(),
+                    std::declval<const typename C::association_value_type&>())
+    } noexcept -> std::same_as<bool>;
     {
         c.assoc(std::declval<const typename C::key_type&>(), std::declval<const typename C::association_value_type&>())
     } noexcept -> std::same_as<C>;

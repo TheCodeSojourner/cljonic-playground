@@ -201,7 +201,8 @@ class Map {
         return (idx < logical_size_) ? entries_[idx].value : fallback;
     }
 
-    [[nodiscard]] constexpr auto can_assoc(const KeyType& key) const noexcept -> bool {
+    [[nodiscard]] constexpr auto can_assoc(const KeyType& key, [[maybe_unused]] const ValueType& value) const noexcept
+        -> bool {
         return contains(key) || (logical_size_ < CapacityValue);
     }
 
