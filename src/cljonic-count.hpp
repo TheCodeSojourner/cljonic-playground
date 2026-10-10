@@ -20,7 +20,7 @@ namespace cljonic {
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
    constexpr auto q_const = conj(Queue<int, 4>{}, 9);
    constexpr Range<int> r_const{0, 5};
-   constexpr Repeat<int> finite_repeat{7, 3U};
+   constexpr Repeat<int> finite_repeat{7, 3};
    constexpr Repeat<int> unbounded_repeat{7};
    constexpr Range<int> unbounded_range{0, 0, 0};
    static_assert(count(v_const) == 3);
