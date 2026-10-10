@@ -501,6 +501,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ `Map`: `conj(map, entry)` associates the entry's key with its value — an existing key replaces its associated value without increasing count, a new key is added only when capacity remains (`REQ-COLL-004A`) ∧ the argument is a `MapEntry<K, V>` ∧ a full map with a new key returns an unchanged copy
   ∧ ∀ `String`: `String::conj(char)` and `conj(string, char)` append the character at the logical count when capacity remains ∧ a full string returns an unchanged copy ∧ the character follows String's character-validity policy (`REQ-COLL-020Q`)
   ∧ ∀ `conj`: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ returns a new collection value ∧ preserves the source
+  ∧ ∀ one-value_form: remains the existing single-value form ∧ the zero-value and variadic arities are defined by `REQ-FN-002Y`
   rationale: `String` is a bounded indexed character collection whose `assoc` operation already appends at the logical count; `conj` exposes the same natural append behavior while preserving String's character policy
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
@@ -541,6 +542,17 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ unsupported first-argument or value type: fails compilation with one targeted diagnostic naming `disj` and the violated Set/value-type domain (`REQ-DIAG-003`, `REQ-DIAG-009`)
   rationale: Clojure's `disj` accepts zero or more values, returns the collection unchanged when given none, and sequentially removes each supplied member; exact element types avoid silently narrowing or converting membership queries
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+
+λ REQ-FN-002Y(x).
+  ∀ context: `conj` also provides a zero-value arity `conj(collection)` and a variadic arity `conj(collection, value₁, value₂, …)` over every `Conjable` collection (`Vector`, `Set`, `Map`, `Queue`, `String`), matching Clojure's `(conj coll)` and `(conj coll x & xs)`
+  ∧ ∀ zero-value arity: returns an unchanged copy of the collection ∧ preserves the source
+  ∧ ∀ variadic arity: folds its values into the result left to right, so `conj(c, x₁, x₂) ≡ conj(conj(c, x₁), x₂)` ∧ the result is a distinct collection value ∧ the source is unchanged
+  ∧ ∀ value: individually admitted under the same collection-specific value domain as the one-value form (`REQ-FN-002T`) ∧ a value outside that domain fails at compile time regardless of its position in the argument list
+  ∧ ∀ `String` value: the character follows the one-value invalid-character policy (`REQ-COLL-020Q`) — compile-time rejection or runtime `'.'` replacement
+  ∧ ∀ value whose documented result cannot be produced because the accumulator is at full capacity for an append index (a `Vector`, `Queue`, or `String`), an absent `Set` element, or a new `Map` key: a per-value no-op that leaves the accumulator unchanged ∧ does not prevent the remaining values from being applied ∧ neither a compile-time error nor a runtime exception, consistent with the total, non-throwing one-value contract
+  ∧ ∀ variadic arity: requires at least two values ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by `Conjable` ∧ the one-value arity remains the existing single-value form (`REQ-FN-002T`)
+  rationale: Clojure's `conj` accepts `(conj coll)` and `(conj coll x & xs)`; cljonic mirrors those surfaces while preserving its bounded, total, non-throwing addition semantics — an over-capacity value is a per-value no-op rather than a Clojure-style failure, and the zero-value arity mirrors the existing `disj` zero-value contract
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-10, rationale_source: origin_artifact}
 
 λ REQ-FN-003(x).
   ∀ generic_free_function: constrained by explicit concepts or equivalent compile-time requirements
