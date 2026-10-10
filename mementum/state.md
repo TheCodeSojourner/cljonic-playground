@@ -1,5 +1,31 @@
 ## Current Session State
 
+- last_session_id: 47bb79f0-803a-4d17-889c-7285ad272274
+- current_timestamp: 2026-10-10
+- recover: 1
+- session_complete: true
+
+Task:
+1. `conj` arity expansion — COMPLETE, uncommitted: Clojure's zero-value and variadic arities were added alongside the existing one-value form. `conj(collection)` returns an unchanged copy (mirroring the `disj` zero-value contract); `conj(collection, value₁, value₂, …)` folds two or more values left to right (mirroring the `assoc` variadic precedent), each value admitted under the same collection-specific domain, with a value that cannot be added at full capacity a per-value no-op that does not stop the remaining values. The one-value arity is unchanged. Updated `REQ-FN-002Y` (plus a cross-reference in `REQ-FN-002T`), architecture `S2_conj_contract`, `specs/primitives/conj.allium` (8 new invariants), `tests/cljonic-conj-spec-tests.cpp`, `src/cljonic-conj.hpp` (two overloads plus three diagnostic fallbacks), the conj compile-fail harness, vocabulary, the traceability snapshot, and `docs/`.
+2. Excluded Clojure's nullary `(conj)` → `[]` (human decision): no typed realization exists — cljonic has no unbounded or default collection, and the `REQ-COLL-004` pack-literal precedent already gives the zero-argument empty collection through default construction (`Vector<T,N>{}`), not a function form. `(conj nil item)` is likewise inapplicable (no `nil` or list type; module 7 maps Clojure nil-returning operations to typed absence semantics).
+3. Mementum memory — proposed and declined (human decision): the requirement clause is the durable record, so no memory file was created.
+
+Questions:
+1. None open for this change.
+
+Decisions:
+1. Add `(conj coll)` and `(conj coll x & xs)`; do not add `(conj)` (human, 2026-10-10).
+2. Skip the Mementum memory; the requirement clause suffices (human, 2026-10-10).
+
+Validation:
+1. `make validate` passes: requirements-structure (301 clauses), vocabulary-structure (171 terms), audit-scripts, format (idempotent), lint, complexity, all compile-fail harnesses including `conj-compile-fail`, header-guards, diagnostic-coverage (pending backlog unchanged: `fits_into`, `get`, `into`, `peek`, `pop`), sanitizer, coverage 100.0% lines, traceability-spec-to-code (strict), no-heap.
+2. 196/196 tests pass (was 194); `allium check specs` and `allium analyse specs` report 0 diagnostics and 0 findings; `make docs` and `make docs-examples` (30 compiled, six intentionally deferred) pass; `git diff --check` is clean outside generated HTML (doxygen.css carries a regeneration timestamp).
+
+Next:
+1. User-owned: review the change and commit when ready. Everything — requirements, architecture, Allium spec, tests, source, harness, vocabulary, traceability snapshot, regenerated `docs/`, and this `mementum/state.md` block — is uncommitted in the working tree.
+
+## Current Session State
+
 - last_session_id: 4e9fa21d-7e6f-436c-851f-33ddaa4fa887
 - current_timestamp: 2026-10-09
 - recover: 1
