@@ -178,7 +178,7 @@ entity AssociativeCollection {
     defines_value_type: Boolean
     defines_capacity_policy: Boolean
     requires_assoc_operation: Boolean
-    requires_can_assoc_preflight: Boolean
+    requires_key_value_can_assoc_preflight: Boolean
     returns_new_collection_value: Boolean
     preserves_source: Boolean
     requires_non_mutating_assoc_operation: Boolean
@@ -204,8 +204,8 @@ entity AssociativeCollection {
         this.requires_assoc_operation = true
     }
 
-    invariant RequiresCanAssocPreflight {
-        this.requires_can_assoc_preflight = true
+    invariant RequiresKeyValueCanAssocPreflight {
+        this.requires_key_value_can_assoc_preflight = true
     }
 
     invariant ReturnsNewCollectionValue {

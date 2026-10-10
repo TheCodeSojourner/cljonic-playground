@@ -43,6 +43,7 @@ entity Map {
     invalid_key_or_full_insert_returns_unchanged_map: Boolean
     can_assoc_true_for_existing_or_insertable_key: Boolean
     can_assoc_false_for_missing_key_at_capacity: Boolean
+    can_assoc_uses_supplied_association_value: Boolean
     missing_key_returns_default_element: Boolean
     missing_key_returns_supplied_fallback: Boolean
     canonical_result_status_model_is_declared: Boolean
@@ -229,6 +230,10 @@ entity Map {
 
     invariant CanAssocFalseForMissingKeyAtCapacity {
         this.can_assoc_false_for_missing_key_at_capacity = true
+    }
+
+    invariant CanAssocUsesSuppliedAssociationValue {
+        this.can_assoc_uses_supplied_association_value = true
     }
 
     invariant MissingKeyReturnsDefaultElement {

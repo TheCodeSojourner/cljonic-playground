@@ -68,6 +68,7 @@ entity String {
     null_terminator_is_not_association_index: Boolean
     can_assoc_true_for_existing_or_append_index: Boolean
     can_assoc_false_for_invalid_or_full_append_index: Boolean
+    can_assoc_false_for_invalid_character: Boolean
     assoc_character_value_is_validated: Boolean
     supports_get_free_function: Boolean
     invalid_index_returns_default_element: Boolean
@@ -355,6 +356,10 @@ entity String {
 
     invariant CanAssocFalseForInvalidOrFullAppendIndex {
         this.can_assoc_false_for_invalid_or_full_append_index = true
+    }
+
+    invariant CanAssocFalseForInvalidCharacter {
+        this.can_assoc_false_for_invalid_character = true
     }
 
     invariant AssocCharacterValueIsValidated {

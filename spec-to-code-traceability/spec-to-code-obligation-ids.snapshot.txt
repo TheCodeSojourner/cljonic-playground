@@ -77,7 +77,7 @@ invariant.AssociativeCollection.DefinesKeyType
 invariant.AssociativeCollection.DefinesValueType
 invariant.AssociativeCollection.PreservesSource
 invariant.AssociativeCollection.RequiresAssocOperation
-invariant.AssociativeCollection.RequiresCanAssocPreflight
+invariant.AssociativeCollection.RequiresKeyValueCanAssocPreflight
 invariant.AssociativeCollection.RequiresNonMutatingAssocOperation
 invariant.AssociativeCollection.RequiresNonMutatingAssocPreflight
 invariant.AssociativeCollection.ReturnsNewCollectionValue
@@ -109,9 +109,10 @@ invariant.Assoc.VariadicOverCapacityPairIsNoOpAndContinues
 invariant.Assoc.VariadicPairAdmittedUnderCollectionDomain
 invariant.Assoc.VariadicRequiresAtLeastTwoPairs
 invariant.CanAssoc.CanAssocPreflightSupported
+invariant.CanAssoc.ChecksCompleteAssocArguments
 invariant.CanAssoc.ConstexprExecutionModel
-invariant.CanAssoc.DependsOnlyOnCollectionAndKey
 invariant.CanAssoc.FalseForInvalidOrFullCapacityKeyOrIndex
+invariant.CanAssoc.FalseForInvalidStringCharacter
 invariant.CanAssoc.NoexceptExecutionModel
 invariant.CanAssoc.NoExceptions
 invariant.CanAssoc.NoHeapAllocation
@@ -126,7 +127,6 @@ invariant.CanAssoc.SupportsStringCanAssoc
 invariant.CanAssoc.SupportsVectorCanAssoc
 invariant.CanAssoc.TrueForCountAppendWhenCapacityRemains
 invariant.CanAssoc.TrueForExistingKeyOrIndex
-invariant.CanAssoc.ValueIndependentResult
 invariant.CanConj.AppliesToAllConjableCollections
 invariant.CanConj.CanConjPreflightSupported
 invariant.CanConj.NoExceptions
@@ -456,6 +456,7 @@ invariant.Map.CallableLookup
 invariant.Map.CanAssocFalseForMissingKeyAtCapacity
 invariant.Map.CanAssocIsCanonicalAssocPreflight
 invariant.Map.CanAssocTrueForExistingOrInsertableKey
+invariant.Map.CanAssocUsesSuppliedAssociationValue
 invariant.Map.CanonicalResultStatusModelIsDeclared
 invariant.Map.CapacityExceedsMaximumIsCompileTimeFailure
 invariant.Map.CapacityIsNonNegative
@@ -832,6 +833,7 @@ invariant.String.AssocAppendsAtLogicalCount
 invariant.String.AssocCharacterValueIsValidated
 invariant.String.AssocReplacesExistingCharacter
 invariant.String.BoundedPrefixResultStatusDeclared
+invariant.String.CanAssocFalseForInvalidCharacter
 invariant.String.CanAssocFalseForInvalidOrFullAppendIndex
 invariant.String.CanAssocTrueForExistingOrAppendIndex
 invariant.String.CanConjRejectsInvalidCharacter
@@ -930,6 +932,7 @@ invariant.Vector.AssocAppendsAtLogicalCount
 invariant.Vector.AssocReplacesExistingIndex
 invariant.Vector.BoundedPrefixResultStatusDeclared
 invariant.Vector.CallableLookup
+invariant.Vector.CanAssocAcceptsAssociationValue
 invariant.Vector.CanAssocFalseForInvalidOrFullAppendIndex
 invariant.Vector.CanAssocTrueForExistingOrAppendIndex
 invariant.Vector.CanonicalResultStatusModelIsDeclared

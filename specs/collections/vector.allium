@@ -40,6 +40,7 @@ entity Vector {
     invalid_assoc_index_returns_unchanged_vector: Boolean
     can_assoc_true_for_existing_or_append_index: Boolean
     can_assoc_false_for_invalid_or_full_append_index: Boolean
+    can_assoc_accepts_association_value: Boolean
     invalid_index_returns_default_element: Boolean
     invalid_index_returns_supplied_fallback: Boolean
     canonical_result_status_model_is_declared: Boolean
@@ -213,6 +214,10 @@ entity Vector {
 
     invariant CanAssocFalseForInvalidOrFullAppendIndex {
         this.can_assoc_false_for_invalid_or_full_append_index = true
+    }
+
+    invariant CanAssocAcceptsAssociationValue {
+        this.can_assoc_accepts_association_value = true
     }
 
     invariant InvalidIndexReturnsDefaultElement {
