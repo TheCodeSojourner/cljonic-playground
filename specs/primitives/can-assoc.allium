@@ -2,6 +2,13 @@
 
 entity CanAssoc {
     supports_can_assoc_preflight: Boolean
+    supports_variadic_preflight: Boolean
+    variadic_preflight_folds_pairs_left_to_right: Boolean
+    variadic_preflight_uses_accumulated_state: Boolean
+    variadic_preflight_false_if_any_pair_fails: Boolean
+    variadic_pairs_admitted_regardless_of_position: Boolean
+    odd_trailing_argument_rejected: Boolean
+    variadic_preflight_preserves_source: Boolean
     checks_complete_assoc_arguments: Boolean
     supports_map_can_assoc: Boolean
     supports_vector_can_assoc: Boolean
@@ -23,6 +30,34 @@ entity CanAssoc {
 
     invariant CanAssocPreflightSupported {
         this.supports_can_assoc_preflight = true
+    }
+
+    invariant SupportsVariadicPreflight {
+        this.supports_variadic_preflight = true
+    }
+
+    invariant VariadicPreflightFoldsPairsLeftToRight {
+        this.variadic_preflight_folds_pairs_left_to_right = true
+    }
+
+    invariant VariadicPreflightUsesAccumulatedState {
+        this.variadic_preflight_uses_accumulated_state = true
+    }
+
+    invariant VariadicPreflightFalseIfAnyPairFails {
+        this.variadic_preflight_false_if_any_pair_fails = true
+    }
+
+    invariant VariadicPairsAdmittedRegardlessOfPosition {
+        this.variadic_pairs_admitted_regardless_of_position = true
+    }
+
+    invariant OddTrailingArgumentRejected {
+        this.odd_trailing_argument_rejected = true
+    }
+
+    invariant VariadicPreflightPreservesSource {
+        this.variadic_preflight_preserves_source = true
     }
 
     invariant ChecksCompleteAssocArguments {

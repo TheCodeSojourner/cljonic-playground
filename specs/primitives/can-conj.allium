@@ -2,6 +2,14 @@
 
 entity CanConj {
     supports_can_conj_preflight: Boolean
+    supports_zero_value_preflight: Boolean
+    zero_value_preflight_is_true: Boolean
+    supports_variadic_preflight: Boolean
+    variadic_preflight_folds_left_to_right: Boolean
+    variadic_preflight_uses_accumulated_state: Boolean
+    variadic_preflight_false_if_any_step_fails: Boolean
+    variadic_values_admitted_regardless_of_position: Boolean
+    variadic_preflight_preserves_source: Boolean
     applies_to_all_conjable_collections: Boolean
     set_or_map_existing_element_succeeds: Boolean
     vector_or_queue_is_capacity_only: Boolean
@@ -15,6 +23,38 @@ entity CanConj {
 
     invariant CanConjPreflightSupported {
         this.supports_can_conj_preflight = true
+    }
+
+    invariant SupportsZeroValuePreflight {
+        this.supports_zero_value_preflight = true
+    }
+
+    invariant ZeroValuePreflightIsTrue {
+        this.zero_value_preflight_is_true = true
+    }
+
+    invariant SupportsVariadicPreflight {
+        this.supports_variadic_preflight = true
+    }
+
+    invariant VariadicPreflightFoldsLeftToRight {
+        this.variadic_preflight_folds_left_to_right = true
+    }
+
+    invariant VariadicPreflightUsesAccumulatedState {
+        this.variadic_preflight_uses_accumulated_state = true
+    }
+
+    invariant VariadicPreflightFalseIfAnyStepFails {
+        this.variadic_preflight_false_if_any_step_fails = true
+    }
+
+    invariant VariadicValuesAdmittedRegardlessOfPosition {
+        this.variadic_values_admitted_regardless_of_position = true
+    }
+
+    invariant VariadicPreflightPreservesSource {
+        this.variadic_preflight_preserves_source = true
     }
 
     invariant AppliesToAllConjableCollections {
