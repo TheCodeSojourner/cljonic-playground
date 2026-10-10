@@ -278,14 +278,14 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ `Map<K, V, N>`: the lookup result and `get` return type are the mapped value `V`, not `MapEntry<K, V>`
   ∧ ∀ `Set<T, N>` ∨ `Vector<T, N>`: the lookup result and `get` return type are the stored element type `T`
   ∧ ∀ `String<N>`: the lookup result and `get` return type are `char`
-  ∧ ∀ context: the other supported generic free-function signatures are `contains(const C&, const K&) -> bool` for `Lookup` or `Indexed` collections; `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&, const C::association_value_type&) -> bool` for `Associative` collections
+  ∧ ∀ context: the other supported generic free-function signatures are `contains(const C&, const K&) -> bool` for `Lookup` or `Indexed` collections; `can_conj(const C&) -> bool`, `can_conj(const C&, const V&) -> bool`, and the variadic `can_conj(const C&, const V₁&, const V₂&, …) -> bool` for `Conjable` collections; the one-pair forms are `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&, const C::association_value_type&) -> bool` for `Associative` collections, with variadic pair forms governed by `REQ-FN-002U` and `REQ-FN-002W`
   ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by the required capability and collection-specific key/value domains
   ∧ ∀ `can_assoc`: the public free-function signature is `can_assoc(const C&, const K&, const V&) -> bool`, where the member call is well-formed under the same key/value admission constraints as `assoc`
   ∧ ∀ (`Map` ∨ `Set`): `contains` accepts only `K` exactly matching the collection's declared `lookup_type` after removing cv-qualification and references; no implicit conversion to that type is admitted
   ∧ ∀ (`Vector` ∨ `String`): `contains` accepts an integral index type
   ∧ ∀ `Range`: `contains(const Range&, const K&)` is not a supported free-function signature; `Range::contains(index)` remains the bounded-observation member predicate specified by `REQ-FN-013A`
   ∧ ∀ `String`: the `assoc` value argument is `char`
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-09}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-10}
 
 λ REQ-COLL-020S(x).
   ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, `Associative`, and `Conjable`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, and `pop` over their supported collection inputs
@@ -463,11 +463,15 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-FN-002M(x).
   ∀ `can_conj(collection, value)` defined for every `Conjable` collection (`Vector`, `Set`, `Map`, `Queue`, `String`): returns true when `conj` can produce its documented result without capacity failure
+  ∧ ∀ `can_conj(collection)`: returns true without changing or requiring capacity from the collection
+  ∧ ∀ `can_conj(collection, value₁, value₂, …)`: supports two or more values and returns true only when each value's single-value preflight succeeds in left-to-right order against the collection resulting from applying the preceding values; returns false when any preflight fails
+  ∧ ∀ variadic value: individually admitted under the same collection-specific value domain as the one-value form regardless of its position
+  ∧ ∀ variadic form: leaves the source unchanged ∧ is `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating
   ∧ ∀ (`Set` ∧ `Map`): an element or key already present returns true — insertion is a no-op or a replacement that needs no capacity — ∧ a new element or key returns true only when capacity remains
   ∧ ∀ (`Vector` ∧ `Queue`): returns true only when capacity remains; the value argument does not affect the outcome
   ∧ ∀ `String`: returns true only when capacity remains and the character is valid (non-NUL ASCII) ∧ returns false for an invalid character even when capacity remains ∧ `conj` still applies the String-owned runtime replacement policy (`REQ-COLL-020Q`)
-  rationale: a `Set` element or `Map` key already present makes `conj` a successful insertion without requiring capacity
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+  rationale: a `Set` element or `Map` key already present makes `conj` a successful insertion without requiring capacity; zero-value preflight mirrors `conj(collection)`, and cumulative variadic preflight answers whether every requested value can be accepted in sequence, accounting for capacity and earlier insertions or replacements
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-10, rationale_source: origin_artifact}
 
 λ REQ-FN-002P(x).
   ∀ callable `Map<K, V, N>` lookup form specified by `REQ-COLL-004B`: equivalent to the corresponding `get` overloads for the same map, key, value, and fallback arguments
@@ -527,12 +531,15 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-FN-002W(x).
   ∀ `can_assoc(collection, key, value)` defined for every built-in `Associative` collection: accepts the complete argument set of `assoc` and returns whether the collection-specific key/index, capacity, and value preflight permits association
+  ∧ ∀ `can_assoc(collection, key₁, value₁, key₂, value₂, …)`: supports two or more key-value pairs and returns true only when each pair's single-pair preflight succeeds in left-to-right order against the collection resulting from applying the preceding pairs; returns false when any preflight fails
+  ∧ ∀ variadic pair: individually admitted under the same collection-specific key/value domain as the one-pair form regardless of its position ∧ an odd trailing key without a value is rejected at compile time
+  ∧ ∀ variadic form: leaves the source unchanged ∧ is `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating
   ∧ ∀ `Map`: an existing key returns true regardless of remaining capacity ∧ an absent key returns true only when capacity remains
   ∧ ∀ `Vector`: an existing index returns true ∧ the logical-count append index returns true only when capacity remains ∧ the value has the Vector's stored element type
   ∧ ∀ `String`: an existing content index or logical-count append index returns true only when content capacity remains and the `char` value is non-NUL ASCII
   ∧ ∀ invalid key/index, inadmissible value type, or invalid String character: rejected according to the collection's compile-time or runtime value domain; invalid runtime String characters return false
-  rationale: a complete preflight receives every operand of `assoc`; String's character-validity policy makes the value relevant to whether the requested association is admissible
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-09, rationale_source: origin_artifact}
+  rationale: a complete preflight receives every operand of `assoc`; String's character-validity policy makes the value relevant to whether the requested association is admissible, and cumulative variadic preflight answers whether every requested pair can be associated in sequence, accounting for capacity, replacements, and indexes produced by prior pairs
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-10, rationale_source: origin_artifact}
 
 λ REQ-FN-002X(x).
   ∀ `disj(set, values...)`: defined only for a `Set` and zero or more values each having exactly the Set's declared `value_type` ∧ any other first-argument or value type is rejected at the public API boundary
