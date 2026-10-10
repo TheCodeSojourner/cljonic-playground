@@ -26,8 +26,8 @@ This module establishes the C++20 concept capability framework, result status ou
 
 λ REQ-CAP-004(x).
   ∀ context: `Associative` means a capability for non-mutating association of a key and value into a collection, producing a new collection value
-  ∧ ∀ Associative_collection: defines its key and value types ∧ defines the valid-key and capacity policy for association ∧ preserves the source collection ∧ provides a non-throwing, non-allocating preflight predicate that agrees with the association operation for immutable inputs
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∧ ∀ built-in Associative_collection: defines its key and value types ∧ defines the valid-key, value, and capacity policies for association ∧ preserves the source collection ∧ provides a non-throwing, non-allocating preflight predicate over the complete key/value argument set that agrees with the collection's association policy for immutable inputs
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-09}
 
 λ REQ-CAP-005(x).
   ∀ context: `Associative` does not imply that the key domain is string-based, map-specific, or non-indexed

@@ -241,9 +241,9 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020L(x).
-  ∀ `Associative` collection ∧ `can_assoc(collection, key)`: determines whether `assoc(collection, key, value)` can produce its documented result without capacity or key-domain failure, independently of the value argument
-  ∧ ∀ `Vector<T, N>`: returns true for an existing index, for the logical-count append index when capacity remains, and false for every invalid or full-capacity append index
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ built-in `Associative` collection ∧ `can_assoc(collection, key, value)`: reports whether the collection-specific key/index and capacity policy permits the requested association, and whether any runtime value policy permits the supplied value
+  ∧ ∀ `Vector<T, N>`: returns true for an existing index or the logical-count append index when capacity remains, provided the value has the collection's stored element type; returns false for every invalid or full-capacity append index
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-09}
 
 λ REQ-COLL-020M(x).
   ∀ `String<N>` ∧ `assoc(s, i, value)` at an existing logical content index `i`: produces a new string whose ASCII character at `i` is replaced with `value` ∧ the source string remains unchanged ∧ all other content characters retain their values and order ∧ the null terminator remains immediately after the resulting content
@@ -260,10 +260,10 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020P(x).
-  ∀ `String<N>` ∧ `can_assoc(string, index)`: accepts any integral index type ∧ normalizes only indexes representable by the `std::size_t` key domain ∧ returns true for an existing content index or the logical content-count append index when content capacity remains
-  ∧ ∀ (negative ∧ unrepresentable ∧ invalid ∧ full-capacity append index): returns false
-  ∧ ∀ result: independent of the character value that would be associated
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ `String<N>` ∧ `can_assoc(string, index, value)`: accepts any integral index type and a `char` value ∧ normalizes only indexes representable by the `std::size_t` key domain
+  ∧ returns true for an existing content index or the logical content-count append index when content capacity remains, provided `value` is a valid non-NUL ASCII character
+  ∧ returns false for a negative, unrepresentable, invalid, or full-capacity append index, or an invalid character value
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-09}
 
 λ REQ-COLL-020Q(x).
   ∀ `String<N>`: String owns one character-validity policy for every operation that stores content
@@ -278,13 +278,14 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ `Map<K, V, N>`: the lookup result and `get` return type are the mapped value `V`, not `MapEntry<K, V>`
   ∧ ∀ `Set<T, N>` ∨ `Vector<T, N>`: the lookup result and `get` return type are the stored element type `T`
   ∧ ∀ `String<N>`: the lookup result and `get` return type are `char`
-  ∧ ∀ context: the other supported generic free-function signatures are `contains(const C&, const K&) -> bool` for `Lookup` or `Indexed` collections; `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&) -> bool` for `Associative` collections
+  ∧ ∀ context: the other supported generic free-function signatures are `contains(const C&, const K&) -> bool` for `Lookup` or `Indexed` collections; `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&, const C::association_value_type&) -> bool` for `Associative` collections
   ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by the required capability and collection-specific key/value domains
+  ∧ ∀ `can_assoc`: the public free-function signature is `can_assoc(const C&, const K&, const V&) -> bool`, where the member call is well-formed under the same key/value admission constraints as `assoc`
   ∧ ∀ (`Map` ∨ `Set`): `contains` accepts only `K` exactly matching the collection's declared `lookup_type` after removing cv-qualification and references; no implicit conversion to that type is admitted
   ∧ ∀ (`Vector` ∨ `String`): `contains` accepts an integral index type
   ∧ ∀ `Range`: `contains(const Range&, const K&)` is not a supported free-function signature; `Range::contains(index)` remains the bounded-observation member predicate specified by `REQ-FN-013A`
   ∧ ∀ `String`: the `assoc` value argument is `char`
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-09}
 
 λ REQ-COLL-020S(x).
   ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, `Associative`, and `Conjable`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, and `pop` over their supported collection inputs
@@ -524,11 +525,13 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-002W(x).
-  ∀ `can_assoc(collection, key)` defined for every `Associative` collection: agrees with that collection's `assoc` key-domain and capacity policy ∧ ¬∃ acceptance of a value argument, because the value being associated never affects whether `assoc` can succeed
-  ∧ ∀ `Map`: an existing key returns true ∧ an absent key returns true only when capacity remains
-  ∧ ∀ (`Vector` ∧ `String`): an existing logical index returns true ∧ the logical-count append index returns true only when capacity remains
-  rationale: the value being associated never affects whether `assoc` can succeed, so a value parameter would invite misuse
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+  ∀ `can_assoc(collection, key, value)` defined for every built-in `Associative` collection: accepts the complete argument set of `assoc` and returns whether the collection-specific key/index, capacity, and value preflight permits association
+  ∧ ∀ `Map`: an existing key returns true regardless of remaining capacity ∧ an absent key returns true only when capacity remains
+  ∧ ∀ `Vector`: an existing index returns true ∧ the logical-count append index returns true only when capacity remains ∧ the value has the Vector's stored element type
+  ∧ ∀ `String`: an existing content index or logical-count append index returns true only when content capacity remains and the `char` value is non-NUL ASCII
+  ∧ ∀ invalid key/index, inadmissible value type, or invalid String character: rejected according to the collection's compile-time or runtime value domain; invalid runtime String characters return false
+  rationale: a complete preflight receives every operand of `assoc`; String's character-validity policy makes the value relevant to whether the requested association is admissible
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-09, rationale_source: origin_artifact}
 
 λ REQ-FN-002X(x).
   ∀ `disj(set, values...)`: defined only for a `Set` and zero or more values each having exactly the Set's declared `value_type` ∧ any other first-argument or value type is rejected at the public API boundary
@@ -582,5 +585,5 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 ## Traceability and Related Requirements
 
-- **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
+- **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
 - **Governed REQs**: `REQ-COLL-001`–`021`, `REQ-SEQ-001`–`014` (incl. `002A`–`002B`, deferred), `REQ-FN-001`–`008A`, `REQ-FN-026`.
