@@ -272,6 +272,13 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
 λ S2_associative_contract(x). Associative(collection) → require(assoc(collection, key, value) ∧ can_assoc(collection, key, value))
   | assoc(x) ∧ can_assoc(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | can_assoc(collection, key, value) ↔ association_key_value_and_capacity_policy_allows_requested_assoc(x)
+  | can_assoc(collection, key₁, value₁, key₂, value₂, …) → fold_preflight_pairs_left_to_right(x)
+    ∧ each_pair_preflighted_against_the_accumulator_after_prior_successful_pairs(x)
+    ∧ true_only_when_every_pair_preflight_succeeds(x)
+    ∧ pair(x) → admit_under(collection_key_value_domain(x)) regardless_of_argument_position(x)
+    ∧ odd_trailing_key(x) → reject_at_compile_time(x)
+    ∧ require(at_least_two_pairs(x)) ∧ preserve(single_pair_arity(x))
+    ∧ constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | can_assoc(String, index, char_value) → false_when_char_is_invalid(x)
   | assoc(Map, key, value) → replace_existing_value_or_insert_new_key_when_capacity_remains(x)
   | assoc(Vector, integer_index, value) → replace_existing_index_or_append_at_count_when_capacity_remains(x)
@@ -305,9 +312,16 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
 
 λ S2_conj_contract(x). conj(collection, value) → return(new_collection_value(x))
   | conj(x) ∧ can_conj(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | can_conj(collection) → return(true) ∧ preserve(collection(x))
   | can_conj(collection, value) ↔ conj(collection, value)_can_produce_documented_result
     ∧ true_when(duplicate_set_value_is_successful_noop(x))
     ∧ can_conj(String, character) → capacity_only(x) ∧ valid_character_only(x)
+  | can_conj(collection, value₁, value₂, …) → fold_preflight_values_left_to_right(x)
+    ∧ each_value_preflighted_against_the_accumulator_after_prior_successful_values(x)
+    ∧ true_only_when_every_value_preflight_succeeds(x)
+    ∧ value(x) → admit_under(collection_value_domain(x)) regardless_of_argument_position(x)
+    ∧ require(at_least_two_values(x)) ∧ preserve(single_value_arity(x))
+    ∧ constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | conj(Set, value) → require(StableEquality(x) ∧ LinearScan(x))
     ∧ insert_when_absent_or_preserve_count_when_present(x)
     ∧ require(capacity_for_new_value_when_absent(x))
