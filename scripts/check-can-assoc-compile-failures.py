@@ -35,10 +35,20 @@ DIAGNOSTIC_CASES = {
         "(void)cljonic::can_assoc(cljonic::Vector<int, 4>{}, 0, CanAssocNotConvertible{});",
         ("this value has a type the collection cannot associate", "value must match"),
     ),
+    "CanAssoc-odd-trailing-argument": (
+        "(void)cljonic::can_assoc(cljonic::Map<int, int, 4>{}, 1, 10, 2);",
+        ("supply complete key/value pairs", "without a value"),
+    ),
+    "CanAssoc-inadmissible-variadic-value": (
+        "(void)cljonic::can_assoc(cljonic::Map<int, int, 4>{}, 1, 10, 2, CanAssocNotConvertible{});",
+        ("every key/value pair must use types", "declared key and value types"),
+    ),
 }
 
 PASS_CASES = {
     "CanAssoc-map": "(void)cljonic::can_assoc(cljonic::Map<int, int, 4>{}, 1, 10);",
+    "CanAssoc-map-variadic":
+        "(void)cljonic::can_assoc(cljonic::Map<int, int, 4>{}, 1, 10, 2, 20);",
     "CanAssoc-vector": "(void)cljonic::can_assoc(cljonic::Vector<int, 4>{10, 20}, 0U, 5);",
     "CanAssoc-vector-negative-index": "(void)cljonic::can_assoc(cljonic::Vector<int, 4>{10, 20}, -1, 5);",
     "CanAssoc-string": "(void)cljonic::can_assoc(cljonic::String<8>{\"ab\"}, 2U, 'x');",
