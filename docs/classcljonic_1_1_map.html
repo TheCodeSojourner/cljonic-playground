@@ -134,7 +134,7 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
 <tr class="memitem:afc4b7c32a76b2eba3c76fd6ca345c48e" id="r_afc4b7c32a76b2eba3c76fd6ca345c48e"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#afc4b7c32a76b2eba3c76fd6ca345c48e">operator==</a> (const <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a> &amp;other) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a5c44757b8c95260c05c64a0377429ac7" id="r_a5c44757b8c95260c05c64a0377429ac7"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5c44757b8c95260c05c64a0377429ac7">contains</a> (const KeyType &amp;key) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a507726e72e09b11dbd84c4c55d23ab48" id="r_a507726e72e09b11dbd84c4c55d23ab48"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a507726e72e09b11dbd84c4c55d23ab48">operator()</a> (const KeyType &amp;key, const ValueType &amp;fallback=ValueType{}) const noexcept -&gt; ValueType</td></tr>
-<tr class="memitem:aedda45e00ae6fe1f451f1525e3514bbc" id="r_aedda45e00ae6fe1f451f1525e3514bbc"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aedda45e00ae6fe1f451f1525e3514bbc">can_assoc</a> (const KeyType &amp;key) const noexcept -&gt; bool</td></tr>
+<tr class="memitem:af354256613c4cb6d089f6fa22a9dfb4b" id="r_af354256613c4cb6d089f6fa22a9dfb4b"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af354256613c4cb6d089f6fa22a9dfb4b">can_assoc</a> (const KeyType &amp;key, const ValueType &amp;value) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a1f5afef397dac66beef961e55640bd16" id="r_a1f5afef397dac66beef961e55640bd16"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1f5afef397dac66beef961e55640bd16">assoc</a> (const KeyType &amp;key, const ValueType &amp;value) const noexcept -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a></td></tr>
 <tr class="memitem:adb0490f3cf0182730c627b331448de71" id="r_adb0490f3cf0182730c627b331448de71"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#adb0490f3cf0182730c627b331448de71">can_conj</a> (const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> &amp;entry) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a14f77f866c683c30d3300b996b351e3d" id="r_a14f77f866c683c30d3300b996b351e3d"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a14f77f866c683c30d3300b996b351e3d">conj</a> (const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> &amp;entry) const noexcept -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a></td></tr>
@@ -457,7 +457,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00208">208</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00209">209</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -486,12 +486,12 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00245">245</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00246">246</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
-<a id="aedda45e00ae6fe1f451f1525e3514bbc" name="aedda45e00ae6fe1f451f1525e3514bbc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aedda45e00ae6fe1f451f1525e3514bbc">&#9670;&#160;</a></span>can_assoc()</h2>
+<a id="af354256613c4cb6d089f6fa22a9dfb4b" name="af354256613c4cb6d089f6fa22a9dfb4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af354256613c4cb6d089f6fa22a9dfb4b">&#9670;&#160;</a></span>can_assoc()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -504,8 +504,12 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
         <tr>
           <td class="memname">auto <a class="el" href="classcljonic_1_1_map.html">cljonic::Map</a>&lt; KeyType, ValueType, CapacityValue &gt;::can_assoc </td>
           <td>(</td>
-          <td class="paramtype">const KeyType &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span></td><td>)</td>
-          <td> const -&gt; bool</td>
+          <td class="paramtype">const KeyType &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ValueType &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) const -&gt; bool</td>
         </tr>
       </table>
   </td>
@@ -545,7 +549,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </div><div class="memdoc">
 <p>Returns true when the entry's key is present or the map has room for one more entry. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00222">222</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00223">223</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -604,7 +608,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </div><div class="memdoc">
 <p>Associates the entry's key with its value on a copy: an existing key replaces its value without increasing count; an absent key is added only when capacity remains. Returns an unchanged copy when full. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00229">229</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00230">230</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -691,7 +695,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00233">233</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00234">234</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -720,7 +724,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00249">249</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00250">250</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -811,7 +815,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00253">253</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00254">254</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>

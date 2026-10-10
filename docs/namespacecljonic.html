@@ -150,17 +150,21 @@ requires concepts::CljonicCollection&lt;C&gt;</td></tr>
 <tr class="memitem:a9ff06642383ef70ad83ccf806b74974a" id="r_a9ff06642383ef70ad83ccf806b74974a"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
 requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a570dcc6213b05f494ff55d6be1497334">concepts_detail::all_assoc_pairs_admissible_v</a>&lt;C, K1, V1, K2, V2, Rest...&gt;)</td></tr>
 <tr class="memitem:a9ff06642383ef70ad83ccf806b74974a template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a9ff06642383ef70ad83ccf806b74974a">assoc</a> (const C &amp;collection, const K1 &amp;key1, const V1 &amp;value1, const K2 &amp;key2, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; C</td></tr>
-<tr class="memitem:a4665aecc1138a24ba9756d4dd22b548d" id="r_a4665aecc1138a24ba9756d4dd22b548d"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
-requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key) { { collection.can_assoc(key) <br class="typebreak" />
-} noexcept -&gt; std::same_as&lt;bool&gt;; }</td></tr>
-<tr class="memitem:a4665aecc1138a24ba9756d4dd22b548d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4665aecc1138a24ba9756d4dd22b548d">can_assoc</a> (const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.can_assoc(key))) -&gt; bool</td></tr>
-<tr class="memdesc:a4665aecc1138a24ba9756d4dd22b548d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if assoc can succeed without capacity overflow.  <br /></td></tr>
-<tr class="memitem:a1a0cd702670fa4a05f3041550489157b" id="r_a1a0cd702670fa4a05f3041550489157b"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+<tr class="memitem:af3f6e53d9eee93ed080c4e76af4d6f06" id="r_af3f6e53d9eee93ed080c4e76af4d6f06"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key, const V&amp; value) <br class="typebreak" />
+{ { collection.can_assoc(key, value) } noexcept -&gt; std::same_as&lt;bool&gt;; }</td></tr>
+<tr class="memitem:af3f6e53d9eee93ed080c4e76af4d6f06 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af3f6e53d9eee93ed080c4e76af4d6f06">can_assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.can_assoc(key, value))) -&gt; bool</td></tr>
+<tr class="memdesc:af3f6e53d9eee93ed080c4e76af4d6f06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if assoc with a key and a value can succeed without capacity overflow.  <br /></td></tr>
+<tr class="memitem:a26c46b3cea8042d9b629e05f8148a6fc" id="r_a26c46b3cea8042d9b629e05f8148a6fc"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; <br />
 requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::AssociativeCollection&lt;C&gt;)</td></tr>
-<tr class="memitem:a1a0cd702670fa4a05f3041550489157b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1a0cd702670fa4a05f3041550489157b">can_assoc</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; bool</td></tr>
-<tr class="memitem:a66abeadc83a174b0f95113b1b9f8c627" id="r_a66abeadc83a174b0f95113b1b9f8c627"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; <br />
+<tr class="memitem:a26c46b3cea8042d9b629e05f8148a6fc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a26c46b3cea8042d9b629e05f8148a6fc">can_assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ad4505bda41f8a5ad232f84efd327e58e" id="r_ad4505bda41f8a5ad232f84efd327e58e"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; <br />
 requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanAssocKeyAdmissible&lt;C, K&gt;)</td></tr>
-<tr class="memitem:a66abeadc83a174b0f95113b1b9f8c627 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a66abeadc83a174b0f95113b1b9f8c627">can_assoc</a> (const C &amp;collection, const K &amp;key) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ad4505bda41f8a5ad232f84efd327e58e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ad4505bda41f8a5ad232f84efd327e58e">can_assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:abc0f6a9a7ed7d35344b12d7e9b2b184d" id="r_abc0f6a9a7ed7d35344b12d7e9b2b184d"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; concepts_detail::CanAssocKeyAdmissible&lt;C, K&gt; &amp;&amp;<br class="typebreak" />
+ (!concepts_detail::CanAssocValueAdmissible&lt;C, V&gt;)</td></tr>
+<tr class="memitem:abc0f6a9a7ed7d35344b12d7e9b2b184d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#abc0f6a9a7ed7d35344b12d7e9b2b184d">can_assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept -&gt; bool</td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0" id="r_a17088e15137ed905561f4020e75e17b0"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires concepts_detail::CanConjValueAdmissible&lt;C, V&gt;</td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a17088e15137ed905561f4020e75e17b0">can_conj</a> (const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</td></tr>
@@ -721,13 +725,53 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; <a class="el" href=
 
 </div>
 </div>
-<a id="a66abeadc83a174b0f95113b1b9f8c627" name="a66abeadc83a174b0f95113b1b9f8c627"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66abeadc83a174b0f95113b1b9f8c627">&#9670;&#160;</a></span>can_assoc() <span class="overload">[1/3]</span></h2>
+<a id="abc0f6a9a7ed7d35344b12d7e9b2b184d" name="abc0f6a9a7ed7d35344b12d7e9b2b184d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc0f6a9a7ed7d35344b12d7e9b2b184d">&#9670;&#160;</a></span>can_assoc() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename C, typename K&gt; <br />
+template&lt;typename C, typename K, typename V&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; concepts_detail::CanAssocKeyAdmissible&lt;C, K&gt; &amp;&amp;<br class="typebreak" />
+ (!concepts_detail::CanAssocValueAdmissible&lt;C, V&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_assoc </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const K &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00085">85</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad4505bda41f8a5ad232f84efd327e58e" name="ad4505bda41f8a5ad232f84efd327e58e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4505bda41f8a5ad232f84efd327e58e">&#9670;&#160;</a></span>can_assoc() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename K, typename V&gt; <br />
 requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanAssocKeyAdmissible&lt;C, K&gt;)</div>
 <table class="mlabels">
   <tr>
@@ -741,7 +785,12 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (!concepts_detail::
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const K &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span>&#160;) -&gt; bool</td>
+          <td class="paramtype">const K &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) -&gt; bool</td>
         </tr>
       </table>
   </td>
@@ -751,17 +800,17 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (!concepts_detail::
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00067">67</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00074">74</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a1a0cd702670fa4a05f3041550489157b" name="a1a0cd702670fa4a05f3041550489157b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a0cd702670fa4a05f3041550489157b">&#9670;&#160;</a></span>can_assoc() <span class="overload">[2/3]</span></h2>
+<a id="a26c46b3cea8042d9b629e05f8148a6fc" name="a26c46b3cea8042d9b629e05f8148a6fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26c46b3cea8042d9b629e05f8148a6fc">&#9670;&#160;</a></span>can_assoc() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename C, typename K&gt; <br />
+template&lt;typename C, typename K, typename V&gt; <br />
 requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::AssociativeCollection&lt;C&gt;)</div>
 <table class="mlabels">
   <tr>
@@ -775,7 +824,12 @@ requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::Associative
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const K &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span>&#160;) -&gt; bool</td>
+          <td class="paramtype">const K &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) -&gt; bool</td>
         </tr>
       </table>
   </td>
@@ -785,19 +839,19 @@ requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::Associative
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00057">57</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00064">64</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a4665aecc1138a24ba9756d4dd22b548d" name="a4665aecc1138a24ba9756d4dd22b548d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4665aecc1138a24ba9756d4dd22b548d">&#9670;&#160;</a></span>can_assoc() <span class="overload">[3/3]</span></h2>
+<a id="af3f6e53d9eee93ed080c4e76af4d6f06" name="af3f6e53d9eee93ed080c4e76af4d6f06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3f6e53d9eee93ed080c4e76af4d6f06">&#9670;&#160;</a></span>can_assoc() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename C, typename K&gt; <br />
-requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key) { { collection.can_assoc(key) <br class="typebreak" />
-} noexcept -&gt; std::same_as&lt;bool&gt;; }</div>
+template&lt;typename C, typename K, typename V&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key, const V&amp; value) <br class="typebreak" />
+{ { collection.can_assoc(key, value) } noexcept -&gt; std::same_as&lt;bool&gt;; }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -810,7 +864,12 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const K &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span>&#160;) -&gt; bool</td>
+          <td class="paramtype">const K &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) -&gt; bool</td>
         </tr>
       </table>
   </td>
@@ -820,24 +879,24 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 </table>
 </div><div class="memdoc">
 
-<p>Checks if assoc can succeed without capacity overflow. </p>
+<p>Checks if assoc with a key and a value can succeed without capacity overflow. </p>
 <p><a class="anchor" id="CanAssoc"></a> </p>
-<p>Supported for <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> (an existing key can be replaced, or an absent key inserted when capacity remains), <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> (an existing index can be replaced, or an index equal to the current count can append when capacity remains), and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span> (the same index and append rule as <a class="el" href="classcljonic_1_1_vector.html">Vector</a>). <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> and <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span> provide no associative capability and are rejected. This preflight leaves the source unchanged.</p>
+<p>Supported for <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> (an existing key can be replaced, or an absent key inserted when capacity remains), <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> (an existing index can be replaced, or an index equal to the current count can append when capacity remains), and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span> (the same index and append rule as <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, with an invalid character returning false). <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> and <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span> provide no associative capability and are rejected. This preflight leaves the source unchanged.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a> m_const{};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a4665aecc1138a24ba9756d4dd22b548d">can_assoc</a>(m_const, 1));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af3f6e53d9eee93ed080c4e76af4d6f06">can_assoc</a>(m_const, 1, 10));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> m_runtime = <a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a>{};</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> ok = <a class="code hl_function" href="#a4665aecc1138a24ba9756d4dd22b548d">can_assoc</a>(m_runtime, 2);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> ok = <a class="code hl_function" href="#af3f6e53d9eee93ed080c4e76af4d6f06">can_assoc</a>(m_runtime, 2, 20);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> ok ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a4665aecc1138a24ba9756d4dd22b548d"><div class="ttname"><a href="#a4665aecc1138a24ba9756d4dd22b548d">cljonic::can_assoc</a></div><div class="ttdeci">constexpr auto can_assoc(const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.can_assoc(key))) -&gt; bool</div><div class="ttdoc">Checks if assoc can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-assoc_8hpp_source.html#l00037">cljonic-can-assoc.hpp:37</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_af3f6e53d9eee93ed080c4e76af4d6f06"><div class="ttname"><a href="#af3f6e53d9eee93ed080c4e76af4d6f06">cljonic::can_assoc</a></div><div class="ttdeci">constexpr auto can_assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.can_assoc(key, value))) -&gt; bool</div><div class="ttdoc">Checks if assoc with a key and a value can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-assoc_8hpp_source.html#l00037">cljonic-can-assoc.hpp:37</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00037">37</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
 

@@ -106,10 +106,11 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <p><code>#include &lt;<a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>&gt;</code></p>
 <h2 id="header-conceptdef" class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible.html">CanAssocKeyAdmissible</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_associative_collection.html">concepts::AssociativeCollection&lt;C&gt;</a> &amp;&amp; <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key) {</div>
-<div class="line">    { collection.can_assoc(key) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
-<div class="line">}</div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_associative_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_associative_collection.html">cljonic::concepts::AssociativeCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00387">cljonic-concepts.hpp:387</a></div></div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible.html">CanAssocKeyAdmissible</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_associative_collection.html">concepts::AssociativeCollection&lt;C&gt;</a> &amp;&amp;</div>
+<div class="line">                                <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key, <span class="keyword">const</span> C::association_value_type&amp; value) {</div>
+<div class="line">                                    { collection.can_assoc(key, value) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
+<div class="line">                                }</div>
+<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_associative_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_associative_collection.html">cljonic::concepts::AssociativeCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00388">cljonic-concepts.hpp:388</a></div></div>
 <div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible.html">cljonic::concepts_detail::CanAssocKeyAdmissible</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-assoc_8hpp_source.html#l00047">cljonic-can-assoc.hpp:47</a></div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">

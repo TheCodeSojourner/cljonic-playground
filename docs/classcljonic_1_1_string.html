@@ -140,8 +140,8 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
 <tr class="memitem:a8cdbb17d9567b6cc39f69b081cb8d77c template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a8cdbb17d9567b6cc39f69b081cb8d77c">contains</a> (IndexType index) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a03b83ff6a6533db8de9be0322052d99d" id="r_a03b83ff6a6533db8de9be0322052d99d"><td class="memTemplParams" colspan="2">template&lt;std::integral IndexType&gt; </td></tr>
 <tr class="memitem:a03b83ff6a6533db8de9be0322052d99d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a03b83ff6a6533db8de9be0322052d99d">operator()</a> (IndexType index, char fallback='\0') const noexcept -&gt; char</td></tr>
-<tr class="memitem:aa1da811e32ff6a941dfe897811f83d0b" id="r_aa1da811e32ff6a941dfe897811f83d0b"><td class="memTemplParams" colspan="2">template&lt;std::integral IndexType&gt; </td></tr>
-<tr class="memitem:aa1da811e32ff6a941dfe897811f83d0b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aa1da811e32ff6a941dfe897811f83d0b">can_assoc</a> (IndexType index) const noexcept -&gt; bool</td></tr>
+<tr class="memitem:a8489616f374fe05996668c01236c5f43" id="r_a8489616f374fe05996668c01236c5f43"><td class="memTemplParams" colspan="2">template&lt;std::integral IndexType&gt; </td></tr>
+<tr class="memitem:a8489616f374fe05996668c01236c5f43 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a8489616f374fe05996668c01236c5f43">can_assoc</a> (IndexType index, char value) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a8ee81bd5462abfd62943ea24577533a9" id="r_a8ee81bd5462abfd62943ea24577533a9"><td class="memTemplParams" colspan="2">template&lt;std::integral IndexType&gt; </td></tr>
 <tr class="memitem:a8ee81bd5462abfd62943ea24577533a9 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a8ee81bd5462abfd62943ea24577533a9">assoc</a> (IndexType index, char value) const noexcept -&gt; <a class="el" href="#a7ea679911d132d5b5c601904153c8d64">String</a></td></tr>
 <tr class="memitem:acc67b7e207b7048b9ece8a0c867ac34e" id="r_acc67b7e207b7048b9ece8a0c867ac34e"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#acc67b7e207b7048b9ece8a0c867ac34e">can_conj</a> (char value) const noexcept -&gt; bool</td></tr>
@@ -533,8 +533,8 @@ template&lt;std::size_t CapacityValue&gt; </div>
 
 </div>
 </div>
-<a id="aa1da811e32ff6a941dfe897811f83d0b" name="aa1da811e32ff6a941dfe897811f83d0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1da811e32ff6a941dfe897811f83d0b">&#9670;&#160;</a></span>can_assoc()</h2>
+<a id="a8489616f374fe05996668c01236c5f43" name="a8489616f374fe05996668c01236c5f43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8489616f374fe05996668c01236c5f43">&#9670;&#160;</a></span>can_assoc()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -549,8 +549,12 @@ template&lt;std::integral IndexType&gt; </div>
         <tr>
           <td class="memname">auto <a class="el" href="classcljonic_1_1_string.html">cljonic::String</a>&lt; CapacityValue &gt;::can_assoc </td>
           <td>(</td>
-          <td class="paramtype">IndexType</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
-          <td> const -&gt; bool</td>
+          <td class="paramtype">IndexType</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) const -&gt; bool</td>
         </tr>
       </table>
   </td>
