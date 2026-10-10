@@ -324,6 +324,16 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ entry ≡ MapEntry(key ∧ value)(x)
   | full_conj_or_invalid_conj(x) → return(unchanged_source(x))
     ∧ not(throw ∨ allocate ∨ mutate_source(x))
+  | conj(collection) → return(unchanged_copy_of_source(x))
+  | conj(collection, value₁, value₂, …) → fold_conj_values_left_to_right(x)
+    ∧ conj(c, x₁, x₂) ≡ conj(conj(c, x₁), x₂)
+    ∧ value(x) → admit_under(collection_value_domain(x))
+    ∧ value_outside_domain(x) → reject_at_compile_time(x) regardless_of_argument_position(x)
+    ∧ conj(String, character)(x) → apply(String_character_validity_policy(x))
+    ∧ value_that_cannot_produce_documented_result_at_full_capacity(x)
+        → no_op(accumulator(x)) ∧ continue(remaining_values(x)) ∧ not(compile_time_error ∨ throw(x))
+    ∧ require(at_least_two_values(x)) ∧ require(one_value_arity_unchanged(x))
+    ∧ constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | conj_operation(x) ∧ can_conj(x) → classify_as(RequirementsBacked)
     ∧ trace_to(requirements/requirements-module-3.md)
 
