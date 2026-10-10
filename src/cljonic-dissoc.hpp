@@ -5,6 +5,38 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C, typename K>
+concept DissocKeyAdmissible = concepts::CljonicMap<C> && requires(const C& collection, const K& key) {
+    { collection.dissoc(key) } noexcept -> std::same_as<C>;
+};
+
+template <typename C, typename... Keys>
+struct all_dissoc_keys_admissible : std::false_type {};
+
+template <typename C>
+struct all_dissoc_keys_admissible<C> : std::bool_constant<concepts::CljonicMap<C>> {};
+
+template <typename C, typename K, typename... Rest>
+struct all_dissoc_keys_admissible<C, K, Rest...>
+    : std::bool_constant<DissocKeyAdmissible<C, K> && all_dissoc_keys_admissible<C, Rest...>::value> {};
+
+template <typename C, typename... Keys>
+inline constexpr bool all_dissoc_keys_admissible_v = all_dissoc_keys_admissible<C, Keys...>::value;
+
+template <typename C>
+constexpr void fold_dissoc_keys_into([[maybe_unused]] C& result) noexcept {
+}
+
+template <typename C, typename K, typename... Rest>
+constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... rest) noexcept {
+    result = result.dissoc(key);
+    fold_dissoc_keys_into(result, rest...);
+}
+
+} // namespace concepts_detail
+
 /** \anchor Dissoc
  * \brief Removes zero or more keys from a Map, returning the resulting map value.
  *
@@ -42,38 +74,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C, typename K>
-concept DissocKeyAdmissible = concepts::CljonicMap<C> && requires(const C& collection, const K& key) {
-    { collection.dissoc(key) } noexcept -> std::same_as<C>;
-};
-
-template <typename C, typename... Keys>
-struct all_dissoc_keys_admissible : std::false_type {};
-
-template <typename C>
-struct all_dissoc_keys_admissible<C> : std::bool_constant<concepts::CljonicMap<C>> {};
-
-template <typename C, typename K, typename... Rest>
-struct all_dissoc_keys_admissible<C, K, Rest...>
-    : std::bool_constant<DissocKeyAdmissible<C, K> && all_dissoc_keys_admissible<C, Rest...>::value> {};
-
-template <typename C, typename... Keys>
-inline constexpr bool all_dissoc_keys_admissible_v = all_dissoc_keys_admissible<C, Keys...>::value;
-
-template <typename C>
-constexpr void fold_dissoc_keys_into([[maybe_unused]] C& result) noexcept {
-}
-
-template <typename C, typename K, typename... Rest>
-constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... rest) noexcept {
-    result = result.dissoc(key);
-    fold_dissoc_keys_into(result, rest...);
-}
-
-} // namespace concepts_detail
-
 template <typename C>
     requires concepts::CljonicMap<C>
 [[nodiscard]] constexpr auto dissoc(const C& collection) noexcept -> C {

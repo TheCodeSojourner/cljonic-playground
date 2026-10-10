@@ -910,6 +910,15 @@ template <typename C, typename K>
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C, typename V>
+concept CanConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const V& value) {
+    { collection.can_conj(value) } noexcept -> std::same_as<bool>;
+};
+
+} // namespace concepts_detail
+
 /** \anchor CanConj
  * \brief Checks whether conj can succeed without capacity overflow.
  *
@@ -947,15 +956,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C, typename V>
-concept CanConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const V& value) {
-    { collection.can_conj(value) } noexcept -> std::same_as<bool>;
-};
-
-} // namespace concepts_detail
-
 template <typename C, typename V>
     requires concepts_detail::CanConjValueAdmissible<C, V>
 [[nodiscard]] constexpr auto can_conj(const C& collection,
@@ -1421,6 +1421,15 @@ template <typename T>
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C, typename T>
+concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
+    { collection.conj(value) } noexcept -> std::same_as<C>;
+};
+
+} // namespace concepts_detail
+
 /** \anchor Conj
  * \brief Adds an element to a collection according to its type conventions.
  *
@@ -1458,15 +1467,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C, typename T>
-concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
-    { collection.conj(value) } noexcept -> std::same_as<C>;
-};
-
-} // namespace concepts_detail
-
 template <typename C, typename T>
     requires concepts_detail::ConjValueAdmissible<C, T>
 [[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept(noexcept(collection.conj(value))) -> C {
@@ -1499,6 +1499,26 @@ template <typename C, typename T>
 
 
 namespace cljonic {
+
+namespace concepts_detail {
+
+template <typename C>
+concept ContainsLookupCollection =
+    concepts::LookupCollection<C> && (concepts::CljonicMap<C> || concepts::CljonicSet<C>);
+
+template <typename C>
+concept ContainsIndexedCollection =
+    concepts::IndexedCollection<C> && (concepts::CljonicVector<C> || concepts::CljonicString<C>);
+
+template <typename C>
+concept ContainsSupportedCollection = ContainsLookupCollection<C> || ContainsIndexedCollection<C>;
+
+template <typename C, typename K>
+concept ContainsAdmissible =
+    (ContainsLookupCollection<C> && std::same_as<std::remove_cvref_t<K>, typename C::lookup_type>) ||
+    (ContainsIndexedCollection<C> && std::integral<std::remove_cvref_t<K>>);
+
+} // namespace concepts_detail
 
 /** \anchor Contains
  * \brief Tests key presence, element membership, or index validity in a Map, Set, Vector, or String.
@@ -1535,26 +1555,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C>
-concept ContainsLookupCollection =
-    concepts::LookupCollection<C> && (concepts::CljonicMap<C> || concepts::CljonicSet<C>);
-
-template <typename C>
-concept ContainsIndexedCollection =
-    concepts::IndexedCollection<C> && (concepts::CljonicVector<C> || concepts::CljonicString<C>);
-
-template <typename C>
-concept ContainsSupportedCollection = ContainsLookupCollection<C> || ContainsIndexedCollection<C>;
-
-template <typename C, typename K>
-concept ContainsAdmissible =
-    (ContainsLookupCollection<C> && std::same_as<std::remove_cvref_t<K>, typename C::lookup_type>) ||
-    (ContainsIndexedCollection<C> && std::integral<std::remove_cvref_t<K>>);
-
-} // namespace concepts_detail
-
 template <typename C, typename K>
     requires concepts_detail::ContainsAdmissible<C, K>
 [[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept(noexcept(collection.contains(key)))
@@ -1597,8 +1597,8 @@ template <typename C, typename K>
 namespace cljonic {
 
 /** \anchor Count
- * \brief Returns a collection's logical size or a producer's observable count. Collections and finite producers
- * return their exact element count. Unbounded producers return their observable count.
+ * \brief Returns a collection's logical size or a producer's observable count. Collections and finite producers return
+ * their exact element count. Unbounded producers return their observable count.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -2246,6 +2246,14 @@ struct contains_standard_range<Cycle<Source>> : std::bool_constant<contains_stan
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C, typename... Values>
+concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value_type; } &&
+                         (std::same_as<std::remove_cvref_t<Values>, typename C::value_type> && ...);
+
+} // namespace concepts_detail
+
 /** \anchor Disj
  * \brief Disjoins zero or more elements from a set.
  *
@@ -2278,14 +2286,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C, typename... Values>
-concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value_type; } &&
-                         (std::same_as<std::remove_cvref_t<Values>, typename C::value_type> && ...);
-
-} // namespace concepts_detail
-
 template <typename C, typename... Values>
     requires concepts_detail::DisjAdmissible<C, Values...>
 [[nodiscard]] constexpr auto disj(const C& collection, const Values&... values) noexcept -> C {
@@ -2316,6 +2316,38 @@ template <typename C, typename... Values>
 #include <type_traits>
 
 namespace cljonic {
+
+namespace concepts_detail {
+
+template <typename C, typename K>
+concept DissocKeyAdmissible = concepts::CljonicMap<C> && requires(const C& collection, const K& key) {
+    { collection.dissoc(key) } noexcept -> std::same_as<C>;
+};
+
+template <typename C, typename... Keys>
+struct all_dissoc_keys_admissible : std::false_type {};
+
+template <typename C>
+struct all_dissoc_keys_admissible<C> : std::bool_constant<concepts::CljonicMap<C>> {};
+
+template <typename C, typename K, typename... Rest>
+struct all_dissoc_keys_admissible<C, K, Rest...>
+    : std::bool_constant<DissocKeyAdmissible<C, K> && all_dissoc_keys_admissible<C, Rest...>::value> {};
+
+template <typename C, typename... Keys>
+inline constexpr bool all_dissoc_keys_admissible_v = all_dissoc_keys_admissible<C, Keys...>::value;
+
+template <typename C>
+constexpr void fold_dissoc_keys_into([[maybe_unused]] C& result) noexcept {
+}
+
+template <typename C, typename K, typename... Rest>
+constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... rest) noexcept {
+    result = result.dissoc(key);
+    fold_dissoc_keys_into(result, rest...);
+}
+
+} // namespace concepts_detail
 
 /** \anchor Dissoc
  * \brief Removes zero or more keys from a Map, returning the resulting map value.
@@ -2354,38 +2386,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C, typename K>
-concept DissocKeyAdmissible = concepts::CljonicMap<C> && requires(const C& collection, const K& key) {
-    { collection.dissoc(key) } noexcept -> std::same_as<C>;
-};
-
-template <typename C, typename... Keys>
-struct all_dissoc_keys_admissible : std::false_type {};
-
-template <typename C>
-struct all_dissoc_keys_admissible<C> : std::bool_constant<concepts::CljonicMap<C>> {};
-
-template <typename C, typename K, typename... Rest>
-struct all_dissoc_keys_admissible<C, K, Rest...>
-    : std::bool_constant<DissocKeyAdmissible<C, K> && all_dissoc_keys_admissible<C, Rest...>::value> {};
-
-template <typename C, typename... Keys>
-inline constexpr bool all_dissoc_keys_admissible_v = all_dissoc_keys_admissible<C, Keys...>::value;
-
-template <typename C>
-constexpr void fold_dissoc_keys_into([[maybe_unused]] C& result) noexcept {
-}
-
-template <typename C, typename K, typename... Rest>
-constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... rest) noexcept {
-    result = result.dissoc(key);
-    fold_dissoc_keys_into(result, rest...);
-}
-
-} // namespace concepts_detail
-
 template <typename C>
     requires concepts::CljonicMap<C>
 [[nodiscard]] constexpr auto dissoc(const C& collection) noexcept -> C {

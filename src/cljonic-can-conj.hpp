@@ -4,6 +4,15 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C, typename V>
+concept CanConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const V& value) {
+    { collection.can_conj(value) } noexcept -> std::same_as<bool>;
+};
+
+} // namespace concepts_detail
+
 /** \anchor CanConj
  * \brief Checks whether conj can succeed without capacity overflow.
  *
@@ -41,15 +50,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C, typename V>
-concept CanConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const V& value) {
-    { collection.can_conj(value) } noexcept -> std::same_as<bool>;
-};
-
-} // namespace concepts_detail
-
 template <typename C, typename V>
     requires concepts_detail::CanConjValueAdmissible<C, V>
 [[nodiscard]] constexpr auto can_conj(const C& collection,

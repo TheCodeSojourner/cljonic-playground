@@ -4,6 +4,26 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C>
+concept ContainsLookupCollection =
+    concepts::LookupCollection<C> && (concepts::CljonicMap<C> || concepts::CljonicSet<C>);
+
+template <typename C>
+concept ContainsIndexedCollection =
+    concepts::IndexedCollection<C> && (concepts::CljonicVector<C> || concepts::CljonicString<C>);
+
+template <typename C>
+concept ContainsSupportedCollection = ContainsLookupCollection<C> || ContainsIndexedCollection<C>;
+
+template <typename C, typename K>
+concept ContainsAdmissible =
+    (ContainsLookupCollection<C> && std::same_as<std::remove_cvref_t<K>, typename C::lookup_type>) ||
+    (ContainsIndexedCollection<C> && std::integral<std::remove_cvref_t<K>>);
+
+} // namespace concepts_detail
+
 /** \anchor Contains
  * \brief Tests key presence, element membership, or index validity in a Map, Set, Vector, or String.
  *
@@ -39,26 +59,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C>
-concept ContainsLookupCollection =
-    concepts::LookupCollection<C> && (concepts::CljonicMap<C> || concepts::CljonicSet<C>);
-
-template <typename C>
-concept ContainsIndexedCollection =
-    concepts::IndexedCollection<C> && (concepts::CljonicVector<C> || concepts::CljonicString<C>);
-
-template <typename C>
-concept ContainsSupportedCollection = ContainsLookupCollection<C> || ContainsIndexedCollection<C>;
-
-template <typename C, typename K>
-concept ContainsAdmissible =
-    (ContainsLookupCollection<C> && std::same_as<std::remove_cvref_t<K>, typename C::lookup_type>) ||
-    (ContainsIndexedCollection<C> && std::integral<std::remove_cvref_t<K>>);
-
-} // namespace concepts_detail
-
 template <typename C, typename K>
     requires concepts_detail::ContainsAdmissible<C, K>
 [[nodiscard]] constexpr auto contains(const C& collection, const K& key) noexcept(noexcept(collection.contains(key)))

@@ -4,6 +4,15 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C, typename T>
+concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
+    { collection.conj(value) } noexcept -> std::same_as<C>;
+};
+
+} // namespace concepts_detail
+
 /** \anchor Conj
  * \brief Adds an element to a collection according to its type conventions.
  *
@@ -41,15 +50,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C, typename T>
-concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const C& collection, const T& value) {
-    { collection.conj(value) } noexcept -> std::same_as<C>;
-};
-
-} // namespace concepts_detail
-
 template <typename C, typename T>
     requires concepts_detail::ConjValueAdmissible<C, T>
 [[nodiscard]] constexpr auto conj(const C& collection, const T& value) noexcept(noexcept(collection.conj(value))) -> C {

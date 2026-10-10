@@ -6,6 +6,14 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C, typename... Values>
+concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value_type; } &&
+                         (std::same_as<std::remove_cvref_t<Values>, typename C::value_type> && ...);
+
+} // namespace concepts_detail
+
 /** \anchor Disj
  * \brief Disjoins zero or more elements from a set.
  *
@@ -38,14 +46,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-template <typename C, typename... Values>
-concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value_type; } &&
-                         (std::same_as<std::remove_cvref_t<Values>, typename C::value_type> && ...);
-
-} // namespace concepts_detail
-
 template <typename C, typename... Values>
     requires concepts_detail::DisjAdmissible<C, Values...>
 [[nodiscard]] constexpr auto disj(const C& collection, const Values&... values) noexcept -> C {
