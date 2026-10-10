@@ -1,5 +1,34 @@
 ## Current Session State
 
+- last_session_id: 4e9fa21d-7e6f-436c-851f-33ddaa4fa887
+- current_timestamp: 2026-10-09
+- recover: 1
+- session_complete: true
+
+Task:
+1. `can_assoc` 3-argument migration — COMPLETE, uncommitted: per the human-approved proposal, `can_assoc` now exists only as `(collection, key, value)` — no unary form remains. Requirements (`REQ-COLL-020L`, `REQ-COLL-020P`, `REQ-COLL-020R`, `REQ-FN-002W`, `REQ-CAP-004`), architecture S2 + concept snippet, Allium specs (`can-assoc`, `map`, `vector`, `string`, `concepts`), the `AssociativeCollection` concept, the three collection members, the free function (now with separate key/value diagnostic fallbacks), `into`, tests (incl. concepts-spec mocks, map spec tests, no-heap probe), the compile-fail harness, vocabulary, and docs were all updated.
+2. String value policy — the value-aware String preflight returns false for an invalid (NUL or non-ASCII) character, mirroring `can_conj`; `assoc` itself still normalizes invalid runtime characters to `'.'` unchanged (REQ-COLL-020Q untouched).
+3. Traceability snapshot regenerated; trace IDs updated to renamed invariants (`ChecksCompleteAssocArguments`, `FalseForInvalidStringCharacter`, `RequiresKeyValueCanAssocPreflight`, plus new per-collection invariants `CanAssocUsesSuppliedAssociationValue`, `CanAssocAcceptsAssociationValue`, `CanAssocFalseForInvalidCharacter`).
+
+Questions:
+1. The proposal draft (`can-assoc-value-argument-proposal.md` in session workspace) supersedes its earlier options; no open questions remain for this change.
+2. Should this change be recorded as a Mementum memory (proposed, needs human approval before commit)?
+
+Decisions:
+1. `can_assoc` takes the complete `assoc` argument set; the unary form and its "value-independent result" contract are superseded (human, 2026-10-09). The earlier "public API remains unary; do not add a variadic form" decision is superseded for the value argument only — no variadic key/value form exists.
+2. No user-defined collection compatibility: the library's idiomatic use is closed to built-in collection types, so the concept change is not a compatibility constraint (human, 2026-10-09).
+
+Validation:
+1. All specs pass `allium check` and `allium analyse` (0 diagnostics, 0 findings).
+2. 194/194 tests pass; `make cljonic`, `make format`, `make can-assoc-compile-fail` (incl. new inadmissible-value case), `make no-heap`, `make traceability-spec-to-code`, targeted lint, `make docs`, `make docs-examples` (30 compiled), diagnostic-coverage, requirements-structure (300 clauses), vocabulary-structure (171 terms), and `git diff --check` all pass.
+3. Diagnostic-coverage pending backlog unchanged: `fits_into`, `get`, `into`, `peek`, `pop`.
+
+Next:
+1. User-owned: review changes and run `make git` when ready; commits (including any Mementum memory) await human approval.
+2. Proposed memory (not yet created): a Mementum insight recording that `can_assoc` is now the sole 3-argument `(collection, key, value)` preflight with String character validation, superseding the earlier unary/value-independent contract. Create on human approval.
+
+## Current Session State
+
 - last_session_id: 490cd960-459c-403e-8f85-8cda06ac078d
 - current_timestamp: 2026-10-09
 - recover: 1
