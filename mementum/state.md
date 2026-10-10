@@ -1,5 +1,31 @@
 ## Current Session State
 
+- last_session_id: 2024cf06-e8ec-49d3-88a4-ef6e33a44119
+- current_timestamp: 2026-10-10
+- recover: 1
+- session_complete: true
+
+Task:
+1. Added zero-value and cumulative variadic free-function preflights: `can_conj(collection)` returns true; multi-value `can_conj` and multi-pair `can_assoc` evaluate left-to-right against the state produced by prior successful additions/associations. Each returns false if any cumulative step fails, without changing its source.
+2. Updated `REQ-FN-002M`, `REQ-FN-002W`, `REQ-COLL-020R`, architecture contracts, Allium specifications, modular/single-header tests, compile-fail diagnostic checks, no-heap probes, generated `cljonic.hpp`, and Doxygen output.
+
+Questions:
+1. None open.
+
+Decisions:
+1. Variadic preflights are cumulative and ordered; capacity consumed by earlier new entries affects later results. Existing single-value forms remain unchanged.
+2. `can_conj(collection)` is supported and returns true; `can_assoc` continues to require at least one key/value pair.
+
+Validation:
+1. Focused modular and single-header preflight tests pass (57 assertions each); compile-fail harnesses pass.
+2. Allium check/analyse, requirements structure (301 clauses), strict traceability, no-heap, sanitizer, 100% line coverage, and `make validate` pass.
+3. `make docs docs-examples` passes (30 examples compiled, six intentionally deferred); `git diff --check` is clean.
+
+Next:
+1. No follow-up pending.
+
+## Previous Session State
+
 - last_session_id: 47bb79f0-803a-4d17-889c-7285ad272274
 - current_timestamp: 2026-10-10
 - recover: 1
