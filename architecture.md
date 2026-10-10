@@ -269,10 +269,10 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ activate_only_when(sequence_requirements_are_implementation_backed(x))
   | capability_matrix(x) → govern(public_concepts ∧ free_function_constraints ∧ documentation_names)
 
-λ S2_associative_contract(x). Associative(collection) → require(assoc(collection, key, value) ∧ can_assoc(collection, key))
+λ S2_associative_contract(x). Associative(collection) → require(assoc(collection, key, value) ∧ can_assoc(collection, key, value))
   | assoc(x) ∧ can_assoc(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
-  | can_assoc(collection, key) ↔ assoc(collection, key, value)_can_produce_documented_result
-    ∧ independent_of(value_argument(x))
+  | can_assoc(collection, key, value) ↔ association_key_value_and_capacity_policy_allows_requested_assoc(x)
+  | can_assoc(String, index, char_value) → false_when_char_is_invalid(x)
   | assoc(Map, key, value) → replace_existing_value_or_insert_new_key_when_capacity_remains(x)
   | assoc(Vector, integer_index, value) → replace_existing_index_or_append_at_count_when_capacity_remains(x)
   | assoc(String, integer_content_index, char_value) → replace_existing_byte_or_append_at_count_when_capacity_remains(x)
@@ -686,7 +686,8 @@ concept AssociativeCollection =
     requires(const C& c) {
       typename C::key_type;
       typename C::association_value_type;
-      { c.can_assoc(std::declval<const typename C::key_type&>()) } -> std::same_as<bool>;
+      { c.can_assoc(std::declval<const typename C::key_type&>(),
+                    std::declval<const typename C::association_value_type&>()) } -> std::same_as<bool>;
       { c.assoc(std::declval<const typename C::key_type&>(),
                 std::declval<const typename C::association_value_type&>()) } -> std::same_as<C>;
     };
