@@ -154,7 +154,11 @@ requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!<a class="el" href="n
 requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key, const V&amp; value) <br class="typebreak" />
 { { collection.can_assoc(key, value) } noexcept -&gt; std::same_as&lt;bool&gt;; }</td></tr>
 <tr class="memitem:af3f6e53d9eee93ed080c4e76af4d6f06 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af3f6e53d9eee93ed080c4e76af4d6f06">can_assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.can_assoc(key, value))) -&gt; bool</td></tr>
-<tr class="memdesc:af3f6e53d9eee93ed080c4e76af4d6f06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if assoc with a key and a value can succeed without capacity overflow.  <br /></td></tr>
+<tr class="memdesc:af3f6e53d9eee93ed080c4e76af4d6f06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether one or more assoc pairs can be applied without capacity overflow.  <br /></td></tr>
+<tr class="memitem:ad55e67d3e0438d070fd781bb54c14bcd" id="r_ad55e67d3e0438d070fd781bb54c14bcd"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (sizeof...(Rest) % 2 == 0) &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a114dcd4fdd8002bf42637725872f8f56">concepts_detail::all_assoc_arguments_admissible_v</a>&lt;C,<br class="typebreak" />
+ K1, V1, K2, V2, Rest...&gt;</td></tr>
+<tr class="memitem:ad55e67d3e0438d070fd781bb54c14bcd template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ad55e67d3e0438d070fd781bb54c14bcd">can_assoc</a> (const C &amp;collection, const K1 &amp;key1, const V1 &amp;value1, const K2 &amp;key2, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
 <tr class="memitem:a26c46b3cea8042d9b629e05f8148a6fc" id="r_a26c46b3cea8042d9b629e05f8148a6fc"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V&gt; <br />
 requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::AssociativeCollection&lt;C&gt;)</td></tr>
 <tr class="memitem:a26c46b3cea8042d9b629e05f8148a6fc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a26c46b3cea8042d9b629e05f8148a6fc">can_assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept -&gt; bool</td></tr>
@@ -165,16 +169,41 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (!concepts_detail::
 requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; concepts_detail::CanAssocKeyAdmissible&lt;C, K&gt; &amp;&amp;<br class="typebreak" />
  (!concepts_detail::CanAssocValueAdmissible&lt;C, V&gt;)</td></tr>
 <tr class="memitem:abc0f6a9a7ed7d35344b12d7e9b2b184d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#abc0f6a9a7ed7d35344b12d7e9b2b184d">can_assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ac6335c1b1e4eb28f16e71349370087fb" id="r_ac6335c1b1e4eb28f16e71349370087fb"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::AssociativeCollection&lt;C&gt;) &amp;&amp; (sizeof...(Rest) % 2 == 0)</td></tr>
+<tr class="memitem:ac6335c1b1e4eb28f16e71349370087fb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac6335c1b1e4eb28f16e71349370087fb">can_assoc</a> (const C &amp;collection, const K1 &amp;key1, const V1 &amp;value1, const K2 &amp;key2, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ab6410e832d8ff8ab086a8cc589aab0f1" id="r_ab6410e832d8ff8ab086a8cc589aab0f1"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (sizeof...(Rest) % 2 == 0) &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a114dcd4fdd8002bf42637725872f8f56">concepts_detail::all_assoc_arguments_admissible_v</a><br class="typebreak" />
+&lt;C, K1, V1, K2, V2, Rest...&gt;)</td></tr>
+<tr class="memitem:ab6410e832d8ff8ab086a8cc589aab0f1 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ab6410e832d8ff8ab086a8cc589aab0f1">can_assoc</a> (const C &amp;collection, const K1 &amp;key1, const V1 &amp;value1, const K2 &amp;key2, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:acf9e7d8ece7da6a3719f4f41b72e8ac6" id="r_acf9e7d8ece7da6a3719f4f41b72e8ac6"><td class="memTemplParams" colspan="2">template&lt;typename C, typename... Arguments&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (sizeof...(Arguments) &gt;= 3) &amp;&amp; (sizeof...(Arguments) % 2 == 1)</td></tr>
+<tr class="memitem:acf9e7d8ece7da6a3719f4f41b72e8ac6 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#acf9e7d8ece7da6a3719f4f41b72e8ac6">can_assoc</a> (const C &amp;collection, const Arguments &amp;... arguments) noexcept -&gt; bool</td></tr>
+<tr class="memitem:aff01cd8591c08e661bde74c6276e9c40" id="r_aff01cd8591c08e661bde74c6276e9c40"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt;</td></tr>
+<tr class="memitem:aff01cd8591c08e661bde74c6276e9c40 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
+<tr class="memdesc:aff01cd8591c08e661bde74c6276e9c40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow.  <br /></td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0" id="r_a17088e15137ed905561f4020e75e17b0"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires concepts_detail::CanConjValueAdmissible&lt;C, V&gt;</td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a17088e15137ed905561f4020e75e17b0">can_conj</a> (const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</td></tr>
-<tr class="memdesc:a17088e15137ed905561f4020e75e17b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow.  <br /></td></tr>
+<tr class="memitem:a99860cc80143c03af7892eaf2148f644" id="r_a99860cc80143c03af7892eaf2148f644"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; concepts_detail::CanConjValuesAdmissible&lt;C, V1, V2, Rest...&gt;</td></tr>
+<tr class="memitem:a99860cc80143c03af7892eaf2148f644 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a99860cc80143c03af7892eaf2148f644">can_conj</a> (const C &amp;collection, const V1 &amp;value1, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a4d8fd344f3775e70cd337db88d8e4b55" id="r_a4d8fd344f3775e70cd337db88d8e4b55"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a4d8fd344f3775e70cd337db88d8e4b55 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4d8fd344f3775e70cd337db88d8e4b55">can_conj</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
 <tr class="memitem:aa65ee82488ac8c6993ff3f04cecc6d01" id="r_aa65ee82488ac8c6993ff3f04cecc6d01"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
 <tr class="memitem:aa65ee82488ac8c6993ff3f04cecc6d01 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aa65ee82488ac8c6993ff3f04cecc6d01">can_conj</a> (const C &amp;collection, const V &amp;value) noexcept -&gt; bool</td></tr>
 <tr class="memitem:af823627d08722d6cb69d5966e4cb10b5" id="r_af823627d08722d6cb69d5966e4cb10b5"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanConjValueAdmissible&lt;C, V&gt;)</td></tr>
 <tr class="memitem:af823627d08722d6cb69d5966e4cb10b5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af823627d08722d6cb69d5966e4cb10b5">can_conj</a> (const C &amp;collection, const V &amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a7e48abe641c817652b2f133690b50387" id="r_a7e48abe641c817652b2f133690b50387"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a7e48abe641c817652b2f133690b50387 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7e48abe641c817652b2f133690b50387">can_conj</a> (const C &amp;collection, const V1 &amp;value1, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a118c0d7015b1823b78e6403ae47351fa" id="r_a118c0d7015b1823b78e6403ae47351fa"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanConjValuesAdmissible&lt;C, V1, V2, Rest...&gt;)</td></tr>
+<tr class="memitem:a118c0d7015b1823b78e6403ae47351fa template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a118c0d7015b1823b78e6403ae47351fa">can_conj</a> (const C &amp;collection, const V1 &amp;value1, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
 <tr class="memitem:ace3eca89e83fec40fe2e35e7fbf2cc45" id="r_ace3eca89e83fec40fe2e35e7fbf2cc45"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
 requires concepts_detail::CharacterValidityInput&lt;T&gt;</td></tr>
 <tr class="memitem:ace3eca89e83fec40fe2e35e7fbf2cc45 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ace3eca89e83fec40fe2e35e7fbf2cc45">character_is_valid</a> (T value) noexcept -&gt; bool</td></tr>
@@ -740,8 +769,42 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; <a class="el" href=
 
 </div>
 </div>
+<a id="acf9e7d8ece7da6a3719f4f41b72e8ac6" name="acf9e7d8ece7da6a3719f4f41b72e8ac6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf9e7d8ece7da6a3719f4f41b72e8ac6">&#9670;&#160;</a></span>can_assoc() <span class="overload">[1/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename... Arguments&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (sizeof...(Arguments) &gt;= 3) &amp;&amp; (sizeof...(Arguments) % 2 == 1)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_assoc </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Arguments &amp;...</td>          <td class="paramname"><span class="paramname"><em>arguments</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00163">163</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+
+</div>
+</div>
 <a id="abc0f6a9a7ed7d35344b12d7e9b2b184d" name="abc0f6a9a7ed7d35344b12d7e9b2b184d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc0f6a9a7ed7d35344b12d7e9b2b184d">&#9670;&#160;</a></span>can_assoc() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#abc0f6a9a7ed7d35344b12d7e9b2b184d">&#9670;&#160;</a></span>can_assoc() <span class="overload">[2/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -776,12 +839,12 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; concepts_detail::Ca
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00085">85</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00126">126</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
 
 </div>
 </div>
 <a id="ad4505bda41f8a5ad232f84efd327e58e" name="ad4505bda41f8a5ad232f84efd327e58e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4505bda41f8a5ad232f84efd327e58e">&#9670;&#160;</a></span>can_assoc() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4505bda41f8a5ad232f84efd327e58e">&#9670;&#160;</a></span>can_assoc() <span class="overload">[3/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -815,12 +878,12 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (!concepts_detail::
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00074">74</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00115">115</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a26c46b3cea8042d9b629e05f8148a6fc" name="a26c46b3cea8042d9b629e05f8148a6fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26c46b3cea8042d9b629e05f8148a6fc">&#9670;&#160;</a></span>can_assoc() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a26c46b3cea8042d9b629e05f8148a6fc">&#9670;&#160;</a></span>can_assoc() <span class="overload">[4/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -854,12 +917,12 @@ requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::Associative
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00064">64</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00105">105</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
 
 </div>
 </div>
 <a id="af3f6e53d9eee93ed080c4e76af4d6f06" name="af3f6e53d9eee93ed080c4e76af4d6f06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3f6e53d9eee93ed080c4e76af4d6f06">&#9670;&#160;</a></span>can_assoc() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af3f6e53d9eee93ed080c4e76af4d6f06">&#9670;&#160;</a></span>can_assoc() <span class="overload">[5/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -894,9 +957,9 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 </table>
 </div><div class="memdoc">
 
-<p>Checks if assoc with a key and a value can succeed without capacity overflow. </p>
+<p>Checks whether one or more assoc pairs can be applied without capacity overflow. </p>
 <p><a class="anchor" id="CanAssoc"></a> </p>
-<p>Supported for <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> (an existing key can be replaced, or an absent key inserted when capacity remains), <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> (an existing index can be replaced, or an index equal to the current count can append when capacity remains), and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span> (the same index and append rule as <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, with an invalid character returning false). <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> and <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span> provide no associative capability and are rejected. This preflight leaves the source unchanged.</p>
+<p>Supported for <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> (an existing key can be replaced, or an absent key inserted when capacity remains), <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> (an existing index can be replaced, or an index equal to the current count can append when capacity remains), and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span> (the same index and append rule as <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, with an invalid character returning false). <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> and <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span> provide no associative capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -904,6 +967,7 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a> m_const{};</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af3f6e53d9eee93ed080c4e76af4d6f06">can_assoc</a>(m_const, 1, 10));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af3f6e53d9eee93ed080c4e76af4d6f06">can_assoc</a>(m_const, 1, 10, 2, 20));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> m_runtime = <a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a>{};</div>
@@ -911,14 +975,273 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> ok ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_af3f6e53d9eee93ed080c4e76af4d6f06"><div class="ttname"><a href="#af3f6e53d9eee93ed080c4e76af4d6f06">cljonic::can_assoc</a></div><div class="ttdeci">constexpr auto can_assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.can_assoc(key, value))) -&gt; bool</div><div class="ttdoc">Checks if assoc with a key and a value can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-assoc_8hpp_source.html#l00037">cljonic-can-assoc.hpp:37</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_af3f6e53d9eee93ed080c4e76af4d6f06"><div class="ttname"><a href="#af3f6e53d9eee93ed080c4e76af4d6f06">cljonic::can_assoc</a></div><div class="ttdeci">constexpr auto can_assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.can_assoc(key, value))) -&gt; bool</div><div class="ttdoc">Checks whether one or more assoc pairs can be applied without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-assoc_8hpp_source.html#l00040">cljonic-can-assoc.hpp:40</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00037">37</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00040">40</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab6410e832d8ff8ab086a8cc589aab0f1" name="ab6410e832d8ff8ab086a8cc589aab0f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6410e832d8ff8ab086a8cc589aab0f1">&#9670;&#160;</a></span>can_assoc() <span class="overload">[6/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (sizeof...(Rest) % 2 == 0) &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a114dcd4fdd8002bf42637725872f8f56">concepts_detail::all_assoc_arguments_admissible_v</a><br class="typebreak" />
+&lt;C, K1, V1, K2, V2, Rest...&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_assoc </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const K1 &amp;</td>          <td class="paramname"><span class="paramname"><em>key1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const K2 &amp;</td>          <td class="paramname"><span class="paramname"><em>key2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00149">149</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac6335c1b1e4eb28f16e71349370087fb" name="ac6335c1b1e4eb28f16e71349370087fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6335c1b1e4eb28f16e71349370087fb">&#9670;&#160;</a></span>can_assoc() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; (!concepts::AssociativeCollection&lt;C&gt;) &amp;&amp; (sizeof...(Rest) % 2 == 0)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_assoc </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const K1 &amp;</td>          <td class="paramname"><span class="paramname"><em>key1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const K2 &amp;</td>          <td class="paramname"><span class="paramname"><em>key2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00136">136</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad55e67d3e0438d070fd781bb54c14bcd" name="ad55e67d3e0438d070fd781bb54c14bcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad55e67d3e0438d070fd781bb54c14bcd">&#9670;&#160;</a></span>can_assoc() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename K1, typename V1, typename K2, typename V2, typename... Rest&gt; <br />
+requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; (sizeof...(Rest) % 2 == 0) &amp;&amp; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a114dcd4fdd8002bf42637725872f8f56">concepts_detail::all_assoc_arguments_admissible_v</a>&lt;C,<br class="typebreak" />
+ K1, V1, K2, V2, Rest...&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_assoc </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const K1 &amp;</td>          <td class="paramname"><span class="paramname"><em>key1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const K2 &amp;</td>          <td class="paramname"><span class="paramname"><em>key2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00095">95</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a4d8fd344f3775e70cd337db88d8e4b55" name="a4d8fd344f3775e70cd337db88d8e4b55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d8fd344f3775e70cd337db88d8e4b55">&#9670;&#160;</a></span>can_conj() <span class="overload">[1/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00101">101</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aff01cd8591c08e661bde74c6276e9c40" name="aff01cd8591c08e661bde74c6276e9c40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff01cd8591c08e661bde74c6276e9c40">&#9670;&#160;</a></span>can_conj() <span class="overload">[2/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks whether conj can succeed without capacity overflow. </p>
+<p><a class="anchor" id="CanConj"></a> </p>
+<p><span class="tt">can_conj(collection)</span> returns true. The one-value form checks that value against the collection. The variadic form checks each value left to right against the state produced by the preceding values, and returns true only if every preflight succeeds. All forms preserve the source.</p>
+<p>Supported for <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>. For <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> and <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, the result depends only on remaining capacity; the value does not affect the preflight. For <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>, both remaining capacity and a valid character are required; see <a class="el" href="classcljonic_1_1_string.html">String</a> for character validation policy. An invalid character returns false.</p>
+<p>For a <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> element or <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> key already present, returns true because insertion is a no-op or a value replacement that needs no capacity. An absent element or key returns true only when capacity remains; when full, it returns false.</p>
+<p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
+<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a> q_const{};</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(q_const));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(q_const, 1));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 2&gt;</a>{}, 1, 2));</div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 1&gt;</a> q_full{1};</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(q_full, 2));</div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a> s_const{};</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(s_const, 1));</div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a> text_const{<span class="stringliteral">&quot;Hi&quot;</span>};</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(text_const, <span class="charliteral">&#39;!&#39;</span>));</div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a> m_const{<a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry&lt;int, int&gt;</a>{1, 100}};</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(m_const, <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry&lt;int, int&gt;</a>{1, 999}));</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
+<div class="line">  <span class="keyword">auto</span> q_runtime = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> q_ok = <a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(q_runtime, 1);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> q_ok ? 0 : 1;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00086">cljonic-queue.hpp:86</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00097">cljonic-set.hpp:97</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00100">cljonic-string.hpp:100</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_aff01cd8591c08e661bde74c6276e9c40"><div class="ttname"><a href="#aff01cd8591c08e661bde74c6276e9c40">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdoc">Checks whether conj can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00078">cljonic-can-conj.hpp:78</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00032">cljonic-map-entry.hpp:32</a></div></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00078">78</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
 
 </div>
 </div>
 <a id="af823627d08722d6cb69d5966e4cb10b5" name="af823627d08722d6cb69d5966e4cb10b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af823627d08722d6cb69d5966e4cb10b5">&#9670;&#160;</a></span>can_conj() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af823627d08722d6cb69d5966e4cb10b5">&#9670;&#160;</a></span>can_conj() <span class="overload">[3/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -947,12 +1270,12 @@ requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::Can
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00074">74</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00118">118</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
 
 </div>
 </div>
 <a id="aa65ee82488ac8c6993ff3f04cecc6d01" name="aa65ee82488ac8c6993ff3f04cecc6d01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa65ee82488ac8c6993ff3f04cecc6d01">&#9670;&#160;</a></span>can_conj() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa65ee82488ac8c6993ff3f04cecc6d01">&#9670;&#160;</a></span>can_conj() <span class="overload">[4/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -981,12 +1304,12 @@ requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00064">64</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00109">109</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a17088e15137ed905561f4020e75e17b0" name="a17088e15137ed905561f4020e75e17b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17088e15137ed905561f4020e75e17b0">&#9670;&#160;</a></span>can_conj() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a17088e15137ed905561f4020e75e17b0">&#9670;&#160;</a></span>can_conj() <span class="overload">[5/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1015,39 +1338,139 @@ requires concepts_detail::CanConjValueAdmissible&lt;C, V&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p>Checks whether conj can succeed without capacity overflow. </p>
-<p><a class="anchor" id="CanConj"></a> </p>
-<p>Supported for <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>. For <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> and <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, the result depends only on remaining capacity; the value does not affect the preflight. For <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>, both remaining capacity and a valid character are required; see <a class="el" href="classcljonic_1_1_string.html">String</a> for character validation policy. An invalid character returns false.</p>
-<p>For a <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> element or <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> key already present, returns true because insertion is a no-op or a value replacement that needs no capacity. An absent element or key returns true only when capacity remains; when full, it returns false.</p>
-<p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
-<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a> q_const{};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a17088e15137ed905561f4020e75e17b0">can_conj</a>(q_const, 1));</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 1&gt;</a> q_full{1};</div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a17088e15137ed905561f4020e75e17b0">can_conj</a>(q_full, 2));</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a> s_const{};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a17088e15137ed905561f4020e75e17b0">can_conj</a>(s_const, 1));</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a> text_const{<span class="stringliteral">&quot;Hi&quot;</span>};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a17088e15137ed905561f4020e75e17b0">can_conj</a>(text_const, <span class="charliteral">&#39;!&#39;</span>));</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a> m_const{<a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry&lt;int, int&gt;</a>{1, 100}};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a17088e15137ed905561f4020e75e17b0">can_conj</a>(m_const, <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry&lt;int, int&gt;</a>{1, 999}));</div>
-<div class="line"> </div>
-<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> q_runtime = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{};</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> q_ok = <a class="code hl_function" href="#a17088e15137ed905561f4020e75e17b0">can_conj</a>(q_runtime, 1);</div>
-<div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> q_ok ? 0 : 1;</div>
-<div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00086">cljonic-queue.hpp:86</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00097">cljonic-set.hpp:97</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00100">cljonic-string.hpp:100</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a17088e15137ed905561f4020e75e17b0"><div class="ttname"><a href="#a17088e15137ed905561f4020e75e17b0">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</div><div class="ttdoc">Checks whether conj can succeed without capacity overflow.</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00055">cljonic-can-conj.hpp:55</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00032">cljonic-map-entry.hpp:32</a></div></div>
-</div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00055">55</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00084">84</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a118c0d7015b1823b78e6403ae47351fa" name="a118c0d7015b1823b78e6403ae47351fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a118c0d7015b1823b78e6403ae47351fa">&#9670;&#160;</a></span>can_conj() <span class="overload">[6/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanConjValuesAdmissible&lt;C, V1, V2, Rest...&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00138">138</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7e48abe641c817652b2f133690b50387" name="a7e48abe641c817652b2f133690b50387"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e48abe641c817652b2f133690b50387">&#9670;&#160;</a></span>can_conj() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00128">128</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a99860cc80143c03af7892eaf2148f644" name="a99860cc80143c03af7892eaf2148f644"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99860cc80143c03af7892eaf2148f644">&#9670;&#160;</a></span>can_conj() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; concepts_detail::CanConjValuesAdmissible&lt;C, V1, V2, Rest...&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::can_conj </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V1 &amp;</td>          <td class="paramname"><span class="paramname"><em>value1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const V2 &amp;</td>          <td class="paramname"><span class="paramname"><em>value2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Rest &amp;...</td>          <td class="paramname"><span class="paramname"><em>rest</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00091">91</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
 
 </div>
 </div>
@@ -1658,7 +2081,7 @@ requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProd
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2fb743a916443eaa52b84a83056cc872">assoc</a>(<a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;int, int, 4&gt;</a>{}, 1, 100);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 9);</div>
 <div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> r_const{0, 5};</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat&lt;int&gt;</a> finite_repeat{7, 3U};</div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat&lt;int&gt;</a> finite_repeat{7, 3};</div>
 <div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat&lt;int&gt;</a> unbounded_repeat{7};</div>
 <div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> unbounded_range{0, 0, 0};</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(v_const) == 3);</div>

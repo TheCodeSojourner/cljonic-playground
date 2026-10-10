@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::concepts_detail::CanAssocKeyAdmissible Concept Reference</title>
+<title>cljonic: cljonic::concepts_detail::CanConjValuesAdmissible Concept Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -94,27 +94,24 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible.html">CanAssocKeyAdmissible</a></li>  </ul>
+<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts__detail_1_1_can_conj_values_admissible.html">CanConjValuesAdmissible</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">cljonic::concepts_detail::CanAssocKeyAdmissible Concept Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic::concepts_detail::CanConjValuesAdmissible Concept Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>&gt;</code></p>
 <h2 id="header-conceptdef" class="groupheader">Concept definition</h2>
-<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> K&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible.html">CanAssocKeyAdmissible</a> = <a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_associative_collection.html">concepts::AssociativeCollection&lt;C&gt;</a> &amp;&amp;</div>
-<div class="line">                                <span class="keyword">requires</span>(<span class="keyword">const</span> C&amp; collection, <span class="keyword">const</span> K&amp; key, <span class="keyword">const</span> C::association_value_type&amp; value) {</div>
-<div class="line">                                    { collection.can_assoc(key, value) } <span class="keyword">noexcept</span> -&gt; std::same_as&lt;bool&gt;;</div>
-<div class="line">                                }</div>
-<div class="ttc" id="aconceptcljonic_1_1concepts_1_1_associative_collection_html"><div class="ttname"><a href="conceptcljonic_1_1concepts_1_1_associative_collection.html">cljonic::concepts::AssociativeCollection</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00388">cljonic-concepts.hpp:388</a></div></div>
-<div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_can_assoc_key_admissible.html">cljonic::concepts_detail::CanAssocKeyAdmissible</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-assoc_8hpp_source.html#l00050">cljonic-can-assoc.hpp:50</a></div></div>
+<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span>... Values&gt;</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_can_conj_values_admissible.html">CanConjValuesAdmissible</a> = (<a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible.html">CanConjValueAdmissible&lt;C, Values&gt;</a> &amp;&amp; ...)</div>
+<div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible.html">cljonic::concepts_detail::CanConjValueAdmissible</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00010">cljonic-can-conj.hpp:10</a></div></div>
+<div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_can_conj_values_admissible_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_can_conj_values_admissible.html">cljonic::concepts_detail::CanConjValuesAdmissible</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00015">cljonic-can-conj.hpp:15</a></div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="cljonic-can-assoc_8hpp_source.html#l00050">50</a> of file <a class="el" href="cljonic-can-assoc_8hpp_source.html">cljonic-can-assoc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00015">15</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

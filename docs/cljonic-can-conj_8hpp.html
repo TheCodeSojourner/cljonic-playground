@@ -118,19 +118,39 @@ Namespaces</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
 Concepts</h2></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ACanConjValueAdmissible" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ACanConjValueAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_can_conj_value_admissible.html">cljonic::concepts_detail::CanConjValueAdmissible</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ACanConjValuesAdmissible" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ACanConjValuesAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_can_conj_values_admissible.html">cljonic::concepts_detail::CanConjValuesAdmissible</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:aab3c56c7d9c426fd107d163adcc9561d" id="r_aab3c56c7d9c426fd107d163adcc9561d"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
+<tr class="memitem:aab3c56c7d9c426fd107d163adcc9561d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#aab3c56c7d9c426fd107d163adcc9561d">cljonic::concepts_detail::can_conj_values_in_order</a> (C &amp;collection) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a0539186730b0186c8159551fd1cf431a" id="r_a0539186730b0186c8159551fd1cf431a"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V, typename... Rest&gt; </td></tr>
+<tr class="memitem:a0539186730b0186c8159551fd1cf431a template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a0539186730b0186c8159551fd1cf431a">cljonic::concepts_detail::can_conj_values_in_order</a> (C &amp;collection, const V &amp;value, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:aff01cd8591c08e661bde74c6276e9c40" id="r_aff01cd8591c08e661bde74c6276e9c40"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt;</td></tr>
+<tr class="memitem:aff01cd8591c08e661bde74c6276e9c40 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aff01cd8591c08e661bde74c6276e9c40">cljonic::can_conj</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
+<tr class="memdesc:aff01cd8591c08e661bde74c6276e9c40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow.  <br /></td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0" id="r_a17088e15137ed905561f4020e75e17b0"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires concepts_detail::CanConjValueAdmissible&lt;C, V&gt;</td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a17088e15137ed905561f4020e75e17b0">cljonic::can_conj</a> (const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</td></tr>
-<tr class="memdesc:a17088e15137ed905561f4020e75e17b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow.  <br /></td></tr>
+<tr class="memitem:a99860cc80143c03af7892eaf2148f644" id="r_a99860cc80143c03af7892eaf2148f644"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; concepts_detail::CanConjValuesAdmissible&lt;C, V1, V2, Rest...&gt;</td></tr>
+<tr class="memitem:a99860cc80143c03af7892eaf2148f644 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a99860cc80143c03af7892eaf2148f644">cljonic::can_conj</a> (const C &amp;collection, const V1 &amp;value1, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a4d8fd344f3775e70cd337db88d8e4b55" id="r_a4d8fd344f3775e70cd337db88d8e4b55"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a4d8fd344f3775e70cd337db88d8e4b55 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a4d8fd344f3775e70cd337db88d8e4b55">cljonic::can_conj</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
 <tr class="memitem:aa65ee82488ac8c6993ff3f04cecc6d01" id="r_aa65ee82488ac8c6993ff3f04cecc6d01"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
 <tr class="memitem:aa65ee82488ac8c6993ff3f04cecc6d01 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aa65ee82488ac8c6993ff3f04cecc6d01">cljonic::can_conj</a> (const C &amp;collection, const V &amp;value) noexcept -&gt; bool</td></tr>
 <tr class="memitem:af823627d08722d6cb69d5966e4cb10b5" id="r_af823627d08722d6cb69d5966e4cb10b5"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanConjValueAdmissible&lt;C, V&gt;)</td></tr>
 <tr class="memitem:af823627d08722d6cb69d5966e4cb10b5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af823627d08722d6cb69d5966e4cb10b5">cljonic::can_conj</a> (const C &amp;collection, const V &amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a7e48abe641c817652b2f133690b50387" id="r_a7e48abe641c817652b2f133690b50387"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C&gt;) &amp;&amp; (!concepts::ConjableCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a7e48abe641c817652b2f133690b50387 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a7e48abe641c817652b2f133690b50387">cljonic::can_conj</a> (const C &amp;collection, const V1 &amp;value1, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a118c0d7015b1823b78e6403ae47351fa" id="r_a118c0d7015b1823b78e6403ae47351fa"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V1, typename V2, typename... Rest&gt; <br />
+requires concepts::ConjableCollection&lt;C&gt; &amp;&amp; (!concepts_detail::CanConjValuesAdmissible&lt;C, V1, V2, Rest...&gt;)</td></tr>
+<tr class="memitem:a118c0d7015b1823b78e6403ae47351fa template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a118c0d7015b1823b78e6403ae47351fa">cljonic::can_conj</a> (const C &amp;collection, const V1 &amp;value1, const V2 &amp;value2, const Rest &amp;... rest) noexcept -&gt; bool</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
