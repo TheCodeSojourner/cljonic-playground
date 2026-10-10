@@ -7,6 +7,14 @@ entity Conj {
     supports_map_conj: Boolean
     supports_queue_conj: Boolean
     supports_string_conj: Boolean
+    supports_zero_value_conj: Boolean
+    zero_value_conj_returns_unchanged_copy: Boolean
+    supports_variadic_conj: Boolean
+    variadic_folds_values_left_to_right: Boolean
+    variadic_requires_at_least_two_values: Boolean
+    variadic_value_admitted_under_collection_domain: Boolean
+    variadic_out_of_domain_value_rejected_at_compile_time: Boolean
+    variadic_over_capacity_value_is_no_op_and_continues: Boolean
     string_conj_appends_at_logical_count: Boolean
     full_string_conj_returns_unchanged_copy: Boolean
     string_conj_uses_string_character_policy: Boolean
@@ -41,6 +49,38 @@ entity Conj {
 
     invariant SupportsStringConj {
         this.supports_string_conj = true
+    }
+
+    invariant SupportsZeroValueConj {
+        this.supports_zero_value_conj = true
+    }
+
+    invariant ZeroValueConjReturnsUnchangedCopy {
+        this.zero_value_conj_returns_unchanged_copy = true
+    }
+
+    invariant SupportsVariadicConj {
+        this.supports_variadic_conj = true
+    }
+
+    invariant VariadicFoldsValuesLeftToRight {
+        this.variadic_folds_values_left_to_right = true
+    }
+
+    invariant VariadicRequiresAtLeastTwoValues {
+        this.variadic_requires_at_least_two_values = true
+    }
+
+    invariant VariadicValueAdmittedUnderCollectionDomain {
+        this.variadic_value_admitted_under_collection_domain = true
+    }
+
+    invariant VariadicOutOfDomainValueRejectedAtCompileTime {
+        this.variadic_out_of_domain_value_rejected_at_compile_time = true
+    }
+
+    invariant VariadicOverCapacityValueIsNoOpAndContinues {
+        this.variadic_over_capacity_value_is_no_op_and_continues = true
     }
 
     invariant StringConjAppendsAtLogicalCount {
