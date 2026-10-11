@@ -523,10 +523,11 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 λ REQ-FN-002V(x).
   ∀ `String<N>`: provides public static `String<N>::character_is_valid(char)` returning true exactly when the character is non-NUL and its unsigned byte value is at most `0x7F`
   ∧ ∀ free function `character_is_valid(value)`: admitted when the argument is an integral type other than `bool` ∧ returns false if the value is not representable by `char` ∧ otherwise converts without narrowing and returns the String character-validity result
+  ∧ ∀ free function `character_is_valid(c_string)`: admitted when the argument is a `char` array of static extent two — a one-character C-string such as `"x"` ∧ returns true only when the second byte is the null terminator and the single character is a valid String character ∧ a `char` array of any other static extent (the empty string and multi-character strings) is rejected with one targeted compile-time diagnostic
   ∧ ∀ function form: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating
-  ∧ ∀ unsupported input type (including `bool`, floating-point, enumeration, and user-defined conversion types): rejected with one targeted compile-time diagnostic
+  ∧ ∀ unsupported input type (including `bool`, floating-point, enumeration, user-defined conversion types, and a non-array C-string source such as `const char*`): rejected with one targeted compile-time diagnostic
   ∧ ∀ diagnostic fallback: constrained to unsupported input types, contains a targeted dependent `static_assert`, and is never a supported call target (`REQ-DIAG-003`, `REQ-DIAG-009`)
-  rationale: expose String's character-validity rule for direct checks while ensuring integer inputs are representable before conversion and rejecting implicit conversions that may lose information
+  rationale: expose String's character-validity rule for direct checks while ensuring integer inputs are representable before conversion and rejecting implicit conversions that may lose information; the C-string form admits a one-character string literal directly and rejects any other length at compile time rather than guessing which byte was intended
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-002W(x).
