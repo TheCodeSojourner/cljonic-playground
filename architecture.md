@@ -121,6 +121,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | unsupported_input_type(value) → targeted_dependent_static_assert(x)
     ∧ not(supported_call_target(x))
 
+λ S2_character_is_valid_c_string(c_string). require(char_array(c_string))
+  | static_extent(c_string) ≠ 2 → targeted_dependent_static_assert(c_string)
+  | static_extent(c_string) = 2 ∧ c_string[1] ≠ NUL → return(false)
+  | static_extent(c_string) = 2 ∧ c_string[1] = NUL → String::character_is_valid(c_string[0])
+  | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+
 λ S3_cpp_interoperability(x). supported_collection(x)
   → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
   | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
