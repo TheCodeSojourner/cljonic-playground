@@ -1,5 +1,54 @@
 ## Current Session State
 
+- last_session_id: 21ccfdf6-dad9-4252-ac6f-f4314a68b031
+- current_timestamp: 2026-10-10
+- recover: 1
+- session_complete: true
+
+Task:
+1. Removed the redundant overload-specific `CharacterIsValidCString` Doxygen block and moved its one-character C-string example (`character_is_valid("x")`) into the existing `CharacterIsValid` example.
+2. Regenerated the Doxygen output to reflect the consolidated example. No behavior or API contract changed.
+
+Questions:
+1. None.
+
+Decisions:
+1. Keep the overload's API behavior description in the main `CharacterIsValid` documentation; avoid a duplicate overload-specific block. Show the one-character C-string call in that shared example (human, 2026-10-10).
+
+Validation:
+1. `make docs docs-examples` passes (30 examples compiled, six intentionally deferred); `git diff --check` is clean.
+
+Next:
+1. No follow-up pending.
+
+## Previous Session State
+
+- last_session_id: 32ed0885-6e86-488d-9f66-9a31aae0e465
+- current_timestamp: 2026-10-10
+- recover: 1
+- session_complete: true
+
+Task:
+1. Added a one-character C-string form of the `character_is_valid` free function: `template <std::size_t N> character_is_valid(const char (&)[N])` accepts a `char` array of static extent two (e.g. `"x"`), returns true only when the second byte is the null terminator and the single character is a valid String character, and rejects any other static extent (`""`, `"AB"`) with a targeted `static_assert`. A dedicated `concepts_detail::CharacterStringInput` concept excludes `char` arrays from the rejection fallback; the fallback message now reads "integer character code or a one-character c-string".
+2. Propagated through requirements (`REQ-FN-002V` extended, clause count unchanged at 301), architecture (`S2_character_is_valid_c_string`), Allium spec (five new invariants), modular/single-header tests (19 assertions), the compile-fail harness (empty, multi-character, and non-array `const char*` cases with per-case expected messages), the no-heap probe, vocabulary, the traceability snapshot, `cljonic.hpp`, and regenerated `docs/`.
+
+Questions:
+1. None open.
+
+Decisions:
+1. The C-string form accepts only a `char` array of static extent two and rejects every other extent (including the empty string and multi-character literals) at compile time with a targeted diagnostic (human, 2026-10-10).
+2. A `const char[2]` whose second byte is not NUL (a raw array, not a literal) returns false — a genuine C-string is required, mirroring integral out-of-range → false rather than guessing which byte was intended (human, 2026-10-10).
+
+Validation:
+1. `make upsert-gate-strict` passes: requirements-structure (301 clauses), vocabulary-structure (171 terms), lint, complexity, all compile-fail harnesses including `character-is-valid-compile-fail`, header-guards, diagnostic-coverage (pending backlog unchanged), sanitizer, coverage 100.0% lines, strict traceability (snapshot synced with five new invariant IDs), and no-heap.
+2. Targeted tests pass 19 assertions in both modular and single-header builds; `allium check specs` and `allium analyse specs` report 0 diagnostics and 0 findings; `make docs` and `make docs-examples` (31 compiled, six intentionally deferred) pass; `make validate` reports `validate:ok`.
+
+Next:
+1. User-owned: review the change and commit when ready. All changes — requirements, architecture, Allium spec, tests, source, harness, probe, vocabulary, traceability snapshot, regenerated `docs/` (including the new `CharacterStringInput` concept page), `cljonic.hpp`, and this `mementum/state.md` block — are uncommitted in the working tree.
+2. Proposed memory (not yet created): a Mementum insight recording that `character_is_valid` gained a one-character C-string overload with static-extent-two admission, NUL-terminator requirement, and targeted compile-time rejection of other extents. Create on human approval.
+
+## Previous Session State
+
 - last_session_id: 2024cf06-e8ec-49d3-88a4-ef6e33a44119
 - current_timestamp: 2026-10-10
 - recover: 1
