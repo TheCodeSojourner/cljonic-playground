@@ -16,15 +16,27 @@ struct CharacterIsValidUnsupported {
 };
 """
 
+# Each case is (source body, expected message fragment).
 DIAGNOSTIC_CASES = {
-    "bool": "(void)cljonic::character_is_valid(true);",
-    "floating-point": "(void)cljonic::character_is_valid(65.0);",
-    "enumeration": "enum class CharacterCode { value = 65 }; (void)cljonic::character_is_valid(CharacterCode::value);",
-    "user-defined-conversion": "(void)cljonic::character_is_valid(CharacterIsValidUnsupported{});",
+    "bool": ("(void)cljonic::character_is_valid(true);", "must be an integer character code"),
+    "floating-point": ("(void)cljonic::character_is_valid(65.0);", "must be an integer character code"),
+    "enumeration": (
+        "enum class CharacterCode { value = 65 }; (void)cljonic::character_is_valid(CharacterCode::value);",
+        "must be an integer character code",
+    ),
+    "user-defined-conversion": (
+        "(void)cljonic::character_is_valid(CharacterIsValidUnsupported{});",
+        "must be an integer character code",
+    ),
+    "non-array-c-string-pointer": (
+        'const char* character = "A"; (void)cljonic::character_is_valid(character);',
+        "must be an integer character code",
+    ),
+    "empty-c-string": ('(void)cljonic::character_is_valid("");', "one-character c-string"),
+    "multi-character-c-string": ('(void)cljonic::character_is_valid("AB");', "one-character c-string"),
 }
 
 DIAGNOSTIC_ANCHOR = "cljonic::character_is_valid:"
-DIAGNOSTIC_MESSAGE = "must be an integer character code"
 
 
 def build_source(header: str, body: str) -> str:
@@ -64,13 +76,13 @@ def main() -> int:
     failures: list[str] = []
 
     for configuration, include_dir, header in configurations:
-        for name, body in DIAGNOSTIC_CASES.items():
+        for name, (body, message) in DIAGNOSTIC_CASES.items():
             result = compile_source(compiler, include_dir, build_source(header, body))
             if result.returncode == 0:
                 failures.append(f"{configuration}/{name}: expected compile failure, but compiled")
                 continue
             output = normalized(result.stdout + result.stderr)
-            if DIAGNOSTIC_ANCHOR not in output or DIAGNOSTIC_MESSAGE not in output:
+            if DIAGNOSTIC_ANCHOR not in output or message not in output:
                 failures.append(f"{configuration}/{name}: targeted rejection diagnostic content not reported")
 
     if failures:
