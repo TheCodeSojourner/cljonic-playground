@@ -722,11 +722,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### CharacterIsValid
-- **Definition:** The `String` character predicate available as `String<N>::character_is_valid(char)` and the free function `character_is_valid(value)`. The free function accepts non-`bool` integral values, returns false if a value is outside the range representable by `char`, and otherwise applies the String rule: NUL is invalid and unsigned byte values greater than `0x7F` are invalid. Unsupported types produce a targeted compile-time diagnostic.
+- **Definition:** The `String` character predicate available as `String<N>::character_is_valid(char)` and the free function `character_is_valid(value)`. The free function accepts non-`bool` integral values and one-character C-strings; an integral value returns false if it is outside the range representable by `char`; a one-character C-string (`char` array of static extent two) returns true only when its second byte is the null terminator and the single character is valid; either form then applies the String rule: NUL is invalid and unsigned byte values greater than `0x7F` are invalid. Unsupported types, and a C-string of any other length, produce a targeted compile-time diagnostic.
 - **Deprecated Synonyms:** valid character predicate
 - **Related:** String, Conj, CanConj, Assoc
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `character_is_valid('A')` and `character_is_valid(65)` are true; `character_is_valid(300)`, `character_is_valid('\0')`, and `character_is_valid(static_cast<char>(0x80))` are false; a floating-point argument is rejected at compile time.
+- **Examples:** `character_is_valid('A')`, `character_is_valid(65)`, and `character_is_valid("A")` are true; `character_is_valid(300)`, `character_is_valid('\0')`, `character_is_valid("\0")`, and `character_is_valid(static_cast<char>(0x80))` are false; a floating-point argument, a `const char*`, and a multi-character string literal such as `"AB"` are rejected at compile time.
 
 
 ### Iterate
