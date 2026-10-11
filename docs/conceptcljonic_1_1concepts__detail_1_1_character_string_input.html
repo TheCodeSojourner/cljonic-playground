@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>cljonic: cljonic::concepts_detail::CharacterValidityInput Concept Reference</title>
+<title>cljonic: cljonic::concepts_detail::CharacterStringInput Concept Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -94,24 +94,24 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts__detail_1_1_character_validity_input.html">CharacterValidityInput</a></li>  </ul>
+<li class="navelem"><a href="namespacecljonic.html">cljonic</a></li><li class="navelem"><a href="namespacecljonic_1_1concepts__detail.html">concepts_detail</a></li><li class="navelem"><a href="conceptcljonic_1_1concepts__detail_1_1_character_string_input.html">CharacterStringInput</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">cljonic::concepts_detail::CharacterValidityInput Concept Reference</div></div>
+  <div class="headertitle"><div class="title">cljonic::concepts_detail::CharacterStringInput Concept Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="cljonic-character-is-valid_8hpp_source.html">cljonic-character-is-valid.hpp</a>&gt;</code></p>
 <h2 id="header-conceptdef" class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_character_validity_input.html">CharacterValidityInput</a> =</div>
-<div class="line">    std::is_integral_v&lt;std::remove_cvref_t&lt;T&gt;&gt; &amp;&amp; !std::is_same_v&lt;std::remove_cvref_t&lt;T&gt;, <span class="keywordtype">bool</span>&gt;</div>
-<div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_character_validity_input_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_character_validity_input.html">cljonic::concepts_detail::CharacterValidityInput</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-character-is-valid_8hpp_source.html#l00016">cljonic-character-is-valid.hpp:16</a></div></div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_character_string_input.html">CharacterStringInput</a> = std::is_array_v&lt;std::remove_reference_t&lt;T&gt;&gt; &amp;&amp;</div>
+<div class="line">                               std::is_same_v&lt;std::remove_cv_t&lt;std::remove_extent_t&lt;std::remove_reference_t&lt;T&gt;&gt;&gt;, <span class="keywordtype">char</span>&gt;</div>
+<div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_character_string_input_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_character_string_input.html">cljonic::concepts_detail::CharacterStringInput</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-character-is-valid_8hpp_source.html#l00020">cljonic-character-is-valid.hpp:20</a></div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="cljonic-character-is-valid_8hpp_source.html#l00016">16</a> of file <a class="el" href="cljonic-character-is-valid_8hpp_source.html">cljonic-character-is-valid.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-character-is-valid_8hpp_source.html#l00020">20</a> of file <a class="el" href="cljonic-character-is-valid_8hpp_source.html">cljonic-character-is-valid.hpp</a>.</p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

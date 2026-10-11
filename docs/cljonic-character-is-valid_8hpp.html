@@ -106,7 +106,8 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="headertitle"><div class="title">cljonic-character-is-valid.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;cstdint&gt;</code><br />
+<div class="textblock"><code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
@@ -122,6 +123,7 @@ Namespaces</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
 Concepts</h2></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ACharacterValidityInput" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ACharacterValidityInput"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_character_validity_input.html">cljonic::concepts_detail::CharacterValidityInput</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ACharacterStringInput" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ACharacterStringInput"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_character_string_input.html">cljonic::concepts_detail::CharacterStringInput</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -135,9 +137,11 @@ Functions</h2></td></tr>
 requires concepts_detail::CharacterValidityInput&lt;T&gt;</td></tr>
 <tr class="memitem:ace3eca89e83fec40fe2e35e7fbf2cc45 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ace3eca89e83fec40fe2e35e7fbf2cc45">cljonic::character_is_valid</a> (T value) noexcept -&gt; bool</td></tr>
 <tr class="memdesc:ace3eca89e83fec40fe2e35e7fbf2cc45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a value converts to a valid <a class="el" href="classcljonic_1_1_string.html">String</a> character.  <br /></td></tr>
-<tr class="memitem:adae771d196893ef57a570e615271cbf5" id="r_adae771d196893ef57a570e615271cbf5"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
-requires (!concepts_detail::CharacterValidityInput&lt;T&gt;)</td></tr>
-<tr class="memitem:adae771d196893ef57a570e615271cbf5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#adae771d196893ef57a570e615271cbf5">cljonic::character_is_valid</a> (T &amp;&amp;value) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a21b31a99cd08f33de14977acd091d996" id="r_a21b31a99cd08f33de14977acd091d996"><td class="memTemplParams" colspan="2">template&lt;std::size_t N&gt; </td></tr>
+<tr class="memitem:a21b31a99cd08f33de14977acd091d996 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a21b31a99cd08f33de14977acd091d996">cljonic::character_is_valid</a> (const char(&amp;value)[N]) noexcept -&gt; bool</td></tr>
+<tr class="memitem:aaedd2180fbb8f03ad10a0e30df018609" id="r_aaedd2180fbb8f03ad10a0e30df018609"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+requires (!concepts_detail::CharacterValidityInput&lt;T&gt; &amp;&amp; !concepts_detail::CharacterStringInput&lt;T&gt;)</td></tr>
+<tr class="memitem:aaedd2180fbb8f03ad10a0e30df018609 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aaedd2180fbb8f03ad10a0e30df018609">cljonic::character_is_valid</a> (T &amp;&amp;value) noexcept -&gt; bool</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
