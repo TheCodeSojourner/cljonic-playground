@@ -2,14 +2,19 @@
 
 entity CharacterIsValid {
     supports_character_is_valid_free_function: Boolean
+    supports_c_string_character_is_valid_free_function: Boolean
     supports_string_static_character_predicate: Boolean
     accepts_nonbool_integral_arguments: Boolean
+    accepts_one_character_c_string: Boolean
+    requires_c_string_null_terminator: Boolean
+    rejects_c_strings_of_other_extents: Boolean
     rejects_unsupported_argument_types: Boolean
     checks_char_representability_before_conversion: Boolean
     returns_false_for_out_of_range_values: Boolean
     rejects_nul_character: Boolean
     rejects_unsigned_byte_above_7f: Boolean
     has_targeted_rejection_diagnostic: Boolean
+    has_c_string_extent_rejection_diagnostic: Boolean
     rejection_fallback_is_not_supported: Boolean
     constexpr_execution_model: Boolean
     noexcept_execution_model: Boolean
@@ -19,12 +24,28 @@ entity CharacterIsValid {
         this.supports_character_is_valid_free_function = true
     }
 
+    invariant CStringCharacterIsValidFreeFunctionSupported {
+        this.supports_c_string_character_is_valid_free_function = true
+    }
+
     invariant StringStaticCharacterPredicateSupported {
         this.supports_string_static_character_predicate = true
     }
 
     invariant AcceptsNonboolIntegralArguments {
         this.accepts_nonbool_integral_arguments = true
+    }
+
+    invariant AcceptsOneCharacterCString {
+        this.accepts_one_character_c_string = true
+    }
+
+    invariant RequiresCStringNullTerminator {
+        this.requires_c_string_null_terminator = true
+    }
+
+    invariant RejectsCStringsOfOtherExtents {
+        this.rejects_c_strings_of_other_extents = true
     }
 
     invariant RejectsUnsupportedArgumentTypes {
@@ -49,6 +70,10 @@ entity CharacterIsValid {
 
     invariant HasTargetedRejectionDiagnostic {
         this.has_targeted_rejection_diagnostic = true
+    }
+
+    invariant HasCStringExtentRejectionDiagnostic {
+        this.has_c_string_extent_rejection_diagnostic = true
     }
 
     invariant RejectionFallbackIsNotSupported {
