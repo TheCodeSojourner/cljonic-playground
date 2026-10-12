@@ -3,23 +3,26 @@
 - last_session_id: 29f0fdd8-b7af-4a13-83ac-c0763aaf12f5
 - current_timestamp: 2026-10-12
 - recover: 1
-- session_complete: false
+- session_complete: true
 
 Task:
-1. Oriented (gybis-init). No work performed yet; awaiting user direction.
+1. Added valid-character range guidance to `character_is_valid` rejection diagnostics; verified compile-fail checks and 196 tests. The commit was undone at the user's request, leaving the diagnostic edits and regenerated header staged; an unrelated Doxygen reflow in `src/cljonic-assoc.hpp` is also staged.
+2. Answered the user's question about whether cljonic built-in collection/producer source types guarantee their element types satisfy `NothrowCollectionElement`: yes, their type constraints generally enforce the properties, while `CljonicSource` itself is only nominal admission plus traversal. No code changes were made for this clarification.
 
 Questions:
-1. None.
+1. None open.
 
 Decisions:
-1. None this session.
+1. Commit policy (human, 2026-10-12): do NOT automatically commit changes; leave them staged/uncommitted for human review, and the human commits.
+2. Cycle documentation's element-capability clause is redundant for the built-in source types because their own type constraints enforce it; `Cycle` also applies an explicit `NothrowCollectionElement` requirement to its source's range value type.
 
 Validation:
-1. None this session.
+1. `make character-is-valid-compile-fail` passed; `make test` passed 196/196 tests before the commit was undone.
 
 Next:
-1. Candidate next slice: `not_equal` (trivially !equal, REQ-FN-002C) or `equal_by`; complete the equality-domain table.
-2. REQ-SEQ-022 operation-level specification reconciliation for remaining operation families (mementum/knowledge/cljonic-next-agenda.md).
+1. Human review of the staged changes; decide whether to keep the incidental `src/cljonic-assoc.hpp` reflow.
+2. Candidate next slice: `not_equal` (REQ-FN-002C) or `equal_by`; complete the equality-domain table.
+3. REQ-SEQ-022 operation-level specification reconciliation for remaining operation families (mementum/knowledge/cljonic-next-agenda.md).
 
 ## Previous Session State
 
