@@ -6,8 +6,7 @@
 namespace cljonic {
 
 /** \anchor Assoc
- * \brief Associates a value with a key in a Map, or with an index in an indexed
- *        collection (Vector, String).
+ * \brief Associates a value with a key in a Map, or with an index in an indexed collection (Vector, String).
  *
  * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association; an
  * index equal to the current count appends when capacity remains), and `String` (the same index and append rule as

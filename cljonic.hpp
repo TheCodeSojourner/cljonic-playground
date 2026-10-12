@@ -676,8 +676,7 @@ concept ValidCycleSource =
 namespace cljonic {
 
 /** \anchor Assoc
- * \brief Associates a value with a key in a Map, or with an index in an indexed
- *        collection (Vector, String).
+ * \brief Associates a value with a key in a Map, or with an index in an indexed collection (Vector, String).
  *
  * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association; an
  * index equal to the current count appends when capacity remains), and `String` (the same index and append rule as
@@ -1579,7 +1578,8 @@ template <typename T>
 template <std::size_t N>
 [[nodiscard]] constexpr auto character_is_valid(const char (&value)[N]) noexcept -> bool {
     static_assert(N == 2U, "cljonic::character_is_valid: a c-string argument must be a one-character c-string, such as "
-                           "\"x\"; the empty string and multi-character strings are not supported.");
+                           "\"x\", holding a valid String character (a non-NUL ASCII byte in the range 0x01 through "
+                           "0x7F); the empty string and multi-character strings are not supported.");
     if constexpr (N == 2U) {
         return value[1U] == '\0' && String<1>::character_is_valid(value[0U]);
     }
@@ -1591,7 +1591,8 @@ template <typename T>
 [[nodiscard]] constexpr auto character_is_valid([[maybe_unused]] T&& value) noexcept -> bool {
     static_assert(concepts_detail::dependent_false<T>,
                   "cljonic::character_is_valid: the value must be an integer character code or a one-character "
-                  "c-string, not a bool, a floating-point number, an enumeration, or another type.");
+                  "c-string holding a valid String character (a non-NUL ASCII byte in the range 0x01 through 0x7F), "
+                  "not a bool, a floating-point number, an enumeration, or another type.");
     return false;
 }
 
@@ -2299,15 +2300,13 @@ struct contains_standard_range<Vector<ElementType, CapacityValue>>
 namespace cljonic {
 
 /** \anchor Cycle
- * \b Cycle is an unbounded producer over an owned source value. A finite source sequence is repeated from the
- * beginning after exhaustion; an unbounded source preserves its observable prefix without requiring a complete source
- * result. The source must be a cljonic collection or producer -- an external C++ range or view is rejected -- and the
- * source's element type must have a default value and be copyable, assignable, and destructible without throwing. The
- * approved public form is `cycle(source)` only, and traversal terminates only at the observable cap used for bounded
- * materialization. Cycle observation is bounded by the configured collection maximum or by an explicit destination
- * capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Cycle values can
- * be passed directly to cljonic operations that accept a source, or converted into an owning destination with `into`
- * when explicit materialization is required.
+ * \b Cycle is an unbounded producer over an owned source value, wich must be a cljonic collection or producer. A
+ * finite source sequence is repeated from the beginning after exhaustion; an unbounded source preserves its observable
+ * prefix without requiring a complete source result. The approved public form is `cycle(source)` only, and traversal
+ * terminates only at the observable cap used for bounded materialization. Cycle observation is bounded by the
+ * configured collection maximum or by an explicit destination capacity, and it supports const C++ range traversal in
+ * both constant evaluation and runtime code. Cycle values can be passed directly to cljonic operations that accept a
+ * source, or converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -2481,7 +2480,7 @@ template <typename Source>
 constexpr auto cycle([[maybe_unused]] Source source) noexcept -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Source>,
                   "cljonic::cycle: the source argument cannot be used to build a Cycle. The source must be a cljonic "
-                  "collection or producer whose values can be stored and read without throwing.");
+                  "collection or producer.");
     return {};
 }
 

@@ -81,7 +81,8 @@ template <typename T>
 template <std::size_t N>
 [[nodiscard]] constexpr auto character_is_valid(const char (&value)[N]) noexcept -> bool {
     static_assert(N == 2U, "cljonic::character_is_valid: a c-string argument must be a one-character c-string, such as "
-                           "\"x\"; the empty string and multi-character strings are not supported.");
+                           "\"x\", holding a valid String character (a non-NUL ASCII byte in the range 0x01 through "
+                           "0x7F); the empty string and multi-character strings are not supported.");
     if constexpr (N == 2U) {
         return value[1U] == '\0' && String<1>::character_is_valid(value[0U]);
     }
@@ -93,7 +94,8 @@ template <typename T>
 [[nodiscard]] constexpr auto character_is_valid([[maybe_unused]] T&& value) noexcept -> bool {
     static_assert(concepts_detail::dependent_false<T>,
                   "cljonic::character_is_valid: the value must be an integer character code or a one-character "
-                  "c-string, not a bool, a floating-point number, an enumeration, or another type.");
+                  "c-string holding a valid String character (a non-NUL ASCII byte in the range 0x01 through 0x7F), "
+                  "not a bool, a floating-point number, an enumeration, or another type.");
     return false;
 }
 

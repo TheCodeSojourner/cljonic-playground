@@ -10,15 +10,13 @@
 namespace cljonic {
 
 /** \anchor Cycle
- * \b Cycle is an unbounded producer over an owned source value. A finite source sequence is repeated from the
- * beginning after exhaustion; an unbounded source preserves its observable prefix without requiring a complete source
- * result. The source must be a cljonic collection or producer -- an external C++ range or view is rejected -- and the
- * source's element type must have a default value and be copyable, assignable, and destructible without throwing. The
- * approved public form is `cycle(source)` only, and traversal terminates only at the observable cap used for bounded
- * materialization. Cycle observation is bounded by the configured collection maximum or by an explicit destination
- * capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Cycle values can
- * be passed directly to cljonic operations that accept a source, or converted into an owning destination with `into`
- * when explicit materialization is required.
+ * \b Cycle is an unbounded producer over an owned source value, wich must be a cljonic collection or producer. A
+ * finite source sequence is repeated from the beginning after exhaustion; an unbounded source preserves its observable
+ * prefix without requiring a complete source result. The approved public form is `cycle(source)` only, and traversal
+ * terminates only at the observable cap used for bounded materialization. Cycle observation is bounded by the
+ * configured collection maximum or by an explicit destination capacity, and it supports const C++ range traversal in
+ * both constant evaluation and runtime code. Cycle values can be passed directly to cljonic operations that accept a
+ * source, or converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -192,7 +190,7 @@ template <typename Source>
 constexpr auto cycle([[maybe_unused]] Source source) noexcept -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Source>,
                   "cljonic::cycle: the source argument cannot be used to build a Cycle. The source must be a cljonic "
-                  "collection or producer whose values can be stored and read without throwing.");
+                  "collection or producer.");
     return {};
 }
 
