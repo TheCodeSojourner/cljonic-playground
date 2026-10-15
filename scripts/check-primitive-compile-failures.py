@@ -54,11 +54,11 @@ PRIMITIVES = {
             ),
             "non-convertible-key": (
                 "struct DissocNotConvertible {}; (void)cljonic::dissoc(cljonic::Map<int, int, 4>{}, DissocNotConvertible{});",
-                "each key must be convertible to the Map's key type",
+                "each key must convert safely to the Map's key type",
             ),
             "non-convertible-trailing-key": (
                 "struct DissocNotConvertible {}; (void)cljonic::dissoc(cljonic::Map<int, int, 4>{}, 1, DissocNotConvertible{});",
-                "each key must be convertible to the Map's key type",
+                "each key must convert safely to the Map's key type",
             ),
         },
         "pass_cases": {
@@ -75,12 +75,13 @@ PRIMITIVES = {
                 "(void)cljonic::disj(cljonic::Vector<int, 4>{}, 1);",
                 "first argument must be a Set",
             ),
-            "convertible-but-not-exact-value": (
-                "(void)cljonic::disj(cljonic::Set<int, 4>{}, short{1});",
-                "must have exactly the same type as the set's elements",
+            "lossy-value": (
+                "(void)cljonic::disj(cljonic::Set<short, 4>{}, 1);",
+                "must convert safely to the set's element type",
             ),
         },
         "pass_cases": {
+            "widening-value": "(void)cljonic::disj(cljonic::Set<int, 4>{}, short{1});",
             "zero-values": "(void)cljonic::disj(cljonic::Set<int, 4>{1});",
             "one-value": "(void)cljonic::disj(cljonic::Set<int, 4>{1}, 1);",
             "multiple-values": "(void)cljonic::disj(cljonic::Set<int, 4>{1, 2}, 1, 2);",
@@ -98,25 +99,27 @@ PRIMITIVES = {
                 "(void)cljonic::contains(cljonic::Queue<int, 4>{}, 1);",
                 "first argument must be a Map, Set, Vector, or String",
             ),
-            "map-convertible-key": (
-                "(void)cljonic::contains(cljonic::Map<int, int, 4>{}, short{1});",
-                "must have exactly the same type as the map's keys or the set's elements",
+            "map-lossy-key": (
+                "(void)cljonic::contains(cljonic::Map<short, int, 4>{}, 1);",
+                "must convert safely to the map's key type or the set's element type",
             ),
-            "set-convertible-element": (
-                "(void)cljonic::contains(cljonic::Set<int, 4>{}, short{1});",
-                "must have exactly the same type as the map's keys or the set's elements",
+            "set-lossy-element": (
+                "(void)cljonic::contains(cljonic::Set<short, 4>{}, 1);",
+                "must convert safely to the map's key type or the set's element type",
             ),
             "vector-non-integral-index": (
                 "(void)cljonic::contains(cljonic::Vector<int, 4>{}, 1.5);",
-                "index must be an integer type",
+                "index must be a non-boolean, non-character integer type",
             ),
             "string-non-integral-index": (
                 "(void)cljonic::contains(cljonic::String<4>{}, 1.5);",
-                "index must be an integer type",
+                "index must be a non-boolean, non-character integer type",
             ),
         },
         "pass_cases": {
             "map-declared-key": "(void)cljonic::contains(cljonic::Map<int, int, 4>{}, 1);",
+            "map-widening-key": "(void)cljonic::contains(cljonic::Map<int, int, 4>{}, short{1});",
+            "set-widening-value": "(void)cljonic::contains(cljonic::Set<int, 4>{}, short{1});",
             "set-declared-element": "(void)cljonic::contains(cljonic::Set<int, 4>{}, 1);",
             "vector-integral-index": "(void)cljonic::contains(cljonic::Vector<int, 4>{}, -1);",
             "string-integral-index": "(void)cljonic::contains(cljonic::String<4>{}, 1U);",

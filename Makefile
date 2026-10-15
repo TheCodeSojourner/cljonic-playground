@@ -72,6 +72,10 @@ help:
 
 all: clean test
 
+.PHONY: implicit-conversion-compile-fail
+implicit-conversion-compile-fail: cljonic
+	@python3 scripts/check-implicit-conversion-compile-failures.py
+
 cljonic: scripts/amalgamate.py $(wildcard src/*.hpp)
 	@python3 scripts/amalgamate.py --source-dir src --root cljonic-core.hpp --output $(CLJONIC_HEADER)
 	@echo "cljonic:ok:header=$(CLJONIC_HEADER)"
@@ -290,6 +294,8 @@ no-heap:
 	@$(CMAKE) -S . -B $(BUILD_DIR) > /dev/null
 	@$(CMAKE) --build $(BUILD_DIR) --target cljonic_no_heap_probe cljonic_single_header_no_heap_probe --parallel > /dev/null
 	@$(MAKE) --no-print-directory -s no-heap-symbols
+	@$(BUILD_DIR)/cljonic_no_heap_probe
+	@$(BUILD_DIR)/cljonic_single_header_no_heap_probe
 	@echo "no-heap:ok"
 
 traceability-spec-to-code-update-snapshot:
@@ -376,6 +382,7 @@ upsert-fast:
 	@echo "upsert-fast:ok:file=$(UPSERT_FAST_FILE)"
 
 upsert-gate:
+	@$(MAKE) --no-print-directory -s implicit-conversion-compile-fail
 	@$(MAKE) --no-print-directory -s requirements-structure
 	@$(MAKE) --no-print-directory -s vocabulary-structure
 	@$(MAKE) --no-print-directory -s audit-scripts
@@ -415,6 +422,7 @@ upsert-gate-strict:
 	@$(MAKE) --no-print-directory -s no-heap
 
 validate:
+	@$(MAKE) --no-print-directory -s implicit-conversion-compile-fail
 	@$(MAKE) --no-print-directory -s requirements-structure
 	@$(MAKE) --no-print-directory -s vocabulary-structure
 	@$(MAKE) --no-print-directory -s audit-scripts

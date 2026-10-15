@@ -28,11 +28,11 @@ FAILURE_CASES = {
 # In-domain calls must still compile.
 PASS_CASES = {
     "Repeat-value": "auto x = cljonic::repeat(7); (void)x;",
-    "Repeat-counted": "auto x = cljonic::repeat(7, 3); (void)x;",
+    "Repeat-counted": "auto x = cljonic::repeat(7, 3U); (void)x;",
     "Cycle-collection": "auto x = cljonic::cycle(cljonic::Vector<int, 3>{1, 2, 3}); (void)x;",
     "Iterate-step": "auto x = cljonic::iterate([](int v) noexcept { return v + 1; }, 0); (void)x;",
     "Repeatedly-named": "constexpr auto five = []() noexcept { return 5; }; auto x = cljonic::repeatedly(five); (void)x;",
-    "Repeatedly-counted": "constexpr auto five = []() noexcept { return 5; }; auto x = cljonic::repeatedly(3, five); (void)x;",
+    "Repeatedly-counted": "constexpr auto five = []() noexcept { return 5; }; auto x = cljonic::repeatedly(3U, five); (void)x;",
 }
 
 PREAMBLE = """\
