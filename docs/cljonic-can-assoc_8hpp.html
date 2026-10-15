@@ -15,6 +15,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-extra.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -134,7 +135,6 @@ Functions</h2></td></tr>
 requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&amp; collection, const K&amp; key, const V&amp; value) <br class="typebreak" />
 { { collection.can_assoc(key, value) } noexcept -&gt; std::same_as&lt;bool&gt;; }</td></tr>
 <tr class="memitem:af3f6e53d9eee93ed080c4e76af4d6f06 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af3f6e53d9eee93ed080c4e76af4d6f06">cljonic::can_assoc</a> (const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.can_assoc(key, value))) -&gt; bool</td></tr>
-<tr class="memdesc:af3f6e53d9eee93ed080c4e76af4d6f06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether one or more assoc pairs can be applied without capacity overflow.  <br /></td></tr>
 <tr class="memitem:ae4d0db820114460485404ad8ad9ed44f" id="r_ae4d0db820114460485404ad8ad9ed44f"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
 <tr class="memitem:ae4d0db820114460485404ad8ad9ed44f template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#ae4d0db820114460485404ad8ad9ed44f">cljonic::concepts_detail::can_assoc_pairs_in_order</a> (C &amp;collection) noexcept -&gt; bool</td></tr>
 <tr class="memitem:a23f5dc0d335aced38c7d4bd977054f00" id="r_a23f5dc0d335aced38c7d4bd977054f00"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V, typename... Rest&gt; </td></tr>

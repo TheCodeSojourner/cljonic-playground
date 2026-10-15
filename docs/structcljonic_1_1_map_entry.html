@@ -15,6 +15,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-extra.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -127,7 +128,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType&gt;<br />
-struct cljonic::MapEntry&lt; KeyType, ValueType &gt;</div><p><a class="anchor" id="MapEntry"></a> <b><a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a></b> is a value-semantic pair representing a single key-value association. Keys must support reliable, non-throwing equality comparison and non-throwing storage operations. Values must have a default value, and be copyable, assignable, and destructible without throwing, so the entry remains safe to copy and update in bounded collections.</p>
+struct cljonic::MapEntry&lt; KeyType, ValueType &gt;</div><p><a class="anchor" id="MapEntry"></a> A <a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a> is a value-semantic pair representing a single key-value association. Keys must support reliable, non-throwing equality comparison and non-throwing storage operations. Values must have a default value, and be copyable, assignable, and destructible without throwing, so the entry remains safe to copy and update in bounded collections.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>

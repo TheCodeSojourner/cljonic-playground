@@ -2194,31 +2194,8 @@ details[open]>summary::before {
 }
 
 html {
---timestamp: 'Mon Oct 12 2026 15:52:37';
+--timestamp: 'Thu Oct 15 2026 10:41:29';
 }
 span.timestamp { content: ' '; }
 span.timestamp:before { content: var(--timestamp); }
-
-:root {
-    scrollbar-width: thin;
-    scrollbar-color: #3C8A86 #102524;
-}
-
-:root.dark-mode {
-    color-scheme: dark;
-}
-
-::-webkit-scrollbar {
-        background-color: #102524;
-        height: 12px;
-        width: 12px;
-}
-::-webkit-scrollbar-thumb {
-        border-radius: 6px;
-        box-shadow: inset 0 0 12px 12px #3C8A86;
-        border: solid 2px transparent;
-}
-::-webkit-scrollbar-corner {
-        background-color: #102524;
-}
 

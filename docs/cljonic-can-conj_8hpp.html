@@ -15,6 +15,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-extra.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -129,7 +130,6 @@ Functions</h2></td></tr>
 <tr class="memitem:aff01cd8591c08e661bde74c6276e9c40" id="r_aff01cd8591c08e661bde74c6276e9c40"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
 requires concepts::ConjableCollection&lt;C&gt;</td></tr>
 <tr class="memitem:aff01cd8591c08e661bde74c6276e9c40 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#aff01cd8591c08e661bde74c6276e9c40">cljonic::can_conj</a> (const C &amp;collection) noexcept -&gt; bool</td></tr>
-<tr class="memdesc:aff01cd8591c08e661bde74c6276e9c40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether conj can succeed without capacity overflow.  <br /></td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0" id="r_a17088e15137ed905561f4020e75e17b0"><td class="memTemplParams" colspan="2">template&lt;typename C, typename V&gt; <br />
 requires concepts_detail::CanConjValueAdmissible&lt;C, V&gt;</td></tr>
 <tr class="memitem:a17088e15137ed905561f4020e75e17b0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a17088e15137ed905561f4020e75e17b0">cljonic::can_conj</a> (const C &amp;collection, const V &amp;value) noexcept(noexcept(collection.can_conj(value))) -&gt; bool</td></tr>

@@ -15,6 +15,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-extra.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -130,7 +131,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowCollectionElement T, typename Step&gt;<br />
 requires concepts::IterateStep&lt;T, Step&gt;<br />
-class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"></a> <b><a class="el" href="classcljonic_1_1_iterate.html">Iterate</a></b> is an unbounded producer created with <span class="tt">iterate(step, initial)</span>. It stores the initial value and a copy of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted value. For an initial value x and step function f, the observed sequence is <span class="tt">x, (f x), (f (f x)), ...</span>. The step may be a lambda, a named function, or a function object. <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a> observation is bounded by the configured collection maximum or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a> values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a2657ed445a742b6fa503dff183ac3a61" title="Materializes a source (collection or producer) into an explicit bounded destination,...">into</a></span> when explicit materialization is required.</p>
+class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"></a> A <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a> producer is unbounded and created with <span class="tt">iterate(step, initial)</span>. It stores the initial value and a copy of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted value. For an initial value x and step function f, the observed sequence is <span class="tt">x, (f x), (f (f x)), ...</span>. The step may be a lambda, a named function, or a function object. Observation is bounded by the configured collection maximum or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a2657ed445a742b6fa503dff183ac3a61">into</a></span> when explicit materialization is required.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>

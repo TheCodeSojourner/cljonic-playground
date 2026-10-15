@@ -15,6 +15,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-extra.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -151,7 +152,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt;<br />
-class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anchor" id="Vector"></a> <b><a class="el" href="classcljonic_1_1_vector.html">Vector</a></b> is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to operate on the collection is through the library's free-function API. Updates return a modified copy without changing the original collection. Construction with more initializers than the available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the <a class="el" href="classcljonic_1_1_vector.html">Vector</a>; a cljonic collection or producer is not a source &ndash; <b><a class="el" href="classcljonic_1_1_vector.html">Vector</a>{<a class="el" href="classcljonic_1_1_vector.html">Vector</a>{</b>...}} encloses it as a single element. To materialize one, use <b>into</b>; <b>fits_into</b> is the preflight predicate for whether the whole source fits.</p>
+class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anchor" id="Vector"></a> A <a class="el" href="classcljonic_1_1_vector.html">Vector</a> is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to operate on the collection is through the library's free-function API. Updates return a modified copy without changing the original collection. Construction with more initializers than the available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer is not a source and is treated as a single element when nested. To materialize one, use <b>into</b>; <b>fits_into</b> is the preflight predicate for whether the whole source fits.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>

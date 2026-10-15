@@ -15,6 +15,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-extra.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -135,7 +136,7 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowCollectionElement T&gt;<br />
-class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> <b><a class="el" href="classcljonic_1_1_repeat.html">Repeat</a></b> is a producer that owns one value and yields copies of it. <span class="tt">repeat(value)</span> is unbounded, while <span class="tt">repeat(value, count)</span> yields exactly <code class="param">count</code> values. <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a> observation is bounded by the configured collection maximum, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a> values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a2657ed445a742b6fa503dff183ac3a61" title="Materializes a source (collection or producer) into an explicit bounded destination,...">into</a></span> when explicit materialization is required.</p>
+class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a> is a producer that owns one value and yields copies of it. <span class="tt">repeat(value)</span> is unbounded, while <span class="tt">repeat(value, count)</span> yields exactly <code class="param">count</code> values. Observation is bounded by the configured collection maximum, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a2657ed445a742b6fa503dff183ac3a61">into</a></span> when explicit materialization is required.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
