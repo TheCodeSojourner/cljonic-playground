@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-10-08
+last_updated: 2026-10-15
 status: draft
 ---
 
@@ -25,6 +25,34 @@ active slice establishes `Range`, `Repeat`, `Iterate`, unbounded `cycle(source)`
 `Repeatedly`, and
 explicit producer materialization. These terms govern stored collection and
 producer building blocks used across all higher-order algorithms.
+
+### SafeImplicitConversion
+- **Definition:** Argument admission that preserves type identity or admits a standard arithmetic conversion preserving every source value, precision, range, and semantic domain. Cross-type Boolean, character, enum, pointer, and user-defined conversions are not admitted by default. Safety is decided from types, not from a particular literal.
+- **Deprecated Synonyms:** safe coercion
+- **Related:** ValuePreservingConversion, CheckedNormalization, NothrowCollectionElement, NothrowElementConstruction
+- **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
+- **Examples:** `short` to `long long` is permitted; `double` to `int`, `int` to `unsigned int`, and `bool` to `int` are not.
+
+### ValuePreservingConversion
+- **Definition:** A conversion whose destination represents the complete source value domain without loss of range, precision, or floating-point special-value support. Value preservation is necessary but not sufficient for SafeImplicitConversion: the argument's Boolean, character, enum, and nominal domain must also retain its meaning.
+- **Deprecated Synonyms:** lossless coercion
+- **Related:** SafeImplicitConversion, CheckedNormalization
+- **Usage:** Requirements, architecture, specifications, tests, and implementation
+- **Examples:** `float` to `double` is normally value-preserving; `int` to `float` is not when the source has more precision bits.
+
+### CheckedNormalization
+- **Definition:** An explicitly specified API path that validates an admitted argument's value before conversion and uses the operation's documented failure outcome for unrepresentable values. It is not an unchecked implicit conversion.
+- **Deprecated Synonyms:** checked coercion
+- **Related:** SafeImplicitConversion, ValuePreservingConversion, Indexed, DefaultReturningResult
+- **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
+- **Examples:** Vector/String indexes check representability before conversion to `std::size_t`; `character_is_valid` checks representability before conversion to `char`.
+
+### NothrowElementConstruction
+- **Definition:** The argument-construction admission contract requiring both SafeImplicitConversion to the destination type and non-throwing construction from the actual argument expression, including its cv-qualification and reference category. Safe conversion alone does not prove non-throwing construction. This operation-specific gate is distinct from the NothrowCollectionElement storage contract.
+- **Deprecated Synonyms:** non-throwing element construction
+- **Related:** SafeImplicitConversion, NothrowCollectionElement
+- **Usage:** Requirements, architecture, specifications, tests, and implementation
+- **Examples:** Construction of `long long` from a `short` argument satisfies this gate; a potentially throwing same-type copy does not, even though type identity satisfies SafeImplicitConversion.
 
 ### Collection
 - **Definition:** A bounded cljonic value or data structure admitted to the closed nominal collection domain and governed by collection-specific capacity, access, failure, and value-semantic rules.
@@ -215,7 +243,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** stable equality comparable, equality capability
 - **Related:** GeneralEquality, NumericEquality, AggregateLikeStruct
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `stable_equality_comparable<T>` admits a type for equality-dependent operations when `a == b` returns `bool`.
+- **Examples:** `StableEqualityComparable<T>` admits a type for equality-dependent operations when `a == b` returns `bool`.
 
 
 ### TotalOrder
@@ -223,7 +251,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** totally ordered, total ordering capability
 - **Related:** StableEquality, NumericPolicy
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `totally_ordered<T>` is required only by operations whose contract needs a total order.
+- **Examples:** `TotallyOrdered<T>` is required only by operations whose contract needs a total order.
 
 
 ### DiscreteNumericType
@@ -251,7 +279,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Contains
-- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to the applicable lookup or indexed domain without performing a default-returning access. For maps it tests key presence and accepts only the declared lookup type; for sets it tests element presence and accepts only the declared lookup type; for indexed collections (`Vector`/`String`) it tests whether an integral index is in range. `Range::contains` is a separate member predicate for bounded-observation availability and is not provided by the free function.
+- **Definition:** The canonical boolean free function modeled on Clojure's `contains?`; it tests whether its argument belongs to the applicable lookup or indexed domain without performing a default-returning access. For maps it tests key presence; for sets it tests element presence. Map and Set arguments must satisfy SafeImplicitConversion to the declared lookup type together with the operation-specific domain constraints. For indexed collections (`Vector`/`String`), it tests whether a non-boolean, non-character integral index is in range, using CheckedNormalization rather than unchecked conversion. `Range::contains` is a separate member predicate for bounded-observation availability and is not provided by the free function.
 - **Deprecated Synonyms:** `contains?`, contains predicate, key-presence check
 - **Related:** FreeFunction, Indexed, Lookup, PreflightPredicate, VerbPredicate, IndexedProducer, Range
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -371,11 +399,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Repeat
-- **Definition:** A Producer that owns one value and yields copies of that value. `repeat(value)` is unbounded; `repeat(value, count)` is finite and yields exactly `count` copies, including an empty result for zero. Finite Repeat returns its exact count and `true` from `is_finite()`; unbounded Repeat returns the configured traversal cap and `false`. `Repeat` is not `Indexed`, is not invocable (`IFn`), and exposes no `contains`, positional retrieval, key-based lookup, or `get`. Its finite result count governs complete append preflight; its unbounded form has no complete-result fit.
+- **Definition:** A Producer that owns one value and yields copies of that value. `repeat(value)` is unbounded; `repeat(value, count)` is finite and yields exactly `count` copies, including an empty result for zero. A finite count must have an unsigned integral type other than Boolean or character types, with its entire type range representable by `std::size_t`; signed, floating-point, and user-defined count types are rejected without wrapping or truncation (`REQ-CONV-002E`). Finite Repeat returns its exact count and `true` from `is_finite()`; unbounded Repeat returns the configured traversal cap and `false`. `Repeat` is not `Indexed`, is not invocable (`IFn`), and exposes no `contains`, positional retrieval, key-based lookup, or `get`. Its finite result count governs complete append preflight; its unbounded form has no complete-result fit.
 - **Deprecated Synonyms:** repeat producer, repeated-value producer
 - **Related:** Producer, UnboundedProducer, ProducerMaterialization, PreflightPredicate, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `repeat(7, 3)` produces `7, 7, 7`; `repeat(7, 0)` produces no values; `repeat(7)` produces destination-bounded copies only through `into`.
+- **Examples:** `repeat(7, std::size_t{3})` produces `7, 7, 7`; `repeat(7, std::size_t{0})` produces no values; `repeat(7)` supports capped const traversal, while `into(destination, repeat(7))` materializes copies up to the destination's remaining capacity.
 
 
 ### Cycle
@@ -399,23 +427,23 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** structural equality, semantic equality
 - **Related:** StableEquality, NumericEquality, FiniteDeepEquality, ProducerParameterEquality, SequentialEquality, Equal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** General equality compares supported collection content according to its documented logical semantics and compares producer values by their stored parameters under ProducerParameterEquality. The named free function `equal` implements general equality over the supported stable-equality domain: it compares scalar operands with `==`, applies the SequentialEquality family rules across cljonic collections and producers, and rejects floating-point operands at compile time at any depth.
+- **Examples:** The named free function `equal` compares supported collection content according to its documented family semantics. For admitted sequential operands, it compares bounded logical observations: the same observed count and elements in the same order, without claiming equality beyond the observation bound. It compares admitted scalar operands with `==` and rejects floating-point operands at compile time at any depth. Native producer `==` and `parameters_equal` instead use ProducerParameterEquality over stored parameters without traversing produced elements. This distinction does not broaden operand admission or imply automatic traversal of every nested producer.
 
 
 ### SequentialEquality
-- **Definition:** The equality family rule under which Vector, Queue, Cycle, Iterate, Range, Repeat, and Repeatedly are mutually comparable by their produced sequence: two sequential values are equal exactly when they produce the same elements in the same order, compared with identical element types, regardless of their concrete types. Comparison is order-sensitive, element-wise, lazy (no eager producer materialization), terminates at the first differing element pair, and compares each operand's configured observable traversal cap when both operands are unbounded so every call terminates.
+- **Definition:** The equality family rule under which Vector, Queue, Cycle, Iterate, Range, Repeat, and Repeatedly are mutually comparable by bounded logical observation: two sequential values are equal exactly when their observed counts are equal and their observed elements compare equal in the same order, with identical element types, regardless of their concrete types. Comparison is order-sensitive, element-wise, lazy (no eager producer materialization), and terminates at the first differing element pair or exhaustion of the shorter logical observation. Each unbounded producer operand uses its configured observable traversal cap, whether the other operand is finite or unbounded; equality makes no claim beyond the observed bounds.
 - **Deprecated Synonyms:** sequence equality family, cross-type sequential comparison
 - **Related:** Equal, GeneralEquality, FiniteDeepEquality, ProducerParameterEquality, FiniteObservation, StableEqualityComparable
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `equal(Vector<int, 4>{1, 2, 3}, Range<int>{0, 3, 1})` is true because both produce `1, 2, 3`; `equal(Vector<int, 3>{1, 1, 1}, repeat(1, 3U))` is true; `equal(cycle(Vector<int, 2>{1, 2}), Vector<int, 4>{1, 2, 3})` is false after the third element without materializing the Cycle; `equal(repeat(1), repeat(1))` is true by bounded-prefix comparison. Map, Set, and String are never members of the sequential family.
+- **Examples:** `equal(Vector<int, 4>{1, 2, 3}, Range<int>{1, 4, 1})` is true because both produce `1, 2, 3`; `equal(Vector<int, 3>{1, 1, 1}, repeat(1, 3U))` is true; `equal(cycle(Vector<int, 2>{1, 2}), Vector<int, 4>{1, 2, 3})` is false after the third element without materializing the Cycle; `equal(repeat(1), repeat(1))` is true by bounded-prefix comparison. Map, Set, and String are never members of the sequential family.
 
 
 ### Equal
-- **Definition:** The canonical named general-equality free function mapped conceptually to Clojure's `=`. It implements GeneralEquality over the supported stable-equality domain in the three arities of Clojure's `=`: a unary form that returns true for a single domain-admitted operand, a binary form that compares a pair, and a variadic form that holds exactly when every adjacent operand pair compares equal by the same family rules, evaluated left to right and short-circuited at the first unequal pair, with every adjacent pair and the unary operand individually compile-time gated. Non-collection, non-producer values compare via `==` over the closed value domain of arithmetic scalars, scoped enumerations, aggregate-like structs with a non-throwing `operator==`, and `cljonic::Variant` composites; unscoped enumerations and pointer types are rejected; floating-point values are rejected at compile time at any depth, including nested inside any operand in any arity; the comparison is non-throwing at any depth so the `noexcept` guarantee cannot be violated; standard-library range and container types are rejected at any depth because `equal` is not the C++ interoperability surface, and `std::variant` is rejected because it is not a supported cljonic value type; cljonic collections and producers compare by their equality family, with the SequentialEquality family mutually comparable by produced sequence and Map, Set, and String comparable only to their own kind; incompatible-family and mixed cljonic-to-non-cljonic pairs fail at compile time. Comparison is recursive over nested values, lazy and element-wise for sequential operands, terminates at the first differing element pair, and compares configured observable traversal caps when both operands are unbounded so every call terminates.
+- **Definition:** The canonical named general-equality free function mapped conceptually to Clojure's `=`. It implements GeneralEquality over the supported stable-equality domain in the three arities of Clojure's `=`: a unary form that returns true for a single domain-admitted operand, a binary form that compares a pair, and a variadic form that holds exactly when every adjacent operand pair compares equal by the same family rules, evaluated left to right and short-circuited at the first unequal pair, with every adjacent pair and the unary operand individually compile-time gated. Non-collection, non-producer values compare via `==` over the closed value domain of arithmetic scalars, scoped enumerations, aggregate-like structs with a non-throwing `operator==`, and `cljonic::Variant` composites; unscoped enumerations and pointer types are rejected; floating-point values are rejected at compile time at any depth, including nested inside any operand in any arity; the comparison is non-throwing at any depth so the `noexcept` guarantee cannot be violated; standard-library range and container types are rejected at any depth because `equal` is not the C++ interoperability surface, and `std::variant` is rejected because it is not a supported cljonic value type; cljonic collections and producers compare by their equality family, with the SequentialEquality family mutually comparable by bounded logical observation and Map, Set, and String comparable only to their own kind; incompatible-family and mixed cljonic-to-non-cljonic pairs fail at compile time. Comparison is recursive over nested values and lazy and element-wise for sequential operands. Sequential equality requires equal observed counts and ordered observed elements, and terminates at the first differing element pair or exhaustion of the shorter logical observation. Each unbounded producer operand uses its configured observable traversal cap, whether the other operand is finite or unbounded; equality makes no claim beyond the observed bounds. This does not introduce automatic traversal of nested producers or replace their specified parameter equality.
 - **Deprecated Synonyms:** `=`, general equality function, Clojure equals
 - **Related:** GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, NothrowEqualityComparable, ProducerParameterEquality, FiniteDeepEquality, AlternativeStrictEquality, CompileTimeFailure
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `equal(1, 1)` is true by scalar comparison; `equal(1)` is true as the unary arity; `equal(1, 1, 1)` is true as the variadic arity over adjacent pairs; `equal(1, 2, 1)` is false at the second adjacent pair; `equal(Vector<int, 3>{1, 2, 3}, Range<int>{0, 3, 1})` is true by sequential equality; `equal(map, map)` compares key/value mappings without entry order; `equal(1.0, 1.0)` and `equal(Vector<float, 2>{}, Vector<float, 2>{})` fail at compile time under the floating-point rule; `equal(Vector<int, 2>{1}, 1)` fails at compile time because a collection is never equal to a scalar; `equal(1, Vector<int, 2>{1}, 2)` fails at compile time because every adjacent pair in the variadic form is gated. Producer `==` and `parameters_equal` remain producer parameter equality and are distinct from `equal`, which may compare produced sequences at the top level.
+- **Examples:** `equal(1, 1)` is true by scalar comparison; `equal(1)` is true as the unary arity; `equal(1, 1, 1)` is true as the variadic arity over adjacent pairs; `equal(1, 2, 1)` is false at the first adjacent pair; `equal(Vector<int, 3>{1, 2, 3}, Range<int>{1, 4, 1})` is true by sequential equality; `equal(map, map)` compares key/value mappings without entry order; `equal(1.0, 1.0)` and `equal(Vector<float, 2>{}, Vector<float, 2>{})` fail at compile time under the floating-point rule; `equal(Vector<int, 2>{1}, 1)` fails at compile time because a collection is never equal to a scalar; `equal(1, Vector<int, 2>{1}, 2)` fails at compile time because every adjacent pair in the variadic form is gated. Producer `==` and `parameters_equal` remain producer parameter equality and are distinct from `equal`, which may compare produced sequences at the top level.
 
 
 ### NotEqual
@@ -423,7 +451,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** `not=`, inequality function, Clojure not-equals
 - **Related:** Equal, GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, NothrowEqualityComparable, CompileTimeFailure
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `not_equal(1, 2)` is true; `not_equal(1, 1)` is false; `not_equal(1)` is false as the unary arity; `not_equal(1, 2, 1)` is true at the first unequal adjacent pair; `not_equal(Vector<int, 4>{1, 2, 3}, Range<int>{0, 3, 1})` is false by sequential equality; `not_equal(1.0, 1.0)` fails at compile time under the floating-point rule.
+- **Examples:** `not_equal(1, 2)` is true; `not_equal(1, 1)` is false; `not_equal(1)` is false as the unary arity; `not_equal(1, 2, 1)` is true at the first unequal adjacent pair; `not_equal(Vector<int, 4>{1, 2, 3}, Range<int>{0, 3, 1})` is true because the first element pair differs; `not_equal(1.0, 1.0)` fails at compile time under the floating-point rule.
 
 
 ### NumericEquality
@@ -483,35 +511,42 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### KeywordEnumNameEntry
-- **Definition:** A bounded mapping entry associating a supported keyword name with an application-defined scoped enumeration value.
+- **Definition:** A bounded debug-formatting entry associating an application-defined scoped enumeration value with a bounded ASCII display name.
 - **Deprecated Synonyms:** keyword enum entry, enum-name entry
 - **Related:** KeywordEnumNameMap, MapEntry, OwningValue
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** An entry can associate a keyword such as `:pending` with a scoped enumeration value.
+- **Examples:** An entry can associate `Status::pending` with the display name `pending`, emitted as `:pending` during debug formatting.
 
 
 ### KeywordEnumNameMap
-- **Definition:** A bounded map of keyword names to application-defined scoped enumeration values under the supported associative and capacity rules.
+- **Definition:** A bounded debug-formatting mapping for one application-defined scoped enumeration type, containing a bounded collection of KeywordEnumNameEntry values and a bounded ASCII display name for the enum type.
 - **Deprecated Synonyms:** keyword-to-enum map, enum name map
 - **Related:** KeywordEnumNameEntry, KeywordEnumNameContext, Map, Lookup
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A keyword enum name map provides bounded lookup and documented missing-key behavior.
+- **Examples:** `KeywordEnumNameMap<Status, 3, 16>` supplies bounded display names for selected Status values and the enum type; `make_keyword_enum_name_map` provides a convenience construction path.
 
 
 ### KeywordEnumNameContext
-- **Definition:** The explicit context required to interpret, validate, or map keyword names to scoped enumeration values without hidden global state.
+- **Definition:** An explicit debug-formatting context that bundles zero or more KeywordEnumNameMap values for reuse with `fits_print` and `print_to`, without dynamic storage, type erasure, or hidden global state.
 - **Deprecated Synonyms:** enum-name mapping context, keyword mapping context
 - **Related:** KeywordEnumNameEntry, KeywordEnumNameMap, KeywordEnumNameMapping, NoHiddenGlobalInitialization
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A caller supplies the mapping context rather than relying on a library-managed global registry.
+- **Examples:** A caller supplies a context containing enum display-name maps to `fits_print` and `print_to` rather than relying on a library-managed global registry.
 
 
 ### KeywordEnumNameMapping
-- **Definition:** The bounded, explicit operation that maps supported keyword names and scoped enumeration values according to a `KeywordEnumNameContext`.
+- **Definition:** Bounded enum-to-display-name selection for debug formatting using explicitly supplied KeywordEnumNameMap values or a KeywordEnumNameContext. A mapped value is emitted with a leading `:`; an unmapped value uses `EnumTypeName(value)` or its underlying numeric value. Without a supplied mapping, enum values use their underlying numeric representation. This is not keyword parsing.
 - **Deprecated Synonyms:** keyword enum mapping, enum-name mapping
 - **Related:** KeywordEnumNameEntry, KeywordEnumNameMap, KeywordEnumNameContext, Parsing
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** Mapping reports invalid, missing, or duplicate names through its documented non-throwing policy.
+- **Examples:** A mapped `Status::pending` formats as `:pending`; an unmapped value formats as `Status(7)` or `7` under the documented fallback policy.
+
+### Atom
+- **Definition:** A bounded single-threaded `Atom<T>` providing an explicit mutable reference to one cljonic value in automatic or static storage. Its binding contract defines `deref` to read the current value, `reset` to replace it with a value assignable to `T`, and `swap` to invoke an update function synchronously exactly once and store its result assignable to `T`, without retry or compare-and-set semantics. Atom mutation is an explicitly authorized effect under `REQ-VAL-009`, not ordinary collection mutation or hidden library state; the stored value retains its ordinary value semantics. Atom provides no thread-safety or concurrent-mutation guarantee. Requirements approval alone does not establish implementation readiness.
+- **Deprecated Synonyms:** explicit state reference
+- **Related:** SingleThreadedExecutionModel, NoHiddenGlobalInitialization
+- **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
+- **Examples:** Under the required contract, `reset(atom, replacement)` explicitly changes the referenced value, while `swap(atom, update)` evaluates the update exactly once rather than retrying it.
 
 ### CopyableElement
 - **Definition:** A user-defined type admissible to a cljonic storage boundary when it is default-initializable and copyable, without requiring the copy operations to be non-throwing. This is the broader storage-admission gate that underpins the stricter non-throwing form used by bounded collections.
@@ -524,7 +559,7 @@ producer building blocks used across all higher-order algorithms.
 ### NothrowCollectionElement
 - **Definition:** A user-defined type admissible for storage in a cljonic collection because its default construction, copy construction, copy assignment, and destruction are all non-throwing. This storage-admission capability is independent of equality, ordering, hashing, parsing, traversal, and other operation-specific capabilities.
 - **Deprecated Synonyms:** nothrow collection element, non-throwing collection element
-- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct, CopyableElement, NothrowStableEqualityComparable
+- **Related:** CopyOnModifyCollection, NoExceptionConstraint, StaticInspectableStorage, AggregateLikeStruct, CopyableElement, NothrowStableEqualityComparable, NothrowElementConstruction
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A `Vector<T, N>`, `Set<T, N>`, or `Queue<T, N>` element, and a `Map<K, V, N>` key or value, must satisfy `NothrowCollectionElement` before storage admission.
 
@@ -550,11 +585,11 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** default element, collection default element
 - **Related:** SentinelBasedAccess, ProbeFirstAccess, CopyOnModifyCollection
 - **Usage:** Architecture, specification, implementation, tests, documentation, and user guidance
-- **Examples:** `get(xs, 99)` returns the collection's `DefaultElement` when index `99` is invalid, and `first(xs)` returns the `DefaultElement` when `xs` is empty.
+- **Examples:** `get(xs, 99)` returns the collection's `DefaultElement` when index `99` is invalid; under the deferred traversal contract, future `first(xs)` returns the `DefaultElement` when `xs` is empty.
 
 
 ### ProbeFirstAccess
-- **Definition:** The required calling discipline for ambiguous domains: first ask a presence or index-validity question, then perform sentinel-based access only when the probe succeeds.
+- **Definition:** The calling discipline used when a caller needs to distinguish absence or invalidity from a valid default-valued element: first ask a presence or index-validity question, then use the successful probe to establish that access returns a valid element. Callers may use documented default-returning access directly when that distinction is unnecessary.
 - **Deprecated Synonyms:** Probe-First Access, guard-before-get, presence check
 - **Related:** SentinelBasedAccess, DefaultElement, CopyOnModifyCollection
 - **Usage:** Specification and implementation
@@ -596,10 +631,17 @@ producer building blocks used across all higher-order algorithms.
 ### String
 - **Definition:** The cljonic fixed-capacity array-backed collection type with ordered ASCII byte storage (range `0x01`–`0x7F`) and an uncounted null terminator immediately following its content.
 - **Deprecated Synonyms:** bounded string, fixed-capacity string, cljonic string
-- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, Indexed, CallableLookup, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, Indexed, CallableLookup, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor, Regex
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length. A fixed-extent `std::span<const char, N>` can use `String{span}` to deduce `String<N>`, while a dynamic-extent span uses an explicit destination capacity and bounded-prefix construction. `s(2)` and `get(s, 2)` return the byte at content index two; invalid indices return `char{}` or a supplied fallback, while `contains(s, index)` distinguishes valid content indices from the terminator and out-of-range indices.
 
+
+### Regex
+- **Definition:** The root-namespace `cljonic::Regex<N>` bounded pattern value, whose capacity `N` measures pattern bytes excluding the terminator. Literal construction parses and validates the pattern during constant evaluation and may infer capacity from the literal's content length. Runtime `cljonic::core::re_pattern` construction from `String<N>` returns a tagged checked result: success contains a `Regex<N>` with the input string's capacity; an invalid pattern produces the failure state, not a sentinel Regex claiming validity. Regex and its required companion values `RegexMatcher`, `RegexMatch`, and `RegexGroup` are self-contained, immutable, bounded root-namespace values without allocation or exceptions. This records the required domain contract, not implementation readiness or additional matcher/group APIs.
+- **Deprecated Synonyms:** bounded regex value
+- **Related:** String, OwningValue, CheckedFailureResult
+- **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
+- **Examples:** The required literal form `cljonic::Regex{"^[A-Z]+$"}` validates at compile time; invalid runtime pattern construction returns the documented checked failure state.
 
 ### SwapAndRemove
 - **Definition:** An $O(1)$ removal strategy for unsorted collections (`Map` and `Set`) where the target element or key-value entry is overwritten by the last active stored element before decrementing the count.
@@ -658,7 +700,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Disj
-- **Definition:** The primitive set free function that returns a new `Set` after removing zero or more specified elements via left-to-right swap-and-remove. Each value must exactly match the Set's declared element type; absent or repeated values are no-ops after any prior removal, and no values returns an unchanged copy.
+- **Definition:** The primitive set free function that returns a new `Set` after removing zero or more specified elements via left-to-right swap-and-remove. Each value must satisfy SafeImplicitConversion to the Set's declared element type together with the operation-specific domain constraints; absent or repeated values are no-ops after any prior removal, and no values returns an unchanged copy.
 - **Deprecated Synonyms:** disjoin, set remove, erase element
 - **Related:** Set, Conj, SwapAndRemove, CopyOnModifyCollection, RejectionDiagnostic
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -676,10 +718,24 @@ producer building blocks used across all higher-order algorithms.
 ### IsEmpty
 - **Definition:** The non-throwing, non-allocating free-function predicate that returns `true` exactly when the `count(value)` observation is zero. It accepts `SequenceableCollection` and `SequenceableProducer` values and is not a member operation. For an unbounded producer, the count is the configured observation cap, not complete cardinality.
 - **Deprecated Synonyms:** empty predicate, emptiness check
-- **Related:** Collection, SequenceableCollection, SequenceableProducer, Count, FreeFunction, StatePredicate, SemanticPredicateName, RejectionDiagnostic
+- **Related:** Collection, SequenceableCollection, SequenceableProducer, Count, FreeFunction, StatePredicate, SemanticPredicateName, RejectionDiagnostic, Empty, NotEmpty
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `is_empty(Vector<int, 4>{})` is true; `is_empty(Vector<int, 4>{1})` is false; `is_empty(Range<int>{0, 3})` is false; a zero-step unbounded range has a nonzero observation count and is therefore not empty.
 
+
+### Empty
+- **Definition:** The deferred `empty` operation whose required result is an empty owning value of the same supported collection type as its input, preserving capacity when present. It preserves the input and requires no allocation or exceptions. It is not the IsEmpty boolean predicate; this entry records future behavior, not current API support.
+- **Deprecated Synonyms:** empty owning-value operation
+- **Related:** IsEmpty, NotEmpty
+- **Usage:** Requirements, future specifications, tests, implementation, and documentation
+- **Examples:** Under the deferred contract, `empty(Vector<int, 4>{1, 2})` returns an empty `Vector<int, 4>` while leaving its input unchanged.
+
+### NotEmpty
+- **Definition:** The deferred `not_empty` operation whose required result is an independent owning copy of a nonempty input or the corresponding empty owning value when the input is empty, preserving the supported collection type and capacity when present. It preserves the input and requires no allocation or exceptions. It is not a boolean alias for IsEmpty; this entry records future behavior, not current API support.
+- **Deprecated Synonyms:** nonempty owning-value operation
+- **Related:** IsEmpty, Empty
+- **Usage:** Requirements, future specifications, tests, implementation, and documentation
+- **Examples:** Under the deferred contract, `not_empty(Vector<int, 4>{1, 2})` returns an independent `Vector<int, 4>` containing `1, 2`; an empty input returns an empty `Vector<int, 4>`.
 
 ### Peek
 - **Definition:** The primitive sequential free function that observes the first or accessible element without removal (`Vector` top/last, `Queue` front) returning `DefaultElement` if empty.
@@ -698,11 +754,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Seq
-- **Definition:** The primitive traversal free function that converts a supported `Seqable` collection, explicitly approved sequenceable value such as `MapEntry`, or approved `Producer` into an owning, value-semantic bounded `Vector` of its logical traversal elements, using the applicable `ConstRangeTraversal`, `ProducerIteration`, element representation, and capacity policy. Seq does not imply support for arbitrary external ranges, iterables, arrays, or containers.
+- **Definition:** The deferred primitive traversal free function whose future collection contract converts a `Seqable` collection, or an explicitly approved sequenceable value such as `MapEntry`, into an owning, value-semantic bounded `Vector` of its logical traversal elements under the applicable element representation and capacity policy. This records future behavior, not current API support. Producer status and active const traversal alone do not approve a producer `seq` API. Seq does not imply support for arbitrary external ranges, iterables, arrays, or containers.
 - **Deprecated Synonyms:** sequence conversion, to-seq, seq conversion
 - **Related:** Seqable, ConstRangeTraversal, ProducerIteration, BoundedResult, Vector, MapEntry, Traversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `seq(m)` returns an owning `Vector<MapEntry<K, V>, N>` of map entries.
+- **Examples:** Under the deferred collection traversal contract, future `seq(m)` returns an owning `Vector<MapEntry<K, V>, N>` of map entries.
 
 
 ### CanConj
@@ -734,30 +790,30 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** iterated sequence
 - **Related:** Producer, CljonicSource, UnboundedProducer, ProducerMaterialization, PreflightPredicate, CollectionMaximumElementCount, OwningValue
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `iterate([](int value) { return value + 1; }, 0)` produces the unbounded sequence `0, 1, 2, 3, ...`, observed only through its configured traversal cap or an explicit destination.
+- **Examples:** `iterate([](int value) noexcept { return value < std::numeric_limits<int>::max() ? value + 1 : value; }, 0)` produces an unbounded sequence starting `0, 1, 2, 3, ...` and repeating the maximum `int` once reached, observed only through its configured traversal cap or an explicit destination.
 
 
 ### Repeatedly
-- **Definition:** A `Producer` and `CljonicSource` whose element type satisfies `NothrowCollectionElement`, owning a non-allocating, copy-constructible zero-argument step callback that produces a fresh element for every produced value; the step MAY maintain state or produce side effects, mirroring Clojure's `repeatedly`, but MUST NOT throw or allocate when invoked. `repeatedly(step)` is unbounded; `repeatedly(count, step)` produces exactly `count` elements, including an empty result when the count is zero, with the count placed before the step as in Clojure's `(repeatedly n f)` form. Named functions, lambdas, and function objects are accepted; the factory stores the decayed callable value, including a copyable function pointer for a named function. The step may be moved from an rvalue during construction when supported, but the resulting producer remains copyable. The callback is not evaluated during construction and is invoked exactly once per produced element during each materialization. The uncounted form uses `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` as its observable traversal cap rather than claiming a finite complete result, may be consumed directly by source-taking free functions, and converts to an owning destination through `into`; the counted form uses its runtime count for materialization. Construction and traversal are constexpr-capable when the supplied arguments are and remain usable at runtime. It is not `Indexed`, is not invocable (`IFn`), and exposes no `contains`, positional retrieval, key-based lookup, or `get`.
+- **Definition:** A `Producer` and `CljonicSource` whose element type satisfies `NothrowCollectionElement`, owning a non-allocating, copy-constructible zero-argument step callback that produces a fresh element for every produced value; the step MAY maintain state or produce side effects, mirroring Clojure's `repeatedly`, but MUST NOT throw or allocate when invoked. `repeatedly(step)` is unbounded; `repeatedly(count, step)` produces exactly `count` elements, including an empty result when the count is zero, with the count placed before the step as in Clojure's `(repeatedly n f)` form. A finite count must have an unsigned integral type other than Boolean or character types, with its entire type range representable by `std::size_t`; signed, floating-point, and user-defined count types are rejected without wrapping or truncation (`REQ-CONV-002E`). Named functions, lambdas, and function objects are accepted; the factory stores the decayed callable value, including a copyable function pointer for a named function. The step may be moved from an rvalue during construction when supported, but the resulting producer remains copyable. The callback is not evaluated during construction and is invoked exactly once per produced element during each materialization. The uncounted form uses `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` as its observable traversal cap rather than claiming a finite complete result, may be consumed directly by source-taking free functions, and converts to an owning destination through `into`; the counted form uses its runtime count for materialization. Construction and traversal are constexpr-capable when the supplied arguments are and remain usable at runtime. It is not `Indexed`, is not invocable (`IFn`), and exposes no `contains`, positional retrieval, key-based lookup, or `get`.
 - **Deprecated Synonyms:** repeatedly sequence
 - **Related:** Producer, CljonicSource, UnboundedProducer, ProducerMaterialization, PreflightPredicate, CollectionMaximumElementCount, OwningValue, Repeat
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `repeatedly(3U, []() { return 7; })` produces the finite sequence `7, 7, 7`; the uncounted `repeatedly([]() { return 7; })` is unbounded, observed only through its configured traversal cap or an explicit destination.
+- **Examples:** `repeatedly(3U, []() noexcept { return 7; })` produces the finite sequence `7, 7, 7`; the uncounted `repeatedly([]() noexcept { return 7; })` is unbounded, observed only through its configured traversal cap or an explicit destination.
 
 
 ### DeterministicOverflowPolicy
-- **Definition:** The explicit, profile-defined rule for numeric overflow behavior, chosen so that overflow outcomes are stable, documented, and never hidden behind undefined or silently heap-backed behavior.
+- **Definition:** The numeric overflow contract requiring checked fixed-width arithmetic by default, rejection of compile-time-known arithmetic overflow during constant evaluation, and a runtime preflight whose failure yields the documented default without changing inputs. Wrapping and saturating alternatives, when provided, use separately named operations and never replace the default implicitly. Outcomes remain stable, documented, non-allocating, and free of undefined behavior.
 - **Deprecated Synonyms:** overflow policy, deterministic overflow behavior
 - **Related:** DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** A profile may choose compile-time rejection for provable overflow cases, or a clearly documented runtime overflow rule such as wraparound or unchanged-result semantics where appropriate.
+- **Examples:** When an arithmetic preflight such as `can_add` returns false, the corresponding default operation returns its documented default and leaves inputs unchanged; wrapping or saturation requires a separately named alternative.
 
 ## Result and Lifecycle Vocabulary
 
 ### OwningValue
 - **Definition:** A self-contained cljonic value whose validity does not depend on another value, temporary, external storage, hidden borrowed state, or hidden result cache.
 - **Deprecated Synonyms:** owning value, self-contained value
-- **Related:** NonOwningView, CopyOnModifyCollection, PersistentValueSemantics
+- **Related:** NonOwningView, CopyOnModifyCollection, PersistentValueSemantics, Regex
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** Collection values, string values, regex values, map-entry values, and producer parameters are owning values.
 
@@ -805,7 +861,7 @@ producer building blocks used across all higher-order algorithms.
 ### CheckedFailureResult
 - **Definition:** A documented non-throwing, non-allocating failure outcome indicating an operation could not complete successfully under the library's failure model.
 - **Deprecated Synonyms:** checked failure, explicit failure result
-- **Related:** DefaultReturningResult, DeterministicBehavior, NoExceptionConstraint
+- **Related:** DefaultReturningResult, DeterministicBehavior, NoExceptionConstraint, Regex
 - **Usage:** Requirements, specification, implementation, tests, and documentation
 - **Examples:** A checked numeric conversion may return a checked-failure result when representability requirements are not met.
 
@@ -887,7 +943,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** producer iteration, producer traversal
 - **Related:** ProducerMaterialization, UnboundedProducer
 - **Usage:** Architecture, specification, and documentation
-- **Examples:** Free-function observation such as `first`, `next`, and `rest` performs ProducerIteration without necessarily invoking ProducerMaterialization.
+- **Examples:** Ordinary const `begin()`/`end()` observation visits a producer's elements within its count bound without invoking ProducerMaterialization; `into` separately copies produced elements into an owning destination.
 
 
 ### RelationModel
@@ -895,7 +951,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** relational model, map/set relation contract
 - **Related:** LifecycleClassification, DeferredStatus
 - **Usage:** Requirements, architecture, specification, tests, and documentation
-- **Examples:** `index`, `project`, `rename`, and `join` remain deferred until a relation model is approved.
+- **Examples:** `REQ-FN-024` and `REQ-FN-030` approve the relation model governing `index`, `project`, `rename`, and `join`; requirements approval alone does not establish implementation readiness.
 
 
 ### StatePredicate
@@ -938,7 +994,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** no exceptions, non-throwing rule
 - **Related:** EmbeddedConstraint, SentinelBasedAccess, DeterministicBehavior
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** Missing access returns sentinel values instead of throwing, and contract failures route through explicit policy hooks.
+- **Examples:** Missing access returns documented default values instead of throwing; unsuccessful operations use their documented preflight/default/bounded-result or checked-result mechanism, or compile-time rejection when applicable, without process termination.
 
 
 ### NoMutationConstraint
@@ -962,7 +1018,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** deterministic semantics, deterministic execution
 - **Related:** EmbeddedConstraint, NoHeapConstraint, NoExceptionConstraint, ReferentialTransparency
 - **Usage:** Architecture, specification, tests, and documentation
-- **Examples:** Full-capacity `conj` returns the unchanged value deterministically, and invalid runtime regex compilation returns a stable invalid-pattern sentinel.
+- **Examples:** Full-capacity `conj` returns the unchanged value deterministically, and invalid runtime regex construction returns the documented tagged checked-failure result.
 
 
 ### HeaderOnlyDistribution
@@ -1233,7 +1289,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### ConjableCollection
-- **Definition:** The C++ concept identifier implementing the `Conjable` CapabilityConcept, requiring a `conj` insertion operation and its matching `can_conj` preflight predicate that return a new collection value and preserve the source.
+- **Definition:** The C++ concept identifier implementing the `Conjable` CapabilityConcept, requiring a `conj` insertion operation that returns a new collection value and a matching `can_conj` preflight predicate that returns a boolean indicating whether insertion can succeed under the collection's admission, capacity, and value policies. Both operations preserve the source.
 - **Deprecated Synonyms:** conjable_cljonic_collection, conjable collection concept
 - **Related:** CapabilityConcept, Conjable, Conj, CanConj, SequenceableCollection, CljonicCollection, Vector, Set, Map, Queue, String
 - **Usage:** Architecture, specification, implementation, tests, and documentation
@@ -1241,7 +1297,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### SequenceableProducer
-- **Definition:** The C++ concept identifier implementing the producer-domain baseline CapabilityConcept, requiring non-throwing `count()` effective-size observation on an admitted producer. `count()` for a producer is a conservative maximum (saturated at `CollectionMaximumElementCount` for an unbounded or oversized form), distinct from Clojure's `Counted` interface, which implies an exact O(1) size. SequenceableProducer does not imply `IndexedProducer`, `LookupCollection`, or any positional access; free-function observation remains the canonical producer access path for producers that are not `IndexedProducer`.
+- **Definition:** The C++ concept identifier implementing the producer-domain baseline CapabilityConcept, requiring non-throwing `count()` observation on an admitted producer. Finite forms return their exact runtime result count under the producer's documented bounded-result policy. Unbounded forms return the configured observable traversal cap, `CollectionMaximumElementCount`, not their complete cardinality. This capability does not by itself promise Clojure's `Counted` interface or an exact O(1) complete size for every producer. SequenceableProducer does not imply `IndexedProducer`, `LookupCollection`, or any positional access; free-function observation remains the canonical producer access path for producers that are not `IndexedProducer`.
 - **Deprecated Synonyms:** sequenceable_cljonic_producer, sequenceable producer concept
 - **Related:** CapabilityConcept, CljonicProducer, CljonicRange, IndexedProducer, SequenceableCollection
 - **Usage:** Architecture, specification, implementation, tests, and documentation
@@ -1273,11 +1329,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Variant
-- **Definition:** The cljonic nominal composite value type `cljonic::Variant<Alternatives...>` holding exactly one alternative at a time. Every alternative satisfies the NothrowCollectionElement storage contract, so a Variant is admissible as a map value, a vector element, and a queue element; floating-point and callable alternatives are admissible for storage but not for equality. A Variant provides alternative-strict value equality through `==` and `equal` exactly when every alternative satisfies NothrowStableEqualityComparable and compares without throwing; otherwise it provides no `==` and fails at compile time in any equality position, mirroring a storable-but-not-comparable element such as `Vector<float, N>`. A Variant has no valueless state and no throwing access path, and its supported operations are `constexpr`, `noexcept`, non-allocating, and RTTI-free. Its free-function API — `index`, `holds`, `get`, `get_if`, `emplace`, `swap`, `visit`, plus `variant_size` and `variant_alternative` — is deferred; when implemented, it is intended to mirror backing member methods. Ordering operators are provided exactly when every alternative satisfies TotallyOrdered. `std::variant` is not a cljonic value type: it is rejected as a cljonic value or equality operand, and `cljonic::Variant` is used instead.
+- **Definition:** The cljonic nominal composite value type `cljonic::Variant<Alternatives...>` holding exactly one alternative at a time. Every alternative satisfies the NothrowCollectionElement storage contract, so a Variant is admissible as a map value, a vector element, and a queue element; floating-point and callable alternatives are admissible for storage but not for equality. A Variant provides alternative-strict value equality through `==` and `equal` exactly when every alternative satisfies NothrowStableEqualityComparable and compares without throwing; otherwise it provides no `==` and fails at compile time in any equality position, mirroring a storable-but-not-comparable element such as `Vector<float, N>`. A Variant has no valueless state and no throwing access path, and its supported operations are `constexpr`, `noexcept`, non-allocating, and RTTI-free. Its free-function API — `index`, `holds`, `get`, `get_if`, `emplace`, `swap`, `visit`, plus `variant_size` and `variant_alternative` — is requirements-backed by `REQ-CAP-012` and mirrors backing member methods; this status alone does not establish implementation readiness. Ordering operators are provided exactly when every alternative satisfies TotallyOrdered. `std::variant` is not a cljonic value type: it is rejected as a cljonic value or equality operand, and `cljonic::Variant` is used instead.
 - **Deprecated Synonyms:** cljonic variant, constrained variant, nothrow variant, constrained composite
 - **Related:** AlternativeStrictEquality, NothrowStableEqualityComparable, StableEqualityComparable, TotallyOrdered, MapEntry, Map, Set, Vector, ProducerParameterEquality
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `cljonic::Variant<int, long>` is storable and comparable; `cljonic::Variant<int, double>` is storable but not comparable; `cljonic::Variant<int, long>{5}` (int alternative) is not equal to `cljonic::Variant<int, long>{5L}` (long alternative); the deferred `index`, `holds<int>`, `get<int>`, `get_if<int>`, and `emplace<long>(...)` operations are intended to query and rebind the active alternative without throwing or allocating; `std::variant<int, long>` is rejected at compile time as a cljonic value.
+- **Examples:** `cljonic::Variant<int, long>` is storable and comparable; `cljonic::Variant<int, double>` is storable but not comparable; `cljonic::Variant<int, long>{5}` (int alternative) is not equal to `cljonic::Variant<int, long>{5L}` (long alternative); the requirements-backed `index`, `holds<int>`, `get<int>`, `get_if<int>`, and `emplace<long>(...)` operations query and rebind the active alternative without throwing or allocating; `std::variant<int, long>` is rejected at compile time as a cljonic value.
 
 
 ### ComparableVariantAlternative
@@ -1371,7 +1427,7 @@ producer building blocks used across all higher-order algorithms.
 ### NoHiddenGlobalInitialization
 - **Definition:** The rule that cljonic introduces no hidden global initialization or library-managed mutable global state.
 - **Deprecated Synonyms:** no global initialization, no hidden global state
-- **Related:** DeterministicBehavior, ReferentialTransparency
+- **Related:** DeterministicBehavior, ReferentialTransparency, Atom
 - **Usage:** Requirements, architecture, implementation, and tests
 - **Examples:** A collection operation cannot rely on a library-initialized mutable registry to produce its result.
 
@@ -1379,7 +1435,7 @@ producer building blocks used across all higher-order algorithms.
 ### SingleThreadedExecutionModel
 - **Definition:** The library contract that neither requires nor provides synchronization, atomics, thread-local state, parallel execution, or concurrent-access safety. A multithreaded caller may use cljonic only when it confines each operation and value access to one thread at a time.
 - **Deprecated Synonyms:** single-threaded model, non-concurrent execution model
-- **Related:** DeterministicBehavior, NoHiddenGlobalInitialization
+- **Related:** DeterministicBehavior, NoHiddenGlobalInitialization, Atom
 - **Usage:** Requirements, architecture, implementation, tests, and documentation
 - **Examples:** cljonic does not synchronize concurrent accesses to a collection value.
 
