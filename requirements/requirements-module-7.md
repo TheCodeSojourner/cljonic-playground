@@ -44,6 +44,10 @@ This module specifies specialized domain conveniences built on top of lower modu
 
 ## Text, Regex, and Parsing Domain
 
+λ REQ-FN-002J(x).
+  ∀ runtime text parsing: provides `can_parse_int` and `parse_int` for the supported fixed-width integer target, `can_parse_float` and `parse_float` for the supported floating-point target, and `can_parse_bool` and `parse_bool` for documented boolean spellings
+  {source: stakeholder_decided, decided_by: original_spec_author}
+
 λ REQ-FN-015(x).
   ∀ single-match regex function corresponding to (`re_find` ∨ `re_matches`): returns an owning `String` ∧ returns the empty `String` when no match exists
   {source: stakeholder_decided, decided_by: original_spec_author}
@@ -81,10 +85,6 @@ This module specifies specialized domain conveniences built on top of lower modu
   ∀ supported ∨ subsequently approved `clojure.string` operation: the bounded text model governs it
   ∧ ∀ text_value: owning `String<N>` containing only bytes in the range `0x01` through `0x7F`
   ∧ ∀ text_operation: ASCII-deterministic ∧ ¬∃ (allocation ∨ throw) ∧ ¬∃ dependence on (locale ∨ Unicode normalization ∨ external string lifetime ∨ hidden caches ∨ runtime reflection)
-  {source: stakeholder_decided, decided_by: original_spec_author}
-
-λ REQ-FN-002J(x).
-  ∀ runtime text parsing: provides `can_parse_int` and `parse_int` for the supported fixed-width integer target, `can_parse_float` and `parse_float` for the supported floating-point target, and `can_parse_bool` and `parse_bool` for documented boolean spellings
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 ## Bounded Debug Formatting & Keyword Enum Mapping
@@ -217,4 +217,4 @@ This module specifies specialized domain conveniences built on top of lower modu
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Relational algebra functions (`index`, `project`, `rename`, `join`), string/regex functions, `fits_print`/`print_to`, `Atom<T>`, and the test suite (`REQ-TEST-*`).
-- **Governed REQs**: `REQ-FN-015`–`024`, `REQ-FN-028`–`031` (incl. `REQ-FN-002I`, `REQ-FN-002J`, `REQ-FN-002K`, `REQ-FN-002O`), `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
+- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.

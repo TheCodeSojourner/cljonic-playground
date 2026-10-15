@@ -4,6 +4,58 @@
 
 This module establishes the C++20 concept capability framework, result status outcome classification model, preflight predicate policies, compile-time diagnostic rules, and vocabulary conventions for `cljonic`. Module 2 defines how the type system enforces safety, communicates failure, and governs function preconditions without runtime exceptions or dynamic memory allocations.
 
+## Implicit Conversion Policy
+
+λ REQ-CONV-001(x).
+  ∀ boundary ∈ {public_free_function, collection_ctor, producer_ctor, corresponding_member}, argument ∈ arguments(boundary): require(SafeImplicitConversion(destination_type(argument), type(argument)) ∧ operation_domain(boundary, argument))
+  ∧ SafeImplicitConversion(T, A) ≡ same(remove_cvref(T), remove_cvref(A)) ∨ ValuePreservingConversion(A → T)
+  ∧ ValuePreservingConversion(A → T) ≡ standard_arithmetic(A → T) ∧ preserves(∀ value ∈ domain(A): value ∧ meaning(value)) ∧ ¬crosses(Boolean ∨ character ∨ enum)
+  ∧ integral → integral: range(source) ⊆ range(destination)
+  ∧ integral → floating: radix_compatible ∧ sufficient(precision ∧ exponent_range)
+  ∧ floating → floating: preserves(precision ∧ exponent_range ∧ infinity ∧ NaN ∧ subnormal_support)
+  ∧ floating → integral: reject
+  ∧ cross_type(user_defined ∨ pointer): reject unless explicitly_required(operation_exception)
+  ∧ same_type(user_defined): retain(storage_constraints)
+  ∧ potentially_lossy(source_type → destination_type): reject regardless(fits(particular_literal))
+  ∧ intentional_conversion: explicit_before_call ∧ (¬established(representability) → checked_conversion)
+  ∧ NothrowElementConstruction(T, argument) ≡ SafeImplicitConversion(T, type(argument)) ∧ noexcept(construct(T, actual_argument_expression))
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-CONV-002(x).
+  ∀ boundary ∈ {query, update, removal, preflight, fallback, ctor, materialization}, ∀ variadic_position: same(destination_domain) → same(SafeImplicitConversion)
+  | refinements: `REQ-CONV-002A`–`002E`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-CONV-002A(x).
+  ∀ external_range_import: check(actual_dereference_expression) ∧ ¬value_type_only ∧ noexcept(traversal ∧ element_construction)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-CONV-002B(x).
+  ∀ fixed_type_parameter: ¬unchecked_conversion_before(admission ∨ validation)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-CONV-002C(x).
+  ∀ `MapEntry`: supports(default_ctor ∧ safe_key_value_ctor) ∧ ¬promises(aggregate_status)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-CONV-002D(x).
+  ∀ collection_copy_ctor: preserve(same_type_copy_semantics)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-CONV-002E(x).
+  ∀ P ∈ {`Repeat`, `Repeatedly`}, count ∈ finite_count_arguments(P): require(unsigned_integral(type(count)) ∧ ¬Boolean(type(count)) ∧ ¬character(type(count)) ∧ range(type(count)) ⊆ range(`std::size_t`))
+  ∧ ∀ P ∈ {`Repeat`, `Repeatedly`}, count ∈ finite_count_arguments(P): type(count) ∈ {signed, floating, user_defined} → reject ∧ ¬wrap ∧ ¬truncate
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-CONV-003(x).
+  ∀ default_rule_exception: explicit(documentation ∧ tests)
+  ∧ ∀ C ∈ {Vector, String}, index ∈ index_arguments(C): integral(type(index)) ∧ ¬Boolean(type(index)) ∧ ¬character(type(index)) → preserve(checked_normalization ∧ invalid_index_result) ∧ ¬require(range(type(index)) ⊆ range(`std::size_t`))
+  ∧ `character_is_valid`: preserve(checked_integral_to_character ∨ one_character_array)
+  ∧ String_text_import: admit(character_array ∨ exact(`std::string_view`) ∨ external_nothrow_character_range) ∧ preserve(byte_replacement ∧ bounded_prefix) ∧ ¬arbitrary_implicit_conversion_to(`std::string_view`)
+  ∧ ∀ domain ∈ {Variant_alternative, Map_entry, producer_source, producer_callback, equality}: preserve(nominal ∨ exact_type) ∧ ¬introduce(cross_type_equality ∨ automatic_wrapping ∨ slicing ∨ callback_substitution)
+  ∧ callback_internals: caller_behavioral_obligation ∧ ¬safety_proof_by(SafeImplicitConversion)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
 ## Collection Capability Definitions
 
 λ REQ-CAP-001(x).
@@ -68,7 +120,7 @@ This module establishes the C++20 concept capability framework, result status ou
 
 λ REQ-CAP-011(x).
   ∀ context: `cljonic::Variant<Alternatives...>` is the nominal cljonic composite value type holding exactly one alternative at a time; it replaces `std::variant` as the supported composite in the cljonic value domain
-  ∧ ∀ alternative: satisfies the `NothrowCollectionElement` storage contract — nothrow default construction, copy or move construction, copy assignment, and destruction — so a `Variant` is admissible as a map value, a vector element, and a queue element
+  ∧ ∀ alternative: require(NothrowCollectionElement) ≡ noexcept(default_construction ∧ copy_construction ∧ copy_assignment ∧ destruction) | permits(Variant_as_map_value ∨ vector_element ∨ queue_element)
   ∧ ∀ admitted_alternative: arithmetic scalar ∨ scoped enumeration ∨ cljonic collection ∨ producer with stable parameters ∨ `MapEntry` ∨ nested `cljonic::Variant`; floating-point and callable alternatives are admissible for storage exactly where `NothrowCollectionElement` admits them, even though they are not equality-admissible
   ∧ ∀ cljonic::Variant: provides alternative-strict value equality through the native `==` operator and the `equal` free function exactly when every alternative satisfies `NothrowStableEqualityComparable` and provides a non-throwing comparison; otherwise it provides no `==` and any use in an equality position fails at compile time, mirroring a storable-but-not-comparable collection element such as `Vector<float, N>`
   ∧ ∀ equality_semantics: two `Variant` values are equal exactly when they hold the same alternative and that alternative's values compare equal ∧ variants holding different alternatives compare unequal even when their alternative values would compare conventionally equal ∧ ¬∃ cross-type numeric unification ∧ ¬∃ hash-based equality
@@ -77,7 +129,7 @@ This module establishes the C++20 concept capability framework, result status ou
   ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating for const operations ∧ non-allocating ∧ ¬∃ RTTI ∧ ¬∃ throwing access path
   ∧ ∀ cljonic::Variant: is a component of the closed equality value domain — nestable inside cljonic collections, producers with stable parameters, `MapEntry`, and other `cljonic::Variant` values — and is subject to the same recursive component analysis as every other composite
   ∧ ∀ standard_library `std::variant`: is not a supported cljonic value type ∧ fails at compile time as an `equal` operand ∧ fails at compile time as a map key ∨ set element ∧ MAY be used only as an internal implementation detail of `cljonic::Variant`
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-CAP-012(x).
   ∀ cljonic::Variant capability: exposed as a cljonic free function ∧ backed by a `cljonic::Variant` member method, consistent with the `std::variant` capability set filtered by cljonic embedded constraints
@@ -96,37 +148,31 @@ This module establishes the C++20 concept capability framework, result status ou
 
 ## Canonical Type, Result, and Status Model
 
+Explanatory definitions; binding obligations reside in the numbered clauses referenced below.
+
 - An owning value is a self-contained cljonic value whose validity does not depend on an external source lifetime, hidden borrowed state, or a hidden result cache.
-- A non-owning view is a read-only observation of an existing cljonic value. A view MUST NOT own storage, MUST NOT extend the lifetime of its source, and MUST NOT permit mutation of the source value.
+- A non-owning view is a borrowed, read-only observation of an existing value, without owned storage or source-lifetime extension (`REQ-VAL-008`).
 - A bounded result is an owning cljonic value whose capacity is known and finite under the operation's documented constraints.
 - A bounded-prefix result is a bounded result that is intentionally smaller than the complete result because the complete result could not fit within the declared capacity or the operation's documented result policy.
 - A default-returning result is the documented default value produced by a convenience operation when the requested access or lookup cannot produce a valid value.
 - A checked-failure result is a documented non-throwing, non-allocating result indicating that an operation could not complete successfully without violating the library's failure model.
-- A producer is an explicit, self-contained value that represents a sequence or materialization source without owning the materialized result storage. A producer MUST own its parameters and MUST NOT borrow source storage, retain hidden mutable state, or depend on a source lifetime. A producer is distinct from both an owning materialized result and a collection-owned C++ interoperability view.
+- A producer is an explicit, parameter-owning value representing a sequence or materialization source, distinct from materialized results and borrowed views. Its ownership and lifetime contract is governed by `REQ-VAL-008`.
 - A producer-only result is a public operation result whose value is a self-contained producer rather than an owning materialized collection. A producer-only result owns producer parameters, does not own materialized result storage, and does not borrow source storage or hidden mutable state.
 - A complete result is the full result of an operation as defined by the relevant requirement.
-- Every public operation MUST document whether it returns a complete result, a bounded-prefix result, a default value, or a checked failure. When the complete result may fail to fit, the operation MUST expose a corresponding non-throwing, non-allocating preflight predicate that measures the same result and failure conditions as the operation.
-- Stable equality and total ordering are capabilities, not assumptions implied by storage. A type is eligible for equality or ordering only when the applicable requirement or capability contract explicitly permits it.
+- Result classification and documentation are governed by `REQ-ERR-009`–`010`; completion preflights by `REQ-BOUNDS-017` and `REQ-ERR-006`.
+- Stable equality and total ordering are capabilities independent of storage admission (`REQ-VAL-007`, `REQ-VAL-007A`).
 
 ## Result Status Classification Rules
 
-- Result status is orthogonal to value kind. Every public operation MUST declare its outcome classification as one of:
-  - complete result
-  - bounded-prefix result
-  - default-returning result
-  - checked-failure result
-  - `ProducerOnlyResult`
-- An operation MUST document which status it returns, which preflight predicate (if any) governs completion, and which failure or default semantics apply when the operation does not produce a complete result.
-- For operations whose complete result may fail to fit or may be invalid under runtime conditions, the operation MUST provide a corresponding non-throwing, non-allocating preflight predicate that measures the same success and failure conditions as the operation itself.
+- Result status is orthogonal to value kind. Classification and documentation are governed by `REQ-ERR-009`–`010`.
+- Runtime completion/preflight agreement is governed by `REQ-BOUNDS-017` and `REQ-ERR-006`.
 - A default-returning result and a checked-failure result are distinct: the former is a documented convenience value for an absent or invalid access, while the latter is an explicit signal that the operation could not complete successfully under the required model.
 
 ## Naming and Predicate Policy
 
-- Naming and predicate policy MUST be stable, explicit, and outcome-oriented.
-- Predicate names MUST read as questions about the operation's precondition or completion condition, not as access operations. Examples include `empty`, `full`, `contains`, `contains_key`, and `fits_into`.
-- A predicate MUST be non-throwing, non-allocating, and MUST test the same domain and failure conditions as the corresponding operation.
-- A predicate MUST never hide a default-returning access behind a truthy check; a `true` result means the operation can return a valid value under the documented contract, and a `false` result means the operation must follow its documented default, bounded-prefix, or checked-failure behavior.
-- The canonical predicate for materialization completeness remains `fits_into`; other operation-specific predicates MAY be used only when they are not just aliases for the same materialization-completion check.
+- Naming intent is governed by `REQ-VOCAB-012`–`013`; spelling conventions by `REQ-VOCAB-007`.
+- Predicate safety, domain agreement, and independence from default-returning access are governed by `REQ-BOUNDS-007`–`011`.
+- Materialization completeness uses `fits_into`, with other operation-specific preflights governed by `REQ-BOUNDS-017`.
 
 ## Bounds and Default Elements Requirements
 
@@ -178,10 +224,20 @@ This module establishes the C++20 concept capability framework, result status ou
   ∧ ∀ unbounded_producer: `count(sequenceable_value)` is the configured observation cap rather than complete cardinality, and `is_empty` follows that count observation
   ∧ ∀ supported owning collection: exposes `is_empty` only as a free function ∧ ¬∃ `is_empty()` member requirement
   ∧ ∀ unsupported input outside (SequenceableCollection ∨ SequenceableProducer): rejects with one targeted compile-time diagnostic naming the argument and required sequenceable domain (`REQ-DIAG-009`)
-  ∧ ∀ future traversal_work: defines the corresponding sequence behavior
-  ∧ ∀ deferred `empty` operation: returns an empty owning value of the same supported collection type as its input, preserving the input's capacity type where that capacity is part of the collection type
-  ∧ ∀ deferred `not_empty` operation: returns an owning value of the same supported collection type as its input — an independently valid copy of the input when the input contains one or more elements and the corresponding empty value when the input contains zero elements ∧ ¬∃ boolean alias for `is_empty`
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  | refinements: `REQ-BOUNDS-010B`–`010D`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-BOUNDS-010B(x).
+  ∀ future traversal_work: defines the sequence behavior corresponding to `is_empty`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-BOUNDS-010C(x).
+  ∀ deferred `empty` operation: result = empty_owning_value(type(input)) ∧ preserve(capacity_type_if_present)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-BOUNDS-010D(x).
+  ∀ deferred `not_empty` operation: result = (nonempty(input) ? independent_owning_copy(input) : empty_owning_value(type(input))) ∧ preserve(capacity_type_if_present) ∧ ¬boolean_alias_for(`is_empty`)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-BOUNDS-011(x).
   ∀ pre_access_predicate: ¬∃ (inspection ∨ comparison of the accessed value ∨ reliance on equality with `T{}` ∨ ambiguous default-returning access ∨ throw ∨ allocation)
@@ -215,6 +271,10 @@ This module establishes the C++20 concept capability framework, result status ou
   ∧ ∀ context: `fits_into` remains the canonical preflight for complete producer materialization into an explicit destination ∧ operation-specific predicates MAY be used for other operations
   rationale: callers must be able to distinguish complete success from default, bounded, partial, or failed results without exceptions
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+
+λ REQ-BOUNDS-018(x).
+  ∀ materialization_completeness_preflight: canonical_name = `fits_into` ∧ ¬alternative_alias_for_same_completion_check
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 ## Error and Failure Policy Requirements
 
@@ -257,6 +317,14 @@ This module establishes the C++20 concept capability framework, result status ou
   ∧ ∀ context: `into` is the explicit partial-prefix exception and uses `fits_into` as specified elsewhere
   ∧ ∀ direct_source_constructor whose documented operation is bounded-prefix construction: not a complete materialization operation ∧ does not require a separate preflight predicate; complete source materialization remains governed by `into`, preflighted by `fits_into`
   {source: stakeholder_decided, decided_by: original_spec_author}
+
+λ REQ-ERR-009(x).
+  ∀ public_operation: declare(outcome_classification ∈ {complete, bounded_prefix, default_returning, checked_failure, ProducerOnlyResult}) ∧ classification_independent_of(value_kind)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-ERR-010(x).
+  ∀ public_operation: document(outcome_classification ∧ completion_preflight_if_any ∧ applicable_noncomplete_result_semantics)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 ## Compile-Time Diagnostics
 
@@ -322,7 +390,7 @@ This module establishes the C++20 concept capability framework, result status ou
   ∧ ∀ diagnostic_fallback message: states the meaning and the violated constraint in user-facing terms rather than relying on a generic element-conversion message, and does not depend on compiler-specific wording (`REQ-DIAG-004`)
   ∧ ∀ constructor whose rejection occurs at class instantiation (a type argument gated by the class-template `requires`: `Range`, `MapEntry`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, `Variant`): excluded — no constructor is reached, so a constructor fallback is unreachable and no diagnostic fallback is required; the class-template constraint already yields one named constraint diagnostic
   ∧ ∀ constructor-level `requires` used as an availability guard rather than a source-domain rejection (`Iterate` and `Repeatedly` default constructors): excluded — it is not a closed source-domain rejection
-  ∧ ∀ aggregate-like struct (`MapEntry`): excluded — its domain is type-argument gated, and any constructor added to host a fallback would destroy aggregate status
+  ∧ ∀ `MapEntry` field_argument: require(SafeImplicitConversion) ∧ ∃ rejection_diagnostic: deleted_overload(named_constraint)
   rationale: without the fallback the rejected argument falls through to the pack constructor's generic conversion diagnostic (for example "could not convert a producer to the element type"), which misleads the caller because no element conversion was intended; one targeted, educational diagnostic is more accurate and keeps the rejection reason discoverable
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
@@ -399,7 +467,15 @@ This module establishes the C++20 concept capability framework, result status ou
   ∀ public_function considered during API-surface review: one explicit lifecycle classification ∈ {`candidate`, `deferred`, `excluded`, `requirements-backed`}
   {source: stakeholder_decided, decided_by: original_spec_author}
 
+λ REQ-VOCAB-012(x).
+  ∀ public_API_naming_policy: stable ∧ explicit ∧ outcome_oriented
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-VOCAB-013(x).
+  ∀ precondition_or_completion_predicate: name_reads_as_question(precondition ∨ completion) ∧ ¬name_as_access_operation
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: C++20 concepts, preflight predicates, compile-time assertions, and result status type definitions.
-- **Governed REQs**: `REQ-CAP-001`–`013`, `REQ-BOUNDS-001`–`017`, `REQ-ERR-001`–`008`, `REQ-DIAG-001`–`010`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`011`.
+- **Governed REQs**: `REQ-CONV-001`–`002`, `REQ-CONV-002A`–`002E`, `REQ-CONV-003`, `REQ-CAP-001`–`013`, `REQ-BOUNDS-001`–`010`, `REQ-BOUNDS-010A`–`010D`, `REQ-BOUNDS-011`–`018`, `REQ-ERR-001`–`010`, `REQ-DIAG-001`–`010`, `REQ-CONST-001`–`004`, `REQ-VOCAB-001`–`013`.

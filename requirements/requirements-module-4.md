@@ -1,5 +1,9 @@
 # cljonic Requirements - Module 4: Sequence Producers & Materialization Pipeline
 
+## Conversion Admission
+
+Conversion admission is governed by `REQ-CONV-001`–`003`; exact callback-result types are specified by `REQ-FN-013C`–`013D`. This section introduces no additional obligations.
+
 ## Purpose and Scope
 
 This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization (`into`) and its completeness preflight (`fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`). Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, and explicit producer materialization through `into`, preflighted by `fits_into`. The semantic sequence operations (`seq`, `first`, `next`, `rest`) remain deferred future work and are not current collection APIs; collection-owned const logical-range traversal and read-only C++ interoperability accessors are active. Standard ranges and views MAY be used internally by cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
@@ -55,15 +59,15 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 ## Sequence Equality & Deep Traversal Rules
 
 λ REQ-SEQ-015(x).
-  ∀ finite sequenceable values where the element types satisfy deep equality: equality MAY compare their elements in sequence order
+  ∀ sequenceable_value with bounded_logical_observation ∧ deep_equality(element_type): ∃ permitted_path: ordered_elementwise_equality
   ∧ ∀ equality: ¬∃ beginning of an unbounded traversal
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-SEQ-016(x).
-  ∀ sequenceable value statically known to be unbounded: ¬∃ provision of sequence equality — equality that compares the value's materialized or observed sequence fails at compile time rather than execute indefinitely
-  ∧ ∀ restriction: ¬∃ prohibition of producer parameter equality, which compares only bounded stored parameters without traversing any produced sequence as governed by `REQ-FN-014B`
-  rationale: comparing an unbounded sequence would never terminate, so compile-time failure replaces infinite runtime comparison
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+  ∀ sequence_equality over admitted_producers: compare(bounded_logical_observations) ∧ ¬reject_solely_for(unbounded_complete_sequence)
+  ∧ equal_observations ≡ same(observed_count ∧ ordered_elements) | ¬claim(equality_beyond_observation_bound)
+  ∧ producer_parameter_equality: distinct ∧ governed_by(`REQ-FN-014B`)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-SEQ-017(x).
   ∀ nested value: deep equality requires finite-observation capability recursively at every nested level
@@ -104,12 +108,12 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-009A(x).
-  ∀ context: the only approved public Cycle spelling is `cycle(source)`, where `source` is a supported Sequence value — a finite collection ∨ an unbounded Producer
+  ∀ context: the only approved public Cycle spelling is `cycle(source)`, where `source` is a supported cljonic collection ∨ producer satisfying `CljonicSource`, whether finite ∨ unbounded
   ∧ ∀ Cycle: stores an independent owned copy of the source value ∧ ∀ Producer_source: that copy consists of the producer's parameters and state ∧ ¬∃ materialized result sequence
   ∧ ∀ Cycle: ¬∃ (borrowed source storage ∨ owned materialized result storage)
   ∧ ∀ finite_source: Cycle repeats the source from its beginning after each complete pass
   ∧ ∀ unbounded_source: Cycle preserves the source's observable traversal without requiring the source to reach an end ∧ bounded observation of `cycle(source)` produces the same prefix as bounded observation of `source`
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-FN-009B(x).
   ∀ finite `source` supplied to `cycle` that is empty: valid ∧ bounded observation of the Cycle producer is empty
@@ -182,17 +186,17 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-014A(x).
-  ∀ producer form that can produce an unbounded sequence — including open-ended `range`, `cycle`, uncounted `repeat`, uncounted `repeatedly`, and unbounded `iterate`, regardless of whether two such producers currently appear to produce the same values: the sequence-equality restriction applies
-  ∧ ∀ restriction: prohibits equality between produced sequences ∧ ¬∃ prohibition of the producer parameter equality governed by `REQ-FN-014B`
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ producer with unbounded_complete_sequence: sequence_equality_admission = bounded_observation_admission ∧ retain(element_domain_constraints)
+  ∧ ∀ admitted_sequence_comparison: traverse_only(configured_bounded_observation) ∧ ¬claim(complete_infinite_sequence_equality)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-FN-014B(x).
-  ∀ producer equality: uses producer parameter equality
+  ∀ native_producer_equality ∨ `parameters_equal`: uses producer_parameter_equality ∧ distinct_from(`equal`_bounded_observation_equality)
   ∧ ∀ producer whose stored parameters all admit stable equality: provides the native C++ `==` operator over its own type with producer parameter equality semantics ∧ provides a separate explicitly named structural-comparison free function named `parameters_equal` with semantics identical to its `==` ∧ satisfies the `StableEqualityComparable` and `NothrowStableEqualityComparable` capabilities so that it MAY be used directly as a map key or set element and as a composite component under `REQ-CAP-010`
   ∧ ∀ (`==` ∧ `parameters_equal`): compare only the producer's bounded stored parameters ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ O(1) in the producer's stored parameters ∧ ¬∃ (traversal ∨ observation ∨ materialization of any produced sequence) ∧ ¬∃ implication that two producers with equal parameters produce equal materialized sequences ∧ treat producers with different stored parameters as unequal even when their produced or observed sequences coincide
   ∧ ∀ producer whose stored parameters include a callable component: ¬∃ provision of `==` ∨ `parameters_equal` ∧ ¬∃ satisfaction of `StableEqualityComparable` ∧ rejected at compile time when used in a key or set-element position
   rationale: callable components cannot participate in a stable value-equality comparison, so admitting them would make map/set membership ill-defined
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15, rationale_source: origin_artifact}
 
 λ REQ-FN-014C(x).
   ∀ producer_construction: ¬∃ evaluation of producer callbacks
@@ -287,4 +291,4 @@ The following range and interoperability requirements are binding contracts: eve
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly` producer templates, `into`, `fits_into`, and internal collection traversal support.
-- **Governed REQs**: `REQ-VAL-014`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`–`014C` (incl. `013A`–`013D`), `REQ-FN-027`–`027A`, `REQ-PLAT-017`–`023` (incl. `017A`, `022A`).
+- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-VAL-017A`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`, `REQ-FN-009A`–`009B`, `REQ-FN-010`–`013`, `REQ-FN-013A`–`013D`, `REQ-FN-014`, `REQ-FN-014A`–`014C`, `REQ-FN-027`, `REQ-FN-027A`, `REQ-PLAT-017`, `REQ-PLAT-017A`, `REQ-PLAT-018`–`022`, `REQ-PLAT-022A`, `REQ-PLAT-023`.

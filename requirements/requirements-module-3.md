@@ -274,18 +274,12 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-COLL-020R(x).
   ∀ context: `get(const C&, const K&)` and `get(const C&, const K&, const R&)` are supported for `Lookup` or `Indexed` collections and return the same collection-specific result type as the corresponding callable lookup operation
-  ∧ ∀ supplied fallback `R`: has the same type as that collection-specific lookup result
+  ∧ ∀ fallback `R`: require(SafeImplicitConversion(lookup_result_type, R)) | governed_by(`REQ-CONV-001`–`003`)
   ∧ ∀ `Map<K, V, N>`: the lookup result and `get` return type are the mapped value `V`, not `MapEntry<K, V>`
   ∧ ∀ `Set<T, N>` ∨ `Vector<T, N>`: the lookup result and `get` return type are the stored element type `T`
   ∧ ∀ `String<N>`: the lookup result and `get` return type are `char`
-  ∧ ∀ context: the other supported generic free-function signatures are `contains(const C&, const K&) -> bool` for `Lookup` or `Indexed` collections; `can_conj(const C&) -> bool`, `can_conj(const C&, const V&) -> bool`, and the variadic `can_conj(const C&, const V₁&, const V₂&, …) -> bool` for `Conjable` collections; the one-pair forms are `assoc(const C&, const K&, const C::association_value_type&) -> C` and `can_assoc(const C&, const K&, const C::association_value_type&) -> bool` for `Associative` collections, with variadic pair forms governed by `REQ-FN-002U` and `REQ-FN-002W`
-  ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by the required capability and collection-specific key/value domains
-  ∧ ∀ `can_assoc`: the public free-function signature is `can_assoc(const C&, const K&, const V&) -> bool`, where the member call is well-formed under the same key/value admission constraints as `assoc`
-  ∧ ∀ (`Map` ∨ `Set`): `contains` accepts only `K` exactly matching the collection's declared `lookup_type` after removing cv-qualification and references; no implicit conversion to that type is admitted
-  ∧ ∀ (`Vector` ∨ `String`): `contains` accepts a non-boolean, non-character integral index type
-  ∧ ∀ `Range`: `contains(const Range&, const K&)` is not a supported free-function signature; `Range::contains(index)` remains the bounded-observation member predicate specified by `REQ-FN-013A`
-  ∧ ∀ `String`: the `assoc` value argument is `char`
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-10}
+  | related_surface_refinements: `REQ-COLL-020V`–`020Y`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-COLL-020S(x).
   ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, `Associative`, and `Conjable`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, and `pop` over their supported collection inputs
@@ -299,11 +293,33 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020U(x).
-  ∀ `dissoc(map, keys...)`: supported only for `Map` ∧ zero or more keys are accepted ∧ each key is admitted by the `Map::dissoc` member parameter domain, including implicit conversions accepted by that member
+  ∀ `dissoc(map, keys...)`: require(Map(map)) ∧ arity(keys) ≥ 0 ∧ ∀ key: require(SafeImplicitConversion(Map::key_type, type(key))) | governed_by(`REQ-CONV-001`–`003`)
   ∧ ∀ present key: returns a new map with that entry removed via swap-and-remove ∧ keys are applied left to right ∧ the source map remains unchanged
   ∧ ∀ absent or repeated key: removal is a no-op ∧ zero keys returns an unchanged map copy
   ∧ ∀ result: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ unsupported collection and key domains are rejected at the public API boundary
   {source: stakeholder_decided, decided_by: original_spec_author}
+
+λ REQ-COLL-020V(x).
+  ∀ `contains(const C&, const K&) -> bool`: require(Lookup(C) ∨ Indexed(C))
+  ∧ ∀ C ∈ {`Map`, `Set`}: require(SafeImplicitConversion(C::lookup_type, K)) | governed_by(`REQ-CONV-001`–`003`)
+  ∧ ∀ C ∈ {`Vector`, `String`}: require(integral(K) ∧ ¬Boolean(K) ∧ ¬character(K))
+  ∧ ∀ `Range`: ¬free_function_contains ∧ member_contains_governed_by(`REQ-FN-013A`)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-COLL-020W(x).
+  ∀ Conjable(C): signatures = {`can_conj(const C&) -> bool`, `can_conj(const C&, const V&) -> bool`, `can_conj(const C&, const V₁&, const V₂&, …) -> bool`}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-COLL-020X(x).
+  ∀ Associative(C): one_pair_signatures = {`assoc(const C&, const K&, const V&) -> C`, `can_assoc(const C&, const K&, const V&) -> bool`}
+  ∧ V: safely_admitted_by(C::association_value_type) ∧ same_key_value_admission(assoc ∧ can_assoc ∧ corresponding_member_calls)
+  ∧ String_association_value: char
+  ∧ variadic_pairs: governed_by(`REQ-FN-002U`, `REQ-FN-002W`)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+
+λ REQ-COLL-020Y(x).
+  ∀ operation governed_by(`REQ-COLL-020R`, `REQ-COLL-020V`–`020X`): constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating ∧ public_boundary_constraints(required_capability ∧ collection_specific_key_value_domains)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 ## Collection Equality
 
@@ -400,16 +416,22 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ entry: only entries classified as `requirements-backed` constitute supported behavior
   {source: stakeholder_decided, decided_by: original_spec_author}
 
+### Map and Entry Sequence Access (Deferred, Non-binding)
+
+> **Deferred future work — non-binding.** `REQ-FN-002A`–`002B` record future map/entry behavior for `first`, `last`, `key`, and `val`; they do not establish current API support.
+
 λ REQ-FN-002A(x).
   ∀ nonempty_map: `first` returns one map-entry value
   ∧ ∀ map_entry_value: `first` returns its key ∧ `last` returns its value ∧ `key` returns its key ∧ `val` returns its value
   ∧ ∀ composition: operations compose so that `first(first(map))` returns the key and `last(first(map))` returns the value
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-FN-002B(x).
   ∀ `last` applied to a map: MAY return the final map-entry value in the implementation's traversal order ∧ ∀ caller: ¬∃ reliance on which entry is returned because ordinary map traversal order is semantically unordered
   rationale: map traversal order is semantically unordered, so no specific entry can be a stable result
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15, rationale_source: origin_artifact}
+
+### General Comparisons (Binding)
 
 λ REQ-FN-002C(x).
   ∀ canonical named comparison function ∈ {`equal`, `not_equal`, `less`, `less_equal`, `greater`, `greater_equal`}: uses full descriptive names
@@ -447,8 +469,10 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ standard_library `std::variant` (as an operand, stored component, or alternative): rejected at compile time because it is not a supported cljonic value type (`REQ-CAP-011`)
   ∧ ∀ both operands cljonic collections ∨ producers: equality classified by equality family — Vector, Queue, Cycle, Iterate, Range, Repeat, and Repeatedly form one sequential family (`SequentialEquality`) whose members are comparable by produced sequence (same elements in the same order, compared with identical element types) regardless of their concrete types; Map comparable only to Map; Set only to Set; String only to String
   ∧ ∀ (pairs belonging to incompatible families ∨ pairs mixing a cljonic value with a non-cljonic value ∨ operands outside the supported stable-equality domain): fail at compile time
-  ∧ ∀ sequential_comparison: order-sensitive ∧ compares elements lazily element by element without eagerly materializing unbounded producers ∧ terminates at the first unequal element pair or the shorter exhausted logical count
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∧ ∀ sequential_comparison: equal ≡ same(observed_count ∧ ordered_elements) | compare_only(bounded_logical_observations) ∧ ¬claim(equality_beyond_observation_bound)
+  ∧ ∀ sequential_comparison: order-sensitive ∧ lazy_elementwise ∧ ¬eager_materialization ∧ terminate(first_unequal_pair ∨ shorter_exhausted_logical_count)
+  ∧ ∀ producer_operand: unbounded_complete_sequence → ¬reject_solely_for_unboundedness ∧ observe_only(configured_bounded_traversal)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-FN-002H(x).
   ∀ context: `not_equal` implements the canonical negation of general value equality as the counterpart of `equal` (`REQ-FN-002G`), in the three arities of Clojure's `not=`
@@ -537,18 +561,18 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ variadic form: leaves the source unchanged ∧ is `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating
   ∧ ∀ `Map`: an existing key returns true regardless of remaining capacity ∧ an absent key returns true only when capacity remains
   ∧ ∀ `Vector`: an existing index returns true ∧ the logical-count append index returns true only when capacity remains ∧ the value has the Vector's stored element type
-  ∧ ∀ `String`: an existing content index or logical-count append index returns true only when content capacity remains and the `char` value is non-NUL ASCII
+  ∧ ∀ `String`: can_assoc(string, index, value) ≡ valid_non_NUL_ASCII(value) ∧ (existing_content_index(index) ∨ (logical_count_append_index(index) ∧ available_content_capacity(string))) | governed_by(`REQ-COLL-020P`)
   ∧ ∀ invalid key/index, inadmissible value type, or invalid String character: rejected according to the collection's compile-time or runtime value domain; invalid runtime String characters return false
   rationale: a complete preflight receives every operand of `assoc`; String's character-validity policy makes the value relevant to whether the requested association is admissible, and cumulative variadic preflight answers whether every requested pair can be associated in sequence, accounting for capacity, replacements, and indexes produced by prior pairs
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-10, rationale_source: origin_artifact}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15, rationale_source: origin_artifact}
 
 λ REQ-FN-002X(x).
-  ∀ `disj(set, values...)`: defined only for a `Set` and zero or more values each having exactly the Set's declared `value_type` ∧ any other first-argument or value type is rejected at the public API boundary
+  ∀ `disj(set, values...)`: require(Set(set)) ∧ arity(values) ≥ 0 ∧ (∀ value: require(SafeImplicitConversion(Set::value_type, type(value)))) ∧ (unsupported_domain → reject_at(public_boundary))
   ∧ ∀ zero values: returns an unchanged copy of the Set
   ∧ ∀ one or more values: removes each value if present, applying removals from left to right ∧ an absent value is a no-op ∧ repeated values are permitted and subsequent removal of a now-absent value remains a no-op ∧ result is equivalent to sequential application of the existing Set removal operation
   ∧ ∀ arity: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ returns a collection value ∧ preserves the source
   ∧ ∀ unsupported first-argument or value type: fails compilation with one targeted diagnostic naming `disj` and the violated Set/value-type domain (`REQ-DIAG-003`, `REQ-DIAG-009`)
-  rationale: Clojure's `disj` accepts zero or more values, returns the collection unchanged when given none, and sequentially removes each supplied member; exact element types avoid silently narrowing or converting membership queries
+  rationale: Clojure_disj ≡ zero_arity_identity ∧ sequential_removal | safe_widening ∧ ¬narrowed_membership
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
 λ REQ-FN-002Y(x).
@@ -606,4 +630,5 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, `rest`, `seq`).
-- **Governed REQs**: `REQ-COLL-001`–`021`, `REQ-SEQ-001`–`014` (incl. `002A`–`002B`, deferred), `REQ-FN-001`–`008A`, `REQ-FN-026`.
+- **Governed REQs**: `REQ-COLL-001`, `REQ-COLL-001A`, `REQ-COLL-002`, `REQ-COLL-002A`, `REQ-COLL-004`, `REQ-COLL-004A`–`004C`, `REQ-COLL-005`, `REQ-COLL-005A`–`005B`, `REQ-COLL-006`–`007`, `REQ-COLL-007A`, `REQ-COLL-008`–`010`, `REQ-COLL-010A`–`010B`, `REQ-COLL-011`–`012`, `REQ-COLL-012A`, `REQ-COLL-013`, `REQ-COLL-013A`–`013B`, `REQ-COLL-014`–`018`, `REQ-COLL-018A`, `REQ-COLL-019`, `REQ-COLL-019A`–`019B`, `REQ-COLL-020`, `REQ-COLL-020A`–`020Y`, `REQ-COLL-021`, `REQ-SEQ-001`–`002`, `REQ-SEQ-002A`–`002B`, `REQ-SEQ-003`–`014`, `REQ-FN-001`–`002`, `REQ-FN-002A`–`002H`, `REQ-FN-002M`, `REQ-FN-002P`–`002Y`, `REQ-FN-003`–`008`, `REQ-FN-008A`, `REQ-FN-026`.
+- **Deferred REQs**: `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-002A`–`002B`.

@@ -67,8 +67,9 @@ This module defines the foundational resource, memory, platform, value semantics
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-VAL-003(x).
-  ∀ equal_inputs ∧ equal_arguments: collection operations have deterministic results
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ collection_operation: determinism_by_default ∧ equal(inputs ∧ arguments) → deterministic_results unless explicitly_authorized_by(governing_requirement)
+  ∧ ∀ determinism_exception: limited_to(explicitly_authorized_effect_scope) ∧ governed_by(`REQ-VAL-009`)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-VAL-004(x).
   ¬∃ user_managed_collection_node_lifetimes required by the library
@@ -101,10 +102,11 @@ This module defines the foundational resource, memory, platform, value semantics
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-VAL-009(x).
-  ∀ public_cljonic_operation except explicit mutable-reference operations defined by `REQ-VAL-022`: referentially transparent with respect to explicit inputs and fixed configuration
-  ∧ ∀ equal_inputs ∧ arguments ∧ configuration: equivalent results ∧ ¬∃ (mutation of input values ∨ modification of hidden mutable state ∨ I/O ∨ dependence on hidden mutable state)
+  ∀ public_cljonic_operation: purity_by_default ∧ exception_only_if(explicitly_authorized_by_governing_requirement)
+  ∧ ∀ operation_without_authorized_effects: equal(inputs ∧ arguments ∧ fixed_configuration) → equivalent_results ∧ ¬∃ (input_mutation ∨ hidden_mutable_state ∨ I/O ∨ dependence_on_hidden_mutable_state)
+  ∧ ∀ authorized_effect_exception: effects ⊆ explicitly_specified_scope ∧ retain(no_allocation ∧ no_throw ∧ unrelated_input_preservation) ∧ ¬introduce(hidden_library_state)
   ∧ ∀ atom_mutation: explicit through the Atom API ∧ ¬∃ treatment as ordinary collection mutation ∨ hidden library state
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-VAL-010(x).
   ∀ operation: purity guarantees conditional on the required operations of its user-defined element, key, and value types being pure and non-allocating
@@ -139,5 +141,5 @@ This module defines the foundational resource, memory, platform, value semantics
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Core foundation headers, storage trait machinery (`detail::is_cljonic_collection_v`).
-- **Governed REQs**: `REQ-PLAT-001`–`010`, `REQ-PLAT-012`–`013`, `REQ-VAL-001`–`013`, `REQ-VAL-018`–`020`.
+- **Governed REQs**: `REQ-PLAT-001`–`010`, `REQ-PLAT-012`–`013`, `REQ-VAL-001`–`007`, `REQ-VAL-007A`, `REQ-VAL-008`–`013`, `REQ-VAL-018`–`020`.
 - **Storage admission**: `REQ-VAL-007A` defines the global `NothrowCollectionElement` contract for user-defined stored types.

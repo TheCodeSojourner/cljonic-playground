@@ -33,7 +33,7 @@ This module records future higher-order sequence transformation requirements and
   ∧ ∀ operation_level_contract: ¬∃ inference only from this inventory
   ∧ policies:
     1. ∀ operation: preserves input values ∧ ¬∃ introduction of side effects or hidden mutable state independently of pure callbacks
-    2. ∀ operation ∈ {`distinct`, `dedupe`, `frequencies`, `sort`, `sort_by`} and similar: requires the applicable `stable_equality_comparable` or `totally_ordered` capability for their elements/keys
+    2. ∀ operation ∈ {`distinct`, `dedupe`, `frequencies`, `sort`, `sort_by`} and similar: requires the applicable `StableEqualityComparable` or `TotallyOrdered` capability for their elements/keys
     3. ∀ operation: produces bounded owning results when a useful finite capacity can be derived, or explicit producers when results are unbounded
     4. ∀ traversal over maps ∧ sets: treats iteration order as semantically unordered
     5. ∀ (transducer-only arities ∧ hidden lazy-sequence machinery): unsupported

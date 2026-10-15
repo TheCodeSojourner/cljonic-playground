@@ -4,7 +4,7 @@ This document outlines the modular implementation roadmap for `cljonic`. To ensu
 
 ## Domain Prefixes (Closed Set)
 
-`REQ-PLAT` | `REQ-VAL` | `REQ-CAP` | `REQ-BOUNDS` | `REQ-ERR` | `REQ-DIAG` | `REQ-CONST` | `REQ-VOCAB` | `REQ-COLL` | `REQ-SEQ` | `REQ-FN` | `REQ-NUM` | `REQ-TEST`
+`REQ-PLAT` | `REQ-VAL` | `REQ-CONV` | `REQ-CAP` | `REQ-BOUNDS` | `REQ-ERR` | `REQ-DIAG` | `REQ-CONST` | `REQ-VOCAB` | `REQ-COLL` | `REQ-SEQ` | `REQ-FN` | `REQ-NUM` | `REQ-TEST`
 
 Extend only with new domains via `/gybis-req-tend` (human approval required).
 
@@ -15,7 +15,7 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 ## Conventions
 
 - **granularity**: `library_contract` — cljonic-grade clause density permitted; compound operator contracts MAY be marked `compound_by_design: true` in clause footers.
-- **deferred_marker**: section headings containing `(Deferred` or a blockquote opener asserting non-binding status (used by Module 3 `REQ-SEQ-001`–`014`).
+- **deferred_marker**: section headings containing `(Deferred` or a blockquote opener asserting non-binding status; scope ends at the next heading of equal or higher level. Module 3 defers `REQ-SEQ-001`–`014` (incl. `002A`–`002B`) and `REQ-FN-002A`–`002B`; Module 5 defers `REQ-FN-032`–`033`.
 
 ## Module Implementation Order & Summary
 
@@ -25,7 +25,7 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 
 2. **[requirements-module-2.md](requirements-module-2.md)** — *Capability Concepts & Preflight Infrastructure*
    - **Purpose**: Defines the C++20 concept capability framework and non-throwing preflight result model.
-   - **Scope**: Outcome status classification (complete, bounded-prefix, default-returning, checked-failure, producer-only), preflight predicates (`fits_into`, `contains`, `is_empty`), compile-time diagnostic rules, `constexpr` constraints, and vocabulary conventions (`REQ-CAP-*`, `REQ-BOUNDS-*`, `REQ-ERR-*`, `REQ-DIAG-*`, `REQ-CONST-*`, `REQ-VOCAB-*`).
+   - **Scope**: Safe implicit conversion (`REQ-CONV-001`–`003`), outcome status classification (complete, bounded-prefix, default-returning, checked-failure, producer-only), preflight predicates (`fits_into`, `contains`, `is_empty`), compile-time diagnostic rules, `constexpr` constraints, and vocabulary conventions (`REQ-CAP-*`, `REQ-BOUNDS-*`, `REQ-ERR-*`, `REQ-DIAG-*`, `REQ-CONST-*`, `REQ-VOCAB-*`).
 
 3. **[requirements-module-3.md](requirements-module-3.md)** — *Core Collection Types & Primitive Free Functions*
    - **Purpose**: Implements concrete, array-backed, bounded collection types and their primitive member and free-function operations.
