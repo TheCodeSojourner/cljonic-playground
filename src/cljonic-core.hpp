@@ -155,7 +155,7 @@
  * Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs "Subs"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
- * ## \ref Set "Set" Functions
+ * ## Set Functions
  *
  * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy"
  * - \ref Set_Difference "Difference", \ref Set_DifferenceBy "DifferenceBy", \ref Set_Disj "Disj",
@@ -165,7 +165,7 @@
  * - \ref Set_ToSet "ToSet", \ref Set_ToSetBy "ToSetBy"
  * - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
  *
- * ## \ref String "String" Functions
+ * ## String Functions
  *
  * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref String_Concat "Concat"
  * - \ref String_EndsWith "EndsWith"
