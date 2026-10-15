@@ -1,5 +1,32 @@
 ## Current Session State
 
+- last_session_id: bc883b3c-752b-45ab-b45c-dc86f61ffb1d
+- current_timestamp: 2026-10-15T10:46:09-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Refined repository Doxygen prose conventions: free-function names are bold but not linked, named entities in prose use explicit links, `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE` is bold, and inline-code ligatures are disabled so `==` remains visually distinct.
+2. Updated `equal` documentation to distinguish Vectors and Queues that contain elements from producers that yield elements, and linked all named collection and producer types.
+3. Simplified `not_equal` documentation to link to `equal` for shared supported-value and comparison rules rather than repeating them.
+4. Stored the durable Doxygen prose conventions in `mementum/memories/doxygen-prose-formatting.md` and committed them as `c210efe`.
+
+Questions:
+1. None open.
+
+Decisions:
+1. Follow `mementum/memories/doxygen-prose-formatting.md` for future Doxygen prose edits.
+2. `not_equal` documentation should remain concise and refer to `equal` for shared behavior.
+
+Validation:
+1. `make docs` passed after documentation changes.
+2. `git diff --check` passed for edited source, generated documentation, and memory files.
+
+Next:
+1. No follow-up pending; apply the stored Doxygen conventions to future documentation changes.
+
+## Previous Session State
+
 - last_session_id: 29f0fdd8-b7af-4a13-83ac-c0763aaf12f5
 - current_timestamp: 2026-10-12
 - recover: 1
