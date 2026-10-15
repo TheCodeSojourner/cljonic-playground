@@ -28,15 +28,15 @@
 The embedded-first policy keeps resource bounds, deterministic outcomes, and value ownership auditable on constrained targets; weakening those guarantees would change cljonic's purpose.
 
 λ S5_identity_intro(x). identity(x) ≡ embedded_first ∧ HeaderOnlyDistribution ∧ C++23 ∧ functional_collection_system
-  | identity(x) → bounded(x) ∧ deterministic(x) ∧ semantically_clear(x)
+  | identity(x) → bounded(x) ∧ deterministic_by_default(x) ∧ semantically_clear(x)
   | preserve_identity(x) → CopyOnModifyCollection(x) ∧ SentinelBasedAccess(x) ∧ ProbeFirstAccess(x) ∧ strict_resource_determinism(x)
 
-λ S5_identity(x). embedded_first(x) ∧ DeterministicBehavior(x) ∧ fixed_capacity_value_semantics(x)
+λ S5_identity(x). embedded_first(x) ∧ determinism_by_default(x) ∧ fixed_capacity_value_semantics(x)
   | no_hidden_allocation(x) ∧ no_exceptions(x)
   | canonical_vocabulary_governs(x)
 
 λ S5_failure(x). violate(NoHeapConstraint) ∨ violate(NoExceptionConstraint)
-  | violate(DeterministicBehavior)
+  | violate(S5_authorized_effect_policy)
   | violate(CopyOnModifyCollection)
   → not_cljonic_identity(x)
 
@@ -44,6 +44,29 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | clojure_parity_when_constraints_allow(x)
 
 λ S5_change_policy(x). public_change(x) → preserve(S5_identity(x))
+
+λ S5_authorized_effect_policy(x). public_operation(x) → require(DeterministicBehavior(x) ∧ ReferentialTransparency(x))
+    unless(explicit_governing_contract_authorizes_effect(x))
+  | authorized_effect(x) → limited_to(explicitly_declared_effect_scope(x))
+    ∧ ¬authorize(additional_effects(x) ∨ hidden_library_state(x) ∨ mutation_of_input_collection_storage(x))
+  | authorized_effect(x) → preserve(NoHeapConstraint(x) ∧ NoExceptionConstraint(x)
+    ∧ SingleThreadedExecutionModel(x))
+  | effect_authorization(x) → ¬imply(implemented(x) ∨ implementation_ready(x))
+
+λ S5_resource_boundaries(x). supported_operation(x) → bounded_inspectable_resources(x)
+  ∧ NoHeapConstraint(x) ∧ NoExceptionConstraint(x) ∧ NoRttiConstraint(x)
+  ∧ NoHiddenGlobalInitialization(x) ∧ SingleThreadedExecutionModel(x)
+  | rationale: explicit resource and runtime-service boundaries keep embedded behavior auditable
+
+λ S5_domain_and_conversion_safety(x). value_domain(x) → explicitly_governed(x)
+  | argument_conversion(x) → preserve_information_and_semantic_domain(x)
+    unless(explicitly_specified_exception_with_checked_or_exact_domain_policy(x))
+  | rationale: admission must not silently lose information or change an operation's meaning
+
+λ S5_value_and_failure_semantics(x). collection_update(x) → independently_valid_persistent_result(x)
+  | owning_result(x) → independent_of_source_lifetime(x)
+  | failure_or_incomplete_result(x) → explicit_predictable_policy(x) ∧ applicable_preflight_or_checked_outcome(x)
+  | rationale: callers must be able to reason about value ownership and unsuccessful outcomes without hidden state
 
 ## S4 - Intelligence
 
@@ -70,6 +93,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | SingleThreadedExecutionModel(x)
   | DeterministicOverflowPolicy(x) ∧ SentinelBasedAccess(x)
   | enforce_in_all_profiles(x)
+  | traces_to(S5_resource_boundaries)
 
 λ S3_quality(x). require(quality_gates(x))
   | quality_gates(x) → enforce(S5_change_policy(x))
@@ -102,17 +126,43 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | SimpleAggregateBoundary(x)
   | closed_numeric_domain(x)
   | reject_out_of_policy_inputs(x)
+  | traces_to(S5_resource_boundaries ∧ S5_domain_and_conversion_safety)
 
 λ S3_collection_storage_admission(x). stored_user_defined_type(x) → require(NothrowCollectionElement(x))
+  | traces_to(S5_resource_boundaries ∧ S5_domain_and_conversion_safety)
   | NothrowCollectionElement(x) → require(nothrow_default_construction(x)
     ∧ nothrow_copy_construction(x) ∧ nothrow_copy_assignment(x) ∧ nothrow_destruction(x))
   | storage_admission(x) → not_imply(StableEquality ∨ TotalOrder ∨ hashing ∨ parsing ∨ traversal)
   | collection_storage_position(x) ≡ element ∨ map_key ∨ map_value
   | String(x) → apply(non_throwing_storage_and_destruction(x))
 
+λ S3_conversion_admission(source, destination). governed_by(REQ-CONV-001 ∧ REQ-CONV-002 ∧ REQ-CONV-003)
+  | traces_to(S5_domain_and_conversion_safety)
+  | SafeImplicitConversion(source, destination) ≡ same_unqualified_type(source, destination)
+    ∨ (standard_arithmetic_conversion(source, destination) ∧ ValuePreservingConversion(source, destination)
+      ∧ ¬crosses(Boolean ∨ character ∨ enumeration domain))
+  | ValuePreservingConversion(source, destination) → preserve(entire_source_range ∧ precision ∧ floating_special_values)
+  | ¬SafeImplicitConversion(source, destination) → reject_at_argument_boundary
+  | NothrowElementConstruction(argument_expression, destination) ≡ SafeImplicitConversion(argument_expression, destination)
+    ∧ non_throwing_construction_from_actual_expression(argument_expression, destination)
+    ∧ preserve_argument_cv_qualification_and_reference_category(argument_expression)
+  | argument_construction_gate_applies(x) → require(NothrowElementConstruction(argument_expression, destination))
+  | SafeImplicitConversion(source, destination) → ¬imply(non_throwing_construction_from_actual_expression(source, destination))
+  | NothrowElementConstruction(x) → distinct_from(NothrowCollectionElement_storage_contract(x))
+  | cross_type_user_defined_conversion ∨ cross_type_pointer_conversion → reject_unless_explicitly_specified
+  | constructor ∨ member ∨ free_function ∨ preflight ∨ fallback ∨ variadic_operand → share(admission_rule)
+  | source_import → check(actual_dereference_expression ∧ nothrow_traversal
+    ∧ NothrowElementConstruction(actual_dereference_expression, destination))
+  | finite_producer_count → require(non_boolean_non_character_unsigned_integral ∧ range_fits_size_t)
+  | MapEntry → constrained_key_value_construction ∧ preserve(default_construction ∧ value_semantics)
+  | checked_exception → Vector_String_index_normalization ∨ character_is_valid
+  | semantic_exception → String_text_import ∨ exact_Variant_alternative ∨ exact_MapEntry
+    ∨ exact_producer_source_callback ∨ existing_equality_domain
+
 λ S3_string_character_validity(character). valid(character) ≡ character ≠ NUL
   ∧ unsigned_byte_value(character) ≤ 0x7F
   | String::character_is_valid(character) ↔ valid(character)
+  | traces_to(S5_domain_and_conversion_safety)
 
 λ S2_character_is_valid(value). require(integral(value) ∧ ¬bool(value))
   | not(in_range<char>(value)) → return(false)
@@ -130,17 +180,25 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
 λ S3_cpp_interoperability(x). supported_collection(x)
   → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
   | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
+  | traces_to(S5_resource_boundaries ∧ S5_value_and_failure_semantics)
 
 λ S3_value_policy(x). PersistentValueSemantics(x) ∧ DeepCopyUpdate(x)
-  | ReferentialTransparency(x)
-  | conditional_on(user_defined_types_being_pure_and_non_allocating(x))
-  | preserve_input_values(x) ∧ return(OwningValue(x))
+  | enforce(S5_authorized_effect_policy(x))
+  | conditional_on(user_defined_types_obeying_applicable_purity_effect_and_allocation_contracts(x))
+  | preserve_input_collection_values(x) ∧ return(OwningValue(x))
+  | traces_to(S5_value_and_failure_semantics)
+
+λ S3_effect_control(x). explicitly_authorized_effect(x) → enforce(declared_effect_scope(x))
+  | effectful_callback_or_reference_operation(x) → require(explicit_governing_contract(x))
+  | unauthorized_effect(x) → reject(x)
+  | traces_to(S5_authorized_effect_policy ∧ S5_resource_boundaries)
 
 λ S3_result_contract(x). result_contract_rules(x) → active_for(all_public_operations)
   | approved_operation(x) → comply_with(result_contract_rules(x))
   | new_operation(x) → comply_with(S3_result_contract_policy ∧ S2_result_status_model)
 
 λ S3_result_contract_policy(x). operation_result(x) → classify_as(CompleteResult ∨ BoundedResult ∨ BoundedPrefixResult ∨ DefaultReturningResult ∨ CheckedFailureResult ∨ ProducerOnlyResult)
+  | traces_to(S5_value_and_failure_semantics ∧ S5_resource_boundaries)
   | may_fail_complete_result(x) → require(PreflightPredicate ∨ CheckedFailureResult)
   | preflight_and_operation(x) → require(semantic_equivalence_on_success_and_failure_conditions)
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
@@ -165,6 +223,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
   | domain_expansion(x) → require(explicit_approved_requirement)
+  | traces_to(S5_domain_and_conversion_safety)
 
 λ S3_vocabulary_enforcement(x). vocabulary_or_public_surface_change(x) → require(vocabulary_consistency_gate(x))
   | vocabulary_consistency_gate(x) → enforce(canonical_vocabulary_governs) ∧ traces_to(S5_identity)
@@ -174,6 +233,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ present_or_added_in_future(x)
     ∧ expressible_through_named_capability_concepts(x)
   → require(concept_based_primary_admission(x))
+  | traces_to(S5_domain_and_conversion_safety ∧ S5_value_and_failure_semantics)
   | diagnostic_overload(x) → provide(one_per_supported_arity(x))
     ∧ constrained_on(negation_of_admission_gate(x))
     ∧ never_returns_a_value(x) ∧ ¬supported_call_target(x)
@@ -208,7 +268,9 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
 
 λ S2_protocol(x). canonical_vocabulary_controls_interfaces(x)
   ∧ canonical_vocabulary_controls_docs(x)
-  | probe_first_access_before_sentinel_reads(x)
+  | caller_needs_to_distinguish_absence_or_invalidity_from_valid_default_value(x)
+    → require(ProbeFirstAccess(x))
+  | caller_accepts_documented_default_returning_access(x) → ¬require(prior_probe(x))
   | semantic_predicate_names(x) → enforce(StatePredicate ∧ VerbPredicate)
   | api_surface_status(x) → enforce(LifecycleClassification)
 
@@ -216,7 +278,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | classify_as(RequirementsBacked) → requires(approved_behavioral_contracts)
   | classify_as(CandidateStatus ∨ DeferredStatus ∨ ExcludedStatus) → not_supported_behavior(x)
   | public_function(x) → classified_before(api_surface_finalization)
-  | RequirementsBacked(x) → require(approved_req_mapping ∧ executable_test_coverage)
+  | RequirementsBacked(x) → require(approved_req_mapping)
+  | implemented_supported_operation(x) → require(RequirementsBacked(x) ∧ executable_test_coverage(x))
   | CandidateStatus(x) → awaiting(specification)
   | DeferredStatus(x) → awaiting(approved_design)
   | ExcludedStatus(x) → out_of_scope(x)
@@ -230,7 +293,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | preserve(core_semantics)
 
 λ S2_semantic_alignment(x). prefer(clojure_parity)
-  | compatible_with(EmbeddedConstraint ∧ DeterministicBehavior)
+  | compatible_with(EmbeddedConstraint ∧ S5_authorized_effect_policy)
 
 λ S2_concept_bootstrap(x). concepts_gate_free_functions(x)
   | minimal_concept_requirements(x) → only_what_current_functions_need(x)
@@ -308,7 +371,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
 
 λ S2_dissoc_contract(x). dissoc(map, keys...) → require(CljonicMap(map))
   | zero_keys(x) → return(unchanged_map_copy(x))
-  | keys(x) → require(each_key_admitted_by(Map.dissoc_member_parameter)) ∧ preserve(implicit_conversion_domain_of(Map.dissoc))
+  | keys(x) → require(SafeImplicitConversion(each_key, Map::key_type))
     ∧ apply_left_to_right(x)
   | present_key(x) → return(new_map_without_entry_via_swap_and_remove(x))
   | absent_or_repeated_key(x) → no_op(x)
@@ -342,8 +405,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | conj(Map, entry) → associate_entry(key ∧ value)(x)
     ∧ replace_value_when_key_present(x) ∧ require(capacity_for_new_key_when_absent(x))
     ∧ entry ≡ MapEntry(key ∧ value)(x)
-  | full_conj_or_invalid_conj(x) → return(unchanged_source(x))
+  | conj_requiring_additional_capacity_when_full(x) → return(unchanged_source(x))
     ∧ not(throw ∨ allocate ∨ mutate_source(x))
+  | unsupported_conj_argument_domain(x) → reject_at_compile_time(x)
+  | conj(String, invalid_character)(x) → reject_during_constant_evaluation(x)
+    ∧ runtime(x) → replace_with_period(x) ∧ append_only_when_capacity_remains(x)
+  | duplicate_set_insertion(x) ∨ existing_map_key_replacement(x) → ¬require(additional_capacity(x))
   | conj(collection) → return(unchanged_copy_of_source(x))
   | conj(collection, value₁, value₂, …) → fold_conj_values_left_to_right(x)
     ∧ conj(c, x₁, x₂) ≡ conj(conj(c, x₁), x₂)
@@ -385,7 +452,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ const_operation(x) → non_mutating(x)
   | cljonic::Variant(x) → recurse_into_components(x) ∧ nestable(x) ∧ closed_value_domain_component(x)
   | variant_free_function_api(x) ≡ {index, holds, get, get_if, emplace, swap, visit, variant_size, variant_alternative}
-    ∧ classify_as(DeferredStatus)
+    ∧ classify_as(RequirementsBacked)
+    ∧ requirements_approval_alone(x) → ¬imply(implemented(x) ∨ implementation_ready(x))
     ∧ ∀ api(x) → free_function(x) ∧ backed_by_member_method(x)
     ∧ access ∨ rebinding(x) → non_throwing(x) ∧ ¬∃ bad_variant_access(x) ∧ rebinding_leaves_no_valueless_state(x)
     ∧ ¬provide(valueless_by_exception ∨ exception_based_get ∨ multi_variant_visit)(x)
@@ -448,12 +516,17 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     because(noexcept_guarantee_cannot_be_violated(x))
   | sequential_family(x) ≡ Vector ∨ Queue ∨ Cycle ∨ Iterate ∨ Range ∨ Repeat ∨ Repeatedly
     ∧ sequential_family_pair(x) → compare(produced_sequence(x)) ∧ require(identical_element_types(x))
+    ∧ equal_when(equal_observed_counts(x) ∧ equal_observed_elements_in_logical_order(x))
     ∧ compare_order_sensitive(x) ∧ lazy_element_wise(x) ∧ early_exit_on_first_difference(x)
-    ∧ unbounded_pair(x) → compare(configured_observable_traversal_cap(x)) ∧ every_call_terminates(x)
+    ∧ each_unbounded_operand(x) → use(configured_observable_traversal_cap(x))
+      ∧ regardless_of(other_operand_finite_or_unbounded(x))
+    ∧ every_call_terminates(x) ∧ ¬claim(equality_beyond_observed_bounds(x))
   | Map(x) → comparable_only_to(Map) | Set(x) → comparable_only_to(Set) | String(x) → comparable_only_to(String)
   | incompatible_family_pair(x) ∨ mixed_cljonic_non_cljonic_pair(x) → compile_time_rejection(x)
   | nested_producer_component(x) → compare_via(producer_parameter_equality(x))
-    ∧ operator==_prohibition(REQ-SEQ-016) ∧ recursion_requirements(REQ-SEQ-017)_unchanged(x)
+    ∧ ¬traverse(produced_elements(x))
+    ∧ recursion_requirements(REQ-SEQ-017)_unchanged(x)
+  | native_producer_operator_equality(x) → ¬imply(produced_sequence_equality(x))
   | equal_operation(x) → classify_as(RequirementsBacked)
     ∧ trace_to(REQ-FN-002G ∧ REQ-FN-002E)
 
@@ -499,7 +572,6 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | deferred_empty_operations(x) ≡ empty ∧ not_empty
   | is_empty(value) → admit(SequenceableCollection ∨ SequenceableProducer) ∧ return(count(value) == 0)
     ∧ non_throwing ∧ non_allocating ∧ provide(targeted_rejection_diagnostic(¬(SequenceableCollection ∨ SequenceableProducer)))
-    ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | deferred_collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
@@ -517,7 +589,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ typed_absence_and_failure_policy_is_declared(x) ∧ result_status_is_declared(x)
     ∧ bounded_owning_results_are_preferred(x) ∧ maps_and_sets_are_semantically_unordered(x)
     ∧ transducers_and_hidden_lazy_sequences_are_unsupported(x))
-  | contains(x) → admit((LookupCollection ∧ exact_declared_lookup_type) ∨ (IndexedCollection ∧ non_boolean_non_character_integer_index))(x)
+  | contains(x) → admit((LookupCollection ∧ SafeImplicitConversion(key, declared_lookup_type)) ∨ (IndexedCollection ∧ non_boolean_non_character_integer_index))(x)
     ∧ support(Map ∨ Set ∨ Vector ∨ String)(x) ∧ ¬support(Range)(x)
   | fits_into(x) → govern(complete_producer_materialization(x))
   | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
@@ -536,7 +608,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | unbounded_producer(value) → use(configured_observation_cap_not_complete_cardinality)
   | is_empty_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
 
-λ S2_disj_function_contract(x). disj(set, values...) → admit(CljonicSet(set) ∧ ∀ value: same_as(value, Set::value_type))
+λ S2_disj_function_contract(x). disj(set, values...) → admit(CljonicSet(set) ∧ ∀ value: SafeImplicitConversion(value, Set::value_type))
   | arity(values) = 0 → return(unchanged_copy(set))
   | arity(values) > 0 → fold(left_to_right, Set::disj, set, values)
     ∧ absent_or_repeated_value → unchanged_accumulator
@@ -550,7 +622,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ preserve(contract ∧ optional_contract_tests)
     ∧ exclude_from(strict_spec_to_code_gate(x))
     ∧ report(deferred_obligations(x))
-    ∧ ¬claim(RequirementsBacked(x) ∨ test_covered(x) ∨ converged(x))
+    ∧ ¬claim(implementation_backed(x) ∨ test_covered(x) ∨ converged(x))
+    ∧ preserve(independently_approved_requirements_backed_api_scope(x))
 
 ## Concept Architecture
 
@@ -669,6 +742,7 @@ template<class T>
 concept NothrowEqualityComparable =
     StableEqualityComparable<T> &&
     cljonic::concepts_detail::nothrow_equality_v<T>;
+```
 
 // Collection equality is conditional and component-wise: a collection
 // provides operator== exactly when its element/key/value types admit
@@ -683,6 +757,7 @@ concept NothrowEqualityComparable =
     producers_with_stable_parameters ∧ composite_values)
     ∧ never_traverse_beyond(bounded_logical_count)
 
+```cpp
 // SequenceableCollection is the current observation baseline; it does not imply
 // the independent Seqable lifecycle capability. Emptiness is derived by the
 // is_empty free function from count(), not required as a collection member.
@@ -690,7 +765,7 @@ template<class C>
 concept SequenceableCollection =
     CljonicCollection<C> &&
     requires(const C& c) {
-      { c.count() } -> std::same_as<std::size_t>;
+      { c.count() } noexcept -> std::same_as<std::size_t>;
     };
 
 template<class C>
@@ -734,11 +809,12 @@ concept ConjableCollection =
 
 ### Level 2B: SequenceableProducer (producer baseline capability gate)
 
-λ SequenceableProducer_level(x). require(admitted_producer(x)) → expose(count(x)) to(participate_in(operation(x)))
+λ SequenceableProducer_level(x). require(admitted_producer(x)) → expose(non_throwing_count(x)) to(participate_in(operation(x)))
   | capability(x) → layered_on(CljonicProducer_admission(x))
   | finite_producer_count(x) → exact_runtime_result_count(x)
   | unbounded_producer_count(x) → bounded_observable_traversal_cap(x) ∧ saturated_by(CollectionMaximumElementCount) ∧ ¬equivalent(complete_cardinality(x))
-  | SequenceableProducer(x) → require(is_finite(x) ∧ const_begin_end_traversal_bounded_by_count(x))
+  | current_producer_family(x) → provide(is_finite(x) ∧ const_begin_end_traversal_bounded_by_count(x))
+    ∧ family_guarantees(x) → ¬additional_checks_of(SequenceableProducer(x))
   | ¬imply(IndexedProducer(x) ∨ LookupCollection(x)) because(no_callable_operator_parenthesis(x))
 
 ```cpp
@@ -746,7 +822,7 @@ template<class C>
 concept SequenceableProducer =
     CljonicProducer<C> &&
     requires(const C& c) {
-      { c.count() } -> std::same_as<std::size_t>;
+      { c.count() } noexcept -> std::same_as<std::size_t>;
     };
 ```
 
@@ -842,6 +918,9 @@ concept SequenceableProducer =
 
 λ S1_collection_storage_and_algorithms(x). collection_storage(x) ≡ ContiguousStorage
   | MapEntry(x) → ContiguousStorage(x) ∧ value_semantics(x)
+    ∧ owns(key_field(x) ∧ value_field(x)) ∧ supports(named_field_observation(x))
+    ∧ semantic_free_function_access(key ∨ val ∨ first ∨ last)(x) → remain(deferred_future_work)
+    ∧ fixed_two_element_sequence_behavior(x) → remain(deferred_future_work)
   | search_algorithm(x) ≡ LinearScan
   | unsorted_removal(Map ∨ Set) ≡ SwapAndRemove
   | future_sequence_representation(seq) ≡ OwningValue(Vector)
@@ -849,7 +928,7 @@ concept SequenceableProducer =
 
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
   | collection_updates(x) → realize(PersistentValueSemantics ∧ DeepCopyUpdate)
-  | public_operations(x) → preserve(ReferentialTransparency)
+  | public_operations(x) → obey(S5_authorized_effect_policy(x))
   | read_only_observation(x) → require(ReadOnlyInteropAccessor ∧ ConstRangeTraversal)
   | contiguous_observation(x) → use(ContiguousConstView) when(complete_active_logical_range_is_contiguous(x))
   | view_lifetime(x) → source_lifetime_bounded(x)
@@ -874,7 +953,11 @@ concept SequenceableProducer =
   | Iterate(x) → emit(initial(x)) ∧ apply(step_to_previous_value(x)) ∧ represent(unbounded) ∧ support(constexpr ∧ runtime)
   | Iterate(x) → permit(named_function ∨ lambda ∨ function_object) ∧ satisfy(CljonicSource) ∧ exclude(IndexedProducer ∧ CallableLookup ∧ Lookup)
   | Repeatedly(step) → store(decay(step)) ∧ require(NothrowCollectionElement(element)) ∧ require(const_step_invocation_is_noexcept_nullary_to_T(step))
-  | Repeatedly(count ∧ step) → store(decay(step) ∧ runtime_count) ∧ represent(finite) ∧ invoke(step_once_per_produced_element) ∧ mirror(Clojure_repeatedly_n_f)
+  | Repeatedly(count ∧ step) → store(decay(step) ∧ runtime_count) ∧ represent(finite) ∧ mirror(Clojure_repeatedly_n_f)
+  | Repeatedly(x) → authorize(only_callback_state_and_side_effects_within_declared_step_contract(x))
+    ∧ invoke(step_once_per_produced_element(x)) ∧ ¬invoke(step_during_construction(x))
+    ∧ require(callback_is_non_throwing_and_non_allocating(x))
+    ∧ obey(S3_effect_control(x))
   | Repeatedly(x) → permit(named_function ∨ lambda ∨ function_object) ∧ satisfy(CljonicSource) ∧ exclude(IndexedProducer ∧ CallableLookup ∧ Lookup) ∧ exclude(step_evaluation_during_construction)
   | semantically_infinite_producer(x) → materialize_at_most(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → materialize_as(BoundedPrefixResult) ∧ adjust_effective_endpoint(x)
@@ -919,7 +1002,10 @@ concept SequenceableProducer =
 λ S1_constant_evaluation_policy(x). constexpr_eligible_operation(x) → prefer(constexpr)
   | required_compile_time_operation(x) → test_in_constant_expression(x)
   | consteval(x) → use_only_when_compile_time_execution_is_semantically_required
-  | compile_time_and_runtime_evaluation(x) → produce(equivalent_observable_results)
+  | valid_input(x) ∧ compile_time_and_runtime_evaluation(x) → produce(equivalent_observable_results)
+  | invalid_input(x) → follow(explicit_operation_specific_failure_policy(x))
+    ∧ permit(compile_time_rejection_versus_documented_runtime_result(x))
+      only_when(explicitly_declared_by_operation_contract(x))
 
 λ S1_user_clarity_policy(x). public_api_constraints(x) → prefer(named_cljonic_concepts)
   | trait_mechanics(x) → hide_inside(cljonic_concepts_namespace)
@@ -937,7 +1023,7 @@ concept SequenceableProducer =
 
 λ coherence_control(x). operational_choice(x) → reject_if(violates_S3_constraints)
 
-λ coherence_adaptation(x). adaptation(x) → valid_only_if(backward_compatible_vocabulary ∧ DeterministicBehavior)
+λ coherence_adaptation(x). adaptation(x) → valid_only_if(backward_compatible_vocabulary ∧ S5_authorized_effect_policy)
 
 λ coherence_type_expression(x). implementation_expression(x) → reject_if(uses_traits_where_clear_concept_exists)
 
