@@ -1,5 +1,35 @@
 ## Current Session State
 
+- last_session_id: 107959fa-e31e-417e-9e8e-341c7e6c0b7e
+- current_timestamp: 2026-10-15T15:57:15-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Fixed misleading links in the generated `\mainpage` cheatsheet: the `Set Functions` and `String Functions` headings linked `Set` and `String` to the `cljonic::Set` and `cljonic::String` collection classes, although those sections list the planned `clojure.set` and `clojure.string` library functions.
+2. Removed the two explicit `\ref` commands in `src/cljonic-core.hpp` after an isolated Doxygen 1.18 experiment showed Markdown headings are never auto-linked, so both headings now render as plain text.
+3. Regenerated `cljonic.hpp` and `docs/`, verified the rendered HTML, and committed the fix as `ff715b1`; stored the reusable insight as memory `0001e8f` and synthesized it into `mementum/knowledge/doxygen-doc-tooling.md`.
+
+Questions:
+1. None open. Deferred work is unchanged and acknowledged: the `variant-api` lifecycle, MapEntry semantic key/val/first/last and two-element sequence behavior, the seqable lifecycle for Map/Queue/Set/String, the five-header diagnostic-coverage backlog (fits_into, get, into, peek, pop), and six documented examples.
+
+Decisions:
+1. Keep the `Set Functions` and `String Functions` headings as plain text rather than linking them: no `Namespace_Set` / `Namespace_String` anchors exist, and the aliases table already renders both names unlinked.
+2. Preserve the intentional `\ref Set` and `\ref String` links under `Collection Types`; only the two function-group headings were wrong.
+3. `doc/mainpage-example.hpp` is a source-format fixture and already carried the plain heading form, so it was left unchanged.
+
+Validation:
+1. `make format-doc-samples` reported `core-cheatsheet-format:ok` and was idempotent across two passes with no diff drift.
+2. `make docs` reported `docs:ok`; regenerated `docs/index.html` emits plain `<h2 class="doxsection">...Set Functions</h2>` and `String Functions` with no link element, and only the intentional Collection Types links remain.
+3. `make cljonic` reported `cljonic:ok` and `make cljonic-test` reported `cljonic-test:ok`.
+4. An isolated Doxygen 1.18 probe established that headings do not auto-link while inline prose does, and that the `%` escape did not reliably suppress prose auto-linking.
+
+Next:
+1. No follow-up pending. Apply the stored heading rule when editing cheatsheet headings: add `\ref` only when the heading names the intended entity.
+2. Working tree is clean at `0001e8f`; no implementation or governance change was pending at finalization.
+
+## Previous Session State
+
 - last_session_id: dd3dbede-e31b-4c78-b743-952b104a5c1d
 - current_timestamp: 2026-10-15T15:46:18-06:00
 - recover: 1

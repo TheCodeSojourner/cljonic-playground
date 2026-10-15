@@ -2,7 +2,7 @@
 type: Reference
 title: Doxygen Doc Tooling
 status: active
-description: The toolchain that formats, checks, compiles, and generates cljonic's Doxygen docs — script responsibilities, comment-structure gates, example rules, and regeneration discipline.
+description: The toolchain that formats, checks, compiles, and generates cljonic's Doxygen docs — script responsibilities, comment-structure gates, example rules, heading link discipline, and regeneration discipline.
 tags: [documentation, doxygen, tooling, formatting, examples, verification]
 related:
   - /mementum/memories/doxygen-reflow-must-respect-list-markers.md
@@ -11,6 +11,7 @@ related:
   - /mementum/memories/docs-examples-must-be-runnable-programs.md
   - /mementum/memories/defer-doc-regeneration-until-final-git.md
   - /mementum/memories/doxygen-html-cheatsheet-structure.md
+  - /mementum/memories/doxygen-markdown-headings-do-not-autolink.md
   - /mementum/memories/doxygen-examples-use-free-functions.md
   - /mementum/memories/doxygen-prose-must-be-user-facing.md
   - /mementum/memories/docs-user-facing-example-style.md
@@ -53,6 +54,24 @@ Operating model for the scripts and gates that guard cljonic's public docs.
   lines and lists need every bullet on its own line — because collapsing them
   breaks HTML rendering. `doc/mainpage-example.hpp` is the source-format
   fixture for that block only.
+
+## Heading links are opt-in
+
+Doxygen does **not** auto-link words in Markdown headings; inline prose is the
+opposite (a bare word auto-links, and the `%` escape did not reliably suppress
+it in Doxygen 1.18). A heading therefore renders plain unless it carries an
+explicit `\ref`, so add one only when the heading names the entity you intend to
+link.
+
+- `## Set Functions` and `## String Functions` group the planned `clojure.set`
+  and `clojure.string` library functions, **not** the `cljonic::Set` and
+  `cljonic::String` collection types; `\ref Set` there wrongly linked readers to
+  the collection class and was removed.
+- The `## Collection Types` entries keep their intentional `\ref` links, and the
+  aliases table renders `Namespace_Set` / `Namespace_String` unlinked because
+  those anchors do not exist.
+- Verify by regenerating `docs/` and checking the generated `<h2>`: Doxygen
+  emits a link element only when one was requested.
 
 ## Example compilation
 
