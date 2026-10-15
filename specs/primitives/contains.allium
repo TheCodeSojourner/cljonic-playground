@@ -9,7 +9,7 @@ entity Contains {
     referential_transparency: Boolean
     returns_boolean_membership: Boolean
     tests_applicable_lookup_or_indexed_domain: Boolean
-    supports_map_and_set_declared_lookup_types_only: Boolean
+    supports_map_and_set_safe_lookup_conversions: Boolean
     supports_vector_and_string_nonboolean_noncharacter_integer_indices: Boolean
     excludes_range_free_function: Boolean
 
@@ -25,8 +25,8 @@ entity Contains {
         this.tests_applicable_lookup_or_indexed_domain = true
     }
 
-    invariant SupportsMapAndSetDeclaredLookupTypesOnly {
-        this.supports_map_and_set_declared_lookup_types_only = true
+    invariant SupportsMapAndSetSafeLookupConversions {
+        this.supports_map_and_set_safe_lookup_conversions = true
     }
 
     invariant SupportsVectorAndStringNonbooleanNoncharacterIntegerIndices {

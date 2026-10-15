@@ -1,0 +1,96 @@
+-- allium: 3
+-- Governed by REQ-CONV-001 through REQ-CONV-003.
+-- NothrowElementConstruction combines safe implicit conversion with a separate
+-- non-throwing construction check on the actual argument expression, retaining
+-- its cv-qualification and reference category wherever that gate applies.
+-- Safe conversion alone does not prove non-throwing construction; collection
+-- storage admission remains the separate NothrowCollectionElement contract.
+-- Finite Repeat/Repeatedly counts require a non-Boolean, non-character unsigned
+-- integral type whose entire range fits std::size_t; signed, floating-point,
+-- and user-defined counts are rejected without wrapping or truncation.
+-- This is not the checked-value normalization policy for Vector/String indexes.
+
+entity ImplicitConversions {
+    same_type_values_preserve_identity: Boolean
+    arithmetic_conversions_preserve_entire_source_domain: Boolean
+    boolean_character_enum_domains_remain_distinct: Boolean
+    cross_type_user_defined_and_pointer_conversions_are_rejected: Boolean
+    all_api_boundaries_share_admission: Boolean
+    argument_construction_gate_requires_safe_conversion_and_nothrow_construction: Boolean
+    construction_checks_actual_argument_expression_preserving_cvref: Boolean
+    safe_conversion_alone_does_not_prove_nothrow_construction: Boolean
+    argument_construction_gate_is_distinct_from_collection_storage_admission: Boolean
+    ranges_check_actual_reference_and_nothrow_traversal: Boolean
+    counts_require_unsigned_noncharacter_integer_types: Boolean
+    finite_counts_exclude_boolean_and_character_types: Boolean
+    finite_count_entire_type_range_must_fit_size_t: Boolean
+    unsupported_count_types_rejected_without_wrapping_or_truncation: Boolean
+    checked_index_and_character_exceptions_are_preserved: Boolean
+    nominal_source_callback_entry_variant_and_equality_domains_are_preserved: Boolean
+
+    invariant SameTypeValuesPreserveIdentity {
+        this.same_type_values_preserve_identity = true
+    }
+
+    invariant ArithmeticConversionsPreserveEntireSourceDomain {
+        this.arithmetic_conversions_preserve_entire_source_domain = true
+    }
+
+    invariant BooleanCharacterEnumDomainsRemainDistinct {
+        this.boolean_character_enum_domains_remain_distinct = true
+    }
+
+    invariant RejectsCrossTypeUserDefinedAndPointerConversions {
+        this.cross_type_user_defined_and_pointer_conversions_are_rejected = true
+    }
+
+    invariant AllApiBoundariesShareAdmission {
+        this.all_api_boundaries_share_admission = true
+    }
+
+    invariant ArgumentConstructionGateRequiresSafeConversionAndNothrowConstruction {
+        this.argument_construction_gate_requires_safe_conversion_and_nothrow_construction = true
+    }
+
+    invariant ConstructionChecksActualArgumentExpressionPreservingCvref {
+        this.construction_checks_actual_argument_expression_preserving_cvref = true
+    }
+
+    invariant SafeConversionAloneDoesNotProveNothrowConstruction {
+        this.safe_conversion_alone_does_not_prove_nothrow_construction = true
+    }
+
+    invariant ArgumentConstructionGateIsDistinctFromCollectionStorageAdmission {
+        this.argument_construction_gate_is_distinct_from_collection_storage_admission = true
+    }
+
+    invariant RangesCheckActualReferenceAndNothrowTraversal {
+        this.ranges_check_actual_reference_and_nothrow_traversal = true
+    }
+
+    invariant CountsRequireUnsignedNoncharacterIntegerTypes {
+        this.counts_require_unsigned_noncharacter_integer_types = true
+    }
+
+    invariant FiniteCountsExcludeBooleanAndCharacterTypes {
+        this.finite_counts_exclude_boolean_and_character_types = true
+    }
+
+    invariant FiniteCountEntireTypeRangeMustFitSizeT {
+        this.finite_count_entire_type_range_must_fit_size_t = true
+    }
+
+    invariant UnsupportedCountTypesRejectedWithoutWrappingOrTruncation {
+        this.unsupported_count_types_rejected_without_wrapping_or_truncation = true
+    }
+
+    invariant CheckedIndexAndCharacterExceptionsArePreserved {
+        this.checked_index_and_character_exceptions_are_preserved = true
+    }
+
+    invariant PreservesNominalDomains {
+        this.nominal_source_callback_entry_variant_and_equality_domains_are_preserved = true
+    }
+}
+
+actor ImplicitConversionCaller { identified_by: ImplicitConversions }

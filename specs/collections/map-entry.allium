@@ -1,4 +1,7 @@
 -- allium: 3
+-- The owning pair and named key/value fields are active. Semantic key, val,
+-- first and last free functions and fixed two-element sequence behavior remain
+-- deferred; this does not defer MapEntry storage or named-field observation.
 
 entity MapEntry {
     key_value_count: Integer
@@ -16,10 +19,10 @@ entity MapEntry {
     requires_nothrow_copy_construction: Boolean
     requires_nothrow_copy_assignment: Boolean
     requires_nothrow_destruction: Boolean
-    supports_key_observation: Boolean
-    supports_val_observation: Boolean
-    supports_first_observation: Boolean
-    supports_last_observation: Boolean
+    supports_named_key_field_observation: Boolean
+    supports_named_value_field_observation: Boolean
+    semantic_key_val_first_last_free_functions_are_deferred: Boolean
+    fixed_two_element_sequence_behavior_is_deferred: Boolean
 
     invariant KeyValueCountIsTwo {
         this.key_value_count = 2
@@ -81,20 +84,20 @@ entity MapEntry {
         this.requires_nothrow_destruction = true
     }
 
-    invariant SupportsKeyObservation {
-        this.supports_key_observation = true
+    invariant SupportsNamedKeyFieldObservation {
+        this.supports_named_key_field_observation = true
     }
 
-    invariant SupportsValObservation {
-        this.supports_val_observation = true
+    invariant SupportsNamedValueFieldObservation {
+        this.supports_named_value_field_observation = true
     }
 
-    invariant SupportsFirstObservation {
-        this.supports_first_observation = true
+    invariant SemanticKeyValFirstLastFreeFunctionsAreDeferred {
+        this.semantic_key_val_first_last_free_functions_are_deferred = true
     }
 
-    invariant SupportsLastObservation {
-        this.supports_last_observation = true
+    invariant FixedTwoElementSequenceBehaviorIsDeferred {
+        this.fixed_two_element_sequence_behavior_is_deferred = true
     }
 }
 

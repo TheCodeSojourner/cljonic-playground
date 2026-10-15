@@ -9,7 +9,9 @@ entity Cycle {
     owns_repeated_sequence: Boolean
     does_not_own_result_storage: Boolean
     does_not_borrow_source_or_callback: Boolean
-    referential_transparency: Boolean
+    referential_transparency_is_default_unless_source_authorizes_effect: Boolean
+    effects_are_limited_to_source_contract_scope: Boolean
+    does_not_authorize_additional_effects_or_input_collection_mutation: Boolean
     single_argument_form_only: Boolean
     accepts_finite_or_unbounded_sequence_source: Boolean
     source_satisfies_const_input_range: Boolean
@@ -67,8 +69,16 @@ entity Cycle {
         this.does_not_borrow_source_or_callback = true
     }
 
-    invariant ReferentialTransparency {
-        this.referential_transparency = true
+    invariant ReferentialTransparencyByDefaultUnlessSourceAuthorizesEffect {
+        this.referential_transparency_is_default_unless_source_authorizes_effect = true
+    }
+
+    invariant EffectsAreLimitedToSourceContractScope {
+        this.effects_are_limited_to_source_contract_scope = true
+    }
+
+    invariant DoesNotAuthorizeAdditionalEffectsOrInputCollectionMutation {
+        this.does_not_authorize_additional_effects_or_input_collection_mutation = true
     }
 
     invariant SingleArgumentFormOnly {

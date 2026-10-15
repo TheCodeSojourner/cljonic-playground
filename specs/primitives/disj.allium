@@ -10,7 +10,7 @@ entity Disj {
     referential_transparency: Boolean
     copy_on_modify_semantics: Boolean
     supports_zero_or_more_values: Boolean
-    requires_exact_set_value_type: Boolean
+    requires_safe_set_value_conversion: Boolean
     removes_values_left_to_right: Boolean
     zero_values_return_unchanged_copy: Boolean
     absent_values_are_no_ops: Boolean
@@ -21,9 +21,9 @@ entity Disj {
         this.supports_disj_free_function = true
     }
 
-    invariant ZeroOrMoreExactValues {
+    invariant ZeroOrMoreSafelyConvertibleValues {
         this.supports_zero_or_more_values = true
-        this.requires_exact_set_value_type = true
+        this.requires_safe_set_value_conversion = true
     }
 
     invariant RemovesValuesLeftToRight {

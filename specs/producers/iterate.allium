@@ -1,4 +1,6 @@
 -- allium: 3
+-- Callable parameters exclude native == and parameters_equal, not admitted
+-- top-level equal comparisons over bounded sequential observations.
 
 entity Iterate {
     supports_header_only_distribution: Boolean
@@ -34,7 +36,7 @@ entity Iterate {
     runtime_use_is_supported: Boolean
     construction_does_not_invoke_step: Boolean
     callable_step_excludes_parameter_equality: Boolean
-    unbounded_equality_fails_at_compile_time: Boolean
+    native_and_parameter_equality_rejected_for_callable_parameters: Boolean
     does_not_satisfy_indexed_producer: Boolean
     satisfies_sequenceable_producer: Boolean
     satisfies_nothrow_collection_element: Boolean
@@ -173,8 +175,8 @@ entity Iterate {
         this.callable_step_excludes_parameter_equality = true
     }
 
-    invariant UnboundedEqualityFailsAtCompileTime {
-        this.unbounded_equality_fails_at_compile_time = true
+    invariant NativeAndParameterEqualityRejectedForCallableParameters {
+        this.native_and_parameter_equality_rejected_for_callable_parameters = true
     }
 
     invariant DoesNotSatisfyIndexedProducer {

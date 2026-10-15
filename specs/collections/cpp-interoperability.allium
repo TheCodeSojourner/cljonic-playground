@@ -11,6 +11,12 @@ entity CollectionCppInteroperability {
     queue_uses_logical_traversal: Boolean
     string_excludes_null_terminator: Boolean
     views_are_const_and_non_owning: Boolean
+    supported_collections_provide_read_only_interoperability: Boolean
+    traversal_terminates_after_exact_active_count: Boolean
+    view_lifetime_is_bounded_by_source_lifetime: Boolean
+    semantic_free_functions_return_owning_results_not_borrowed_views: Boolean
+    contiguous_view_requires_complete_active_logical_range_contiguity: Boolean
+    queue_does_not_require_a_contiguous_view: Boolean
 
     invariant SupportsConstTraversal { this.supports_const_traversal = true }
     invariant TraversalIsReadOnly { this.traversal_is_read_only = true }
@@ -22,6 +28,12 @@ entity CollectionCppInteroperability {
     invariant QueueUsesLogicalTraversal { this.queue_uses_logical_traversal = true }
     invariant StringExcludesNullTerminator { this.string_excludes_null_terminator = true }
     invariant ViewsAreConstAndNonOwning { this.views_are_const_and_non_owning = true }
+    invariant SupportedCollectionsProvideReadOnlyInteroperability { this.supported_collections_provide_read_only_interoperability = true }
+    invariant TraversalTerminatesAfterExactActiveCount { this.traversal_terminates_after_exact_active_count = true }
+    invariant ViewLifetimeIsBoundedBySourceLifetime { this.view_lifetime_is_bounded_by_source_lifetime = true }
+    invariant SemanticFreeFunctionsReturnOwningResultsNotBorrowedViews { this.semantic_free_functions_return_owning_results_not_borrowed_views = true }
+    invariant ContiguousViewRequiresCompleteActiveLogicalRangeContiguity { this.contiguous_view_requires_complete_active_logical_range_contiguity = true }
+    invariant QueueDoesNotRequireAContiguousView { this.queue_does_not_require_a_contiguous_view = true }
 }
 
 actor CollectionCppInteroperabilityOperator { identified_by: CollectionCppInteroperability }

@@ -389,7 +389,9 @@ entity CljonicProducer {
     no_rtti: Boolean
     no_exceptions: Boolean
     single_threaded_execution_model: Boolean
-    referential_transparency: Boolean
+    referential_transparency_is_default_unless_explicitly_authorized_effect: Boolean
+    effects_are_limited_to_governing_contract_scope: Boolean
+    effects_do_not_authorize_hidden_state_or_input_collection_mutation: Boolean
 
     invariant NominalAdmissionRequiresCljonicOwnedTrait {
         this.nominal_admission_requires_cljonic_owned_trait = true
@@ -419,8 +421,16 @@ entity CljonicProducer {
         this.single_threaded_execution_model = true
     }
 
-    invariant ReferentialTransparency {
-        this.referential_transparency = true
+    invariant ReferentialTransparencyByDefaultUnlessExplicitlyAuthorizedEffect {
+        this.referential_transparency_is_default_unless_explicitly_authorized_effect = true
+    }
+
+    invariant EffectsAreLimitedToGoverningContractScope {
+        this.effects_are_limited_to_governing_contract_scope = true
+    }
+
+    invariant EffectsDoNotAuthorizeHiddenStateOrInputCollectionMutation {
+        this.effects_do_not_authorize_hidden_state_or_input_collection_mutation = true
     }
 }
 
@@ -489,6 +499,27 @@ entity CljonicRepeatedly {
     }
 }
 
+-- NoHiddenGlobalInitialization applies to every supported public path without
+-- prohibiting explicitly bounded automatic or static storage.
+entity RuntimeInitializationPolicy {
+    every_supported_public_path_excludes_hidden_global_runtime_initialization: Boolean
+    no_hidden_initialization_dependent_library_state: Boolean
+    bounded_automatic_or_static_storage_remains_permitted: Boolean
+
+    invariant EverySupportedPublicPathExcludesHiddenGlobalRuntimeInitialization {
+        this.every_supported_public_path_excludes_hidden_global_runtime_initialization = true
+    }
+
+    invariant NoHiddenInitializationDependentLibraryState {
+        this.no_hidden_initialization_dependent_library_state = true
+    }
+
+    invariant BoundedAutomaticOrStaticStorageRemainsPermitted {
+        this.bounded_automatic_or_static_storage_remains_permitted = true
+    }
+}
+
+actor RuntimeInitializationPolicyOperator { identified_by: RuntimeInitializationPolicy }
 actor CljonicCollectionOperator { identified_by: CljonicCollection }
 actor CljonicVectorOperator { identified_by: CljonicVector }
 actor CljonicMapOperator { identified_by: CljonicMap }
