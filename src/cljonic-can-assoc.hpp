@@ -16,6 +16,8 @@ namespace cljonic {
  * capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier
  * pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.
  *
+ * Keys and values use the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Assoc "assoc".
+ *
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"

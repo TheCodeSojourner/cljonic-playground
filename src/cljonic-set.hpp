@@ -21,6 +21,8 @@ namespace cljonic {
  * a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
  * preflight predicate for whether the whole source fits.
  *
+ Elements and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -47,7 +49,8 @@ namespace cljonic {
    // A standard view pipeline can use an existing Set as its source and
    // materialize transformed values into another Set.
    const auto doubled_view =
-       runtime | std::views::transform([](int value) { return value * 2; });
+       runtime |
+       std::views::transform([](int value) noexcept { return value * 2; });
    const auto from_pipeline = AccountSet{doubled_view};
 
    // -------------------------------------------------------------------------
@@ -109,7 +112,7 @@ class Set {
         static_assert(sizeof...(Args) <= CapacityValue, "Set initializer count exceeds Set CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
                       "Set constructor requires all arguments to construct "
-                      "T without throwing and be implicitly convertible to T");
+                      "T without throwing and convert safely without losing values or changing their meaning");
 
         const auto duplicate = append_constructed(std::forward<Args>(args)...);
 
@@ -126,12 +129,10 @@ class Set {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Set(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+    constexpr Set(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+        static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
                       "Set range/view constructor requires each source element to construct "
-                      "T without throwing and be implicitly convertible to T");
+                      "T safely and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "Set static-extent range source exceeds Set CapacityValue");
 
@@ -140,7 +141,7 @@ class Set {
             if (copy_count++ >= CapacityValue) {
                 break;
             }
-            *this = conj(value_type{std::forward<decltype(item)>(item)});
+            *this = conj(value_type(std::forward<decltype(item)>(item)));
         }
     }
 
@@ -234,6 +235,26 @@ class Set {
         }
         return result;
     }
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto contains(const Value& value) const -> bool = delete;
+
+    template <typename Value, typename Fallback = T>
+        requires(!concepts::SafeImplicitConversion<T, Value> || !concepts::SafeImplicitConversion<T, Fallback>)
+    auto operator()(const Value& value, const Fallback& fallback = Fallback{}) const -> T = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto can_conj(const Value& value) const -> bool = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto conj(const Value& value) const -> Set = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto disj(const Value& value) const -> Set = delete;
 
   private:
     template <typename Arg>

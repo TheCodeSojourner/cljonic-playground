@@ -116,7 +116,7 @@ class Variant {
 
     template <typename T>
         requires(variant_detail::matching_alternative_count_v<std::remove_cvref_t<T>, Alternatives...> == 1)
-    constexpr Variant(T&& value) noexcept : storage_{std::forward<T>(value)} {
+    constexpr Variant(const T& value) noexcept : storage_{value} {
     }
 
     /** Returns the zero-based index of the active alternative. */

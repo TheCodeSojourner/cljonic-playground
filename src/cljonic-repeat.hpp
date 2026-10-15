@@ -14,7 +14,9 @@ namespace cljonic {
  * `repeat(value, count)` yields exactly \p count values. Observation is bounded by the configured collection maximum,
  * by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both
  * constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or
- * converted into an owning destination with `into` when explicit materialization is required.
+ * converted into an owning destination with `into` when explicit materialization is required. Values and finite counts
+ * follow the \ref ImplicitConversions "safe implicit conversion rules"; counts use non-Boolean, non-character unsigned
+ * integer types whose ranges fit \c std::size_t.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -104,11 +106,19 @@ class Repeat {
     constexpr Repeat() noexcept : value_{}, count_{0U}, is_finite_{true} {
     }
 
-    constexpr explicit Repeat(T value) noexcept : value_(std::move(value)), count_(0U), is_finite_(false) {
+    constexpr explicit Repeat(const T& value) noexcept : value_(value), count_(0U), is_finite_(false) {
     }
 
-    constexpr Repeat(T value, std::size_t count) noexcept : value_(std::move(value)), count_(count), is_finite_(true) {
+    constexpr Repeat(const T& value, std::size_t count) noexcept : value_(value), count_(count), is_finite_(true) {
     }
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    explicit Repeat(Value value) = delete;
+
+    template <typename Value, typename Count>
+        requires(!concepts::SafeImplicitConversion<T, Value> || !concepts_detail::ProducerCount<Count>)
+    Repeat(Value value, Count count) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
@@ -156,9 +166,9 @@ template <typename T>
     return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value)};
 }
 
-template <typename T>
+template <typename T, concepts_detail::ProducerCount Count>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
-[[nodiscard]] constexpr auto repeat(T&& value, std::size_t count) noexcept -> Repeat<std::remove_cvref_t<T>> {
+[[nodiscard]] constexpr auto repeat(T&& value, Count count) noexcept -> Repeat<std::remove_cvref_t<T>> {
     return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value), count};
 }
 
@@ -174,13 +184,14 @@ constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::R
     return {};
 }
 
-template <typename T>
-    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
-constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] std::size_t count) noexcept
+template <typename T, typename Count>
+    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>> || !concepts_detail::ProducerCount<Count>)
+constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] Count count) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<T>,
                   "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
-                  "safe to create, store, and destroy without throwing.");
+                  "safe to create, store, and destroy without throwing. The count must be a non-boolean, "
+                  "non-character unsigned integer type whose range fits std::size_t.");
     return {};
 }
 

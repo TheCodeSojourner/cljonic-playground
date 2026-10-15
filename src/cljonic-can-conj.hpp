@@ -47,6 +47,8 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
  * value replacement that needs no capacity. An absent element or key returns true only when capacity remains; when
  * full, it returns false.
  *
+ * Values use the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Conj "conj".
+ *
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"

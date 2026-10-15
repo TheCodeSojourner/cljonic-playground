@@ -75,8 +75,8 @@ class Iterate {
 
         constexpr const_iterator() noexcept = default;
 
-        constexpr const_iterator(T current, const Step* step, std::size_t remaining) noexcept
-            : current_(std::move(current)), step_(step), remaining_(remaining) {
+        constexpr const_iterator(const T& current, const Step* step, std::size_t remaining) noexcept
+            : current_(current), step_(step), remaining_(remaining) {
         }
 
         [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
@@ -85,7 +85,8 @@ class Iterate {
 
         constexpr auto operator++() noexcept -> const_iterator& {
             if (remaining_ > 1U) {
-                current_ = std::invoke(*step_, current_);
+                const T next = std::invoke(*step_, current_);
+                current_ = next;
             }
             --remaining_;
             return *this;
@@ -116,8 +117,12 @@ class Iterate {
         : initial_{}, step_{} {
     }
 
-    constexpr Iterate(T initial, Step step) noexcept : initial_(std::move(initial)), step_(std::move(step)) {
+    constexpr Iterate(const T& initial, const Step& step) noexcept : initial_(initial), step_(step) {
     }
+
+    template <typename Initial, typename OtherStep>
+        requires(!concepts::SafeImplicitConversion<T, Initial> || !std::same_as<std::remove_cvref_t<OtherStep>, Step>)
+    Iterate(Initial initial, OtherStep step) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;

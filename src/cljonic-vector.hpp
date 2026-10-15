@@ -18,7 +18,8 @@ namespace cljonic {
  * changing the original collection. Construction with more initializers than the available capacity is rejected at
  * compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer
  * is not a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
- * preflight predicate for whether the whole source fits.
+ * preflight predicate for whether the whole source fits. Element construction, updates, and fallbacks follow the \ref
+ * ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -68,8 +69,10 @@ namespace cljonic {
    constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
    constexpr Vector<int, 4> values{10, 20};
    constexpr CategoryArgument category_argument{};
-   constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
-   constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
+   constexpr Vector<CategoryElement, 1> lvalue_constructed{
+       CategoryElement{category_argument}};
+   constexpr Vector<CategoryElement, 1> rvalue_constructed{
+       CategoryElement{CategoryArgument{}}};
 
    // Vector values can be used as a callable function, returning a default-
    // value for invalid indexes or a supplied fallback when provided.
@@ -105,7 +108,7 @@ namespace cljonic {
    // materialize transformed values into another Vector.
    const auto doubled_view =
        runtime_values |
-       std::views::transform([](int value) { return value * 2; });
+       std::views::transform([](int value) noexcept { return value * 2; });
    const auto from_pipeline = Vector<int, 4>{doubled_view};
 
    // -----------------------------------------------------------------------
@@ -165,10 +168,10 @@ class Vector {
     template <typename... Args>
     constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
         static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
-        static_assert((concepts::NothrowElementConstruction<ElementType, Args> && ...),
-                      "Vector constructor requires all arguments to construct "
-                      "ElementType without throwing and be implicitly "
-                      "convertible to ElementType");
+        static_assert(
+            (concepts::NothrowElementConstruction<ElementType, Args> && ...),
+            "Vector constructor requires all arguments to construct "
+            "ElementType without throwing and convert safely without losing values or changing their meaning");
 
         initialize_storage_if_valid(std::forward<Args>(args)...);
     }
@@ -183,13 +186,10 @@ class Vector {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, ElementType>)
-    constexpr Vector(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(concepts::NothrowElementConstruction<ElementType, source_value_type>,
+    constexpr Vector(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<ElementType, SourceRange>)) {
+        static_assert(concepts::NothrowRangeConstruction<ElementType, SourceRange>,
                       "Vector range/view constructor requires each source element to "
-                      "construct ElementType without throwing and be implicitly "
-                      "convertible to ElementType");
+                      "convert safely to ElementType and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "Vector static-extent range source exceeds Vector CapacityValue");
 
@@ -198,7 +198,7 @@ class Vector {
             if (copy_count >= CapacityValue) {
                 break;
             }
-            storage_[copy_count++] = value_type{std::forward<decltype(item)>(item)};
+            storage_[copy_count++] = value_type(std::forward<decltype(item)>(item));
         }
         logical_size_ = copy_count;
     }
@@ -303,6 +303,26 @@ class Vector {
         return {storage_.data(), logical_size_};
     }
 
+    template <typename Index, typename Fallback>
+        requires(!concepts::SafeImplicitConversion<value_type, Fallback>)
+    auto operator()(Index index, const Fallback& fallback) const -> value_type = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<value_type, Value>)
+    auto can_assoc(Index index, const Value& value) const -> bool = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<value_type, Value>)
+    auto assoc(Index index, const Value& value) const -> Vector = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<value_type, Value>)
+    auto can_conj(const Value& value) const -> bool = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<value_type, Value>)
+    auto conj(const Value& value) const -> Vector = delete;
+
   private:
     [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
         return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
@@ -323,7 +343,7 @@ class Vector {
     template <std::size_t... Indices, typename... Args>
     constexpr void initialize_storage(std::index_sequence<Indices...> indices, Args&&... args) noexcept {
         (void)indices;
-        ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
+        ((storage_[Indices] = ElementType(std::forward<Args>(args))), ...);
     }
 
     std::array<value_type, CapacityValue> storage_{};

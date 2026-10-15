@@ -41,8 +41,9 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
  * The \b dissoc free function API removes zero or more keys from a \ref Map "Map".
  *
  * `dissoc` is supported only for \ref Map "Map". With no keys it returns an unchanged copy; otherwise it removes keys
- * left-to-right. Keys may be supplied using any type convertible to the map's key type. Present keys are removed via
- * swap-and-remove; absent or repeated keys are no-ops. The source map is never modified.
+ * left-to-right. Keys may use the map's key type or a numeric type whose entire range is preserved by conversion to
+ * that type; Boolean, character, enum, and user-defined keys do not convert across types. Each present key is removed;
+ * absent keys leave the map unchanged, and repeating a key has no further effect. The source map is never modified.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -118,7 +119,8 @@ template <typename C, typename K>
     requires concepts::CljonicMap<C> && (!concepts_detail::DissocKeyAdmissible<C, K>)
 [[nodiscard]] constexpr auto dissoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C, K>,
-                  "cljonic::dissoc: each key must be convertible to the Map's key type.");
+                  "cljonic::dissoc: each key must convert safely to the Map's key type, without losing values or "
+                  "changing its meaning.");
     return C{};
 }
 
@@ -138,7 +140,8 @@ template <typename C, typename K1, typename K2, typename... Rest>
                                     [[maybe_unused]] const K2& key2, [[maybe_unused]] const Rest&... rest) noexcept
     -> C {
     static_assert(concepts_detail::dependent_false<C, K1, K2, Rest...>,
-                  "cljonic::dissoc: each key must be convertible to the Map's key type.");
+                  "cljonic::dissoc: each key must convert safely to the Map's key type, without losing values or "
+                  "changing its meaning.");
     return C{};
 }
 

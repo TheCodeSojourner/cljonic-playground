@@ -67,6 +67,8 @@
  *
  * ## Collection Types
  *
+ * Argument admission follows the \ref ImplicitConversions "safe implicit conversion rules".
+ *
  * - \ref Map "Map", \ref MapEntry "MapEntry"
  * - \ref Queue "Queue"
  * - \ref Set "Set"

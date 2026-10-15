@@ -78,6 +78,8 @@
  *
  * ## Collection Types
  *
+ * Argument admission follows the \ref ImplicitConversions "safe implicit conversion rules".
+ *
  * - \ref Map "Map", \ref MapEntry "MapEntry"
  * - \ref Queue "Queue"
  * - \ref Set "Set"
@@ -209,12 +211,34 @@
 #include <concepts>
 #include <cstddef>
 #include <functional>
+#include <limits>
 #include <optional>
 #include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
 #include <variant>
+
+/** \page ImplicitConversions Safe implicit conversions
+ * Arguments accept their declared types and numeric widening only when every source value is preserved. For example,
+ * \c short can widen to \c long \c long, and \c float can widen to \c double. Converting an integer to floating point
+ * also requires sufficient precision for every source integer. Floating-to-integer conversions and potentially
+ * narrowing conversions are rejected even when a particular literal fits.
+ *
+ * Boolean, character, enum, pointer, and user-defined values do not implicitly change types. Convert deliberately
+ * before a call when needed, checking representability first; an unchecked cast does not establish safety. The same
+ * rules apply to construction, lookup, fallback, update, removal, and their preflight functions.
+ *
+ * Where an operation requires nominal identity or exact types, safe numeric widening does not override that
+ * requirement. Conversion admission does not introduce implicit wrapping, callback substitution, or cross-type
+ * equality. Each operation documents its accepted domain where needed.
+ *
+ * Some operations explicitly accept a broader input domain and validate representability or content before conversion.
+ * These exceptions are documented by the operation; they do not relax the default conversion rules.
+ *
+ * External range imports require safe construction from the actual dereferenced elements and non-throwing traversal.
+ * For transformed ranges, the transformation must also be non-throwing.
+ */
 
 namespace cljonic {
 
@@ -234,6 +258,76 @@ enum class collection_kind { none, vector, map, set, queue, string };
 // never fire.
 template <typename...>
 inline constexpr bool dependent_false = false;
+
+template <typename T>
+inline constexpr bool is_cljonic_map_entry_v = false;
+
+template <typename T>
+concept CharacterType =
+    std::same_as<T, char> || std::same_as<T, signed char> || std::same_as<T, unsigned char> ||
+    std::same_as<T, wchar_t> || std::same_as<T, char8_t> || std::same_as<T, char16_t> || std::same_as<T, char32_t>;
+
+template <typename To, typename From>
+inline constexpr bool value_preserving_arithmetic = false;
+
+template <typename To, typename From>
+    requires(std::is_arithmetic_v<To> && std::is_arithmetic_v<From>)
+inline constexpr bool value_preserving_arithmetic<To, From> =
+    !std::same_as<To, bool> && !std::same_as<From, bool> && !CharacterType<To> && !CharacterType<From> &&
+    std::numeric_limits<To>::radix == std::numeric_limits<From>::radix &&
+    std::numeric_limits<To>::digits >= std::numeric_limits<From>::digits &&
+    (std::is_floating_point_v<To> || (std::is_integral_v<From> && (std::is_signed_v<To> || !std::is_signed_v<From>))) &&
+    (!std::is_floating_point_v<To> ||
+     (std::numeric_limits<To>::max_exponent >=
+      (std::is_integral_v<From> ? std::numeric_limits<From>::digits : std::numeric_limits<From>::max_exponent))) &&
+    (!std::is_floating_point_v<From> ||
+     (std::is_floating_point_v<To> &&
+      std::numeric_limits<To>::min_exponent <= std::numeric_limits<From>::min_exponent &&
+      (!std::numeric_limits<From>::has_infinity || std::numeric_limits<To>::has_infinity) &&
+      (!std::numeric_limits<From>::has_quiet_NaN || std::numeric_limits<To>::has_quiet_NaN) &&
+      (!std::numeric_limits<From>::has_signaling_NaN || std::numeric_limits<To>::has_signaling_NaN) &&
+      std::numeric_limits<To>::has_denorm >= std::numeric_limits<From>::has_denorm));
+
+template <typename Source>
+concept NothrowRangeTraversal =
+    requires(Source& source, std::ranges::iterator_t<Source> iterator, std::ranges::sentinel_t<Source> sentinel) {
+        { std::ranges::begin(source) } noexcept;
+        { std::ranges::end(source) } noexcept;
+        { *iterator } noexcept;
+        { ++iterator } noexcept;
+        { iterator != sentinel } noexcept -> std::same_as<bool>;
+        { iterator == sentinel } noexcept -> std::same_as<bool>;
+    };
+
+template <typename Source>
+struct nothrow_range_traversal : std::bool_constant<NothrowRangeTraversal<Source>> {};
+
+// Standard views do not propagate noexcept on every traversal operation;
+// their base traversal, iterator copies, and callbacks determine safety.
+template <typename Range>
+struct nothrow_range_traversal<std::ranges::ref_view<Range>> : nothrow_range_traversal<Range> {};
+
+template <typename Range>
+struct nothrow_range_traversal<const std::ranges::ref_view<Range>> : nothrow_range_traversal<Range> {};
+
+template <typename Base, typename Function>
+struct nothrow_range_traversal<std::ranges::transform_view<Base, Function>>
+    : std::bool_constant<nothrow_range_traversal<Base>::value &&
+                         std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<Base>> &&
+                         std::is_nothrow_copy_constructible_v<std::ranges::sentinel_t<Base>> &&
+                         std::is_nothrow_move_constructible_v<std::ranges::iterator_t<Base>> &&
+                         std::is_nothrow_move_constructible_v<std::ranges::sentinel_t<Base>> &&
+                         std::is_nothrow_invocable_v<Function&, std::ranges::range_reference_t<Base>>> {};
+
+template <typename Base, typename Function>
+    requires std::ranges::input_range<const Base>
+struct nothrow_range_traversal<const std::ranges::transform_view<Base, Function>>
+    : std::bool_constant<nothrow_range_traversal<const Base>::value &&
+                         std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<const Base>> &&
+                         std::is_nothrow_copy_constructible_v<std::ranges::sentinel_t<const Base>> &&
+                         std::is_nothrow_move_constructible_v<std::ranges::iterator_t<const Base>> &&
+                         std::is_nothrow_move_constructible_v<std::ranges::sentinel_t<const Base>> &&
+                         std::is_nothrow_invocable_v<const Function&, std::ranges::range_reference_t<const Base>>> {};
 
 template <typename T>
 concept IntegerIndexType =
@@ -405,11 +499,17 @@ concept NothrowCollectionElement = CopyableElement<T> && std::destructible<T> &&
     { value = other } noexcept;
 };
 
-/** Requires that an argument is convertible to and can construct an element
- *  without throwing. */
+/** Admits identical types or value-preserving arithmetic conversions without
+ *  crossing Boolean, character, enumeration, pointer, or user-defined domains. */
 template <typename T, typename Arg>
-concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg&& argument) {
-    { T{std::forward<Arg>(argument)} } noexcept;
+concept SafeImplicitConversion =
+    std::same_as<std::remove_cvref_t<T>, std::remove_cvref_t<Arg>> ||
+    concepts_detail::value_preserving_arithmetic<std::remove_cvref_t<T>, std::remove_cvref_t<Arg>>;
+
+/** Requires safe implicit conversion and non-throwing element construction. */
+template <typename T, typename Arg>
+concept NothrowElementConstruction = SafeImplicitConversion<T, Arg> && requires(Arg&& argument) {
+    { T(std::forward<Arg>(argument)) } noexcept;
 };
 
 // ============================================================================
@@ -474,6 +574,12 @@ concept NothrowConstInputRange =
         { iterator++ } noexcept;
         { iterator == sentinel } noexcept -> std::same_as<bool>;
     };
+
+/** Requires non-throwing traversal and construction from the actual range reference. */
+template <typename T, typename Source>
+concept NothrowRangeConstruction =
+    std::ranges::input_range<Source> && NothrowElementConstruction<T, std::ranges::range_reference_t<Source>> &&
+    concepts_detail::nothrow_range_traversal<std::remove_reference_t<Source>>::value;
 
 /** Gates types admitted to the closed nominal cljonic collection domain
  *  through cljonic-owned trait specialization. */
@@ -647,6 +753,15 @@ concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t
 
 namespace concepts_detail {
 
+template <typename Count>
+concept ProducerCount = IntegerIndexType<Count> && std::unsigned_integral<std::remove_cvref_t<Count>> &&
+                        concepts::SafeImplicitConversion<std::size_t, Count>;
+
+template <typename Dest, typename Source>
+concept MaterializableSource =
+    concepts::CljonicVector<Dest> && concepts::CljonicSource<Source> &&
+    concepts::NothrowElementConstruction<typename Dest::value_type, std::ranges::range_reference_t<const Source>>;
+
 // Guarded admission helpers for the REQ-DIAG-009 producer-factory diagnostics.
 // Each derives the element type internally, so an argument outside the producer
 // domain yields `false` rather than an ill-formed substitution; the negation is
@@ -697,6 +812,8 @@ namespace cljonic {
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
  * a full-capacity map or append index) is skipped and the remaining pairs still apply.
+ *
+ * Keys and stored values follow the \ref ImplicitConversions "safe implicit conversion rules".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -860,6 +977,8 @@ namespace cljonic {
  * "Vector", with an invalid character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative
  * capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier
  * pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.
+ *
+ * Keys and values use the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Assoc "assoc".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -1066,6 +1185,8 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
  * value replacement that needs no capacity. An absent element or key returns true only when capacity remains; when
  * full, it returns false.
  *
+ * Values use the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Conj "conj".
+ *
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -1212,6 +1333,9 @@ namespace cljonic {
  * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
  * original collection. Construction with content longer than the available capacity is rejected at compile time.
  *
+ Character arguments must be \c char; numeric values do not implicitly become characters.
+ Text imports follow the \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
+
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -1261,9 +1385,10 @@ namespace cljonic {
 
    // A standard view pipeline can use an existing String as its source and
    // materialize transformed characters into another String.
-   const auto uppercase_view = runtime | std::views::transform([](char byte) {
-                                 return byte == 'i' ? 'I' : byte;
-                               });
+   const auto uppercase_view =
+       runtime | std::views::transform([](char byte) noexcept {
+         return byte == 'i' ? 'I' : byte;
+       });
    const auto from_pipeline = String<8>{uppercase_view};
 
    static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
@@ -1315,7 +1440,9 @@ class String {
         copy_from_source(arr, N - 1U);
     }
 
-    constexpr String(std::string_view source) noexcept {
+    template <typename Source>
+        requires std::same_as<std::remove_cvref_t<Source>, std::string_view>
+    constexpr String(const Source& source) noexcept {
         if consteval {
             if (source.size() > CapacityValue) {
                 rejected_oversized_string_source_at_compile_time();
@@ -1331,8 +1458,11 @@ class String {
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
-                 std::same_as<std::remove_cv_t<std::ranges::range_value_t<SourceRange>>, char>)
+                 !std::same_as<std::remove_cvref_t<SourceRange>, std::string_view> &&
+                 std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<SourceRange>>, char>)
     constexpr String(SourceRange&& source) noexcept {
+        static_assert(concepts::NothrowRangeConstruction<char, SourceRange>,
+                      "String range/view constructor requires char elements and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "String static-extent range source exceeds String CapacityValue");
 
@@ -1374,6 +1504,10 @@ class String {
     [[nodiscard]] static constexpr auto character_is_valid(char value) noexcept -> bool {
         return value != '\0' && static_cast<unsigned char>(value) <= 0x7FU;
     }
+
+    template <typename Value>
+        requires(!std::same_as<std::remove_cvref_t<Value>, char>)
+    static auto character_is_valid(Value value) -> bool = delete;
 
     [[nodiscard]] constexpr auto operator==(const String& other) const noexcept -> bool {
         if (logical_size_ != other.logical_size_) {
@@ -1459,6 +1593,30 @@ class String {
         }
         return result;
     }
+
+    template <typename Index, typename Fallback>
+        requires(!concepts::SafeImplicitConversion<char, Fallback>)
+    auto operator()(Index index, Fallback fallback) const -> char = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto can_assoc(Index index, Value value) const -> bool = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto assoc(Index index, Value value) const -> String = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto put(Index index, Value value) const -> String = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto can_conj(Value value) const -> bool = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto conj(Value value) const -> String = delete;
 
   private:
     [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
@@ -1648,6 +1806,8 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
  * equals `conj(conj(c, x₁), x₂)`. Each value must be one the collection can hold, as described above; a value that
  * does not fit because the collection is full is skipped, and the remaining values are still added.
  *
+ * Stored values follow the \ref ImplicitConversions "safe implicit conversion rules".
+ *
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -1810,7 +1970,7 @@ concept ContainsSupportedCollection = ContainsLookupCollection<C> || ContainsInd
 
 template <typename C, typename K>
 concept ContainsAdmissible =
-    (ContainsLookupCollection<C> && std::same_as<std::remove_cvref_t<K>, typename C::lookup_type>) ||
+    (ContainsLookupCollection<C> && concepts::SafeImplicitConversion<typename C::lookup_type, K>) ||
     (ContainsIndexedCollection<C> && IntegerIndexType<K>);
 
 } // namespace concepts_detail
@@ -1820,8 +1980,9 @@ concept ContainsAdmissible =
  * \ref Set "Set", \ref Vector
  *        "Vector", or \ref String "String".
  *
- * \ref Map "Map" keys and \ref Set "Set" elements must exactly match the declared lookup type. \ref Vector "Vector"
- * and \ref String "String" accept non-boolean, non-character integral indexes.
+ * \ref Map "Map" keys and \ref Set "Set" elements admit their declared type and safe numeric widening that preserves
+ * every source value. Boolean, character, enum, and user-defined values do not convert across types. \ref Vector
+ * "Vector" and \ref String "String" accept non-boolean, non-character integral indexes.
  *
  * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
  * `false`.
@@ -1876,8 +2037,8 @@ template <typename C, typename K>
     -> bool {
     if constexpr (concepts_detail::ContainsLookupCollection<C>) {
         static_assert(concepts_detail::dependent_false<C, K>,
-                      "cljonic::contains: for a Map or a Set, the value you look up must have exactly the same type as "
-                      "the map's keys or the set's elements; conversions are not accepted.");
+                      "cljonic::contains: the lookup value must convert safely to the map's key type or the set's "
+                      "element type, without losing values or changing its meaning.");
     } else {
         static_assert(concepts_detail::dependent_false<C, K>,
                       "cljonic::contains: a Vector or a String index must be a non-boolean, non-character integer "
@@ -1912,7 +2073,7 @@ namespace cljonic {
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
    constexpr auto q_const = conj(Queue<int, 4>{}, 9);
    constexpr Range<int> r_const{0, 5};
-   constexpr Repeat<int> finite_repeat{7, 3};
+   constexpr Repeat<int> finite_repeat{7, 3U};
    constexpr Repeat<int> unbounded_repeat{7};
    constexpr Range<int> unbounded_range{0, 0, 0};
    static_assert(count(v_const) == 3);
@@ -1975,7 +2136,8 @@ namespace cljonic {
  * changing the original collection. Construction with more initializers than the available capacity is rejected at
  * compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer
  * is not a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
- * preflight predicate for whether the whole source fits.
+ * preflight predicate for whether the whole source fits. Element construction, updates, and fallbacks follow the \ref
+ * ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -2025,8 +2187,10 @@ namespace cljonic {
    constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
    constexpr Vector<int, 4> values{10, 20};
    constexpr CategoryArgument category_argument{};
-   constexpr Vector<CategoryElement, 1> lvalue_constructed{category_argument};
-   constexpr Vector<CategoryElement, 1> rvalue_constructed{CategoryArgument{}};
+   constexpr Vector<CategoryElement, 1> lvalue_constructed{
+       CategoryElement{category_argument}};
+   constexpr Vector<CategoryElement, 1> rvalue_constructed{
+       CategoryElement{CategoryArgument{}}};
 
    // Vector values can be used as a callable function, returning a default-
    // value for invalid indexes or a supplied fallback when provided.
@@ -2062,7 +2226,7 @@ namespace cljonic {
    // materialize transformed values into another Vector.
    const auto doubled_view =
        runtime_values |
-       std::views::transform([](int value) { return value * 2; });
+       std::views::transform([](int value) noexcept { return value * 2; });
    const auto from_pipeline = Vector<int, 4>{doubled_view};
 
    // -----------------------------------------------------------------------
@@ -2122,10 +2286,10 @@ class Vector {
     template <typename... Args>
     constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
         static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
-        static_assert((concepts::NothrowElementConstruction<ElementType, Args> && ...),
-                      "Vector constructor requires all arguments to construct "
-                      "ElementType without throwing and be implicitly "
-                      "convertible to ElementType");
+        static_assert(
+            (concepts::NothrowElementConstruction<ElementType, Args> && ...),
+            "Vector constructor requires all arguments to construct "
+            "ElementType without throwing and convert safely without losing values or changing their meaning");
 
         initialize_storage_if_valid(std::forward<Args>(args)...);
     }
@@ -2140,13 +2304,10 @@ class Vector {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, ElementType>)
-    constexpr Vector(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<ElementType, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(concepts::NothrowElementConstruction<ElementType, source_value_type>,
+    constexpr Vector(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<ElementType, SourceRange>)) {
+        static_assert(concepts::NothrowRangeConstruction<ElementType, SourceRange>,
                       "Vector range/view constructor requires each source element to "
-                      "construct ElementType without throwing and be implicitly "
-                      "convertible to ElementType");
+                      "convert safely to ElementType and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "Vector static-extent range source exceeds Vector CapacityValue");
 
@@ -2155,7 +2316,7 @@ class Vector {
             if (copy_count >= CapacityValue) {
                 break;
             }
-            storage_[copy_count++] = value_type{std::forward<decltype(item)>(item)};
+            storage_[copy_count++] = value_type(std::forward<decltype(item)>(item));
         }
         logical_size_ = copy_count;
     }
@@ -2260,6 +2421,26 @@ class Vector {
         return {storage_.data(), logical_size_};
     }
 
+    template <typename Index, typename Fallback>
+        requires(!concepts::SafeImplicitConversion<value_type, Fallback>)
+    auto operator()(Index index, const Fallback& fallback) const -> value_type = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<value_type, Value>)
+    auto can_assoc(Index index, const Value& value) const -> bool = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<value_type, Value>)
+    auto assoc(Index index, const Value& value) const -> Vector = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<value_type, Value>)
+    auto can_conj(const Value& value) const -> bool = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<value_type, Value>)
+    auto conj(const Value& value) const -> Vector = delete;
+
   private:
     [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {
         return index < logical_size_ || (index == logical_size_ && logical_size_ < CapacityValue);
@@ -2280,7 +2461,7 @@ class Vector {
     template <std::size_t... Indices, typename... Args>
     constexpr void initialize_storage(std::index_sequence<Indices...> indices, Args&&... args) noexcept {
         (void)indices;
-        ((storage_[Indices] = ElementType{std::forward<Args>(args)}), ...);
+        ((storage_[Indices] = ElementType(std::forward<Args>(args))), ...);
     }
 
     std::array<value_type, CapacityValue> storage_{};
@@ -2441,8 +2622,12 @@ class Cycle {
 
     constexpr Cycle() noexcept = default;
 
-    constexpr explicit Cycle(Source source) noexcept : source_(std::move(source)) {
+    constexpr explicit Cycle(const Source& source) noexcept : source_(source) {
     }
+
+    template <typename OtherSource>
+        requires(!std::same_as<std::remove_cvref_t<OtherSource>, Source>)
+    explicit Cycle(OtherSource source) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return count_;
@@ -2494,8 +2679,8 @@ class Cycle {
 
 template <concepts::CljonicSource Source>
     requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>
-[[nodiscard]] constexpr auto cycle(Source source) noexcept -> Cycle<Source> {
-    return Cycle<Source>{std::move(source)};
+[[nodiscard]] constexpr auto cycle(const Source& source) noexcept -> Cycle<Source> {
+    return Cycle<Source>{source};
 }
 
 // Diagnostic fallback (REQ-DIAG-009): the source argument is outside the closed
@@ -2550,16 +2735,17 @@ namespace concepts_detail {
 
 template <typename C, typename... Values>
 concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value_type; } &&
-                         (std::same_as<std::remove_cvref_t<Values>, typename C::value_type> && ...);
+                         (concepts::SafeImplicitConversion<typename C::value_type, Values> && ...);
 
 } // namespace concepts_detail
 
 /** \anchor Disj
  * The \b disj free function API disjoins zero or more elements from a \ref Set "Set".
  *
- * `disj(set, values...)` accepts only values whose type exactly matches the \ref Set "Set"'s `value_type`. Values are
- * removed from left to right; absent or repeated values are no-ops after any prior removal. Calling `disj(set)` with
- * no values returns an unchanged copy.
+ * `disj(set, values...)` accepts the \ref Set "Set"'s element type and safe numeric widening conversions. A conversion
+ * must preserve every source value; Boolean, character, enum, and user-defined values do not convert across types.
+ * Values are removed from left to right; absent or repeated values are no-ops after any prior removal. Calling
+ * `disj(set)` with no values returns an unchanged copy.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -2604,7 +2790,8 @@ template <typename C, typename... Values>
         static_assert(concepts_detail::dependent_false<C>, "cljonic::disj: the first argument must be a Set.");
     } else {
         static_assert(concepts_detail::dependent_false<C, Values...>,
-                      "cljonic::disj: every value to remove must have exactly the same type as the set's elements.");
+                      "cljonic::disj: every value to remove must convert safely to the set's element type, without "
+                      "losing values or changing its meaning.");
     }
 }
 
@@ -2653,8 +2840,9 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
  * The \b dissoc free function API removes zero or more keys from a \ref Map "Map".
  *
  * `dissoc` is supported only for \ref Map "Map". With no keys it returns an unchanged copy; otherwise it removes keys
- * left-to-right. Keys may be supplied using any type convertible to the map's key type. Present keys are removed via
- * swap-and-remove; absent or repeated keys are no-ops. The source map is never modified.
+ * left-to-right. Keys may use the map's key type or a numeric type whose entire range is preserved by conversion to
+ * that type; Boolean, character, enum, and user-defined keys do not convert across types. Each present key is removed;
+ * absent keys leave the map unchanged, and repeating a key has no further effect. The source map is never modified.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -2730,7 +2918,8 @@ template <typename C, typename K>
     requires concepts::CljonicMap<C> && (!concepts_detail::DissocKeyAdmissible<C, K>)
 [[nodiscard]] constexpr auto dissoc([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C, K>,
-                  "cljonic::dissoc: each key must be convertible to the Map's key type.");
+                  "cljonic::dissoc: each key must convert safely to the Map's key type, without losing values or "
+                  "changing its meaning.");
     return C{};
 }
 
@@ -2750,7 +2939,8 @@ template <typename C, typename K1, typename K2, typename... Rest>
                                     [[maybe_unused]] const K2& key2, [[maybe_unused]] const Rest&... rest) noexcept
     -> C {
     static_assert(concepts_detail::dependent_false<C, K1, K2, Rest...>,
-                  "cljonic::dissoc: each key must be convertible to the Map's key type.");
+                  "cljonic::dissoc: each key must convert safely to the Map's key type, without losing values or "
+                  "changing its meaning.");
     return C{};
 }
 
@@ -2776,7 +2966,8 @@ enum class equality_family { none, sequential, map, set, string };
 template <typename T>
 inline constexpr bool in_non_cljonic_fallthrough_domain_v =
     !is_cljonic_collection_v<T> && !is_cljonic_producer_v<T> && !std::ranges::range<T> &&
-    ((std::is_arithmetic_v<T> || std::is_scoped_enum_v<T>) || std::is_aggregate_v<T> || is_cljonic_variant_v<T>);
+    ((std::is_arithmetic_v<T> || std::is_scoped_enum_v<T>) || std::is_aggregate_v<T> || is_cljonic_map_entry_v<T> ||
+     is_cljonic_variant_v<T>);
 
 // Equality-family classification for the general-equality free function `equal`
 // (REQ-FN-002G): Vector and Queue join all five producers in the sequential
@@ -3160,7 +3351,8 @@ namespace cljonic {
  *
  * Reports whether appending the complete \p source to \p destination fits within the destination's remaining capacity,
  * using the same cardinality semantics as `into`. It returns `false` for every unbounded producer, even though its
- * normal const traversal is capped. Scoped to \ref Vector "Vector" destinations in this increment.
+ * normal const traversal is capped. Scoped to \ref Vector "Vector" destinations in this increment. Source elements
+ * must follow the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Into "into".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3174,6 +3366,7 @@ namespace cljonic {
  ~~~~~
  */
 template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
+    requires concepts_detail::MaterializableSource<Dest, Source>
 [[nodiscard]] constexpr auto fits_into(const Dest& destination, const Source& source) noexcept -> bool {
     if constexpr (concepts::CljonicProducer<Source>) {
         if (!source.is_finite()) {
@@ -3199,7 +3392,9 @@ namespace cljonic {
  * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
  * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
  * default lookup result when omitted. For \ref Vector "Vector" and \ref String "String", the index must be an integral
- * type other than \c bool or a character type.
+ * type other than \c bool or a character type. Keys and fallback values accept their declared types and safe numeric
+ * widening that preserves every source value; Boolean, character, enum, and user-defined values do not convert across
+ * types.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -3253,7 +3448,8 @@ namespace cljonic {
  * Returns an updated destination-typed collection with source elements appended after the destination's existing
  * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
  * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
- * completely. Scoped to \ref Vector "Vector" destinations in this increment.
+ * completely. Scoped to \ref Vector "Vector" destinations in this increment. Source elements must follow the
+ * destination's \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3267,6 +3463,7 @@ namespace cljonic {
  ~~~~~
  */
 template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
+    requires concepts_detail::MaterializableSource<Dest, Source>
 [[nodiscard]] constexpr auto into(const Dest& destination, const Source& source) noexcept -> Dest {
     Dest result = destination;
     for (auto&& item : source) {
@@ -3405,8 +3602,8 @@ class Iterate {
 
         constexpr const_iterator() noexcept = default;
 
-        constexpr const_iterator(T current, const Step* step, std::size_t remaining) noexcept
-            : current_(std::move(current)), step_(step), remaining_(remaining) {
+        constexpr const_iterator(const T& current, const Step* step, std::size_t remaining) noexcept
+            : current_(current), step_(step), remaining_(remaining) {
         }
 
         [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
@@ -3415,7 +3612,8 @@ class Iterate {
 
         constexpr auto operator++() noexcept -> const_iterator& {
             if (remaining_ > 1U) {
-                current_ = std::invoke(*step_, current_);
+                const T next = std::invoke(*step_, current_);
+                current_ = next;
             }
             --remaining_;
             return *this;
@@ -3446,8 +3644,12 @@ class Iterate {
         : initial_{}, step_{} {
     }
 
-    constexpr Iterate(T initial, Step step) noexcept : initial_(std::move(initial)), step_(std::move(step)) {
+    constexpr Iterate(const T& initial, const Step& step) noexcept : initial_(initial), step_(step) {
     }
+
+    template <typename Initial, typename OtherStep>
+        requires(!concepts::SafeImplicitConversion<T, Initial> || !std::same_as<std::remove_cvref_t<OtherStep>, Step>)
+    Iterate(Initial initial, OtherStep step) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
@@ -3542,6 +3744,9 @@ namespace cljonic {
  * copyable, assignable, and destructible without throwing, so the entry remains safe to copy and update in bounded
  * collections.
  *
+ * Key and value construction follows the \ref ImplicitConversions "safe implicit conversion rules". The public fields
+ * remain available, but MapEntry is not a C++ aggregate.
+ *
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3569,6 +3774,20 @@ struct MapEntry {
     KeyType key{};
     ValueType value{};
 
+    constexpr MapEntry() noexcept = default;
+
+    template <typename Key>
+        requires concepts::NothrowElementConstruction<KeyType, Key>
+    constexpr explicit MapEntry(Key&& entry_key) noexcept : key(std::forward<Key>(entry_key)) {
+    }
+
+    template <typename Key, typename Value>
+        requires concepts::NothrowElementConstruction<KeyType, Key> &&
+                     concepts::NothrowElementConstruction<ValueType, Value>
+    constexpr MapEntry(Key&& entry_key, Value&& entry_value) noexcept
+        : key(std::forward<Key>(entry_key)), value(std::forward<Value>(entry_value)) {
+    }
+
     [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool
         requires concepts::StableEqualityComparable<KeyType> && concepts::StableEqualityComparable<ValueType>
     {
@@ -3576,9 +3795,15 @@ struct MapEntry {
     }
 };
 
+template <typename Key, typename Value>
+MapEntry(Key, Value) -> MapEntry<Key, Value>;
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
+
+template <typename KeyType, typename ValueType>
+inline constexpr bool is_cljonic_map_entry_v<cljonic::MapEntry<KeyType, ValueType>> = true;
 
 // MapEntry inherits the recursive component analysis of the closed cljonic
 // value domain: it admits stable equality only when both its key and value
@@ -3608,6 +3833,9 @@ namespace cljonic {
  * cljonic collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight
  * predicate for whether the whole source fits.
  *
+ Keys, mapped values, and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+ Construction from entries requires the exact declared entry type.
+
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3636,7 +3864,7 @@ namespace cljonic {
    // A standard view pipeline can use an existing Map as its source and
    // materialize the transformed entries into another Map.
    const auto copied_view =
-       runtime | std::views::transform([](const AccountEntry &entry) {
+       runtime | std::views::transform([](const AccountEntry &entry) noexcept {
          return AccountEntry{entry.key, Value{entry.value.amount * 2}};
        });
    const auto from_pipeline = AccountMap{copied_view};
@@ -3711,9 +3939,11 @@ class Map {
     template <typename... Args>
     constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
         static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
-        static_assert((concepts::NothrowElementConstruction<value_type, Args> && ...),
+        static_assert(((std::same_as<std::remove_cvref_t<Args>, value_type> &&
+                        concepts::NothrowElementConstruction<value_type, Args>) &&
+                       ...),
                       "Map constructor requires all arguments to construct "
-                      "MapEntry without throwing and be implicitly convertible to MapEntry");
+                      "the exact MapEntry type without throwing");
 
         ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
     }
@@ -3724,12 +3954,10 @@ class Map {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Map(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+    constexpr Map(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+        static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
                       "Map range/view constructor requires each source element to construct "
-                      "MapEntry without throwing and be implicitly convertible to MapEntry");
+                      "the exact MapEntry type and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "Map static-extent range source exceeds Map CapacityValue");
 
@@ -3842,6 +4070,35 @@ class Map {
     [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
         return {entries_.data(), logical_size_};
     }
+
+    template <typename Key>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key>)
+    auto contains(const Key& key) const -> bool = delete;
+
+    template <typename Key, typename Fallback = ValueType>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key> ||
+                 !concepts::SafeImplicitConversion<ValueType, Fallback>)
+    auto operator()(const Key& key, const Fallback& fallback = Fallback{}) const -> ValueType = delete;
+
+    template <typename Key, typename Value>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key> || !concepts::SafeImplicitConversion<ValueType, Value>)
+    auto can_assoc(const Key& key, const Value& value) const -> bool = delete;
+
+    template <typename Key, typename Value>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key> || !concepts::SafeImplicitConversion<ValueType, Value>)
+    auto assoc(const Key& key, const Value& value) const -> Map = delete;
+
+    template <typename Entry>
+        requires(!std::same_as<std::remove_cvref_t<Entry>, value_type>)
+    auto can_conj(const Entry& entry) const -> bool = delete;
+
+    template <typename Entry>
+        requires(!std::same_as<std::remove_cvref_t<Entry>, value_type>)
+    auto conj(const Entry& entry) const -> Map = delete;
+
+    template <typename Key>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key>)
+    auto dissoc(const Key& key) const -> Map = delete;
 
   private:
     [[nodiscard]] constexpr auto find_index(const KeyType& key) const noexcept -> std::size_t {
@@ -4110,6 +4367,8 @@ namespace cljonic {
  * collection; a cljonic collection or producer is not a source and is treated as a single element when nested. To
  * materialize one, use \b into; \b fits_into is the preflight predicate for whether the whole source fits.
  *
+ Elements follow the \ref ImplicitConversions "safe implicit conversion rules".
+
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4141,7 +4400,7 @@ namespace cljonic {
    const auto pipeline_source = Queue<int, 4>{1, 2, 3};
    const auto shifted_view =
        pipeline_source |
-       std::views::transform([](int value) { return value + 10; });
+       std::views::transform([](int value) noexcept { return value + 10; });
    const auto from_pipeline = Queue<int, 4>{shifted_view};
 
    // Constructing a Queue from a runtime C++ array/span
@@ -4228,9 +4487,9 @@ class Queue {
         static_assert(sizeof...(Args) <= CapacityValue, "Queue initializer count exceeds Queue CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
                       "Queue constructor requires all arguments to construct "
-                      "T without throwing and be implicitly convertible to T");
+                      "T without throwing and convert safely without losing values or changing their meaning");
 
-        ((*this = conj(T{std::forward<Args>(args)})), ...);
+        ((*this = conj(T(std::forward<Args>(args)))), ...);
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
@@ -4239,11 +4498,9 @@ class Queue {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Queue(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(std::same_as<std::remove_cvref_t<source_value_type>, value_type>,
-                      "Queue range/view constructor requires a matching element type");
+    constexpr Queue(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+        static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
+                      "Queue range/view constructor requires safe element conversion and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "Queue static-extent range source exceeds Queue CapacityValue");
 
@@ -4252,7 +4509,7 @@ class Queue {
             if (copy_count++ >= CapacityValue) {
                 break;
             }
-            *this = conj(value_type{std::forward<decltype(item)>(item)});
+            *this = conj(value_type(std::forward<decltype(item)>(item)));
         }
     }
 
@@ -4343,6 +4600,14 @@ class Queue {
         return result;
     }
 
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto can_conj(const Value& value) const -> bool = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto conj(const Value& value) const -> Queue = delete;
+
   private:
     std::array<value_type, CapacityValue> elements_{};
     std::size_t head_{0};
@@ -4398,7 +4663,8 @@ namespace cljonic {
  * an empty range. Observation is bounded by its finite span, by the configured collection maximum for a zero-step
  * range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation
  * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required.
+ * owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow the
+ * \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4505,6 +4771,19 @@ class Range {
     constexpr Range(T start, T end, T step) noexcept : start_(start), end_(end), step_(step) {
     }
 
+    template <typename End>
+        requires(!concepts::SafeImplicitConversion<T, End>)
+    explicit Range(End end) = delete;
+
+    template <typename Start, typename End>
+        requires(!concepts::SafeImplicitConversion<T, Start> || !concepts::SafeImplicitConversion<T, End>)
+    Range(Start start, End end) = delete;
+
+    template <typename Start, typename End, typename Step>
+        requires(!concepts::SafeImplicitConversion<T, Start> || !concepts::SafeImplicitConversion<T, End> ||
+                 !concepts::SafeImplicitConversion<T, Step>)
+    Range(Start start, End end, Step step) = delete;
+
     /** Conservative materialization size: the synthesis cap for a zero step, otherwise the
      *  exact finite cardinality saturated at the synthesis cap. */
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
@@ -4520,6 +4799,10 @@ class Range {
     [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
         return index < count();
     }
+
+    template <typename Index>
+        requires(!concepts::SafeImplicitConversion<std::size_t, Index>)
+    auto contains(Index index) const -> bool = delete;
 
     /** Bounded generating iteration up to the effective size returned by count(). */
     [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
@@ -4683,7 +4966,9 @@ namespace cljonic {
  * `repeat(value, count)` yields exactly \p count values. Observation is bounded by the configured collection maximum,
  * by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both
  * constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or
- * converted into an owning destination with `into` when explicit materialization is required.
+ * converted into an owning destination with `into` when explicit materialization is required. Values and finite counts
+ * follow the \ref ImplicitConversions "safe implicit conversion rules"; counts use non-Boolean, non-character unsigned
+ * integer types whose ranges fit \c std::size_t.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4773,11 +5058,19 @@ class Repeat {
     constexpr Repeat() noexcept : value_{}, count_{0U}, is_finite_{true} {
     }
 
-    constexpr explicit Repeat(T value) noexcept : value_(std::move(value)), count_(0U), is_finite_(false) {
+    constexpr explicit Repeat(const T& value) noexcept : value_(value), count_(0U), is_finite_(false) {
     }
 
-    constexpr Repeat(T value, std::size_t count) noexcept : value_(std::move(value)), count_(count), is_finite_(true) {
+    constexpr Repeat(const T& value, std::size_t count) noexcept : value_(value), count_(count), is_finite_(true) {
     }
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    explicit Repeat(Value value) = delete;
+
+    template <typename Value, typename Count>
+        requires(!concepts::SafeImplicitConversion<T, Value> || !concepts_detail::ProducerCount<Count>)
+    Repeat(Value value, Count count) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
@@ -4825,9 +5118,9 @@ template <typename T>
     return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value)};
 }
 
-template <typename T>
+template <typename T, concepts_detail::ProducerCount Count>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
-[[nodiscard]] constexpr auto repeat(T&& value, std::size_t count) noexcept -> Repeat<std::remove_cvref_t<T>> {
+[[nodiscard]] constexpr auto repeat(T&& value, Count count) noexcept -> Repeat<std::remove_cvref_t<T>> {
     return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value), count};
 }
 
@@ -4843,13 +5136,14 @@ constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::R
     return {};
 }
 
-template <typename T>
-    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
-constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] std::size_t count) noexcept
+template <typename T, typename Count>
+    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>> || !concepts_detail::ProducerCount<Count>)
+constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] Count count) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<T>,
                   "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
-                  "safe to create, store, and destroy without throwing.");
+                  "safe to create, store, and destroy without throwing. The count must be a non-boolean, "
+                  "non-character unsigned integer type whose range fits std::size_t.");
     return {};
 }
 
@@ -4894,7 +5188,9 @@ namespace cljonic {
  * function, or a function object. Observation is bounded by the configured collection maximum, by the requested count,
  * or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and
  * runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required.
+ * destination with `into` when explicit materialization is required. Finite counts follow the \ref ImplicitConversions
+ * "safe implicit conversion rules": use non-Boolean, non-character unsigned integer types whose ranges fit \c
+ * std::size_t. Callback types and produced element types remain exact.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4905,7 +5201,7 @@ namespace cljonic {
  int main() {
    // A named function can be used as the constexpr step callback.
    constexpr auto constexpr_sum = [] {
-     constexpr auto values = repeatedly(3, five);
+     constexpr auto values = repeatedly(3U, five);
      int sum = 0;
      for (const auto value : values) {
        sum += value;
@@ -4914,7 +5210,7 @@ namespace cljonic {
    }();
 
    // Runtime construction also accepts an inline lambda step callback.
-   auto runtime_values = repeatedly(2, []() noexcept { return 7; });
+   auto runtime_values = repeatedly(2U, []() noexcept { return 7; });
 
    // An uncounted Repeatedly is an unbounded producer whose observation is
    // bounded by the configured collection maximum or a destination capacity.
@@ -4989,12 +5285,19 @@ class Repeatedly {
         : step_{}, count_{0U}, is_finite_{true} {
     }
 
-    constexpr explicit Repeatedly(Step step) noexcept : step_(std::move(step)), count_(0U), is_finite_(false) {
+    constexpr explicit Repeatedly(const Step& step) noexcept : step_(step), count_(0U), is_finite_(false) {
     }
 
-    constexpr Repeatedly(Step step, std::size_t count) noexcept
-        : step_(std::move(step)), count_(count), is_finite_(true) {
+    constexpr Repeatedly(const Step& step, std::size_t count) noexcept : step_(step), count_(count), is_finite_(true) {
     }
+
+    template <typename OtherStep>
+        requires(!std::same_as<std::remove_cvref_t<OtherStep>, Step>)
+    explicit Repeatedly(OtherStep step) = delete;
+
+    template <typename OtherStep, typename Count>
+        requires(!std::same_as<std::remove_cvref_t<OtherStep>, Step> || !concepts_detail::ProducerCount<Count>)
+    Repeatedly(OtherStep step, Count count) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
@@ -5024,9 +5327,10 @@ template <typename Step, typename T = std::invoke_result_t<const std::decay_t<St
     return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step)};
 }
 
-template <typename Step, typename T = std::invoke_result_t<const std::decay_t<Step>&>>
+template <concepts_detail::ProducerCount Count, typename Step,
+          typename T = std::invoke_result_t<const std::decay_t<Step>&>>
     requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
-[[nodiscard]] constexpr auto repeatedly(std::size_t count, Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
+[[nodiscard]] constexpr auto repeatedly(Count count, Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
     return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step), count};
 }
 
@@ -5044,15 +5348,16 @@ constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_det
     return {};
 }
 
-template <typename Step>
-    requires(!concepts_detail::ValidRepeatedlyStep<Step>)
-constexpr auto repeatedly([[maybe_unused]] std::size_t count, [[maybe_unused]] Step&& step) noexcept
+template <typename Count, typename Step>
+    requires(!concepts_detail::ValidRepeatedlyStep<Step> || !concepts_detail::ProducerCount<Count>)
+constexpr auto repeatedly([[maybe_unused]] Count count, [[maybe_unused]] Step&& step) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Step>,
                   "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
                   "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
                   "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
-                  "cljonic::repeat(value, count).");
+                  "cljonic::repeat(value, count). The count must be a non-boolean, non-character unsigned integer "
+                  "type whose range fits std::size_t.");
     return {};
 }
 
@@ -5105,6 +5410,8 @@ namespace cljonic {
  * a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
  * preflight predicate for whether the whole source fits.
  *
+ Elements and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -5131,7 +5438,8 @@ namespace cljonic {
    // A standard view pipeline can use an existing Set as its source and
    // materialize transformed values into another Set.
    const auto doubled_view =
-       runtime | std::views::transform([](int value) { return value * 2; });
+       runtime |
+       std::views::transform([](int value) noexcept { return value * 2; });
    const auto from_pipeline = AccountSet{doubled_view};
 
    // -------------------------------------------------------------------------
@@ -5193,7 +5501,7 @@ class Set {
         static_assert(sizeof...(Args) <= CapacityValue, "Set initializer count exceeds Set CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
                       "Set constructor requires all arguments to construct "
-                      "T without throwing and be implicitly convertible to T");
+                      "T without throwing and convert safely without losing values or changing their meaning");
 
         const auto duplicate = append_constructed(std::forward<Args>(args)...);
 
@@ -5210,12 +5518,10 @@ class Set {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Set(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+    constexpr Set(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+        static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
                       "Set range/view constructor requires each source element to construct "
-                      "T without throwing and be implicitly convertible to T");
+                      "T safely and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "Set static-extent range source exceeds Set CapacityValue");
 
@@ -5224,7 +5530,7 @@ class Set {
             if (copy_count++ >= CapacityValue) {
                 break;
             }
-            *this = conj(value_type{std::forward<decltype(item)>(item)});
+            *this = conj(value_type(std::forward<decltype(item)>(item)));
         }
     }
 
@@ -5318,6 +5624,26 @@ class Set {
         }
         return result;
     }
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto contains(const Value& value) const -> bool = delete;
+
+    template <typename Value, typename Fallback = T>
+        requires(!concepts::SafeImplicitConversion<T, Value> || !concepts::SafeImplicitConversion<T, Fallback>)
+    auto operator()(const Value& value, const Fallback& fallback = Fallback{}) const -> T = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto can_conj(const Value& value) const -> bool = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto conj(const Value& value) const -> Set = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto disj(const Value& value) const -> Set = delete;
 
   private:
     template <typename Arg>
@@ -5509,7 +5835,7 @@ class Variant {
 
     template <typename T>
         requires(variant_detail::matching_alternative_count_v<std::remove_cvref_t<T>, Alternatives...> == 1)
-    constexpr Variant(T&& value) noexcept : storage_{std::forward<T>(value)} {
+    constexpr Variant(const T& value) noexcept : storage_{value} {
     }
 
     /** Returns the zero-based index of the active alternative. */

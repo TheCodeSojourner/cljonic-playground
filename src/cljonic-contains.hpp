@@ -19,7 +19,7 @@ concept ContainsSupportedCollection = ContainsLookupCollection<C> || ContainsInd
 
 template <typename C, typename K>
 concept ContainsAdmissible =
-    (ContainsLookupCollection<C> && std::same_as<std::remove_cvref_t<K>, typename C::lookup_type>) ||
+    (ContainsLookupCollection<C> && concepts::SafeImplicitConversion<typename C::lookup_type, K>) ||
     (ContainsIndexedCollection<C> && IntegerIndexType<K>);
 
 } // namespace concepts_detail
@@ -29,8 +29,9 @@ concept ContainsAdmissible =
  * \ref Set "Set", \ref Vector
  *        "Vector", or \ref String "String".
  *
- * \ref Map "Map" keys and \ref Set "Set" elements must exactly match the declared lookup type. \ref Vector "Vector"
- * and \ref String "String" accept non-boolean, non-character integral indexes.
+ * \ref Map "Map" keys and \ref Set "Set" elements admit their declared type and safe numeric widening that preserves
+ * every source value. Boolean, character, enum, and user-defined values do not convert across types. \ref Vector
+ * "Vector" and \ref String "String" accept non-boolean, non-character integral indexes.
  *
  * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
  * `false`.
@@ -85,8 +86,8 @@ template <typename C, typename K>
     -> bool {
     if constexpr (concepts_detail::ContainsLookupCollection<C>) {
         static_assert(concepts_detail::dependent_false<C, K>,
-                      "cljonic::contains: for a Map or a Set, the value you look up must have exactly the same type as "
-                      "the map's keys or the set's elements; conversions are not accepted.");
+                      "cljonic::contains: the lookup value must convert safely to the map's key type or the set's "
+                      "element type, without losing values or changing its meaning.");
     } else {
         static_assert(concepts_detail::dependent_false<C, K>,
                       "cljonic::contains: a Vector or a String index must be a non-boolean, non-character integer "

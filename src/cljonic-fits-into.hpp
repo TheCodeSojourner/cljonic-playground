@@ -11,7 +11,8 @@ namespace cljonic {
  *
  * Reports whether appending the complete \p source to \p destination fits within the destination's remaining capacity,
  * using the same cardinality semantics as `into`. It returns `false` for every unbounded producer, even though its
- * normal const traversal is capped. Scoped to \ref Vector "Vector" destinations in this increment.
+ * normal const traversal is capped. Scoped to \ref Vector "Vector" destinations in this increment. Source elements
+ * must follow the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Into "into".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -25,6 +26,7 @@ namespace cljonic {
  ~~~~~
  */
 template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
+    requires concepts_detail::MaterializableSource<Dest, Source>
 [[nodiscard]] constexpr auto fits_into(const Dest& destination, const Source& source) noexcept -> bool {
     if constexpr (concepts::CljonicProducer<Source>) {
         if (!source.is_finite()) {

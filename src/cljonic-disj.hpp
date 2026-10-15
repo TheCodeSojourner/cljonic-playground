@@ -10,16 +10,17 @@ namespace concepts_detail {
 
 template <typename C, typename... Values>
 concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value_type; } &&
-                         (std::same_as<std::remove_cvref_t<Values>, typename C::value_type> && ...);
+                         (concepts::SafeImplicitConversion<typename C::value_type, Values> && ...);
 
 } // namespace concepts_detail
 
 /** \anchor Disj
  * The \b disj free function API disjoins zero or more elements from a \ref Set "Set".
  *
- * `disj(set, values...)` accepts only values whose type exactly matches the \ref Set "Set"'s `value_type`. Values are
- * removed from left to right; absent or repeated values are no-ops after any prior removal. Calling `disj(set)` with
- * no values returns an unchanged copy.
+ * `disj(set, values...)` accepts the \ref Set "Set"'s element type and safe numeric widening conversions. A conversion
+ * must preserve every source value; Boolean, character, enum, and user-defined values do not convert across types.
+ * Values are removed from left to right; absent or repeated values are no-ops after any prior removal. Calling
+ * `disj(set)` with no values returns an unchanged copy.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -64,7 +65,8 @@ template <typename C, typename... Values>
         static_assert(concepts_detail::dependent_false<C>, "cljonic::disj: the first argument must be a Set.");
     } else {
         static_assert(concepts_detail::dependent_false<C, Values...>,
-                      "cljonic::disj: every value to remove must have exactly the same type as the set's elements.");
+                      "cljonic::disj: every value to remove must convert safely to the set's element type, without "
+                      "losing values or changing its meaning.");
     }
 }
 

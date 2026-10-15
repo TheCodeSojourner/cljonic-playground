@@ -18,6 +18,9 @@ namespace cljonic {
  * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
  * original collection. Construction with content longer than the available capacity is rejected at compile time.
  *
+ Character arguments must be \c char; numeric values do not implicitly become characters.
+ Text imports follow the \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
+
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -67,9 +70,10 @@ namespace cljonic {
 
    // A standard view pipeline can use an existing String as its source and
    // materialize transformed characters into another String.
-   const auto uppercase_view = runtime | std::views::transform([](char byte) {
-                                 return byte == 'i' ? 'I' : byte;
-                               });
+   const auto uppercase_view =
+       runtime | std::views::transform([](char byte) noexcept {
+         return byte == 'i' ? 'I' : byte;
+       });
    const auto from_pipeline = String<8>{uppercase_view};
 
    static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
@@ -121,7 +125,9 @@ class String {
         copy_from_source(arr, N - 1U);
     }
 
-    constexpr String(std::string_view source) noexcept {
+    template <typename Source>
+        requires std::same_as<std::remove_cvref_t<Source>, std::string_view>
+    constexpr String(const Source& source) noexcept {
         if consteval {
             if (source.size() > CapacityValue) {
                 rejected_oversized_string_source_at_compile_time();
@@ -137,8 +143,11 @@ class String {
     template <std::ranges::input_range SourceRange>
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
-                 std::same_as<std::remove_cv_t<std::ranges::range_value_t<SourceRange>>, char>)
+                 !std::same_as<std::remove_cvref_t<SourceRange>, std::string_view> &&
+                 std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<SourceRange>>, char>)
     constexpr String(SourceRange&& source) noexcept {
+        static_assert(concepts::NothrowRangeConstruction<char, SourceRange>,
+                      "String range/view constructor requires char elements and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "String static-extent range source exceeds String CapacityValue");
 
@@ -180,6 +189,10 @@ class String {
     [[nodiscard]] static constexpr auto character_is_valid(char value) noexcept -> bool {
         return value != '\0' && static_cast<unsigned char>(value) <= 0x7FU;
     }
+
+    template <typename Value>
+        requires(!std::same_as<std::remove_cvref_t<Value>, char>)
+    static auto character_is_valid(Value value) -> bool = delete;
 
     [[nodiscard]] constexpr auto operator==(const String& other) const noexcept -> bool {
         if (logical_size_ != other.logical_size_) {
@@ -265,6 +278,30 @@ class String {
         }
         return result;
     }
+
+    template <typename Index, typename Fallback>
+        requires(!concepts::SafeImplicitConversion<char, Fallback>)
+    auto operator()(Index index, Fallback fallback) const -> char = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto can_assoc(Index index, Value value) const -> bool = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto assoc(Index index, Value value) const -> String = delete;
+
+    template <typename Index, typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto put(Index index, Value value) const -> String = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto can_conj(Value value) const -> bool = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<char, Value>)
+    auto conj(Value value) const -> String = delete;
 
   private:
     [[nodiscard]] constexpr auto association_index_is_valid(std::size_t index) const noexcept -> bool {

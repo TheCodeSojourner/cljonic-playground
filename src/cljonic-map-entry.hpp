@@ -10,6 +10,9 @@ namespace cljonic {
  * copyable, assignable, and destructible without throwing, so the entry remains safe to copy and update in bounded
  * collections.
  *
+ * Key and value construction follows the \ref ImplicitConversions "safe implicit conversion rules". The public fields
+ * remain available, but MapEntry is not a C++ aggregate.
+ *
  * \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -37,6 +40,20 @@ struct MapEntry {
     KeyType key{};
     ValueType value{};
 
+    constexpr MapEntry() noexcept = default;
+
+    template <typename Key>
+        requires concepts::NothrowElementConstruction<KeyType, Key>
+    constexpr explicit MapEntry(Key&& entry_key) noexcept : key(std::forward<Key>(entry_key)) {
+    }
+
+    template <typename Key, typename Value>
+        requires concepts::NothrowElementConstruction<KeyType, Key> &&
+                     concepts::NothrowElementConstruction<ValueType, Value>
+    constexpr MapEntry(Key&& entry_key, Value&& entry_value) noexcept
+        : key(std::forward<Key>(entry_key)), value(std::forward<Value>(entry_value)) {
+    }
+
     [[nodiscard]] constexpr auto operator==(const MapEntry& other) const noexcept -> bool
         requires concepts::StableEqualityComparable<KeyType> && concepts::StableEqualityComparable<ValueType>
     {
@@ -44,9 +61,15 @@ struct MapEntry {
     }
 };
 
+template <typename Key, typename Value>
+MapEntry(Key, Value) -> MapEntry<Key, Value>;
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
+
+template <typename KeyType, typename ValueType>
+inline constexpr bool is_cljonic_map_entry_v<cljonic::MapEntry<KeyType, ValueType>> = true;
 
 // MapEntry inherits the recursive component analysis of the closed cljonic
 // value domain: it admits stable equality only when both its key and value

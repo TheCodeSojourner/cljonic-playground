@@ -16,7 +16,8 @@ namespace cljonic {
  * an empty range. Observation is bounded by its finite span, by the configured collection maximum for a zero-step
  * range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation
  * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required.
+ * owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow the
+ * \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -123,6 +124,19 @@ class Range {
     constexpr Range(T start, T end, T step) noexcept : start_(start), end_(end), step_(step) {
     }
 
+    template <typename End>
+        requires(!concepts::SafeImplicitConversion<T, End>)
+    explicit Range(End end) = delete;
+
+    template <typename Start, typename End>
+        requires(!concepts::SafeImplicitConversion<T, Start> || !concepts::SafeImplicitConversion<T, End>)
+    Range(Start start, End end) = delete;
+
+    template <typename Start, typename End, typename Step>
+        requires(!concepts::SafeImplicitConversion<T, Start> || !concepts::SafeImplicitConversion<T, End> ||
+                 !concepts::SafeImplicitConversion<T, Step>)
+    Range(Start start, End end, Step step) = delete;
+
     /** Conservative materialization size: the synthesis cap for a zero step, otherwise the
      *  exact finite cardinality saturated at the synthesis cap. */
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
@@ -138,6 +152,10 @@ class Range {
     [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
         return index < count();
     }
+
+    template <typename Index>
+        requires(!concepts::SafeImplicitConversion<std::size_t, Index>)
+    auto contains(Index index) const -> bool = delete;
 
     /** Bounded generating iteration up to the effective size returned by count(). */
     [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {

@@ -20,6 +20,9 @@ namespace cljonic {
  * cljonic collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight
  * predicate for whether the whole source fits.
  *
+ Keys, mapped values, and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+ Construction from entries requires the exact declared entry type.
+
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -48,7 +51,7 @@ namespace cljonic {
    // A standard view pipeline can use an existing Map as its source and
    // materialize the transformed entries into another Map.
    const auto copied_view =
-       runtime | std::views::transform([](const AccountEntry &entry) {
+       runtime | std::views::transform([](const AccountEntry &entry) noexcept {
          return AccountEntry{entry.key, Value{entry.value.amount * 2}};
        });
    const auto from_pipeline = AccountMap{copied_view};
@@ -123,9 +126,11 @@ class Map {
     template <typename... Args>
     constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
         static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
-        static_assert((concepts::NothrowElementConstruction<value_type, Args> && ...),
+        static_assert(((std::same_as<std::remove_cvref_t<Args>, value_type> &&
+                        concepts::NothrowElementConstruction<value_type, Args>) &&
+                       ...),
                       "Map constructor requires all arguments to construct "
-                      "MapEntry without throwing and be implicitly convertible to MapEntry");
+                      "the exact MapEntry type without throwing");
 
         ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
     }
@@ -136,12 +141,10 @@ class Map {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Map(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(concepts::NothrowElementConstruction<value_type, source_value_type>,
+    constexpr Map(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+        static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
                       "Map range/view constructor requires each source element to construct "
-                      "MapEntry without throwing and be implicitly convertible to MapEntry");
+                      "the exact MapEntry type and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "Map static-extent range source exceeds Map CapacityValue");
 
@@ -254,6 +257,35 @@ class Map {
     [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
         return {entries_.data(), logical_size_};
     }
+
+    template <typename Key>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key>)
+    auto contains(const Key& key) const -> bool = delete;
+
+    template <typename Key, typename Fallback = ValueType>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key> ||
+                 !concepts::SafeImplicitConversion<ValueType, Fallback>)
+    auto operator()(const Key& key, const Fallback& fallback = Fallback{}) const -> ValueType = delete;
+
+    template <typename Key, typename Value>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key> || !concepts::SafeImplicitConversion<ValueType, Value>)
+    auto can_assoc(const Key& key, const Value& value) const -> bool = delete;
+
+    template <typename Key, typename Value>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key> || !concepts::SafeImplicitConversion<ValueType, Value>)
+    auto assoc(const Key& key, const Value& value) const -> Map = delete;
+
+    template <typename Entry>
+        requires(!std::same_as<std::remove_cvref_t<Entry>, value_type>)
+    auto can_conj(const Entry& entry) const -> bool = delete;
+
+    template <typename Entry>
+        requires(!std::same_as<std::remove_cvref_t<Entry>, value_type>)
+    auto conj(const Entry& entry) const -> Map = delete;
+
+    template <typename Key>
+        requires(!concepts::SafeImplicitConversion<KeyType, Key>)
+    auto dissoc(const Key& key) const -> Map = delete;
 
   private:
     [[nodiscard]] constexpr auto find_index(const KeyType& key) const noexcept -> std::size_t {

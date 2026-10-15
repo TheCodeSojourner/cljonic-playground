@@ -19,7 +19,9 @@ namespace cljonic {
  * function, or a function object. Observation is bounded by the configured collection maximum, by the requested count,
  * or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and
  * runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required.
+ * destination with `into` when explicit materialization is required. Finite counts follow the \ref ImplicitConversions
+ * "safe implicit conversion rules": use non-Boolean, non-character unsigned integer types whose ranges fit \c
+ * std::size_t. Callback types and produced element types remain exact.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -30,7 +32,7 @@ namespace cljonic {
  int main() {
    // A named function can be used as the constexpr step callback.
    constexpr auto constexpr_sum = [] {
-     constexpr auto values = repeatedly(3, five);
+     constexpr auto values = repeatedly(3U, five);
      int sum = 0;
      for (const auto value : values) {
        sum += value;
@@ -39,7 +41,7 @@ namespace cljonic {
    }();
 
    // Runtime construction also accepts an inline lambda step callback.
-   auto runtime_values = repeatedly(2, []() noexcept { return 7; });
+   auto runtime_values = repeatedly(2U, []() noexcept { return 7; });
 
    // An uncounted Repeatedly is an unbounded producer whose observation is
    // bounded by the configured collection maximum or a destination capacity.
@@ -114,12 +116,19 @@ class Repeatedly {
         : step_{}, count_{0U}, is_finite_{true} {
     }
 
-    constexpr explicit Repeatedly(Step step) noexcept : step_(std::move(step)), count_(0U), is_finite_(false) {
+    constexpr explicit Repeatedly(const Step& step) noexcept : step_(step), count_(0U), is_finite_(false) {
     }
 
-    constexpr Repeatedly(Step step, std::size_t count) noexcept
-        : step_(std::move(step)), count_(count), is_finite_(true) {
+    constexpr Repeatedly(const Step& step, std::size_t count) noexcept : step_(step), count_(count), is_finite_(true) {
     }
+
+    template <typename OtherStep>
+        requires(!std::same_as<std::remove_cvref_t<OtherStep>, Step>)
+    explicit Repeatedly(OtherStep step) = delete;
+
+    template <typename OtherStep, typename Count>
+        requires(!std::same_as<std::remove_cvref_t<OtherStep>, Step> || !concepts_detail::ProducerCount<Count>)
+    Repeatedly(OtherStep step, Count count) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
@@ -149,9 +158,10 @@ template <typename Step, typename T = std::invoke_result_t<const std::decay_t<St
     return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step)};
 }
 
-template <typename Step, typename T = std::invoke_result_t<const std::decay_t<Step>&>>
+template <concepts_detail::ProducerCount Count, typename Step,
+          typename T = std::invoke_result_t<const std::decay_t<Step>&>>
     requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
-[[nodiscard]] constexpr auto repeatedly(std::size_t count, Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
+[[nodiscard]] constexpr auto repeatedly(Count count, Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
     return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step), count};
 }
 
@@ -169,15 +179,16 @@ constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_det
     return {};
 }
 
-template <typename Step>
-    requires(!concepts_detail::ValidRepeatedlyStep<Step>)
-constexpr auto repeatedly([[maybe_unused]] std::size_t count, [[maybe_unused]] Step&& step) noexcept
+template <typename Count, typename Step>
+    requires(!concepts_detail::ValidRepeatedlyStep<Step> || !concepts_detail::ProducerCount<Count>)
+constexpr auto repeatedly([[maybe_unused]] Count count, [[maybe_unused]] Step&& step) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<Step>,
                   "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
                   "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
                   "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
-                  "cljonic::repeat(value, count).");
+                  "cljonic::repeat(value, count). The count must be a non-boolean, non-character unsigned integer "
+                  "type whose range fits std::size_t.");
     return {};
 }
 

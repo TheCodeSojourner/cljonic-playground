@@ -18,7 +18,8 @@ enum class equality_family { none, sequential, map, set, string };
 template <typename T>
 inline constexpr bool in_non_cljonic_fallthrough_domain_v =
     !is_cljonic_collection_v<T> && !is_cljonic_producer_v<T> && !std::ranges::range<T> &&
-    ((std::is_arithmetic_v<T> || std::is_scoped_enum_v<T>) || std::is_aggregate_v<T> || is_cljonic_variant_v<T>);
+    ((std::is_arithmetic_v<T> || std::is_scoped_enum_v<T>) || std::is_aggregate_v<T> || is_cljonic_map_entry_v<T> ||
+     is_cljonic_variant_v<T>);
 
 // Equality-family classification for the general-equality free function `equal`
 // (REQ-FN-002G): Vector and Queue join all five producers in the sequential

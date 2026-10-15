@@ -125,8 +125,12 @@ class Cycle {
 
     constexpr Cycle() noexcept = default;
 
-    constexpr explicit Cycle(Source source) noexcept : source_(std::move(source)) {
+    constexpr explicit Cycle(const Source& source) noexcept : source_(source) {
     }
+
+    template <typename OtherSource>
+        requires(!std::same_as<std::remove_cvref_t<OtherSource>, Source>)
+    explicit Cycle(OtherSource source) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return count_;
@@ -178,8 +182,8 @@ class Cycle {
 
 template <concepts::CljonicSource Source>
     requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>
-[[nodiscard]] constexpr auto cycle(Source source) noexcept -> Cycle<Source> {
-    return Cycle<Source>{std::move(source)};
+[[nodiscard]] constexpr auto cycle(const Source& source) noexcept -> Cycle<Source> {
+    return Cycle<Source>{source};
 }
 
 // Diagnostic fallback (REQ-DIAG-009): the source argument is outside the closed

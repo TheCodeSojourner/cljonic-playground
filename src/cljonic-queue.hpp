@@ -20,6 +20,8 @@ namespace cljonic {
  * collection; a cljonic collection or producer is not a source and is treated as a single element when nested. To
  * materialize one, use \b into; \b fits_into is the preflight predicate for whether the whole source fits.
  *
+ Elements follow the \ref ImplicitConversions "safe implicit conversion rules".
+
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -51,7 +53,7 @@ namespace cljonic {
    const auto pipeline_source = Queue<int, 4>{1, 2, 3};
    const auto shifted_view =
        pipeline_source |
-       std::views::transform([](int value) { return value + 10; });
+       std::views::transform([](int value) noexcept { return value + 10; });
    const auto from_pipeline = Queue<int, 4>{shifted_view};
 
    // Constructing a Queue from a runtime C++ array/span
@@ -138,9 +140,9 @@ class Queue {
         static_assert(sizeof...(Args) <= CapacityValue, "Queue initializer count exceeds Queue CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
                       "Queue constructor requires all arguments to construct "
-                      "T without throwing and be implicitly convertible to T");
+                      "T without throwing and convert safely without losing values or changing their meaning");
 
-        ((*this = conj(T{std::forward<Args>(args)})), ...);
+        ((*this = conj(T(std::forward<Args>(args)))), ...);
     }
 
     // A cljonic collection or producer is not a SourceConstruction source
@@ -149,11 +151,9 @@ class Queue {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Queue(SourceRange&& source) noexcept(
-        (concepts::NothrowElementConstruction<value_type, std::ranges::range_value_t<SourceRange>>)) {
-        using source_value_type = std::ranges::range_value_t<SourceRange>;
-        static_assert(std::same_as<std::remove_cvref_t<source_value_type>, value_type>,
-                      "Queue range/view constructor requires a matching element type");
+    constexpr Queue(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+        static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
+                      "Queue range/view constructor requires safe element conversion and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "Queue static-extent range source exceeds Queue CapacityValue");
 
@@ -162,7 +162,7 @@ class Queue {
             if (copy_count++ >= CapacityValue) {
                 break;
             }
-            *this = conj(value_type{std::forward<decltype(item)>(item)});
+            *this = conj(value_type(std::forward<decltype(item)>(item)));
         }
     }
 
@@ -252,6 +252,14 @@ class Queue {
         }
         return result;
     }
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto can_conj(const Value& value) const -> bool = delete;
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    auto conj(const Value& value) const -> Queue = delete;
 
   private:
     std::array<value_type, CapacityValue> elements_{};

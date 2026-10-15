@@ -4,12 +4,34 @@
 #include <concepts>
 #include <cstddef>
 #include <functional>
+#include <limits>
 #include <optional>
 #include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
 #include <variant>
+
+/** \page ImplicitConversions Safe implicit conversions
+ * Arguments accept their declared types and numeric widening only when every source value is preserved. For example,
+ * \c short can widen to \c long \c long, and \c float can widen to \c double. Converting an integer to floating point
+ * also requires sufficient precision for every source integer. Floating-to-integer conversions and potentially
+ * narrowing conversions are rejected even when a particular literal fits.
+ *
+ * Boolean, character, enum, pointer, and user-defined values do not implicitly change types. Convert deliberately
+ * before a call when needed, checking representability first; an unchecked cast does not establish safety. The same
+ * rules apply to construction, lookup, fallback, update, removal, and their preflight functions.
+ *
+ * Where an operation requires nominal identity or exact types, safe numeric widening does not override that
+ * requirement. Conversion admission does not introduce implicit wrapping, callback substitution, or cross-type
+ * equality. Each operation documents its accepted domain where needed.
+ *
+ * Some operations explicitly accept a broader input domain and validate representability or content before conversion.
+ * These exceptions are documented by the operation; they do not relax the default conversion rules.
+ *
+ * External range imports require safe construction from the actual dereferenced elements and non-throwing traversal.
+ * For transformed ranges, the transformation must also be non-throwing.
+ */
 
 namespace cljonic {
 
@@ -29,6 +51,76 @@ enum class collection_kind { none, vector, map, set, queue, string };
 // never fire.
 template <typename...>
 inline constexpr bool dependent_false = false;
+
+template <typename T>
+inline constexpr bool is_cljonic_map_entry_v = false;
+
+template <typename T>
+concept CharacterType =
+    std::same_as<T, char> || std::same_as<T, signed char> || std::same_as<T, unsigned char> ||
+    std::same_as<T, wchar_t> || std::same_as<T, char8_t> || std::same_as<T, char16_t> || std::same_as<T, char32_t>;
+
+template <typename To, typename From>
+inline constexpr bool value_preserving_arithmetic = false;
+
+template <typename To, typename From>
+    requires(std::is_arithmetic_v<To> && std::is_arithmetic_v<From>)
+inline constexpr bool value_preserving_arithmetic<To, From> =
+    !std::same_as<To, bool> && !std::same_as<From, bool> && !CharacterType<To> && !CharacterType<From> &&
+    std::numeric_limits<To>::radix == std::numeric_limits<From>::radix &&
+    std::numeric_limits<To>::digits >= std::numeric_limits<From>::digits &&
+    (std::is_floating_point_v<To> || (std::is_integral_v<From> && (std::is_signed_v<To> || !std::is_signed_v<From>))) &&
+    (!std::is_floating_point_v<To> ||
+     (std::numeric_limits<To>::max_exponent >=
+      (std::is_integral_v<From> ? std::numeric_limits<From>::digits : std::numeric_limits<From>::max_exponent))) &&
+    (!std::is_floating_point_v<From> ||
+     (std::is_floating_point_v<To> &&
+      std::numeric_limits<To>::min_exponent <= std::numeric_limits<From>::min_exponent &&
+      (!std::numeric_limits<From>::has_infinity || std::numeric_limits<To>::has_infinity) &&
+      (!std::numeric_limits<From>::has_quiet_NaN || std::numeric_limits<To>::has_quiet_NaN) &&
+      (!std::numeric_limits<From>::has_signaling_NaN || std::numeric_limits<To>::has_signaling_NaN) &&
+      std::numeric_limits<To>::has_denorm >= std::numeric_limits<From>::has_denorm));
+
+template <typename Source>
+concept NothrowRangeTraversal =
+    requires(Source& source, std::ranges::iterator_t<Source> iterator, std::ranges::sentinel_t<Source> sentinel) {
+        { std::ranges::begin(source) } noexcept;
+        { std::ranges::end(source) } noexcept;
+        { *iterator } noexcept;
+        { ++iterator } noexcept;
+        { iterator != sentinel } noexcept -> std::same_as<bool>;
+        { iterator == sentinel } noexcept -> std::same_as<bool>;
+    };
+
+template <typename Source>
+struct nothrow_range_traversal : std::bool_constant<NothrowRangeTraversal<Source>> {};
+
+// Standard views do not propagate noexcept on every traversal operation;
+// their base traversal, iterator copies, and callbacks determine safety.
+template <typename Range>
+struct nothrow_range_traversal<std::ranges::ref_view<Range>> : nothrow_range_traversal<Range> {};
+
+template <typename Range>
+struct nothrow_range_traversal<const std::ranges::ref_view<Range>> : nothrow_range_traversal<Range> {};
+
+template <typename Base, typename Function>
+struct nothrow_range_traversal<std::ranges::transform_view<Base, Function>>
+    : std::bool_constant<nothrow_range_traversal<Base>::value &&
+                         std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<Base>> &&
+                         std::is_nothrow_copy_constructible_v<std::ranges::sentinel_t<Base>> &&
+                         std::is_nothrow_move_constructible_v<std::ranges::iterator_t<Base>> &&
+                         std::is_nothrow_move_constructible_v<std::ranges::sentinel_t<Base>> &&
+                         std::is_nothrow_invocable_v<Function&, std::ranges::range_reference_t<Base>>> {};
+
+template <typename Base, typename Function>
+    requires std::ranges::input_range<const Base>
+struct nothrow_range_traversal<const std::ranges::transform_view<Base, Function>>
+    : std::bool_constant<nothrow_range_traversal<const Base>::value &&
+                         std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<const Base>> &&
+                         std::is_nothrow_copy_constructible_v<std::ranges::sentinel_t<const Base>> &&
+                         std::is_nothrow_move_constructible_v<std::ranges::iterator_t<const Base>> &&
+                         std::is_nothrow_move_constructible_v<std::ranges::sentinel_t<const Base>> &&
+                         std::is_nothrow_invocable_v<const Function&, std::ranges::range_reference_t<const Base>>> {};
 
 template <typename T>
 concept IntegerIndexType =
@@ -200,11 +292,17 @@ concept NothrowCollectionElement = CopyableElement<T> && std::destructible<T> &&
     { value = other } noexcept;
 };
 
-/** Requires that an argument is convertible to and can construct an element
- *  without throwing. */
+/** Admits identical types or value-preserving arithmetic conversions without
+ *  crossing Boolean, character, enumeration, pointer, or user-defined domains. */
 template <typename T, typename Arg>
-concept NothrowElementConstruction = std::convertible_to<Arg, T> && requires(Arg&& argument) {
-    { T{std::forward<Arg>(argument)} } noexcept;
+concept SafeImplicitConversion =
+    std::same_as<std::remove_cvref_t<T>, std::remove_cvref_t<Arg>> ||
+    concepts_detail::value_preserving_arithmetic<std::remove_cvref_t<T>, std::remove_cvref_t<Arg>>;
+
+/** Requires safe implicit conversion and non-throwing element construction. */
+template <typename T, typename Arg>
+concept NothrowElementConstruction = SafeImplicitConversion<T, Arg> && requires(Arg&& argument) {
+    { T(std::forward<Arg>(argument)) } noexcept;
 };
 
 // ============================================================================
@@ -269,6 +367,12 @@ concept NothrowConstInputRange =
         { iterator++ } noexcept;
         { iterator == sentinel } noexcept -> std::same_as<bool>;
     };
+
+/** Requires non-throwing traversal and construction from the actual range reference. */
+template <typename T, typename Source>
+concept NothrowRangeConstruction =
+    std::ranges::input_range<Source> && NothrowElementConstruction<T, std::ranges::range_reference_t<Source>> &&
+    concepts_detail::nothrow_range_traversal<std::remove_reference_t<Source>>::value;
 
 /** Gates types admitted to the closed nominal cljonic collection domain
  *  through cljonic-owned trait specialization. */
@@ -441,6 +545,15 @@ concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t
 } // namespace concepts
 
 namespace concepts_detail {
+
+template <typename Count>
+concept ProducerCount = IntegerIndexType<Count> && std::unsigned_integral<std::remove_cvref_t<Count>> &&
+                        concepts::SafeImplicitConversion<std::size_t, Count>;
+
+template <typename Dest, typename Source>
+concept MaterializableSource =
+    concepts::CljonicVector<Dest> && concepts::CljonicSource<Source> &&
+    concepts::NothrowElementConstruction<typename Dest::value_type, std::ranges::range_reference_t<const Source>>;
 
 // Guarded admission helpers for the REQ-DIAG-009 producer-factory diagnostics.
 // Each derives the element type internally, so an argument outside the producer
