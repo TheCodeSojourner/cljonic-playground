@@ -5,9 +5,10 @@
 namespace cljonic {
 
 /** \anchor Next
- * \brief Returns a collection without its first element.
+ * The \b next free function API returns a \ref concepts::CljonicCollection "collection" without its first element.
  *
- * For a Queue, `next` dequeues the front element (the accessible element) and returns the remaining collection.
+ * For a \ref Queue "Queue", `next` dequeues the front element (the accessible element) and returns the remaining
+ * collection.
  *
  * \note Not yet part of the public API; the sequence-shaping operations are deferred.
  *

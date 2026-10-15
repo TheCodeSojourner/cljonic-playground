@@ -5,14 +5,16 @@
 namespace cljonic {
 
 /** \anchor CanAssoc
- * \brief Checks whether one or more assoc pairs can be applied without capacity overflow.
+ * The \b can_assoc free function API checks whether one or more key-value pairs can be applied with \ref Assoc "assoc"
+ * to a
+ *        \ref concepts::CljonicCollection "collection".
  *
- * Supported for `Map` (an existing key can be replaced, or an absent key inserted when capacity remains), `Vector` (an
- * existing index can be replaced, or an index equal to the current count can append when capacity remains), and
- * `String` (the same index and append rule as Vector, with an invalid character returning false). `Set` and `Queue`
- * provide no associative capability and are rejected. The variadic form checks pairs left to right against the state
- * produced by earlier pairs, returning true only when every pair preflight succeeds. All forms leave the source
- * unchanged.
+ * Supported for \ref Map "Map" (an existing key can be replaced, or an absent key inserted when capacity remains),
+ * \ref Vector "Vector" (an existing index can be replaced, or an index equal to the current count can append when
+ * capacity remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector", with an invalid
+ * character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are
+ * rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true
+ * only when every pair preflight succeeds. All forms leave the source unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}

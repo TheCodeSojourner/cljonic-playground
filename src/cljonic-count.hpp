@@ -6,8 +6,10 @@
 namespace cljonic {
 
 /** \anchor Count
- * \brief Returns a collection's logical size or a producer's observable count. Collections and finite producers return
- * their exact element count. Unbounded producers return their observable count.
+ * The \b count free function API returns the number of elements in a \ref concepts::SequenceableCollection
+ * "collection" or
+ *        \ref concepts::SequenceableProducer "producer". For unbounded \ref concepts::SequenceableProducer "producers",
+ *        returns \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE.
  *
  * \b Examples
  ~~~~~{.cpp}

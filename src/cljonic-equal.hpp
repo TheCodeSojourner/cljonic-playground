@@ -215,7 +215,7 @@ template <typename Lhs, typename Rhs>
 namespace cljonic {
 
 /** \anchor Equal
- * \brief Compares one or more values for equality.
+ * The \b equal free function API compares one or more values for equality.
  *
  * \b Equal compares values by their contents:
  *
@@ -225,18 +225,17 @@ namespace cljonic {
  *   explicit or defaulted `operator==`). The comparison must not throw, so a
  *   type whose `==` can throw is not supported; pointers and unscoped enums
  *   are not supported either.
- * - Vectors, Queues, Ranges, Repeats, Cycles, and the Iterate and Repeatedly
- *   producers
- *   compare equal when they contain or produce the same elements in the same
- *   order. Producers are compared by what they produce, one element at a
- *   time, and comparison always finishes: no producer yields more than
- *   `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` elements, so two unbounded
- *   producers are compared over that configured maximum.
- * - Maps compare equal when they hold the same entries, regardless of
+ * - \ref Vector "Vectors" and \ref Queue "Queues" compare equal when they contain the same elements in the same order;
+ *   producers (\ref Range "Ranges", \ref Repeat "Repeats", \ref Cycle "Cycles", \ref Iterate "Iterate", and
+ *   \ref Repeatedly "Repeatedly") compare equal when they produce the same elements in the same order. When comparing
+ *   producers, at most
+ *   \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements are compared, so
+ *   this also works for two unbounded producers.
+ * - \ref Map "Maps" compare equal when they hold the same entries, regardless of
  *   insertion order.
- * - Sets compare equal when they hold the same elements, regardless of
+ * - \ref Set "Sets" compare equal when they hold the same elements, regardless of
  *   insertion order.
- * - Strings compare equal when they hold the same characters.
+ * - \ref String "Strings" compare equal when they hold the same characters.
  *
  * Compared collections and sets must have matching element types, and compared maps must have matching key and value
  * types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as

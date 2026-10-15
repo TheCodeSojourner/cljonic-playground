@@ -12,14 +12,14 @@
 namespace cljonic {
 
 /** \anchor Repeatedly
- * \b Repeatedly is a producer created with `repeatedly(step)` or `repeatedly(count, step)`. It stores a copy of the
+ * A Repeatedly producer is created with `repeatedly(step)` or `repeatedly(count, step)`. It stores a copy of the
  * zero-argument step callable and produces a fresh element by invoking the step for every observed element. The step
  * may maintain state or produce side effects, but it must not throw or allocate when invoked. `repeatedly(step)` is
  * unbounded, while `repeatedly(count, step)` yields exactly \p count elements. The step may be a lambda, a named
- * function, or a function object. Repeatedly observation is bounded by the configured collection maximum, by the
- * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
- * evaluation and runtime code. Repeatedly values can be passed directly to cljonic operations that accept a source, or
- * converted into an owning destination with `into` when explicit materialization is required.
+ * function, or a function object. Observation is bounded by the configured collection maximum, by the requested count,
+ * or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and
+ * runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
+ * destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

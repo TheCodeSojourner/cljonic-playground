@@ -5,13 +5,14 @@
 namespace cljonic {
 
 /** \anchor Into
- * \brief Materializes a \ref CljonicSource "source" (collection or producer) into an explicit bounded destination,
- * appending its elements.
+ * The \b into free function API appends elements from a \ref concepts::CljonicSource "source" to a \ref Vector
+ * "Vector", up to its remaining
+ *        capacity.
  *
  * Returns an updated destination-typed collection with source elements appended after the destination's existing
  * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
  * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
- * completely. Scoped to `Vector` destinations in this increment.
+ * completely. Scoped to \ref Vector "Vector" destinations in this increment.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

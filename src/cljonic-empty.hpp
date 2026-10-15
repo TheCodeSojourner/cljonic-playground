@@ -5,7 +5,8 @@
 namespace cljonic {
 
 /** \anchor Empty
- * \brief Returns an empty owning value of the same collection type as the input.
+ * The \b empty free function API returns an empty \ref concepts::SequenceableCollection "collection" of the same type
+ * as the input.
  *
  * Per REQ-FN-026, `empty` produces an empty owning value of the same supported collection type as its input.
  *

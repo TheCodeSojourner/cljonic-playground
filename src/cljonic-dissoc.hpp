@@ -38,9 +38,9 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
 } // namespace concepts_detail
 
 /** \anchor Dissoc
- * \brief Removes zero or more keys from a Map, returning the resulting map value.
+ * The \b dissoc free function API removes zero or more keys from a \ref Map "Map".
  *
- * `dissoc` is supported only for `Map`. With no keys it returns an unchanged copy; otherwise it removes keys
+ * `dissoc` is supported only for \ref Map "Map". With no keys it returns an unchanged copy; otherwise it removes keys
  * left-to-right. Keys may be supplied using any type convertible to the map's key type. Present keys are removed via
  * swap-and-remove; absent or repeated keys are no-ops. The source map is never modified.
  *

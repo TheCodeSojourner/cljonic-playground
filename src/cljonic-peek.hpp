@@ -6,7 +6,7 @@
 namespace cljonic {
 
 /** \anchor Peek
- * \brief Observes the accessible element without removal.
+ * The \b peek free function API observes the accessible element without removal.
  *
  * \b Examples
  ~~~~~{.cpp}

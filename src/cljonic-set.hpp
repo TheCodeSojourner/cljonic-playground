@@ -14,11 +14,11 @@
 namespace cljonic {
 
 /** \anchor Set
- * \b Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
+ * A Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more values than the available capacity is rejected at compile
- * time. A non-cljonic C++ range or view source is copied into the Set; a cljonic collection or producer is not a
- * source -- \b Set{Set{...}} encloses it as a single element. To materialize one, use \b into; \b fits_into is the
+ * time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer is not
+ * a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
  * preflight predicate for whether the whole source fits.
  *
  \b Examples

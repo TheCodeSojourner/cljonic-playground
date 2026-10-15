@@ -5,7 +5,8 @@
 namespace cljonic {
 
 /** \anchor IsEmpty
- * \brief Returns true when a collection or producer is empty.
+ * The \b is_empty free function API returns true when a \ref concepts::SequenceableCollection "collection" or
+ *        \ref concepts::SequenceableProducer "producer" is empty.
  *
  * \b Examples
  ~~~~~{.cpp}

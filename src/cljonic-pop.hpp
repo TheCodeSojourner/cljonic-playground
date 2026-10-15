@@ -6,7 +6,8 @@
 namespace cljonic {
 
 /** \anchor Pop
- * \brief Yields an updated collection with the accessible element removed.
+ * The \b pop free function API yields an updated \ref concepts::CljonicCollection "collection" with the accessible
+ * element removed.
  *
  * \b Examples
  ~~~~~{.cpp}

@@ -25,9 +25,12 @@ concept ContainsAdmissible =
 } // namespace concepts_detail
 
 /** \anchor Contains
- * \brief Tests key presence, element membership, or index validity in a Map, Set, Vector, or String.
+ * The \b contains free function API tests key presence, element membership, or index validity in a \ref Map "Map",
+ * \ref Set "Set", \ref Vector
+ *        "Vector", or \ref String "String".
  *
- * Map keys and Set elements must exactly match the declared lookup type. Vector and String accept integral indexes.
+ * \ref Map "Map" keys and \ref Set "Set" elements must exactly match the declared lookup type. \ref Vector "Vector"
+ * and \ref String "String" accept integral indexes.
  *
  * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
  * `false`.

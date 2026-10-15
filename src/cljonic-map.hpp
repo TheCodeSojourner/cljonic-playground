@@ -13,12 +13,12 @@
 namespace cljonic {
 
 /** \anchor Map
- * \b Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
+ * A Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
  * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
  * return a modified copy without changing the original collection. Construction with more entries than the available
- * capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the Map; a cljonic
- * collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight predicate for
- * whether the whole source fits.
+ * capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the \ref Map "Map"; a
+ * cljonic collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight
+ * predicate for whether the whole source fits.
  *
  \b Examples
  ~~~~~{.cpp}

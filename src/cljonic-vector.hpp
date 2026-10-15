@@ -13,12 +13,12 @@
 namespace cljonic {
 
 /** \anchor Vector
- * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
+ * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more initializers than the available capacity is rejected at
- * compile time. A non-cljonic C++ range or view source is copied into the Vector; a cljonic collection or producer is
- * not a source -- \b Vector{Vector{...}} encloses it as a single element. To materialize one, use \b into; \b
- * fits_into is the preflight predicate for whether the whole source fits.
+ * compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer
+ * is not a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
+ * preflight predicate for whether the whole source fits.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

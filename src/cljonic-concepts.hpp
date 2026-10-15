@@ -272,27 +272,27 @@ concept CljonicCollection = concepts_detail::is_cljonic_collection_v<T>;
 template <typename T>
 concept CljonicProducer = concepts_detail::is_cljonic_producer_v<T>;
 
-/** Nominal identity gate for Range producer types. */
+/** Nominal identity gate for \ref Range "Range" producer types. */
 template <typename T>
 concept CljonicRange =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::range);
 
-/** Nominal identity gate for Repeat producer types. */
+/** Nominal identity gate for \ref Repeat "Repeat" producer types. */
 template <typename T>
 concept CljonicRepeat =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::repeat);
 
-/** Nominal identity gate for Cycle producer types. */
+/** Nominal identity gate for \ref Cycle "Cycle" producer types. */
 template <typename T>
 concept CljonicCycle =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::cycle);
 
-/** Nominal identity gate for Iterate producer types. */
+/** Nominal identity gate for \ref Iterate "Iterate" producer types. */
 template <typename T>
 concept CljonicIterate =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::iterate);
 
-/** Nominal identity gate for Repeatedly producer types. */
+/** Nominal identity gate for \ref Repeatedly "Repeatedly" producer types. */
 template <typename T>
 concept CljonicRepeatedly =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::repeatedly);
@@ -316,27 +316,27 @@ concept RepeatedlyStep = NothrowCollectionElement<T> && std::copy_constructible<
 template <typename T>
 concept CljonicSource = (CljonicCollection<T> || CljonicProducer<T>) && NothrowConstInputRange<T>;
 
-/** Nominal identity gate for Vector collection types. */
+/** Nominal identity gate for \ref Vector "Vector" collection types. */
 template <typename T>
 concept CljonicVector =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::vector);
 
-/** Nominal identity gate for Map collection types. */
+/** Nominal identity gate for \ref Map "Map" collection types. */
 template <typename T>
 concept CljonicMap =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::map);
 
-/** Nominal identity gate for Set collection types. */
+/** Nominal identity gate for \ref Set "Set" collection types. */
 template <typename T>
 concept CljonicSet =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::set);
 
-/** Nominal identity gate for Queue collection types. */
+/** Nominal identity gate for \ref Queue "Queue" collection types. */
 template <typename T>
 concept CljonicQueue =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::queue);
 
-/** Nominal identity gate for String collection types. */
+/** Nominal identity gate for \ref String "String" collection types. */
 template <typename T>
 concept CljonicString =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::string);
@@ -399,7 +399,7 @@ concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
 
 /** Requires that an admitted collection provides immutable element insertion
  *  plus its matching capacity/element preflight operation. A `Conjable`
- *  collection is one of Vector, Set, Map, Queue, or String. The value-type
+ *  collection is one of \ref Vector "Vector", \ref Set "Set", \ref Map "Map", \ref Queue "Queue", or \ref String "String". The value-type
  *  reference lives in the requires-expression body,
  *  never its parameter list, so the concept stays SFINAE-friendly
  *  (REQ-DIAG-001). */

@@ -14,10 +14,10 @@
 namespace cljonic {
 
 /** \anchor Queue
- * \b Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
+ * A Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
  * way to operate on the collection is through the library's free-function API. Construction with more values than the
- * available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the Queue; a
- * cljonic collection or producer is not a source -- \b Queue{Queue{...}} encloses it as a single element. To
+ * available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the
+ * collection; a cljonic collection or producer is not a source and is treated as a single element when nested. To
  * materialize one, use \b into; \b fits_into is the preflight predicate for whether the whole source fits.
  *
  \b Examples

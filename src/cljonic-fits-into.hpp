@@ -5,11 +5,13 @@
 namespace cljonic {
 
 /** \anchor FitsInto
- * \brief The non-throwing, non-allocating materialization-completeness preflight for \ref Into "into".
+ * The \b fits_into free function API checks whether every element of a finite \ref concepts::CljonicSource "source"
+ * fits within the remaining
+ *        capacity of a \ref Vector "Vector".
  *
  * Reports whether appending the complete \p source to \p destination fits within the destination's remaining capacity,
  * using the same cardinality semantics as `into`. It returns `false` for every unbounded producer, even though its
- * normal const traversal is capped. Scoped to `Vector` destinations in this increment.
+ * normal const traversal is capped. Scoped to \ref Vector "Vector" destinations in this increment.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

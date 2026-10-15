@@ -6,11 +6,12 @@
 namespace cljonic {
 
 /** \anchor Get
- * \brief Looks up an element by a key or index, returning the default or
+ * The \b get free function API looks up an element by a key or index, returning the default or
  *        supplied fallback when absent.
  *
- * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of Map, Set,
- * Vector, and String. The fallback defaults to the collection's default lookup result when omitted.
+ * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
+ * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
+ * default lookup result when omitted.
  *
  * \b Examples
  ~~~~~{.cpp}

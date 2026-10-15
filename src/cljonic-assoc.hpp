@@ -6,12 +6,15 @@
 namespace cljonic {
 
 /** \anchor Assoc
- * \brief Associates a value with a key in a Map, or with an index in an indexed collection (Vector, String).
+ * The \b assoc free function API associates a value with a key in a \ref Map "Map", or with an index in an indexed
+ * collection (\ref Vector
+ *        "Vector", \ref String "String").
  *
- * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association; an
- * index equal to the current count appends when capacity remains), and `String` (the same index and append rule as
- * Vector; see String for character validation and normalization policy). `Set` and `Queue` provide no associative
- * capability and are rejected. The result is a distinct collection value; the source is unchanged.
+ * Supported for \ref Map "Map" (key/value association, replacing the value of an existing key), \ref Vector "Vector"
+ * (index association; an index equal to the current count appends when capacity remains), and \ref String "String"
+ * (the same index and append rule as \ref Vector "Vector"; see \ref String "String" for character validation and
+ * normalization policy). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are rejected. The
+ * result is a distinct collection value; the source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or

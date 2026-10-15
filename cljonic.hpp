@@ -164,7 +164,7 @@
  * Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs "Subs"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
  *
- * ## Set Functions
+ * ## \ref Set "Set" Functions
  *
  * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy"
  * - \ref Set_Difference "Difference", \ref Set_DifferenceBy "DifferenceBy", \ref Set_Disj "Disj",
@@ -174,7 +174,7 @@
  * - \ref Set_ToSet "ToSet", \ref Set_ToSetBy "ToSetBy"
  * - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
  *
- * ## String Functions
+ * ## \ref String "String" Functions
  *
  * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref String_Concat "Concat"
  * - \ref String_EndsWith "EndsWith"
@@ -477,27 +477,27 @@ concept CljonicCollection = concepts_detail::is_cljonic_collection_v<T>;
 template <typename T>
 concept CljonicProducer = concepts_detail::is_cljonic_producer_v<T>;
 
-/** Nominal identity gate for Range producer types. */
+/** Nominal identity gate for \ref Range "Range" producer types. */
 template <typename T>
 concept CljonicRange =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::range);
 
-/** Nominal identity gate for Repeat producer types. */
+/** Nominal identity gate for \ref Repeat "Repeat" producer types. */
 template <typename T>
 concept CljonicRepeat =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::repeat);
 
-/** Nominal identity gate for Cycle producer types. */
+/** Nominal identity gate for \ref Cycle "Cycle" producer types. */
 template <typename T>
 concept CljonicCycle =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::cycle);
 
-/** Nominal identity gate for Iterate producer types. */
+/** Nominal identity gate for \ref Iterate "Iterate" producer types. */
 template <typename T>
 concept CljonicIterate =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::iterate);
 
-/** Nominal identity gate for Repeatedly producer types. */
+/** Nominal identity gate for \ref Repeatedly "Repeatedly" producer types. */
 template <typename T>
 concept CljonicRepeatedly =
     CljonicProducer<T> && (concepts_detail::producer_kind_of_v<T> == concepts_detail::producer_kind::repeatedly);
@@ -521,27 +521,27 @@ concept RepeatedlyStep = NothrowCollectionElement<T> && std::copy_constructible<
 template <typename T>
 concept CljonicSource = (CljonicCollection<T> || CljonicProducer<T>) && NothrowConstInputRange<T>;
 
-/** Nominal identity gate for Vector collection types. */
+/** Nominal identity gate for \ref Vector "Vector" collection types. */
 template <typename T>
 concept CljonicVector =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::vector);
 
-/** Nominal identity gate for Map collection types. */
+/** Nominal identity gate for \ref Map "Map" collection types. */
 template <typename T>
 concept CljonicMap =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::map);
 
-/** Nominal identity gate for Set collection types. */
+/** Nominal identity gate for \ref Set "Set" collection types. */
 template <typename T>
 concept CljonicSet =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::set);
 
-/** Nominal identity gate for Queue collection types. */
+/** Nominal identity gate for \ref Queue "Queue" collection types. */
 template <typename T>
 concept CljonicQueue =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::queue);
 
-/** Nominal identity gate for String collection types. */
+/** Nominal identity gate for \ref String "String" collection types. */
 template <typename T>
 concept CljonicString =
     CljonicCollection<T> && (concepts_detail::collection_kind_of_v<T> == concepts_detail::collection_kind::string);
@@ -604,7 +604,7 @@ concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
 
 /** Requires that an admitted collection provides immutable element insertion
  *  plus its matching capacity/element preflight operation. A `Conjable`
- *  collection is one of Vector, Set, Map, Queue, or String. The value-type
+ *  collection is one of \ref Vector "Vector", \ref Set "Set", \ref Map "Map", \ref Queue "Queue", or \ref String "String". The value-type
  *  reference lives in the requires-expression body,
  *  never its parameter list, so the concept stays SFINAE-friendly
  *  (REQ-DIAG-001). */
@@ -676,12 +676,15 @@ concept ValidCycleSource =
 namespace cljonic {
 
 /** \anchor Assoc
- * \brief Associates a value with a key in a Map, or with an index in an indexed collection (Vector, String).
+ * The \b assoc free function API associates a value with a key in a \ref Map "Map", or with an index in an indexed
+ * collection (\ref Vector
+ *        "Vector", \ref String "String").
  *
- * Supported for `Map` (key/value association, replacing the value of an existing key), `Vector` (index association; an
- * index equal to the current count appends when capacity remains), and `String` (the same index and append rule as
- * Vector; see String for character validation and normalization policy). `Set` and `Queue` provide no associative
- * capability and are rejected. The result is a distinct collection value; the source is unchanged.
+ * Supported for \ref Map "Map" (key/value association, replacing the value of an existing key), \ref Vector "Vector"
+ * (index association; an index equal to the current count appends when capacity remains), and \ref String "String"
+ * (the same index and append rule as \ref Vector "Vector"; see \ref String "String" for character validation and
+ * normalization policy). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are rejected. The
+ * result is a distinct collection value; the source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
@@ -838,14 +841,16 @@ template <typename C, typename K1, typename V1, typename K2, typename V2, typena
 namespace cljonic {
 
 /** \anchor CanAssoc
- * \brief Checks whether one or more assoc pairs can be applied without capacity overflow.
+ * The \b can_assoc free function API checks whether one or more key-value pairs can be applied with \ref Assoc "assoc"
+ * to a
+ *        \ref concepts::CljonicCollection "collection".
  *
- * Supported for `Map` (an existing key can be replaced, or an absent key inserted when capacity remains), `Vector` (an
- * existing index can be replaced, or an index equal to the current count can append when capacity remains), and
- * `String` (the same index and append rule as Vector, with an invalid character returning false). `Set` and `Queue`
- * provide no associative capability and are rejected. The variadic form checks pairs left to right against the state
- * produced by earlier pairs, returning true only when every pair preflight succeeds. All forms leave the source
- * unchanged.
+ * Supported for \ref Map "Map" (an existing key can be replaced, or an absent key inserted when capacity remains),
+ * \ref Vector "Vector" (an existing index can be replaced, or an index equal to the current count can append when
+ * capacity remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector", with an invalid
+ * character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are
+ * rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true
+ * only when every pair preflight succeeds. All forms leave the source unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -1036,19 +1041,21 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
 } // namespace concepts_detail
 
 /** \anchor CanConj
- * \brief Checks whether conj can succeed without capacity overflow.
+ * The \b can_conj free function API checks whether \ref Conj "conj" can add one or more values to a
+ *        \ref concepts::CljonicCollection "collection".
  *
  * `can_conj(collection)` returns true. The one-value form checks that value against the collection. The variadic form
  * checks each value left to right against the state produced by the preceding values, and returns true only if every
  * preflight succeeds. All forms preserve the source.
  *
- * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. For `Vector` and `Queue`, the result depends only on
- * remaining capacity; the value does not affect the preflight. For `String`, both remaining capacity and a valid
- * character are required; see String for character validation policy. An invalid character returns false.
+ * Supported for \ref Vector "Vector", \ref Set "Set", \ref Map "Map", \ref Queue "Queue", and \ref String "String".
+ * For \ref Vector "Vector" and \ref Queue "Queue", the result depends only on remaining capacity; the value does not
+ * affect the preflight. For \ref String "String", both remaining capacity and a valid character are required; see \ref
+ * String "String" for character validation policy. An invalid character returns false.
  *
- * For a `Set` element or `Map` key already present, returns true because insertion is a no-op or a value replacement
- * that needs no capacity. An absent element or key returns true only when capacity remains; when full, it returns
- * false.
+ * For a \ref Set "Set" element or \ref Map "Map" key already present, returns true because insertion is a no-op or a
+ * value replacement that needs no capacity. An absent element or key returns true only when capacity remains; when
+ * full, it returns false.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -1191,7 +1198,7 @@ constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE = CLJONIC_C
 namespace cljonic {
 
 /** \anchor String
- * \b String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
+ * A String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
  * callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds `0x7F` are
  * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
  * original collection. Construction with content longer than the available capacity is rejected at compile time.
@@ -1544,7 +1551,8 @@ template <typename T>
 } // namespace concepts_detail
 
 /** \anchor CharacterIsValid
- * \brief Checks whether a value converts to a valid String character.
+ * The \b character_is_valid free function API checks whether a value converts to a valid \ref String "String"
+ * character.
  *
  * Accepts non-`bool` integral values and one-character C-strings. Values outside the range representable by `char`
  * return false without conversion; otherwise the character is valid when it is not NUL and its unsigned byte value is
@@ -1614,14 +1622,17 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
 } // namespace concepts_detail
 
 /** \anchor Conj
- * \brief Adds an element to a collection according to its type conventions.
+ * The \b conj free function API returns a \ref concepts::CljonicCollection "collection" with the supplied values
+ * added.
  *
- * Supported for `Vector`, `Set`, `Map`, `Queue`, and `String`. `Vector` appends at the end. `Queue` enqueues at the
- * rear. `String` appends at its logical count. For `String`, invalid characters are rejected at compile time and
- * replaced with `.` at runtime; see String for character validation and normalization policy. `Set` adds absent
- * elements; duplicates are no-ops. `Map` associates a `MapEntry`; an existing key's value is replaced. At full
- * capacity, `Vector`, `Queue`, and `String` return unchanged copies. A full `Set` or `Map` also returns an unchanged
- * copy when the element or key is absent. Each operation returns a distinct collection value and preserves the source.
+ * Supported for \ref Vector "Vector", \ref Set "Set", \ref Map "Map", \ref Queue "Queue", and \ref String "String".
+ * \ref Vector "Vector" appends at the end. \ref Queue "Queue" enqueues at the rear. \ref String "String" appends at
+ * its logical count. For \ref String "String", invalid characters are rejected at compile time and replaced with `.`
+ * at runtime; see \ref String "String" for character validation and normalization policy. \ref Set "Set" adds absent
+ * elements; duplicates are no-ops. \ref Map "Map" associates a \ref MapEntry "MapEntry"; an existing key's value is
+ * replaced. At full capacity, \ref Vector "Vector", \ref Queue "Queue", and \ref String "String" return unchanged
+ * copies. A full \ref Set "Set" or \ref Map "Map" also returns an unchanged copy when the element or key is absent.
+ * Each operation returns a distinct collection value and preserves the source.
  *
  * Three arities are provided: `conj(collection)` returns an unchanged copy, `conj(collection, value)` adds one value,
  * and `conj(collection, value₁, value₂, …)` adds two or more values left to right, so `conj(c, x₁, x₂)`
@@ -1796,9 +1807,12 @@ concept ContainsAdmissible =
 } // namespace concepts_detail
 
 /** \anchor Contains
- * \brief Tests key presence, element membership, or index validity in a Map, Set, Vector, or String.
+ * The \b contains free function API tests key presence, element membership, or index validity in a \ref Map "Map",
+ * \ref Set "Set", \ref Vector
+ *        "Vector", or \ref String "String".
  *
- * Map keys and Set elements must exactly match the declared lookup type. Vector and String accept integral indexes.
+ * \ref Map "Map" keys and \ref Set "Set" elements must exactly match the declared lookup type. \ref Vector "Vector"
+ * and \ref String "String" accept integral indexes.
  *
  * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
  * `false`.
@@ -1872,8 +1886,10 @@ template <typename C, typename K>
 namespace cljonic {
 
 /** \anchor Count
- * \brief Returns a collection's logical size or a producer's observable count. Collections and finite producers return
- * their exact element count. Unbounded producers return their observable count.
+ * The \b count free function API returns the number of elements in a \ref concepts::SequenceableCollection
+ * "collection" or
+ *        \ref concepts::SequenceableProducer "producer". For unbounded \ref concepts::SequenceableProducer "producers",
+ *        returns \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -1944,12 +1960,12 @@ template <typename C>
 namespace cljonic {
 
 /** \anchor Vector
- * \b Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
+ * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more initializers than the available capacity is rejected at
- * compile time. A non-cljonic C++ range or view source is copied into the Vector; a cljonic collection or producer is
- * not a source -- \b Vector{Vector{...}} encloses it as a single element. To materialize one, use \b into; \b
- * fits_into is the preflight predicate for whether the whole source fits.
+ * compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer
+ * is not a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
+ * preflight predicate for whether the whole source fits.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -2300,13 +2316,13 @@ struct contains_standard_range<Vector<ElementType, CapacityValue>>
 namespace cljonic {
 
 /** \anchor Cycle
- * \b Cycle is an unbounded producer over an owned source value, wich must be a cljonic collection or producer. A
- * finite source sequence is repeated from the beginning after exhaustion; an unbounded source preserves its observable
- * prefix without requiring a complete source result. The approved public form is `cycle(source)` only, and traversal
- * terminates only at the observable cap used for bounded materialization. Cycle observation is bounded by the
- * configured collection maximum or by an explicit destination capacity, and it supports const C++ range traversal in
- * both constant evaluation and runtime code. Cycle values can be passed directly to cljonic operations that accept a
- * source, or converted into an owning destination with `into` when explicit materialization is required.
+ * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. A
+ * finite source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without
+ * first materializing the whole source, and yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements (or
+ * fewer when materialized into a destination with an explicit capacity). The approved public form is `cycle(source)`
+ * only. It supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
+ * directly to cljonic operations that accept a source, or converted into an owning destination with `into` when
+ * explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -2529,11 +2545,11 @@ concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value
 } // namespace concepts_detail
 
 /** \anchor Disj
- * \brief Disjoins zero or more elements from a set.
+ * The \b disj free function API disjoins zero or more elements from a \ref Set "Set".
  *
- * `disj(set, values...)` accepts only values whose type exactly matches the Set's `value_type`. Values are removed
- * from left to right; absent or repeated values are no-ops after any prior removal. Calling `disj(set)` with no values
- * returns an unchanged copy.
+ * `disj(set, values...)` accepts only values whose type exactly matches the \ref Set "Set"'s `value_type`. Values are
+ * removed from left to right; absent or repeated values are no-ops after any prior removal. Calling `disj(set)` with
+ * no values returns an unchanged copy.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -2624,9 +2640,9 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
 } // namespace concepts_detail
 
 /** \anchor Dissoc
- * \brief Removes zero or more keys from a Map, returning the resulting map value.
+ * The \b dissoc free function API removes zero or more keys from a \ref Map "Map".
  *
- * `dissoc` is supported only for `Map`. With no keys it returns an unchanged copy; otherwise it removes keys
+ * `dissoc` is supported only for \ref Map "Map". With no keys it returns an unchanged copy; otherwise it removes keys
  * left-to-right. Keys may be supplied using any type convertible to the map's key type. Present keys are removed via
  * swap-and-remove; absent or repeated keys are no-ops. The source map is never modified.
  *
@@ -2947,7 +2963,7 @@ template <typename Lhs, typename Rhs>
 namespace cljonic {
 
 /** \anchor Equal
- * \brief Compares one or more values for equality.
+ * The \b equal free function API compares one or more values for equality.
  *
  * \b Equal compares values by their contents:
  *
@@ -2957,18 +2973,17 @@ namespace cljonic {
  *   explicit or defaulted `operator==`). The comparison must not throw, so a
  *   type whose `==` can throw is not supported; pointers and unscoped enums
  *   are not supported either.
- * - Vectors, Queues, Ranges, Repeats, Cycles, and the Iterate and Repeatedly
- *   producers
- *   compare equal when they contain or produce the same elements in the same
- *   order. Producers are compared by what they produce, one element at a
- *   time, and comparison always finishes: no producer yields more than
- *   `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` elements, so two unbounded
- *   producers are compared over that configured maximum.
- * - Maps compare equal when they hold the same entries, regardless of
+ * - \ref Vector "Vectors" and \ref Queue "Queues" compare equal when they contain the same elements in the same order;
+ *   producers (\ref Range "Ranges", \ref Repeat "Repeats", \ref Cycle "Cycles", \ref Iterate "Iterate", and
+ *   \ref Repeatedly "Repeatedly") compare equal when they produce the same elements in the same order. When comparing
+ *   producers, at most
+ *   \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements are compared, so
+ *   this also works for two unbounded producers.
+ * - \ref Map "Maps" compare equal when they hold the same entries, regardless of
  *   insertion order.
- * - Sets compare equal when they hold the same elements, regardless of
+ * - \ref Set "Sets" compare equal when they hold the same elements, regardless of
  *   insertion order.
- * - Strings compare equal when they hold the same characters.
+ * - \ref String "Strings" compare equal when they hold the same characters.
  *
  * Compared collections and sets must have matching element types, and compared maps must have matching key and value
  * types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as
@@ -3129,11 +3144,13 @@ template <typename Lhs, typename Rhs, typename... Rest>
 namespace cljonic {
 
 /** \anchor FitsInto
- * \brief The non-throwing, non-allocating materialization-completeness preflight for \ref Into "into".
+ * The \b fits_into free function API checks whether every element of a finite \ref concepts::CljonicSource "source"
+ * fits within the remaining
+ *        capacity of a \ref Vector "Vector".
  *
  * Reports whether appending the complete \p source to \p destination fits within the destination's remaining capacity,
  * using the same cardinality semantics as `into`. It returns `false` for every unbounded producer, even though its
- * normal const traversal is capped. Scoped to `Vector` destinations in this increment.
+ * normal const traversal is capped. Scoped to \ref Vector "Vector" destinations in this increment.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3166,11 +3183,12 @@ template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
 namespace cljonic {
 
 /** \anchor Get
- * \brief Looks up an element by a key or index, returning the default or
+ * The \b get free function API looks up an element by a key or index, returning the default or
  *        supplied fallback when absent.
  *
- * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of Map, Set,
- * Vector, and String. The fallback defaults to the collection's default lookup result when omitted.
+ * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
+ * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
+ * default lookup result when omitted.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -3217,13 +3235,14 @@ template <typename C, typename K,
 namespace cljonic {
 
 /** \anchor Into
- * \brief Materializes a \ref CljonicSource "source" (collection or producer) into an explicit bounded destination,
- * appending its elements.
+ * The \b into free function API appends elements from a \ref concepts::CljonicSource "source" to a \ref Vector
+ * "Vector", up to its remaining
+ *        capacity.
  *
  * Returns an updated destination-typed collection with source elements appended after the destination's existing
  * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
  * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
- * completely. Scoped to `Vector` destinations in this increment.
+ * completely. Scoped to \ref Vector "Vector" destinations in this increment.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3258,7 +3277,8 @@ template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
 namespace cljonic {
 
 /** \anchor IsEmpty
- * \brief Returns true when a collection or producer is empty.
+ * The \b is_empty free function API returns true when a \ref concepts::SequenceableCollection "collection" or
+ *        \ref concepts::SequenceableProducer "producer" is empty.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -3311,13 +3331,13 @@ constexpr auto is_empty([[maybe_unused]] const C& collection) noexcept -> void {
 namespace cljonic {
 
 /** \anchor Iterate
- * \b Iterate is an unbounded producer created with `iterate(step, initial)`. It stores the initial value and a copy of
+ * A Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy of
  * the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted value.
  * For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`. The step may be a
- * lambda, a named function, or a function object. Iterate observation is bounded by the configured collection maximum
- * or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and
- * runtime code. Iterate values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required.
+ * lambda, a named function, or a function object. Observation is bounded by the configured collection maximum or by an
+ * explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime
+ * code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
+ * destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3506,7 +3526,7 @@ struct contains_standard_range<Iterate<T, Step>> : std::bool_constant<contains_s
 namespace cljonic {
 
 /** \anchor MapEntry
- * \b MapEntry is a value-semantic pair representing a single key-value association. Keys must support reliable,
+ * A MapEntry is a value-semantic pair representing a single key-value association. Keys must support reliable,
  * non-throwing equality comparison and non-throwing storage operations. Values must have a default value, and be
  * copyable, assignable, and destructible without throwing, so the entry remains safe to copy and update in bounded
  * collections.
@@ -3570,12 +3590,12 @@ struct contains_standard_range<cljonic::MapEntry<KeyType, ValueType>>
 namespace cljonic {
 
 /** \anchor Map
- * \b Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
+ * A Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
  * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
  * return a modified copy without changing the original collection. Construction with more entries than the available
- * capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the Map; a cljonic
- * collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight predicate for
- * whether the whole source fits.
+ * capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the \ref Map "Map"; a
+ * cljonic collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight
+ * predicate for whether the whole source fits.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -3880,27 +3900,11 @@ struct contains_standard_range<Map<KeyType, ValueType, CapacityValue>>
 namespace cljonic {
 
 /** \anchor NotEqual
- * \brief Compares one or more values for inequality.
+ * The \b not_equal free function API compares one or more values for inequality.
  *
- * \b NotEqual is the negation of \ref Equal : it answers the same question and returns the opposite result, over the
- * same values and by the same rules.
- *
- * - Calling `not_equal` with one value always returns false, because a value is
- *   never unequal to itself.
- * - Two ordinary values are unequal when they are the same type and compare
- *   unequal with `==`.
- * - Vectors, Queues, Ranges, Repeats, Cycles, Iterates, and Repeatedlys are
- *   unequal when they do not contain or produce the same elements in the same
- *   order; producers are compared by what they produce, one element at a time,
- *   and the comparison always finishes.
- * - Maps are unequal when they do not hold the same entries, regardless of
- *   insertion order; Sets are unequal when they do not hold the same elements,
- *   regardless of insertion order; Strings are unequal when they do not hold
- *   the same characters.
- *
- * The supported values are exactly those of \ref Equal : mismatched collection element types, collections compared to
- * ordinary values, and values that cannot be compared stably (such as floating-point numbers) are rejected. With more
- * than two arguments, `not_equal` is true when at least one adjacent pair is unequal.
+ * \b NotEqual is the negation of \ref Equal "equal" and uses the same supported values and comparison rules.
+ * Calling `not_equal` with one value returns false. With multiple values, it returns true when at least one adjacent
+ * pair is unequal.
  *
  * \b Examples
  *
@@ -4011,7 +4015,7 @@ template <typename Lhs, typename Rhs, typename... Rest>
 namespace cljonic {
 
 /** \anchor Peek
- * \brief Observes the accessible element without removal.
+ * The \b peek free function API observes the accessible element without removal.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -4046,7 +4050,8 @@ template <typename C>
 namespace cljonic {
 
 /** \anchor Pop
- * \brief Yields an updated collection with the accessible element removed.
+ * The \b pop free function API yields an updated \ref concepts::CljonicCollection "collection" with the accessible
+ * element removed.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -4088,10 +4093,10 @@ template <typename C>
 namespace cljonic {
 
 /** \anchor Queue
- * \b Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
+ * A Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
  * way to operate on the collection is through the library's free-function API. Construction with more values than the
- * available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the Queue; a
- * cljonic collection or producer is not a source -- \b Queue{Queue{...}} encloses it as a single element. To
+ * available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the
+ * collection; a cljonic collection or producer is not a source and is treated as a single element when nested. To
  * materialize one, use \b into; \b fits_into is the preflight predicate for whether the whole source fits.
  *
  \b Examples
@@ -4376,13 +4381,13 @@ struct contains_standard_range<Queue<T, CapacityValue>> : std::bool_constant<con
 namespace cljonic {
 
 /** \anchor Range
- * \b Range is a bounded producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end
- * by a fixed \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking
- * precedence over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p
- * end produces an empty range. Range observation is bounded by its finite span, by the configured collection maximum
- * for a zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both
- * constant evaluation and runtime code. Range values can be passed directly to cljonic operations that accept a
- * source, or converted into an owning destination with `into` when explicit materialization is required.
+ * A Range is a bounded producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by
+ * a fixed \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking precedence
+ * over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p end produces
+ * an empty range. Observation is bounded by its finite span, by the configured collection maximum for a zero-step
+ * range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation
+ * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
+ * owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4663,11 +4668,11 @@ struct contains_standard_range<Range<T>> : std::bool_constant<contains_standard_
 namespace cljonic {
 
 /** \anchor Repeat
- * \b Repeat is a producer that owns one value and yields copies of it. `repeat(value)` is unbounded, while
- * `repeat(value, count)` yields exactly \p count values. Repeat observation is bounded by the configured collection
- * maximum, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal
- * in both constant evaluation and runtime code. Repeat values can be passed directly to cljonic operations that accept
- * a source, or converted into an owning destination with `into` when explicit materialization is required.
+ * A Repeat is a producer that owns one value and yields copies of it. `repeat(value)` is unbounded, while
+ * `repeat(value, count)` yields exactly \p count values. Observation is bounded by the configured collection maximum,
+ * by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both
+ * constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or
+ * converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4871,14 +4876,14 @@ struct contains_standard_range<Repeat<T>> : std::bool_constant<contains_standard
 namespace cljonic {
 
 /** \anchor Repeatedly
- * \b Repeatedly is a producer created with `repeatedly(step)` or `repeatedly(count, step)`. It stores a copy of the
+ * A Repeatedly producer is created with `repeatedly(step)` or `repeatedly(count, step)`. It stores a copy of the
  * zero-argument step callable and produces a fresh element by invoking the step for every observed element. The step
  * may maintain state or produce side effects, but it must not throw or allocate when invoked. `repeatedly(step)` is
  * unbounded, while `repeatedly(count, step)` yields exactly \p count elements. The step may be a lambda, a named
- * function, or a function object. Repeatedly observation is bounded by the configured collection maximum, by the
- * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
- * evaluation and runtime code. Repeatedly values can be passed directly to cljonic operations that accept a source, or
- * converted into an owning destination with `into` when explicit materialization is required.
+ * function, or a function object. Observation is bounded by the configured collection maximum, by the requested count,
+ * or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and
+ * runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
+ * destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -5082,11 +5087,11 @@ struct contains_standard_range<Repeatedly<T, Step>> : std::bool_constant<contain
 namespace cljonic {
 
 /** \anchor Set
- * \b Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
+ * A Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
  * operate on the collection is through the library's free-function API. Updates return a modified copy without
  * changing the original collection. Construction with more values than the available capacity is rejected at compile
- * time. A non-cljonic C++ range or view source is copied into the Set; a cljonic collection or producer is not a
- * source -- \b Set{Set{...}} encloses it as a single element. To materialize one, use \b into; \b fits_into is the
+ * time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer is not
+ * a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
  * preflight predicate for whether the whole source fits.
  *
  \b Examples
@@ -5429,26 +5434,26 @@ template <std::size_t Index = 0, typename Variant>
 } // namespace variant_detail
 
 /** \anchor Variant
- * \brief A composite value holding exactly one of several alternatives.
+ * A composite value holding exactly one of several alternatives.
  *
- * \b Variant is the cljonic composite: it holds exactly one of its alternatives at a time and is the supported
- * composite in the cljonic value domain.
+ * A composite value holding exactly one of several alternatives. It is the supported composite in the cljonic value
+ * domain.
  *
  * - Every alternative must have a default value and be copyable without
- *   throwing, so a `Variant` is a storable value: it can be a map value, a
+ *   throwing, so a Variant is a storable value: it can be a map value, a
  *   vector element, or a queue element.
  * - Two values compare equal only when they hold the same alternative and that
  *   alternative's values compare equal (alternative-strict equality). Values
  *   holding different alternatives always compare unequal.
  * - Equality is provided only when every alternative is comparable without
  *   throwing; otherwise `==` is not provided and the value cannot be used in an
- *   equality position. A `Variant` may therefore be storable without being
+ *   equality position. A Variant may therefore be storable without being
  *   comparable, exactly like a collection of floating-point numbers. When it is
- *   comparable, a `Variant` takes part in cljonic equality: as an `equal` or
+ *   comparable, a Variant takes part in cljonic equality: as an `equal` or
  *   `not_equal` operand, as a map key or set element, and as a stored member of a
  *   collection or producer whose own equality is used; when it is not, all of
  *   those equality positions reject it.
- * - A `Variant` always holds an active alternative: it has no empty or
+ * - A Variant always holds an active alternative: it has no empty or
  *   valueless state.
  *
  * \b Examples

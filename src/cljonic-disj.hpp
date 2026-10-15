@@ -15,11 +15,11 @@ concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value
 } // namespace concepts_detail
 
 /** \anchor Disj
- * \brief Disjoins zero or more elements from a set.
+ * The \b disj free function API disjoins zero or more elements from a \ref Set "Set".
  *
- * `disj(set, values...)` accepts only values whose type exactly matches the Set's `value_type`. Values are removed
- * from left to right; absent or repeated values are no-ops after any prior removal. Calling `disj(set)` with no values
- * returns an unchanged copy.
+ * `disj(set, values...)` accepts only values whose type exactly matches the \ref Set "Set"'s `value_type`. Values are
+ * removed from left to right; absent or repeated values are no-ops after any prior removal. Calling `disj(set)` with
+ * no values returns an unchanged copy.
  *
  * \b Examples
  ~~~~~{.cpp}

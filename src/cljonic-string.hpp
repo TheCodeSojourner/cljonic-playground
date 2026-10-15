@@ -13,7 +13,7 @@
 namespace cljonic {
 
 /** \anchor String
- * \b String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
+ * A String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
  * callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds `0x7F` are
  * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
  * original collection. Construction with content longer than the available capacity is rejected at compile time.

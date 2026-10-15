@@ -5,27 +5,11 @@
 namespace cljonic {
 
 /** \anchor NotEqual
- * \brief Compares one or more values for inequality.
+ * The \b not_equal free function API compares one or more values for inequality.
  *
- * \b NotEqual is the negation of \ref Equal : it answers the same question and returns the opposite result, over the
- * same values and by the same rules.
- *
- * - Calling `not_equal` with one value always returns false, because a value is
- *   never unequal to itself.
- * - Two ordinary values are unequal when they are the same type and compare
- *   unequal with `==`.
- * - Vectors, Queues, Ranges, Repeats, Cycles, Iterates, and Repeatedlys are
- *   unequal when they do not contain or produce the same elements in the same
- *   order; producers are compared by what they produce, one element at a time,
- *   and the comparison always finishes.
- * - Maps are unequal when they do not hold the same entries, regardless of
- *   insertion order; Sets are unequal when they do not hold the same elements,
- *   regardless of insertion order; Strings are unequal when they do not hold
- *   the same characters.
- *
- * The supported values are exactly those of \ref Equal : mismatched collection element types, collections compared to
- * ordinary values, and values that cannot be compared stably (such as floating-point numbers) are rejected. With more
- * than two arguments, `not_equal` is true when at least one adjacent pair is unequal.
+ * \b NotEqual is the negation of \ref Equal "equal" and uses the same supported values and comparison rules. Calling
+ * `not_equal` with one value returns false. With multiple values, it returns true when at least one adjacent pair is
+ * unequal.
  *
  * \b Examples
  *

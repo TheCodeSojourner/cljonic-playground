@@ -5,7 +5,9 @@
 namespace cljonic {
 
 /** \anchor NotEmpty
- * \brief Returns an owning copy of the input when nonempty, otherwise the corresponding empty owning value.
+ * The \b not_empty free function API returns a copy of a nonempty \ref concepts::SequenceableCollection "collection",
+ * or an empty
+ *        \ref concepts::SequenceableCollection "collection" of the same type otherwise.
  *
  * Per REQ-FN-026, `not_empty` preserves the input collection type and capacity and returns an owning copy of the input
  * when nonempty or the corresponding empty value when empty.

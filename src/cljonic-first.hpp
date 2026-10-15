@@ -6,11 +6,12 @@
 namespace cljonic {
 
 /** \anchor First
- * \brief Returns the first element of a sequenceable collection, or the key of
- *        a MapEntry.
+ * The \b first free function API returns the first element of a \ref concepts::SequenceableCollection "sequenceable
+ * collection", or the key
+ *        of a \ref MapEntry "MapEntry".
  *
- * For a MapEntry value, `first` returns its key. For a sequenceable collection, `first` returns the element at index
- * zero.
+ * For a \ref MapEntry "MapEntry" value, `first` returns its key. For a sequenceable collection, `first` returns the
+ * element at index zero.
  *
  * \note Not yet part of the public API; the sequence-shaping operations are deferred.
  *

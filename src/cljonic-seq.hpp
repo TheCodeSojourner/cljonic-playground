@@ -5,10 +5,11 @@
 namespace cljonic {
 
 /** \anchor Seq
- * \brief Converts a collection into an owning, value-semantic sequence.
+ * The \b seq free function API returns the elements of a \ref concepts::SequenceableCollection "collection" as a
+ * sequence.
  *
- * For a Vector this returns the owning vector itself; for other sequenceable collections it produces an owning Vector
- * of their traversal elements.
+ * For a \ref Vector "Vector" this returns the owning vector itself; for other sequenceable collections it produces an
+ * owning \ref Vector "Vector" of their traversal elements.
  *
  * \note Not yet part of the public API; the sequence-shaping operations are deferred.
  *

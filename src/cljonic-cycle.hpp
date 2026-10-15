@@ -10,13 +10,13 @@
 namespace cljonic {
 
 /** \anchor Cycle
- * \b Cycle is an unbounded producer over an owned source value, wich must be a cljonic collection or producer. A
- * finite source sequence is repeated from the beginning after exhaustion; an unbounded source preserves its observable
- * prefix without requiring a complete source result. The approved public form is `cycle(source)` only, and traversal
- * terminates only at the observable cap used for bounded materialization. Cycle observation is bounded by the
- * configured collection maximum or by an explicit destination capacity, and it supports const C++ range traversal in
- * both constant evaluation and runtime code. Cycle values can be passed directly to cljonic operations that accept a
- * source, or converted into an owning destination with `into` when explicit materialization is required.
+ * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. A
+ * finite source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without
+ * first materializing the whole source, and yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements
+ * (or fewer when materialized into a destination with an explicit capacity). The approved public form is
+ * `cycle(source)` only. It supports const C++ range traversal in both constant evaluation and runtime code. Values can
+ * be passed directly to cljonic operations that accept a source, or converted into an owning destination with `into`
+ * when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
