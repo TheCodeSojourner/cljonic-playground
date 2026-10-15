@@ -245,7 +245,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | vague_concept_name(x) → reject(x)
 
 λ S2_canonical_capabilities(x). public_capability_names(x) ≡ Indexed ∧ Lookup ∧ Seqable ∧ Associative ∧ Conjable
-  | Indexed(x) → ordered_integer_access(x) ∧ bounded_logical_index_domain(x)
+  | Indexed(x) → ordered_access_by_non_boolean_non_character_integer_index(x) ∧ bounded_logical_index_domain(x)
     ∧ non_mutating_access(x) ∧ non_throwing_non_allocating_membership_predicate(x)
     ∧ negative_index_outside_domain_when_representable(x)
   | Lookup(x) → collection_defined_lookup_domain(x) ∧ non_mutating_access(x)
@@ -258,7 +258,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ non_throwing_non_allocating_preflight(can_assoc(x))
   | capability_satisfaction(x) → compositional_and_operation_specific(x)
     ∧ remain_distinct(Indexed ∧ Lookup ∧ Seqable ∧ Associative ∧ Conjable)
-  | IndexedCollection(x) → refine(Lookup(integer_key_domain(x)))
+  | IndexedCollection(x) → refine(Lookup(non_boolean_non_character_integer_key_domain(x)))
   | IndexedProducer(x) → not_imply(Lookup(x)) ∧ require(explicit_positional_retrieval_specification_before_value_access(x))
   | Associative(x) → not_imply(Indexed ∨ Lookup) unless(concrete_collection_requirement(x))
   | Seqable(x) → independent_of(Indexed ∧ Lookup ∧ Associative)
@@ -287,8 +287,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | can_assoc(String, index, char_value) → false_when_char_is_invalid(x)
   | assoc(Map, key, value) → replace_existing_value_or_insert_new_key_when_capacity_remains(x)
-  | assoc(Vector, integer_index, value) → replace_existing_index_or_append_at_count_when_capacity_remains(x)
-  | assoc(String, integer_content_index, char_value) → replace_existing_byte_or_append_at_count_when_capacity_remains(x)
+  | assoc(Vector, non_boolean_non_character_integer_index, value) → replace_existing_index_or_append_at_count_when_capacity_remains(x)
+  | assoc(String, non_boolean_non_character_integer_content_index, char_value) → replace_existing_byte_or_append_at_count_when_capacity_remains(x)
     ∧ preserve_ascii_validity_policy(x) ∧ preserve_null_terminator(x)
     ∧ reject_invalid_character_at_compile_time_when_known(x)
     ∧ replace_invalid_runtime_character_with_period(x)
@@ -517,7 +517,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ typed_absence_and_failure_policy_is_declared(x) ∧ result_status_is_declared(x)
     ∧ bounded_owning_results_are_preferred(x) ∧ maps_and_sets_are_semantically_unordered(x)
     ∧ transducers_and_hidden_lazy_sequences_are_unsupported(x))
-  | contains(x) → admit((LookupCollection ∧ exact_declared_lookup_type) ∨ (IndexedCollection ∧ integral_index))(x)
+  | contains(x) → admit((LookupCollection ∧ exact_declared_lookup_type) ∨ (IndexedCollection ∧ non_boolean_non_character_integer_index))(x)
     ∧ support(Map ∨ Set ∨ Vector ∨ String)(x) ∧ ¬support(Range)(x)
   | fits_into(x) → govern(complete_producer_materialization(x))
   | can_conj(x) ∧ can_assoc(x) → govern(PreflightPredicate(x))
