@@ -12,22 +12,16 @@ related:
 
 This document synthesizes the mandatory multi-layer discipline for introducing any new C++ header (`src/cljonic-*.hpp`) into the `cljonic` codebase.
 
-## The 5-Point Lifecycle Contract
+## Required Order and Integration Checklist
 
-Every header added to `src/` must complete all five stages before being considered integrated:
+The required development order is:
 
 ```
-+-------------------+      +--------------------+      +--------------------+
-| 1. Specification  | ---> | 2. Header & Docs   | ---> | 3. Tests           |
-| (specs/*.allium)  |      | (src/*.hpp)        |      | (tests/*-tests.cpp)|
-+-------------------+      +--------------------+      +--------------------+
-                                                                  |
-                                                                  v
-+-------------------+      +--------------------+      +--------------------+
-| 5. Quality Gates  | <--- | 5. No-Heap Probe   | <--- | 4. Full Coverage   |
-| (upsert-gate-*)   |      | (tests/no_heap/*)  |      | (100% SF visibility|
-+-------------------+      +--------------------+      +--------------------+
+requirements -> vocabulary -> architecture -> specs -> tests -> implementation -> documentation
 ```
+
+Every header added to `src/` must satisfy all five checkpoints below; their
+numbering is an integration checklist, not a different dependency order.
 
 ### 1. Specification (`specs/` or `specs/primitives/`)
 - Each free function or collection API must have a dedicated Allium specification file (`{name}.allium`).
@@ -58,3 +52,7 @@ Every header added to `src/` must complete all five stages before being consider
 - Every header must have a dedicated probe file (`tests/no_heap/cljonic-{name}-probes.cpp`).
 - Probes must be declared in `tests/no_heap/probes.hpp` and invoked in `tests/no_heap/harness_main.cpp`.
 - Must pass `make no-heap` with zero forbidden allocator symbols in both modular and single-header probe binaries.
+- Both probe binaries must actually execute successfully. A symbol scan alone
+  cannot establish probe behavior. The target now executes both binaries after
+  scanning; enabling execution exposed a stale unequal-sequence expectation
+  that a build-only check had never exercised.

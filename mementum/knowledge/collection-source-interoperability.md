@@ -54,6 +54,9 @@ exactly one of three mechanisms:
 - `fits_into` is the non-throwing, non-allocating **completeness preflight
   predicate** (returns `bool`); it never materializes.
 - Complete materialization ≡ preflight `fits_into`, then apply `into`.
+- Both operations use the same `MaterializableSource` admission, including safe,
+  non-throwing construction from the actual source reference. A completeness
+  preflight cannot accept an element conversion the materializer rejects.
 
 Do not write "use `into` (or `fits_into`) to materialize a range, view, or
 producer": external ranges/views materialize through the direct source
@@ -91,9 +94,24 @@ constructor source" (whitespace-normalized), so wording drift fails the gate.
 
 ## Vector baseline
 
-Vector span construction is `constexpr`, `noexcept`, and heap-free. It requires
-nothrow element construction and implicit convertibility, supports CTAD, and
-exposes active storage through a read-only `view()`.
+Vector span construction is `constexpr`, `noexcept`, and heap-free. Like Set,
+Map, and Queue imports, it checks the actual `range_reference_t`, not merely
+the advertised `range_value_t`, through `NothrowRangeConstruction`. Traversal
+and element construction must be non-throwing. Known standard ref/transform
+views are checked through their base traversal, iterator copies/moves, and callbacks
+because their wrappers do not consistently propagate `noexcept`.
+
+`SafeImplicitConversion<Target, Argument>` admits identical unqualified types
+and arithmetic conversions that preserve the entire source-type value domain.
+Boolean, character, enum, pointer, and user-defined domains do not implicitly
+change types. Safe integer-to-floating widening uses constrained direct
+initialization: brace initialization alone would reject even exactly
+representable integer domains. Vector retains CTAD and a read-only `view()`.
+
+MapEntry has safe key/value constructors and is no longer a C++ aggregate.
+Map packs and entry updates still require the exact declared MapEntry type.
+String admits exact string_view, character arrays, and safe character ranges;
+it does not import arbitrary implicit string_view conversions or raw pointers.
 
 ## Open design work
 
@@ -102,8 +120,5 @@ exposes active storage through a read-only `view()`.
   `char`, never a range) remain deferred.
 - Extend the REQ-DIAG-010 constructor-diagnostic policy to any other public
   constructor whose source domain is closed.
-- Converge the cross-collection source contract (accepted span/string-view/range
-  sources, String byte validation, Queue logical FIFO order, complete-fit
-  predicates, and the `into` result-capacity contract) through Allium
-  specifications, architecture, tests, traceability, and implementation in that
-  order.
+- Further source-contract changes follow the required order: requirements,
+  vocabulary, architecture, specs, tests, implementation, documentation.
