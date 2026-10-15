@@ -1,5 +1,79 @@
 ## Current Session State
 
+- last_session_id: dd3dbede-e31b-4c78-b743-952b104a5c1d
+- current_timestamp: 2026-10-15T15:46:18-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Completed scope-limited integrity reviews and reconciliation of requirements/vocabulary, vocabulary/architecture, and architecture/specifications, preserving individually approved decisions and lifecycle distinctions.
+2. Repaired the subsequent specification-to-code snapshot drift and all 33 missing obligation mappings, replacing renamed trace IDs and adding meaningful compile-time/runtime assertions in eight spec-test files.
+3. Finalized durable session memory through the explicitly invoked gybis-fini workflow. At finalization, HEAD is d7d70a3 (Update docs); the index is empty and only mementum/state.md is modified.
+
+Questions:
+1. None open for the completed reconciliation and focused traceability repair.
+
+Decisions:
+1. Non-Boolean, non-character integral Vector/String indexes remain checked by value, including signed indexes. Finite Repeat/Repeatedly counts instead require unsigned non-Boolean, non-character types whose entire ranges fit size_t.
+2. SafeImplicitConversion is distinct from NothrowElementConstruction, which checks the actual expression preserving cv/ref, and from NothrowCollectionElement storage admission, which does not require nothrow move construction.
+3. Requirements-backed approval does not imply implementation or executable coverage. Preserve active MapEntry named key/value fields while semantic key/val/first/last free functions and two-element sequence behavior remain deferred.
+4. Producers are pure by default except explicitly authorized callback effects. Cycle only propagates source-authorized effects; no additional hidden-state or input-collection mutation permission is granted.
+5. Sequential equality compares equal observed counts and elements, caps each unbounded operand even against a finite partner, and makes no beyond-cap equality claim. std::variant is rejected at any depth; cljonic::Variant remains the supported wrapper.
+6. Read-only interop views are source-bound; semantic results own their storage. Queue requires logical FIFO traversal, not a contiguous view. Hidden global runtime initialization is forbidden; bounded automatic/static storage remains permitted.
+7. Keep 17 fine-grained vocabulary terms without artificial architecture references: DiscreteNumericType, NumericPolicy, NumericEquality, ExactConversion, CheckedConversion, LossyConversion, Parsing, IsPredicatePrefix, CanPredicatePrefix, HasPredicatePrefix, ValidPredicatePrefix, KeywordEnumNameEntry, KeywordEnumNameMap, KeywordEnumNameContext, KeywordEnumNameMapping, Atom, CopyableElement.
+8. Repeated architecture/specification weed used FP-oriented corrections with a maximum of five iterations; it reached a fixed point in iteration 1 with zero new findings or edits.
+9. Do not rerun the whole make git pipeline for the reported failure. No implementation/governance commits were made by the assistant during repair; this invocation explicitly authorizes the skill's memory-only commit. Ordinary future work retains human-controlled commits unless explicitly authorized.
+
+Validation:
+1. Requirements/vocabulary coverage ledger: 321 clauses (227 represented, 74 reasoned no-change, 20 explicitly non-binding excluded); all 179 vocabulary terms reverse-reviewed.
+2. Vocabulary/architecture ledger: 179 terms (113 canonical uses, 49 contextual representations, 17 approved keep/no-change).
+3. Architecture/specification ledger: 105 principles, 37 Allium files, 120 entities, 1537 invariants. Allium 3.5.3 check/analyse returned empty diagnostics/findings; scoped structural/whitespace checks passed.
+4. Final focused repair: make traceability-spec-to-code passes. Both modular and generated-header test targets build; each passes 54 selected test cases with 763 assertions.
+5. make no-heap passes source checks, allocator-symbol scans, and both executable probes; make equal-compile-fail passes. Changed-test clang-format checks and scoped git diff --check pass.
+6. Constant-initialization assertions cover representative values across all collection/producer families and Variant; these are representative regression coverage, not a universal proof for every public path. Broad sanitizers/coverage were verified earlier in the session, not rerun after this focused test-only repair.
+7. Preserved existing into traversal behavior: an oversized/unbounded effectful source may be advanced once beyond destination capacity before fullness is detected. The new Cycle test accounts for this; no implementation change was made.
+
+Next:
+1. No repair is pending. Resume from the reviewed governance/contracts and passing focused traceability baseline; select the next user-directed slice rather than rerunning make git automatically.
+2. Session evidence is in /home/pauwhi/.copilot/session-state/dd3dbede-e31b-4c78-b743-952b104a5c1d/files/: req-vocab-dispositions.py/json, vocab-arch-dispositions.py/json, arch-spec-dispositions.py/json. These preserve dispositions and reviewed source hashes; consult before repeating reconciliation.
+3. The older next-agenda knowledge file is historical guidance, not evidence that the now-completed layer reconciliations or traceability repair remain outstanding.
+
+## Earlier State in This Session
+
+- last_session_id: dd3dbede-e31b-4c78-b743-952b104a5c1d
+- current_timestamp: 2026-10-15T12:44:52-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Implemented the approved repository-wide safe implicit conversion policy through requirements, vocabulary, architecture, Allium specs, tests, implementation, and documentation, in that required order.
+2. Added shared `SafeImplicitConversion`, actual-reference/non-throwing range admission, guarded collection operations and constructors, safe producer counts, and consistent materialization/preflight admission.
+3. Updated and verified modular and generated-header tests, compile-failure controls, Allium obligations, executed no-heap probes, public documentation, and related knowledge. All changes remain uncommitted for human review.
+
+Questions:
+1. None open; human explicitly requested autonomous end-to-end implementation without approval pauses.
+
+Decisions:
+1. Accept identical unqualified types and arithmetic widening that preserves every source-type value; reject implicit narrowing, floating-to-integer, cross-type Boolean/character/enum/pointer/user-defined conversions.
+2. Preserve checked Vector/String indexes and character validation, exact Variant/MapEntry/source/callback identity, and existing equality domains.
+3. Finite Repeat/Repeatedly counts require unsigned non-Boolean, non-character integer types whose entire ranges fit size_t; signed counts must be validated and converted explicitly.
+4. MapEntry retains public fields, default/key-only construction, and two-argument CTAD, but safe constructors mean it is no longer a C++ aggregate. Key-only construction is explicit, avoiding a newly introduced implicit wrapping conversion.
+5. Safe integer-to-floating construction uses constrained direct initialization rather than brace initialization, which rejects some whole-domain-preserving conversions.
+6. No git commits; leave every change for human review.
+
+Validation:
+1. Final pass: 206/206 modular/single-header tests in normal, ASan/UBSan, and coverage builds; 100% instrumented lines (661/661 across 30 executable headers); lint, complexity, structural audits, Allium traceability, 142 rejected compilations, and all existing diagnostic gates.
+2. No-heap now executes both probe binaries after source/symbol scans; this exposed and corrected an existing unequal-sequence probe with equal inputs.
+3. Doxygen and 30 documented examples passed; six documented examples remain explicitly deferred under the existing policy.
+4. Actual-reference tests cover differing advertised value/reference types, including String character ranges. Runtime character validation is instrumented rather than merely constant-evaluated. Final `git diff --check` passes; temporary diagnostic source/executable removed.
+5. Diagnostic coverage retains its pre-existing five-header backlog (fits_into, get, into, peek, pop); the diagnostic gate passes with that explicitly declared backlog.
+
+Next:
+1. Human review of the uncommitted changes, especially unsigned finite counts, explicit user-defined conversions, and MapEntry's non-aggregate status.
+2. No further implementation or validation is pending for this task. Do not commit automatically.
+
+## Previous Session State
+
 - last_session_id: 7f1b1c1b-eeba-4520-b1b1-e9781ed361db
 - current_timestamp: 2026-10-15T11:41:05-06:00
 - recover: 1
