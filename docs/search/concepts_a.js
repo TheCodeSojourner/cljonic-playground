@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['validcyclesource_0',['ValidCycleSource',['../conceptcljonic_1_1concepts__detail_1_1_valid_cycle_source.html',1,'cljonic::concepts_detail']]],
-  ['validrepeatedlystep_1',['ValidRepeatedlyStep',['../conceptcljonic_1_1concepts__detail_1_1_valid_repeatedly_step.html',1,'cljonic::concepts_detail']]]
+  ['safeimplicitconversion_0',['SafeImplicitConversion',['../conceptcljonic_1_1concepts_1_1_safe_implicit_conversion.html',1,'cljonic::concepts']]],
+  ['sequenceablecollection_1',['SequenceableCollection',['../conceptcljonic_1_1concepts_1_1_sequenceable_collection.html',1,'cljonic::concepts']]],
+  ['sequenceableproducer_2',['SequenceableProducer',['../conceptcljonic_1_1concepts_1_1_sequenceable_producer.html',1,'cljonic::concepts']]],
+  ['stableequalitycomparable_3',['StableEqualityComparable',['../conceptcljonic_1_1concepts_1_1_stable_equality_comparable.html',1,'cljonic::concepts']]]
 ];

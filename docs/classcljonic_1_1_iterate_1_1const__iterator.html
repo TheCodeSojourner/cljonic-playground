@@ -119,7 +119,7 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a484e905efc25786f2851d7aa7799222d" id="r_a484e905efc25786f2851d7aa7799222d"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a484e905efc25786f2851d7aa7799222d">const_iterator</a> () noexcept=default</td></tr>
-<tr class="memitem:a185cfcd435396572ea1a059e28063ccc" id="r_a185cfcd435396572ea1a059e28063ccc"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a185cfcd435396572ea1a059e28063ccc">const_iterator</a> (T current, const Step *step, std::size_t remaining) noexcept</td></tr>
+<tr class="memitem:a7a179786f055276dc90371ce40a6d273" id="r_a7a179786f055276dc90371ce40a6d273"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a7a179786f055276dc90371ce40a6d273">const_iterator</a> (const T &amp;current, const Step *step, std::size_t remaining) noexcept</td></tr>
 <tr class="memitem:a4694d3fadd5e4ab9aacb66e59bc0f881" id="r_a4694d3fadd5e4ab9aacb66e59bc0f881"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4694d3fadd5e4ab9aacb66e59bc0f881">operator*</a> () const noexcept -&gt; const T &amp;</td></tr>
 <tr class="memitem:a1151ebd00a51b1be7f80bb2a81d3faa1" id="r_a1151ebd00a51b1be7f80bb2a81d3faa1"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1151ebd00a51b1be7f80bb2a81d3faa1">operator++</a> () noexcept -&gt; <a class="el" href="#a484e905efc25786f2851d7aa7799222d">const_iterator</a> &amp;</td></tr>
 <tr class="memitem:a25b9a13f7e38091cd3679021fe68cb42" id="r_a25b9a13f7e38091cd3679021fe68cb42"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a25b9a13f7e38091cd3679021fe68cb42">operator++</a> (int) noexcept -&gt; <a class="el" href="#a484e905efc25786f2851d7aa7799222d">const_iterator</a></td></tr>
@@ -197,8 +197,8 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 
 </div>
 </div>
-<a id="a185cfcd435396572ea1a059e28063ccc" name="a185cfcd435396572ea1a059e28063ccc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a185cfcd435396572ea1a059e28063ccc">&#9670;&#160;</a></span>const_iterator() <span class="overload">[2/2]</span></h2>
+<a id="a7a179786f055276dc90371ce40a6d273" name="a7a179786f055276dc90371ce40a6d273"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a179786f055276dc90371ce40a6d273">&#9670;&#160;</a></span>const_iterator() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -211,7 +211,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classcljonic_1_1_iterate.html">cljonic::Iterate</a>&lt; T, Step &gt;::const_iterator::const_iterator </td>
           <td>(</td>
-          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>current</em></span>, </td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>current</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -319,7 +319,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00094">94</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00095">95</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +353,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00100">100</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00101">101</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>

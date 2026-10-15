@@ -122,10 +122,10 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae20df8cbc8d873f43c22e5e7d9a522dc" id="r_ae20df8cbc8d873f43c22e5e7d9a522dc"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:ae20df8cbc8d873f43c22e5e7d9a522dc template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector</a> (Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; ElementType, Args &gt; &amp;&amp;...))</td></tr>
-<tr class="memitem:a878744ee82619a3900e1228ee6479102" id="r_a878744ee82619a3900e1228ee6479102"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range SourceRange&gt; <br />
+<tr class="memitem:a118834181d7acbf93e1acc5c1eebf224" id="r_a118834181d7acbf93e1acc5c1eebf224"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range SourceRange&gt; <br />
 requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceRange&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceRange&gt; &amp;&amp;<br class="typebreak" />
  !std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, ElementType&gt;)</td></tr>
-<tr class="memitem:a878744ee82619a3900e1228ee6479102 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a878744ee82619a3900e1228ee6479102">Vector</a> (SourceRange &amp;&amp;source) noexcept((concepts::NothrowElementConstruction&lt; ElementType, std::ranges::range_value_t&lt; SourceRange &gt; &gt;))</td></tr>
+<tr class="memitem:a118834181d7acbf93e1acc5c1eebf224 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a> (SourceRange &amp;&amp;source) noexcept((concepts::NothrowRangeConstruction&lt; ElementType, SourceRange &gt;))</td></tr>
 <tr class="memitem:a171192dbd6d16ff09b07489c645516eb" id="r_a171192dbd6d16ff09b07489c645516eb"><td class="memTemplParams" colspan="2">template&lt;typename SourceValue&gt; <br />
 requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceValue&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceValue&gt;) &amp;&amp;<br class="typebreak" />
  !std::same_as&lt;std::remove_cvref_t&lt;SourceValue&gt;, <a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>&gt;)</td></tr>
@@ -145,6 +145,21 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
 <tr class="memitem:a5e4292e09c0bf523ade8df97f96c845d" id="r_a5e4292e09c0bf523ade8df97f96c845d"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5e4292e09c0bf523ade8df97f96c845d">begin</a> () const noexcept -&gt; const <a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a> *</td></tr>
 <tr class="memitem:a08c6d3fe0d7fb568f151b99c5056f1e5" id="r_a08c6d3fe0d7fb568f151b99c5056f1e5"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a08c6d3fe0d7fb568f151b99c5056f1e5">end</a> () const noexcept -&gt; const <a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a> *</td></tr>
 <tr class="memitem:a39f6cbed0797efb9edb9cbde7ecd61d6" id="r_a39f6cbed0797efb9edb9cbde7ecd61d6"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a39f6cbed0797efb9edb9cbde7ecd61d6">view</a> () const noexcept -&gt; std::span&lt; const <a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a> &gt;</td></tr>
+<tr class="memitem:a07ce21489f41aae1e48f3d2bd31b8243" id="r_a07ce21489f41aae1e48f3d2bd31b8243"><td class="memTemplParams" colspan="2">template&lt;typename Index, typename Fallback&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Fallback&gt;)</td></tr>
+<tr class="memitem:a07ce21489f41aae1e48f3d2bd31b8243 template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a07ce21489f41aae1e48f3d2bd31b8243">operator()</a> (Index index, const Fallback &amp;fallback) const -&gt; <a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>=delete</td></tr>
+<tr class="memitem:a15e76fcf1aa43efa48fcd35f67da8b9a" id="r_a15e76fcf1aa43efa48fcd35f67da8b9a"><td class="memTemplParams" colspan="2">template&lt;typename Index, typename Value&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Value&gt;)</td></tr>
+<tr class="memitem:a15e76fcf1aa43efa48fcd35f67da8b9a template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a15e76fcf1aa43efa48fcd35f67da8b9a">can_assoc</a> (Index index, const Value &amp;value) const -&gt; bool=delete</td></tr>
+<tr class="memitem:ac4d9aafd99d5b160a993dafe4cb2738c" id="r_ac4d9aafd99d5b160a993dafe4cb2738c"><td class="memTemplParams" colspan="2">template&lt;typename Index, typename Value&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Value&gt;)</td></tr>
+<tr class="memitem:ac4d9aafd99d5b160a993dafe4cb2738c template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#ac4d9aafd99d5b160a993dafe4cb2738c">assoc</a> (Index index, const Value &amp;value) const -&gt; <a class="el" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector</a>=delete</td></tr>
+<tr class="memitem:a293f8a767aadee227a4fcfb071a58dd2" id="r_a293f8a767aadee227a4fcfb071a58dd2"><td class="memTemplParams" colspan="2">template&lt;typename Value&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Value&gt;)</td></tr>
+<tr class="memitem:a293f8a767aadee227a4fcfb071a58dd2 template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a293f8a767aadee227a4fcfb071a58dd2">can_conj</a> (const Value &amp;value) const -&gt; bool=delete</td></tr>
+<tr class="memitem:a8d46315ca4d6e70f0fd2f069338b3c4c" id="r_a8d46315ca4d6e70f0fd2f069338b3c4c"><td class="memTemplParams" colspan="2">template&lt;typename Value&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Value&gt;)</td></tr>
+<tr class="memitem:a8d46315ca4d6e70f0fd2f069338b3c4c template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a8d46315ca4d6e70f0fd2f069338b3c4c">conj</a> (const Value &amp;value) const -&gt; <a class="el" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector</a>=delete</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -152,7 +167,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt;<br />
-class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anchor" id="Vector"></a> A <a class="el" href="classcljonic_1_1_vector.html">Vector</a> is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to operate on the collection is through the library's free-function API. Updates return a modified copy without changing the original collection. Construction with more initializers than the available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer is not a source and is treated as a single element when nested. To materialize one, use <b>into</b>; <b>fits_into</b> is the preflight predicate for whether the whole source fits.</p>
+class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anchor" id="Vector"></a> A <a class="el" href="classcljonic_1_1_vector.html">Vector</a> is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to operate on the collection is through the library's free-function API. Updates return a modified copy without changing the original collection. Construction with more initializers than the available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer is not a source and is treated as a single element when nested. To materialize one, use <b>into</b>; <b>fits_into</b> is the preflight predicate for whether the whole source fits. Element construction, updates, and fallbacks follow the <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -200,8 +215,10 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> pixels_populated = <a class="code hl_function" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector</a>{Pixel{1, 2}, Pixel{3, 4}};</div>
 <div class="line">  <span class="keyword">constexpr</span> <a class="code hl_function" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector&lt;int, 4&gt;</a> values{10, 20};</div>
 <div class="line">  <span class="keyword">constexpr</span> CategoryArgument category_argument{};</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_function" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector&lt;CategoryElement, 1&gt;</a> lvalue_constructed{category_argument};</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_function" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector&lt;CategoryElement, 1&gt;</a> rvalue_constructed{CategoryArgument{}};</div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_function" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector&lt;CategoryElement, 1&gt;</a> lvalue_constructed{</div>
+<div class="line">      CategoryElement{category_argument}};</div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_function" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector&lt;CategoryElement, 1&gt;</a> rvalue_constructed{</div>
+<div class="line">      CategoryElement{CategoryArgument{}}};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Vector values can be used as a callable function, returning a default-</span></div>
 <div class="line">  <span class="comment">// value for invalid indexes or a supplied fallback when provided.</span></div>
@@ -237,7 +254,7 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="comment">// materialize transformed values into another Vector.</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> doubled_view =</div>
 <div class="line">      runtime_values |</div>
-<div class="line">      std::views::transform([](<span class="keywordtype">int</span> value) { <span class="keywordflow">return</span> value * 2; });</div>
+<div class="line">      std::views::transform([](<span class="keywordtype">int</span> value) <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> value * 2; });</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> from_pipeline = <a class="code hl_function" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector&lt;int, 4&gt;</a>{doubled_view};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
@@ -280,10 +297,10 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">             : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html_ab511d049c458171909125c715cad0ee5"><div class="ttname"><a href="#ab511d049c458171909125c715cad0ee5">cljonic::Vector::operator==</a></div><div class="ttdeci">constexpr auto operator==(const Vector &amp;other) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00280">cljonic-vector.hpp:280</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_ae20df8cbc8d873f43c22e5e7d9a522dc"><div class="ttname"><a href="#ae20df8cbc8d873f43c22e5e7d9a522dc">cljonic::Vector::Vector</a></div><div class="ttdeci">constexpr Vector(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; ElementType, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00166">cljonic-vector.hpp:166</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_vector_html_ae20df8cbc8d873f43c22e5e7d9a522dc"><div class="ttname"><a href="#ae20df8cbc8d873f43c22e5e7d9a522dc">cljonic::Vector::Vector</a></div><div class="ttdeci">constexpr Vector(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; ElementType, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00169">cljonic-vector.hpp:169</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00153">153</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00156">156</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a2ba5d49e66aa76e21cf3fc5e3186104e" name="a2ba5d49e66aa76e21cf3fc5e3186104e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2ba5d49e66aa76e21cf3fc5e3186104e">&#9670;&#160;</a></span>association_value_type</h2>
@@ -299,7 +316,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00157">157</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00160">160</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -317,7 +334,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00155">155</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -335,7 +352,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00156">156</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00159">159</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +370,7 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00161">161</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -385,12 +402,12 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00166">166</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00169">169</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a878744ee82619a3900e1228ee6479102" name="a878744ee82619a3900e1228ee6479102"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a878744ee82619a3900e1228ee6479102">&#9670;&#160;</a></span>Vector() <span class="overload">[2/3]</span></h2>
+<a id="a118834181d7acbf93e1acc5c1eebf224" name="a118834181d7acbf93e1acc5c1eebf224"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a118834181d7acbf93e1acc5c1eebf224">&#9670;&#160;</a></span>Vector() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -418,7 +435,7 @@ requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00186">186</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00189">189</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -456,8 +473,42 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="ac4d9aafd99d5b160a993dafe4cb2738c" name="ac4d9aafd99d5b160a993dafe4cb2738c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4d9aafd99d5b160a993dafe4cb2738c">&#9670;&#160;</a></span>assoc() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt; </div>
+<div class="memtemplate">
+template&lt;typename Index, typename Value&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Value&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector</a>&lt; ElementType, CapacityValue &gt;::assoc </td>
+          <td>(</td>
+          <td class="paramtype">Index</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Value &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) const -&gt;  <a class="el" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector</a>=delete</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a5559757f473f8821fcaf13c12379d890" name="a5559757f473f8821fcaf13c12379d890"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5559757f473f8821fcaf13c12379d890">&#9670;&#160;</a></span>assoc()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5559757f473f8821fcaf13c12379d890">&#9670;&#160;</a></span>assoc() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -520,8 +571,42 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 
 </div>
 </div>
+<a id="a15e76fcf1aa43efa48fcd35f67da8b9a" name="a15e76fcf1aa43efa48fcd35f67da8b9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15e76fcf1aa43efa48fcd35f67da8b9a">&#9670;&#160;</a></span>can_assoc() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt; </div>
+<div class="memtemplate">
+template&lt;typename Index, typename Value&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Value&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector</a>&lt; ElementType, CapacityValue &gt;::can_assoc </td>
+          <td>(</td>
+          <td class="paramtype">Index</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Value &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) const -&gt;  bool=delete</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a5f69384ddc13ae90e4e8559e06a7721f" name="a5f69384ddc13ae90e4e8559e06a7721f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f69384ddc13ae90e4e8559e06a7721f">&#9670;&#160;</a></span>can_assoc()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f69384ddc13ae90e4e8559e06a7721f">&#9670;&#160;</a></span>can_assoc() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -555,8 +640,38 @@ template&lt;concepts_detail::IntegerIndexType IndexType&gt; </div>
 
 </div>
 </div>
+<a id="a293f8a767aadee227a4fcfb071a58dd2" name="a293f8a767aadee227a4fcfb071a58dd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a293f8a767aadee227a4fcfb071a58dd2">&#9670;&#160;</a></span>can_conj() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt; </div>
+<div class="memtemplate">
+template&lt;typename Value&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Value&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector</a>&lt; ElementType, CapacityValue &gt;::can_conj </td>
+          <td>(</td>
+          <td class="paramtype">const Value &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td> const -&gt;  bool=delete</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="af55182ebaf0442d785d0266fdc10fdb6" name="af55182ebaf0442d785d0266fdc10fdb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af55182ebaf0442d785d0266fdc10fdb6">&#9670;&#160;</a></span>can_conj()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af55182ebaf0442d785d0266fdc10fdb6">&#9670;&#160;</a></span>can_conj() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -614,8 +729,38 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 
 </div>
 </div>
+<a id="a8d46315ca4d6e70f0fd2f069338b3c4c" name="a8d46315ca4d6e70f0fd2f069338b3c4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d46315ca4d6e70f0fd2f069338b3c4c">&#9670;&#160;</a></span>conj() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt; </div>
+<div class="memtemplate">
+template&lt;typename Value&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Value&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector</a>&lt; ElementType, CapacityValue &gt;::conj </td>
+          <td>(</td>
+          <td class="paramtype">const Value &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td> const -&gt;  <a class="el" href="#ae20df8cbc8d873f43c22e5e7d9a522dc">Vector</a>=delete</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aaa6b5b28b63559b1523f113edba76e3e" name="aaa6b5b28b63559b1523f113edba76e3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa6b5b28b63559b1523f113edba76e3e">&#9670;&#160;</a></span>conj()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa6b5b28b63559b1523f113edba76e3e">&#9670;&#160;</a></span>conj() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -733,8 +878,42 @@ template&lt;concepts::NothrowCollectionElement ElementType, std::size_t Capacity
 
 </div>
 </div>
+<a id="a07ce21489f41aae1e48f3d2bd31b8243" name="a07ce21489f41aae1e48f3d2bd31b8243"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07ce21489f41aae1e48f3d2bd31b8243">&#9670;&#160;</a></span>operator()() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowCollectionElement ElementType, std::size_t CapacityValue&gt; </div>
+<div class="memtemplate">
+template&lt;typename Index, typename Fallback&gt; <br />
+requires (!concepts::SafeImplicitConversion&lt;<a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>, Fallback&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classcljonic_1_1_vector.html">cljonic::Vector</a>&lt; ElementType, CapacityValue &gt;::operator() </td>
+          <td>(</td>
+          <td class="paramtype">Index</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Fallback &amp;</td>          <td class="paramname"><span class="paramname"><em>fallback</em></span>&#160;) const -&gt;  <a class="el" href="#a0c0629be3dc07d0e27e94774cbb1c90d">value_type</a>=delete</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a452fe9fbb43f749fdf5fa5fe0b77d568" name="a452fe9fbb43f749fdf5fa5fe0b77d568"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a452fe9fbb43f749fdf5fa5fe0b77d568">&#9670;&#160;</a></span>operator()()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a452fe9fbb43f749fdf5fa5fe0b77d568">&#9670;&#160;</a></span>operator()() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

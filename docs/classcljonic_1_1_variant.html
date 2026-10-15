@@ -113,9 +113,9 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a98f8a03f100ac9f6072e29c538eccb7f" id="r_a98f8a03f100ac9f6072e29c538eccb7f"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a98f8a03f100ac9f6072e29c538eccb7f">Variant</a> () noexcept=default</td></tr>
-<tr class="memitem:a4d17597c45acbaeb38c21e54045de247" id="r_a4d17597c45acbaeb38c21e54045de247"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
+<tr class="memitem:aee97b95998cbe5c67a1c1b2d2ac6f5ef" id="r_aee97b95998cbe5c67a1c1b2d2ac6f5ef"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
 requires (<a class="el" href="namespacecljonic_1_1variant__detail.html#a9ccabbeeac6762046412faebbf635d67">variant_detail::matching_alternative_count_v</a>&lt;std::remove_cvref_t&lt;T&gt;, Alternatives...&gt; == 1)</td></tr>
-<tr class="memitem:a4d17597c45acbaeb38c21e54045de247 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a4d17597c45acbaeb38c21e54045de247">Variant</a> (T &amp;&amp;value) noexcept</td></tr>
+<tr class="memitem:aee97b95998cbe5c67a1c1b2d2ac6f5ef template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#aee97b95998cbe5c67a1c1b2d2ac6f5ef">Variant</a> (const T &amp;value) noexcept</td></tr>
 <tr class="memitem:a048b1ca5d841d2add653a170ec7208d8" id="r_a048b1ca5d841d2add653a170ec7208d8"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a048b1ca5d841d2add653a170ec7208d8">index</a> () const noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:a0eda0ceb9827649600d04001439dff03" id="r_a0eda0ceb9827649600d04001439dff03"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a0eda0ceb9827649600d04001439dff03 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a0eda0ceb9827649600d04001439dff03">holds</a> () const noexcept -&gt; bool</td></tr>
@@ -165,7 +165,7 @@ class cljonic::Variant&lt; Alternatives &gt;</div><p><a class="anchor" id="Varia
 <div class="line">      <a class="code hl_function" href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">Vector</a>{<a class="code hl_function" href="#a98f8a03f100ac9f6072e29c538eccb7f">Variant&lt;int, long&gt;</a>{1}, <a class="code hl_function" href="#a98f8a03f100ac9f6072e29c538eccb7f">Variant&lt;int, long&gt;</a>{2L}};</div>
 <div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> as_set_element = <a class="code hl_function" href="namespacecljonic.html#af20d169ef36288b54ca608a14eb6b557">Set</a>{<a class="code hl_function" href="#a98f8a03f100ac9f6072e29c538eccb7f">Variant&lt;int, long&gt;</a>{1}};</div>
 <div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> as_map_key =</div>
-<div class="line">      MapEntry&lt;Variant&lt;int, long&gt;, <span class="keywordtype">int</span>&gt;{as_int, 1};</div>
+<div class="line">      <a class="code hl_function" href="namespacecljonic.html#a84f433958b6b8b0baf5c3d489d35e36a">MapEntry&lt;Variant&lt;int, long&gt;</a>, <span class="keywordtype">int</span>&gt;{as_int, 1};</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
@@ -173,6 +173,7 @@ class cljonic::Variant&lt; Alternatives &gt;</div><p><a class="anchor" id="Varia
 <div class="ttc" id="aclasscljonic_1_1_variant_html_a98f8a03f100ac9f6072e29c538eccb7f"><div class="ttname"><a href="#a98f8a03f100ac9f6072e29c538eccb7f">cljonic::Variant::Variant</a></div><div class="ttdeci">constexpr Variant() noexcept=default</div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a2c1c737c352027b41c8f7a0bbfecc2ac"><div class="ttname"><a href="namespacecljonic.html#a2c1c737c352027b41c8f7a0bbfecc2ac">cljonic::Vector</a></div><div class="ttdeci">Vector(First, Rest...) -&gt; Vector&lt; First, 1+sizeof...(Rest)&gt;</div></div>
+<div class="ttc" id="anamespacecljonic_html_a84f433958b6b8b0baf5c3d489d35e36a"><div class="ttname"><a href="namespacecljonic.html#a84f433958b6b8b0baf5c3d489d35e36a">cljonic::MapEntry</a></div><div class="ttdeci">MapEntry(Key, Value) -&gt; MapEntry&lt; Key, Value &gt;</div></div>
 <div class="ttc" id="anamespacecljonic_html_af20d169ef36288b54ca608a14eb6b557"><div class="ttname"><a href="namespacecljonic.html#af20d169ef36288b54ca608a14eb6b557">cljonic::Set</a></div><div class="ttdeci">Set(First, Rest...) -&gt; Set&lt; First, 1+sizeof...(Rest)&gt;</div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-variant_8hpp_source.html#l00113">113</a> of file <a class="el" href="cljonic-variant_8hpp_source.html">cljonic-variant.hpp</a>.</p>
@@ -204,8 +205,8 @@ template&lt;typename... Alternatives&gt; </div>
 
 </div>
 </div>
-<a id="a4d17597c45acbaeb38c21e54045de247" name="a4d17597c45acbaeb38c21e54045de247"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d17597c45acbaeb38c21e54045de247">&#9670;&#160;</a></span>Variant() <span class="overload">[2/2]</span></h2>
+<a id="aee97b95998cbe5c67a1c1b2d2ac6f5ef" name="aee97b95998cbe5c67a1c1b2d2ac6f5ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee97b95998cbe5c67a1c1b2d2ac6f5ef">&#9670;&#160;</a></span>Variant() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -221,7 +222,7 @@ requires (<a class="el" href="namespacecljonic_1_1variant__detail.html#a9ccabbee
         <tr>
           <td class="memname"><a class="el" href="classcljonic_1_1_variant.html">cljonic::Variant</a>&lt; Alternatives &gt;::Variant </td>
           <td>(</td>
-          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>

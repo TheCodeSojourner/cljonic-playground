@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['variant_0',['Variant',['../classcljonic_1_1_variant.html',1,'cljonic']]],
-  ['vector_1',['Vector',['../classcljonic_1_1_vector.html',1,'cljonic']]]
+  ['type_0',['type',['../structcljonic_1_1concepts__detail_1_1equal__association__value__type__of.html',1,'cljonic::concepts_detail::type&lt; T &gt;'],['../structcljonic_1_1concepts__detail_1_1equal__key__type__of.html',1,'cljonic::concepts_detail::type&lt; T &gt;'],['../structcljonic_1_1concepts__detail_1_1equal__value__type__of.html',1,'cljonic::concepts_detail::type&lt; T &gt;']]]
 ];
