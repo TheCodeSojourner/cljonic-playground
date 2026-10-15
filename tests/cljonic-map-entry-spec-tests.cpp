@@ -4,6 +4,16 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+namespace {
+template <typename T>
+concept HasSemanticEntryAccess = requires(const T& value) { first(value); } || requires(const T& value) {
+    last(value);
+} || requires(const T& value) { key(value); } || requires(const T& value) { val(value); };
+
+template <typename T>
+concept HasSequenceConversion = requires(const T& value) { seq(value); };
+} // namespace
+
 TEST_CASE("MapEntry holds value-semantic key/value pair", "[map-entry]") {
     using cljonic::MapEntry;
 
@@ -23,14 +33,16 @@ TEST_CASE("MapEntry holds value-semantic key/value pair", "[map-entry]") {
     TRACE_ID("invariant.MapEntry.RequiresNothrowCopyConstruction");
     TRACE_ID("invariant.MapEntry.RequiresNothrowCopyAssignment");
     TRACE_ID("invariant.MapEntry.RequiresNothrowDestruction");
-    TRACE_ID("invariant.MapEntry.SupportsKeyObservation");
-    TRACE_ID("invariant.MapEntry.SupportsValObservation");
-    TRACE_ID("invariant.MapEntry.SupportsFirstObservation");
-    TRACE_ID("invariant.MapEntry.SupportsLastObservation");
+    TRACE_ID("invariant.MapEntry.SupportsNamedKeyFieldObservation");
+    TRACE_ID("invariant.MapEntry.SupportsNamedValueFieldObservation");
+    TRACE_ID("invariant.MapEntry.SemanticKeyValFirstLastFreeFunctionsAreDeferred");
+    TRACE_ID("invariant.MapEntry.FixedTwoElementSequenceBehaviorIsDeferred");
 
     constexpr MapEntry<int, int> entry{1, 100};
     STATIC_REQUIRE(entry.key == 1);
     STATIC_REQUIRE(entry.value == 100);
+    STATIC_REQUIRE_FALSE(HasSemanticEntryAccess<decltype(entry)>);
+    STATIC_REQUIRE_FALSE(HasSequenceConversion<decltype(entry)>);
 
     const auto runtime_entry = MapEntry<int, int>{2, 200};
     CHECK(runtime_entry.key == 2);

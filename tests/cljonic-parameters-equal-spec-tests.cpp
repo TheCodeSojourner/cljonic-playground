@@ -75,7 +75,7 @@ TEST_CASE("parameters_equal is the named producer structural-comparison operatio
     STATIC_REQUIRE(!parameters_equal(cycle_a, cycle_c));
 
     // O(1) and constexpr: no traversal is required for any producer form.
-    constexpr auto zero_step = Range<int>{0, 1000000000L * 0L, 0};
+    constexpr auto zero_step = Range<int>{0, 0, 0};
     (void)zero_step;
     STATIC_REQUIRE(parameters_equal(infinite_zeros_a, Range<int>{0, 5, 0}));
 

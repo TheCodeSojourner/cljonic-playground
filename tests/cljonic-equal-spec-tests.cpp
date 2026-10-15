@@ -30,6 +30,32 @@ struct Pixel {
 
 } // namespace
 
+TEST_CASE("Sequential equality observes each operand cap without claiming infinite equality", "[equal][core]") {
+    TRACE_ID("invariant.EqualFunction.EachUnboundedOperandUsesObservationCapRegardlessOfPartner");
+    TRACE_ID("invariant.EqualFunction.NoEqualityClaimBeyondObservationBounds");
+    TRACE_ID("invariant.EqualFunction.SequentialEqualityRequiresEqualObservedCountsAndElements");
+    constexpr auto cap = cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
+    const auto unbounded = cljonic::repeat(1);
+    const auto finite = cljonic::repeat(1, cap);
+    CHECK(cljonic::equal(unbounded, finite));
+    CHECK(cljonic::equal(finite, unbounded));
+    CHECK_FALSE(cljonic::equal(unbounded, cljonic::repeat(1, cap - 1)));
+    CHECK_FALSE(cljonic::equal(cljonic::repeat(1, cap - 1), unbounded));
+    std::size_t calls = 0;
+    const auto differs_after_cap = cljonic::repeatedly([&calls]() noexcept { return ++calls <= cap ? 1 : 2; });
+    CHECK(cljonic::equal(unbounded, differs_after_cap));
+    CHECK(calls == cap);
+    CHECK_FALSE(cljonic::equal(cljonic::Vector<int, 2>{1, 2}, cljonic::Vector<int, 2>{1, 3}));
+}
+
+TEST_CASE("General equality rejects standard variants including nested components", "[equal][core]") {
+    TRACE_ID("invariant.EqualFunction.StandardVariantRejectedAtAnyDepth");
+    using StandardVariant = std::variant<int, long>;
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::EqualScalarPairAdmissible<StandardVariant, StandardVariant>);
+    using Nested = cljonic::Vector<StandardVariant, 1>;
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::EqualSequentialPairAdmissible<Nested, Nested>);
+}
+
 TEST_CASE("equal implements general value equality over the supported domain", "[equal][core]") {
     using cljonic::cycle;
     using cljonic::equal;

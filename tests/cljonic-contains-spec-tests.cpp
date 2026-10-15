@@ -25,7 +25,7 @@ TEST_CASE("Contains free function operates on each supported lookup or indexed d
     TRACE_ID("invariant.Contains.ContainsFreeFunctionSupported");
     TRACE_ID("invariant.Contains.ReturnsBooleanMembership");
     TRACE_ID("invariant.Contains.TestsApplicableLookupOrIndexedDomain");
-    TRACE_ID("invariant.Contains.SupportsMapAndSetDeclaredLookupTypesOnly");
+    TRACE_ID("invariant.Contains.SupportsMapAndSetSafeLookupConversions");
     TRACE_ID("invariant.Contains.SupportsVectorAndStringNonbooleanNoncharacterIntegerIndices");
     TRACE_ID("invariant.Contains.ExcludesRangeFreeFunction");
     TRACE_ID("invariant.Contains.NoHeapAllocation");

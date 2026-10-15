@@ -10,6 +10,11 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+namespace {
+template <typename T>
+concept HasView = requires(const T& value) { value.view(); };
+} // namespace
+
 TEST_CASE("Collection C++ interoperability exposes const logical traversal and views", "[interop]") {
     using cljonic::Map;
     using cljonic::MapEntry;
@@ -29,6 +34,10 @@ TEST_CASE("Collection C++ interoperability exposes const logical traversal and v
     TRACE_ID("invariant.CollectionCppInteroperability.QueueUsesLogicalTraversal");
     TRACE_ID("invariant.CollectionCppInteroperability.StringExcludesNullTerminator");
     TRACE_ID("invariant.CollectionCppInteroperability.ViewsAreConstAndNonOwning");
+    TRACE_ID("invariant.CollectionCppInteroperability.SupportedCollectionsProvideReadOnlyInteroperability");
+    TRACE_ID("invariant.CollectionCppInteroperability.TraversalTerminatesAfterExactActiveCount");
+    TRACE_ID("invariant.CollectionCppInteroperability.ContiguousViewRequiresCompleteActiveLogicalRangeContiguity");
+    TRACE_ID("invariant.CollectionCppInteroperability.QueueDoesNotRequireAContiguousView");
 
     constexpr auto vector = Vector<int, 4>{1, 2};
     constexpr auto map = Map<int, int, 2>{MapEntry<int, int>{1, 10}};
@@ -48,6 +57,15 @@ TEST_CASE("Collection C++ interoperability exposes const logical traversal and v
     STATIC_REQUIRE(map.view().size() == 1U);
     STATIC_REQUIRE(set.view().size() == 2U);
     STATIC_REQUIRE(string.view() == std::string_view{"Hi"});
+    STATIC_REQUIRE_FALSE(HasView<decltype(queue)>);
+    STATIC_REQUIRE(std::ranges::contiguous_range<decltype(vector.view())>);
+    STATIC_REQUIRE(std::ranges::contiguous_range<decltype(map.view())>);
+    STATIC_REQUIRE(std::ranges::contiguous_range<decltype(set.view())>);
+    STATIC_REQUIRE(std::ranges::contiguous_range<decltype(string.view())>);
+    CHECK(std::ranges::distance(vector) == static_cast<std::ptrdiff_t>(vector.count()));
+    CHECK(std::ranges::distance(map) == static_cast<std::ptrdiff_t>(map.count()));
+    CHECK(std::ranges::distance(set) == static_cast<std::ptrdiff_t>(set.count()));
+    CHECK(std::ranges::distance(string) == static_cast<std::ptrdiff_t>(string.count()));
     auto wrapped = queue.pop().conj(5);
     REQUIRE(wrapped.begin() != wrapped.end());
     REQUIRE(*wrapped.begin() == 2);
@@ -55,6 +73,7 @@ TEST_CASE("Collection C++ interoperability exposes const logical traversal and v
     REQUIRE(*(++(++wrapped.begin())) == 4);
     REQUIRE(*(++(++(++wrapped.begin()))) == 5);
     REQUIRE(wrapped.count() == 4U);
+    CHECK(std::ranges::distance(wrapped) == static_cast<std::ptrdiff_t>(wrapped.count()));
 
     const auto empty_vector = Vector<int, 4>{};
     const auto empty_map = Map<int, int, 2>{};
@@ -64,6 +83,23 @@ TEST_CASE("Collection C++ interoperability exposes const logical traversal and v
     REQUIRE(empty_map.view().empty());
     REQUIRE(empty_set.view().empty());
     REQUIRE(empty_string.view().empty());
+}
+
+TEST_CASE("Interop views borrow their owner while semantic results own independent storage", "[interop]") {
+    TRACE_ID("invariant.CollectionCppInteroperability.ViewLifetimeIsBoundedBySourceLifetime");
+    TRACE_ID("invariant.CollectionCppInteroperability.SemanticFreeFunctionsReturnOwningResultsNotBorrowedViews");
+    const auto source = cljonic::Vector<int, 3>{1, 2};
+    const auto view = source.view();
+    CHECK(view.data() == &*source.begin());
+    CHECK(view.size() == source.count());
+    const auto result = [&source] {
+        const auto local = source;
+        return cljonic::conj(local, 3);
+    }();
+    CHECK(result.count() == 3U);
+    CHECK(result(2) == 3);
+    CHECK(result.view().data() != view.data());
+    CHECK(source.count() == 2U);
 }
 
 TEST_CASE("Vector accepts bounded range and view source imports", "[interop][vector][range]") {
@@ -83,7 +119,7 @@ TEST_CASE("Vector accepts bounded range and view source imports", "[interop][vec
     REQUIRE(from_array.view()[1] == 20);
     REQUIRE(from_array.view()[2] == 30);
 
-    const auto mapped = std::views::transform(values, [](int value) { return value * 2; });
+    const auto mapped = std::views::transform(values, [](int value) noexcept { return value * 2; });
     const auto from_view = Vector<int, 4>{mapped};
     REQUIRE(from_view.count() == 4U);
     REQUIRE(from_view.view()[0] == 20);

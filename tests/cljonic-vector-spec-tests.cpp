@@ -79,8 +79,9 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
     };
 
     constexpr CategoryArgument category_argument{};
-    constexpr Vector<CategoryElement, 1> lvalue_category_vector{category_argument};
-    constexpr Vector<CategoryElement, 1> rvalue_category_vector{CategoryArgument{}};
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowElementConstruction<CategoryElement, const CategoryArgument&>);
+    constexpr Vector<CategoryElement, 1> lvalue_category_vector{CategoryElement{category_argument}};
+    constexpr Vector<CategoryElement, 1> rvalue_category_vector{CategoryElement{CategoryArgument{}}};
 
     STATIC_REQUIRE(empty.count() == 0U);
     STATIC_REQUIRE(populated.count() == 2U);

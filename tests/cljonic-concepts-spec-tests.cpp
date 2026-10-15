@@ -733,7 +733,7 @@ TEST_CASE("Producer parameter equality stable-recursion", "[concepts][value][pro
 
     // A Cycle over a callable-producing source is also rejected.
     STATIC_REQUIRE_FALSE(StableEqualityComparable<std::remove_cvref_t<decltype(cycle(
-                             Iterate<int, int (*)(int) noexcept>{0, [](int v) noexcept { return v + 1; }}))>>);
+                             Iterate<int, int (*)(int) noexcept>{0, +[](int v) noexcept { return v + 1; }}))>>);
 }
 
 TEST_CASE("AlternativeStrictEquality variant-equality semantics", "[value][composite]") {
@@ -832,7 +832,6 @@ TEST_CASE("CljonicProducer nominal producer admission", "[concepts][producer]") 
     TRACE_ID("invariant.CljonicProducer.NoRtti");
     TRACE_ID("invariant.CljonicProducer.NoExceptions");
     TRACE_ID("invariant.CljonicProducer.SingleThreadedExecutionModel");
-    TRACE_ID("invariant.CljonicProducer.ReferentialTransparency");
 
     // NominalAdmissionRequiresCljonicOwnedTrait: a structurally similar
     // producer without the cljonic-owned producer trait specialization is NOT
@@ -861,6 +860,65 @@ TEST_CASE("CljonicProducer nominal producer admission", "[concepts][producer]") 
     // RTTI, no exceptions, no threads, and is referentially transparent.
     STATIC_REQUIRE(is_producer_admitted<ProducerLike>());
     STATIC_REQUIRE(noexcept(is_producer_admitted<ProducerLike>()));
+}
+
+TEST_CASE("Producer effects stay within explicitly supplied callback state", "[concepts][producer]") {
+    TRACE_ID("invariant.CljonicProducer.ReferentialTransparencyByDefaultUnlessExplicitlyAuthorizedEffect");
+    TRACE_ID("invariant.CljonicProducer.EffectsAreLimitedToGoverningContractScope");
+    TRACE_ID("invariant.CljonicProducer.EffectsDoNotAuthorizeHiddenStateOrInputCollectionMutation");
+
+    constexpr auto pure = cljonic::repeat(7, std::size_t{2});
+    STATIC_REQUIRE(
+        cljonic::equal(cljonic::into(cljonic::Vector<int, 2>{}, pure), cljonic::into(cljonic::Vector<int, 2>{}, pure)));
+    int calls = 0;
+    const auto effectful = cljonic::repeatedly(std::size_t{2}, [&calls]() noexcept { return ++calls; });
+    const auto destination = cljonic::Vector<int, 3>{9};
+    CHECK(calls == 0);
+    const auto result = cljonic::into(destination, effectful);
+    CHECK(calls == 2);
+    CHECK(result(1) == 1);
+    CHECK(result(2) == 2);
+    CHECK(destination.count() == 1U);
+    CHECK(destination(0) == 9);
+}
+
+TEST_CASE("Bounded values support constant initialization without hidden callback evaluation",
+          "[concepts][initialization]") {
+    TRACE_ID("entity-fields.RuntimeInitializationPolicy");
+    TRACE_ID("invariant.RuntimeInitializationPolicy.EverySupportedPublicPathExcludesHiddenGlobalRuntimeInitialization");
+    TRACE_ID("invariant.RuntimeInitializationPolicy.NoHiddenInitializationDependentLibraryState");
+    TRACE_ID("invariant.RuntimeInitializationPolicy.BoundedAutomaticOrStaticStorageRemainsPermitted");
+
+    static constinit const cljonic::Vector<int, 2> stored{1, 2};
+    static constinit const cljonic::Map<int, int, 2> map{cljonic::MapEntry<int, int>{1, 2}};
+    static constinit const cljonic::Set<int, 2> set{1, 2};
+    static constinit const cljonic::Queue<int, 2> queue{1, 2};
+    static constinit const cljonic::String<2> string{"ab"};
+    static constinit const cljonic::Variant<int, long> variant{1};
+    static constinit const cljonic::Range<int> range{0, 2};
+    static constinit const auto repeated = cljonic::repeat(1, std::size_t{2});
+    static constinit const auto cycled = cljonic::cycle(cljonic::Vector<int, 2>{1, 2});
+    static constinit const auto iterated = cljonic::iterate([](int value) noexcept { return value + 1; }, 0);
+    static constinit const auto generated = cljonic::repeatedly(std::size_t{2}, []() noexcept { return 1; });
+    constexpr auto automatic = cljonic::Vector<int, 2>{3, 4};
+    STATIC_REQUIRE(automatic(1) == 4);
+    CHECK(stored(0) == 1);
+    CHECK(map(1) == 2);
+    CHECK(set.contains(2));
+    CHECK(queue.peek() == 1);
+    CHECK(string(1) == 'b');
+    CHECK(cljonic::equal(variant, cljonic::Variant<int, long>{1}));
+    CHECK(range.count() == 2U);
+    CHECK(repeated.count() == 2U);
+    CHECK(cycled.count() == cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
+    CHECK(*iterated.begin() == 0);
+    CHECK(*generated.begin() == 1);
+    int calls = 0;
+    const auto source = cljonic::repeatedly(std::size_t{1}, [&calls]() noexcept { return ++calls; });
+    CHECK(calls == 0);
+    const auto result = cljonic::into(cljonic::Vector<int, 1>{}, source);
+    CHECK(calls == 1);
+    CHECK(result(0) == 1);
 }
 
 // ============================================================================
@@ -989,6 +1047,6 @@ TEST_CASE("Element construction preserves argument value category", "[concepts]"
         }
     };
 
-    STATIC_REQUIRE(cljonic::concepts::NothrowElementConstruction<int, CategorySensitive&>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowElementConstruction<int, CategorySensitive&>);
     STATIC_REQUIRE_FALSE(cljonic::concepts::NothrowElementConstruction<int, CategorySensitive>);
 }

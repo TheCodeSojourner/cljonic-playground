@@ -176,7 +176,7 @@ TEST_CASE("Map, Set, and Queue accept bounded range and view sources", "[source-
     REQUIRE(copied_map(2) == 20);
     REQUIRE_FALSE(copied_map.contains(3));
 
-    const auto map_view = std::views::transform(map_entries, [](MapEntry<int, int> entry) { return entry; });
+    const auto map_view = std::views::transform(map_entries, [](MapEntry<int, int> entry) noexcept { return entry; });
     const auto copied_map_view_fit = Map<int, int, 4>{map_view};
     REQUIRE(copied_map_view_fit.count() == 3U);
     const auto copied_map_view_bounded = Map<int, int, 3>{map_view};
@@ -189,7 +189,7 @@ TEST_CASE("Map, Set, and Queue accept bounded range and view sources", "[source-
     const auto copied_set_bounded = Set<int, 2>{dynamic_set_source};
     REQUIRE(copied_set_bounded.count() == 2U);
 
-    const auto doubled = std::views::transform(values, [](int value) { return value * 2; });
+    const auto doubled = std::views::transform(values, [](int value) noexcept { return value * 2; });
     const auto copied_set = Set<int, 3>{doubled};
     REQUIRE(copied_set.count() == 3U);
     REQUIRE(copied_set.contains(2));
@@ -198,7 +198,7 @@ TEST_CASE("Map, Set, and Queue accept bounded range and view sources", "[source-
     const auto copied_set_view_fit = Set<int, 4>{doubled};
     REQUIRE(copied_set_view_fit.count() == 4U);
 
-    const auto tripled = std::views::transform(values, [](int value) { return value * 3; });
+    const auto tripled = std::views::transform(values, [](int value) noexcept { return value * 3; });
     const auto copied_queue = Queue<int, 2>{tripled};
     REQUIRE(copied_queue.count() == 2U);
     REQUIRE(copied_queue.peek() == 3);

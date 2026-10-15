@@ -36,7 +36,7 @@ namespace cljonic::no_heap::probes {
     auto runtime_ok =
         equal(first, first) && !equal(first, second) &&
         equal(Vector<int, 4>{first, second}, Queue<int, 4>{first, second}) &&
-        !equal(Vector<int, 4>{first, second}, Range<int>{first, 3, 1}) &&
+        !equal(Vector<int, 4>{first, second}, Range<int>{first, 4, 1}) &&
         equal(Map<int, int, 4>{MapEntry<int, int>{first, 10}}, Map<int, int, 8>{MapEntry<int, int>{first, 10}}) &&
         equal(Set<int, 4>{first, second}, Set<int, 8>{second, first}) && equal(String<8>{"abc"}, String<16>{"abc"}) &&
         equal(Repeat<int>{first}, Repeat<int>{first}) && equal(first) && equal(first, first, first) &&

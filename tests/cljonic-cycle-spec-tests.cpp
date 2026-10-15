@@ -30,7 +30,7 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     TRACE_ID("invariant.Cycle.OwnsRepeatedSequence");
     TRACE_ID("invariant.Cycle.DoesNotOwnResultStorage");
     TRACE_ID("invariant.Cycle.DoesNotBorrowSourceOrCallback");
-    TRACE_ID("invariant.Cycle.ReferentialTransparency");
+    TRACE_ID("invariant.Cycle.ReferentialTransparencyByDefaultUnlessSourceAuthorizesEffect");
     TRACE_ID("invariant.Cycle.SingleArgumentFormOnly");
     TRACE_ID("invariant.Cycle.AcceptsFiniteOrUnboundedSequenceSource");
     TRACE_ID("invariant.Cycle.SourceSatisfiesConstInputRange");
@@ -166,4 +166,23 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     STATIC_REQUIRE(unbounded_source_prefix(1U) == 0);
     STATIC_REQUIRE(unbounded_source_prefix(2U) == 0);
     STATIC_REQUIRE(unbounded_source_prefix(3U) == 0);
+}
+
+TEST_CASE("Cycle propagates only the supplied source callback effects", "[cycle]") {
+    TRACE_ID("invariant.Cycle.EffectsAreLimitedToSourceContractScope");
+    TRACE_ID("invariant.Cycle.DoesNotAuthorizeAdditionalEffectsOrInputCollectionMutation");
+    int calls = 0;
+    const auto source = cljonic::repeatedly(std::size_t{2}, [&calls]() noexcept { return ++calls; });
+    const auto cycled = cljonic::cycle(source);
+    const auto destination = cljonic::Vector<int, 4>{9};
+    CHECK(calls == 0);
+    const auto result = cljonic::into(destination, cycled);
+    // into advances the source once more before detecting a full destination.
+    CHECK(calls == 4);
+    CHECK(result(0) == 9);
+    CHECK(result(1) == 1);
+    CHECK(result(2) == 2);
+    CHECK(result(3) == 3);
+    CHECK(destination.count() == 1U);
+    CHECK(source.count() == 2U);
 }

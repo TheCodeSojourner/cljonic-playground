@@ -338,7 +338,7 @@ TEST_CASE("String accepts bounded character ranges and views", "[string][interop
     REQUIRE(copied.view() == std::string_view{"ABC"});
 
     const auto mapped =
-        std::views::transform(source, [](char byte) { return byte == 'B' ? static_cast<char>(0x80) : byte; });
+        std::views::transform(source, [](char byte) noexcept { return byte == 'B' ? static_cast<char>(0x80) : byte; });
     const auto normalized = String<4>{mapped};
     REQUIRE(normalized.view() == std::string_view{"A.CD"});
     const auto normalized_bounded = String<3>{mapped};

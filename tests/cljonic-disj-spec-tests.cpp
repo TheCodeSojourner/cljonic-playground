@@ -20,7 +20,7 @@ TEST_CASE("Disj free function operations", "[disj]") {
     TRACE_ID("invariant.Disj.FunctionalImmutabilityPreserved");
     TRACE_ID("invariant.Disj.ReferentialTransparency");
     TRACE_ID("invariant.Disj.CopyOnModifySemantics");
-    TRACE_ID("invariant.Disj.ZeroOrMoreExactValues");
+    TRACE_ID("invariant.Disj.ZeroOrMoreSafelyConvertibleValues");
     TRACE_ID("invariant.Disj.RemovesValuesLeftToRight");
     TRACE_ID("invariant.Disj.ZeroValuesReturnUnchangedCopy");
     TRACE_ID("invariant.Disj.AbsentValuesAreNoOps");
