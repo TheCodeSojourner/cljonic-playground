@@ -49,7 +49,7 @@ entity String {
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     supports_indexed_lookup: Boolean
     supports_default_fallback_lookup: Boolean
-    accepts_integral_index_types: Boolean
+    accepts_nonboolean_noncharacter_integer_index_types: Boolean
     supports_lookup_capability: Boolean
     supports_associative_capability: Boolean
     seqable_lifecycle_is_deferred: Boolean
@@ -282,8 +282,8 @@ entity String {
         this.supports_default_fallback_lookup = true
     }
 
-    invariant AcceptsIntegralIndexTypes {
-        this.accepts_integral_index_types = true
+    invariant AcceptsNonbooleanNoncharacterIntegerIndexTypes {
+        this.accepts_nonboolean_noncharacter_integer_index_types = true
     }
 
     invariant SupportsLookupCapability {

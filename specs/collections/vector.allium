@@ -29,6 +29,7 @@ entity Vector {
     capacity_exceeds_maximum_is_compile_time_failure: Boolean
     single_element_type_argument_yields_pack_construction: Boolean
     supports_indexed_lookup: Boolean
+    accepts_nonboolean_noncharacter_integer_index_types: Boolean
     supports_default_fallback_lookup: Boolean
     supports_lookup_capability: Boolean
     supports_associative_capability: Boolean
@@ -170,6 +171,10 @@ entity Vector {
 
     invariant SupportsIndexedLookup {
         this.supports_indexed_lookup = true
+    }
+
+    invariant AcceptsNonbooleanNoncharacterIntegerIndexTypes {
+        this.accepts_nonboolean_noncharacter_integer_index_types = true
     }
 
     invariant SupportsDefaultFallbackLookup {
