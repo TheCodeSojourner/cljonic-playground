@@ -117,7 +117,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-012A(x).
-  ∀ `String<N>`: callable with `operator()(Index, fallback)` for indexed lookup, where `Index` is any integral type and `fallback` defaults to `char{}` when omitted
+  ∀ `String<N>`: callable with `operator()(Index, fallback)` for indexed lookup, where `Index` is an integral type other than `bool` or a character type and `fallback` defaults to `char{}` when omitted
   ∧ ∀ operation: returns the stored ASCII byte at a valid content index or the fallback character when the index is invalid
   ∧ ∀ (negative ∧ unrepresentable index): invalid rather than converted modulo to the unsigned key domain
   ∧ ∀ operation: ¬∃ (exposure of the null terminator as a content element ∨ mutation ∨ allocation ∨ throw)
@@ -219,8 +219,8 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 λ REQ-COLL-020G(x).
   ∀ context: `assoc` is defined for `Map`, `Vector`, and `String`
   ∧ ∀ `Map`: associates a key with a value ∧ replaces the existing value when the key already exists
-  ∧ ∀ `Vector`: the key is an integer index ∧ the value is the vector's element type
-  ∧ ∀ `String`: the key is an integer content index ∧ the value is a character subject to the String character-validity policy defined by `REQ-COLL-013` through `REQ-COLL-013B` and `REQ-COLL-020Q`
+  ∧ ∀ `Vector`: the key is a non-boolean, non-character integer index ∧ the value is the vector's element type
+  ∧ ∀ `String`: the key is a non-boolean, non-character integer content index ∧ the value is a character subject to the String character-validity policy defined by `REQ-COLL-013` through `REQ-COLL-013B` and `REQ-COLL-020Q`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020H(x).
@@ -254,13 +254,13 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020O(x).
-  ∀ `String<N>` ∧ `assoc` index of any integral type: valid only when it is representable by the normalized `std::size_t` key domain, non-negative, no greater than the source string's logical content count, and either less than the logical content count or equal to the logical content count when content capacity remains
+  ∀ `String<N>` ∧ `assoc` index of any non-boolean, non-character integral type: valid only when it is representable by the normalized `std::size_t` key domain, non-negative, no greater than the source string's logical content count, and either less than the logical content count or equal to the logical content count when content capacity remains
   ∧ ∀ invalid_index (including a negative ∨ unrepresentable index ∨ an index beyond the append position ∨ an append index at full content capacity): produces an unchanged string without throwing, allocating, or mutating the source
   ∧ ∀ null_terminator: ¬∃ valid association ∨ lookup index
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020P(x).
-  ∀ `String<N>` ∧ `can_assoc(string, index, value)`: accepts any integral index type and a `char` value ∧ normalizes only indexes representable by the `std::size_t` key domain
+  ∀ `String<N>` ∧ `can_assoc(string, index, value)`: accepts any non-boolean, non-character integral index type and a `char` value ∧ normalizes only indexes representable by the `std::size_t` key domain
   ∧ returns true for an existing content index or the logical content-count append index when content capacity remains, provided `value` is a valid non-NUL ASCII character
   ∧ returns false for a negative, unrepresentable, invalid, or full-capacity append index, or an invalid character value
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-09}
@@ -282,7 +282,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ constrained at the public API boundary by the required capability and collection-specific key/value domains
   ∧ ∀ `can_assoc`: the public free-function signature is `can_assoc(const C&, const K&, const V&) -> bool`, where the member call is well-formed under the same key/value admission constraints as `assoc`
   ∧ ∀ (`Map` ∨ `Set`): `contains` accepts only `K` exactly matching the collection's declared `lookup_type` after removing cv-qualification and references; no implicit conversion to that type is admitted
-  ∧ ∀ (`Vector` ∨ `String`): `contains` accepts an integral index type
+  ∧ ∀ (`Vector` ∨ `String`): `contains` accepts a non-boolean, non-character integral index type
   ∧ ∀ `Range`: `contains(const Range&, const K&)` is not a supported free-function signature; `Range::contains(index)` remains the bounded-observation member predicate specified by `REQ-FN-013A`
   ∧ ∀ `String`: the `assoc` value argument is `char`
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-10}

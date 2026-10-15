@@ -8,6 +8,7 @@ This module establishes the C++20 concept capability framework, result status ou
 
 λ REQ-CAP-001(x).
   ∀ context: `Indexed` means a capability for efficient (constant-time, non-traversing), integer-indexed access to a collection's logical elements
+  ∧ ∀ accepted_index_type: integral except `bool` and character types (`char`, `signed char`, `unsigned char`, `wchar_t`, `char8_t`, `char16_t`, and `char32_t`)
   ∧ ∀ Indexed_collection: defines a bounded logical index domain ∧ provides non-mutating access for an index in that domain ∧ provides a non-throwing, non-allocating predicate that determines whether an index is in that domain
   ∧ ∀ negative_index (representable by the accepted index type): outside the domain
   {source: stakeholder_decided, decided_by: original_spec_author}
@@ -31,7 +32,7 @@ This module establishes the C++20 concept capability framework, result status ou
 
 λ REQ-CAP-005(x).
   ∀ context: `Associative` does not imply that the key domain is string-based, map-specific, or non-indexed
-  ∧ ∃ permitted_path: vector ∨ string satisfies `Associative` by using integer indexes as keys, subject to the collection-specific replacement, append, capacity, and invalid-index requirements defined by Module 3
+  ∧ ∃ permitted_path: vector ∨ string satisfies `Associative` by using non-boolean, non-character integer indexes as keys, subject to the collection-specific replacement, append, capacity, and invalid-index requirements defined by Module 3
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-CAP-006(x).
@@ -41,7 +42,7 @@ This module establishes the C++20 concept capability framework, result status ou
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-CAP-007(x).
-  ∀ context: `Indexed` refines `Lookup` for the integer lookup domain — every `Indexed` collection also satisfies `Lookup` with an integer key type ∧ indexed access and lookup agree for the same valid index
+  ∀ context: `Indexed` refines `Lookup` for the non-boolean, non-character integer lookup domain — every `Indexed` collection also satisfies `Lookup` with an accepted integer key type ∧ indexed access and lookup agree for the same valid index
   ∧ ∀ context: `Associative` does not generally imply `Indexed` ∨ `Lookup`; its lookup-domain relationship is stated by the concrete collection requirement
   ∧ ∀ context: `Seqable` remains independent of the other four capabilities (`Indexed`, `Lookup`, `Associative`, and `Conjable`)
   {source: stakeholder_decided, decided_by: original_spec_author}
