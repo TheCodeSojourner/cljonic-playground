@@ -10,6 +10,23 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+namespace {
+
+template <typename Collection, typename Index>
+concept StringIndexOperationsAcceptIndex = requires(const Collection& collection, Index index) {
+    collection.contains(index);
+    collection(index);
+    collection.can_assoc(index, char{});
+    collection.assoc(index, char{});
+    collection.put(index, char{});
+};
+
+template <typename Collection, typename Index>
+concept GetFreeFunctionAcceptsIndex =
+    requires(const Collection& collection, Index index) { cljonic::get(collection, index); };
+
+} // namespace
+
 TEST_CASE("String construction and indexed operations", "[string]") {
     using cljonic::assoc;
     using cljonic::can_conj;
@@ -67,7 +84,7 @@ TEST_CASE("String construction and indexed operations", "[string]") {
     TRACE_ID("invariant.String.CapacityExceedsMaximumIsCompileTimeFailure");
     TRACE_ID("invariant.String.SupportsIndexedLookup");
     TRACE_ID("invariant.String.SupportsDefaultFallbackLookup");
-    TRACE_ID("invariant.String.AcceptsIntegralIndexTypes");
+    TRACE_ID("invariant.String.AcceptsNonbooleanNoncharacterIntegerIndexTypes");
     TRACE_ID("invariant.String.SupportsLookupCapability");
     TRACE_ID("invariant.String.SupportsAssociativeCapability");
     TRACE_ID("invariant.String.SeqableLifecycleIsDeferred");
@@ -105,6 +122,23 @@ TEST_CASE("String construction and indexed operations", "[string]") {
 
     // Empty construction with explicit capacity
     constexpr String<8> s{};
+    STATIC_REQUIRE(StringIndexOperationsAcceptIndex<String<8>, int>);
+    STATIC_REQUIRE(StringIndexOperationsAcceptIndex<String<8>, unsigned long long>);
+    STATIC_REQUIRE_FALSE(StringIndexOperationsAcceptIndex<String<8>, bool>);
+    STATIC_REQUIRE_FALSE(StringIndexOperationsAcceptIndex<String<8>, char>);
+    STATIC_REQUIRE_FALSE(StringIndexOperationsAcceptIndex<String<8>, signed char>);
+    STATIC_REQUIRE_FALSE(StringIndexOperationsAcceptIndex<String<8>, unsigned char>);
+    STATIC_REQUIRE_FALSE(StringIndexOperationsAcceptIndex<String<8>, wchar_t>);
+    STATIC_REQUIRE_FALSE(StringIndexOperationsAcceptIndex<String<8>, char8_t>);
+    STATIC_REQUIRE_FALSE(StringIndexOperationsAcceptIndex<String<8>, char16_t>);
+    STATIC_REQUIRE_FALSE(StringIndexOperationsAcceptIndex<String<8>, char32_t>);
+    STATIC_REQUIRE(GetFreeFunctionAcceptsIndex<String<8>, int>);
+    STATIC_REQUIRE_FALSE(GetFreeFunctionAcceptsIndex<String<8>, bool>);
+    STATIC_REQUIRE_FALSE(GetFreeFunctionAcceptsIndex<String<8>, char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::AssocPairAdmissible<String<8>, char, char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::AssocPairAdmissible<String<8>, bool, char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::CanAssocKeyAdmissible<String<8>, char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::CanAssocKeyAdmissible<String<8>, bool>);
     STATIC_REQUIRE(cljonic::is_empty(s));
     STATIC_REQUIRE(s.count() == 0U);
     STATIC_REQUIRE(s.capacity() == 8U);

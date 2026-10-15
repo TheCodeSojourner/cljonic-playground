@@ -4,6 +4,22 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+namespace {
+
+template <typename Collection, typename Index>
+concept VectorIndexOperationsAcceptIndex = requires(const Collection& collection, Index index) {
+    collection.contains(index);
+    collection(index);
+    collection.can_assoc(index, typename Collection::value_type{});
+    collection.assoc(index, typename Collection::value_type{});
+};
+
+template <typename Collection, typename Index>
+concept GetFreeFunctionAcceptsIndex =
+    requires(const Collection& collection, Index index) { cljonic::get(collection, index); };
+
+} // namespace
+
 TEST_CASE("Vector construction establishes logical size", "[vector]") {
     using cljonic::Vector;
 
@@ -114,6 +130,7 @@ TEST_CASE("Vector canonical preflight predicates model index validity and emptin
     TRACE_ID("invariant.Vector.RuntimeCapacityFailuresHaveDocumentedPolicy");
     TRACE_ID("invariant.Vector.DefaultAccessHasPreflightPredicate");
     TRACE_ID("invariant.Vector.SupportsIndexedLookup");
+    TRACE_ID("invariant.Vector.AcceptsNonbooleanNoncharacterIntegerIndexTypes");
     TRACE_ID("invariant.Vector.SupportsDefaultFallbackLookup");
     TRACE_ID("invariant.Vector.SupportsLookupCapability");
     TRACE_ID("invariant.Vector.SupportsAssociativeCapability");
@@ -130,6 +147,24 @@ TEST_CASE("Vector canonical preflight predicates model index validity and emptin
 
     constexpr Vector<int, 4> values{10, 20};
     constexpr Vector<int, 4> empty_values{};
+
+    STATIC_REQUIRE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, int>);
+    STATIC_REQUIRE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, unsigned long long>);
+    STATIC_REQUIRE_FALSE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, bool>);
+    STATIC_REQUIRE_FALSE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, char>);
+    STATIC_REQUIRE_FALSE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, signed char>);
+    STATIC_REQUIRE_FALSE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, unsigned char>);
+    STATIC_REQUIRE_FALSE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, wchar_t>);
+    STATIC_REQUIRE_FALSE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, char8_t>);
+    STATIC_REQUIRE_FALSE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, char16_t>);
+    STATIC_REQUIRE_FALSE(VectorIndexOperationsAcceptIndex<Vector<int, 4>, char32_t>);
+    STATIC_REQUIRE(GetFreeFunctionAcceptsIndex<Vector<int, 4>, int>);
+    STATIC_REQUIRE_FALSE(GetFreeFunctionAcceptsIndex<Vector<int, 4>, bool>);
+    STATIC_REQUIRE_FALSE(GetFreeFunctionAcceptsIndex<Vector<int, 4>, char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::AssocPairAdmissible<Vector<int, 4>, char, int>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::AssocPairAdmissible<Vector<int, 4>, bool, int>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::CanAssocKeyAdmissible<Vector<int, 4>, char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::CanAssocKeyAdmissible<Vector<int, 4>, bool>);
 
     STATIC_REQUIRE(values.contains(0U));
     STATIC_REQUIRE(values.contains(1U));

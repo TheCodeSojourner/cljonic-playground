@@ -4,6 +4,14 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+namespace {
+
+template <typename Collection, typename Index>
+concept ContainsMemberAcceptsIndex =
+    requires(const Collection& collection, Index index) { collection.contains(index); };
+
+} // namespace
+
 TEST_CASE("Contains free function operates on each supported lookup or indexed domain", "[contains]") {
     using cljonic::assoc;
     using cljonic::conj;
@@ -18,7 +26,7 @@ TEST_CASE("Contains free function operates on each supported lookup or indexed d
     TRACE_ID("invariant.Contains.ReturnsBooleanMembership");
     TRACE_ID("invariant.Contains.TestsApplicableLookupOrIndexedDomain");
     TRACE_ID("invariant.Contains.SupportsMapAndSetDeclaredLookupTypesOnly");
-    TRACE_ID("invariant.Contains.SupportsVectorAndStringIntegralIndices");
+    TRACE_ID("invariant.Contains.SupportsVectorAndStringNonbooleanNoncharacterIntegerIndices");
     TRACE_ID("invariant.Contains.ExcludesRangeFreeFunction");
     TRACE_ID("invariant.Contains.NoHeapAllocation");
     TRACE_ID("invariant.Contains.NoRtti");
@@ -46,12 +54,31 @@ TEST_CASE("Contains free function operates on each supported lookup or indexed d
     STATIC_REQUIRE(contains(v, 0U));
     STATIC_REQUIRE(contains(v, 2U));
     STATIC_REQUIRE_FALSE(contains(v, 3U));
+    STATIC_REQUIRE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, int>);
+    STATIC_REQUIRE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, unsigned long long>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, bool>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, signed char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, unsigned char>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, wchar_t>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, char8_t>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, char16_t>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<Vector<int, 4>, char32_t>);
+    STATIC_REQUIRE_FALSE(ContainsMemberAcceptsIndex<Vector<int, 4>, bool>);
+    STATIC_REQUIRE_FALSE(ContainsMemberAcceptsIndex<Vector<int, 4>, char>);
+    STATIC_REQUIRE(cljonic::concepts_detail::ContainsAdmissible<Map<char, int, 4>, char>);
+    STATIC_REQUIRE(cljonic::concepts_detail::ContainsAdmissible<Set<bool, 4>, bool>);
 
     // String: index in range.
     constexpr String<8> st{"abc"};
     STATIC_REQUIRE(contains(st, 0U));
     STATIC_REQUIRE(contains(st, 2U));
     STATIC_REQUIRE_FALSE(contains(st, 3U));
+    STATIC_REQUIRE(cljonic::concepts_detail::ContainsAdmissible<String<8>, int>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<String<8>, bool>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ContainsAdmissible<String<8>, char>);
+    STATIC_REQUIRE_FALSE(ContainsMemberAcceptsIndex<String<8>, bool>);
+    STATIC_REQUIRE_FALSE(ContainsMemberAcceptsIndex<String<8>, char>);
 
     // Runtime forms.
     const auto m_runtime = assoc(Map<int, int, 4>{}, 7, 70);
