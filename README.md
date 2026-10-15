@@ -82,6 +82,39 @@ The value of a collection's **default element** is the **default value** of the 
 **cljonic** uses **constexpr** and **consteval** whenever possible to enable/require **compile-time** evaluation of expressions.
 Additionally, this approach helps to detect **undefined behavior** at compile time.
 
+### Safe implicit conversions
+
+Collection and producer arguments accept their declared types and value-preserving
+numeric widening, not arbitrary C++ implicit conversions. The destination must
+represent **every value of the source type**; a small literal does not make a
+potentially narrowing conversion safe.
+
+- `short` to `long long` and `float` to `double` are accepted.
+- Integer-to-floating conversion is accepted only when all source integers are
+  representable exactly; floating-to-integer conversion is rejected.
+- Boolean, character, and enum types retain their distinct meanings. For example,
+  an `int` does not implicitly become a String character, and `bool` is not an index.
+- Cross-type user-defined and pointer conversions must be performed explicitly.
+  Same-type application values remain supported under the usual storage rules.
+- Lookup, membership, update, removal, fallback, and preflight arguments use the
+  same safety rule for their destination type. External range imports check the
+  actual dereference type and require non-throwing traversal and construction.
+- Finite `Repeat`/`Repeatedly` counts must be non-Boolean, non-character unsigned
+  integer types whose ranges fit `std::size_t`: use `3U` or `std::size_t{3}`, not
+  a signed count. Validate signed input before deliberately converting it.
+- Vector/String indexes and `character_is_valid` keep their documented checked
+  normalization paths. String imports keep ASCII validation/replacement.
+- Variant alternatives, Map entry types, producer source/callback types, and
+  equality domains keep their nominal/exact-type rules. These APIs do not
+  automatically wrap values, substitute callbacks, or introduce cross-type equality.
+
+Potentially lossy conversion must happen explicitly before a call, with a
+representability check when needed. An unchecked cast is not a safety check.
+`MapEntry` retains public key/value fields, default construction, and CTAD, but
+is no longer a C++ aggregate: its constructor enforces these conversion rules.
+Standard transform views remain supported when their base traversal and callback
+are non-throwing; declare such callbacks `noexcept`.
+
 ### concepts
 
 **cljonic** uses **concepts** to specify template requirements, improving code readability and providing better compiler diagnostics.
@@ -102,6 +135,7 @@ The key artifacts that define what this system is and does, in order of authorit
 
 | Artifact          | Role                                                                  |
 | ----------------- | --------------------------------------------------------------------- |
+| `requirements/`  | Governing behavior and safety requirements                            |
 | `vocabulary.md`   | Shared domain vocabulary; the foundation all other artifacts build on |
 | `architecture.md` | Structural constraints and decisions derived from vocabulary          |
 | `specs/`          | Behavioral specifications derived from architecture                   |
@@ -109,12 +143,15 @@ The key artifacts that define what this system is and does, in order of authorit
 
 ### Primary Workflow (gybis)
 
-Development follows a vocabulary-first discipline driven by gybis commands in GitHub Copilot agent mode:
+Development follows this dependency order, driven by gybis commands in GitHub Copilot agent mode:
 
-1. **Vocabulary first** — establish or evolve shared terms in `vocabulary.md`
-2. **Architecture second** — express structural constraints in `architecture.md`
-3. **Specs third** — capture behavioral truth in `specs/`
-4. **Implementation last** — code and tests must converge to the specs above
+1. **Requirements** — establish the governing behavioral and safety contracts.
+2. **Vocabulary** — establish or evolve shared terms.
+3. **Architecture** — express structural constraints.
+4. **Specs** — capture behavioral truth in Allium.
+5. **Tests** — verify the specified behavior.
+6. **Implementation** — make the tests and contracts hold.
+7. **Documentation** — explain the supported behavior and update generated artifacts.
 
 For full workflow guidance, see [GYBIS-README.md](GYBIS-README.md) or run `/gybis-help` in GitHub Copilot agent mode.
 
