@@ -20,7 +20,7 @@ concept ContainsSupportedCollection = ContainsLookupCollection<C> || ContainsInd
 template <typename C, typename K>
 concept ContainsAdmissible =
     (ContainsLookupCollection<C> && std::same_as<std::remove_cvref_t<K>, typename C::lookup_type>) ||
-    (ContainsIndexedCollection<C> && std::integral<std::remove_cvref_t<K>>);
+    (ContainsIndexedCollection<C> && IntegerIndexType<K>);
 
 } // namespace concepts_detail
 
@@ -30,7 +30,7 @@ concept ContainsAdmissible =
  *        "Vector", or \ref String "String".
  *
  * \ref Map "Map" keys and \ref Set "Set" elements must exactly match the declared lookup type. \ref Vector "Vector"
- * and \ref String "String" accept integral indexes.
+ * and \ref String "String" accept non-boolean, non-character integral indexes.
  *
  * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
  * `false`.
@@ -89,7 +89,8 @@ template <typename C, typename K>
                       "the map's keys or the set's elements; conversions are not accepted.");
     } else {
         static_assert(concepts_detail::dependent_false<C, K>,
-                      "cljonic::contains: a Vector or a String index must be an integer type.");
+                      "cljonic::contains: a Vector or a String index must be a non-boolean, non-character integer "
+                      "type.");
     }
     return false;
 }

@@ -207,26 +207,26 @@ class String {
 
     /** Returns true when index falls within logical bounds (not counting null
      * terminator). Mirrors Clojure contains? over string indices. */
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && *normalized_index < logical_size_;
     }
 
     /** Callable index access with custom fallback value on invalid index. */
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto operator()(IndexType index, char fallback = '\0') const noexcept -> char {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && *normalized_index < logical_size_ ? data_[*normalized_index] : fallback;
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto can_assoc(IndexType index, char value) const noexcept -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && association_index_is_valid(*normalized_index) && character_is_valid(value);
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto assoc(IndexType index, char value) const noexcept -> String {
         String result = *this;
         const auto normalized_index = concepts_detail::try_normalize_index(index);
@@ -256,7 +256,7 @@ class String {
 
     /** Returns a fresh String with the character at index replaced. Out-of-bounds
      * indices leave copy unchanged. */
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto put(IndexType index, char c) const noexcept -> String {
         String result = *this;
         const auto normalized_index = concepts_detail::try_normalize_index(index);

@@ -11,10 +11,10 @@ namespace cljonic {
  *        "Vector", \ref String "String").
  *
  * Supported for \ref Map "Map" (key/value association, replacing the value of an existing key), \ref Vector "Vector"
- * (index association; an index equal to the current count appends when capacity remains), and \ref String "String"
- * (the same index and append rule as \ref Vector "Vector"; see \ref String "String" for character validation and
- * normalization policy). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are rejected. The
- * result is a distinct collection value; the source is unchanged.
+ * (non-boolean, non-character integer index association; an index equal to the current count appends when capacity
+ * remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector"; see \ref String "String"
+ * for character validation and normalization policy). \ref Set "Set" and \ref Queue "Queue" provide no associative
+ * capability and are rejected. The result is a distinct collection value; the source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
@@ -132,8 +132,8 @@ template <typename C, typename K, typename V>
                                    [[maybe_unused]] const V& value) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C>,
                   "cljonic::assoc: the key, the value, or both have a type this collection cannot associate. A Map "
-                  "takes a key and a value of the types it stores; a Vector or a String takes an integer index and a "
-                  "value of the type it stores.");
+                  "takes a key and a value of the types it stores; a Vector or a String takes a non-boolean, "
+                  "non-character integer index and a value of the type it stores.");
     return C{};
 }
 
@@ -158,7 +158,8 @@ template <typename C, typename K1, typename V1, typename K2, typename V2, typena
     static_assert(concepts_detail::dependent_false<C>,
                   "cljonic::assoc: the arguments after the collection must be complete key/value pairs this collection "
                   "can associate. A key is missing its value, or the key or value has a type the collection cannot "
-                  "associate. A Map takes a key and a value; a Vector or a String takes an integer index and a value.");
+                  "associate. A Map takes a key and a value; a Vector or a String takes a non-boolean, non-character "
+                  "integer index and a value.");
     return C{};
 }
 

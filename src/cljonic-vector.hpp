@@ -227,27 +227,27 @@ class Vector {
         return logical_size_;
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback = value_type{}) const noexcept
         -> value_type {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && *normalized_index < logical_size_ ? storage_[*normalized_index] : fallback;
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && *normalized_index < logical_size_;
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto can_assoc(IndexType index, [[maybe_unused]] const value_type& value) const noexcept
         -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && association_index_is_valid(*normalized_index);
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto assoc(IndexType index, const value_type& value) const noexcept -> Vector {
         Vector result = *this;
         const auto normalized_index = concepts_detail::try_normalize_index(index);

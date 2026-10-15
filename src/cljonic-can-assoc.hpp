@@ -10,11 +10,11 @@ namespace cljonic {
  *        \ref concepts::CljonicCollection "collection".
  *
  * Supported for \ref Map "Map" (an existing key can be replaced, or an absent key inserted when capacity remains),
- * \ref Vector "Vector" (an existing index can be replaced, or an index equal to the current count can append when
- * capacity remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector", with an invalid
- * character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are
- * rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true
- * only when every pair preflight succeeds. All forms leave the source unchanged.
+ * \ref Vector "Vector" (a non-boolean, non-character integer index can be replaced, or an index equal to the current
+ * count can append when capacity remains), and \ref String "String" (the same index and append rule as \ref Vector
+ * "Vector", with an invalid character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative
+ * capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier
+ * pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -118,7 +118,7 @@ template <typename C, typename K, typename V>
                                        [[maybe_unused]] const V& value) noexcept -> bool {
     static_assert(concepts_detail::dependent_false<C>,
                   "cljonic::can_assoc: this key has a type the collection cannot associate. A Map takes a key; a "
-                  "Vector or a String takes an integer index.");
+                  "Vector or a String takes a non-boolean, non-character integer index.");
     return false;
 }
 
@@ -154,8 +154,8 @@ template <typename C, typename K1, typename V1, typename K2, typename V2, typena
     -> bool {
     static_assert(concepts_detail::dependent_false<C, K1, V1, K2, V2, Rest...>,
                   "cljonic::can_assoc: every key/value pair must use types this collection can associate. A Map "
-                  "takes its declared key and value types; a Vector or String takes an integer index and its stored "
-                  "value type.");
+                  "takes its declared key and value types; a Vector or String takes a non-boolean, non-character "
+                  "integer index and its stored value type.");
     return false;
 }
 

@@ -235,11 +235,19 @@ enum class collection_kind { none, vector, map, set, queue, string };
 template <typename...>
 inline constexpr bool dependent_false = false;
 
-// Convert an integral API index only when its value is representable by the
+template <typename T>
+concept IntegerIndexType =
+    std::integral<std::remove_cvref_t<T>> && (!std::same_as<std::remove_cvref_t<T>, bool>) &&
+    (!std::same_as<std::remove_cvref_t<T>, char>) && (!std::same_as<std::remove_cvref_t<T>, signed char>) &&
+    (!std::same_as<std::remove_cvref_t<T>, unsigned char>) && (!std::same_as<std::remove_cvref_t<T>, wchar_t>) &&
+    (!std::same_as<std::remove_cvref_t<T>, char8_t>) && (!std::same_as<std::remove_cvref_t<T>, char16_t>) &&
+    (!std::same_as<std::remove_cvref_t<T>, char32_t>);
+
+// Convert an admitted API index only when its value is representable by the
 // library's normalized size_t index domain. Collection-specific bounds remain
 // at each collection's call site because lookup and association have different
 // valid ranges.
-template <std::integral IndexType>
+template <IntegerIndexType IndexType>
 [[nodiscard]] constexpr auto try_normalize_index(IndexType index) noexcept -> std::optional<std::size_t> {
     if (!std::in_range<std::size_t>(index)) {
         return std::nullopt;
@@ -681,10 +689,10 @@ namespace cljonic {
  *        "Vector", \ref String "String").
  *
  * Supported for \ref Map "Map" (key/value association, replacing the value of an existing key), \ref Vector "Vector"
- * (index association; an index equal to the current count appends when capacity remains), and \ref String "String"
- * (the same index and append rule as \ref Vector "Vector"; see \ref String "String" for character validation and
- * normalization policy). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are rejected. The
- * result is a distinct collection value; the source is unchanged.
+ * (non-boolean, non-character integer index association; an index equal to the current count appends when capacity
+ * remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector"; see \ref String "String"
+ * for character validation and normalization policy). \ref Set "Set" and \ref Queue "Queue" provide no associative
+ * capability and are rejected. The result is a distinct collection value; the source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
@@ -802,8 +810,8 @@ template <typename C, typename K, typename V>
                                    [[maybe_unused]] const V& value) noexcept -> C {
     static_assert(concepts_detail::dependent_false<C>,
                   "cljonic::assoc: the key, the value, or both have a type this collection cannot associate. A Map "
-                  "takes a key and a value of the types it stores; a Vector or a String takes an integer index and a "
-                  "value of the type it stores.");
+                  "takes a key and a value of the types it stores; a Vector or a String takes a non-boolean, "
+                  "non-character integer index and a value of the type it stores.");
     return C{};
 }
 
@@ -828,7 +836,8 @@ template <typename C, typename K1, typename V1, typename K2, typename V2, typena
     static_assert(concepts_detail::dependent_false<C>,
                   "cljonic::assoc: the arguments after the collection must be complete key/value pairs this collection "
                   "can associate. A key is missing its value, or the key or value has a type the collection cannot "
-                  "associate. A Map takes a key and a value; a Vector or a String takes an integer index and a value.");
+                  "associate. A Map takes a key and a value; a Vector or a String takes a non-boolean, non-character "
+                  "integer index and a value.");
     return C{};
 }
 
@@ -846,11 +855,11 @@ namespace cljonic {
  *        \ref concepts::CljonicCollection "collection".
  *
  * Supported for \ref Map "Map" (an existing key can be replaced, or an absent key inserted when capacity remains),
- * \ref Vector "Vector" (an existing index can be replaced, or an index equal to the current count can append when
- * capacity remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector", with an invalid
- * character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are
- * rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true
- * only when every pair preflight succeeds. All forms leave the source unchanged.
+ * \ref Vector "Vector" (a non-boolean, non-character integer index can be replaced, or an index equal to the current
+ * count can append when capacity remains), and \ref String "String" (the same index and append rule as \ref Vector
+ * "Vector", with an invalid character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative
+ * capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier
+ * pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -954,7 +963,7 @@ template <typename C, typename K, typename V>
                                        [[maybe_unused]] const V& value) noexcept -> bool {
     static_assert(concepts_detail::dependent_false<C>,
                   "cljonic::can_assoc: this key has a type the collection cannot associate. A Map takes a key; a "
-                  "Vector or a String takes an integer index.");
+                  "Vector or a String takes a non-boolean, non-character integer index.");
     return false;
 }
 
@@ -990,8 +999,8 @@ template <typename C, typename K1, typename V1, typename K2, typename V2, typena
     -> bool {
     static_assert(concepts_detail::dependent_false<C, K1, V1, K2, V2, Rest...>,
                   "cljonic::can_assoc: every key/value pair must use types this collection can associate. A Map "
-                  "takes its declared key and value types; a Vector or String takes an integer index and its stored "
-                  "value type.");
+                  "takes its declared key and value types; a Vector or String takes a non-boolean, non-character "
+                  "integer index and its stored value type.");
     return false;
 }
 
@@ -1392,26 +1401,26 @@ class String {
 
     /** Returns true when index falls within logical bounds (not counting null
      * terminator). Mirrors Clojure contains? over string indices. */
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && *normalized_index < logical_size_;
     }
 
     /** Callable index access with custom fallback value on invalid index. */
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto operator()(IndexType index, char fallback = '\0') const noexcept -> char {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && *normalized_index < logical_size_ ? data_[*normalized_index] : fallback;
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto can_assoc(IndexType index, char value) const noexcept -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && association_index_is_valid(*normalized_index) && character_is_valid(value);
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto assoc(IndexType index, char value) const noexcept -> String {
         String result = *this;
         const auto normalized_index = concepts_detail::try_normalize_index(index);
@@ -1441,7 +1450,7 @@ class String {
 
     /** Returns a fresh String with the character at index replaced. Out-of-bounds
      * indices leave copy unchanged. */
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto put(IndexType index, char c) const noexcept -> String {
         String result = *this;
         const auto normalized_index = concepts_detail::try_normalize_index(index);
@@ -1802,7 +1811,7 @@ concept ContainsSupportedCollection = ContainsLookupCollection<C> || ContainsInd
 template <typename C, typename K>
 concept ContainsAdmissible =
     (ContainsLookupCollection<C> && std::same_as<std::remove_cvref_t<K>, typename C::lookup_type>) ||
-    (ContainsIndexedCollection<C> && std::integral<std::remove_cvref_t<K>>);
+    (ContainsIndexedCollection<C> && IntegerIndexType<K>);
 
 } // namespace concepts_detail
 
@@ -1812,7 +1821,7 @@ concept ContainsAdmissible =
  *        "Vector", or \ref String "String".
  *
  * \ref Map "Map" keys and \ref Set "Set" elements must exactly match the declared lookup type. \ref Vector "Vector"
- * and \ref String "String" accept integral indexes.
+ * and \ref String "String" accept non-boolean, non-character integral indexes.
  *
  * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
  * `false`.
@@ -1871,7 +1880,8 @@ template <typename C, typename K>
                       "the map's keys or the set's elements; conversions are not accepted.");
     } else {
         static_assert(concepts_detail::dependent_false<C, K>,
-                      "cljonic::contains: a Vector or a String index must be an integer type.");
+                      "cljonic::contains: a Vector or a String index must be a non-boolean, non-character integer "
+                      "type.");
     }
     return false;
 }
@@ -2174,27 +2184,27 @@ class Vector {
         return logical_size_;
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback = value_type{}) const noexcept
         -> value_type {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && *normalized_index < logical_size_ ? storage_[*normalized_index] : fallback;
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto contains(IndexType index) const noexcept -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && *normalized_index < logical_size_;
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto can_assoc(IndexType index, [[maybe_unused]] const value_type& value) const noexcept
         -> bool {
         const auto normalized_index = concepts_detail::try_normalize_index(index);
         return normalized_index && association_index_is_valid(*normalized_index);
     }
 
-    template <std::integral IndexType>
+    template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto assoc(IndexType index, const value_type& value) const noexcept -> Vector {
         Vector result = *this;
         const auto normalized_index = concepts_detail::try_normalize_index(index);
@@ -2318,11 +2328,11 @@ namespace cljonic {
 /** \anchor Cycle
  * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. A
  * finite source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without
- * first materializing the whole source, and yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements (or
- * fewer when materialized into a destination with an explicit capacity). The approved public form is `cycle(source)`
- * only. It supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
- * directly to cljonic operations that accept a source, or converted into an owning destination with `into` when
- * explicit materialization is required.
+ * first materializing the whole source, and yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements
+ * (or fewer when materialized into a destination with an explicit capacity). The approved public form is
+ * `cycle(source)` only. It supports const C++ range traversal in both constant evaluation and runtime code. Values can
+ * be passed directly to cljonic operations that accept a source, or converted into an owning destination with `into`
+ * when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3188,7 +3198,8 @@ namespace cljonic {
  *
  * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
  * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
- * default lookup result when omitted.
+ * default lookup result when omitted. For \ref Vector "Vector" and \ref String "String", the index must be an integral
+ * type other than \c bool or a character type.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -3902,9 +3913,9 @@ namespace cljonic {
 /** \anchor NotEqual
  * The \b not_equal free function API compares one or more values for inequality.
  *
- * \b NotEqual is the negation of \ref Equal "equal" and uses the same supported values and comparison rules.
- * Calling `not_equal` with one value returns false. With multiple values, it returns true when at least one adjacent
- * pair is unequal.
+ * \b NotEqual is the negation of \ref Equal "equal" and uses the same supported values and comparison rules. Calling
+ * `not_equal` with one value returns false. With multiple values, it returns true when at least one adjacent pair is
+ * unequal.
  *
  * \b Examples
  *

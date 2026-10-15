@@ -11,7 +11,8 @@ namespace cljonic {
  *
  * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
  * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
- * default lookup result when omitted.
+ * default lookup result when omitted. For \ref Vector "Vector" and \ref String "String", the index must be an integral
+ * type other than \c bool or a character type.
  *
  * \b Examples
  ~~~~~{.cpp}

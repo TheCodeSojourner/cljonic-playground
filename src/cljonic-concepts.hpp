@@ -30,11 +30,19 @@ enum class collection_kind { none, vector, map, set, queue, string };
 template <typename...>
 inline constexpr bool dependent_false = false;
 
-// Convert an integral API index only when its value is representable by the
+template <typename T>
+concept IntegerIndexType =
+    std::integral<std::remove_cvref_t<T>> && (!std::same_as<std::remove_cvref_t<T>, bool>) &&
+    (!std::same_as<std::remove_cvref_t<T>, char>) && (!std::same_as<std::remove_cvref_t<T>, signed char>) &&
+    (!std::same_as<std::remove_cvref_t<T>, unsigned char>) && (!std::same_as<std::remove_cvref_t<T>, wchar_t>) &&
+    (!std::same_as<std::remove_cvref_t<T>, char8_t>) && (!std::same_as<std::remove_cvref_t<T>, char16_t>) &&
+    (!std::same_as<std::remove_cvref_t<T>, char32_t>);
+
+// Convert an admitted API index only when its value is representable by the
 // library's normalized size_t index domain. Collection-specific bounds remain
 // at each collection's call site because lookup and association have different
 // valid ranges.
-template <std::integral IndexType>
+template <IntegerIndexType IndexType>
 [[nodiscard]] constexpr auto try_normalize_index(IndexType index) noexcept -> std::optional<std::size_t> {
     if (!std::in_range<std::size_t>(index)) {
         return std::nullopt;
