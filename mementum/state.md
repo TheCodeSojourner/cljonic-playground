@@ -1,29 +1,29 @@
 ## Current Session State
 
-- last_session_id: bc883b3c-752b-45ab-b45c-dc86f61ffb1d
-- current_timestamp: 2026-10-15T10:46:09-06:00
+- last_session_id: 7f1b1c1b-eeba-4520-b1b1-e9781ed361db
+- current_timestamp: 2026-10-15T11:41:05-06:00
 - recover: 1
 - session_complete: true
 
 Task:
-1. Refined repository Doxygen prose conventions: free-function names are bold but not linked, named entities in prose use explicit links, `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE` is bold, and inline-code ligatures are disabled so `==` remains visually distinct.
-2. Updated `equal` documentation to distinguish Vectors and Queues that contain elements from producers that yield elements, and linked all named collection and producer types.
-3. Simplified `not_equal` documentation to link to `equal` for shared supported-value and comparison rules rather than repeating them.
-4. Stored the durable Doxygen prose conventions in `mementum/memories/doxygen-prose-formatting.md` and committed them as `c210efe`.
+1. Excluded `bool` and all character types from Vector/String index admission, propagating the rule through architecture, requirements, Allium specs, member APIs, free-function wrappers, diagnostics, tests, and the generated single header.
+2. Audited free-function, collection, and producer descriptions for index-type claims. Public free-function descriptions explicitly name the restriction; Vector/String summaries and generic IndexedCollection/IndexedProducer summaries describe callable/indexed behavior without restating it, so they omit the rule but do not contradict it.
+3. Confirmed `character_is_valid` intentionally accepts character input (but rejects `bool`) and `Range` uses signed integral progression values rather than Vector/String indices; neither behavior was changed.
 
 Questions:
 1. None open.
 
 Decisions:
-1. Follow `mementum/memories/doxygen-prose-formatting.md` for future Doxygen prose edits.
-2. `not_equal` documentation should remain concise and refer to `equal` for shared behavior.
+1. Exclude `bool`, `char`, `signed char`, `unsigned char`, `wchar_t`, `char8_t`, `char16_t`, and `char32_t` from Vector/String index parameters (human, 2026-10-15).
+2. Preserve character-key lookup semantics for Map/Set, character input to `character_is_valid`, and numeric `Range` behavior.
+3. No need to create a separate memory for the index-type restriction; the behavioral rule belongs in the existing requirements and specs (human, 2026-10-15).
 
 Validation:
-1. `make docs` passed after documentation changes.
-2. `git diff --check` passed for edited source, generated documentation, and memory files.
+1. Both modular and single-header test binaries built; CTest passed all 196 tests.
+2. `make traceability-spec-to-code`, `make lint LINT_FILE=src/cljonic-concepts.hpp`, `make no-heap-src`, C++ formatting checks, and `git diff --check` passed.
 
 Next:
-1. No follow-up pending; apply the stored Doxygen conventions to future documentation changes.
+1. No follow-up implementation is pending. If future prose changes touch Vector/String summaries, consider adding their accepted index types there for discoverability.
 
 ## Previous Session State
 
