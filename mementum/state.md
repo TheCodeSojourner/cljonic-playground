@@ -1,14 +1,14 @@
 ## Current Session State
 
 - last_session_id: 22001e9d-5b1c-43ec-91d7-4269932bedb5
-- current_timestamp: 2026-10-16T07:44:58-06:00
+- current_timestamp: 2026-10-16T08:03:17-06:00
 - recover: 1
-- session_complete: false
+- session_complete: true
 
 Task:
-1. Answered two user questions: whether the `String` doc claim about `char` character arguments matches the code, and whether the inconsistent `static_assert` message prefixes should be made consistent.
-2. Landed a spec-first governance change for diagnostic message labels: vocabulary term `DiagnosticMessageLabel`, `REQ-DIAG-011`, architecture `S3_diagnostic_message_label`, and the new gate `make diagnostic-message-labels` (`scripts/check-diagnostic-message-labels.py`), wired into `upsert-gate`, `upsert-gate-fast`, `validate`, and `git`.
-3. Relabelled all 24 class-internal collection `static_assert` messages from a bare `Vector `/`Map ` prefix with no delimiter to `cljonic::<Type>: ` (Map, Queue, Set, String, Vector), and emptied the gate's `PENDING_MESSAGES` backlog.
+1. Landed repository-wide diagnostic message labels (`REQ-DIAG-011`) and relabelled the 24 collection messages that the rule exposed.
+2. Added vocabulary `DiagnosticMessageLabel`, architecture `S3_diagnostic_message_label`, and the `make diagnostic-message-labels` gate (`scripts/check-diagnostic-message-labels.py`), wired into `upsert-gate`, `upsert-gate-fast`, `validate`, and `git`.
+3. Answered the two questions that motivated the change: (a) the `String` doc claim that character arguments must be `char` is TRUE — `SafeImplicitConversion<char, X>` collapses to `same_as` because `value_preserving_arithmetic<char, ...>` is always false, and 14 compile probes confirmed every non-`char` argument hits a deleted overload; (b) the `String` line-17 claim about NUL and `0x80` rejection is NOT true of `put`, which bypasses `normalize_byte` and stores both verbatim.
 
 Questions:
 1. Open — the message-language pass over the same 24 messages, which still name internal template parameters `ElementType` and `T`. Deliberately split from the label axis after an explicit human choice not to bundle it.
@@ -20,16 +20,19 @@ Decisions:
 2. The label axis and the message-language axis are separate. `REQ-DIAG-011` governs the label only; message-body language stays with the 2026-10-09 user-facing-diagnostic-language decision.
 3. Specs unchanged: a message label is wording, not observable behaviour, so `specs/capabilities/diagnostics.allium` needs no entity.
 4. The gate parks a known backlog as non-fatal (`PENDING_MESSAGES`) and reports a relabelled parked entry as stale, following the `check-free-function-diagnostics.py` precedent so governance can land ahead of its application slice.
+5. The human committed the session's work directly; the assistant made no non-mementum commit. The `/gybis-fini` commit is memory-only (`mementum/`).
 
 Validation:
 1. `requirements-structure:ok clauses=322 unique=322`; `vocabulary-structure:ok terms=180`; `diagnostic-message-labels:ok`; `diagnostic-coverage:ok`; `traceability-spec-to-code:ok`; `format:ok`; `lint:ok`; `no-heap-src:ok`; `git diff --check` clean.
 2. `make cljonic` and `make cljonic-test` pass; `make test` passes 218/218.
 3. Gate failure modes were exercised in isolated sandboxes: a new unlabelled message fails with `file:line`, a relabelled backlog entry is reported stale, a doc-block message is skipped, and a labelled-only header is clean.
 4. Verified that no test, script, or Makefile pins the 24 messages; their Doxygen source listings under `docs/` will refresh at `make git`.
+5. Human-committed sequence at 07:52–07:53: `52ac81d` REQ-DIAG-011, `7b9bbbe` vocabulary, `3672b21` architecture, `1e5cf55` gate, `feb0ede` collection labels, `12fdddb` memory + knowledge, `69765f5` docs regeneration, `b50fd08` session state.
+6. Working tree was clean at `b50fd08` before finalization.
 
 Next:
-1. Awaiting human review of the uncommitted governance change and the 24 relabels; no commits were made by the assistant.
-2. Then decide the message-language pass, and address the two pre-existing open items.
+1. Decide the message-language pass over the 24 class-internal messages, and address the two pre-existing open items (`put` validation + missing `string.allium` contract; capacity-message content).
+2. Deferred work unchanged and acknowledged: the `variant-api` lifecycle, MapEntry semantic key/val/first/last and two-element sequence behavior, the seqable lifecycle for Map/Queue/Set/String, the five-header diagnostic-coverage backlog (`fits_into`, `get`, `into`, `peek`, `pop`), and six documented examples.
 
 ## Previous Session State
 
