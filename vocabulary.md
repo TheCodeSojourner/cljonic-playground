@@ -1053,6 +1053,14 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `equal(1.0, 1.0)`, `equal(Vector<int, 2>{1}, 1)`, and `not_equal(1.0, 1.0)` each resolve to a diagnostic overload whose `static_assert` names the operation and the violated equality-domain rule; the valid overloads are still selected for admitted operands. The collection primitives (`assoc`, `conj`, `get`, `contains`, `count`, `dissoc`, `disj`, `peek`, `pop`, `can_assoc`, `can_conj`, `is_empty`, `into`, `fits_into`) carry the same obligation, each with a fallback where its rejection surface admits one.
 
 
+### DiagnosticMessageLabel
+- **Definition:** The fully-qualified opening label of every targeted compile-time diagnostic message in the library source: `cljonic::` followed by the public free-function or class-template name and a colon, for example `cljonic::conj:` or `cljonic::Vector:`, followed by a plain-language statement of the violated constraint. DiagnosticMessageLabel applies to every `static_assert` message the library emits — including the class-internal capacity, initializer-count, constructor, range/view, and static-extent assertions — not only to the closed-domain RejectionDiagnostic and SourceConstructionDiagnostic fallbacks. Where a rejection carries no message, because a class-template constraint already fails with one named compiler diagnostic, there is no label to check. The label is a governance property of message text, not an observable behaviour of an operation.
+- **Deprecated Synonyms:** diagnostic prefix, message prefix, diagnostic label
+- **Related:** RejectionDiagnostic, SourceConstructionDiagnostic, CompileTimeFailure, CapacityConstruction
+- **Usage:** Requirements, architecture, implementation, tests, and documentation
+- **Examples:** `cljonic::Vector: initializer count exceeds the declared capacity` opens the Vector initializer-count diagnostic, and `cljonic::conj: the first argument must be a Vector, a Set, a Map, a Queue, or a String.` opens the conj rejection diagnostic, while the same Vector class previously opened its class-internal assertions with a bare `Vector ` and no delimiter.
+
+
 ## Behavioral Specification Vocabulary
 
 
