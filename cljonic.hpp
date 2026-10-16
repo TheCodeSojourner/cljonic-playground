@@ -749,6 +749,14 @@ concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t
     { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 
+/** The named element-domain rule for \ref Range "Range" (REQ-DIAG-012): a
+ *  `Range` element must be a signed integral type, because a `Range` describes a
+ *  signed arithmetic sequence and its span arithmetic requires a signed element
+ *  type. An out-of-domain element type fails this concept, so the type-level
+ *  gate stays soft and SFINAE-friendly rather than becoming ill-formed. */
+template <typename T>
+concept RangeElement = std::signed_integral<T>;
+
 } // namespace concepts
 
 namespace concepts_detail {
@@ -2557,8 +2565,22 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::CljonicSource Source>
-    requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Cycle` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct CycleSourceDomainViolation {};
+
+/** The `Cycle` class-template gate (REQ-DIAG-012): a valid cycle source, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. Naming
+ *  the rule as one concept also keeps the emitted constraint readable. */
+template <typename Source>
+concept CycleClassArgument =
+    ValidCycleSource<Source> || std::same_as<std::remove_cvref_t<Source>, CycleSourceDomainViolation>;
+
+} // namespace concepts_detail
+
+template <concepts_detail::CycleClassArgument Source>
 class Cycle {
   public:
     using source_type = Source;
@@ -2679,6 +2701,27 @@ class Cycle {
     std::size_t count_{CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE};
     bool is_finite_{false};
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guide below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Cycle<concepts_detail::CycleSourceDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Cycle([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Cycle: the source argument cannot be used to build a Cycle. The source must be a "
+                      "cljonic collection or producer whose element type is storable without throwing.");
+    }
+};
+
+/** Redirecting deduction guide (REQ-DIAG-012): viable only for a rejected
+ *  deduction, so an admitted deduction is never affected. */
+template <typename Source>
+    requires(!concepts_detail::ValidCycleSource<Source>)
+Cycle(const Source&) -> Cycle<concepts_detail::CycleSourceDomainViolation>;
 
 template <concepts::CljonicSource Source>
     requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>
@@ -3585,8 +3628,24 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
+ *  specialization during an out-of-domain class template argument deduction. */
+struct IterateDomainViolation {};
+
+/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
+ *  step, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
+template <typename T, typename Step>
+concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
+                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
+                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
+
+} // namespace concepts_detail
+
+template <typename T, typename Step>
+    requires concepts_detail::IterateClassArgument<T, Step>
 class Iterate {
   public:
     using value_type = T;
@@ -3667,6 +3726,29 @@ class Iterate {
     T initial_;
     Step step_;
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guide below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Iterate([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Iterate: the initial value and step cannot be used to build an Iterate. The initial "
+                      "value must be storable without throwing, and the step must be a pure, non-allocating, "
+                      "non-throwing callable that accepts the initial value and returns the element type.");
+    }
+};
+
+/** Redirecting deduction guide (REQ-DIAG-012): viable only for a rejected
+ *  deduction, so an admitted deduction is never affected. */
+template <typename T, typename Step>
+    requires(!(concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>))
+Iterate(const T&, const Step&)
+    -> Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation>;
 
 template <typename Step, typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
@@ -4710,7 +4792,24 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <std::signed_integral T>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. It is never a
+ *  supported element type and is never produced by an admitted call. */
+struct RangeElementDomainViolation {};
+
+/** The `Range` class-template gate (REQ-DIAG-012): a valid `Range` element
+ *  domain, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. Keeping the valid domain first preserves soft, SFINAE-friendly
+ *  type-level rejection for an out-of-domain element type. */
+template <typename T>
+concept RangeClassArgument =
+    concepts::RangeElement<T> || std::same_as<std::remove_cvref_t<T>, RangeElementDomainViolation>;
+
+} // namespace concepts_detail
+
+template <concepts_detail::RangeClassArgument T>
 class Range {
   public:
     using value_type = T;
@@ -4871,6 +4970,40 @@ class Range {
     T step_;
 };
 
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guides below, which select it for exactly the
+ *  out-of-domain class template argument deduction. Constructing it is always a
+ *  compile-time error whose single message names the class template, the
+ *  rejected argument type, and the violated domain rule. It is never a
+ *  supported construction target and exposes no usable state. */
+template <>
+class Range<concepts_detail::RangeElementDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Range([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Range: the element type must be a signed integral type. Every start, end, and step "
+                      "argument must be a signed integral value, because Range describes a signed arithmetic "
+                      "sequence whose span arithmetic requires a signed element type.");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012), one per supported arity. Each is
+ *  viable only for a rejected deduction, so an admitted deduction is never
+ *  affected. */
+template <typename T>
+    requires(!concepts::RangeElement<std::remove_cvref_t<T>>)
+Range(T) -> Range<concepts_detail::RangeElementDomainViolation>;
+
+template <typename Start, typename End>
+    requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>>))
+Range(Start, End) -> Range<concepts_detail::RangeElementDomainViolation>;
+
+template <typename Start, typename End, typename Step>
+    requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>> &&
+               concepts::RangeElement<std::remove_cvref_t<Step>>))
+Range(Start, End, Step) -> Range<concepts_detail::RangeElementDomainViolation>;
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -4955,7 +5088,21 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::NothrowCollectionElement T>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct RepeatElementDomainViolation {};
+
+/** The `Repeat` class-template gate (REQ-DIAG-012): a storable element, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. */
+template <typename T>
+concept RepeatClassArgument =
+    concepts::NothrowCollectionElement<T> || std::same_as<std::remove_cvref_t<T>, RepeatElementDomainViolation>;
+
+} // namespace concepts_detail
+
+template <concepts_detail::RepeatClassArgument T>
 class Repeat {
   public:
     using value_type = T;
@@ -5048,6 +5195,34 @@ class Repeat {
     std::size_t count_;
     bool is_finite_;
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guides below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Repeat<concepts_detail::RepeatElementDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Repeat([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Repeat: the repeated value must be storable without throwing. The value must be "
+                      "copyable and safe to create, store, and destroy without throwing, and a finite count must be "
+                      "an unsigned integral value representable by std::size_t.");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012), one per supported arity. Each is
+ *  viable only for a rejected deduction, so an admitted deduction is never
+ *  affected. The one-argument guide takes `const T&` to mirror the constructor's
+ *  deduction, so an array argument is rejected as the array it is. */
+template <typename T>
+    requires(!concepts::NothrowCollectionElement<T>)
+Repeat(const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
+
+template <typename T, typename Count>
+    requires(!concepts::NothrowCollectionElement<T> || !concepts_detail::ProducerCount<Count>)
+Repeat(const T&, Count) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
 
 template <typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
@@ -5165,8 +5340,25 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::RepeatedlyStep<T, Step>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeatedly` diagnostic
+ *  specialization. A `Repeatedly`'s element type is never deducible from its
+ *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
+struct RepeatedlyDomainViolation {};
+
+/** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
+ *  zero-argument step, or the internal diagnostic tag pair used only to redirect
+ *  a rejected deduction. */
+template <typename T, typename Step>
+concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && concepts::RepeatedlyStep<T, Step>) ||
+                                  (std::same_as<std::remove_cvref_t<T>, RepeatedlyDomainViolation> &&
+                                   std::same_as<std::remove_cvref_t<Step>, RepeatedlyDomainViolation>);
+
+} // namespace concepts_detail
+
+template <typename T, typename Step>
+    requires concepts_detail::RepeatedlyClassArgument<T, Step>
 class Repeatedly {
   public:
     using value_type = T;
@@ -5257,6 +5449,32 @@ class Repeatedly {
     std::size_t count_;
     bool is_finite_;
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): selected by the redirecting
+ *  deduction guides below. A `Repeatedly`'s element type is produced by its
+ *  step, so it is never deducible from a constructor argument; every deduced
+ *  `Repeatedly` reaches this specialization instead of a failed-deduction
+ *  candidate list. */
+template <>
+class Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Repeatedly([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Repeatedly: the element type cannot be deduced from a step alone. Use the repeatedly() "
+                      "free function, as in cljonic::repeatedly(step) or cljonic::repeatedly(count, step).");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012). No admitted `Repeatedly`
+ *  deduction exists, so these guides can never affect a supported construction. */
+template <typename Step>
+Repeatedly(const Step&)
+    -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
+
+template <typename Step, typename Count>
+Repeatedly(const Step&, Count)
+    -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
 
 template <typename Step, typename T = std::invoke_result_t<const std::decay_t<Step>&>>
     requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
@@ -5764,8 +5982,25 @@ template <std::size_t Index = 0, typename Variant>
  }
  ~~~~~
  */
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Variant` diagnostic
+ *  specialization. A `Variant`'s alternatives are never deducible from its
+ *  constructor arguments, so any deduced `Variant` is a rejected deduction. */
+struct VariantDomainViolation {};
+
+/** The `Variant` class-template gate (REQ-DIAG-012): at least one storable
+ *  alternative, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
 template <typename... Alternatives>
-    requires(sizeof...(Alternatives) >= 1) && (concepts::NothrowVariantAlternative<Alternatives> && ...)
+concept VariantClassArgument =
+    (sizeof...(Alternatives) >= 1 && (concepts::NothrowVariantAlternative<Alternatives> && ...)) ||
+    (sizeof...(Alternatives) == 1 && (std::same_as<std::remove_cvref_t<Alternatives>, VariantDomainViolation> && ...));
+
+} // namespace concepts_detail
+
+template <typename... Alternatives>
+    requires concepts_detail::VariantClassArgument<Alternatives...>
 class Variant {
   public:
     constexpr Variant() noexcept = default;
@@ -5825,6 +6060,27 @@ class Variant {
   private:
     std::variant<Alternatives...> storage_{};
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): selected by the redirecting
+ *  deduction guide below. A `Variant`'s alternatives are never deducible from
+ *  its constructor arguments, so every deduced `Variant` reaches this
+ *  specialization, which turns the failed-deduction candidate list into one
+ *  targeted message. */
+template <>
+class Variant<concepts_detail::VariantDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Variant([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Variant: the alternative types cannot be deduced from this argument. Name the "
+                      "alternatives explicitly, as in cljonic::Variant<int, long>{value}.");
+    }
+};
+
+/** Redirecting deduction guide (REQ-DIAG-012). No admitted `Variant` deduction
+ *  exists, so this guide can never affect a supported construction. */
+template <typename T>
+Variant(const T&) -> Variant<concepts_detail::VariantDomainViolation>;
 
 } // namespace cljonic
 
