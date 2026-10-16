@@ -63,13 +63,14 @@ is detected through the admission concepts, never `requires { call(...) }`.
 | ------------------- | ---------------------------------------------------- | --------------------- | ----------------------------------------- |
 | Vector/String/Queue | order-sensitive (count + logical order)              | `equal` (REQ-FN-002G) | stable element equality                   |
 | Map/Set             | order-insensitive (count + matching entries)         | `equal` (REQ-FN-002G) | stable key/value equality                 |
-| Range/Repeat/Cycle  | producer parameter equality (stored parameters only) | `parameters_equal`    | stable parameter equality                 |
+| Range/Repeat/Cycle  | producer parameter equality (stored parameters only) | none (native `==` only) | stable parameter equality                 |
 | Iterate/Repeatedly  | none                                                 | none                  | callable step → excluded at type boundary |
 
 Producer parameter equality (REQ-FN-014B) is normative for every producer whose
-stored parameters all admit stable equality: provide both `==` and
-`parameters_equal` with identical semantics, O(1), constexpr, noexcept,
-non-allocating, never traversing the produced sequence. Distinct parameters
+stored parameters all admit stable equality: provide only the native `==`, with
+producer parameter equality semantics, O(1), constexpr, noexcept, non-allocating,
+never traversing the produced sequence. There is no separately named comparison
+free function (`parameters_equal` was removed 2026-10-16). Distinct parameters
 compare unequal even when produced sequences coincide
 (`Range{0,5,0} != Range{0,7,0}`; `Repeat{7} != Repeat{7,0U}`).
 

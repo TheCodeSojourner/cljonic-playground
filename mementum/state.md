@@ -1,5 +1,33 @@
 ## Current Session State
 
+- last_session_id: 0d302fe0-fd1f-4380-afdc-cbd1e0d7be7d
+- current_timestamp: 2026-10-16T08:26:00-06:00
+- recover: 1
+- session_complete: false
+
+Task:
+1. Removed the redundant public `parameters_equal` producer-comparison free function across every durability layer, in order: REQ-FN-014B (requirements), `ProducerParameterEquality` + the `equal` examples (vocabulary), `S2_producer_parameter_equality` (architecture), the producer specifications (deleted `specs/producers/parameters-equal.allium`; dropped `provides_named_parameters_equal_operation` from range/repeat/cycle/materialization), tests (deleted the dedicated spec test and no-heap probe; converted call sites to `operator==`; migrated three orphaned `ProducerParameterEquality` obligations into the concepts and range tests), and code (removed the three `src/` overloads plus the cheatsheet API-index entry).
+2. Producer parameter equality now has exactly one surface — the native `operator==` — and the stored-parameter vs observed-sequence distinction is documented on each producer's `operator==` (the accepted tradeoff), rather than kept as a redundant alias.
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. Human decision 2026-10-16: producers expose only the native `operator==`; no separately named producer-comparison free function. The distinction from the `equal` free function lives on `operator==` documentation instead of a public alias.
+2. Existing producer `operator==` semantics, `StableEqualityComparable`/`NothrowStableEqualityComparable` admission, and map-key/set-element use are unchanged.
+
+Validation:
+1. `make validate` green: requirements-structure 322 clauses / vocabulary 180 terms, lint, complexity, all compile-fail suites, diagnostic gates, `sanitizer:ok`, `coverage:lines=100.0%`, `traceability-spec-to-code:ok` (snapshot −16 obligations), `no-heap:ok`.
+2. `make test` 216/216 pass (the 218→216 delta is the removed `parameters_equal` TEST_CASE counted in both the modular and single-header suites).
+3. `make cljonic`, `make cljonic-test`, `make docs`, `make docs-examples` (29 compiled) all ok; generated `cljonic.hpp` and `docs/` no longer reference `parameters_equal`.
+4. Human-approved commits landed 2026-10-16: `4b2b484` the implementation removal, `6ddcb7d` the durable memory (`🎯 producer-parameter-equality-single-surface`), and the mementum truth refresh (this file plus the knowledge and memory follow-ups).
+
+Next:
+1. Finalize with `/gybis-fini`.
+2. Deferred work unchanged: the message-language pass over the 24 class-internal diagnostic messages, the `String::put` validation gap, the capacity-message content question, and the previously acknowledged backlog.
+
+## Previous Session State
+
 - last_session_id: 22001e9d-5b1c-43ec-91d7-4269932bedb5
 - current_timestamp: 2026-10-16T08:03:17-06:00
 - recover: 1
