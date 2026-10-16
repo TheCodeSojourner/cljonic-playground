@@ -394,6 +394,20 @@ Explanatory definitions; binding obligations reside in the numbered clauses refe
   rationale: without the fallback the rejected argument falls through to the pack constructor's generic conversion diagnostic (for example "could not convert a producer to the element type"), which misleads the caller because no element conversion was intended; one targeted, educational diagnostic is more accurate and keeps the rejection reason discoverable
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
+λ REQ-DIAG-011(x).
+  ∀ targeted_compile_time_diagnostic_message, present ∨ added_in_future, emitted as a `static_assert` message in `src/`:
+  ∧ opens_with(DiagnosticMessageLabel(x)) ≡ "cljonic::" ∧ entity_name(x) ∧ ": "
+  ∧ entity_name(x) ≡ public_free_function_name(x) ∨ class_template_name(x)
+  ∧ ¬bare_class_template_name_without_delimiter(x) ∧ ¬unqualified_entity_name(x)
+  ∧ ∀ class_internal_assertion ∈ {capacity, initializer_count, constructor, range_view, static_extent}: bound_by(this_requirement(x)), because the same class would otherwise emit two different label conventions from two call sites
+  ∧ where a message is assembled from concatenated string literals, the label binds the first literal
+  ∧ this requirement governs the label only; message-body language remains governed separately by the user-facing diagnostic language decision (`REQ-DIAG-004`)
+  ∧ excluded: a rejection that carries no message because a class-template constraint already fails with one named compiler diagnostic before any call candidate is considered (`Range`, `MapEntry`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, `Variant`) — there is no label to check (`REQ-DIAG-010`)
+  ∧ excluded: `static_assert` calls inside documentation example blocks, which assert example values rather than carrying a diagnostic message
+  ∧ forward_binding: the obligation binds every diagnostic message added in the future, not only those present now
+  rationale: a library diagnostic is read out of context, in a CI log or an IDE tooltip, where a bare class name such as `Vector` is ambiguous with a standard-library or application type; one label grammar covering both free functions and collection classes is self-describing and mechanically checkable, which the split convention it replaces is not. The label axis and the message-language axis are decided separately: the label pass is complete, while the language pass over the same class-internal messages — which still name internal template parameters such as `ElementType` and `T` — remains an open decision
+  {source: stakeholder_decided, decided_by: human, rationale_source: origin_artifact}
+
 ## Compile-Time Evaluation
 
 λ REQ-CONST-001(x).
