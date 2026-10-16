@@ -9,7 +9,6 @@
 TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     using cljonic::Map;
     using cljonic::MapEntry;
-    using cljonic::parameters_equal;
     using cljonic::Range;
     using cljonic::Set;
     using cljonic::Vector;
@@ -50,14 +49,13 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     TRACE_ID("invariant.Range.SpanArithmeticAvoidsSignedOverflow");
     TRACE_ID("invariant.Range.OperatorEqualsUsesProducerParameterEquality");
     TRACE_ID("invariant.Range.EqualityComparesStartEndStep");
-    TRACE_ID("invariant.Range.ProvidesNamedParametersEqualOperation");
     TRACE_ID("invariant.Range.SatisfiesNothrowStableEqualityComparable");
     TRACE_ID("invariant.Range.ContainsIsMemberOnlyPredicate");
     TRACE_ID("invariant.Range.GenericContainsFreeFunctionIsExcluded");
     TRACE_ID("entity-fields.ProducerParameterEquality");
     TRACE_ID("invariant.ProducerParameterEquality.ComparesBoundedStoredParametersOnly");
     TRACE_ID("invariant.ProducerParameterEquality.OperatorEqualsUsesProducerParameterEquality");
-    TRACE_ID("invariant.ProducerParameterEquality.ProvidesNamedParametersEqualOperation");
+    TRACE_ID("invariant.ProducerParameterEquality.IsO1ConstexprNoexceptNonmutatingNonallocating");
     TRACE_ID("invariant.ProducerParameterEquality.NeverTraversesProducedSequence");
     TRACE_ID("invariant.ProducerParameterEquality.DoesNotImplySequenceEquality");
     TRACE_ID("invariant.ProducerParameterEquality.DistinctParametersCompareUnequalEvenWhenSequencesCoincide");
@@ -170,15 +168,12 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     constexpr Range<int> eq_c{1, 5, 3};
     STATIC_REQUIRE(eq_a == eq_b);
     STATIC_REQUIRE(!(eq_a == eq_c));
-    STATIC_REQUIRE(parameters_equal(eq_a, eq_b));
-    STATIC_REQUIRE(!parameters_equal(eq_a, eq_c));
 
     // Distinct parameters compare unequal even when the produced sequences
     // coincide: both zero-step ranges produce an infinite repetition of zero.
     constexpr Range<int> zero_step_a{0, 5, 0};
     constexpr Range<int> zero_step_b{0, 7, 0};
     STATIC_REQUIRE(!(zero_step_a == zero_step_b));
-    STATIC_REQUIRE(!parameters_equal(zero_step_a, zero_step_b));
 
     // Range is admitted as a set element and map key.
     constexpr Set<Range<int>, 4> range_set{Range<int>{1, 5, 2}, Range<int>{1, 5, 3}};

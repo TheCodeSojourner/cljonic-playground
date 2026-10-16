@@ -157,10 +157,12 @@ class Cycle {
 
     /** Producer parameter equality (REQ-FN-014B): compares only the stored
      *  owned source, count, and finite-form parameters, never the produced
-     *  sequence. The owned source compares by its own stable equality, so
-     *  `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 3})` is true while
-     *  `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 4})` is false. O(1), no
-     *  traversal, no allocation. */
+     *  sequence. It is the only producer parameter-equality surface; the
+     *  `equal` free function instead compares bounded logical observations of
+     *  the produced sequences. The owned source compares by its own stable
+     *  equality, so `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 3})` is true
+     *  while `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 4})` is false. O(1),
+     *  no traversal, no allocation. */
     [[nodiscard]] friend constexpr auto operator==(const Cycle& lhs, const Cycle& rhs) noexcept -> bool
         requires concepts::StableEqualityComparable<Source>
     {
@@ -196,13 +198,6 @@ constexpr auto cycle([[maybe_unused]] Source source) noexcept -> concepts_detail
                   "cljonic::cycle: the source argument cannot be used to build a Cycle. The source must be a cljonic "
                   "collection or producer.");
     return {};
-}
-
-template <concepts::CljonicSource Source>
-    requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>> &&
-             concepts::StableEqualityComparable<Source>
-[[nodiscard]] constexpr auto parameters_equal(const Cycle<Source>& lhs, const Cycle<Source>& rhs) noexcept -> bool {
-    return lhs == rhs;
 }
 
 } // namespace cljonic

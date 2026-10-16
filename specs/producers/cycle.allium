@@ -30,7 +30,6 @@ entity Cycle {
     does_not_fit_into_destination: Boolean
     operator_equals_uses_producer_parameter_equality: Boolean
     equality_compares_owned_source_and_form: Boolean
-    provides_named_parameters_equal_operation: Boolean
     satisfies_nothrow_stable_equality_comparable: Boolean
     does_not_satisfy_indexed_producer: Boolean
     satisfies_sequenceable_producer: Boolean
@@ -151,10 +150,6 @@ entity Cycle {
 
     invariant EqualityComparesOwnedSourceAndForm {
         this.equality_compares_owned_source_and_form = true
-    }
-
-    invariant ProvidesNamedParametersEqualOperation {
-        this.provides_named_parameters_equal_operation = true
     }
 
     invariant SatisfiesNothrowStableEqualityComparable {

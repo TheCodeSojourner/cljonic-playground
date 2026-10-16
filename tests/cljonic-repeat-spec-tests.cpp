@@ -16,7 +16,6 @@ concept HasGet = requires(const T& value) { cljonic::get(value, 0U); };
 TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[repeat]") {
     using cljonic::fits_into;
     using cljonic::into;
-    using cljonic::parameters_equal;
     using cljonic::Repeat;
     using cljonic::repeat;
     using cljonic::Set;
@@ -51,12 +50,10 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     TRACE_ID("invariant.Repeat.UncountedFormDoesNotFitIntoDestination");
     TRACE_ID("invariant.Repeat.OperatorEqualsUsesProducerParameterEquality");
     TRACE_ID("invariant.Repeat.EqualityComparesValueCountAndForm");
-    TRACE_ID("invariant.Repeat.ProvidesNamedParametersEqualOperation");
     TRACE_ID("invariant.Repeat.SatisfiesNothrowStableEqualityComparable");
     TRACE_ID("entity-fields.ProducerParameterEquality");
     TRACE_ID("invariant.ProducerParameterEquality.ComparesBoundedStoredParametersOnly");
     TRACE_ID("invariant.ProducerParameterEquality.OperatorEqualsUsesProducerParameterEquality");
-    TRACE_ID("invariant.ProducerParameterEquality.ProvidesNamedParametersEqualOperation");
     TRACE_ID("invariant.ProducerParameterEquality.DoesNotImplySequenceEquality");
     TRACE_ID("invariant.ProducerParameterEquality.DistinctParametersCompareUnequalEvenWhenSequencesCoincide");
     TRACE_ID("invariant.ProducerParameterEquality.ProducerAdmittedAsMapKeyAndSetElement");
@@ -114,8 +111,6 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     constexpr auto counted_c = repeat(7, 2U);
     STATIC_REQUIRE(counted_a == counted_b);
     STATIC_REQUIRE(!(counted_a == counted_c));
-    STATIC_REQUIRE(parameters_equal(counted_a, counted_b));
-    STATIC_REQUIRE(!parameters_equal(counted_a, counted_c));
     STATIC_REQUIRE(!(counted_a == unbounded_repeat));
     STATIC_REQUIRE(!(counted_a == empty_repeat));
     STATIC_REQUIRE(StableEqualityComparable<std::remove_cvref_t<decltype(counted_a)>>);

@@ -1,5 +1,5 @@
 -- allium: 3
--- Callable parameters exclude native == and parameters_equal, not admitted
+-- Callable parameters exclude native ==, not admitted
 -- top-level equal comparisons over bounded sequential observations.
 
 entity Repeatedly {

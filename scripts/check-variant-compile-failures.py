@@ -42,7 +42,6 @@ PASS_CASES = {
     "Cycle-set-element": "cljonic::Set<cljonic::Cycle<cljonic::Vector<int, 4>>, 4>{cljonic::cycle(cljonic::Vector<int, 4>{1, 2, 3}), cljonic::cycle(cljonic::Vector<int, 4>{1, 2, 4})};",
     "Variant-producer-key": "cljonic::Set<cljonic::Variant<int, cljonic::Range<int>>, 4>{};",
     "Vector-of-producers-equality": "cljonic::Vector<cljonic::Range<int>, 4> a{cljonic::Range<int>{1, 5, 2}, cljonic::Range<int>{2, 4}}; cljonic::Vector<cljonic::Range<int>, 4> b{cljonic::Range<int>{1, 5, 2}, cljonic::Range<int>{2, 4}}; (void)(a == b);",
-    "Parameters-equal-call": "(void)cljonic::parameters_equal(cljonic::Range<int>{1, 5, 2}, cljonic::Range<int>{1, 5, 2}); (void)cljonic::parameters_equal(cljonic::Repeat<int>{7, 3U}, cljonic::Repeat<int>{7, 3U}); (void)cljonic::parameters_equal(cljonic::cycle(cljonic::Vector<int, 4>{1, 2, 3}), cljonic::cycle(cljonic::Vector<int, 4>{1, 2, 3}));",
 }
 
 # Extra source lines injected before main() for each case (shared preamble):

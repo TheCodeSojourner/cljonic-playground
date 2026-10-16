@@ -663,9 +663,9 @@ template&lt;std::signed_integral T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Producer parameter equality (REQ-FN-014B): compares only the stored start/end/step parameters, never the produced sequence. Two <a class="el" href="classcljonic_1_1_range.html">Range</a> values with different parameters compare unequal even when their produced or observed sequences coincide (for example two zero-step ranges with different endpoints both produce an infinite repetition of their respective start values). O(1), no traversal, no allocation. </p>
+<p>Producer parameter equality (REQ-FN-014B): compares only the stored start/end/step parameters, never the produced sequence. It is the only producer parameter-equality surface; the <span class="tt"><a class="el" href="namespacecljonic.html#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a></span> free function instead compares bounded logical observations of the produced sequences. Two <a class="el" href="classcljonic_1_1_range.html">Range</a> values with different parameters compare unequal even when their produced or observed sequences coincide (for example two zero-step ranges with different endpoints both produce an infinite repetition of their respective start values). O(1), no traversal, no allocation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00175">175</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00177">177</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>

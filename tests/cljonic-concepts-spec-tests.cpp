@@ -704,6 +704,8 @@ TEST_CASE("Producer parameter equality stable-recursion", "[concepts][value][pro
     TRACE_ID("invariant.StableEqualityComparable.RecursesIntoProducerParameters");
     TRACE_ID("invariant.StableEqualityComparable.RecursesOverComponents");
     TRACE_ID("invariant.StableEqualityComparable.RejectsCallableComponents");
+    TRACE_ID("invariant.ProducerParameterEquality.RequiresAllStoredComponentsAdmitStableEquality");
+    TRACE_ID("invariant.ProducerParameterEquality.CallableComponentsExcludeParameterEquality");
 
     // RecursesIntoProducerParameters: Range/Repeat/Cycle with all-stable
     // stored parameters admit producer parameter equality.

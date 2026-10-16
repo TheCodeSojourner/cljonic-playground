@@ -135,7 +135,6 @@ entity ProducerStorageAdmission {
 entity ProducerParameterEquality {
     compares_bounded_stored_parameters_only: Boolean
     operator_equals_uses_producer_parameter_equality: Boolean
-    provides_named_parameters_equal_operation: Boolean
     is_o1_constexpr_noexcept_nonmutating_nonallocating: Boolean
     never_traverses_produced_sequence: Boolean
     does_not_imply_sequence_equality: Boolean
@@ -150,10 +149,6 @@ entity ProducerParameterEquality {
 
     invariant OperatorEqualsUsesProducerParameterEquality {
         this.operator_equals_uses_producer_parameter_equality = true
-    }
-
-    invariant ProvidesNamedParametersEqualOperation {
-        this.provides_named_parameters_equal_operation = true
     }
 
     invariant IsO1ConstexprNoexceptNonmutatingNonallocating {

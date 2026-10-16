@@ -191,12 +191,12 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-FN-014B(x).
-  ∀ native_producer_equality ∨ `parameters_equal`: uses producer_parameter_equality ∧ distinct_from(`equal`_bounded_observation_equality)
-  ∧ ∀ producer whose stored parameters all admit stable equality: provides the native C++ `==` operator over its own type with producer parameter equality semantics ∧ provides a separate explicitly named structural-comparison free function named `parameters_equal` with semantics identical to its `==` ∧ satisfies the `StableEqualityComparable` and `NothrowStableEqualityComparable` capabilities so that it MAY be used directly as a map key or set element and as a composite component under `REQ-CAP-010`
-  ∧ ∀ (`==` ∧ `parameters_equal`): compare only the producer's bounded stored parameters ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ O(1) in the producer's stored parameters ∧ ¬∃ (traversal ∨ observation ∨ materialization of any produced sequence) ∧ ¬∃ implication that two producers with equal parameters produce equal materialized sequences ∧ treat producers with different stored parameters as unequal even when their produced or observed sequences coincide
-  ∧ ∀ producer whose stored parameters include a callable component: ¬∃ provision of `==` ∨ `parameters_equal` ∧ ¬∃ satisfaction of `StableEqualityComparable` ∧ rejected at compile time when used in a key or set-element position
+  ∀ native_producer_equality: uses producer_parameter_equality ∧ distinct_from(`equal`_bounded_observation_equality)
+  ∧ ∀ producer whose stored parameters all admit stable equality: provides only the native C++ `==` operator over its own type with producer parameter equality semantics ∧ ¬∃ (any separately named producer-comparison free function) ∧ satisfies the `StableEqualityComparable` and `NothrowStableEqualityComparable` capabilities so that it MAY be used directly as a map key or set element and as a composite component under `REQ-CAP-010`
+  ∧ ∀ native producer `==`: compare only the producer's bounded stored parameters ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ O(1) in the producer's stored parameters ∧ ¬∃ (traversal ∨ observation ∨ materialization of any produced sequence) ∧ ¬∃ implication that two producers with equal parameters produce equal materialized sequences ∧ treat producers with different stored parameters as unequal even when their produced or observed sequences coincide
+  ∧ ∀ producer whose stored parameters include a callable component: ¬∃ provision of `==` ∧ ¬∃ satisfaction of `StableEqualityComparable` ∧ rejected at compile time when used in a key or set-element position
   rationale: callable components cannot participate in a stable value-equality comparison, so admitting them would make map/set membership ill-defined
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15, rationale_source: origin_artifact}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-16, rationale_source: origin_artifact}
 
 λ REQ-FN-014C(x).
   ∀ producer_construction: ¬∃ evaluation of producer callbacks

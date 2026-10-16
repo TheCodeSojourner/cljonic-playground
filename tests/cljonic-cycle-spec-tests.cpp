@@ -8,7 +8,6 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     using cljonic::cycle;
     using cljonic::fits_into;
     using cljonic::into;
-    using cljonic::parameters_equal;
     using cljonic::Range;
     using cljonic::Set;
     using cljonic::Vector;
@@ -49,12 +48,10 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     TRACE_ID("invariant.Cycle.DoesNotFitIntoDestination");
     TRACE_ID("invariant.Cycle.OperatorEqualsUsesProducerParameterEquality");
     TRACE_ID("invariant.Cycle.EqualityComparesOwnedSourceAndForm");
-    TRACE_ID("invariant.Cycle.ProvidesNamedParametersEqualOperation");
     TRACE_ID("invariant.Cycle.SatisfiesNothrowStableEqualityComparable");
     TRACE_ID("entity-fields.ProducerParameterEquality");
     TRACE_ID("invariant.ProducerParameterEquality.ComparesBoundedStoredParametersOnly");
     TRACE_ID("invariant.ProducerParameterEquality.OperatorEqualsUsesProducerParameterEquality");
-    TRACE_ID("invariant.ProducerParameterEquality.ProvidesNamedParametersEqualOperation");
     TRACE_ID("invariant.ProducerParameterEquality.NeverTraversesProducedSequence");
     TRACE_ID("invariant.ProducerParameterEquality.DoesNotImplySequenceEquality");
     TRACE_ID("invariant.ProducerParameterEquality.ProducerAdmittedAsMapKeyAndSetElement");
@@ -108,8 +105,6 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     constexpr auto cycle_c = cycle(Vector<int, 3>{1, 2, 4});
     STATIC_REQUIRE(cycle_a == cycle_b);
     STATIC_REQUIRE(!(cycle_a == cycle_c));
-    STATIC_REQUIRE(parameters_equal(cycle_a, cycle_b));
-    STATIC_REQUIRE(!parameters_equal(cycle_a, cycle_c));
     STATIC_REQUIRE(StableEqualityComparable<std::remove_cvref_t<decltype(cycle_a)>>);
     STATIC_REQUIRE(NothrowStableEqualityComparable<std::remove_cvref_t<decltype(cycle_a)>>);
 

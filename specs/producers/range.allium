@@ -28,7 +28,6 @@ entity Range {
     span_arithmetic_avoids_signed_overflow: Boolean
     operator_equals_uses_producer_parameter_equality: Boolean
     equality_compares_start_end_step: Boolean
-    provides_named_parameters_equal_operation: Boolean
     satisfies_nothrow_stable_equality_comparable: Boolean
     contains_is_authoritative_bounded_observation_predicate: Boolean
     contains_is_member_only_predicate: Boolean
@@ -149,10 +148,6 @@ entity Range {
 
     invariant EqualityComparesStartEndStep {
         this.equality_compares_start_end_step = true
-    }
-
-    invariant ProvidesNamedParametersEqualOperation {
-        this.provides_named_parameters_equal_operation = true
     }
 
     invariant SatisfiesNothrowStableEqualityComparable {

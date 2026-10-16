@@ -509,10 +509,9 @@ template&lt;concepts::NothrowCollectionElement T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Producer parameter equality (REQ-FN-014B): compares only the stored value, count, and finite-form parameters, never the produced sequence. The unbounded <span class="tt">repeat(value)</span> form is distinct from the finite <span class="tt"><a class="el" href="namespacecljonic.html#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">repeat</a>
-(value, <a class="el" href="#a4e95ae84875155308db3313271bb9abb">count</a>)</span> forms even when their produced prefixes coincide, and a counted form with count zero is distinct from the unbounded form. O(1), no traversal, no allocation. </p>
+<p>Producer parameter equality (REQ-FN-014B): compares only the stored value, count, and finite-form parameters, never the produced sequence. It is the only producer parameter-equality surface; the <span class="tt"><a class="el" href="namespacecljonic.html#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a></span> free function instead compares bounded logical observations of the produced sequences. The unbounded <span class="tt">repeat(value)</span> form is distinct from the finite <span class="tt">repeat(value, count)</span> forms even when their produced prefixes coincide, and a counted form with count zero is distinct from the unbounded form. O(1), no traversal, no allocation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00145">145</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00147">147</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>

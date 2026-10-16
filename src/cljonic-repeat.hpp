@@ -138,10 +138,12 @@ class Repeat {
 
     /** Producer parameter equality (REQ-FN-014B): compares only the stored
      *  value, count, and finite-form parameters, never the produced sequence.
-     *  The unbounded `repeat(value)` form is distinct from the finite `repeat
-     *  (value, count)` forms even when their produced prefixes coincide, and a
-     *  counted form with count zero is distinct from the unbounded form.
-     *  O(1), no traversal, no allocation. */
+     *  It is the only producer parameter-equality surface; the `equal` free
+     *  function instead compares bounded logical observations of the produced
+     *  sequences. The unbounded `repeat(value)` form is distinct from the
+     *  finite `repeat(value, count)` forms even when their produced prefixes
+     *  coincide, and a counted form with count zero is distinct from the
+     *  unbounded form. O(1), no traversal, no allocation. */
     [[nodiscard]] friend constexpr auto operator==(const Repeat& lhs, const Repeat& rhs) noexcept -> bool
         requires concepts::StableEqualityComparable<T>
     {
@@ -153,12 +155,6 @@ class Repeat {
     std::size_t count_;
     bool is_finite_;
 };
-
-template <concepts::NothrowCollectionElement T>
-    requires concepts::StableEqualityComparable<T>
-[[nodiscard]] constexpr auto parameters_equal(const Repeat<T>& lhs, const Repeat<T>& rhs) noexcept -> bool {
-    return lhs == rhs;
-}
 
 template <typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
