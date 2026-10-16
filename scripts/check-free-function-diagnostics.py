@@ -46,6 +46,10 @@ REGISTRY: dict[str, str] = {
     "cljonic-set.hpp": "fallback",
     "cljonic-string.hpp": "fallback",
     "cljonic-vector.hpp": "fallback",
+    # Class-template deduction diagnostic (REQ-DIAG-012): the element domain
+    # stays a constraint, and out-of-domain deduction is redirected to an
+    # internal diagnostic specialization carrying one targeted static_assert.
+    "cljonic-range.hpp": "fallback",
     # Subject to REQ-DIAG-009; fallback not yet added (application backlog).
     "cljonic-can-conj.hpp": "fallback",
     "cljonic-conj.hpp": "fallback",
@@ -60,7 +64,6 @@ REGISTRY: dict[str, str] = {
     "cljonic-peek.hpp": "pending",
     "cljonic-pop.hpp": "pending",
     # Documented exclusions.
-    "cljonic-range.hpp": "excluded",       # element domain is a class-template constraint (signed_integral)
     "cljonic-map-entry.hpp": "excluded",   # aggregate-like; domain is type-argument gated
     "cljonic-variant.hpp": "excluded",     # free-function API deferred (Slice B)
     "cljonic-empty.hpp": "excluded",       # deferred non-public API (DEFERRED_NON_PUBLIC_HEADERS)
