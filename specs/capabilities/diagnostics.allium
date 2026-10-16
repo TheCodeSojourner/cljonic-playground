@@ -56,3 +56,55 @@ entity RejectionDiagnostic {
 }
 
 actor RejectionDiagnosticOperator { identified_by: RejectionDiagnostic }
+
+-- ClassTemplateDeductionDiagnostic (REQ-DIAG-012): the targeted
+-- compile-time diagnostic for a public class template, present or added
+-- later, whose type-argument domain is closed and expressible through named
+-- capability concepts. The type-argument domain stays a `requires`-clause
+-- constraint on that named concept, so an out-of-domain argument is still
+-- rejected softly and satisfies no admission concept. An out-of-domain class
+-- template argument deduction is redirected, by deduction guides constrained
+-- on the negation of the domain rule and provided for every supported arity,
+-- to an internal diagnostic specialization that carries exactly one targeted
+-- static_assert. An admitted deduction, and every explicit construction, still
+-- selects the real specialization unchanged.
+--
+-- This entity records the observable contract only. The message wording and the
+-- instantiation-dependent static_assert mechanism are governance properties
+-- held in the requirements (REQ-DIAG-012, REQ-DIAG-004) and architecture
+-- (S3_class_template_deduction_diagnostic).
+
+entity ClassTemplateDeductionDiagnostic {
+    domain_gate_uses_named_capability_concept: Boolean
+    out_of_domain_deduction_redirects_to_diagnostic_specialization: Boolean
+    redirect_guide_provided_per_supported_arity: Boolean
+    diagnostic_specialization_internal_and_unsupported: Boolean
+    admitted_deduction_unchanged: Boolean
+    non_deducible_type_argument_redirects_to_guidance: Boolean
+
+    invariant DomainGateUsesNamedCapabilityConcept {
+        this.domain_gate_uses_named_capability_concept = true
+    }
+
+    invariant OutOfDomainDeductionRedirectsToDiagnosticSpecialization {
+        this.out_of_domain_deduction_redirects_to_diagnostic_specialization = true
+    }
+
+    invariant RedirectGuideProvidedPerSupportedArity {
+        this.redirect_guide_provided_per_supported_arity = true
+    }
+
+    invariant DiagnosticSpecializationInternalAndUnsupported {
+        this.diagnostic_specialization_internal_and_unsupported = true
+    }
+
+    invariant AdmittedDeductionUnchanged {
+        this.admitted_deduction_unchanged = true
+    }
+
+    invariant NonDeducibleTypeArgumentRedirectsToGuidance {
+        this.non_deducible_type_argument_redirects_to_guidance = true
+    }
+}
+
+actor ClassTemplateDeductionDiagnosticOperator { identified_by: ClassTemplateDeductionDiagnostic }
