@@ -10,6 +10,7 @@ related:
   - /mementum/memories/diagnostic-fallback-tracks-constraint-axis.md
   - /mementum/memories/requires-expression-constrained-template-sfinae-limitation.md
   - /mementum/memories/rejection-diagnostic-message-anchor.md
+  - /mementum/memories/diagnostic-message-label-convention.md
   - /mementum/knowledge/collection-source-interoperability.md
   - /mementum/knowledge/value-equality-domain.md
 depends-on: []
@@ -189,10 +190,45 @@ architecture `S3_rejection_diagnostic` → `specs/capabilities/diagnostics.alliu
 `static_assert` mechanism, and the "never a supported call target" obligation
 are **governance** properties held in requirements/architecture — the Allium
 entity records only observable contract, so the requirement-level carve-out
-needs no spec/arch propagation.
+needs no spec/arch propagation. `REQ-DIAG-011`'s label convention rides the same
+carve-out: a message label is wording, not observable behaviour, so it needs no
+Allium entity either.
+
+## Message labels (REQ-DIAG-011)
+
+A rejected call is not the only thing a reader sees: every targeted compile-time
+diagnostic message in `src/` also carries a label. Since 2026-10-16 every one
+opens with `cljonic::<entity>: ` — the public free-function name
+(`cljonic::conj:`) or the class-template name (`cljonic::Vector:`).
+
+- Codified as `REQ-DIAG-011` + architecture `S3_diagnostic_message_label` +
+  vocabulary `DiagnosticMessageLabel`.
+- Covers the class-internal asserts (capacity, initializer count, constructor,
+  range/view, static extent) that previously opened with a bare `Vector ` and no
+  delimiter, so one class no longer speaks two conventions.
+- Out of scope: a rejection carrying no message at all (a class-template
+  constraint already yields one named compiler diagnostic), and `static_assert`
+  calls inside documentation example blocks.
+- `make diagnostic-message-labels`
+  (`scripts/check-diagnostic-message-labels.py`) enforces it by parsing the
+  trailing message argument structurally — paren-matched statement, last
+  top-level comma, first string literal. Doc-example asserts and literal-bearing
+  conditions are therefore ignored, and the five concatenated capacity messages
+  are checked on their first literal.
+- An unlabelled message is fatal. A parked `PENDING_MESSAGES` backlog is
+  reported, non-fatal — the same ahead-of-the-application-slice pattern as
+  `check-free-function-diagnostics.py` — and a parked entry that later gets
+  relabelled is reported **stale**, so the backlog cannot silently outlive the
+  fix. The backlog is currently empty.
+- The label axis and the message-language axis are decided separately: these
+  messages still name internal template parameters (`ElementType`, `T`), and the
+  language pass over them remains open.
 
 ## Open work
 
+- The message-**language** pass over the 24 class-internal messages that still
+  name internal template parameters (`ElementType`, `T`). The label axis is done;
+  the language axis was deliberately decided separately.
 - Slice B — the `cljonic::Variant` free-function API — would add new public
   entry points requiring their own REQ-DIAG-009/010 disposition.
 - A future `range()` factory function would give `Range` a REQ-DIAG-009
