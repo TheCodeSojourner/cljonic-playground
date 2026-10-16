@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">static_assert</span>(</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        CapacityValue &lt;= <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>,</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="stringliteral">&quot;String CapacityValue exceeds &quot;</span></div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="stringliteral">&quot;cljonic::String: CapacityValue exceeds &quot;</span></div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="stringliteral">&quot;CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=&quot;</span> <a class="code hl_define" href="cljonic-config_8hpp.html#a79e6d0db8a00de83923cebef40296dab">CLJONIC_STRINGIFY</a>(<a class="code hl_define" href="cljonic-config_8hpp.html#a3de5728cfb3d964bf6b7c08224c174ad">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT</a>));</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
 <div class="foldopen" id="foldopen00116" data-start="{" data-end="}">
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> N&gt;</div>
 <div class="foldopen" id="foldopen00123" data-start="{" data-end="}">
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2">  123</a></span>    <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_string.html#ae3e26d18bb8bc456e6acd07b28ec73b2">String</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> (&amp;arr)[N]) <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        <span class="keyword">static_assert</span>(N - 1U &lt;= CapacityValue, <span class="stringliteral">&quot;String literal too long for capacity&quot;</span>);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        <span class="keyword">static_assert</span>(N - 1U &lt;= CapacityValue, <span class="stringliteral">&quot;cljonic::String: literal too long for capacity&quot;</span>);</div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        copy_from_source(arr, N - 1U);</div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    }</div>
 </div>
@@ -170,9 +170,9 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="foldopen" id="foldopen00148" data-start="{" data-end="}">
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno"><a class="line" href="classcljonic_1_1_string.html#abf4a5be6971e4cc5a6c4671be53828cf">  148</a></span>    <span class="keyword">constexpr</span> <a class="code hl_function" href="classcljonic_1_1_string.html#abf4a5be6971e4cc5a6c4671be53828cf">String</a>(SourceRange&amp;&amp; source) <span class="keyword">noexcept</span> {</div>
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        <span class="keyword">static_assert</span>(<a class="code hl_concept" href="conceptcljonic_1_1concepts_1_1_nothrow_range_construction.html">concepts::NothrowRangeConstruction&lt;char, SourceRange&gt;</a>,</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                      <span class="stringliteral">&quot;String range/view constructor requires char elements and non-throwing traversal&quot;</span>);</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                      <span class="stringliteral">&quot;cljonic::String: range/view constructor requires char elements and non-throwing traversal&quot;</span>);</div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        <span class="keyword">static_assert</span>(<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#ac4bb744bda73962104f419d622a023f0">concepts_detail::static_extent_fits_v&lt;SourceRange, CapacityValue&gt;</a>,</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                      <span class="stringliteral">&quot;String static-extent range source exceeds String CapacityValue&quot;</span>);</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                      <span class="stringliteral">&quot;cljonic::String: static-extent range source exceeds String CapacityValue&quot;</span>);</div>
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        std::size_t copy_count = 0;</div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; <span class="keywordtype">byte</span> : std::forward&lt;SourceRange&gt;(source)) {</div>
