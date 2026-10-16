@@ -1333,9 +1333,9 @@ namespace cljonic {
  * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
  * original collection. Construction with content longer than the available capacity is rejected at compile time.
  *
- Character arguments must be \c char; numeric values do not implicitly become characters.
- Text imports follow the \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
-
+ * Character arguments must be \c char; numeric values do not implicitly become characters. Text imports follow the
+ * \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
+ *
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -1425,7 +1425,7 @@ class String {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "String CapacityValue exceeds "
+        "cljonic::String: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     constexpr String() noexcept {
@@ -1436,7 +1436,7 @@ class String {
      * characters; the null terminator is managed separately. */
     template <std::size_t N>
     constexpr String(const char (&arr)[N]) noexcept {
-        static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
+        static_assert(N - 1U <= CapacityValue, "cljonic::String: literal too long for capacity");
         copy_from_source(arr, N - 1U);
     }
 
@@ -1462,9 +1462,9 @@ class String {
                  std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<SourceRange>>, char>)
     constexpr String(SourceRange&& source) noexcept {
         static_assert(concepts::NothrowRangeConstruction<char, SourceRange>,
-                      "String range/view constructor requires char elements and non-throwing traversal");
+                      "cljonic::String: range/view constructor requires char elements and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "String static-extent range source exceeds String CapacityValue");
+                      "cljonic::String: static-extent range source exceeds String CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& byte : std::forward<SourceRange>(source)) {
@@ -2280,15 +2280,16 @@ class Vector {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Vector CapacityValue exceeds "
+        "cljonic::Vector: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
     constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
+        static_assert(sizeof...(Args) <= CapacityValue,
+                      "cljonic::Vector: initializer count exceeds Vector CapacityValue");
         static_assert(
             (concepts::NothrowElementConstruction<ElementType, Args> && ...),
-            "Vector constructor requires all arguments to construct "
+            "cljonic::Vector: constructor requires all arguments to construct "
             "ElementType without throwing and convert safely without losing values or changing their meaning");
 
         initialize_storage_if_valid(std::forward<Args>(args)...);
@@ -2306,10 +2307,10 @@ class Vector {
                  !std::same_as<std::remove_cvref_t<SourceRange>, ElementType>)
     constexpr Vector(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<ElementType, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<ElementType, SourceRange>,
-                      "Vector range/view constructor requires each source element to "
+                      "cljonic::Vector: range/view constructor requires each source element to "
                       "convert safely to ElementType and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "Vector static-extent range source exceeds Vector CapacityValue");
+                      "cljonic::Vector: static-extent range source exceeds Vector CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& item : std::forward<SourceRange>(source)) {
@@ -3933,16 +3934,16 @@ class Map {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Map CapacityValue exceeds "
+        "cljonic::Map: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
     constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
+        static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Map: initializer count exceeds Map CapacityValue");
         static_assert(((std::same_as<std::remove_cvref_t<Args>, value_type> &&
                         concepts::NothrowElementConstruction<value_type, Args>) &&
                        ...),
-                      "Map constructor requires all arguments to construct "
+                      "cljonic::Map: constructor requires all arguments to construct "
                       "the exact MapEntry type without throwing");
 
         ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
@@ -3956,10 +3957,10 @@ class Map {
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
     constexpr Map(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
-                      "Map range/view constructor requires each source element to construct "
+                      "cljonic::Map: range/view constructor requires each source element to construct "
                       "the exact MapEntry type and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "Map static-extent range source exceeds Map CapacityValue");
+                      "cljonic::Map: static-extent range source exceeds Map CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& item : std::forward<SourceRange>(source)) {
@@ -4479,14 +4480,15 @@ class Queue {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Queue CapacityValue exceeds "
+        "cljonic::Queue: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
     constexpr Queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Queue initializer count exceeds Queue CapacityValue");
+        static_assert(sizeof...(Args) <= CapacityValue,
+                      "cljonic::Queue: initializer count exceeds Queue CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
-                      "Queue constructor requires all arguments to construct "
+                      "cljonic::Queue: constructor requires all arguments to construct "
                       "T without throwing and convert safely without losing values or changing their meaning");
 
         ((*this = conj(T(std::forward<Args>(args)))), ...);
@@ -4499,10 +4501,11 @@ class Queue {
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
     constexpr Queue(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
-        static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
-                      "Queue range/view constructor requires safe element conversion and non-throwing traversal");
+        static_assert(
+            concepts::NothrowRangeConstruction<value_type, SourceRange>,
+            "cljonic::Queue: range/view constructor requires safe element conversion and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "Queue static-extent range source exceeds Queue CapacityValue");
+                      "cljonic::Queue: static-extent range source exceeds Queue CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& item : std::forward<SourceRange>(source)) {
@@ -5493,14 +5496,14 @@ class Set {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Set CapacityValue exceeds "
+        "cljonic::Set: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
     constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Set initializer count exceeds Set CapacityValue");
+        static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Set: initializer count exceeds Set CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
-                      "Set constructor requires all arguments to construct "
+                      "cljonic::Set: constructor requires all arguments to construct "
                       "T without throwing and convert safely without losing values or changing their meaning");
 
         const auto duplicate = append_constructed(std::forward<Args>(args)...);
@@ -5520,10 +5523,10 @@ class Set {
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
     constexpr Set(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
-                      "Set range/view constructor requires each source element to construct "
+                      "cljonic::Set: range/view constructor requires each source element to construct "
                       "T safely and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "Set static-extent range source exceeds Set CapacityValue");
+                      "cljonic::Set: static-extent range source exceeds Set CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& item : std::forward<SourceRange>(source)) {

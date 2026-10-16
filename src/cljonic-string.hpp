@@ -18,9 +18,9 @@ namespace cljonic {
  * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
  * original collection. Construction with content longer than the available capacity is rejected at compile time.
  *
- Character arguments must be \c char; numeric values do not implicitly become characters.
- Text imports follow the \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
-
+ * Character arguments must be \c char; numeric values do not implicitly become characters. Text imports follow the
+ * \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
+ *
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -110,7 +110,7 @@ class String {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "String CapacityValue exceeds "
+        "cljonic::String: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     constexpr String() noexcept {
@@ -121,7 +121,7 @@ class String {
      * characters; the null terminator is managed separately. */
     template <std::size_t N>
     constexpr String(const char (&arr)[N]) noexcept {
-        static_assert(N - 1U <= CapacityValue, "String literal too long for capacity");
+        static_assert(N - 1U <= CapacityValue, "cljonic::String: literal too long for capacity");
         copy_from_source(arr, N - 1U);
     }
 
@@ -147,9 +147,9 @@ class String {
                  std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<SourceRange>>, char>)
     constexpr String(SourceRange&& source) noexcept {
         static_assert(concepts::NothrowRangeConstruction<char, SourceRange>,
-                      "String range/view constructor requires char elements and non-throwing traversal");
+                      "cljonic::String: range/view constructor requires char elements and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "String static-extent range source exceeds String CapacityValue");
+                      "cljonic::String: static-extent range source exceeds String CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& byte : std::forward<SourceRange>(source)) {

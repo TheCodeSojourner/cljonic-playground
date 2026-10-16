@@ -162,15 +162,16 @@ class Vector {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Vector CapacityValue exceeds "
+        "cljonic::Vector: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
     constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Vector initializer count exceeds Vector CapacityValue");
+        static_assert(sizeof...(Args) <= CapacityValue,
+                      "cljonic::Vector: initializer count exceeds Vector CapacityValue");
         static_assert(
             (concepts::NothrowElementConstruction<ElementType, Args> && ...),
-            "Vector constructor requires all arguments to construct "
+            "cljonic::Vector: constructor requires all arguments to construct "
             "ElementType without throwing and convert safely without losing values or changing their meaning");
 
         initialize_storage_if_valid(std::forward<Args>(args)...);
@@ -188,10 +189,10 @@ class Vector {
                  !std::same_as<std::remove_cvref_t<SourceRange>, ElementType>)
     constexpr Vector(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<ElementType, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<ElementType, SourceRange>,
-                      "Vector range/view constructor requires each source element to "
+                      "cljonic::Vector: range/view constructor requires each source element to "
                       "convert safely to ElementType and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "Vector static-extent range source exceeds Vector CapacityValue");
+                      "cljonic::Vector: static-extent range source exceeds Vector CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& item : std::forward<SourceRange>(source)) {

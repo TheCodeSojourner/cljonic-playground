@@ -104,14 +104,14 @@ class Set {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Set CapacityValue exceeds "
+        "cljonic::Set: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
     constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Set initializer count exceeds Set CapacityValue");
+        static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Set: initializer count exceeds Set CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
-                      "Set constructor requires all arguments to construct "
+                      "cljonic::Set: constructor requires all arguments to construct "
                       "T without throwing and convert safely without losing values or changing their meaning");
 
         const auto duplicate = append_constructed(std::forward<Args>(args)...);
@@ -131,10 +131,10 @@ class Set {
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
     constexpr Set(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
-                      "Set range/view constructor requires each source element to construct "
+                      "cljonic::Set: range/view constructor requires each source element to construct "
                       "T safely and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "Set static-extent range source exceeds Set CapacityValue");
+                      "cljonic::Set: static-extent range source exceeds Set CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& item : std::forward<SourceRange>(source)) {

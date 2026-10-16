@@ -120,16 +120,16 @@ class Map {
 
     static_assert(
         CapacityValue <= cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE,
-        "Map CapacityValue exceeds "
+        "cljonic::Map: CapacityValue exceeds "
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
     constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
-        static_assert(sizeof...(Args) <= CapacityValue, "Map initializer count exceeds Map CapacityValue");
+        static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Map: initializer count exceeds Map CapacityValue");
         static_assert(((std::same_as<std::remove_cvref_t<Args>, value_type> &&
                         concepts::NothrowElementConstruction<value_type, Args>) &&
                        ...),
-                      "Map constructor requires all arguments to construct "
+                      "cljonic::Map: constructor requires all arguments to construct "
                       "the exact MapEntry type without throwing");
 
         ((*this = assoc_entry(value_type{std::forward<Args>(args)})), ...);
@@ -143,10 +143,10 @@ class Map {
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
     constexpr Map(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
-                      "Map range/view constructor requires each source element to construct "
+                      "cljonic::Map: range/view constructor requires each source element to construct "
                       "the exact MapEntry type and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
-                      "Map static-extent range source exceeds Map CapacityValue");
+                      "cljonic::Map: static-extent range source exceeds Map CapacityValue");
 
         std::size_t copy_count = 0;
         for (auto&& item : std::forward<SourceRange>(source)) {
