@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail header-guards diagnostic-coverage requirements-structure vocabulary-structure audit-scripts trace-id-check _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail header-guards diagnostic-coverage diagnostic-message-labels requirements-structure vocabulary-structure audit-scripts trace-id-check _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -40,6 +40,7 @@ help:
 	@printf '%-12s %s\n' 'can-conj-compile-fail' 'Verify can_conj rejection diagnostics for unsupported collections and values'
 	@printf '%-12s %s\n' 'conj-compile-fail' 'Verify conj rejection diagnostics for unsupported collections and values'
 	@printf '%-12s %s\n' 'diagnostic-coverage' 'Verify every src/ public free-function header is classified as fallback, pending, or excluded (REQ-DIAG-009)'
+	@printf '%-12s %s\n' 'diagnostic-message-labels' 'Verify every src/ diagnostic message opens with a cljonic::<entity>: label (REQ-DIAG-011)'
 	@printf '%-12s %s\n' 'requirements-structure' 'Audit requirement IDs, declared domains, attribution, and rationale provenance'
 	@printf '%-12s %s\n' 'vocabulary-structure' 'Audit term metadata and Related links in vocabulary.md'
 	@printf '%-12s %s\n' 'audit-scripts' 'Run self-tests for reusable structural and trace-ID audit scripts'
@@ -192,6 +193,9 @@ header-guards:
 
 diagnostic-coverage:
 	@python3 scripts/check-free-function-diagnostics.py
+
+diagnostic-message-labels:
+	@python3 scripts/check-diagnostic-message-labels.py
 
 requirements-structure:
 	@python3 scripts/check-requirements-structure.py
@@ -402,6 +406,7 @@ upsert-gate:
 	@$(MAKE) --no-print-directory -s producer-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s diagnostic-coverage
+	@$(MAKE) --no-print-directory -s diagnostic-message-labels
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)
 
@@ -412,6 +417,7 @@ upsert-gate-fast:
 	@$(MAKE) --no-print-directory -s lint
 	@$(MAKE) --no-print-directory -s complexity-cli
 	@$(MAKE) --no-print-directory -s diagnostic-coverage
+	@$(MAKE) --no-print-directory -s diagnostic-message-labels
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
 	@$(MAKE) --no-print-directory -s no-heap
 	@echo "upsert-gate-fast:ok"
@@ -443,6 +449,7 @@ validate:
 	@$(MAKE) --no-print-directory -s producer-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s diagnostic-coverage
+	@$(MAKE) --no-print-directory -s diagnostic-message-labels
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
@@ -470,6 +477,7 @@ git:
 	@$(MAKE) --no-print-directory -s producer-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s diagnostic-coverage
+	@$(MAKE) --no-print-directory -s diagnostic-message-labels
 	@$(MAKE) --no-print-directory -s sanitizer-cli
 	@$(MAKE) --no-print-directory -s coverage-cli
 	@$(MAKE) --no-print-directory -s traceability-spec-to-code
