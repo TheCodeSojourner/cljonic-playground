@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-10-15
+last_updated: 2026-10-16
 status: draft
 ---
 
@@ -643,6 +643,27 @@ producer building blocks used across all higher-order algorithms.
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
 - **Examples:** The required literal form `cljonic::Regex{"^[A-Z]+$"}` validates at compile time; invalid runtime pattern construction returns the documented checked failure state.
 
+### RegexGroup
+- **Definition:** The root-namespace `cljonic::RegexGroup` public regex value type representing one capture group within a successful pattern match, identified by its group index. It is self-contained, immutable, bounded, and lives in the root `cljonic` namespace. It is approved-but-unimplemented: its lifecycle status is DeferredStatus until its behavioral specification, tests, and implementation are separately propagated.
+- **Deprecated Synonyms:** regex_group, regex capture group value
+- **Related:** Regex, RegexMatch, RegexMatcher, String, LifecycleClassification, DeferredStatus
+- **Usage:** Requirements, architecture, specifications, and documentation
+- **Examples:** `RegexGroup` is named by `REQ-VAL-018` as one of the public cljonic regex value types; no supported construction or observation exists today.
+
+### RegexMatch
+- **Definition:** The root-namespace `cljonic::RegexMatch` public regex value type representing one successful pattern match: the matched extent together with its capture groups. It is self-contained, immutable, bounded, and lives in the root `cljonic` namespace. It is approved-but-unimplemented: its lifecycle status is DeferredStatus until its behavioral specification, tests, and implementation are separately propagated.
+- **Deprecated Synonyms:** regex_match, regex match value
+- **Related:** Regex, RegexMatcher, RegexGroup, String, LifecycleClassification, DeferredStatus
+- **Usage:** Requirements, architecture, specifications, and documentation
+- **Examples:** `RegexMatch` is named by `REQ-VAL-018` as one of the public cljonic regex value types; no supported construction or observation exists today.
+
+### RegexMatcher
+- **Definition:** The root-namespace `cljonic::RegexMatcher` public regex value type pairing a bounded pattern value with the bounded input it searches, and yielding RegexMatch results. It is self-contained, immutable, bounded, and lives in the root `cljonic` namespace. It is approved-but-unimplemented: its lifecycle status is DeferredStatus until its behavioral specification, tests, and implementation are separately propagated.
+- **Deprecated Synonyms:** regex_matcher, regex matcher value
+- **Related:** Regex, RegexMatch, RegexGroup, String, LifecycleClassification, DeferredStatus
+- **Usage:** Requirements, architecture, specifications, and documentation
+- **Examples:** `RegexMatcher` is named by `REQ-VAL-018` as one of the public cljonic regex value types; no supported construction exists today.
+
 ### SwapAndRemove
 - **Definition:** An $O(1)$ removal strategy for unsorted collections (`Map` and `Set`) where the target element or key-value entry is overwritten by the last active stored element before decrementing the count.
 - **Deprecated Synonyms:** swap and remove, swap-with-back, unordered removal
@@ -1239,6 +1260,20 @@ producer building blocks used across all higher-order algorithms.
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `CljonicSource<Range<int>>` and `CljonicSource<Vector<int, 4>>` are both satisfied because they provide const input traversal; an external container is not nominally admitted even when it models `std::ranges::input_range`.
 
+
+### IterateStep
+- **Definition:** The named capability concept admitting a step callable to `Iterate`: the step must be copy-constructible and non-allocating, must accept the producer's element type, must return that element type, and must not throw when invoked. It is the product-specific admission concept for the `iterate` producer factory, so an argument outside the domain fails the concept rather than degrading into a candidate list (`REQ-DIAG-009`).
+- **Deprecated Synonyms:** iterate_step, iterate step concept
+- **Related:** Iterate, CljonicSource, NothrowCollectionElement, CljonicProducer, Producer, ProducerMaterialization, CapabilityConcept
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `IterateStep<int, int (*)(int) noexcept>` is satisfied by a non-throwing function pointer; the `Iterate` class template is gated on this concept.
+
+### RepeatedlyStep
+- **Definition:** The named capability concept admitting a zero-argument step callable to `Repeatedly`: the step must be copy-constructible and non-allocating, must produce the producer's element type, and must not throw when invoked. Unlike `IterateStep`, the step MAY maintain state or produce side effects. It is the product-specific admission concept for the `repeatedly` producer factory (`REQ-DIAG-009`).
+- **Deprecated Synonyms:** repeatedly_step, repeatedly step concept
+- **Related:** Repeatedly, CljonicSource, NothrowCollectionElement, CljonicProducer, Producer, ProducerMaterialization, CapabilityConcept
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `RepeatedlyStep<int, int (*)() noexcept>` is satisfied by a non-throwing generator; the `Repeatedly` class template is gated on this concept.
 
 ### ConstInputRange
 - **Definition:** The named structural capability requiring a value to provide input-range traversal from a const source expression. ConstInputRange is the weaker traversal capability refined by `NothrowConstInputRange`; it does not by itself imply nominal cljonic collection or producer admission, ownership, no-heap behavior, or exact cardinality.
