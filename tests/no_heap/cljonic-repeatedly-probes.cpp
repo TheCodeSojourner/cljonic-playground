@@ -5,6 +5,10 @@
 namespace cljonic::no_heap::probes {
 
 [[nodiscard]] auto repeatedly_probe() noexcept -> bool {
+    // No deduced construction here: Repeatedly has no admitted class template argument deduction (its element type
+    // is never deducible from a step), so every deduced form is redirected to the REQ-DIAG-012 diagnostic. The
+    // factory is the only construction surface at runtime; the rejected deduction is a compile-time error covered
+    // by scripts/check-ctad-diagnostics.py.
     const auto destination = Vector<int, 4>{};
     const auto counted = repeatedly(3U, []() noexcept { return 5; });
     const auto copied = counted;

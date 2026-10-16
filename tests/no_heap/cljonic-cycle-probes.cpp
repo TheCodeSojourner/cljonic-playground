@@ -8,6 +8,10 @@ namespace cljonic::no_heap::probes {
     const auto destination = Vector<int, 5>{};
     const auto source = Vector<int, 3>{1, 2, 3};
     const auto repeated = cycle(source);
+    // Deduced construction (REQ-DIAG-012): exercises the admitted class template argument deduction path so the
+    // redirecting guide is instantiated in the no-heap build as well. The rejected (redirected) deduction is a
+    // compile-time error and is covered by scripts/check-ctad-diagnostics.py.
+    const auto deduced_repeated = Cycle{source};
     const auto prefix = into(destination, repeated);
     const auto finite_source_cycle = cycle(Range{1, 4});
     const auto finite_source_prefix = into(Vector<int, 5>{}, finite_source_cycle);
@@ -16,10 +20,11 @@ namespace cljonic::no_heap::probes {
     return repeated.count() == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE && !repeated.is_finite() &&
            !fits_into(destination, repeated) && prefix.count() == destination.capacity() && prefix(0U) == 1 &&
            prefix(1U) == 2 && prefix(2U) == 3 && prefix(3U) == 1 && prefix(4U) == 2 &&
-           finite_source_prefix.count() == 5U && finite_source_prefix(0U) == 1 && finite_source_prefix(1U) == 2 &&
-           finite_source_prefix(2U) == 3 && finite_source_prefix(3U) == 1 && finite_source_prefix(4U) == 2 &&
-           unbounded_source_prefix.count() == 4U && unbounded_source_prefix(0U) == 0 &&
-           unbounded_source_prefix(3U) == 0;
+           deduced_repeated.count() == repeated.count() && !deduced_repeated.is_finite() &&
+           !fits_into(destination, deduced_repeated) && finite_source_prefix.count() == 5U &&
+           finite_source_prefix(0U) == 1 && finite_source_prefix(1U) == 2 && finite_source_prefix(2U) == 3 &&
+           finite_source_prefix(3U) == 1 && finite_source_prefix(4U) == 2 && unbounded_source_prefix.count() == 4U &&
+           unbounded_source_prefix(0U) == 0 && unbounded_source_prefix(3U) == 0;
 }
 
 } // namespace cljonic::no_heap::probes
