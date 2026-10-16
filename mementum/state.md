@@ -1,5 +1,38 @@
 ## Current Session State
 
+- last_session_id: 22001e9d-5b1c-43ec-91d7-4269932bedb5
+- current_timestamp: 2026-10-16T07:44:58-06:00
+- recover: 1
+- session_complete: false
+
+Task:
+1. Answered two user questions: whether the `String` doc claim about `char` character arguments matches the code, and whether the inconsistent `static_assert` message prefixes should be made consistent.
+2. Landed a spec-first governance change for diagnostic message labels: vocabulary term `DiagnosticMessageLabel`, `REQ-DIAG-011`, architecture `S3_diagnostic_message_label`, and the new gate `make diagnostic-message-labels` (`scripts/check-diagnostic-message-labels.py`), wired into `upsert-gate`, `upsert-gate-fast`, `validate`, and `git`.
+3. Relabelled all 24 class-internal collection `static_assert` messages from a bare `Vector `/`Map ` prefix with no delimiter to `cljonic::<Type>: ` (Map, Queue, Set, String, Vector), and emptied the gate's `PENDING_MESSAGES` backlog.
+
+Questions:
+1. Open — the message-language pass over the same 24 messages, which still name internal template parameters `ElementType` and `T`. Deliberately split from the label axis after an explicit human choice not to bundle it.
+2. Open (pre-existing) — `String::put` bypasses `character_is_valid`/`normalize_byte`, storing NUL and `0x80` verbatim, which contradicts the `String` class doc claim; `put` also has no contract in `specs/collections/string.allium` although tests exercise it.
+3. Open (pre-existing) — whether the capacity message must itself name the declared capacity, not only the configured maximum (vocabulary `CapacityConstruction` says the diagnostic identifies both; today only the maximum is stringified).
+
+Decisions:
+1. Canonical label form is `cljonic::<entity>: `, where entity is the public free-function name or the class-template name; human-decided 2026-10-16.
+2. The label axis and the message-language axis are separate. `REQ-DIAG-011` governs the label only; message-body language stays with the 2026-10-09 user-facing-diagnostic-language decision.
+3. Specs unchanged: a message label is wording, not observable behaviour, so `specs/capabilities/diagnostics.allium` needs no entity.
+4. The gate parks a known backlog as non-fatal (`PENDING_MESSAGES`) and reports a relabelled parked entry as stale, following the `check-free-function-diagnostics.py` precedent so governance can land ahead of its application slice.
+
+Validation:
+1. `requirements-structure:ok clauses=322 unique=322`; `vocabulary-structure:ok terms=180`; `diagnostic-message-labels:ok`; `diagnostic-coverage:ok`; `traceability-spec-to-code:ok`; `format:ok`; `lint:ok`; `no-heap-src:ok`; `git diff --check` clean.
+2. `make cljonic` and `make cljonic-test` pass; `make test` passes 218/218.
+3. Gate failure modes were exercised in isolated sandboxes: a new unlabelled message fails with `file:line`, a relabelled backlog entry is reported stale, a doc-block message is skipped, and a labelled-only header is clean.
+4. Verified that no test, script, or Makefile pins the 24 messages; their Doxygen source listings under `docs/` will refresh at `make git`.
+
+Next:
+1. Awaiting human review of the uncommitted governance change and the 24 relabels; no commits were made by the assistant.
+2. Then decide the message-language pass, and address the two pre-existing open items.
+
+## Previous Session State
+
 - last_session_id: 107959fa-e31e-417e-9e8e-341c7e6c0b7e
 - current_timestamp: 2026-10-15T15:57:15-06:00
 - recover: 1
