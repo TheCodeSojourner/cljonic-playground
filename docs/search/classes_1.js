@@ -50,5 +50,7 @@ var searchData=
   ['contains_5fstandard_5frange_3c_20set_3c_20t_2c_20capacityvalue_20_3e_20_3e_47',['contains_standard_range&lt; Set&lt; T, CapacityValue &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1contains__standard__range_3_01_set_3_01_t_00_01_capacity_value_01_4_01_4.html',1,'cljonic::concepts_detail']]],
   ['contains_5fstandard_5frange_3c_20string_3c_20capacityvalue_20_3e_20_3e_48',['contains_standard_range&lt; String&lt; CapacityValue &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1contains__standard__range_3_01_string_3_01_capacity_value_01_4_01_4.html',1,'cljonic::concepts_detail']]],
   ['contains_5fstandard_5frange_3c_20vector_3c_20elementtype_2c_20capacityvalue_20_3e_20_3e_49',['contains_standard_range&lt; Vector&lt; ElementType, CapacityValue &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1contains__standard__range_3_01_vector_3_01_element_type_00_01_capacity_value_01_4_01_4.html',1,'cljonic::concepts_detail']]],
-  ['cycle_50',['Cycle',['../classcljonic_1_1_cycle.html',1,'cljonic']]]
+  ['cycle_50',['Cycle',['../classcljonic_1_1_cycle.html',1,'cljonic']]],
+  ['cycle_3c_20concepts_5fdetail_3a_3acyclesourcedomainviolation_20_3e_51',['Cycle&lt; concepts_detail::CycleSourceDomainViolation &gt;',['../classcljonic_1_1_cycle_3_01concepts__detail_1_1_cycle_source_domain_violation_01_4.html',1,'cljonic']]],
+  ['cyclesourcedomainviolation_52',['CycleSourceDomainViolation',['../structcljonic_1_1concepts__detail_1_1_cycle_source_domain_violation.html',1,'cljonic::concepts_detail']]]
 ];

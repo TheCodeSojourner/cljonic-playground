@@ -28,5 +28,6 @@ var searchData=
   ['containsindexedcollection_25',['ContainsIndexedCollection',['../conceptcljonic_1_1concepts__detail_1_1_contains_indexed_collection.html',1,'cljonic::concepts_detail']]],
   ['containslookupcollection_26',['ContainsLookupCollection',['../conceptcljonic_1_1concepts__detail_1_1_contains_lookup_collection.html',1,'cljonic::concepts_detail']]],
   ['containssupportedcollection_27',['ContainsSupportedCollection',['../conceptcljonic_1_1concepts__detail_1_1_contains_supported_collection.html',1,'cljonic::concepts_detail']]],
-  ['copyableelement_28',['CopyableElement',['../conceptcljonic_1_1concepts_1_1_copyable_element.html',1,'cljonic::concepts']]]
+  ['copyableelement_28',['CopyableElement',['../conceptcljonic_1_1concepts_1_1_copyable_element.html',1,'cljonic::concepts']]],
+  ['cycleclassargument_29',['CycleClassArgument',['../conceptcljonic_1_1concepts__detail_1_1_cycle_class_argument.html',1,'cljonic::concepts_detail']]]
 ];

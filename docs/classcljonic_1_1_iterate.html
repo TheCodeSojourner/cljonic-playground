@@ -132,52 +132,10 @@ requires (!concepts::SafeImplicitConversion&lt;T, Initial&gt; || !std::same_as&l
 <tr class="memitem:aac5b9dabea70770b1ca58807030d5de1" id="r_aac5b9dabea70770b1ca58807030d5de1"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aac5b9dabea70770b1ca58807030d5de1">end</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_iterate_1_1const__iterator.html">const_iterator</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowCollectionElement T, typename Step&gt;<br />
-requires concepts::IterateStep&lt;T, Step&gt;<br />
-class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"></a> A <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a> producer is unbounded and created with <span class="tt">iterate(step, initial)</span>. It stores the initial value and a copy of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted value. For an initial value x and step function f, the observed sequence is <span class="tt">x, (f x), (f (f x)), ...</span>. The step may be a lambda, a named function, or a function object. Observation is bounded by the configured collection maximum or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a></span> when explicit materialization is required.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
-<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
-<div class="line"> </div>
-<div class="line"><span class="keyword">constexpr</span> <span class="keyword">auto</span> add_two(<span class="keywordtype">int</span> value) <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">int</span> { <span class="keywordflow">return</span> value + 2; }</div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">  <span class="comment">// A named function can be used as the constexpr step callback.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> constexpr_sum = [] {</div>
-<div class="line">    <span class="keyword">constexpr</span> <span class="keyword">auto</span> values = <a class="code hl_function" href="namespacecljonic.html#a63314a7947b7251553be23329779260a">iterate</a>(add_two, 1);</div>
-<div class="line">    <span class="keywordtype">int</span> sum = 0;</div>
-<div class="line">    <span class="keywordtype">int</span> observed = 0;</div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : values) {</div>
-<div class="line">      sum += value;</div>
-<div class="line">      <span class="keywordflow">if</span> (++observed == 4) {</div>
-<div class="line">        <span class="keywordflow">break</span>;</div>
-<div class="line">      }</div>
-<div class="line">    }</div>
-<div class="line">    <span class="keywordflow">return</span> sum;</div>
-<div class="line">  }();</div>
-<div class="line"> </div>
-<div class="line">  <span class="comment">// Runtime construction also accepts an inline lambda step callback.</span></div>
-<div class="line">  <span class="keyword">auto</span> runtime_values =</div>
-<div class="line">      <a class="code hl_function" href="namespacecljonic.html#a63314a7947b7251553be23329779260a">iterate</a>([](<span class="keywordtype">int</span> value) <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> value * 2; }, 2);</div>
-<div class="line"> </div>
-<div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="comment">// C++ interoperability: Iterate supports const traversal.</span></div>
-<div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="keywordtype">int</span> runtime_sum = 0;</div>
-<div class="line">  <span class="keywordtype">int</span> runtime_observed = 0;</div>
-<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : runtime_values) {</div>
-<div class="line">    <span class="comment">// A bounded observation makes the unbounded producer safe to inspect.</span></div>
-<div class="line">    runtime_sum += value;</div>
-<div class="line">    <span class="keywordflow">if</span> (++runtime_observed == 4) {</div>
-<div class="line">      <span class="keywordflow">break</span>;</div>
-<div class="line">    }</div>
-<div class="line">  }</div>
-<div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> constexpr_sum == 16 &amp;&amp; runtime_sum == 30 ? 0 : 1;</div>
-<div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a63314a7947b7251553be23329779260a"><div class="ttname"><a href="namespacecljonic.html#a63314a7947b7251553be23329779260a">cljonic::iterate</a></div><div class="ttdeci">constexpr auto iterate(Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; Iterate&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-iterate_8hpp_source.html#l00151">cljonic-iterate.hpp:151</a></div></div>
-</div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00067">67</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename Step&gt;<br />
+requires concepts_detail::IterateClassArgument&lt;T, Step&gt;<br />
+class cljonic::Iterate&lt; T, Step &gt;</div>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00083">83</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="abf2d980482bbd50d75a8ec3b6e0bd82a" name="abf2d980482bbd50d75a8ec3b6e0bd82a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abf2d980482bbd50d75a8ec3b6e0bd82a">&#9670;&#160;</a></span>value_type</h2>
@@ -185,7 +143,7 @@ class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"><
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+template&lt;typename T, typename Step&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="classcljonic_1_1_iterate.html">cljonic::Iterate</a>&lt; T, Step &gt;::value_type = T</td>
@@ -193,7 +151,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00069">69</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00085">85</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -204,7 +162,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+template&lt;typename T, typename Step&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -223,7 +181,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00115">115</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00131">131</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -233,7 +191,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+template&lt;typename T, typename Step&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -256,7 +214,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00120">120</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00136">136</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -266,7 +224,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+template&lt;typename T, typename Step&gt; </div>
 <div class="memtemplate">
 template&lt;typename Initial, typename OtherStep&gt; <br />
 requires (!concepts::SafeImplicitConversion&lt;T, Initial&gt; || !std::same_as&lt;std::remove_cvref_t&lt;OtherStep&gt;, Step&gt;)</div>
@@ -301,7 +259,7 @@ requires (!concepts::SafeImplicitConversion&lt;T, Initial&gt; || !std::same_as&l
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+template&lt;typename T, typename Step&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -320,7 +278,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00135">135</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00151">151</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -330,7 +288,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+template&lt;typename T, typename Step&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -349,7 +307,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00127">127</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00143">143</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -359,7 +317,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+template&lt;typename T, typename Step&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -378,7 +336,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00139">139</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00155">155</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -388,7 +346,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
+template&lt;typename T, typename Step&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -407,7 +365,7 @@ template&lt;concepts::NothrowCollectionElement T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00131">131</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00147">147</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
