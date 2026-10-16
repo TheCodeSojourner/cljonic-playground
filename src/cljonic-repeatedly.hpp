@@ -59,8 +59,25 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::RepeatedlyStep<T, Step>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeatedly` diagnostic
+ *  specialization. A `Repeatedly`'s element type is never deducible from its
+ *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
+struct RepeatedlyDomainViolation {};
+
+/** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
+ *  zero-argument step, or the internal diagnostic tag pair used only to redirect
+ *  a rejected deduction. */
+template <typename T, typename Step>
+concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && concepts::RepeatedlyStep<T, Step>) ||
+                                  (std::same_as<std::remove_cvref_t<T>, RepeatedlyDomainViolation> &&
+                                   std::same_as<std::remove_cvref_t<Step>, RepeatedlyDomainViolation>);
+
+} // namespace concepts_detail
+
+template <typename T, typename Step>
+    requires concepts_detail::RepeatedlyClassArgument<T, Step>
 class Repeatedly {
   public:
     using value_type = T;
@@ -151,6 +168,32 @@ class Repeatedly {
     std::size_t count_;
     bool is_finite_;
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): selected by the redirecting
+ *  deduction guides below. A `Repeatedly`'s element type is produced by its
+ *  step, so it is never deducible from a constructor argument; every deduced
+ *  `Repeatedly` reaches this specialization instead of a failed-deduction
+ *  candidate list. */
+template <>
+class Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Repeatedly([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Repeatedly: the element type cannot be deduced from a step alone. Use the repeatedly() "
+                      "free function, as in cljonic::repeatedly(step) or cljonic::repeatedly(count, step).");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012). No admitted `Repeatedly`
+ *  deduction exists, so these guides can never affect a supported construction. */
+template <typename Step>
+Repeatedly(const Step&)
+    -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
+
+template <typename Step, typename Count>
+Repeatedly(const Step&, Count)
+    -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
 
 template <typename Step, typename T = std::invoke_result_t<const std::decay_t<Step>&>>
     requires concepts::RepeatedlyStep<T, std::decay_t<Step>>

@@ -62,7 +62,21 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::NothrowCollectionElement T>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct RepeatElementDomainViolation {};
+
+/** The `Repeat` class-template gate (REQ-DIAG-012): a storable element, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. */
+template <typename T>
+concept RepeatClassArgument =
+    concepts::NothrowCollectionElement<T> || std::same_as<std::remove_cvref_t<T>, RepeatElementDomainViolation>;
+
+} // namespace concepts_detail
+
+template <concepts_detail::RepeatClassArgument T>
 class Repeat {
   public:
     using value_type = T;
@@ -155,6 +169,34 @@ class Repeat {
     std::size_t count_;
     bool is_finite_;
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guides below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Repeat<concepts_detail::RepeatElementDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Repeat([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Repeat: the repeated value must be storable without throwing. The value must be "
+                      "copyable and safe to create, store, and destroy without throwing, and a finite count must be "
+                      "an unsigned integral value representable by std::size_t.");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012), one per supported arity. Each is
+ *  viable only for a rejected deduction, so an admitted deduction is never
+ *  affected. The one-argument guide takes `const T&` to mirror the constructor's
+ *  deduction, so an array argument is rejected as the array it is. */
+template <typename T>
+    requires(!concepts::NothrowCollectionElement<T>)
+Repeat(const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
+
+template <typename T, typename Count>
+    requires(!concepts::NothrowCollectionElement<T> || !concepts_detail::ProducerCount<Count>)
+Repeat(const T&, Count) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
 
 template <typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>

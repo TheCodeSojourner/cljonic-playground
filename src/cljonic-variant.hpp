@@ -108,8 +108,25 @@ template <std::size_t Index = 0, typename Variant>
  }
  ~~~~~
  */
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Variant` diagnostic
+ *  specialization. A `Variant`'s alternatives are never deducible from its
+ *  constructor arguments, so any deduced `Variant` is a rejected deduction. */
+struct VariantDomainViolation {};
+
+/** The `Variant` class-template gate (REQ-DIAG-012): at least one storable
+ *  alternative, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
 template <typename... Alternatives>
-    requires(sizeof...(Alternatives) >= 1) && (concepts::NothrowVariantAlternative<Alternatives> && ...)
+concept VariantClassArgument =
+    (sizeof...(Alternatives) >= 1 && (concepts::NothrowVariantAlternative<Alternatives> && ...)) ||
+    (sizeof...(Alternatives) == 1 && (std::same_as<std::remove_cvref_t<Alternatives>, VariantDomainViolation> && ...));
+
+} // namespace concepts_detail
+
+template <typename... Alternatives>
+    requires concepts_detail::VariantClassArgument<Alternatives...>
 class Variant {
   public:
     constexpr Variant() noexcept = default;
@@ -169,6 +186,27 @@ class Variant {
   private:
     std::variant<Alternatives...> storage_{};
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): selected by the redirecting
+ *  deduction guide below. A `Variant`'s alternatives are never deducible from
+ *  its constructor arguments, so every deduced `Variant` reaches this
+ *  specialization, which turns the failed-deduction candidate list into one
+ *  targeted message. */
+template <>
+class Variant<concepts_detail::VariantDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Variant([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Variant: the alternative types cannot be deduced from this argument. Name the "
+                      "alternatives explicitly, as in cljonic::Variant<int, long>{value}.");
+    }
+};
+
+/** Redirecting deduction guide (REQ-DIAG-012). No admitted `Variant` deduction
+ *  exists, so this guide can never affect a supported construction. */
+template <typename T>
+Variant(const T&) -> Variant<concepts_detail::VariantDomainViolation>;
 
 } // namespace cljonic
 

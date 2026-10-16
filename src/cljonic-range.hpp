@@ -65,7 +65,24 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <std::signed_integral T>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. It is never a
+ *  supported element type and is never produced by an admitted call. */
+struct RangeElementDomainViolation {};
+
+/** The `Range` class-template gate (REQ-DIAG-012): a valid `Range` element
+ *  domain, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. Keeping the valid domain first preserves soft, SFINAE-friendly
+ *  type-level rejection for an out-of-domain element type. */
+template <typename T>
+concept RangeClassArgument =
+    concepts::RangeElement<T> || std::same_as<std::remove_cvref_t<T>, RangeElementDomainViolation>;
+
+} // namespace concepts_detail
+
+template <concepts_detail::RangeClassArgument T>
 class Range {
   public:
     using value_type = T;
@@ -225,6 +242,40 @@ class Range {
     T end_;
     T step_;
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guides below, which select it for exactly the
+ *  out-of-domain class template argument deduction. Constructing it is always a
+ *  compile-time error whose single message names the class template, the
+ *  rejected argument type, and the violated domain rule. It is never a
+ *  supported construction target and exposes no usable state. */
+template <>
+class Range<concepts_detail::RangeElementDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Range([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Range: the element type must be a signed integral type. Every start, end, and step "
+                      "argument must be a signed integral value, because Range describes a signed arithmetic "
+                      "sequence whose span arithmetic requires a signed element type.");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012), one per supported arity. Each is
+ *  viable only for a rejected deduction, so an admitted deduction is never
+ *  affected. */
+template <typename T>
+    requires(!concepts::RangeElement<std::remove_cvref_t<T>>)
+Range(T) -> Range<concepts_detail::RangeElementDomainViolation>;
+
+template <typename Start, typename End>
+    requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>>))
+Range(Start, End) -> Range<concepts_detail::RangeElementDomainViolation>;
+
+template <typename Start, typename End, typename Step>
+    requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>> &&
+               concepts::RangeElement<std::remove_cvref_t<Step>>))
+Range(Start, End, Step) -> Range<concepts_detail::RangeElementDomainViolation>;
 
 } // namespace cljonic
 

@@ -62,8 +62,24 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
+ *  specialization during an out-of-domain class template argument deduction. */
+struct IterateDomainViolation {};
+
+/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
+ *  step, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
+template <typename T, typename Step>
+concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
+                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
+                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
+
+} // namespace concepts_detail
+
+template <typename T, typename Step>
+    requires concepts_detail::IterateClassArgument<T, Step>
 class Iterate {
   public:
     using value_type = T;
@@ -144,6 +160,29 @@ class Iterate {
     T initial_;
     Step step_;
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guide below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Iterate([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Iterate: the initial value and step cannot be used to build an Iterate. The initial "
+                      "value must be storable without throwing, and the step must be a pure, non-allocating, "
+                      "non-throwing callable that accepts the initial value and returns the element type.");
+    }
+};
+
+/** Redirecting deduction guide (REQ-DIAG-012): viable only for a rejected
+ *  deduction, so an admitted deduction is never affected. */
+template <typename T, typename Step>
+    requires(!(concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>))
+Iterate(const T&, const Step&)
+    -> Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation>;
 
 template <typename Step, typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&

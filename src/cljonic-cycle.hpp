@@ -59,8 +59,22 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts::CljonicSource Source>
-    requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Cycle` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct CycleSourceDomainViolation {};
+
+/** The `Cycle` class-template gate (REQ-DIAG-012): a valid cycle source, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. Naming
+ *  the rule as one concept also keeps the emitted constraint readable. */
+template <typename Source>
+concept CycleClassArgument =
+    ValidCycleSource<Source> || std::same_as<std::remove_cvref_t<Source>, CycleSourceDomainViolation>;
+
+} // namespace concepts_detail
+
+template <concepts_detail::CycleClassArgument Source>
 class Cycle {
   public:
     using source_type = Source;
@@ -181,6 +195,27 @@ class Cycle {
     std::size_t count_{CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE};
     bool is_finite_{false};
 };
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guide below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Cycle<concepts_detail::CycleSourceDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Cycle([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Cycle: the source argument cannot be used to build a Cycle. The source must be a "
+                      "cljonic collection or producer whose element type is storable without throwing.");
+    }
+};
+
+/** Redirecting deduction guide (REQ-DIAG-012): viable only for a rejected
+ *  deduction, so an admitted deduction is never affected. */
+template <typename Source>
+    requires(!concepts_detail::ValidCycleSource<Source>)
+Cycle(const Source&) -> Cycle<concepts_detail::CycleSourceDomainViolation>;
 
 template <concepts::CljonicSource Source>
     requires concepts::NothrowCollectionElement<std::ranges::range_value_t<const Source>>

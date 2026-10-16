@@ -542,6 +542,14 @@ concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t
     { c.contains(i) } noexcept -> std::same_as<bool>;
 };
 
+/** The named element-domain rule for \ref Range "Range" (REQ-DIAG-012): a
+ *  `Range` element must be a signed integral type, because a `Range` describes a
+ *  signed arithmetic sequence and its span arithmetic requires a signed element
+ *  type. An out-of-domain element type fails this concept, so the type-level
+ *  gate stays soft and SFINAE-friendly rather than becoming ill-formed. */
+template <typename T>
+concept RangeElement = std::signed_integral<T>;
+
 } // namespace concepts
 
 namespace concepts_detail {
