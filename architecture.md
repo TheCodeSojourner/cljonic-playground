@@ -261,6 +261,19 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | ¬require(producer_factory_diagnostic(x)) for(Range ∧ class_template_element_constraint(x))
   | rejection_diagnostic(x) → trace_to(REQ-DIAG-009 ∧ REQ-DIAG-010 ∧ REQ-DIAG-001 ∧ REQ-DIAG-003)
 
+λ S3_diagnostic_message_label(x). targeted_compile_time_diagnostic_message(x) ∧ emitted_in(src/)
+  → require(fixed_label(x))
+  | fixed_label(x) ≡ "cljonic::" ∧ entity_name(x) ∧ ": " ∧ message_body(x)
+  | entity_name(x) ≡ public_free_function_name(x) ∨ class_template_name(x)
+  | message_body_language(x) → governed_separately_by(user_facing_diagnostic_language_decision(x)) ∧ ¬governed_by(this_rule(x))
+  | applies_to(class_internal_assertions(x) ≡ capacity ∧ initializer_count ∧ constructor ∧ range_view ∧ static_extent)
+  | concatenated_message_literals(x) → label_binds(first_literal(x))
+  | ¬applies_to(class_template_gated_rejection_without_message(x))
+  | label_convention(x) → mechanically_checkable(x) ∧ surfaced_by(diagnostic_message_label_gate(x))
+  | traces_to(S3_rejection_diagnostic ∧ S5_value_and_failure_semantics)
+  | violation(x) → conformance_defect(x) ∧ surface_by(diagnostic_message_label_gate(x))
+  | forward_binding(x) → bind(every_future_diagnostic_message(x))
+
 ## S2 - Coordination
 
 λ S2_coordination_intro(x). coordination(x) → driven_by(canonical_vocabulary ∧ interaction_protocols)
