@@ -1,5 +1,44 @@
 ## Current Session State
 
+- last_session_id: 7f60904a-77f3-4e7d-878d-a36a58c1bcdd
+- current_timestamp: 2026-10-17T13:49:16-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Arranged the `\mainpage` Core_Cheatsheet free-function index so each bullet holds one initial letter: split the `a`/`c` mixed first bullet of Sequence traversal, split Control (`d`/`i`/`u`/`w`), and merged the duplicate `i` bullets in Sequence traversal.
+2. Replaced implementation-facing index wording with user-facing wording: "integer index association" (`assoc`), "an integer index can be replaced" (`can_assoc`), "accept an integer index" (`contains`), "the index must be an integer" (`get`); removed "non-Boolean, non-character" from the count prose in `Repeat` and `Repeatedly`.
+3. Removed the redundant "Boolean, character, enum, and user-defined values do not convert across types" sentence from `contains`, `disj`, and `get`, plus the keys variant from `dissoc`, leaving the linked ImplicitConversions page as the single statement of the conversion rule.
+4. Clarified the `equal` contract: "a nested producer that admits stable equality is compared by its stored parameters", and added that `Iterate`/`Repeatedly` cannot be compared stably because their step is a callable, so they are unsupported as map keys, set elements, or nested components.
+5. Regenerated `cljonic.hpp` and `docs/` and verified the rendered HTML after each change.
+
+Questions:
+1. None blocking.
+2. Open — the Core_Cheatsheet retains pre-existing link defects outside the arrangement rule: `Core_Frequencies "Frequencies"` renders literally because its `\ref` is absent (planned entry, no anchor), and `FitsInto` is out of alphabetical position in the `f` bullet.
+3. Resolved — the unrelated `src/cljonic-conj.hpp` edit ("and the remaining values are still added." removed) was landed by the human in `904b374` together with the session's source changes; AI did not author it and left it untouched.
+4. Deferred — `character_is_valid` retains "Accepts non-`bool` integral values"; that is a value-domain contract, not an index description.
+
+Decisions:
+1. Human decision 2026-10-17: free-function index lists must hold exactly one bullet per initial letter — split mixed-letter bullets and merge bullets repeating a letter.
+2. Human decision 2026-10-17: describe index positions as "an integer index"; drop the implementation-facing bool/character qualifiers from Doxygen prose.
+3. Human decision 2026-10-17: remove the restated conversion-exclusion sentence wherever it duplicates the linked ImplicitConversions rule (`contains`, then `disj`/`get`, then `dissoc`).
+4. Human decision 2026-10-17: `equal` prose says "a nested producer that admits stable equality…", and the Iterate/Repeatedly exclusion is scoped to map keys, set elements, and nested components because top-level `equal` still compares them by their observed elements.
+
+Validation:
+1. `make format-doc-samples` (`core-cheatsheet-format:ok`), `make cljonic`, `make cljonic-test`, and `make docs` all reported ok; the formatter and amalgamation were idempotent on a second pass.
+2. Parsed both the source and rendered `docs/index.html`: every free-function section is one bullet per letter with no duplicate-letter bullets (`Control: diuw`, `Sequence traversal: acdefgijlmnprst`, etc.).
+3. Rendered prose contains "an integer index", "the index must be an integer", and the revised `equal` paragraph; no prose page contains "non-Boolean, non-character" or the restated conversion sentence. Those strings survive only in `static_assert` diagnostic messages, which remain unchanged.
+4. `git diff --check` clean; no new line exceeds 120 columns (the lone `concepts.hpp:1111` hit is pre-existing).
+5. Approved synthesis applied: `doxygen-html-cheatsheet-structure` memory extended with the letter-grouping convention (145 words), `doxygen-prose-must-be-user-facing` memory extended with the index/count wording rule (181 words), and the stale `collection-source-interoperability` anchor sentence refreshed to "you cannot construct a".
+6. Human landed the source and generated artifacts before fini: `904b374` (source changes plus regenerated `cljonic.hpp`) and `7ca6718` (regenerated `docs/`). The working tree was clean at fini; only `mementum/` was committed by fini.
+
+Next:
+1. Optional cheatsheet cleanup: render the planned `Frequencies` entry as plain text and move `FitsInto` into alphabetical position in the `f` bullet.
+2. Synthesis carried forward (human approval required): add the doc-block binding rule and the six-producer instance to `mementum/knowledge/doxygen-doc-tooling.md`.
+3. Deferred backlog unchanged: the message-language pass over the 24 class-internal diagnostic messages, the `String::put` validation gap, the capacity-message content question, the `variant-api` lifecycle, the MapEntry semantic key/val/first/last behavior, the seqable lifecycle for Map/Queue/Set/String, the five-header diagnostic-coverage backlog (`fits_into`, `get`, `into`, `peek`, `pop`), and the six documented examples.
+
+## Previous Session State
+
 - last_session_id: 4453d16a-1f48-4d20-b648-30a7d6951ac1
 - current_timestamp: 2026-10-17T12:35:00-06:00
 - recover: 1

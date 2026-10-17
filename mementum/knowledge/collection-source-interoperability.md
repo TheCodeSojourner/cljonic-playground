@@ -89,8 +89,8 @@ constrained on the negation of the source-admission rule, emitting one targeted
 violated rule, and both alternatives: `into` for materialization (preflighted by
 `fits_into`), or the enclosure form for a single element. The fallback exists to
 explain rejection, not to accept it — it never produces a value and is never a
-supported call target. The harness asserts the message anchor "is not a
-constructor source" (whitespace-normalized), so wording drift fails the gate.
+supported call target. The harness asserts the message anchor "you cannot
+construct a" (whitespace-normalized), so wording drift fails the gate.
 
 ## Vector baseline
 
