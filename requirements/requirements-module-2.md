@@ -417,7 +417,7 @@ Explanatory definitions; binding obligations reside in the numbered clauses refe
   ∧ ¬∃ regression of the detectability contract (`REQ-DIAG-009`): an out-of-domain type argument still satisfies none of the admission concepts
   ∧ ∀ public_class_template whose type argument is not deducible from any constructor argument (`Variant`'s alternatives, `Repeatedly`'s element type): no admitted deduction exists, so every deduction is rejected and the redirect yields exactly one targeted `static_assert` that names the class template and states the supported construction form — name the arguments explicitly or use the named factory function — rather than a failed-deduction candidate list
   rationale: class template argument deduction reports an out-of-domain argument as a failed deduction with a candidate list — for `Cycle` even expanding standard-library iterator traits into the constraint text — naming the compiler's candidate set rather than the violated cljonic rule. The two goals are not a trade-off: a domain constraint keeps the type-level gate SFINAE-friendly, while a deduction guide constrained on the negated domain redirects exactly the rejected deduction to one targeted message
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-16, rationale_source: AI_inferred}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-16, rationale_source: AI_inferred, rationale_approved_by: human, rationale_approved_at: 2026-10-17}
 
 ## Compile-Time Evaluation
 
