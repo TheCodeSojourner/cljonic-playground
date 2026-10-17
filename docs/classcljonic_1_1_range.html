@@ -151,7 +151,55 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts_detail::RangeClassArgument T&gt;<br />
-class cljonic::Range&lt; T &gt;</div>
+class cljonic::Range&lt; T &gt;</div><p><a class="anchor" id="Range"></a> A <a class="el" href="classcljonic_1_1_range.html">Range</a> is a producer describing an arithmetic sequence from an inclusive <code class="param">start</code> to an exclusive <code class="param">end</code> by a fixed <code class="param">step</code>, defaulting to start <span class="tt">0</span> and step <span class="tt">1</span>. A zero step repeats <code class="param">start</code> indefinitely, taking precedence over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from <code class="param">end</code> produces an empty range. Observation is bounded by its finite span, by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b> for a zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a></span> when explicit materialization is required. Explicitly typed parameters follow the <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
+<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="comment">// Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero</span></div>
+<div class="line">  <span class="comment">// arguments.</span></div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range&lt;int&gt;</a> <a class="code hl_function" href="namespacecljonic.html#a2936b6921ca67e4b8ae5f221c095bde0">empty</a>{};</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Single argument is the exclusive end; start defaults to 0, step to 1.</span></div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> to_five = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{5};</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Explicit start and end; step still defaults to 1.</span></div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> two_to_five = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{2, 5};</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Explicit start, end, and step.</span></div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> evens = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{0, 10, 2};</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// A zero step repeats start indefinitely rather than being empty.</span></div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> repeating = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{0, 5, 0};</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// A billion elements exceeds the system&#39;s allowed maximum, so only that</span></div>
+<div class="line">  <span class="comment">// maximum number of elements is available.</span></div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> huge = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{1000000000L};</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
+<div class="line">  <span class="comment">// C++ interoperability: a Range supports const traversal.</span></div>
+<div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> odds = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{1, 12, 2};</div>
+<div class="line">  <span class="keyword">auto</span> runtime_odds = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{-1, -11, -2};</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Use C++ interoperability to sum the values in a constexpr range</span></div>
+<div class="line">  <span class="keywordtype">int</span> odds_sum = 0;</div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : odds) {</div>
+<div class="line">    odds_sum += value;</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Use C++ interoperability to sum the values in a runtime range</span></div>
+<div class="line">  <span class="keywordtype">int</span> runtime_odds_sum = 0;</div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : runtime_odds) {</div>
+<div class="line">    runtime_odds_sum += value;</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> (odds_sum == 36) &amp;&amp; (runtime_odds_sum == -25);</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00086">cljonic-range.hpp:86</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_range_html_a99d9aab5afee99d7193f76882974e7c1"><div class="ttname"><a href="#a99d9aab5afee99d7193f76882974e7c1">cljonic::Range::Range</a></div><div class="ttdeci">constexpr Range() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00132">cljonic-range.hpp:132</a></div></div>
+<div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a2936b6921ca67e4b8ae5f221c095bde0"><div class="ttname"><a href="namespacecljonic.html#a2936b6921ca67e4b8ae5f221c095bde0">cljonic::empty</a></div><div class="ttdeci">constexpr auto empty(const C &amp;) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-empty_8hpp_source.html#l00035">cljonic-empty.hpp:35</a></div></div>
+</div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00086">86</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a852046c9ce7f1f2dcdf3e8a92960e165" name="a852046c9ce7f1f2dcdf3e8a92960e165"></a>

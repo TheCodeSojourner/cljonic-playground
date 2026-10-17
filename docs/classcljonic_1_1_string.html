@@ -181,7 +181,7 @@ requires (!std::same_as&lt;std::remove_cvref_t&lt;Value&gt;, char&gt;)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t CapacityValue&gt;<br />
-class cljonic::String&lt; CapacityValue &gt;</div><p><a class="anchor" id="String"></a> A <a class="el" href="classcljonic_1_1_string.html">String</a> is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds <span class="tt">0x7F</span> are rejected at compile time and replaced with <span class="tt">.</span> at runtime. Updates return a modified copy without changing the original collection. Construction with content longer than the available capacity is rejected at compile time.</p>
+class cljonic::String&lt; CapacityValue &gt;</div><p><a class="anchor" id="String"></a> A <a class="el" href="classcljonic_1_1_string.html">String</a> is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds <span class="tt">0x7F</span> are rejected at compile time and replaced with <span class="tt">.</span> at runtime. Construction with content longer than the available capacity is rejected at compile time.</p>
 <p>Character arguments must be <code>char</code>; numeric values do not implicitly become characters. Text imports follow the <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a> and retain character validation.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -565,7 +565,7 @@ template&lt;concepts_detail::IntegerIndexType IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00243">243</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00244">244</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -594,7 +594,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00209">209</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00210">210</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -663,7 +663,7 @@ template&lt;concepts_detail::IntegerIndexType IndexType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00237">237</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00238">238</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -692,7 +692,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00256">256</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00257">257</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -751,7 +751,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00180">180</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00181">181</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -781,7 +781,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </div><div class="memdoc">
 <p>Returns whether the character is non-NUL ASCII. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00189">189</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00190">190</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -840,7 +840,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00260">260</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00261">261</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -902,7 +902,7 @@ template&lt;concepts_detail::IntegerIndexType IndexType&gt; </div>
 </div><div class="memdoc">
 <p>Returns true when index falls within logical bounds (not counting null terminator). Mirrors Clojure contains? over string indices. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00224">224</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00225">225</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -931,7 +931,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00184">184</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00185">185</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -960,7 +960,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00213">213</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00214">214</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -1030,7 +1030,7 @@ template&lt;concepts_detail::IntegerIndexType IndexType&gt; </div>
 </div><div class="memdoc">
 <p>Callable index access with custom fallback value on invalid index. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00231">231</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00232">232</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -1059,7 +1059,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00197">197</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00198">198</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -1129,7 +1129,7 @@ template&lt;concepts_detail::IntegerIndexType IndexType&gt; </div>
 </div><div class="memdoc">
 <p>Returns a fresh <a class="el" href="classcljonic_1_1_string.html">String</a> with the character at index replaced. Out-of-bounds indices leave copy unchanged. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00273">273</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00274">274</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
@@ -1158,7 +1158,7 @@ template&lt;std::size_t CapacityValue&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00217">217</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00218">218</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
