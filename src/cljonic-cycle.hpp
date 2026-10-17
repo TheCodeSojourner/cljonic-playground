@@ -9,14 +9,30 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Cycle` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct CycleSourceDomainViolation {};
+
+/** The `Cycle` class-template gate (REQ-DIAG-012): a valid cycle source, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. Naming
+ *  the rule as one concept also keeps the emitted constraint readable. */
+template <typename Source>
+concept CycleClassArgument =
+    ValidCycleSource<Source> || std::same_as<std::remove_cvref_t<Source>, CycleSourceDomainViolation>;
+
+} // namespace concepts_detail
+
 /** \anchor Cycle
- * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. A
- * finite source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without
- * first materializing the whole source, and yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements
- * (or fewer when materialized into a destination with an explicit capacity). The approved public form is
- * `cycle(source)` only. It supports const C++ range traversal in both constant evaluation and runtime code. Values can
- * be passed directly to cljonic operations that accept a source, or converted into an owning destination with `into`
- * when explicit materialization is required.
+ * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. The
+ * source's elements may themselves be cljonic collections or producers, including nested cljonic composites. A finite
+ * source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without first
+ * materializing the whole source, and yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements (or
+ * fewer when materialized into a destination with an explicit capacity). The approved public form is `cycle(source)`
+ * only. It supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
+ * directly to cljonic operations that accept a source, or converted into an owning destination with `into` when
+ * explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -59,21 +75,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Cycle` diagnostic specialization
- *  during an out-of-domain class template argument deduction. */
-struct CycleSourceDomainViolation {};
-
-/** The `Cycle` class-template gate (REQ-DIAG-012): a valid cycle source, or the
- *  internal diagnostic tag used only to redirect a rejected deduction. Naming
- *  the rule as one concept also keeps the emitted constraint readable. */
-template <typename Source>
-concept CycleClassArgument =
-    ValidCycleSource<Source> || std::same_as<std::remove_cvref_t<Source>, CycleSourceDomainViolation>;
-
-} // namespace concepts_detail
-
 template <concepts_detail::CycleClassArgument Source>
 class Cycle {
   public:

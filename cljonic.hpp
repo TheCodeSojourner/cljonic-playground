@@ -1338,8 +1338,8 @@ namespace cljonic {
 /** \anchor String
  * A String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
  * callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds `0x7F` are
- * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
- * original collection. Construction with content longer than the available capacity is rejected at compile time.
+ * rejected at compile time and replaced with `.` at runtime. Construction with content longer than the available
+ * capacity is rejected at compile time.
  *
  * Character arguments must be \c char; numeric values do not implicitly become characters. Text imports follow the
  * \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
@@ -1495,9 +1495,10 @@ class String {
     constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::String: you cannot construct a String from a cljonic collection or producer. A String "
-                      "is built from its characters, or from a non-cljonic C++ range or view. To copy this argument's "
-                      "contents into a String, use into(destination, source); call fits_into(destination, source) "
-                      "first to check whether the whole source fits.");
+                      "is built from its characters, or from a non-cljonic C++ range or view. To materialize a cljonic "
+                      "collection or producer into a Vector, use into(destination, source); call "
+                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
+                      "remaining capacity.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2140,12 +2141,14 @@ namespace cljonic {
 
 /** \anchor Vector
  * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
- * operate on the collection is through the library's free-function API. Updates return a modified copy without
- * changing the original collection. Construction with more initializers than the available capacity is rejected at
- * compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer
- * is not a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
- * preflight predicate for whether the whole source fits. Element construction, updates, and fallbacks follow the \ref
- * ImplicitConversions "safe implicit conversion rules".
+ * operate on the collection is through the library's free-function API. Construction with more initializers than the
+ * available capacity is rejected at compile time. A non-cljonic C++ range or view constructor parameter is copied into
+ * the collection. A cljonic value is not copied as a range/view source. With an explicit element type, it is accepted
+ * as one element only when its type exactly matches the declared element type. Without explicit template arguments, a
+ * sole cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
+ * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
+ * collections or producers, including nested cljonic composites. Element construction, updates, and fallbacks follow
+ * the \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -2341,9 +2344,11 @@ class Vector {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Vector: you cannot construct a Vector from a cljonic collection or producer. A Vector is built "
-            "from its individual elements, or from a non-cljonic C++ range or view. To copy this argument's contents "
-            "into a Vector, use into(destination, source) (call fits_into(destination, source) first to check whether "
-            "the whole source fits); to keep it as a single element, write Vector{...}.");
+            "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
+            "collection or "
+            "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
+            "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
+            "element, write Vector{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2515,14 +2520,30 @@ struct contains_standard_range<Vector<ElementType, CapacityValue>>
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Cycle` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct CycleSourceDomainViolation {};
+
+/** The `Cycle` class-template gate (REQ-DIAG-012): a valid cycle source, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. Naming
+ *  the rule as one concept also keeps the emitted constraint readable. */
+template <typename Source>
+concept CycleClassArgument =
+    ValidCycleSource<Source> || std::same_as<std::remove_cvref_t<Source>, CycleSourceDomainViolation>;
+
+} // namespace concepts_detail
+
 /** \anchor Cycle
- * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. A
- * finite source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without
- * first materializing the whole source, and yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements
- * (or fewer when materialized into a destination with an explicit capacity). The approved public form is
- * `cycle(source)` only. It supports const C++ range traversal in both constant evaluation and runtime code. Values can
- * be passed directly to cljonic operations that accept a source, or converted into an owning destination with `into`
- * when explicit materialization is required.
+ * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. The
+ * source's elements may themselves be cljonic collections or producers, including nested cljonic composites. A finite
+ * source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without first
+ * materializing the whole source, and yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements (or
+ * fewer when materialized into a destination with an explicit capacity). The approved public form is `cycle(source)`
+ * only. It supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
+ * directly to cljonic operations that accept a source, or converted into an owning destination with `into` when
+ * explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -2565,21 +2586,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Cycle` diagnostic specialization
- *  during an out-of-domain class template argument deduction. */
-struct CycleSourceDomainViolation {};
-
-/** The `Cycle` class-template gate (REQ-DIAG-012): a valid cycle source, or the
- *  internal diagnostic tag used only to redirect a rejected deduction. Naming
- *  the rule as one concept also keeps the emitted constraint readable. */
-template <typename Source>
-concept CycleClassArgument =
-    ValidCycleSource<Source> || std::same_as<std::remove_cvref_t<Source>, CycleSourceDomainViolation>;
-
-} // namespace concepts_detail
-
 template <concepts_detail::CycleClassArgument Source>
 class Cycle {
   public:
@@ -3481,14 +3487,14 @@ namespace cljonic {
 
 /** \anchor Into
  * The \b into free function API appends elements from a \ref concepts::CljonicSource "source" to a \ref Vector
- * "Vector", up to its remaining
- *        capacity.
+ * "Vector", up to its remaining capacity.
  *
  * Returns an updated destination-typed collection with source elements appended after the destination's existing
  * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
  * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
- * completely. Scoped to \ref Vector "Vector" destinations in this increment. Source elements must follow the
- * destination's \ref ImplicitConversions "safe implicit conversion rules".
+ * completely. Use \b fits_into beforehand to check whether the complete source fits. Scoped to \ref Vector "Vector"
+ * destinations in this increment. Source elements must follow the destination's \ref ImplicitConversions "safe
+ * implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3577,14 +3583,31 @@ constexpr auto is_empty([[maybe_unused]] const C& collection) noexcept -> void {
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
+ *  specialization during an out-of-domain class template argument deduction. */
+struct IterateDomainViolation {};
+
+/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
+ *  step, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
+template <typename T, typename Step>
+concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
+                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
+                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
+
+} // namespace concepts_detail
+
 /** \anchor Iterate
- * A Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy of
- * the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted value.
- * For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`. The step may be a
- * lambda, a named function, or a function object. Observation is bounded by the configured collection maximum or by an
- * explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime
- * code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required.
+ * An Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy
+ * of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted
+ * value. For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`. The initial
+ * and produced values may themselves be cljonic collections or producers, including nested cljonic composites. The
+ * step may be a lambda, a named function, or a function object. Observation is bounded by \b
+ * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by an explicit destination capacity, and it supports const C++
+ * range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations
+ * that accept a source, or converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3628,22 +3651,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
- *  specialization during an out-of-domain class template argument deduction. */
-struct IterateDomainViolation {};
-
-/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
- *  step, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. */
-template <typename T, typename Step>
-concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
-                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
-                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
-
-} // namespace concepts_detail
-
 template <typename T, typename Step>
     requires concepts_detail::IterateClassArgument<T, Step>
 class Iterate {
@@ -3906,11 +3913,10 @@ namespace cljonic {
 
 /** \anchor Map
  * A Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
- * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
- * return a modified copy without changing the original collection. Construction with more entries than the available
- * capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the \ref Map "Map"; a
- * cljonic collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight
- * predicate for whether the whole source fits.
+ * optional fallback values. The way to operate on the collection is through the library's free-function API.
+ * Construction with more entries than the available capacity is rejected at compile time. A non-cljonic C++ range or
+ * view constructor parameter is copied into the \ref Map "Map"; a cljonic collection or producer is not a constructor
+ * source. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
  *
  Keys, mapped values, and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
  Construction from entries requires the exact declared entry type.
@@ -4059,9 +4065,10 @@ class Map {
     constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Map: you cannot construct a Map from a cljonic collection or producer. A Map is built "
-                      "from MapEntry elements, or from a non-cljonic C++ range or view. To copy this argument's "
-                      "contents into a Map, use into(destination, source); call fits_into(destination, source) first "
-                      "to check whether the whole source fits.");
+                      "from MapEntry elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
+                      "collection or producer into a Vector, use into(destination, source); call "
+                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
+                      "remaining capacity.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -4440,13 +4447,16 @@ template <typename C>
 namespace cljonic {
 
 /** \anchor Queue
- * A Queue is a bounded FIFO collection. Updates return a modified copy without changing the original collection. The
- * way to operate on the collection is through the library's free-function API. Construction with more values than the
- * available capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the
- * collection; a cljonic collection or producer is not a source and is treated as a single element when nested. To
- * materialize one, use \b into; \b fits_into is the preflight predicate for whether the whole source fits.
+ * A Queue is a bounded FIFO collection. The way to operate on the collection is through the library's free-function
+ * API. Construction with more values than the available capacity is rejected at compile time. A non-cljonic C++ range
+ * or view constructor parameter is copied into the collection. A cljonic value is not copied as a range/view source.
+ * With an explicit element type, it is accepted as one element only when its type exactly matches the declared element
+ * type. Without explicit template arguments, a sole cljonic argument determines the element type and yields a
+ * one-element collection. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use
+ * \b into.
  *
- Elements follow the \ref ImplicitConversions "safe implicit conversion rules".
+ Elements may themselves be cljonic collections or producers, including nested cljonic composites. Elements follow
+ the \ref ImplicitConversions "safe implicit conversion rules".
 
  \b Examples
  ~~~~~{.cpp}
@@ -4605,9 +4615,10 @@ class Queue {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Queue: you cannot construct a Queue from a cljonic collection or producer. A Queue is built from "
-            "its individual elements, or from a non-cljonic C++ range or view. To copy this argument's contents into a "
-            "Queue, use into(destination, source) (call fits_into(destination, source) first to check whether the "
-            "whole source fits); to keep it as a single element, write Queue{...}.");
+            "its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic collection or "
+            "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
+            "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
+            "element, write Queue{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -4737,15 +4748,32 @@ struct contains_standard_range<Queue<T, CapacityValue>> : std::bool_constant<con
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. It is never a
+ *  supported element type and is never produced by an admitted call. */
+struct RangeElementDomainViolation {};
+
+/** The `Range` class-template gate (REQ-DIAG-012): a valid `Range` element
+ *  domain, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. Keeping the valid domain first preserves soft, SFINAE-friendly
+ *  type-level rejection for an out-of-domain element type. */
+template <typename T>
+concept RangeClassArgument =
+    concepts::RangeElement<T> || std::same_as<std::remove_cvref_t<T>, RangeElementDomainViolation>;
+
+} // namespace concepts_detail
+
 /** \anchor Range
- * A Range is a bounded producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by
- * a fixed \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking precedence
- * over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p end produces
- * an empty range. Observation is bounded by its finite span, by the configured collection maximum for a zero-step
- * range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation
- * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow the
- * \ref ImplicitConversions "safe implicit conversion rules".
+ * A Range is a producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by a fixed
+ * \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking precedence over
+ * otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p end produces an
+ * empty range. Observation is bounded by its finite span, by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a
+ * zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
+ * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
+ * into an owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow
+ * the \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4793,23 +4821,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
- *  during an out-of-domain class template argument deduction. It is never a
- *  supported element type and is never produced by an admitted call. */
-struct RangeElementDomainViolation {};
-
-/** The `Range` class-template gate (REQ-DIAG-012): a valid `Range` element
- *  domain, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. Keeping the valid domain first preserves soft, SFINAE-friendly
- *  type-level rejection for an out-of-domain element type. */
-template <typename T>
-concept RangeClassArgument =
-    concepts::RangeElement<T> || std::same_as<std::remove_cvref_t<T>, RangeElementDomainViolation>;
-
-} // namespace concepts_detail
-
 template <concepts_detail::RangeClassArgument T>
 class Range {
   public:
@@ -5036,13 +5047,28 @@ struct contains_standard_range<Range<T>> : std::bool_constant<contains_standard_
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct RepeatElementDomainViolation {};
+
+/** The `Repeat` class-template gate (REQ-DIAG-012): a storable element, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. */
+template <typename T>
+concept RepeatClassArgument =
+    concepts::NothrowCollectionElement<T> || std::same_as<std::remove_cvref_t<T>, RepeatElementDomainViolation>;
+
+} // namespace concepts_detail
+
 /** \anchor Repeat
- * A Repeat is a producer that owns one value and yields copies of it. `repeat(value)` is unbounded, while
- * `repeat(value, count)` yields exactly \p count values. Observation is bounded by the configured collection maximum,
- * by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both
- * constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or
- * converted into an owning destination with `into` when explicit materialization is required. Values and finite counts
- * follow the \ref ImplicitConversions "safe implicit conversion rules"; counts use non-Boolean, non-character unsigned
+ * A Repeat is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or
+ * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(value, count)` yields
+ * exactly \p count values. Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the
+ * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
+ * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
+ * into an owning destination with `into` when explicit materialization is required. Values and finite counts follow
+ * the \ref ImplicitConversions "safe implicit conversion rules"; counts use non-Boolean, non-character unsigned
  * integer types whose ranges fit \c std::size_t.
  *
  ~~~~~{.cpp}
@@ -5089,20 +5115,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
- *  during an out-of-domain class template argument deduction. */
-struct RepeatElementDomainViolation {};
-
-/** The `Repeat` class-template gate (REQ-DIAG-012): a storable element, or the
- *  internal diagnostic tag used only to redirect a rejected deduction. */
-template <typename T>
-concept RepeatClassArgument =
-    concepts::NothrowCollectionElement<T> || std::same_as<std::remove_cvref_t<T>, RepeatElementDomainViolation>;
-
-} // namespace concepts_detail
-
 template <concepts_detail::RepeatClassArgument T>
 class Repeat {
   public:
@@ -5293,17 +5305,34 @@ struct contains_standard_range<Repeat<T>> : std::bool_constant<contains_standard
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeatedly` diagnostic
+ *  specialization. A `Repeatedly`'s element type is never deducible from its
+ *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
+struct RepeatedlyDomainViolation {};
+
+/** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
+ *  zero-argument step, or the internal diagnostic tag pair used only to redirect
+ *  a rejected deduction. */
+template <typename T, typename Step>
+concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && concepts::RepeatedlyStep<T, Step>) ||
+                                  (std::same_as<std::remove_cvref_t<T>, RepeatedlyDomainViolation> &&
+                                   std::same_as<std::remove_cvref_t<Step>, RepeatedlyDomainViolation>);
+
+} // namespace concepts_detail
+
 /** \anchor Repeatedly
  * A Repeatedly producer is created with `repeatedly(step)` or `repeatedly(count, step)`. It stores a copy of the
  * zero-argument step callable and produces a fresh element by invoking the step for every observed element. The step
  * may maintain state or produce side effects, but it must not throw or allocate when invoked. `repeatedly(step)` is
  * unbounded, while `repeatedly(count, step)` yields exactly \p count elements. The step may be a lambda, a named
- * function, or a function object. Observation is bounded by the configured collection maximum, by the requested count,
- * or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and
- * runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required. Finite counts follow the \ref ImplicitConversions
- * "safe implicit conversion rules": use non-Boolean, non-character unsigned integer types whose ranges fit \c
- * std::size_t. Callback types and produced element types remain exact.
+ * function, or a function object. Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the
+ * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
+ * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
+ * into an owning destination with `into` when explicit materialization is required. Finite counts follow the \ref
+ * ImplicitConversions "safe implicit conversion rules": use non-Boolean, non-character unsigned integer types whose
+ * ranges fit \c std::size_t. Callback types and produced element types remain exact.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -5326,7 +5355,8 @@ namespace cljonic {
    auto runtime_values = repeatedly(2U, []() noexcept { return 7; });
 
    // An uncounted Repeatedly is an unbounded producer whose observation is
-   // bounded by the configured collection maximum or a destination capacity.
+   // bounded by CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or a destination
+   // capacity.
    [[maybe_unused]] constexpr auto unbounded = repeatedly(five);
 
    // -----------------------------------------------------------------------
@@ -5341,23 +5371,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Repeatedly` diagnostic
- *  specialization. A `Repeatedly`'s element type is never deducible from its
- *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
-struct RepeatedlyDomainViolation {};
-
-/** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
- *  zero-argument step, or the internal diagnostic tag pair used only to redirect
- *  a rejected deduction. */
-template <typename T, typename Step>
-concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && concepts::RepeatedlyStep<T, Step>) ||
-                                  (std::same_as<std::remove_cvref_t<T>, RepeatedlyDomainViolation> &&
-                                   std::same_as<std::remove_cvref_t<Step>, RepeatedlyDomainViolation>);
-
-} // namespace concepts_detail
-
 template <typename T, typename Step>
     requires concepts_detail::RepeatedlyClassArgument<T, Step>
 class Repeatedly {
@@ -5560,13 +5573,15 @@ namespace cljonic {
 
 /** \anchor Set
  * A Set is a bounded, unordered collection that provides callable lookup with optional fallback values. The way to
- * operate on the collection is through the library's free-function API. Updates return a modified copy without
- * changing the original collection. Construction with more values than the available capacity is rejected at compile
- * time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer is not
- * a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
- * preflight predicate for whether the whole source fits.
+ * operate on the collection is through the library's free-function API. Construction with more values than the
+ * available capacity is rejected at compile time. A non-cljonic C++ range or view constructor parameter is copied into
+ * the collection. A cljonic value is not copied as a range/view source. With an explicit element type, it is accepted
+ * as one element only when its type exactly matches the declared element type. Without explicit template arguments, a
+ * sole cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
+ * collection or producer into a destination \ref Vector "Vector", use \b into.
  *
- Elements and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+ Elements may themselves be cljonic collections or producers, including nested cljonic composites. Elements and
+ fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
 
  \b Examples
  ~~~~~{.cpp}
@@ -5700,9 +5715,10 @@ class Set {
     constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Set: you cannot construct a Set from a cljonic collection or producer. A Set is built "
-                      "from its individual elements, or from a non-cljonic C++ range or view. To copy this argument's "
-                      "contents into a Set, use into(destination, source) (call fits_into(destination, source) first "
-                      "to check whether the whole source fits); to keep it as a single element, write Set{...}.");
+                      "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
+                      "collection or producer into a Vector, use into(destination, source); call "
+                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
+                      "remaining capacity; to keep it as a single element, write Set{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -5926,6 +5942,23 @@ template <std::size_t Index = 0, typename Variant>
 
 } // namespace variant_detail
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Variant` diagnostic
+ *  specialization. A `Variant`'s alternatives are never deducible from its
+ *  constructor arguments, so any deduced `Variant` is a rejected deduction. */
+struct VariantDomainViolation {};
+
+/** The `Variant` class-template gate (REQ-DIAG-012): at least one storable
+ *  alternative, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
+template <typename... Alternatives>
+concept VariantClassArgument =
+    (sizeof...(Alternatives) >= 1 && (concepts::NothrowVariantAlternative<Alternatives> && ...)) ||
+    (sizeof...(Alternatives) == 1 && (std::same_as<std::remove_cvref_t<Alternatives>, VariantDomainViolation> && ...));
+
+} // namespace concepts_detail
+
 /** \anchor Variant
  * A composite value holding exactly one of several alternatives.
  *
@@ -5983,23 +6016,6 @@ template <std::size_t Index = 0, typename Variant>
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Variant` diagnostic
- *  specialization. A `Variant`'s alternatives are never deducible from its
- *  constructor arguments, so any deduced `Variant` is a rejected deduction. */
-struct VariantDomainViolation {};
-
-/** The `Variant` class-template gate (REQ-DIAG-012): at least one storable
- *  alternative, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. */
-template <typename... Alternatives>
-concept VariantClassArgument =
-    (sizeof...(Alternatives) >= 1 && (concepts::NothrowVariantAlternative<Alternatives> && ...)) ||
-    (sizeof...(Alternatives) == 1 && (std::same_as<std::remove_cvref_t<Alternatives>, VariantDomainViolation> && ...));
-
-} // namespace concepts_detail
-
 template <typename... Alternatives>
     requires concepts_detail::VariantClassArgument<Alternatives...>
 class Variant {

@@ -11,17 +11,34 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeatedly` diagnostic
+ *  specialization. A `Repeatedly`'s element type is never deducible from its
+ *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
+struct RepeatedlyDomainViolation {};
+
+/** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
+ *  zero-argument step, or the internal diagnostic tag pair used only to redirect
+ *  a rejected deduction. */
+template <typename T, typename Step>
+concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && concepts::RepeatedlyStep<T, Step>) ||
+                                  (std::same_as<std::remove_cvref_t<T>, RepeatedlyDomainViolation> &&
+                                   std::same_as<std::remove_cvref_t<Step>, RepeatedlyDomainViolation>);
+
+} // namespace concepts_detail
+
 /** \anchor Repeatedly
  * A Repeatedly producer is created with `repeatedly(step)` or `repeatedly(count, step)`. It stores a copy of the
  * zero-argument step callable and produces a fresh element by invoking the step for every observed element. The step
  * may maintain state or produce side effects, but it must not throw or allocate when invoked. `repeatedly(step)` is
  * unbounded, while `repeatedly(count, step)` yields exactly \p count elements. The step may be a lambda, a named
- * function, or a function object. Observation is bounded by the configured collection maximum, by the requested count,
- * or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and
- * runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required. Finite counts follow the \ref ImplicitConversions
- * "safe implicit conversion rules": use non-Boolean, non-character unsigned integer types whose ranges fit \c
- * std::size_t. Callback types and produced element types remain exact.
+ * function, or a function object. Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the
+ * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
+ * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
+ * into an owning destination with `into` when explicit materialization is required. Finite counts follow the \ref
+ * ImplicitConversions "safe implicit conversion rules": use non-Boolean, non-character unsigned integer types whose
+ * ranges fit \c std::size_t. Callback types and produced element types remain exact.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -44,7 +61,8 @@ namespace cljonic {
    auto runtime_values = repeatedly(2U, []() noexcept { return 7; });
 
    // An uncounted Repeatedly is an unbounded producer whose observation is
-   // bounded by the configured collection maximum or a destination capacity.
+   // bounded by CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or a destination
+   // capacity.
    [[maybe_unused]] constexpr auto unbounded = repeatedly(five);
 
    // -----------------------------------------------------------------------
@@ -59,23 +77,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Repeatedly` diagnostic
- *  specialization. A `Repeatedly`'s element type is never deducible from its
- *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
-struct RepeatedlyDomainViolation {};
-
-/** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
- *  zero-argument step, or the internal diagnostic tag pair used only to redirect
- *  a rejected deduction. */
-template <typename T, typename Step>
-concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && concepts::RepeatedlyStep<T, Step>) ||
-                                  (std::same_as<std::remove_cvref_t<T>, RepeatedlyDomainViolation> &&
-                                   std::same_as<std::remove_cvref_t<Step>, RepeatedlyDomainViolation>);
-
-} // namespace concepts_detail
-
 template <typename T, typename Step>
     requires concepts_detail::RepeatedlyClassArgument<T, Step>
 class Repeatedly {

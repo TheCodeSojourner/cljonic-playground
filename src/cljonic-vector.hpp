@@ -14,12 +14,14 @@ namespace cljonic {
 
 /** \anchor Vector
  * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
- * operate on the collection is through the library's free-function API. Updates return a modified copy without
- * changing the original collection. Construction with more initializers than the available capacity is rejected at
- * compile time. A non-cljonic C++ range or view source is copied into the collection; a cljonic collection or producer
- * is not a source and is treated as a single element when nested. To materialize one, use \b into; \b fits_into is the
- * preflight predicate for whether the whole source fits. Element construction, updates, and fallbacks follow the \ref
- * ImplicitConversions "safe implicit conversion rules".
+ * operate on the collection is through the library's free-function API. Construction with more initializers than the
+ * available capacity is rejected at compile time. A non-cljonic C++ range or view constructor parameter is copied into
+ * the collection. A cljonic value is not copied as a range/view source. With an explicit element type, it is accepted
+ * as one element only when its type exactly matches the declared element type. Without explicit template arguments, a
+ * sole cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
+ * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
+ * collections or producers, including nested cljonic composites. Element construction, updates, and fallbacks follow
+ * the \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -215,9 +217,11 @@ class Vector {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Vector: you cannot construct a Vector from a cljonic collection or producer. A Vector is built "
-            "from its individual elements, or from a non-cljonic C++ range or view. To copy this argument's contents "
-            "into a Vector, use into(destination, source) (call fits_into(destination, source) first to check whether "
-            "the whole source fits); to keep it as a single element, write Vector{...}.");
+            "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
+            "collection or "
+            "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
+            "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
+            "element, write Vector{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

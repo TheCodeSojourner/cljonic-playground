@@ -15,8 +15,8 @@ namespace cljonic {
 /** \anchor String
  * A String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
  * callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds `0x7F` are
- * rejected at compile time and replaced with `.` at runtime. Updates return a modified copy without changing the
- * original collection. Construction with content longer than the available capacity is rejected at compile time.
+ * rejected at compile time and replaced with `.` at runtime. Construction with content longer than the available
+ * capacity is rejected at compile time.
  *
  * Character arguments must be \c char; numeric values do not implicitly become characters. Text imports follow the
  * \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
@@ -172,9 +172,10 @@ class String {
     constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::String: you cannot construct a String from a cljonic collection or producer. A String "
-                      "is built from its characters, or from a non-cljonic C++ range or view. To copy this argument's "
-                      "contents into a String, use into(destination, source); call fits_into(destination, source) "
-                      "first to check whether the whole source fits.");
+                      "is built from its characters, or from a non-cljonic C++ range or view. To materialize a cljonic "
+                      "collection or producer into a Vector, use into(destination, source); call "
+                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
+                      "remaining capacity.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

@@ -9,15 +9,32 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. It is never a
+ *  supported element type and is never produced by an admitted call. */
+struct RangeElementDomainViolation {};
+
+/** The `Range` class-template gate (REQ-DIAG-012): a valid `Range` element
+ *  domain, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. Keeping the valid domain first preserves soft, SFINAE-friendly
+ *  type-level rejection for an out-of-domain element type. */
+template <typename T>
+concept RangeClassArgument =
+    concepts::RangeElement<T> || std::same_as<std::remove_cvref_t<T>, RangeElementDomainViolation>;
+
+} // namespace concepts_detail
+
 /** \anchor Range
- * A Range is a bounded producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by
- * a fixed \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking precedence
- * over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p end produces
- * an empty range. Observation is bounded by its finite span, by the configured collection maximum for a zero-step
- * range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation
- * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow the
- * \ref ImplicitConversions "safe implicit conversion rules".
+ * A Range is a producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by a fixed
+ * \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking precedence over
+ * otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p end produces an
+ * empty range. Observation is bounded by its finite span, by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a
+ * zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
+ * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
+ * into an owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow
+ * the \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -65,23 +82,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
- *  during an out-of-domain class template argument deduction. It is never a
- *  supported element type and is never produced by an admitted call. */
-struct RangeElementDomainViolation {};
-
-/** The `Range` class-template gate (REQ-DIAG-012): a valid `Range` element
- *  domain, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. Keeping the valid domain first preserves soft, SFINAE-friendly
- *  type-level rejection for an out-of-domain element type. */
-template <typename T>
-concept RangeClassArgument =
-    concepts::RangeElement<T> || std::same_as<std::remove_cvref_t<T>, RangeElementDomainViolation>;
-
-} // namespace concepts_detail
-
 template <concepts_detail::RangeClassArgument T>
 class Range {
   public:

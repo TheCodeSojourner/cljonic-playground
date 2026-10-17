@@ -14,11 +14,10 @@ namespace cljonic {
 
 /** \anchor Map
  * A Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
- * optional fallback values. The way to operate on the collection is through the library's free-function API. Updates
- * return a modified copy without changing the original collection. Construction with more entries than the available
- * capacity is rejected at compile time. A non-cljonic C++ range or view source is copied into the \ref Map "Map"; a
- * cljonic collection or producer is not a source. To materialize one, use \b into; \b fits_into is the preflight
- * predicate for whether the whole source fits.
+ * optional fallback values. The way to operate on the collection is through the library's free-function API.
+ * Construction with more entries than the available capacity is rejected at compile time. A non-cljonic C++ range or
+ * view constructor parameter is copied into the \ref Map "Map"; a cljonic collection or producer is not a constructor
+ * source. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
  *
  Keys, mapped values, and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
  Construction from entries requires the exact declared entry type.
@@ -167,9 +166,10 @@ class Map {
     constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Map: you cannot construct a Map from a cljonic collection or producer. A Map is built "
-                      "from MapEntry elements, or from a non-cljonic C++ range or view. To copy this argument's "
-                      "contents into a Map, use into(destination, source); call fits_into(destination, source) first "
-                      "to check whether the whole source fits.");
+                      "from MapEntry elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
+                      "collection or producer into a Vector, use into(destination, source); call "
+                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
+                      "remaining capacity.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

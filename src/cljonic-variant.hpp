@@ -51,6 +51,23 @@ template <std::size_t Index = 0, typename Variant>
 
 } // namespace variant_detail
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Variant` diagnostic
+ *  specialization. A `Variant`'s alternatives are never deducible from its
+ *  constructor arguments, so any deduced `Variant` is a rejected deduction. */
+struct VariantDomainViolation {};
+
+/** The `Variant` class-template gate (REQ-DIAG-012): at least one storable
+ *  alternative, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
+template <typename... Alternatives>
+concept VariantClassArgument =
+    (sizeof...(Alternatives) >= 1 && (concepts::NothrowVariantAlternative<Alternatives> && ...)) ||
+    (sizeof...(Alternatives) == 1 && (std::same_as<std::remove_cvref_t<Alternatives>, VariantDomainViolation> && ...));
+
+} // namespace concepts_detail
+
 /** \anchor Variant
  * A composite value holding exactly one of several alternatives.
  *
@@ -108,23 +125,6 @@ template <std::size_t Index = 0, typename Variant>
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Variant` diagnostic
- *  specialization. A `Variant`'s alternatives are never deducible from its
- *  constructor arguments, so any deduced `Variant` is a rejected deduction. */
-struct VariantDomainViolation {};
-
-/** The `Variant` class-template gate (REQ-DIAG-012): at least one storable
- *  alternative, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. */
-template <typename... Alternatives>
-concept VariantClassArgument =
-    (sizeof...(Alternatives) >= 1 && (concepts::NothrowVariantAlternative<Alternatives> && ...)) ||
-    (sizeof...(Alternatives) == 1 && (std::same_as<std::remove_cvref_t<Alternatives>, VariantDomainViolation> && ...));
-
-} // namespace concepts_detail
-
 template <typename... Alternatives>
     requires concepts_detail::VariantClassArgument<Alternatives...>
 class Variant {

@@ -11,14 +11,31 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
+ *  specialization during an out-of-domain class template argument deduction. */
+struct IterateDomainViolation {};
+
+/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
+ *  step, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
+template <typename T, typename Step>
+concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
+                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
+                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
+
+} // namespace concepts_detail
+
 /** \anchor Iterate
- * A Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy of
- * the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted value.
- * For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`. The step may be a
- * lambda, a named function, or a function object. Observation is bounded by the configured collection maximum or by an
- * explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime
- * code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required.
+ * An Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy
+ * of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted
+ * value. For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`. The initial
+ * and produced values may themselves be cljonic collections or producers, including nested cljonic composites. The
+ * step may be a lambda, a named function, or a function object. Observation is bounded by \b
+ * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by an explicit destination capacity, and it supports const C++
+ * range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations
+ * that accept a source, or converted into an owning destination with `into` when explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -62,22 +79,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
- *  specialization during an out-of-domain class template argument deduction. */
-struct IterateDomainViolation {};
-
-/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
- *  step, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. */
-template <typename T, typename Step>
-concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
-                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
-                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
-
-} // namespace concepts_detail
-
 template <typename T, typename Step>
     requires concepts_detail::IterateClassArgument<T, Step>
 class Iterate {

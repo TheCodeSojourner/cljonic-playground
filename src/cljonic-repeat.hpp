@@ -9,13 +9,28 @@
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct RepeatElementDomainViolation {};
+
+/** The `Repeat` class-template gate (REQ-DIAG-012): a storable element, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. */
+template <typename T>
+concept RepeatClassArgument =
+    concepts::NothrowCollectionElement<T> || std::same_as<std::remove_cvref_t<T>, RepeatElementDomainViolation>;
+
+} // namespace concepts_detail
+
 /** \anchor Repeat
- * A Repeat is a producer that owns one value and yields copies of it. `repeat(value)` is unbounded, while
- * `repeat(value, count)` yields exactly \p count values. Observation is bounded by the configured collection maximum,
- * by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both
- * constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or
- * converted into an owning destination with `into` when explicit materialization is required. Values and finite counts
- * follow the \ref ImplicitConversions "safe implicit conversion rules"; counts use non-Boolean, non-character unsigned
+ * A Repeat is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or
+ * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(value, count)` yields
+ * exactly \p count values. Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the
+ * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
+ * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
+ * into an owning destination with `into` when explicit materialization is required. Values and finite counts follow
+ * the \ref ImplicitConversions "safe implicit conversion rules"; counts use non-Boolean, non-character unsigned
  * integer types whose ranges fit \c std::size_t.
  *
  ~~~~~{.cpp}
@@ -62,20 +77,6 @@ namespace cljonic {
  }
  ~~~~~
  */
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
- *  during an out-of-domain class template argument deduction. */
-struct RepeatElementDomainViolation {};
-
-/** The `Repeat` class-template gate (REQ-DIAG-012): a storable element, or the
- *  internal diagnostic tag used only to redirect a rejected deduction. */
-template <typename T>
-concept RepeatClassArgument =
-    concepts::NothrowCollectionElement<T> || std::same_as<std::remove_cvref_t<T>, RepeatElementDomainViolation>;
-
-} // namespace concepts_detail
-
 template <concepts_detail::RepeatClassArgument T>
 class Repeat {
   public:
