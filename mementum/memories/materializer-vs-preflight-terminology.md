@@ -18,10 +18,10 @@ Correct collection-top phrasing:
 "A non-cljonic C++ range or view constructor parameter is copied into the X; a
 cljonic collection or producer is not a constructor source -- X{X{...}} encloses
 it as a single element. To materialize a cljonic collection or producer into a
-destination Vector, use into; fits_into checks whether the complete cljonic
-collection or producer fits in that Vector's remaining capacity."
+destination Vector, use into." The `fits_into` preflight is stated on `into`'s
+own page, not repeated in each collection overview.
 
-REQ-DIAG-010 fallback guidance should name Vector: `into` and `fits_into`
+REQ-DIAG-010 fallback guidance still names Vector: `into` and `fits_into`
 accept only `CljonicVector` destinations. Never suggest materializing into Map,
 Queue, Set, or String.
 
