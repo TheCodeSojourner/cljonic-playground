@@ -15,10 +15,15 @@ materialize a range, view, or producer" is WRONG: only cljonic
 collections/producers go through `into`.
 
 Correct collection-top phrasing (mirrors Vector):
-"A non-cljonic C++ range or view source is copied into the X; a cljonic
-collection or producer is not a source -- X{X{...}} encloses it as a single
-element. To materialize one, use into; fits_into is the preflight predicate for
-whether the whole source fits."
+"A non-cljonic C++ range or view constructor parameter is copied into the X; a
+cljonic collection or producer is not a constructor source -- X{X{...}} encloses
+it as a single element. To materialize one, use into; fits_into is the preflight
+predicate for whether the whole source fits."
+
+2026-10-17, human-approved: "source" alone spanned two domains in one paragraph.
+The constructor side now says "constructor parameter" (paired with "constructor
+source", the term in CljonicSourceIsNotConstructorSource); the into/fits_into
+argument is still the source. Applied to Vector, Map, Queue, Set.
 
 Applied 2026-10-05 repo-wide: src/cljonic-{vector,map,queue,set}.hpp top +
 internal `(REQ-FN-027A)` comments, vocabulary.md, architecture.md,
