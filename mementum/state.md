@@ -1,5 +1,44 @@
 ## Current Session State
 
+- last_session_id: 4453d16a-1f48-4d20-b648-30a7d6951ac1
+- current_timestamp: 2026-10-17T12:35:00-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Clarified the collection/producer Doxygen prose across five collections and six producers. The constructor argument is now called a "constructor parameter", paired with "constructor source"; materialization points only at `into` (the `fits_into` preflight moved to `into`'s own page); "Updates return a modified copy..." and "bounded" (for `Range`) were removed.
+2. Verified by compile probe that `Vector`, `Set`, `Queue`, `Cycle`, `Iterate`, and `Repeat` admit cljonic collections/producers as elements, including nested composites, subject to each admission contract. Added that statement to the six class descriptions, then removed the restated storage clauses as redundant because the class-template constraints enforce them.
+3. Fixed a pre-existing Doxygen binding defect affecting all six producer class pages: their doc blocks sat before a reopened `namespace concepts_detail`, so the blocks documented the namespace and every producer class rendered no description. Relocated each block directly above its class template; every producer page now renders its description and `\anchor`, and the namespace page carries none of them.
+4. Replaced "configured collection maximum" with `\b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE` in `Range`, `Iterate`, `Repeatedly`, and `Repeat` (and the `Repeatedly` code comment); `Cycle` already used the macro.
+5. Rewrote "treated as a single element when nested" in `Vector`, `Set`, and `Queue` into the two admitted cases: with an explicit element type the cljonic value is one element only on an exact type match; without template arguments a sole cljonic argument determines the element type and yields a one-element collection. `Map` and `String` were left unchanged because they lack those forms.
+
+Questions:
+1. None blocking.
+2. Open — `mementum/knowledge/collection-source-interoperability.md` claims the harness asserts the message anchor "is not a constructor source", but `scripts/check-source-construction-compile-failures.py` anchors "you cannot construct a". The page is stale on that point.
+3. Deferred and acknowledged — `assoc`/`conj` descriptions still say "returns a modified copy"; accurate for a free function, unlike the removed collection-instance phrasing.
+
+Decisions:
+1. Human decision 2026-10-17: collection overviews stop at `use into`; the `fits_into` preflight statement lives on `into`'s page. The REQ-DIAG-010 fallback diagnostics keep `fits_into` because that requirement mandates it.
+2. Human decision 2026-10-17: the element storage/equality clauses are redundant in prose because the class-template constraints already enforce them; remove them rather than reword.
+3. Human decision 2026-10-17: "Updates return a modified copy without changing the original collection" implies an instance-level mutating method that does not exist; remove it from collection descriptions.
+4. Human decision 2026-10-17: `Range` is not inherently bounded (zero-step form is unbounded); describe it as "a producer".
+5. Human decision 2026-10-17: "when nested" was ambiguous; state the admitted construction cases explicitly.
+6. Human decision 2026-10-17: approved relocating the doc blocks for the remaining producers (`Range`, `Repeatedly`, `Variant`) after the three in-scope blocks were fixed.
+
+Validation:
+1. `make format`, `make cljonic`, `make cljonic-test`, and `make docs` all reported ok after every prose change; `make source-construction-compile-fail` ok after the diagnostic rewording.
+2. Compile probes verified each element position (`Vector`, `Set`, `Queue`, `Cycle`, `Iterate`, `Repeat`), including producer-of-producer and composite nesting, and established the `Iterate` nuance: a capturing-lambda step yields a producer that compiles but is not a storable element.
+3. Rendered-doc checks confirmed: all six producer class pages carry descriptions and anchors; the internal namespace page carries none; the four collection overviews contain no `fits_into` clause; all six element statements render; no removed phrase survives in `src/`, `cljonic.hpp`, or `docs/`.
+4. No line exceeds the 120-column limit; `git diff --check` reported only Doxygen-generated trailing whitespace in the generated HTML.
+5. Human landed the changes: `606a549` (`src/` prose plus regenerated `cljonic.hpp`, committed with a memory-style subject) and `6cde2fb` (regenerated `docs/`). Memory commits `5d7e36d`, `d481837`. The working tree is clean at `/gybis-fini`.
+
+Next:
+1. Synthesis candidate (human approval required): add the doc-block binding rule and the six-producer instance to `mementum/knowledge/doxygen-doc-tooling.md`, whose `related` list already carries the Doxygen prose memories.
+2. Refresh the stale diagnostic-anchor sentence in `mementum/knowledge/collection-source-interoperability.md` (question 2).
+3. Deferred backlog unchanged: the message-language pass over the 24 class-internal diagnostic messages, the `String::put` validation gap, the capacity-message content question, the `variant-api` lifecycle, the MapEntry semantic key/val/first/last behavior, the seqable lifecycle for Map/Queue/Set/String, the five-header diagnostic-coverage backlog (`fits_into`, `get`, `into`, `peek`, `pop`), and the six documented examples.
+
+## Previous Session State
+
 - last_session_id: 0a300781-343e-48ec-b0b4-afcac104d6a2
 - current_timestamp: 2026-10-16T12:23:00-06:00
 - recover: 1
