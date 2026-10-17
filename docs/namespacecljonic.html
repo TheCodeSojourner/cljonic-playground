@@ -588,7 +588,7 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="Assoc"></a> The <b>assoc</b> free function API associates a value with a key in a <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>, or with an index in an indexed collection (<a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>).</p>
-<p>Supported for <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> (key/value association, replacing the value of an existing key), <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> (non-boolean, non-character integer index association; an index equal to the current count appends when capacity remains), and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> (the same index and append rule as <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>; see <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> for character validation and normalization policy). <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> and <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a> provide no associative capability and are rejected. The result is a distinct collection value; the source is unchanged.</p>
+<p>Supported for <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> (key/value association, replacing the value of an existing key), <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> (integer index association; an index equal to the current count appends when capacity remains), and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> (the same index and append rule as <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>; see <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> for character validation and normalization policy). <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> and <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a> provide no associative capability and are rejected. The result is a distinct collection value; the source is unchanged.</p>
 <p>The variadic form <span class="tt"><a class="el" href="#a2fb743a916443eaa52b84a83056cc872">assoc</a>(collection, key₁, value₁, key₂, value₂, …)</span> applies two or more key-value pairs left to right into the result, as if each were a separate <span class="tt"><a class="el" href="#a2fb743a916443eaa52b84a83056cc872">assoc</a></span>. A pair that cannot be applied (an invalid key, or a full-capacity map or append index) is skipped and the remaining pairs still apply.</p>
 <p>Keys and stored values follow the <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
@@ -618,7 +618,7 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 <div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00158">cljonic-vector.hpp:158</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a2fb743a916443eaa52b84a83056cc872"><div class="ttname"><a href="#a2fb743a916443eaa52b84a83056cc872">cljonic::assoc</a></div><div class="ttdeci">constexpr auto assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.assoc(key, value))) -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00056">cljonic-assoc.hpp:56</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a5b8275162678a23d519d3711df6d9a2b"><div class="ttname"><a href="#a5b8275162678a23d519d3711df6d9a2b">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.contains(key))) -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00068">cljonic-contains.hpp:68</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a5b8275162678a23d519d3711df6d9a2b"><div class="ttname"><a href="#a5b8275162678a23d519d3711df6d9a2b">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.contains(key))) -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00067">cljonic-contains.hpp:67</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-assoc_8hpp_source.html#l00056">56</a> of file <a class="el" href="cljonic-assoc_8hpp_source.html">cljonic-assoc.hpp</a>.</p>
 
@@ -965,7 +965,7 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="CanAssoc"></a> The <b>can_assoc</b> free function API checks whether one or more key-value pairs can be applied with <a class="el" href="#Assoc" title="Assoc">assoc</a> to a <a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html" title="concepts::CljonicCollection">collection</a>.</p>
-<p>Supported for <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> (an existing key can be replaced, or an absent key inserted when capacity remains), <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> (a non-boolean, non-character integer index can be replaced, or an index equal to the current count can append when capacity remains), and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> (the same index and append rule as <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, with an invalid character returning false). <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> and <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a> provide no associative capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.</p>
+<p>Supported for <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> (an existing key can be replaced, or an absent key inserted when capacity remains), <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> (an integer index can be replaced, or an index equal to the current count can append when capacity remains), and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> (the same index and append rule as <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, with an invalid character returning false). <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> and <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a> provide no associative capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.</p>
 <p>Keys and values use the same <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a> as <a class="el" href="#Assoc" title="Assoc">assoc</a>.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -1744,7 +1744,7 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 </div><div class="memdoc">
 <p><a class="anchor" id="Conj"></a> The <b>conj</b> free function API returns a <a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html" title="concepts::CljonicCollection">collection</a> with the supplied values added.</p>
 <p>Supported for <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>, <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>, <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a>, and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>. <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> appends at the end. <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a> enqueues at the rear. <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> appends at its logical count. For <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>, invalid characters are rejected at compile time and replaced with <span class="tt">.</span> at runtime; see <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> for character validation and normalization policy. <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> adds absent elements; duplicates are no-ops. <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> associates a <a class="el" href="structcljonic_1_1_map_entry.html#MapEntry" title="MapEntry">MapEntry</a>; an existing key's value is replaced. At full capacity, <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a>, and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> return unchanged copies. A full <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> or <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> also returns an unchanged copy when the element or key is absent. Each operation returns a distinct collection value and preserves the source.</p>
-<p>Three arities are provided: <span class="tt">conj(collection)</span> returns an unchanged copy, <span class="tt">conj(collection, value)</span> adds one value, and <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(collection, value₁, value₂, …)</span> adds two or more values left to right, so <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(c, x₁, x₂)</span> equals <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(c, x₁), x₂)</span>. Each value must be one the collection can hold, as described above; a value that does not fit because the collection is full is skipped, and the remaining values are still added.</p>
+<p>Three arities are provided: <span class="tt">conj(collection)</span> returns an unchanged copy, <span class="tt">conj(collection, value)</span> adds one value, and <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(collection, value₁, value₂, …)</span> adds two or more values left to right, so <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(c, x₁, x₂)</span> equals <span class="tt"><a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="el" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(c, x₁), x₂)</span>. Each value must be one the collection can hold, as described above; a value that does not fit because the collection is full is skipped.</p>
 <p>Stored values follow the <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -1947,7 +1947,7 @@ requires concepts_detail::ContainsSupportedCollection&lt;C&gt; &amp;&amp; (!conc
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00085">85</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00084">84</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
 
 </div>
 </div>
@@ -1981,7 +1981,7 @@ requires (concepts::CljonicCollection&lt;C&gt; || concepts::CljonicProducer&lt;C
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00076">76</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00075">75</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
 
 </div>
 </div>
@@ -2015,7 +2015,7 @@ requires concepts_detail::ContainsAdmissible&lt;C, K&gt;</div>
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="Contains"></a> The <b>contains</b> free function API tests key presence, element membership, or index validity in a <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>, <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>, <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, or <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>.</p>
-<p><a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> keys and <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> elements admit their declared type and safe numeric widening that preserves every source value. Boolean, character, enum, and user-defined values do not convert across types. <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> accept non-boolean, non-character integral indexes.</p>
+<p><a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> keys and <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> elements admit their declared type and safe numeric widening that preserves every source value. <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> accept an integer index.</p>
 <p><span class="tt"><a class="el" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a></span> returns <span class="tt">true</span> when the key or element is present, or when the index is valid; otherwise, it returns <span class="tt">false</span>.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -2041,7 +2041,7 @@ requires concepts_detail::ContainsAdmissible&lt;C, K&gt;</div>
 <div class="line">  <span class="keywordflow">return</span> (in_range &amp;&amp; !<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_runtime, 9U)) ? 0 : 1;</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00068">68</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00067">67</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
 
 </div>
 </div>
@@ -2249,7 +2249,7 @@ requires (!concepts_detail::DisjAdmissible&lt;C, Values...&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-disj_8hpp_source.html#l00062">62</a> of file <a class="el" href="cljonic-disj_8hpp_source.html">cljonic-disj.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-disj_8hpp_source.html#l00061">61</a> of file <a class="el" href="cljonic-disj_8hpp_source.html">cljonic-disj.hpp</a>.</p>
 
 </div>
 </div>
@@ -2283,7 +2283,7 @@ requires concepts_detail::DisjAdmissible&lt;C, Values...&gt;</div>
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="Disj"></a> The <b>disj</b> free function API disjoins zero or more elements from a <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>.</p>
-<p><span class="tt">disj(set, values...)</span> accepts the <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>'s element type and safe numeric widening conversions. A conversion must preserve every source value; Boolean, character, enum, and user-defined values do not convert across types. Values are removed from left to right; absent or repeated values are no-ops after any prior removal. Calling <span class="tt">disj(set)</span> with no values returns an unchanged copy.</p>
+<p><span class="tt">disj(set, values...)</span> accepts the <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>'s element type and safe numeric widening conversions. A conversion must preserve every source value. Values are removed from left to right; absent or repeated values are no-ops after any prior removal. Calling <span class="tt">disj(set)</span> with no values returns an unchanged copy.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -2305,11 +2305,11 @@ requires concepts_detail::DisjAdmissible&lt;C, Values...&gt;</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s1_runtime, 99) &amp;&amp; <a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(s1_runtime)) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a3379aa2a8b5ffa4566662c4b4a1455c2"><div class="ttname"><a href="#a3379aa2a8b5ffa4566662c4b4a1455c2">cljonic::equal</a></div><div class="ttdeci">constexpr auto equal(const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-equal_8hpp_source.html#l00301">cljonic-equal.hpp:301</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a523eadba6652db67d95d3e910ec80008"><div class="ttname"><a href="#a523eadba6652db67d95d3e910ec80008">cljonic::disj</a></div><div class="ttdeci">constexpr auto disj(const C &amp;collection, const Values &amp;... values) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-disj_8hpp_source.html#l00052">cljonic-disj.hpp:52</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a3379aa2a8b5ffa4566662c4b4a1455c2"><div class="ttname"><a href="#a3379aa2a8b5ffa4566662c4b4a1455c2">cljonic::equal</a></div><div class="ttdeci">constexpr auto equal(const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-equal_8hpp_source.html#l00303">cljonic-equal.hpp:303</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a523eadba6652db67d95d3e910ec80008"><div class="ttname"><a href="#a523eadba6652db67d95d3e910ec80008">cljonic::disj</a></div><div class="ttdeci">constexpr auto disj(const C &amp;collection, const Values &amp;... values) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-disj_8hpp_source.html#l00051">cljonic-disj.hpp:51</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_acc881adb41275d2d6cb0aed6b943ad5b"><div class="ttname"><a href="#acc881adb41275d2d6cb0aed6b943ad5b">cljonic::is_empty</a></div><div class="ttdeci">constexpr auto is_empty(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-is-empty_8hpp_source.html#l00037">cljonic-is-empty.hpp:37</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-disj_8hpp_source.html#l00052">52</a> of file <a class="el" href="cljonic-disj_8hpp_source.html">cljonic-disj.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-disj_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-disj_8hpp_source.html">cljonic-disj.hpp</a>.</p>
 
 </div>
 </div>
@@ -2369,7 +2369,7 @@ requires concepts::CljonicMap&lt;C&gt;</div>
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="Dissoc"></a> The <b>dissoc</b> free function API removes zero or more keys from a <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>.</p>
-<p><span class="tt"><a class="el" href="#adbd0f9877636930403e4c459d3873d0c">dissoc</a></span> is supported only for <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>. With no keys it returns an unchanged copy; otherwise it removes keys left-to-right. Keys may use the map's key type or a numeric type whose entire range is preserved by conversion to that type; Boolean, character, enum, and user-defined keys do not convert across types. Each present key is removed; absent keys leave the map unchanged, and repeating a key has no further effect. The source map is never modified.</p>
+<p><span class="tt"><a class="el" href="#adbd0f9877636930403e4c459d3873d0c">dissoc</a></span> is supported only for <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>. With no keys it returns an unchanged copy; otherwise it removes keys left-to-right. Keys may use the map's key type or a numeric type whose entire range is preserved by conversion to that type. Each present key is removed; absent keys leave the map unchanged, and repeating a key has no further effect. The source map is never modified.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -2714,7 +2714,7 @@ requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00366">366</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00368">368</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -2748,7 +2748,7 @@ requires concepts_detail::EqualSetPairAdmissible&lt;Lhs, Rhs&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00328">328</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00330">330</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -2782,7 +2782,7 @@ requires concepts_detail::EqualMapPairAdmissible&lt;Lhs, Rhs&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00319">319</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00321">321</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -2816,7 +2816,7 @@ requires concepts_detail::EqualStringPairAdmissible&lt;Lhs, Rhs&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00313">313</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00315">315</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -2850,7 +2850,7 @@ requires concepts_detail::EqualSequentialPairAdmissible&lt;Lhs, Rhs&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00307">307</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00309">309</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -2893,7 +2893,7 @@ requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <li><a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Sets</a> compare equal when they hold the same elements, regardless of insertion order.</li>
 <li><a class="el" href="classcljonic_1_1_string.html#String" title="String">Strings</a> compare equal when they hold the same characters.</li>
 </ul>
-<p>Compared collections and sets must have matching element types, and compared maps must have matching key and value types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as floating-point numbers, are not supported. Standard-library range and container types are not supported at any depth. Nested collections and composite values compare by the same rules; a nested producer is compared by its stored parameters.</p>
+<p>Compared collections and sets must have matching element types, and compared maps must have matching key and value types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as floating-point numbers, are not supported. <a class="el" href="classcljonic_1_1_iterate.html#Iterate" title="Iterate">Iterate</a> and <a class="el" href="classcljonic_1_1_repeatedly.html#Repeatedly" title="Repeatedly">Repeatedly</a> values cannot be compared stably because their step is a callable, so they are not supported as map keys, set elements, or nested components. Standard-library range and container types are not supported at any depth. Nested collections and composite values compare by the same rules; a nested producer that admits stable equality is compared by its stored parameters.</p>
 <p>With more than two arguments, every adjacent pair is compared, from left to right, stopping at the first unequal pair.</p>
 <p><b>Examples</b> </p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
@@ -2942,7 +2942,7 @@ requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_variant_html"><div class="ttname"><a href="classcljonic_1_1_variant.html">cljonic::Variant</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-variant_8hpp_source.html#l00130">cljonic-variant.hpp:130</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00301">301</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00303">303</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -2981,7 +2981,7 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecl
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00378">378</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00380">380</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -3020,7 +3020,7 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; <a class="el" href="namespacecljo
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00343">343</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00345">345</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -3050,7 +3050,7 @@ requires (!concepts_detail::EqualPairAdmissible&lt;T, T&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00356">356</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00358">358</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -3080,7 +3080,7 @@ requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00337">337</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00339">339</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -3244,7 +3244,7 @@ fallback) { collection(key, fallback); }</div>
 </table>
 </div><div class="memdoc">
 <p><a class="anchor" id="Get"></a> The <b>get</b> free function API looks up an element by a key or index, returning the default or supplied fallback when absent.</p>
-<p>Dispatches to the collection's callable lookup operation, consistent with the <span class="tt">operator()</span> behavior of <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>, <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>, <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>. The fallback defaults to the collection's default lookup result when omitted. For <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>, the index must be an integral type other than <code>bool</code> or a character type. Keys and fallback values accept their declared types and safe numeric widening that preserves every source value; Boolean, character, enum, and user-defined values do not convert across types.</p>
+<p>Dispatches to the collection's callable lookup operation, consistent with the <span class="tt">operator()</span> behavior of <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>, <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>, <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>. The fallback defaults to the collection's default lookup result when omitted. For <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> and <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>, the index must be an integer. Keys and fallback values accept their declared types and safe numeric widening that preserves every source value.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -3266,10 +3266,10 @@ fallback) { collection(key, fallback); }</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (val == 10) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a5619a9d49633aabff9b98aee1b381151"><div class="ttname"><a href="#a5619a9d49633aabff9b98aee1b381151">cljonic::get</a></div><div class="ttdeci">constexpr auto get(const C &amp;collection, const K &amp;key, const V &amp;fallback=V{}) noexcept -&gt; decltype(collection(key, fallback))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-get_8hpp_source.html#l00050">cljonic-get.hpp:50</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a5619a9d49633aabff9b98aee1b381151"><div class="ttname"><a href="#a5619a9d49633aabff9b98aee1b381151">cljonic::get</a></div><div class="ttdeci">constexpr auto get(const C &amp;collection, const K &amp;key, const V &amp;fallback=V{}) noexcept -&gt; decltype(collection(key, fallback))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-get_8hpp_source.html#l00048">cljonic-get.hpp:48</a></div></div>
 </div><!-- fragment --><p> Returns the stored value when present, otherwise the supplied fallback or the collection's default lookup result when no fallback is supplied. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-get_8hpp_source.html#l00050">50</a> of file <a class="el" href="cljonic-get_8hpp_source.html">cljonic-get.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-get_8hpp_source.html#l00048">48</a> of file <a class="el" href="cljonic-get_8hpp_source.html">cljonic-get.hpp</a>.</p>
 
 </div>
 </div>
