@@ -14,18 +14,19 @@ direct **source/interop constructor** (SourceConstruction). So "use `into` to
 materialize a range, view, or producer" is WRONG: only cljonic
 collections/producers go through `into`.
 
-Correct collection-top phrasing (mirrors Vector):
+Correct collection-top phrasing:
 "A non-cljonic C++ range or view constructor parameter is copied into the X; a
 cljonic collection or producer is not a constructor source -- X{X{...}} encloses
-it as a single element. To materialize one, use into; fits_into is the preflight
-predicate for whether the whole source fits."
+it as a single element. To materialize one into a destination Vector, use into;
+fits_into checks whether the complete source fits in that Vector's remaining
+capacity."
 
-2026-10-17, human-approved: "source" alone spanned two domains in one paragraph.
-The constructor side now says "constructor parameter" (paired with "constructor
-source", the term in CljonicSourceIsNotConstructorSource); the into/fits_into
-argument is still the source. Applied to Vector, Map, Queue, Set.
+REQ-DIAG-010 fallback guidance should name Vector: `into` and `fits_into`
+accept only `CljonicVector` destinations. Never suggest materializing into Map,
+Queue, Set, or String.
 
-Applied 2026-10-05 repo-wide: src/cljonic-{vector,map,queue,set}.hpp top +
-internal `(REQ-FN-027A)` comments, vocabulary.md, architecture.md,
-requirements-index/module-2/module-4, and the mementum notes. Do not regress to
+2026-10-17, human-approved: "source" alone spanned two domains; constructor
+prose now says "constructor parameter" / "constructor source", while the
+`into`/`fits_into` argument remains "source". Applied to Vector, Map, Queue,
+Set overviews and all five collection fallback diagnostics. Do not regress to
 "into or fits_into to materialize".
