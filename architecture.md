@@ -14,7 +14,8 @@
   | module4_active_slice(x) → Range(x) ∧ Repeat(x) ∧ Cycle(x) ∧ Iterate(x) ∧ Repeatedly(x) ∧ into(x) ∧ fits_into(x)
   | deferred_sequence_contracts(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
-  | future_expansion(transformations ∨ regexes ∨ relational_models)
+  | future_expansion(transformations ∨ numeric_algorithms ∨ callable_adapters ∨ set_algebra
+      ∨ relational_models ∨ regexes ∨ formatting ∨ keyword_enum_mapping ∨ state_reference)
     → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
 
 λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_public_producer_surface ∧ current_free_function_surface)
@@ -204,7 +205,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | semantically_infinite_producer(x) → bound_synthesis_by(CollectionMaximumElementCount)
   | oversized_finite_producer(x) → classify_as(BoundedPrefixResult) ∧ bound_synthesis_by(CollectionMaximumElementCount)
   | SourceConstruction(x) → classify_as(BoundedResult) ∧ require(owned_copy ∧ no_checked_constructor)
-  | SourceConstruction(x) → admit_only(external_non_cljonic_range_or_view(x)) ∧ ¬admit(cljonic_collection(x) ∨ cljonic_producer(x))
+  | SourceConstruction(x) → admit_only(external_non_cljonic_range_or_view(x)) ∧ ¬admit(CljonicCollection(x) ∨ CljonicProducer(x))
   | SameTypeArgumentIsOneElement(x) → single_argument_same_type_as_element(x) → select_pack_construction(x) ∧ ¬select(SourceConstruction(x))
   | EnclosureConstruction(x) → deduce_element_type_from_argument(x) ∧ capacity_one(x) ∧ produce_one_element(x) ∧ ¬copy(x) ∧ ¬materialize(x) ∧ mirrors(Clojure_literal_enclosure)
   | RangeViewMaterialization(x) → direct_source_construction(x) ∧ copy_prefix_to(destination_capacity(x))
@@ -1075,7 +1076,7 @@ concept SequenceableProducer =
   | module4_producer_authority(x) ≡ requirements/requirements-module-4.md → govern(producers ∧ materialization ∧ interop)
   | module5_algorithm_authority(x) ≡ requirements/requirements-module-5.md → govern(composition ∧ traversal_family)
   | module6_numeric_authority(x) ≡ requirements/requirements-module-6.md → govern(checked_arithmetic ∧ callables)
-  | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ regex ∧ state ∧ formatting)
+  | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ set_algebra ∧ regex ∧ state ∧ formatting ∧ keyword_enum_mapping)
 
 λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ into ∧ fits_into
   | approved_but_unimplemented(algorithms ∨ regexes) → remain_outside(active_surface(x))
