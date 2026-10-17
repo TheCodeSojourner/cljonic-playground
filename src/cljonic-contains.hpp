@@ -30,8 +30,7 @@ concept ContainsAdmissible =
  *        "Vector", or \ref String "String".
  *
  * \ref Map "Map" keys and \ref Set "Set" elements admit their declared type and safe numeric widening that preserves
- * every source value. Boolean, character, enum, and user-defined values do not convert across types. \ref Vector
- * "Vector" and \ref String "String" accept non-boolean, non-character integral indexes.
+ * every source value. \ref Vector "Vector" and \ref String "String" accept an integer index.
  *
  * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
  * `false`.

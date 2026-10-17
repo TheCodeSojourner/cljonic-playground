@@ -240,9 +240,11 @@ namespace cljonic {
  *
  * Compared collections and sets must have matching element types, and compared maps must have matching key and value
  * types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as
- * floating-point numbers, are not supported. Standard-library range and container types are not supported at any
- * depth. Nested collections and composite values compare by the same rules; a nested producer is compared by its
- * stored parameters.
+ * floating-point numbers, are not supported. \ref Iterate "Iterate" and \ref Repeatedly "Repeatedly" values cannot be
+ * compared stably because their step is a callable, so they are not supported as map keys, set elements, or nested
+ * components. Standard-library range and container types are not supported at any depth. Nested collections and
+ * composite values compare by the same rules; a nested producer that admits stable equality is compared by its stored
+ * parameters.
  *
  * With more than two arguments, every adjacent pair is compared, from left to right, stopping at the first unequal
  * pair.

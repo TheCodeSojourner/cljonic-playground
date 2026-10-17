@@ -42,8 +42,8 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
  *
  * `dissoc` is supported only for \ref Map "Map". With no keys it returns an unchanged copy; otherwise it removes keys
  * left-to-right. Keys may use the map's key type or a numeric type whose entire range is preserved by conversion to
- * that type; Boolean, character, enum, and user-defined keys do not convert across types. Each present key is removed;
- * absent keys leave the map unchanged, and repeating a key has no further effect. The source map is never modified.
+ * that type. Each present key is removed; absent keys leave the map unchanged, and repeating a key has no further
+ * effect. The source map is never modified.
  *
  * \b Examples
  ~~~~~{.cpp}

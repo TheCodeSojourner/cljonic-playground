@@ -37,8 +37,8 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
  * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Finite counts follow the \ref
- * ImplicitConversions "safe implicit conversion rules": use non-Boolean, non-character unsigned integer types whose
- * ranges fit \c std::size_t. Callback types and produced element types remain exact.
+ * ImplicitConversions "safe implicit conversion rules": use unsigned integer types whose ranges fit \c std::size_t.
+ * Callback types and produced element types remain exact.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

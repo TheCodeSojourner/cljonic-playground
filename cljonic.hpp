@@ -102,8 +102,10 @@
  *
  * ### Control
  *
- * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes", \ref Core_If "If", \ref Core_Unless "Unless", \ref Core_When
- * "When", \ref Core_WhenNot "WhenNot"
+ * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes"
+ * - \ref Core_If "If"
+ * - \ref Core_Unless "Unless"
+ * - \ref Core_When "When", \ref Core_WhenNot "WhenNot"
  *
  * ### Predicate
  *
@@ -138,8 +140,9 @@
  * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
  * when their requirements are approved.
  *
- * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref CharacterIsValid
- * "character_is_valid", \ref Conj "conj", \ref Contains "contains", \ref Count "count"
+ * - \ref Assoc "assoc"
+ * - \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref CharacterIsValid "character_is_valid",
+ * \ref Conj "conj", \ref Contains "contains", \ref Count "count"
  * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref Core_DefaultElement "DefaultElement",
  * \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref Dissoc
  * "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
@@ -150,8 +153,8 @@
  * "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into"
  * - \ref Get "get"
  * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy
- * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into"
- * - \ref Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull
+ * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into", \ref
+ * Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull
  * "IsFull", \ref Iterate "Iterate"
  * - \ref Core_Juxt "Juxt"
  * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy"
@@ -812,10 +815,10 @@ namespace cljonic {
  *        "Vector", \ref String "String").
  *
  * Supported for \ref Map "Map" (key/value association, replacing the value of an existing key), \ref Vector "Vector"
- * (non-boolean, non-character integer index association; an index equal to the current count appends when capacity
- * remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector"; see \ref String "String"
- * for character validation and normalization policy). \ref Set "Set" and \ref Queue "Queue" provide no associative
- * capability and are rejected. The result is a distinct collection value; the source is unchanged.
+ * (integer index association; an index equal to the current count appends when capacity remains), and \ref String
+ * "String" (the same index and append rule as \ref Vector "Vector"; see \ref String "String" for character validation
+ * and normalization policy). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are rejected.
+ * The result is a distinct collection value; the source is unchanged.
  *
  * The variadic form `assoc(collection, key₁, value₁, key₂, value₂, …)` applies two or more key-value pairs
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
@@ -980,11 +983,11 @@ namespace cljonic {
  *        \ref concepts::CljonicCollection "collection".
  *
  * Supported for \ref Map "Map" (an existing key can be replaced, or an absent key inserted when capacity remains),
- * \ref Vector "Vector" (a non-boolean, non-character integer index can be replaced, or an index equal to the current
- * count can append when capacity remains), and \ref String "String" (the same index and append rule as \ref Vector
- * "Vector", with an invalid character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative
- * capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier
- * pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.
+ * \ref Vector "Vector" (an integer index can be replaced, or an index equal to the current count can append when
+ * capacity remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector", with an invalid
+ * character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are
+ * rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true
+ * only when every pair preflight succeeds. All forms leave the source unchanged.
  *
  * Keys and values use the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Assoc "assoc".
  *
@@ -1813,7 +1816,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
  * Three arities are provided: `conj(collection)` returns an unchanged copy, `conj(collection, value)` adds one value,
  * and `conj(collection, value₁, value₂, …)` adds two or more values left to right, so `conj(c, x₁, x₂)`
  * equals `conj(conj(c, x₁), x₂)`. Each value must be one the collection can hold, as described above; a value that
- * does not fit because the collection is full is skipped, and the remaining values are still added.
+ * does not fit because the collection is full is skipped.
  *
  * Stored values follow the \ref ImplicitConversions "safe implicit conversion rules".
  *
@@ -1990,8 +1993,7 @@ concept ContainsAdmissible =
  *        "Vector", or \ref String "String".
  *
  * \ref Map "Map" keys and \ref Set "Set" elements admit their declared type and safe numeric widening that preserves
- * every source value. Boolean, character, enum, and user-defined values do not convert across types. \ref Vector
- * "Vector" and \ref String "String" accept non-boolean, non-character integral indexes.
+ * every source value. \ref Vector "Vector" and \ref String "String" accept an integer index.
  *
  * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
  * `false`.
@@ -2788,9 +2790,8 @@ concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value
  * The \b disj free function API disjoins zero or more elements from a \ref Set "Set".
  *
  * `disj(set, values...)` accepts the \ref Set "Set"'s element type and safe numeric widening conversions. A conversion
- * must preserve every source value; Boolean, character, enum, and user-defined values do not convert across types.
- * Values are removed from left to right; absent or repeated values are no-ops after any prior removal. Calling
- * `disj(set)` with no values returns an unchanged copy.
+ * must preserve every source value. Values are removed from left to right; absent or repeated values are no-ops after
+ * any prior removal. Calling `disj(set)` with no values returns an unchanged copy.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -2886,8 +2887,8 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
  *
  * `dissoc` is supported only for \ref Map "Map". With no keys it returns an unchanged copy; otherwise it removes keys
  * left-to-right. Keys may use the map's key type or a numeric type whose entire range is preserved by conversion to
- * that type; Boolean, character, enum, and user-defined keys do not convert across types. Each present key is removed;
- * absent keys leave the map unchanged, and repeating a key has no further effect. The source map is never modified.
+ * that type. Each present key is removed; absent keys leave the map unchanged, and repeating a key has no further
+ * effect. The source map is never modified.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -3233,9 +3234,11 @@ namespace cljonic {
  *
  * Compared collections and sets must have matching element types, and compared maps must have matching key and value
  * types. Collections are never compared to ordinary values. Values that cannot be compared stably, such as
- * floating-point numbers, are not supported. Standard-library range and container types are not supported at any
- * depth. Nested collections and composite values compare by the same rules; a nested producer is compared by its
- * stored parameters.
+ * floating-point numbers, are not supported. \ref Iterate "Iterate" and \ref Repeatedly "Repeatedly" values cannot be
+ * compared stably because their step is a callable, so they are not supported as map keys, set elements, or nested
+ * components. Standard-library range and container types are not supported at any depth. Nested collections and
+ * composite values compare by the same rules; a nested producer that admits stable equality is compared by its stored
+ * parameters.
  *
  * With more than two arguments, every adjacent pair is compared, from left to right, stopping at the first unequal
  * pair.
@@ -3436,10 +3439,8 @@ namespace cljonic {
  *
  * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
  * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
- * default lookup result when omitted. For \ref Vector "Vector" and \ref String "String", the index must be an integral
- * type other than \c bool or a character type. Keys and fallback values accept their declared types and safe numeric
- * widening that preserves every source value; Boolean, character, enum, and user-defined values do not convert across
- * types.
+ * default lookup result when omitted. For \ref Vector "Vector" and \ref String "String", the index must be an integer.
+ * Keys and fallback values accept their declared types and safe numeric widening that preserves every source value.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -5068,8 +5069,8 @@ concept RepeatClassArgument =
  * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Values and finite counts follow
- * the \ref ImplicitConversions "safe implicit conversion rules"; counts use non-Boolean, non-character unsigned
- * integer types whose ranges fit \c std::size_t.
+ * the \ref ImplicitConversions "safe implicit conversion rules"; counts use unsigned integer types whose ranges fit \c
+ * std::size_t.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -5331,8 +5332,8 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
  * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Finite counts follow the \ref
- * ImplicitConversions "safe implicit conversion rules": use non-Boolean, non-character unsigned integer types whose
- * ranges fit \c std::size_t. Callback types and produced element types remain exact.
+ * ImplicitConversions "safe implicit conversion rules": use unsigned integer types whose ranges fit \c std::size_t.
+ * Callback types and produced element types remain exact.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

@@ -10,11 +10,11 @@ namespace cljonic {
  *        \ref concepts::CljonicCollection "collection".
  *
  * Supported for \ref Map "Map" (an existing key can be replaced, or an absent key inserted when capacity remains),
- * \ref Vector "Vector" (a non-boolean, non-character integer index can be replaced, or an index equal to the current
- * count can append when capacity remains), and \ref String "String" (the same index and append rule as \ref Vector
- * "Vector", with an invalid character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative
- * capability and are rejected. The variadic form checks pairs left to right against the state produced by earlier
- * pairs, returning true only when every pair preflight succeeds. All forms leave the source unchanged.
+ * \ref Vector "Vector" (an integer index can be replaced, or an index equal to the current count can append when
+ * capacity remains), and \ref String "String" (the same index and append rule as \ref Vector "Vector", with an invalid
+ * character returning false). \ref Set "Set" and \ref Queue "Queue" provide no associative capability and are
+ * rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true
+ * only when every pair preflight succeeds. All forms leave the source unchanged.
  *
  * Keys and values use the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Assoc "assoc".
  *

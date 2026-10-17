@@ -91,8 +91,10 @@
  *
  * ### Control
  *
- * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes", \ref Core_If "If", \ref Core_Unless "Unless", \ref Core_When
- * "When", \ref Core_WhenNot "WhenNot"
+ * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes"
+ * - \ref Core_If "If"
+ * - \ref Core_Unless "Unless"
+ * - \ref Core_When "When", \ref Core_WhenNot "WhenNot"
  *
  * ### Predicate
  *
@@ -127,8 +129,9 @@
  * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
  * when their requirements are approved.
  *
- * - \ref Assoc "assoc", \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref CharacterIsValid
- * "character_is_valid", \ref Conj "conj", \ref Contains "contains", \ref Count "count"
+ * - \ref Assoc "assoc"
+ * - \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref CharacterIsValid "character_is_valid",
+ * \ref Conj "conj", \ref Contains "contains", \ref Count "count"
  * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref Core_DefaultElement "DefaultElement",
  * \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref Dissoc
  * "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
@@ -139,8 +142,8 @@
  * "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into"
  * - \ref Get "get"
  * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy
- * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into"
- * - \ref Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull
+ * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into", \ref
+ * Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull
  * "IsFull", \ref Iterate "Iterate"
  * - \ref Core_Juxt "Juxt"
  * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy"
