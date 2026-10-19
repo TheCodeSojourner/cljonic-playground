@@ -15,7 +15,7 @@
   | deferred_sequence_contracts(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
   | future_expansion(transformations ∨ numeric_algorithms ∨ callable_adapters ∨ set_algebra
-      ∨ relational_models ∨ regexes ∨ formatting ∨ keyword_enum_mapping ∨ state_reference)
+      ∨ relational_models ∨ regexes ∨ formatting ∨ KeywordEnumNameMapping ∨ Atom)
     → describe(approved_future_expansion) ∧ remain_inactive_until(module_propagated(x))
 
 λ current_concept_model(x). two_level_concept_model(x) → gate(current_public_collection_surface ∧ current_public_producer_surface ∧ current_free_function_surface)
@@ -254,7 +254,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | applies_to(all_public_free_functions_with_closed_domain ∧ collection_source_constructors)(x)
   | illustrative_examples(x) ≡ equal ∧ not_equal ∧ producer_factory_functions ∧ collection_primitives
   | collection_primitives(x) ≡ count ∧ get ∧ contains ∧ conj ∧ can_conj ∧ assoc ∧ can_assoc
-    ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ is_empty ∧ into ∧ fits_into
+    ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ empty ∧ is_empty ∧ into ∧ fits_into
   | collection_primitives(x) → ¬narrow(universal_obligation(x))
   | producer_factory_functions(x) ≡ repeat ∧ cycle ∧ iterate ∧ repeatedly
   | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ direct_to(into ∨ enclosure_form) ∧ preflight(fits_into)
@@ -595,15 +595,15 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | complete_materialization_into(destination, producer) → use(fits_into)
   | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | requirements_backed_operations(x) ≡ is_empty ∧ contains ∧ count ∧ fits_into ∧ into
+  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ contains ∧ count ∧ fits_into ∧ into
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | bounded_insertion_capacity_inspection(x) ≡ full ∨ equivalent_capacity_inspection
   | requirements_backed_operations(x) → classify_as(RequirementsBacked)
   | bounded_insertion_capacity_inspection(x) → classify_as(RequirementsBacked)
-  | deferred_empty_operations(x) ≡ empty ∧ not_empty
+  | deferred_empty_operations(x) ≡ not_empty
   | is_empty(value) → admit(SequenceableCollection ∨ SequenceableProducer) ∧ return(count(value) == 0)
     ∧ non_throwing ∧ non_allocating ∧ provide(targeted_rejection_diagnostic(¬(SequenceableCollection ∨ SequenceableProducer)))
   | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
@@ -641,6 +641,13 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | return(count(value) == 0) ∧ inherit(collection_or_producer_count_semantics(value))
   | unbounded_producer(value) → use(configured_observation_cap_not_complete_cardinality)
   | is_empty_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+
+λ S2_empty_function_contract(x). empty(collection) → admit(SequenceableCollection(collection))(x)
+  | return(empty_owning_value_of_same_type(collection)) ∧ preserve(capacity_type(collection))
+  | result(x) → satisfies(is_empty(x)) ∧ independent_of_input_lifetime(x)
+  | preserves(input_collection_value(x))
+  | empty_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | rejected_input(x) → provide(targeted_rejection_diagnostic(x))
 
 λ S2_disj_function_contract(x). disj(set, values...) → admit(CljonicSet(set) ∧ ∀ value: SafeImplicitConversion(value, Set::value_type))
   | arity(values) = 0 → return(unchanged_copy(set))
@@ -1076,7 +1083,7 @@ concept SequenceableProducer =
   | module4_producer_authority(x) ≡ requirements/requirements-module-4.md → govern(producers ∧ materialization ∧ interop)
   | module5_algorithm_authority(x) ≡ requirements/requirements-module-5.md → govern(composition ∧ traversal_family)
   | module6_numeric_authority(x) ≡ requirements/requirements-module-6.md → govern(checked_arithmetic ∧ callables)
-  | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ set_algebra ∧ regex ∧ state ∧ formatting ∧ keyword_enum_mapping)
+  | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ set_algebra ∧ regex ∧ Atom ∧ formatting ∧ KeywordEnumNameMapping)
 
 λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ into ∧ fits_into
   | approved_but_unimplemented(algorithms ∨ regexes) → remain_outside(active_surface(x))
