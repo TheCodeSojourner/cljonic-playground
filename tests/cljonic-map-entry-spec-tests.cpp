@@ -6,9 +6,11 @@
 
 namespace {
 template <typename T>
-concept HasSemanticEntryAccess = requires(const T& value) { first(value); } || requires(const T& value) {
-    last(value);
-} || requires(const T& value) { key(value); } || requires(const T& value) { val(value); };
+concept HasDeferredEntryAccess = requires(const T& value) { last(value); } ||
+                                 requires(const T& value) { key(value); } || requires(const T& value) { val(value); };
+
+template <typename T>
+concept HasFirstAccess = requires(const T& value) { first(value); };
 
 template <typename T>
 concept HasSequenceConversion = requires(const T& value) { seq(value); };
@@ -35,13 +37,16 @@ TEST_CASE("MapEntry holds value-semantic key/value pair", "[map-entry]") {
     TRACE_ID("invariant.MapEntry.RequiresNothrowDestruction");
     TRACE_ID("invariant.MapEntry.SupportsNamedKeyFieldObservation");
     TRACE_ID("invariant.MapEntry.SupportsNamedValueFieldObservation");
-    TRACE_ID("invariant.MapEntry.SemanticKeyValFirstLastFreeFunctionsAreDeferred");
+    TRACE_ID("invariant.MapEntry.SupportsFirstFreeFunction");
+    TRACE_ID("invariant.MapEntry.SemanticKeyValLastFreeFunctionsAreDeferred");
     TRACE_ID("invariant.MapEntry.FixedTwoElementSequenceBehaviorIsDeferred");
 
     constexpr MapEntry<int, int> entry{1, 100};
     STATIC_REQUIRE(entry.key == 1);
     STATIC_REQUIRE(entry.value == 100);
-    STATIC_REQUIRE_FALSE(HasSemanticEntryAccess<decltype(entry)>);
+    STATIC_REQUIRE(HasFirstAccess<decltype(entry)>);
+    STATIC_REQUIRE(first(entry) == 1);
+    STATIC_REQUIRE_FALSE(HasDeferredEntryAccess<decltype(entry)>);
     STATIC_REQUIRE_FALSE(HasSequenceConversion<decltype(entry)>);
 
     const auto runtime_entry = MapEntry<int, int>{2, 200};
