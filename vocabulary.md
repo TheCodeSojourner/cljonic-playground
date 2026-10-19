@@ -67,7 +67,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** ordered sequence, sequential value
 - **Related:** Collection, Sequenceable, Traversal, LogicalTraversalOrder, Producer
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A future semantic traversal increment may define `seq`, `first`, `next`, and `rest`; current collections expose const range traversal without claiming those operations.
+- **Examples:** `first` is part of the current traversal API; a future semantic traversal increment may define `seq`, `next`, and `rest`. Current collections expose const range traversal in addition to `first`.
 
 
 ### Sequenceable
@@ -123,7 +123,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence traversal, iteration
 - **Related:** Sequence, ProducerIteration, BoundedInspection, LogicalTraversalOrder
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `first`, `next`, and `rest` are deferred traversal operations whose behavior will be implemented for all collections in a future increment.
+- **Examples:** `first` is an active traversal operation; `next` and `rest` remain deferred and will be implemented for all collections in a future increment.
 
 
 ### ConstRangeTraversal
@@ -415,9 +415,9 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### MapEntry
-- **Definition:** The bounded owning key-value pair representation used when a map association is explicitly constructed or exposed as an entry value, such as during map traversal. Its key and value are named fields; typed `key` and `val` free functions are the planned user-facing accessors. A Map lookup returns its mapped value `V`, not a `MapEntry<K, V>`. Any future fixed two-element sequence behavior remains deferred until an indexed result representation is approved.
+- **Definition:** The bounded owning key-value pair representation used when a map association is explicitly constructed or exposed as an entry value, such as during map traversal. Its key and value are named fields; `first` returns the key, and typed `key` and `val` free functions remain planned user-facing accessors. A Map lookup returns its mapped value `V`, not a `MapEntry<K, V>`. Any future fixed two-element sequence behavior remains deferred until an indexed result representation is approved.
 - **Deprecated Synonyms:** map entry, key-value entry
-- **Related:** Map, Lookup, Seqable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue
+- **Related:** Map, Lookup, Seqable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue, First
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** A map-entry result owns its key and value rather than borrowing hidden map storage.
 
@@ -585,7 +585,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** default element, collection default element
 - **Related:** SentinelBasedAccess, ProbeFirstAccess, CopyOnModifyCollection
 - **Usage:** Architecture, specification, implementation, tests, documentation, and user guidance
-- **Examples:** `get(xs, 99)` returns the collection's `DefaultElement` when index `99` is invalid; under the deferred traversal contract, future `first(xs)` returns the `DefaultElement` when `xs` is empty.
+- **Examples:** `get(xs, 99)` returns the collection's `DefaultElement` when index `99` is invalid; `first(xs)` returns the `DefaultElement` when `xs` is empty.
 
 
 ### ProbeFirstAccess
@@ -750,6 +750,13 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** IsEmpty, NotEmpty
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
 - **Examples:** `empty(Vector<int, 4>{1, 2})` returns an empty `Vector<int, 4>` while leaving its input unchanged.
+
+### First
+- **Definition:** The free function that returns the first logical element of a `Vector`, `String`, `Queue`, `Map`, or `Set`, or the key of a `MapEntry`. `Vector` and `String` yield the element at index zero, `Queue` yields its front element without removal, `Map` yields one value-semantic `MapEntry`, and `Set` yields one stored element. `Map` and `Set` traversal order is not semantically significant. An empty sequenceable collection yields its `DefaultElement`. The operation is non-mutating, non-allocating, non-throwing, and part of the current public API.
+- **Deprecated Synonyms:** head, first element, first entry
+- **Related:** Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, MapEntry, DefaultElement, Peek
+- **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
+- **Examples:** `first(Vector<int, 4>{10, 20})` is `10`; `first(Queue<int, 4>{5, 6})` is `5`; `first(MapEntry<int, int>{1, 100})` is `1`; `first(Vector<int, 4>{})` is the default `int` value.
 
 ### NotEmpty
 - **Definition:** The deferred `not_empty` operation whose required result is an independent owning copy of a nonempty input or the corresponding empty owning value when the input is empty, preserving the supported collection type and capacity when present. It preserves the input and requires no allocation or exceptions. It is not a boolean alias for IsEmpty; this entry records future behavior, not current API support.
