@@ -84,11 +84,12 @@ link.
 - `docs-examples:ok` alone is not proof: confirm the `docs-examples:compiled=N`
   count when adding/editing a block.
 - Headers documenting free functions that are deliberately not yet in the public
-  API (`empty`, `first`, `next`, `not-empty`, `rest`, `seq`) are listed in
+  API (`first`, `next`, `not-empty`, `rest`, `seq`) are listed in
   `DEFERRED_NON_PUBLIC_HEADERS` and reported as
   `docs-examples:deferred-skipped=N`, with a `\note Not yet part of the public
   API` in each header. **Never re-introduce a silent skip** — the skip must stay
-  visible.
+  visible. `empty` was promoted to the public API on 2026-10-17: it is in the
+  `cljonic-core.hpp` umbrella, its example compiles, and its spec is active.
 
 ## Example content rules
 

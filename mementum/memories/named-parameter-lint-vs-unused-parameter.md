@@ -14,4 +14,4 @@ Fix: name the parameter and mark it `[[maybe_unused]]` in the **prefix** positio
 
 The trailing form (`const T& [[maybe_unused]] value`) fails with `'maybe_unused' attribute cannot be applied to types`.
 
-Found 2026-09-29 on the unary `equal` overload, after its doc sample was moved to the bare-fence style and compiled for the first time. `empty(const C&)` in `cljonic-empty.hpp` uses the unnamed form only because it is outside the lint TU — do not copy it. Always confirm with `make lint`, not just a compile.
+Found 2026-09-29 on the unary `equal` overload, after its doc sample was moved to the bare-fence style and compiled for the first time. `empty(const C&)` in `cljonic-empty.hpp` used the unnamed form only because that header was outside the lint TU while deferred; when `empty` was promoted to the public API on 2026-10-17 it was named and marked `[[maybe_unused]]` per this rule. Always confirm with `make lint`, not just a compile.

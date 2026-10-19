@@ -32,7 +32,7 @@ Counter-example: `ApiLifecycleGate` (2026-09-26). Governance-process invariants
 (CandidateStatus / DeferredStatus / ExcludedStatus / RequirementsBacked) were
 encoded as an allium entity, generating seven plan obligations that no runtime
 behavior could honestly satisfy, because the implemented surface legitimately
-contains deferred-labeled functions (`seq`, `first`, `empty`, `not_empty`). The
+contains deferred-labeled functions (`seq`, `first`, `not_empty`). The
 entity was reverted. Governance vocabulary stays in architecture λ-rules and
 `vocabulary.md`; its enforcement channel is the gate process itself, not a
 runtime assertion.
