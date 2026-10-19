@@ -5,12 +5,8 @@
 namespace cljonic {
 
 /** \anchor Empty
- * The \b empty free function API returns an empty \ref concepts::SequenceableCollection "collection" of the same type
- * as the input.
- *
- * Per REQ-FN-026, `empty` produces an empty owning value of the same supported collection type as its input.
- *
- * \note Not yet part of the public API; the sequence-shaping operations are deferred.
+ * The \b empty free function returns a new, empty collection of the same type as its argument. It works with `Vector`,
+ * `Map`, `Set`, `Queue`, and `String`; the argument is left unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -26,14 +22,26 @@ namespace cljonic {
    // Runtime demonstration.
    auto v_runtime = Vector<int, 4>{10, 20};
    auto e_runtime = empty(v_runtime);
+   auto m_runtime = Map<int, int, 4>{MapEntry<int, int>{1, 100}};
+   auto em_runtime = empty(m_runtime);
 
-   return (is_empty(e_runtime) && count(v_runtime) == 2U) ? 0 : 1;
+   return (is_empty(e_runtime) && count(v_runtime) == 2U &&
+           is_empty(em_runtime) && count(m_runtime) == 1U)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
 template <concepts::SequenceableCollection C>
-[[nodiscard]] constexpr auto empty(const C&) noexcept -> C {
+[[nodiscard]] constexpr auto empty([[maybe_unused]] const C& collection) noexcept -> C {
     return C{};
+}
+
+template <typename C>
+    requires(!concepts::SequenceableCollection<C>)
+constexpr auto empty([[maybe_unused]] const C& collection) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::empty: expected a Vector, Map, Set, Queue, or String value.");
 }
 
 } // namespace cljonic

@@ -205,6 +205,7 @@
 #include <cljonic-cycle.hpp>
 #include <cljonic-disj.hpp>
 #include <cljonic-dissoc.hpp>
+#include <cljonic-empty.hpp>
 #include <cljonic-equal.hpp>
 #include <cljonic-fits-into.hpp>
 #include <cljonic-get.hpp>
