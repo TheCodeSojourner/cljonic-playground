@@ -593,7 +593,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | predicate_true(x) ↔ corresponding_operation_can_produce_valid_or_complete_result(x)
   | predicate_false(x) → follow(documented_default_bounded_or_failure_policy(x))
   | complete_materialization_into(destination, producer) → use(fits_into)
-  | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
+  | fits_into(destination, producer) → require(CljonicVector(destination)) ∧ measure(complete_result_cardinality_and_semantics)
 
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ first
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
