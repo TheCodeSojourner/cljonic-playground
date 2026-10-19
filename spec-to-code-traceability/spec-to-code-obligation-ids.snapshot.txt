@@ -29,6 +29,7 @@ entity-fields.Count
 entity-fields.Cycle
 entity-fields.Disj
 entity-fields.Dissoc
+entity-fields.Empty
 entity-fields.EqualFunction
 entity-fields.Get
 entity-fields.ImplicitConversions
@@ -390,6 +391,19 @@ invariant.Dissoc.SingleThreadedExecutionModel
 invariant.Dissoc.UnsupportedDomainsAreRejected
 invariant.Dissoc.ZeroKeysReturnUnchangedCopy
 invariant.Dissoc.ZeroOrMoreKeys
+invariant.Empty.DiagnosticNamesSupportedCollections
+invariant.Empty.EmptyFreeFunctionSupported
+invariant.Empty.LeavesInputUnchanged
+invariant.Empty.NoExceptions
+invariant.Empty.NoHeapAllocation
+invariant.Empty.NoRtti
+invariant.Empty.ReferentialTransparency
+invariant.Empty.RejectsUnsupportedDomainWithTargetedDiagnostic
+invariant.Empty.ResultSatisfiesIsEmpty
+invariant.Empty.ReturnsEmptyOwningValueOfSameType
+invariant.Empty.SingleThreadedExecutionModel
+invariant.Empty.SupportedCollectionsPreserveTypeAndCapacity
+invariant.Empty.SupportsSequenceableCollectionDomain
 invariant.EqualFunction.AdjacentPairsAndUnaryOperandCompileTimeGated
 invariant.EqualFunction.CljonicNonscalarPairsClassifiedByEqualityFamily
 invariant.EqualFunction.ConstexprNoexceptNonmutatingNonallocating

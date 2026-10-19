@@ -1,0 +1,71 @@
+-- allium: 3
+
+entity Empty {
+    supports_empty_free_function: Boolean
+    returns_empty_owning_value_of_same_type: Boolean
+    supports_sequenceable_collection_domain: Boolean
+    supported_collections_preserve_type_and_capacity: Boolean
+    leaves_input_unchanged: Boolean
+    result_satisfies_is_empty: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+    rejects_unsupported_domain_with_targeted_diagnostic: Boolean
+    diagnostic_names_supported_collections: Boolean
+
+    invariant EmptyFreeFunctionSupported {
+        this.supports_empty_free_function = true
+    }
+
+    invariant ReturnsEmptyOwningValueOfSameType {
+        this.returns_empty_owning_value_of_same_type = true
+    }
+
+    invariant SupportsSequenceableCollectionDomain {
+        this.supports_sequenceable_collection_domain = true
+    }
+
+    invariant SupportedCollectionsPreserveTypeAndCapacity {
+        this.supported_collections_preserve_type_and_capacity = true
+    }
+
+    invariant LeavesInputUnchanged {
+        this.leaves_input_unchanged = true
+    }
+
+    invariant ResultSatisfiesIsEmpty {
+        this.result_satisfies_is_empty = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.rejects_unsupported_domain_with_targeted_diagnostic = true
+    }
+
+    invariant DiagnosticNamesSupportedCollections {
+        this.diagnostic_names_supported_collections = true
+    }
+}
+
+actor EmptyOperator { identified_by: Empty }
