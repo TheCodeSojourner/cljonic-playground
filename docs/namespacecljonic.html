@@ -338,6 +338,9 @@ requires (!concepts::SequenceableCollection&lt;C&gt; &amp;&amp; !<a class="el" h
 <tr class="memitem:af876852c739bf65f6e8cded65a3778e4" id="r_af876852c739bf65f6e8cded65a3778e4"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; <br />
 requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</td></tr>
 <tr class="memitem:af876852c739bf65f6e8cded65a3778e4 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a> (const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ab03cdd5b91723dc5cd1ae26a03704959" id="r_ab03cdd5b91723dc5cd1ae26a03704959"><td class="memTemplParams" colspan="2">template&lt;typename Dest, typename Source&gt; <br />
+requires (!concepts_detail::MaterializableSource&lt;Dest, Source&gt;)</td></tr>
+<tr class="memitem:ab03cdd5b91723dc5cd1ae26a03704959 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ab03cdd5b91723dc5cd1ae26a03704959">fits_into</a> (const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</td></tr>
 <tr class="memitem:a5619a9d49633aabff9b98aee1b381151" id="r_a5619a9d49633aabff9b98aee1b381151"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename V = std::remove_cvref_t&lt;decltype(std::declval&lt;const C&amp;&gt;()(std::declval&lt;const K&amp;&gt;()))&gt;&gt; <br />
 requires (concepts::LookupCollection&lt;C&gt; || concepts::IndexedCollection&lt;C&gt;) &amp;&amp; requires(const C&amp; collection, const K&amp; key, const V&amp; <br class="typebreak" />
 fallback) { collection(key, fallback); }</td></tr>
@@ -3147,7 +3150,7 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns the first logical element of the sequenceable collection. </p>
+<p>Returns the first logical element of a <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, <a class="el" href="classcljonic_1_1_map.html">Map</a>, <a class="el" href="classcljonic_1_1_set.html">Set</a>, <a class="el" href="classcljonic_1_1_queue.html">Queue</a>, or <a class="el" href="classcljonic_1_1_string.html">String</a> value. </p>
 
 <p class="definition">Definition at line <a class="el" href="cljonic-first_8hpp_source.html#l00060">60</a> of file <a class="el" href="cljonic-first_8hpp_source.html">cljonic-first.hpp</a>.</p>
 
@@ -3207,7 +3210,7 @@ template&lt;typename KeyType, typename ValueType&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="First"></a> The <b>first</b> free function returns the first logical element of a <a class="el" href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html" title="concepts::SequenceableCollection">sequenceable collection</a>, or the key of a <a class="el" href="structcljonic_1_1_map_entry.html#MapEntry" title="MapEntry">MapEntry</a>.</p>
+<p><a class="anchor" id="First"></a> The <b>first</b> free function returns the first logical element of a <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, or <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span> value, or the key of a <a class="el" href="structcljonic_1_1_map_entry.html#MapEntry" title="MapEntry">MapEntry</a> value.</p>
 <p><span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span> and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span> yield the element at index zero, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span> yields its front element, <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> yields one value-semantic <span class="tt"><a class="el" href="structcljonic_1_1_map_entry.html">MapEntry</a></span>, and <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> yields one stored element. <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span> and <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span> traversal order is not semantically significant. An empty collection yields its default element.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -3248,8 +3251,42 @@ template&lt;typename KeyType, typename ValueType&gt; </div>
 
 </div>
 </div>
+<a id="ab03cdd5b91723dc5cd1ae26a03704959" name="ab03cdd5b91723dc5cd1ae26a03704959"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab03cdd5b91723dc5cd1ae26a03704959">&#9670;&#160;</a></span>fits_into() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Dest, typename Source&gt; <br />
+requires (!concepts_detail::MaterializableSource&lt;Dest, Source&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::fits_into </td>
+          <td>(</td>
+          <td class="paramtype">const Dest &amp;</td>          <td class="paramname"><span class="paramname"><em>destination</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Source &amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00061">61</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
+
+</div>
+</div>
 <a id="af876852c739bf65f6e8cded65a3778e4" name="af876852c739bf65f6e8cded65a3778e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af876852c739bf65f6e8cded65a3778e4">&#9670;&#160;</a></span>fits_into()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af876852c739bf65f6e8cded65a3778e4">&#9670;&#160;</a></span>fits_into() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3277,19 +3314,37 @@ requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="FitsInto"></a> The <b>fits_into</b> free function API checks whether every element of a finite <a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_source.html" title="concepts::CljonicSource">source</a> fits within the remaining capacity of a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>.</p>
-<p>Reports whether appending the complete <code class="param">source</code> to <code class="param">destination</code> fits within the destination's remaining capacity, using the same cardinality semantics as <span class="tt"><a class="el" href="#a6b0a13c640d125d2b026b26ca253f292">into</a></span>. It returns <span class="tt">false</span> for every unbounded producer, even though its normal const traversal is capped. Scoped to <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> destinations in this increment. Source elements must follow the same <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a> as <a class="el" href="#Into" title="Into">into</a>.</p>
+<p><a class="anchor" id="FitsInto"></a> The <b>fits_into</b> free function checks whether the complete contents of a cljonic collection or producer fit within the remaining capacity of a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>.</p>
+<p>The destination must be a <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, and the source must be a cljonic collection or producer whose elements convert safely to the <a class="el" href="classcljonic_1_1_vector.html">Vector</a>'s element type. Reports whether appending the complete <code class="param">source</code> to <code class="param">destination</code> fits within the destination's remaining capacity, using the same cardinality semantics as <span class="tt"><a class="el" href="#a6b0a13c640d125d2b026b26ca253f292">into</a></span>. It returns <span class="tt">false</span> for every unbounded producer, even though its normal const traversal is capped. Source elements must follow the same <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a> as <a class="el" href="#Into" title="Into">into</a>.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 8&gt;</a> destination{};</div>
-<div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> source{0, 5};</div>
-<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(destination, source));</div>
-<div class="line"><span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> unbounded{0, 5, 0};</div>
-<div class="line"><span class="keyword">static_assert</span>(!<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(destination, unbounded));</div>
-<div class="ttc" id="anamespacecljonic_html_af876852c739bf65f6e8cded65a3778e4"><div class="ttname"><a href="#af876852c739bf65f6e8cded65a3778e4">cljonic::fits_into</a></div><div class="ttdeci">constexpr auto fits_into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-fits-into_8hpp_source.html#l00030">cljonic-fits-into.hpp:30</a></div></div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 8&gt;</a> destination{};</div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> finite_source{0, 5};</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(destination, finite_source));</div>
+<div class="line"> </div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a> unbounded_source{0, 5, 0};</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(destination, unbounded_source));</div>
+<div class="line"> </div>
+<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 2&gt;</a> small_destination{};</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(small_destination, finite_source));</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
+<div class="line">  <span class="keyword">volatile</span> <span class="keywordtype">int</span> runtime_end = 5;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_destination = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 8&gt;</a>{1, 2};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_source = <a class="code hl_class" href="classcljonic_1_1_range.html">Range&lt;int&gt;</a>{0, runtime_end};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_small_destination = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{};</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(runtime_destination, runtime_source) &amp;&amp;</div>
+<div class="line">          !<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(runtime_small_destination, runtime_source))</div>
+<div class="line">             ? 0</div>
+<div class="line">             : 1;</div>
+<div class="line">}</div>
+<div class="ttc" id="anamespacecljonic_html_af876852c739bf65f6e8cded65a3778e4"><div class="ttname"><a href="#af876852c739bf65f6e8cded65a3778e4">cljonic::fits_into</a></div><div class="ttdeci">constexpr auto fits_into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-fits-into_8hpp_source.html#l00048">cljonic-fits-into.hpp:48</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00030">30</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00048">48</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
 
 </div>
 </div>
