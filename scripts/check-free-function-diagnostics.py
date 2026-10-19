@@ -62,12 +62,12 @@ REGISTRY: dict[str, str] = {
     "cljonic-into.hpp": "pending",
     "cljonic-is-empty.hpp": "fallback",
     "cljonic-empty.hpp": "fallback",
+    "cljonic-first.hpp": "fallback",
     "cljonic-peek.hpp": "pending",
     "cljonic-pop.hpp": "pending",
     # Documented exclusions.
     "cljonic-map-entry.hpp": "excluded",   # aggregate-like; domain is type-argument gated
     "cljonic-variant.hpp": "excluded",     # free-function API deferred (Slice B)
-    "cljonic-first.hpp": "excluded",       # deferred non-public API (DEFERRED_NON_PUBLIC_HEADERS)
     "cljonic-next.hpp": "excluded",        # deferred non-public API (DEFERRED_NON_PUBLIC_HEADERS)
     "cljonic-not-empty.hpp": "excluded",   # deferred non-public API (DEFERRED_NON_PUBLIC_HEADERS)
     "cljonic-rest.hpp": "excluded",        # deferred non-public API (DEFERRED_NON_PUBLIC_HEADERS)

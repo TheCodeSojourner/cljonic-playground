@@ -29,7 +29,6 @@ USING_INDENTED_RE = re.compile(r"(?m)^[ \t]+using namespace cljonic;")
 # header from this set only when it is promoted into cljonic-core.hpp.
 DEFERRED_NON_PUBLIC_HEADERS = frozenset(
     {
-        "cljonic-first.hpp",
         "cljonic-next.hpp",
         "cljonic-not-empty.hpp",
         "cljonic-rest.hpp",

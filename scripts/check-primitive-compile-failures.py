@@ -57,6 +57,27 @@ PRIMITIVES = {
             "string": "(void)cljonic::empty(cljonic::String<4>{});",
         },
     },
+    "first": {
+        "diagnostic_anchor": "cljonic::first:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::first(42);",
+                "expected a Vector, Map, Set, Queue, String, or MapEntry value",
+            ),
+            "unsupported-producer": (
+                "(void)cljonic::first(cljonic::Range<int>{0, 5});",
+                "expected a Vector, Map, Set, Queue, String, or MapEntry value",
+            ),
+        },
+        "pass_cases": {
+            "vector": "(void)cljonic::first(cljonic::Vector<int, 4>{10, 20});",
+            "map": "(void)cljonic::first(cljonic::Map<int, int, 4>{cljonic::MapEntry<int, int>{1, 100}});",
+            "set": "(void)cljonic::first(cljonic::Set<int, 4>{7});",
+            "queue": "(void)cljonic::first(cljonic::Queue<int, 4>{5, 6});",
+            "string": "(void)cljonic::first(cljonic::String<4>{\"AB\"});",
+            "map-entry": "(void)cljonic::first(cljonic::MapEntry<int, int>{1, 100});",
+        },
+    },
     "dissoc": {
         "diagnostic_anchor": "cljonic::dissoc:",
         "diagnostic_cases": {
