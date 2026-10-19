@@ -254,7 +254,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | applies_to(all_public_free_functions_with_closed_domain ∧ collection_source_constructors)(x)
   | illustrative_examples(x) ≡ equal ∧ not_equal ∧ producer_factory_functions ∧ collection_primitives
   | collection_primitives(x) ≡ count ∧ get ∧ contains ∧ conj ∧ can_conj ∧ assoc ∧ can_assoc
-    ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ empty ∧ is_empty ∧ into ∧ fits_into
+    ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ empty ∧ is_empty ∧ first ∧ into ∧ fits_into
   | collection_primitives(x) → ¬narrow(universal_obligation(x))
   | producer_factory_functions(x) ≡ repeat ∧ cycle ∧ iterate ∧ repeatedly
   | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ direct_to(into ∨ enclosure_form) ∧ preflight(fits_into)
@@ -595,10 +595,10 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | complete_materialization_into(destination, producer) → use(fits_into)
   | fits_into(destination, producer) → measure(complete_result_cardinality_and_semantics)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ first
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ contains ∧ count ∧ fits_into ∧ into
+  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ first ∧ contains ∧ count ∧ fits_into ∧ into
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | bounded_insertion_capacity_inspection(x) ≡ full ∨ equivalent_capacity_inspection
   | requirements_backed_operations(x) → classify_as(RequirementsBacked)
@@ -606,7 +606,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | deferred_empty_operations(x) ≡ not_empty
   | is_empty(value) → admit(SequenceableCollection ∨ SequenceableProducer) ∧ return(count(value) == 0)
     ∧ non_throwing ∧ non_allocating ∧ provide(targeted_rejection_diagnostic(¬(SequenceableCollection ∨ SequenceableProducer)))
-  | deferred_sequence_operations(x) ≡ first ∧ next ∧ rest ∧ seq
+  | deferred_sequence_operations(x) ≡ next ∧ rest ∧ seq
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | deferred_collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
     ∧ take_nth ∧ nth ∧ nthnext ∧ nthrest ∧ butlast ∧ map_indexed ∧ rseq ∧ second ∧ ffirst ∧ fnext
@@ -647,6 +647,18 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | result(x) → satisfies(is_empty(x)) ∧ independent_of_input_lifetime(x)
   | preserves(input_collection_value(x))
   | empty_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | rejected_input(x) → provide(targeted_rejection_diagnostic(x))
+
+λ S2_first_function_contract(x). first(value) → admit(SequenceableCollection(value) ∨ MapEntry(value))(x)
+  | Vector(value) ∨ String(value) → return(logical_element_at_index_zero(value))
+  | Queue(value) → return(front_element_without_removal(value))
+  | Map(value) → return(one_value_semantic_map_entry(value))
+  | Set(value) → return(one_stored_element(value))
+  | MapEntry(value) → return(entry_key(value))
+  | empty_sequenceable_collection(value) → return(DefaultElement(value))
+  | Map(value) ∨ Set(value) → ¬imply_semantic_significance_of_traversal_order(value)
+  | preserves(input_collection_value(x))
+  | first_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | rejected_input(x) → provide(targeted_rejection_diagnostic(x))
 
 λ S2_disj_function_contract(x). disj(set, values...) → admit(CljonicSet(set) ∧ ∀ value: SafeImplicitConversion(value, Set::value_type))
@@ -960,7 +972,8 @@ concept SequenceableProducer =
 λ S1_collection_storage_and_algorithms(x). collection_storage(x) ≡ ContiguousStorage
   | MapEntry(x) → ContiguousStorage(x) ∧ value_semantics(x)
     ∧ owns(key_field(x) ∧ value_field(x)) ∧ supports(named_field_observation(x))
-    ∧ semantic_free_function_access(key ∨ val ∨ first ∨ last)(x) → remain(deferred_future_work)
+    ∧ semantic_free_function_access(key ∨ val ∨ last)(x) → remain(deferred_future_work)
+    ∧ semantic_free_function_access(first)(x) → return(entry_key(x))
     ∧ fixed_two_element_sequence_behavior(x) → remain(deferred_future_work)
   | search_algorithm(x) ≡ LinearScan
   | unsorted_removal(Map ∨ Set) ≡ SwapAndRemove
