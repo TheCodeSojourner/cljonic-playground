@@ -131,7 +131,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-013A(x).
-  ∀ runtime `'.'` replacement policy for invalid bytes defined by `REQ-FN-027`: applies to external `std::string_view` and `std::span<const char>` imports
+  ∀ runtime `'.'` replacement policy for invalid bytes defined by `REQ-FN-027A`: applies to direct `String` source construction from external `std::string_view` and `std::span<const char>` imports
   ∧ ∀ direct String construction from compile-time literals: rejects invalid bytes at compile time
   ∧ ∀ public runtime constructor ∨ operation accepting raw byte input: defines an explicit checked-failure or replacement policy for invalid bytes ∧ ¬∃ implicit inheritance of the external-source import policy
   ∧ ∀ operation receiving an existing `String`: MAY assume that its stored content has already passed the string byte-validity rules ∧ operates only on valid stored bytes
@@ -289,7 +289,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 λ REQ-COLL-020T(x).
   ∀ context: the lifecycle classification is also `requirements-backed` for `is_empty` over its supported sequenceable collection and producer inputs, `empty`, `can_conj`, and the `full` predicate or equivalent capacity inspection over their supported bounded collection inputs
   ∧ ∀ `not_empty`: remain `deferred` until its owning-value behavior is implementation-backed
-  ∧ ∀ behavioral contracts for `into` ∧ `fits_into`: approved by Module 2 and Module 4 ∧ both operations remain `deferred` until producer and materialization support is implementation-backed
+  ∧ ∀ behavioral contracts for `into` ∧ `fits_into`: approved by Module 2 and Module 4 ∧ both operations are `requirements-backed` active public free functions over `CljonicVector` destinations and `CljonicSource` sources
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020U(x).

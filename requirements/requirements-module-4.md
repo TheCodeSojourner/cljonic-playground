@@ -6,7 +6,7 @@ Conversion admission is governed by `REQ-CONV-001`–`003`; exact callback-resul
 
 ## Purpose and Scope
 
-This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization (`into`) and its completeness preflight (`fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`). Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, and explicit producer materialization through `into`, preflighted by `fits_into`. The semantic sequence operations (`seq`, `first`, `next`, `rest`) remain deferred future work and are not current collection APIs; collection-owned const logical-range traversal and read-only C++ interoperability accessors are active. Standard ranges and views MAY be used internally by cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
+This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`), materialization (`into`) and its completeness preflight (`fits_into`), and bounded C++ interoperability inputs (`std::span`, `std::string_view`) for direct source construction. Module 4 bridges explicit sequence generators to concrete stored collections without dynamic allocation or hidden caching. The active implementation slice covers `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, and explicit producer materialization through `into`, preflighted by `fits_into`. The semantic sequence operations (`seq`, `first`, `next`, `rest`) remain deferred future work and are not current collection APIs; collection-owned const logical-range traversal and read-only C++ interoperability accessors are active. Standard ranges and views MAY be used internally by cljonic free-function implementations when they preserve the requirements in this module and MUST NOT be exposed as public cljonic result types. Direct use of standard ranges and views by cljonic applications is outside this library contract.
 
 ## Materialization & Producer Invariants
 
@@ -207,15 +207,14 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 ## C++ Import Interoperability and Materialization
 
 λ REQ-FN-027(x).
-  ∀ `into` ∧ `fits_into`: support explicit read-only C++ interop sources in addition to supported cljonic producers ∧ these free functions are the complete-materialization boundary for source imports
-  ∧ ∀ `std::span<const T>` source: `into(destination, source)` copies elements into a new collection of the destination's collection type and capacity ∧ `fits_into(destination, source)` tests whether the complete copy fits
-  ∧ ∀ `std::string_view` source ∧ `String<N>` destination: `into(destination, source)` copies the source's bytes into a new owning `String<N>` ∧ `fits_into(destination, source)` tests whether the complete source content is valid and fits within `N` content bytes
-  ∧ ∀ overload: leaves the source and destination unchanged ∧ ¬∃ (retention of the external view ∨ allocation ∨ throw) ∧ uses the existing deterministic bounded-prefix behavior when the complete result does not fit
-  ∧ ∀ runtime `std::string_view` import: replaces every source byte outside the approved `0x01` through `0x7F` range, including `0x00`, with the ASCII period byte `0x2E` in the returned `String<N>` ∧ the replacement occurs before the bounded prefix is selected, so the returned value contains the first `N` converted content bytes when the source has more than `N` bytes
-  ∧ ∀ `fits_into(destination, source)`: returns `false` when any source byte is invalid or when the converted content does not fit ∧ returns `true` only when every source byte is valid and the complete content length is no greater than `N`
-  ∧ ∀ constant_evaluation where source bytes are invalid ∨ source content is longer than `N`: compile-time diagnostic rather than replacement or bounded-prefix materialization
-  ∧ ∀ `std::string_view` input: ¬∃ requirement or copy of a source null terminator as content ∧ an explicitly included null byte is an invalid source byte under this policy
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ `into` ∧ `fits_into`: materialization and its completeness preflight operate over cljonic sources only
+  ∧ ∀ `fits_into(destination, source)` call: the destination is exactly a `CljonicVector` ∧ the source is exactly a `CljonicCollection` or `CljonicProducer` satisfying `CljonicSource`
+  ∧ ∀ source outside that domain — including any non-cljonic C++ range or view such as `std::span<const T>` or `std::string_view` — ¬∃ admitted as a `fits_into` source
+  ∧ ∀ destination outside `CljonicVector` — including `String<N>`, `Map`, `Set`, and `Queue` — ¬∃ admitted as a `fits_into` destination
+  ∧ external C++ interoperability sources are materialized only through direct source construction (`REQ-FN-027A`) ∧ ¬∃ (retention of the external view ∨ allocation ∨ throw) by `into` or `fits_into`
+  ∧ ∀ admitted `fits_into`: non-throwing ∧ non-allocating ∧ returns whether the complete source fits the destination's remaining capacity ∧ returns `false` for every unbounded producer
+  ∧ ∀ rejected `fits_into` call: fails at compile time with the targeted rejection diagnostic governed by `REQ-DIAG-009`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-19, rationale_source: origin_artifact}
 
 λ REQ-FN-027A(x).
   ∃ permitted_path: a supported collection provides direct construction from a compatible bounded C++ source when its destination type and capacity are encoded by the constructed collection type
