@@ -56,3 +56,18 @@ numbering is an integration checklist, not a different dependency order.
   cannot establish probe behavior. The target now executes both binaries after
   scanning; enabling execution exposed a stale unequal-sequence expectation
   that a build-only check had never exercised.
+
+## Promoting a Deferred Header to Public API
+
+A header that already exists under `DEFERRED_NON_PUBLIC_HEADERS` promotes through
+the same layers, but two registries fail only at the gates: `make lint` rejects an
+unnamed parameter (`readability-named-parameter`), and `make docs-examples` keeps
+skipping the example until the name leaves `DEFERRED_NON_PUBLIC_HEADERS`. Beyond
+that, promotion requires adding the umbrella include in `src/cljonic-core.hpp`
+(the amalgamation follows that include graph), adding the `dependent_false`
+rejection overload, reclassifying `check-free-function-diagnostics.py` from
+`excluded` to `fallback`, adding primitive compile-fail cases, a no-heap probe, an
+active spec plus traced tests, and moving the operation out of the deferred set in
+requirements, architecture, and the vocabulary term definition. Refresh the
+obligation snapshot and regenerate `cljonic.hpp` and `docs/` last. Verified by
+promoting `empty` on 2026-10-17.

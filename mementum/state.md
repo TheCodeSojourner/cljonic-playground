@@ -1,5 +1,44 @@
 ## Current Session State
 
+- last_session_id: 1679bdce-23ff-4dc7-a7f5-5d0d291ed7d6
+- current_timestamp: 2026-10-19T11:22:00-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Initialized gybis, then ran two full repository sweeps (four layer checks plus four adjacent-layer weed passes) and repaired the divergences they surfaced: canonicalized `cljonic_collection`/`cljonic_producer` to `CljonicCollection`/`CljonicProducer`, canonicalized `keyword_enum_mapping`/`state_reference` to `KeywordEnumNameMapping`/`Atom`, completed `future_expansion` with the approved-but-inactive domains, recorded human approval for `REQ-DIAG-012`'s AI-inferred rationale, and declared the topical numbering convention in the requirements index.
+2. Promoted `empty` from deferred to public API: umbrella include in `src/cljonic-core.hpp`, user-facing prose enumerating `Vector`/`Map`/`Set`/`Queue`/`String`, `dependent_false` rejection overlay, named `[[maybe_unused]]` parameters, active `specs/primitives/empty.allium` with 14 traced tests, no-heap probe, primitive compile-fail cases, and registry updates in `compile-doc-samples.py` and `check-free-function-diagnostics.py`; moved the operation out of the deferred set in `REQ-BOUNDS-010C`, the requirements index and Module 3 footer, and the architecture operation vocabulary.
+3. Created `.agents/skills/cljonic-full-converge-auto/`, a repository-wide autonomous convergence skill: four checks, then four adjacent-edge weeds, no approval pauses, with an explicit decision policy and unresolved-divergence ledger.
+4. Ran `/cljonic-api-converge empty`, which found and repaired two remaining divergences: a missing `S2_empty_function_contract` architecture rule and a stale `Empty` vocabulary definition that still described the operation as deferred.
+
+Questions:
+1. None blocking.
+2. Resolved — `.agents/skills/cljonic-full-converge-auto/` landed as `d3c1e7f`.
+3. Open — the remaining deferred APIs (`first`, `next`, `rest`, `seq`, `not_empty`) can follow the promotion checklist recorded in `deferred-api-promotion-checklist`; no promotion decision yet.
+4. Deferred backlog unchanged: message-language pass over the 24 class-internal diagnostics, `String::put` validation gap, capacity-message content, `variant-api` lifecycle, MapEntry semantic key/val/first/last behavior, seqable lifecycle, five-header diagnostic coverage (`fits_into`, `get`, `into`, `peek`, `pop`), and six documented examples.
+
+Decisions:
+1. Human decision 2026-10-17: `empty` becomes public API; its prose enumerates the supported collections and drops implementation-facing concept jargon.
+2. Human decision 2026-10-17: free-function index lists hold exactly one bullet per initial letter.
+3. Human decision 2026-10-17: designator numbering is topical; gaps and cross-module restarts are intentional and declared in the index.
+4. Human decision 2026-10-17: create `cljonic-full-converge-auto` implementing the autonomous, adjacent-edge convergence semantics.
+5. Human decision 2026-10-19: converge `empty` by updating architecture (`arch`, add the contract rule) and vocabulary (`vocab`, restate the term as active).
+
+Validation:
+1. `make upsert-gate-strict`: ok — sanitizers, 100.0% line coverage, every compile-fail suite, header guards, diagnostic coverage and labels, traceability, and no-heap on the final source.
+2. `make test`: 220/220 pass, including the new Empty tests in modular and single-header builds.
+3. `make traceability-spec-to-code`: ok; 1,056 snapshot obligations covered, all 14 Empty obligations traced.
+4. Allium: 37/37 files with zero diagnostics and zero findings; gate true.
+5. `make upsert-gate-fast`: ok after the architecture and vocabulary repairs.
+6. `make docs`: ok; the rendered Empty section links the five collections and carries no deferral note.
+7. Synthesis applied: new `deferred-api-promotion-checklist` memory and a promotion section in `header-addition-and-verification-lifecycle`.
+
+Next:
+1. Worktree is clean: the human landed the product work in `f9495da` (Empty vocabulary), `1f3aec0` (empty architecture contract), `412e97d` (Empty spec tests and no-heap probes), `1a00672` (umbrella include and diagnostic fallback), `472906e` (requirements index and modules), `9552ff9` (diagnostic and doc-sample registries), `31602ac` (mementum notes), `780d2a8` (docs), and `d3c1e7f` (convergence skill). No product commit remains outstanding; only `mementum/` was committed by this fini.
+2. Optional: promote `not_empty` next using the recorded checklist.
+
+## Previous Session State
+
 - last_session_id: 7f60904a-77f3-4e7d-878d-a36a58c1bcdd
 - current_timestamp: 2026-10-17T13:49:16-06:00
 - recover: 1
