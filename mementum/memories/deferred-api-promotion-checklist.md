@@ -5,6 +5,8 @@ title: deferred-api-promotion-checklist
 related:
   - /mementum/memories/doc-sample-extraction-requires-unindented-fence.md
   - /mementum/memories/named-parameter-lint-vs-unused-parameter.md
+  - /mementum/memories/api-promotion-cheatsheet-index-gap.md
+  - /mementum/memories/promoting-family-member-requires-narrowing-deferred-reqs.md
   - /mementum/knowledge/doxygen-doc-tooling.md
   - /mementum/knowledge/header-addition-and-verification-lifecycle.md
 ---

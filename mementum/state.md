@@ -1,5 +1,49 @@
 ## Current Session State
 
+- last_session_id: 2e788022-e104-4a77-85f9-3fc41f17b4ec
+- current_timestamp: 2026-10-19T13:26:27-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Initialized gybis context, then completed the `first` free-function API end to end: binding `REQ-FN-002A1`, active `specs/primitives/first.allium`, all five collections plus `MapEntry`, targeted rejection diagnostic, traced tests (20 obligations), no-heap probe, registries, requirements/vocabulary/architecture updates, `cljonic.hpp`, docs, and traceability snapshot.
+2. Converged `first` in targeted mode: req/vocab/arch/spec checks passed; req-weed surfaced deferred REQ-SEQ clauses still naming `first`; human decided to narrow them to `seq`/`next`/`rest`; vocab/arch/spec weeds found no divergence.
+3. Added `first` to the `Sequence traversal` Core_Cheatsheet index in `src/cljonic-core.hpp` after the user noticed it was missing; regenerated `cljonic.hpp` and `docs/`.
+4. Changed `empty`'s Doxygen example from `1U`/`2U` to `1`/`2` per user preference.
+5. Investigated `documentation-notes.md`: one commit (`9ac1d81`, 2026-10-03); its AI-native single-header design is dormant/unadopted, not implemented or explicitly abandoned.
+
+Questions:
+1. None blocking.
+2. Resolved — the human committed the product/API/docs work in `920d0d6`–`7b8c1e0`; the worktree is clean. This fini commits only `mementum/`.
+3. Open — remaining deferred APIs: `next`, `rest`, `seq`, `not_empty`.
+4. Open — no decision on whether to keep or remove `documentation-notes.md`.
+
+Decisions:
+1. Human 2026-10-19: promote `first` to public API.
+2. Human 2026-10-19: narrow deferred REQ-SEQ clauses to the remaining operations (`seq`, `next`, `rest`) rather than making the family binding.
+3. Human 2026-10-19: Doxygen examples should use plain integer literals, not `U` suffixes.
+
+Validation:
+1. `make test`: 222/222.
+2. `make traceability-spec-to-code`: ok; focused trace checks 20/20 (`first`) and 21/21 (`MapEntry`).
+3. `allium check specs` and `allium analyse specs`: zero diagnostics/findings; gate true.
+4. `make requirements-structure`: ok (323 clauses); `make vocabulary-structure`: ok (186 terms).
+5. `make docs-examples`: ok (31 compiled, 4 deferred); `make primitive-compile-fail`, `make no-heap`, `make header-guards`, `make diagnostic-coverage`: ok.
+6. `make docs` and `make cljonic`: ok; rendered `Sequence traversal` lists and links `first`.
+7. `clang-format --dry-run --Werror` on changed C++ and `git diff --check`: clean.
+8. `make lint`: not green; pre-existing `explicit-constructor` findings in untouched headers/tests, none in changed files.
+
+Synthesis:
+1. Added `api-promotion-cheatsheet-index-gap` (❌) and `promoting-family-member-requires-narrowing-deferred-reqs` (🔁), linked both from `deferred-api-promotion-checklist`, and expanded `header-addition-and-verification-lifecycle`.
+2. Added `documentation-notes-is-dormant-proposal` (💡).
+
+Next:
+1. Worktree is clean: the human landed the product/API/docs work in `920d0d6`–`7b8c1e0`. No product commit was made by this fini; `make git` remains user-owned.
+2. Promote `next` next using the promotion checklist, the new gap memories, and the updated lifecycle knowledge.
+3. Decide whether `documentation-notes.md` stays as dormant context or is removed.
+
+## Previous Session State
+
 - last_session_id: 1679bdce-23ff-4dc7-a7f5-5d0d291ed7d6
 - current_timestamp: 2026-10-19T11:22:00-06:00
 - recover: 1

@@ -71,3 +71,11 @@ active spec plus traced tests, and moving the operation out of the deferred set 
 requirements, architecture, and the vocabulary term definition. Refresh the
 obligation snapshot and regenerate `cljonic.hpp` and `docs/` last. Verified by
 promoting `empty` on 2026-10-17.
+
+Promoting `first` on 2026-10-19 added two steps. Add the operation to the
+`Sequence traversal` Core_Cheatsheet index in `src/cljonic-core.hpp`; the index
+is hand-maintained, not generated from the include graph, so check the source
+bullet and the rendered `docs/index.html`. When promoting one member of a
+deferred family, narrow the deferred clauses that still name it so the family
+remains scoped to the unimplemented operations, then run
+`/cljonic-api-converge` to surface the edge. Verified again by promoting `first`.
