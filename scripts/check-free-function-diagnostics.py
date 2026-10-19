@@ -57,7 +57,7 @@ REGISTRY: dict[str, str] = {
     "cljonic-count.hpp": "fallback",
     "cljonic-disj.hpp": "fallback",
     "cljonic-dissoc.hpp": "fallback",
-    "cljonic-fits-into.hpp": "pending",
+    "cljonic-fits-into.hpp": "fallback",
     "cljonic-get.hpp": "pending",
     "cljonic-into.hpp": "pending",
     "cljonic-is-empty.hpp": "fallback",

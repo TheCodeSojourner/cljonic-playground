@@ -20,6 +20,7 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoPredictsIntoCompleteness");
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoUsesRemainingDestinationCapacity");
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoAvoidsUnsignedAdditionOverflow");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoRequiresCljonicVectorDestination");
     TRACE_ID("invariant.ProducerMaterialization.UnboundedSourceDoesNotFitIntoDestination");
     TRACE_ID("invariant.ProducerMaterialization.UnboundedSourceMaterializesBoundedPrefix");
     TRACE_ID("invariant.ProducerMaterialization.FiniteSourceMaterializesCompleteResultWhenItFits");

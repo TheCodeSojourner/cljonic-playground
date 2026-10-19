@@ -78,6 +78,29 @@ PRIMITIVES = {
             "map-entry": "(void)cljonic::first(cljonic::MapEntry<int, int>{1, 100});",
         },
     },
+    "fits_into": {
+        "diagnostic_anchor": "cljonic::fits_into:",
+        "diagnostic_cases": {
+            "unsupported-scalar-source": (
+                "(void)cljonic::fits_into(cljonic::Vector<int, 4>{}, 42);",
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+            "unsupported-destination": (
+                "(void)cljonic::fits_into(cljonic::Set<int, 4>{}, cljonic::Range<int>{0, 5});",
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+            "lossy-source-element": (
+                "(void)cljonic::fits_into(cljonic::Vector<short, 4>{}, cljonic::Range<int>{0, 5});",
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+        },
+        "pass_cases": {
+            "finite-range": "(void)cljonic::fits_into(cljonic::Vector<int, 8>{}, cljonic::Range<int>{0, 5});",
+            "unbounded-range": "(void)cljonic::fits_into(cljonic::Vector<int, 8>{}, cljonic::Range<int>{0, 5, 0});",
+            "vector-source": "(void)cljonic::fits_into(cljonic::Vector<int, 8>{}, cljonic::Vector<int, 4>{1, 2});",
+            "populated-destination": "(void)cljonic::fits_into(cljonic::Vector<int, 8>{1, 2}, cljonic::Range<int>{0, 5});",
+        },
+    },
     "dissoc": {
         "diagnostic_anchor": "cljonic::dissoc:",
         "diagnostic_cases": {
