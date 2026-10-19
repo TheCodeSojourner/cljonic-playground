@@ -58,8 +58,9 @@ These were checked against the actual repo and must not be re-litigated:
    - **Consequence:** stripping comments from `cljonic.hpp` does NOT break the `docs-examples`
      gate. The coupling is loose.
 
-3. **Deferred headers** skipped by docs-examples (6): `cljonic-empty.hpp`, `cljonic-first.hpp`,
-   `cljonic-next.hpp`, `cljonic-not-empty.hpp`, `cljonic-rest.hpp`, `cljonic-seq.hpp`.
+3. **Deferred headers** skipped by docs-examples (4): `cljonic-next.hpp`, `cljonic-not-empty.hpp`,
+   `cljonic-rest.hpp`, `cljonic-seq.hpp`. `cljonic-empty.hpp` (2026-10-17) and
+   `cljonic-first.hpp` (2026-10-19) were promoted into the umbrella and now compile their samples.
 
 4. **The gate `make git` currently passes fully** (validated 2026-10-03): format, lint,
    complexity, compile-fail checks, header-guards, sanitizer, 100% line coverage, traceability,
@@ -238,7 +239,7 @@ wording to "machine-native / AI-facing."
    (Recommendation: ai release header + optional human variant for review.)
 4. **`#line` directives:** required in first cut, or deferred?
 5. **Freshness gate hook:** new `make` target, or folded into `make cljonic` / `make git`?
-6. **Deferred functions:** should `first`/`next`/`rest`/`seq`/`empty`/`not_empty` remain src-only,
+6. **Deferred functions:** `empty` and `first` are promoted; should `next`/`rest`/`seq`/`not_empty` remain src-only,
    or be removed from `src/` until promoted? (Eliminates the modular-vs-single-header discrepancy
    entirely.)
 
