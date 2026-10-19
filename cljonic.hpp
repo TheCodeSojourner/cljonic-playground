@@ -149,8 +149,8 @@
  * Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
  * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Equal "equal", \ref Core_EqualBy "EqualBy",
  * \ref Core_Every "Every"
- * - \ref Core_Filter "Filter", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize", Core_Frequencies
- * "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into"
+ * - \ref Core_Filter "Filter", \ref First "first", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize",
+ * Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into"
  * - \ref Get "get"
  * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy
  * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into", \ref
@@ -3019,8 +3019,8 @@ namespace cljonic {
    auto m_runtime = Map<int, int, 4>{MapEntry<int, int>{1, 100}};
    auto em_runtime = empty(m_runtime);
 
-   return (is_empty(e_runtime) && count(v_runtime) == 2U &&
-           is_empty(em_runtime) && count(m_runtime) == 1U)
+   return (is_empty(e_runtime) && count(v_runtime) == 2 &&
+           is_empty(em_runtime) && count(m_runtime) == 1)
               ? 0
               : 1;
  }
@@ -3434,430 +3434,9 @@ template <typename Lhs, typename Rhs, typename... Rest>
 
 } // namespace cljonic
 // End cljonic-equal.hpp
-// Begin cljonic-fits-into.hpp
+// Begin cljonic-first.hpp
 #pragma once
 
-
-namespace cljonic {
-
-/** \anchor FitsInto
- * The \b fits_into free function API checks whether every element of a finite \ref concepts::CljonicSource "source"
- * fits within the remaining
- *        capacity of a \ref Vector "Vector".
- *
- * Reports whether appending the complete \p source to \p destination fits within the destination's remaining capacity,
- * using the same cardinality semantics as `into`. It returns `false` for every unbounded producer, even though its
- * normal const traversal is capped. Scoped to \ref Vector "Vector" destinations in this increment. Source elements
- * must follow the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Into "into".
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- constexpr Vector<int, 8> destination{};
- constexpr Range<int> source{0, 5};
- static_assert(fits_into(destination, source));
- constexpr Range<int> unbounded{0, 5, 0};
- static_assert(!fits_into(destination, unbounded));
- ~~~~~
- */
-template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
-    requires concepts_detail::MaterializableSource<Dest, Source>
-[[nodiscard]] constexpr auto fits_into(const Dest& destination, const Source& source) noexcept -> bool {
-    if constexpr (concepts::CljonicProducer<Source>) {
-        if (!source.is_finite()) {
-            return false;
-        }
-    }
-    return source.count() <= (Dest::capacity() - destination.count());
-}
-
-} // namespace cljonic
-// End cljonic-fits-into.hpp
-// Begin cljonic-get.hpp
-#pragma once
-
-#include <utility>
-
-namespace cljonic {
-
-/** \anchor Get
- * The \b get free function API looks up an element by a key or index, returning the default or
- *        supplied fallback when absent.
- *
- * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
- * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
- * default lookup result when omitted. For \ref Vector "Vector" and \ref String "String", the index must be an integer.
- * Keys and fallback values accept their declared types and safe numeric widening that preserves every source value.
- *
- * \b Examples
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{10, 20};
-   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
-   constexpr auto s_const = conj(Set<int, 4>{}, 5);
-   static_assert(get(v_const, 0U) == 10);
-   static_assert(get(v_const, 9U, -1) == -1);
-   static_assert(get(m_const, 1) == 100);
-   static_assert(get(m_const, 2, -1) == -1);
-   static_assert(get(s_const, 5) == 5);
-   static_assert(get(s_const, 8, -1) == -1);
-
-   // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10, 20};
-   const auto val = get(v_runtime, 0U);
-
-   return (val == 10) ? 0 : 1;
- }
- ~~~~~
- */
-/** Returns the stored value when present, otherwise the supplied fallback or
- * the collection's default lookup result when no fallback is supplied. */
-template <typename C, typename K,
-          typename V = std::remove_cvref_t<decltype(std::declval<const C&>()(std::declval<const K&>()))>>
-    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
-            requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
-[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback = V{}) noexcept
-    -> decltype(collection(key, fallback)) {
-    return collection(key, fallback);
-}
-
-} // namespace cljonic
-// End cljonic-get.hpp
-// Begin cljonic-into.hpp
-#pragma once
-
-
-namespace cljonic {
-
-/** \anchor Into
- * The \b into free function API appends elements from a \ref concepts::CljonicSource "source" to a \ref Vector
- * "Vector", up to its remaining capacity.
- *
- * Returns an updated destination-typed collection with source elements appended after the destination's existing
- * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
- * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
- * completely. Use \b fits_into beforehand to check whether the complete source fits. Scoped to \ref Vector "Vector"
- * destinations in this increment. Source elements must follow the destination's \ref ImplicitConversions "safe
- * implicit conversion rules".
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- constexpr Vector<int, 8> destination{100, 200};
- constexpr Range<int> source{0, 5};
- constexpr auto result = into(destination, source);
- static_assert(count(result) == 7U);
- static_assert(result(2U) == 0);
- ~~~~~
- */
-template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
-    requires concepts_detail::MaterializableSource<Dest, Source>
-[[nodiscard]] constexpr auto into(const Dest& destination, const Source& source) noexcept -> Dest {
-    Dest result = destination;
-    for (auto&& item : source) {
-        const auto index = result.count();
-        if (!result.can_assoc(index, item)) {
-            break;
-        }
-        result = result.assoc(index, item);
-    }
-    return result;
-}
-
-} // namespace cljonic
-// End cljonic-into.hpp
-// Begin cljonic-is-empty.hpp
-#pragma once
-
-
-namespace cljonic {
-
-/** \anchor IsEmpty
- * The \b is_empty free function API returns true when a \ref concepts::SequenceableCollection "collection" or
- *        \ref concepts::SequenceableProducer "producer" is empty.
- *
- * \b Examples
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- int main() {
-   // Compile-time demonstration.
-   constexpr auto e_const = Vector<int, 4>{};
-   constexpr auto v_const = Vector<int, 4>{1};
-   constexpr auto empty_range = Range<int>{0, 0};
-   constexpr auto unbounded_repeat = Repeat<int>{7};
-   static_assert(is_empty(e_const));
-   static_assert(!is_empty(v_const));
-   static_assert(is_empty(empty_range));
-   static_assert(!is_empty(unbounded_repeat));
-
-   // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10};
-   const auto empty_res = is_empty(v_runtime);
-
-   return (!empty_res) ? 0 : 1;
- }
- ~~~~~
- */
-template <typename C>
-    requires concepts::SequenceableCollection<C> || concepts::SequenceableProducer<C>
-[[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
-    return count(collection) == 0U;
-}
-
-template <typename C>
-    requires(!concepts::SequenceableCollection<C> && !concepts::SequenceableProducer<C>)
-constexpr auto is_empty([[maybe_unused]] const C& collection) noexcept -> void {
-    static_assert(concepts_detail::dependent_false<C>, "cljonic::is_empty: value must be a collection or producer.");
-}
-
-} // namespace cljonic
-// End cljonic-is-empty.hpp
-// Begin cljonic-iterate.hpp
-#pragma once
-
-#include <concepts>
-#include <cstddef>
-#include <functional>
-#include <type_traits>
-#include <utility>
-
-
-namespace cljonic {
-
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
- *  specialization during an out-of-domain class template argument deduction. */
-struct IterateDomainViolation {};
-
-/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
- *  step, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. */
-template <typename T, typename Step>
-concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
-                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
-                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
-
-} // namespace concepts_detail
-
-/** \anchor Iterate
- * An Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy
- * of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted
- * value. For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`. The initial
- * and produced values may themselves be cljonic collections or producers, including nested cljonic composites. The
- * step may be a lambda, a named function, or a function object. Observation is bounded by \b
- * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by an explicit destination capacity, and it supports const C++
- * range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations
- * that accept a source, or converted into an owning destination with `into` when explicit materialization is required.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- constexpr auto add_two(int value) noexcept -> int { return value + 2; }
-
- int main() {
-   // A named function can be used as the constexpr step callback.
-   constexpr auto constexpr_sum = [] {
-     constexpr auto values = iterate(add_two, 1);
-     int sum = 0;
-     int observed = 0;
-     for (const auto value : values) {
-       sum += value;
-       if (++observed == 4) {
-         break;
-       }
-     }
-     return sum;
-   }();
-
-   // Runtime construction also accepts an inline lambda step callback.
-   auto runtime_values =
-       iterate([](int value) noexcept { return value * 2; }, 2);
-
-   // -----------------------------------------------------------------------
-   // C++ interoperability: Iterate supports const traversal.
-   // -----------------------------------------------------------------------
-   int runtime_sum = 0;
-   int runtime_observed = 0;
-   for (const auto value : runtime_values) {
-     // A bounded observation makes the unbounded producer safe to inspect.
-     runtime_sum += value;
-     if (++runtime_observed == 4) {
-       break;
-     }
-   }
-
-   return constexpr_sum == 16 && runtime_sum == 30 ? 0 : 1;
- }
- ~~~~~
- */
-template <typename T, typename Step>
-    requires concepts_detail::IterateClassArgument<T, Step>
-class Iterate {
-  public:
-    using value_type = T;
-
-    class const_iterator {
-      public:
-        using value_type = T;
-        using difference_type = std::ptrdiff_t;
-
-        constexpr const_iterator() noexcept = default;
-
-        constexpr const_iterator(const T& current, const Step* step, std::size_t remaining) noexcept
-            : current_(current), step_(step), remaining_(remaining) {
-        }
-
-        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
-            return current_;
-        }
-
-        constexpr auto operator++() noexcept -> const_iterator& {
-            if (remaining_ > 1U) {
-                const T next = std::invoke(*step_, current_);
-                current_ = next;
-            }
-            --remaining_;
-            return *this;
-        }
-
-        constexpr auto operator++(int) noexcept -> const_iterator {
-            auto previous = *this;
-            ++(*this);
-            return previous;
-        }
-
-        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
-            -> bool {
-            return lhs.remaining_ == rhs.remaining_;
-        }
-
-      private:
-        T current_{};
-        const Step* step_{nullptr};
-        std::size_t remaining_{0U};
-    };
-
-    // The default form requires a default-constructed step. Constraining the
-    // constructor keeps a non-default-constructible Step from satisfying
-    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
-    constexpr Iterate() noexcept
-        requires std::default_initializable<Step>
-        : initial_{}, step_{} {
-    }
-
-    constexpr Iterate(const T& initial, const Step& step) noexcept : initial_(initial), step_(step) {
-    }
-
-    template <typename Initial, typename OtherStep>
-        requires(!concepts::SafeImplicitConversion<T, Initial> || !std::same_as<std::remove_cvref_t<OtherStep>, Step>)
-    Iterate(Initial initial, OtherStep step) = delete;
-
-    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
-        return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
-    }
-
-    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
-        return false;
-    }
-
-    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
-        return const_iterator{initial_, &step_, count()};
-    }
-
-    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
-        return const_iterator{};
-    }
-
-  private:
-    T initial_;
-    Step step_;
-};
-
-/** Diagnostic specialization (REQ-DIAG-012): reached only through the
- *  redirecting deduction guide below. Constructing it is always a compile-time
- *  error whose single message names the class template, the rejected argument
- *  type, and the violated domain rule. */
-template <>
-class Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation> {
-  public:
-    template <typename... Args>
-    constexpr explicit Iterate([[maybe_unused]] Args&&... args) noexcept {
-        static_assert(concepts_detail::dependent_false<Args...>,
-                      "cljonic::Iterate: the initial value and step cannot be used to build an Iterate. The initial "
-                      "value must be storable without throwing, and the step must be a pure, non-allocating, "
-                      "non-throwing callable that accepts the initial value and returns the element type.");
-    }
-};
-
-/** Redirecting deduction guide (REQ-DIAG-012): viable only for a rejected
- *  deduction, so an admitted deduction is never affected. */
-template <typename T, typename Step>
-    requires(!(concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>))
-Iterate(const T&, const Step&)
-    -> Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation>;
-
-template <typename Step, typename T>
-    requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
-             concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>
-[[nodiscard]] constexpr auto iterate(Step&& step, T&& initial) noexcept
-    -> Iterate<std::remove_cvref_t<T>, std::decay_t<Step>> {
-    return Iterate<std::remove_cvref_t<T>, std::decay_t<Step>>{std::forward<T>(initial), std::forward<Step>(step)};
-}
-
-// Diagnostic fallback (REQ-DIAG-009): the (step, initial) arguments are outside
-// the closed producer domain. This overload explains the rejection; it never
-// returns a value and is never a supported call target.
-template <typename Step, typename T>
-    requires(!(concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
-               concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>))
-constexpr auto iterate([[maybe_unused]] Step&& step, [[maybe_unused]] T&& initial) noexcept
-    -> concepts_detail::RejectedProducerFactory {
-    static_assert(
-        concepts_detail::dependent_false<Step, T>,
-        "cljonic::iterate: the (step, initial) arguments cannot be used to build an Iterate. The initial value must be "
-        "safe to store without throwing, and the step must be a callable that takes one value of that type and returns "
-        "the same type without throwing. Note the argument order is iterate(step, initial).");
-    return {};
-}
-
-} // namespace cljonic
-
-namespace cljonic::concepts_detail {
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
-struct producer_traits<Iterate<T, Step>> {
-    static constexpr bool is_cljonic_producer = true;
-    static constexpr producer_kind kind = producer_kind::iterate;
-};
-
-// The stored step is a callable component, so Iterate never admits producer
-// parameter equality and is never usable as a map key or set
-// element (REQ-CAP-010, REQ-FN-014B).
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
-struct contains_callable<Iterate<T, Step>> : std::true_type {};
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
-struct contains_floating_point<Iterate<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
-struct contains_standard_range<Iterate<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
-
-} // namespace cljonic::concepts_detail
-// End cljonic-iterate.hpp
 // Begin cljonic-map.hpp
 #pragma once
 
@@ -4296,6 +3875,501 @@ struct contains_standard_range<Map<KeyType, ValueType, CapacityValue>>
 
 } // namespace cljonic::concepts_detail
 // End cljonic-map.hpp
+
+namespace cljonic {
+
+/** \anchor First
+ * The \b first free function returns the first logical element of a \ref concepts::SequenceableCollection
+ * "sequenceable collection", or the key of a \ref MapEntry "MapEntry".
+ *
+ * `Vector` and `String` yield the element at index zero, `Queue` yields its front element, `Map` yields one
+ * value-semantic `MapEntry`, and `Set` yields one stored element. `Map` and `Set` traversal order is not semantically
+ * significant. An empty collection yields its \ref DefaultElement "default element".
+ *
+ * \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Compile-time demonstration.
+   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+   constexpr auto m_const = Map<int, int, 4>{MapEntry<int, int>{1, 100}};
+   constexpr auto s_const = Set<int, 4>{7};
+   constexpr auto q_const = Queue<int, 4>{5, 6};
+   constexpr auto text_const = String<4>{"AB"};
+   constexpr MapEntry<int, int> e_const{1, 100};
+   static_assert(first(v_const) == 10);
+   static_assert(first(m_const) == MapEntry<int, int>{1, 100});
+   static_assert(first(s_const) == 7);
+   static_assert(first(q_const) == 5);
+   static_assert(first(text_const) == 'A');
+   static_assert(first(e_const) == 1);
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{100, 200};
+   auto m_runtime = Map<int, int, 4>{MapEntry<int, int>{2, 200}};
+   auto s_runtime = Set<int, 4>{8};
+   auto q_runtime = Queue<int, 4>{9, 10};
+   auto text_runtime = String<4>{"CD"};
+   auto e_runtime = MapEntry<int, int>{3, 300};
+
+   return (first(v_runtime) == 100 &&
+           first(m_runtime) == MapEntry<int, int>{2, 200} &&
+           first(s_runtime) == 8 && first(q_runtime) == 9 &&
+           first(text_runtime) == 'C' && first(e_runtime) == 3)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <typename KeyType, typename ValueType>
+[[nodiscard]] constexpr auto first(const MapEntry<KeyType, ValueType>& entry) noexcept -> KeyType {
+    return entry.key;
+}
+
+/** Returns the first logical element of the sequenceable collection. */
+template <concepts::SequenceableCollection C>
+[[nodiscard]] constexpr auto first(const C& collection) noexcept -> typename C::value_type {
+    if (collection.count() == 0U) {
+        return typename C::value_type{};
+    }
+    return *collection.begin();
+}
+
+template <typename C>
+    requires(!concepts::SequenceableCollection<C> && !concepts_detail::is_cljonic_map_entry_v<C>)
+constexpr auto first([[maybe_unused]] const C& value) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::first: expected a Vector, Map, Set, Queue, String, or MapEntry value.");
+}
+
+} // namespace cljonic
+// End cljonic-first.hpp
+// Begin cljonic-fits-into.hpp
+#pragma once
+
+
+namespace cljonic {
+
+/** \anchor FitsInto
+ * The \b fits_into free function API checks whether every element of a finite \ref concepts::CljonicSource "source"
+ * fits within the remaining
+ *        capacity of a \ref Vector "Vector".
+ *
+ * Reports whether appending the complete \p source to \p destination fits within the destination's remaining capacity,
+ * using the same cardinality semantics as `into`. It returns `false` for every unbounded producer, even though its
+ * normal const traversal is capped. Scoped to \ref Vector "Vector" destinations in this increment. Source elements
+ * must follow the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Into "into".
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ constexpr Vector<int, 8> destination{};
+ constexpr Range<int> source{0, 5};
+ static_assert(fits_into(destination, source));
+ constexpr Range<int> unbounded{0, 5, 0};
+ static_assert(!fits_into(destination, unbounded));
+ ~~~~~
+ */
+template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
+    requires concepts_detail::MaterializableSource<Dest, Source>
+[[nodiscard]] constexpr auto fits_into(const Dest& destination, const Source& source) noexcept -> bool {
+    if constexpr (concepts::CljonicProducer<Source>) {
+        if (!source.is_finite()) {
+            return false;
+        }
+    }
+    return source.count() <= (Dest::capacity() - destination.count());
+}
+
+} // namespace cljonic
+// End cljonic-fits-into.hpp
+// Begin cljonic-get.hpp
+#pragma once
+
+#include <utility>
+
+namespace cljonic {
+
+/** \anchor Get
+ * The \b get free function API looks up an element by a key or index, returning the default or
+ *        supplied fallback when absent.
+ *
+ * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
+ * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
+ * default lookup result when omitted. For \ref Vector "Vector" and \ref String "String", the index must be an integer.
+ * Keys and fallback values accept their declared types and safe numeric widening that preserves every source value.
+ *
+ * \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Compile-time demonstration.
+   constexpr auto v_const = Vector<int, 4>{10, 20};
+   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr auto s_const = conj(Set<int, 4>{}, 5);
+   static_assert(get(v_const, 0U) == 10);
+   static_assert(get(v_const, 9U, -1) == -1);
+   static_assert(get(m_const, 1) == 100);
+   static_assert(get(m_const, 2, -1) == -1);
+   static_assert(get(s_const, 5) == 5);
+   static_assert(get(s_const, 8, -1) == -1);
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{10, 20};
+   const auto val = get(v_runtime, 0U);
+
+   return (val == 10) ? 0 : 1;
+ }
+ ~~~~~
+ */
+/** Returns the stored value when present, otherwise the supplied fallback or
+ * the collection's default lookup result when no fallback is supplied. */
+template <typename C, typename K,
+          typename V = std::remove_cvref_t<decltype(std::declval<const C&>()(std::declval<const K&>()))>>
+    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
+            requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
+[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback = V{}) noexcept
+    -> decltype(collection(key, fallback)) {
+    return collection(key, fallback);
+}
+
+} // namespace cljonic
+// End cljonic-get.hpp
+// Begin cljonic-into.hpp
+#pragma once
+
+
+namespace cljonic {
+
+/** \anchor Into
+ * The \b into free function API appends elements from a \ref concepts::CljonicSource "source" to a \ref Vector
+ * "Vector", up to its remaining capacity.
+ *
+ * Returns an updated destination-typed collection with source elements appended after the destination's existing
+ * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
+ * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
+ * completely. Use \b fits_into beforehand to check whether the complete source fits. Scoped to \ref Vector "Vector"
+ * destinations in this increment. Source elements must follow the destination's \ref ImplicitConversions "safe
+ * implicit conversion rules".
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ constexpr Vector<int, 8> destination{100, 200};
+ constexpr Range<int> source{0, 5};
+ constexpr auto result = into(destination, source);
+ static_assert(count(result) == 7U);
+ static_assert(result(2U) == 0);
+ ~~~~~
+ */
+template <concepts::CljonicVector Dest, concepts::CljonicSource Source>
+    requires concepts_detail::MaterializableSource<Dest, Source>
+[[nodiscard]] constexpr auto into(const Dest& destination, const Source& source) noexcept -> Dest {
+    Dest result = destination;
+    for (auto&& item : source) {
+        const auto index = result.count();
+        if (!result.can_assoc(index, item)) {
+            break;
+        }
+        result = result.assoc(index, item);
+    }
+    return result;
+}
+
+} // namespace cljonic
+// End cljonic-into.hpp
+// Begin cljonic-is-empty.hpp
+#pragma once
+
+
+namespace cljonic {
+
+/** \anchor IsEmpty
+ * The \b is_empty free function API returns true when a \ref concepts::SequenceableCollection "collection" or
+ *        \ref concepts::SequenceableProducer "producer" is empty.
+ *
+ * \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Compile-time demonstration.
+   constexpr auto e_const = Vector<int, 4>{};
+   constexpr auto v_const = Vector<int, 4>{1};
+   constexpr auto empty_range = Range<int>{0, 0};
+   constexpr auto unbounded_repeat = Repeat<int>{7};
+   static_assert(is_empty(e_const));
+   static_assert(!is_empty(v_const));
+   static_assert(is_empty(empty_range));
+   static_assert(!is_empty(unbounded_repeat));
+
+   // Runtime demonstration.
+   auto v_runtime = Vector<int, 4>{10};
+   const auto empty_res = is_empty(v_runtime);
+
+   return (!empty_res) ? 0 : 1;
+ }
+ ~~~~~
+ */
+template <typename C>
+    requires concepts::SequenceableCollection<C> || concepts::SequenceableProducer<C>
+[[nodiscard]] constexpr auto is_empty(const C& collection) noexcept -> bool {
+    return count(collection) == 0U;
+}
+
+template <typename C>
+    requires(!concepts::SequenceableCollection<C> && !concepts::SequenceableProducer<C>)
+constexpr auto is_empty([[maybe_unused]] const C& collection) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<C>, "cljonic::is_empty: value must be a collection or producer.");
+}
+
+} // namespace cljonic
+// End cljonic-is-empty.hpp
+// Begin cljonic-iterate.hpp
+#pragma once
+
+#include <concepts>
+#include <cstddef>
+#include <functional>
+#include <type_traits>
+#include <utility>
+
+
+namespace cljonic {
+
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
+ *  specialization during an out-of-domain class template argument deduction. */
+struct IterateDomainViolation {};
+
+/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
+ *  step, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
+template <typename T, typename Step>
+concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
+                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
+                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
+
+} // namespace concepts_detail
+
+/** \anchor Iterate
+ * An Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy
+ * of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted
+ * value. For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`. The initial
+ * and produced values may themselves be cljonic collections or producers, including nested cljonic composites. The
+ * step may be a lambda, a named function, or a function object. Observation is bounded by \b
+ * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by an explicit destination capacity, and it supports const C++
+ * range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations
+ * that accept a source, or converted into an owning destination with `into` when explicit materialization is required.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ constexpr auto add_two(int value) noexcept -> int { return value + 2; }
+
+ int main() {
+   // A named function can be used as the constexpr step callback.
+   constexpr auto constexpr_sum = [] {
+     constexpr auto values = iterate(add_two, 1);
+     int sum = 0;
+     int observed = 0;
+     for (const auto value : values) {
+       sum += value;
+       if (++observed == 4) {
+         break;
+       }
+     }
+     return sum;
+   }();
+
+   // Runtime construction also accepts an inline lambda step callback.
+   auto runtime_values =
+       iterate([](int value) noexcept { return value * 2; }, 2);
+
+   // -----------------------------------------------------------------------
+   // C++ interoperability: Iterate supports const traversal.
+   // -----------------------------------------------------------------------
+   int runtime_sum = 0;
+   int runtime_observed = 0;
+   for (const auto value : runtime_values) {
+     // A bounded observation makes the unbounded producer safe to inspect.
+     runtime_sum += value;
+     if (++runtime_observed == 4) {
+       break;
+     }
+   }
+
+   return constexpr_sum == 16 && runtime_sum == 30 ? 0 : 1;
+ }
+ ~~~~~
+ */
+template <typename T, typename Step>
+    requires concepts_detail::IterateClassArgument<T, Step>
+class Iterate {
+  public:
+    using value_type = T;
+
+    class const_iterator {
+      public:
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+
+        constexpr const_iterator() noexcept = default;
+
+        constexpr const_iterator(const T& current, const Step* step, std::size_t remaining) noexcept
+            : current_(current), step_(step), remaining_(remaining) {
+        }
+
+        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
+            return current_;
+        }
+
+        constexpr auto operator++() noexcept -> const_iterator& {
+            if (remaining_ > 1U) {
+                const T next = std::invoke(*step_, current_);
+                current_ = next;
+            }
+            --remaining_;
+            return *this;
+        }
+
+        constexpr auto operator++(int) noexcept -> const_iterator {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+
+        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
+            -> bool {
+            return lhs.remaining_ == rhs.remaining_;
+        }
+
+      private:
+        T current_{};
+        const Step* step_{nullptr};
+        std::size_t remaining_{0U};
+    };
+
+    // The default form requires a default-constructed step. Constraining the
+    // constructor keeps a non-default-constructible Step from satisfying
+    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
+    constexpr Iterate() noexcept
+        requires std::default_initializable<Step>
+        : initial_{}, step_{} {
+    }
+
+    constexpr Iterate(const T& initial, const Step& step) noexcept : initial_(initial), step_(step) {
+    }
+
+    template <typename Initial, typename OtherStep>
+        requires(!concepts::SafeImplicitConversion<T, Initial> || !std::same_as<std::remove_cvref_t<OtherStep>, Step>)
+    Iterate(Initial initial, OtherStep step) = delete;
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
+    }
+
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return false;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+        return const_iterator{initial_, &step_, count()};
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+        return const_iterator{};
+    }
+
+  private:
+    T initial_;
+    Step step_;
+};
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guide below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Iterate([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Iterate: the initial value and step cannot be used to build an Iterate. The initial "
+                      "value must be storable without throwing, and the step must be a pure, non-allocating, "
+                      "non-throwing callable that accepts the initial value and returns the element type.");
+    }
+};
+
+/** Redirecting deduction guide (REQ-DIAG-012): viable only for a rejected
+ *  deduction, so an admitted deduction is never affected. */
+template <typename T, typename Step>
+    requires(!(concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>))
+Iterate(const T&, const Step&)
+    -> Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation>;
+
+template <typename Step, typename T>
+    requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
+             concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>
+[[nodiscard]] constexpr auto iterate(Step&& step, T&& initial) noexcept
+    -> Iterate<std::remove_cvref_t<T>, std::decay_t<Step>> {
+    return Iterate<std::remove_cvref_t<T>, std::decay_t<Step>>{std::forward<T>(initial), std::forward<Step>(step)};
+}
+
+// Diagnostic fallback (REQ-DIAG-009): the (step, initial) arguments are outside
+// the closed producer domain. This overload explains the rejection; it never
+// returns a value and is never a supported call target.
+template <typename Step, typename T>
+    requires(!(concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
+               concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>))
+constexpr auto iterate([[maybe_unused]] Step&& step, [[maybe_unused]] T&& initial) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(
+        concepts_detail::dependent_false<Step, T>,
+        "cljonic::iterate: the (step, initial) arguments cannot be used to build an Iterate. The initial value must be "
+        "safe to store without throwing, and the step must be a callable that takes one value of that type and returns "
+        "the same type without throwing. Note the argument order is iterate(step, initial).");
+    return {};
+}
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct producer_traits<Iterate<T, Step>> {
+    static constexpr bool is_cljonic_producer = true;
+    static constexpr producer_kind kind = producer_kind::iterate;
+};
+
+// The stored step is a callable component, so Iterate never admits producer
+// parameter equality and is never usable as a map key or set
+// element (REQ-CAP-010, REQ-FN-014B).
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_callable<Iterate<T, Step>> : std::true_type {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_floating_point<Iterate<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_standard_range<Iterate<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-iterate.hpp
 // Begin cljonic-not-equal.hpp
 #pragma once
 

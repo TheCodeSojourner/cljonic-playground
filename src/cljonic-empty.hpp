@@ -25,8 +25,8 @@ namespace cljonic {
    auto m_runtime = Map<int, int, 4>{MapEntry<int, int>{1, 100}};
    auto em_runtime = empty(m_runtime);
 
-   return (is_empty(e_runtime) && count(v_runtime) == 2U &&
-           is_empty(em_runtime) && count(m_runtime) == 1U)
+   return (is_empty(e_runtime) && count(v_runtime) == 2 &&
+           is_empty(em_runtime) && count(m_runtime) == 1)
               ? 0
               : 1;
  }
