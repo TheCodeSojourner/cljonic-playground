@@ -37,6 +37,26 @@ PRIMITIVES = {
             "nonempty-range-producer": "(void)cljonic::is_empty(cljonic::Range<int>{0, 5});",
         },
     },
+    "empty": {
+        "diagnostic_anchor": "cljonic::empty:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::empty(42);",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-producer": (
+                "(void)cljonic::empty(cljonic::Range<int>{0, 5});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+        },
+        "pass_cases": {
+            "vector": "(void)cljonic::empty(cljonic::Vector<int, 4>{});",
+            "map": "(void)cljonic::empty(cljonic::Map<int, int, 4>{});",
+            "set": "(void)cljonic::empty(cljonic::Set<int, 4>{});",
+            "queue": "(void)cljonic::empty(cljonic::Queue<int, 4>{});",
+            "string": "(void)cljonic::empty(cljonic::String<4>{});",
+        },
+    },
     "dissoc": {
         "diagnostic_anchor": "cljonic::dissoc:",
         "diagnostic_cases": {
