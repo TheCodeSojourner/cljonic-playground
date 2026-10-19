@@ -232,7 +232,7 @@ Explanatory definitions; binding obligations reside in the numbered clauses refe
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-BOUNDS-010C(x).
-  ∀ deferred `empty` operation: result = empty_owning_value(type(input)) ∧ preserve(capacity_type_if_present)
+  ∀ supported owning collection: `empty` produces `empty_owning_value(type(input))` ∧ preserves `capacity_type_if_present`
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-BOUNDS-010D(x).
