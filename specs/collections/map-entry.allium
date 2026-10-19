@@ -1,7 +1,8 @@
 -- allium: 3
--- The owning pair and named key/value fields are active. Semantic key, val,
--- first and last free functions and fixed two-element sequence behavior remain
--- deferred; this does not defer MapEntry storage or named-field observation.
+-- The owning pair and named key/value fields are active. Semantic first is
+-- active; key, val, and last free functions and fixed two-element sequence
+-- behavior remain deferred; this does not defer MapEntry storage or
+-- named-field observation.
 
 entity MapEntry {
     key_value_count: Integer
@@ -21,7 +22,8 @@ entity MapEntry {
     requires_nothrow_destruction: Boolean
     supports_named_key_field_observation: Boolean
     supports_named_value_field_observation: Boolean
-    semantic_key_val_first_last_free_functions_are_deferred: Boolean
+    supports_first_free_function: Boolean
+    semantic_key_val_last_free_functions_are_deferred: Boolean
     fixed_two_element_sequence_behavior_is_deferred: Boolean
 
     invariant KeyValueCountIsTwo {
@@ -92,8 +94,12 @@ entity MapEntry {
         this.supports_named_value_field_observation = true
     }
 
-    invariant SemanticKeyValFirstLastFreeFunctionsAreDeferred {
-        this.semantic_key_val_first_last_free_functions_are_deferred = true
+    invariant SupportsFirstFreeFunction {
+        this.supports_first_free_function = true
+    }
+
+    invariant SemanticKeyValLastFreeFunctionsAreDeferred {
+        this.semantic_key_val_last_free_functions_are_deferred = true
     }
 
     invariant FixedTwoElementSequenceBehaviorIsDeferred {
