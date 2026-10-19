@@ -6,8 +6,8 @@
 namespace cljonic {
 
 /** \anchor First
- * The \b first free function returns the first logical element of a \ref concepts::SequenceableCollection
- * "sequenceable collection", or the key of a \ref MapEntry "MapEntry".
+ * The \b first free function returns the first logical element of a `Vector`, `Map`, `Set`, `Queue`, or `String`
+ * value, or the key of a \ref MapEntry "MapEntry" value.
  *
  * `Vector` and `String` yield the element at index zero, `Queue` yields its front element, `Map` yields one
  * value-semantic `MapEntry`, and `Set` yields one stored element. `Map` and `Set` traversal order is not semantically
@@ -55,7 +55,7 @@ template <typename KeyType, typename ValueType>
     return entry.key;
 }
 
-/** Returns the first logical element of the sequenceable collection. */
+/** Returns the first logical element of a Vector, Map, Set, Queue, or String value. */
 template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto first(const C& collection) noexcept -> typename C::value_type {
     if (collection.count() == 0U) {
