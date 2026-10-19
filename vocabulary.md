@@ -287,7 +287,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### FitsInto
-- **Definition:** The canonical materialization-completeness preflight predicate; its C++ free-function spelling is `fits_into`. It returns a non-throwing, non-allocating boolean indicating whether the complete producer or explicitly supported external source result fits within the destination under the same cardinality, matching, filtering, transformation, capacity, representability, and overflow semantics as `into`.
+- **Definition:** The canonical materialization-completeness preflight predicate; its C++ free-function spelling is `fits_into`. It returns a non-throwing, non-allocating boolean indicating whether the complete cljonic collection or producer source fits within a `CljonicVector` destination under the same cardinality, matching, filtering, transformation, capacity, representability, and overflow semantics as `into`. It never accepts an external C++ range or view; those are imported through direct source construction.
 - **Deprecated Synonyms:** `fits_into`, materialization-fit check, capacity-fit predicate
 - **Related:** FreeFunction, ProducerMaterialization, CompleteResult, BoundedPrefixResult, PreflightPredicate, CapabilityPredicate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
