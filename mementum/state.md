@@ -1,5 +1,52 @@
 ## Current Session State
 
+- last_session_id: 5c7aa993-8ade-441e-83e1-9201d89193be
+- current_timestamp: 2026-10-19T14:27:17-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Initialized gybis context, then completed `fits_into`: rejection-diagnostic fallback, compile-fail coverage, registry reclassification, lifecycle repair, user-facing Doxygen prose, and a complete runnable example; regenerated `cljonic.hpp`, `docs/`, and validated modular plus single-header builds.
+2. Human narrowed `fits_into`: destination exactly `CljonicVector`; source exactly a `CljonicCollection` or `CljonicProducer` (`CljonicSource`); external C++ ranges/views are not admitted. Repaired `REQ-FN-027`, `REQ-COLL-013A`, `REQ-COLL-020T`, and the `FitsInto` vocabulary definition.
+3. Recorded the ruling as memory `fits-into-domain-is-cljonic-vector-and-cljonic-source` (commit `ef67e56`).
+4. Ran `/cljonic-api-converge fits_into` targeted: req-check PASS; req-weed found the destination restriction absent from architecture and spec; human chose `propagate`; added the S2 architecture rule, a `ProducerMaterialization` spec obligation, a `TRACE_ID`, and refreshed the obligation snapshot; spec-weed PASS.
+5. Rewrote `src/cljonic-first.hpp` prose to name the admitted value types directly, matching its diagnostic, and rewrote `src/cljonic-fits-into.hpp` prose and example.
+
+Questions:
+1. Open — remaining deferred APIs: `next`, `rest`, `seq`, `not_empty`.
+2. Open — keep or remove `documentation-notes.md` (dormant proposal).
+3. Open — pending diagnostic coverage for `get`, `into`, `peek`, `pop`.
+4. Resolved — `fits_into` destination/source domain; `cljonic::String` is a valid source for a `Vector<char, N>` destination, but not a valid destination.
+
+Decisions:
+1. Human 2026-10-19: `fits_into` destination must be exactly `CljonicVector`; source exactly a cljonic collection or producer.
+2. Human 2026-10-19: propagate the missing destination rule into architecture, specification, and tests.
+3. Human 2026-10-19: record the domain ruling as a `🎯` mementum decision (approved).
+
+Validation:
+1. `make requirements-structure`: ok (323 clauses).
+2. `make vocabulary-structure`: ok (186 terms); gybis-vocab-check PASS.
+3. gybis-arch-check PASS; `S5`–`S1` structure intact with the new S2 rule.
+4. `allium check specs` and `allium analyse specs`: 38 specs, zero diagnostics/findings; gate true.
+5. `make traceability-spec-to-code`: ok after snapshot refresh.
+6. `ctest`: 222/222.
+7. `make diagnostic-coverage`: ok (`pending=4`); `make primitive-compile-fail`: ok in modular and single-header; `make docs-examples`: ok (31 compiled, 4 deferred-skipped); `make no-heap`: ok.
+8. `make cljonic` and `make docs`: ok; the revised `first` and `fits_into` prose/examples rendered.
+9. `clang-format --dry-run --Werror` and `git diff --check`: clean.
+10. `make lint`: not run; prior baseline is not green due to pre-existing `explicit-constructor` findings.
+
+Synthesis:
+1. `fits-into-domain-is-cljonic-vector-and-cljonic-source` recorded as a `🎯` decision and committed in `ef67e56`.
+2. No new knowledge page: only one new memory on this topic; existing `collection-source-interoperability` and `materializer-vs-preflight-terminology` remain current.
+3. Convergence added the destination rule to architecture, spec, and traceability; no open divergence remains for `fits_into`.
+
+Next:
+1. Worktree is clean. The human landed the product work in `351f3e3` (requirements), `1063837` (vocabulary), `209ed72` (S2 architecture rule), `56942b3` (spec obligation), `3c0a9b9` (compile-fail and diagnostic coverage), `bb92f6e` (first/fits_into docs and diagnostic fallback), and `0d85453` (regenerated docs); the memory commit is `ef67e56`. No product commit remains outstanding.
+2. Resume pending diagnostics (`get`, `into`, `peek`, `pop`) or promote the next deferred API (`next`) using `deferred-api-promotion-checklist`.
+3. Decide the `documentation-notes.md` disposition.
+
+## Previous Session State
+
 - last_session_id: 2e788022-e104-4a77-85f9-3fc41f17b4ec
 - current_timestamp: 2026-10-19T13:26:27-06:00
 - recover: 1
