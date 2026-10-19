@@ -10,6 +10,7 @@ entity ProducerMaterialization {
     fits_into_predicts_into_completeness: Boolean
     fits_into_uses_remaining_destination_capacity: Boolean
     fits_into_avoids_unsigned_addition_overflow: Boolean
+    fits_into_requires_cljonic_vector_destination: Boolean
     unbounded_source_does_not_fit_into_destination: Boolean
     unbounded_source_materializes_bounded_prefix: Boolean
     finite_source_materializes_complete_result_when_it_fits: Boolean
@@ -56,6 +57,10 @@ entity ProducerMaterialization {
 
     invariant FitsIntoAvoidsUnsignedAdditionOverflow {
         this.fits_into_avoids_unsigned_addition_overflow = true
+    }
+
+    invariant FitsIntoRequiresCljonicVectorDestination {
+        this.fits_into_requires_cljonic_vector_destination = true
     }
 
     invariant UnboundedSourceDoesNotFitIntoDestination {
