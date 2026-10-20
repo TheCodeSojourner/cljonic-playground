@@ -754,7 +754,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Empty
-- **Definition:** The `empty` free function whose result is an empty owning value of the same supported collection type as its input, preserving capacity when present. It admits `Vector`, `Map`, `Set`, `Queue`, and `String` values, preserves the input, and requires no allocation or exceptions. It is not the IsEmpty boolean predicate. The operation is part of the current public API; `NotEmpty` remains deferred.
+- **Definition:** The `empty` free function whose result is an empty owning value of the same supported collection type as its input, preserving capacity when present. It admits `Vector`, `Map`, `Set`, `Queue`, and `String` values, preserves the input, and requires no allocation or exceptions. It is not the IsEmpty boolean predicate. The operation is part of the current public API.
 - **Deprecated Synonyms:** empty owning-value operation
 - **Related:** IsEmpty, NotEmpty
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
@@ -768,11 +768,11 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `first(Vector<int, 4>{10, 20})` is `10`; `first(Queue<int, 4>{5, 6})` is `5`; `first(MapEntry<int, int>{1, 100})` is `1`; `first(Vector<int, 4>{})` is the default `int` value.
 
 ### NotEmpty
-- **Definition:** The deferred `not_empty` operation whose required result is an independent owning copy of a nonempty input or the corresponding empty owning value when the input is empty, preserving the supported collection type and capacity when present. It preserves the input and requires no allocation or exceptions. It is not a boolean alias for IsEmpty; this entry records future behavior, not current API support.
+- **Definition:** The `not_empty` free function whose result is an independent owning copy of a nonempty input or the corresponding empty owning value when the input is empty, preserving the supported collection type and capacity when present. It admits `Vector`, `Map`, `Set`, `Queue`, and `String`, but not producers or external ranges. It preserves the input and requires no allocation or exceptions. It is not a boolean alias for IsEmpty and is part of the current public API.
 - **Deprecated Synonyms:** nonempty owning-value operation
 - **Related:** IsEmpty, Empty
-- **Usage:** Requirements, future specifications, tests, implementation, and documentation
-- **Examples:** Under the deferred contract, `not_empty(Vector<int, 4>{1, 2})` returns an independent `Vector<int, 4>` containing `1, 2`; an empty input returns an empty `Vector<int, 4>`.
+- **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
+- **Examples:** `not_empty(Vector<int, 4>{1, 2})` returns an independent `Vector<int, 4>` containing `1, 2`; an empty input returns an empty `Vector<int, 4>`.
 
 ### Peek
 - **Definition:** The primitive sequential free function that observes the first or accessible element without removal (`Vector` top/last, `Queue` front) returning `DefaultElement` if empty.
