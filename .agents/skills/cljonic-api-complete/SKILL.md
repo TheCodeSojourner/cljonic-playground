@@ -6,62 +6,177 @@ user-invocable: true
 disable-model-invocation: true
 ---
 
-# Complete a cljonic Free-Function API
+λ cljonic-api-complete(function, canonical?).
+  purpose: complete one free-function API across governed layers
+  | gate: explicit_user_invocation("/cljonic-api-complete") ∧ function ∃
+  | canonical ≔ supplied ∨ derive(req, vocab, spec, code)
+  | ambiguous(target) → ask_user
+  | sequence: startup → recall → requirements → vocabulary → architecture → specification
+              → tests_and_probes → implementation_and_example → integration → handoff
+  | interaction: autonomous_between_layers | substantive_decision ∨ unresolved_ambiguity → ask_user
+  | notation: ≔ definition | ∧ all | ∨ alternatives | ¬ prohibition | → consequence/order
+  | current(evidence) ≡ inputs_match_final_versions ∧ contract_mapping_valid
 
-Use this skill only when the user explicitly invokes `/cljonic-api-complete`. The required argument is the free-function identifier, such as `count`; the optional second argument is its canonical API name, such as `Count`. If omitted, derive the canonical name from nearby requirements, vocabulary, specs, and code. Ask only if the target remains ambiguous.
+λ boundaries().
+  forbid(commit ∨ stage ∨ revert ∨ discard_user_edits ∨ edit_vendored_gybis)
+  | forbid(run("make git", direct ∨ indirect) ∨ unsolicited_gybis_invocation)
+  | preserve(preexisting ∧ unrelated_changes ∧ explicit_deferrals)
+  | human_owns(final_repository_gate ∧ commits)
+  | unmet(active_contract) → ¬claim(complete)
 
-## Hard Boundaries
+λ startup().
+  read(applicable_repo_instructions) → inspect("git status --short")
+  | locate(target_header, owning_code, req, vocab, arch, spec, tests, docs, probes)
+  | start(closest_anchor) ∧ ¬map(unrelated_areas)
+  | record(domain ∧ semantics, repository_evidence) ∧ ¬infer_by_API_analogy
+  | formulate(falsifiable_gap_hypothesis ∧ cheapest_disconfirming_check)
+  | correct(existing_implementation) → ¬unnecessary_implementation_edit
+  | evidence_table(before_test_or_example_edits)
+  | inspect(probe_bodies ∧ source_example) even_if(unchanged ∨ diagnostic_only)
 
-- Never create a Git commit.
-- Never run `make git`, directly or through another command. The user owns that final gate.
-- Do not stage, revert, or discard user changes. Inspect the worktree first and preserve unrelated or pre-existing edits.
-- Do not edit vendored Gybis skills or invoke Gybis commands on your own initiative.
-- Do not claim an API is complete when active requirements or obligations remain unmet. Keep explicitly deferred work identified as deferred.
+λ recall().
+  read(current_section([state](../../../mementum/state.md)))
+  | read([probe propagation](../../../mementum/memories/no-heap-probes-propagate-with-feature.md),
+         [Doxygen tooling](../../../mementum/knowledge/doxygen-doc-tooling.md),
+         [header lifecycle](../../../mementum/knowledge/header-addition-and-verification-lifecycle.md))
+  | search(mementum/memories/ ∪ mementum/knowledge/, {target, no_heap, examples, verification})
+  | follow(relevant_related_links) → report(read_paths ∧ conflicts)
+  | mandatory even_if(guidance_already_inline)
+  | memory ≡ context ¬authority_over(current_contract ∨ human_decision)
+  | [representative examples](../../../mementum/memories/docs-user-facing-example-style.md)
+      > lifecycle_page_demand(every_collection_in_example)
+  | [defer HTML](../../../mementum/memories/defer-doc-regeneration-until-final-git.md) ≡ default
+  | verify(historical_paths ∧ inventories ∧ gate_descriptions, current_artifacts)
+  | remaining_substantive_conflict → surface ∧ ask_user
 
-## Startup
+λ commands().
+  allium ≔ {"allium check <file-or-directory>", "allium analyse <file-or-directory>", "allium plan <file>"}
+  | full_spec ≔ {"allium check specs", "allium analyse specs"}
+  | structural ≔ {"make requirements-structure", "make vocabulary-structure", "make audit-scripts"}
+  | focused_trace ≔ 'make trace-id-check SPEC=<spec.allium> TESTS="<test.cpp> [shared.cpp...]"'
+  | add("EXACT=1") only_if(all_supplied_tests_dedicated_to_one_spec)
+  | authoritative_trace ≔ "make traceability-spec-to-code"
+  | other_gates ≔ documented_Makefile_targets(e.g. "make primitive-compile-fail", "make no-heap", "make docs-examples")
+  | use("analyse") ∧ ¬guess(commands) ∧ ¬probe("--help")
+  | uncertain(command) → read(Makefile ∨ owning_skill_guidance)
 
-1. Read applicable repository instructions and inspect `git status` before editing.
-2. Locate the target free function, its owning implementation, related requirements, vocabulary, architecture, spec, tests, documentation, and resource probes. Start from the closest concrete anchor; do not map unrelated areas.
-3. Identify one falsifiable local hypothesis about the API gap and one cheap check that could disconfirm it. If evidence shows the implementation already behaves correctly, avoid unnecessary implementation changes.
-4. Record the intended API domain and semantics from repository evidence. Do not copy another API's semantics by analogy.
-5. Use the known repository tool commands below; do not probe command-line options with `--help` or guess unverified command names. If a command is uncertain, inspect the repository Makefile or skill guidance first.
+λ layers().
+  requirements: upsert_existing(admission, results, diagnostics, resources)
+    ∧ preserve(IDs, provenance, lifecycle) → "make requirements-structure"
+  | vocabulary: upsert(canonical_term ∧ relationships) → "make vocabulary-structure"
+    | structural_audit ≠ "/gybis-vocab-check"
+  | architecture: missing_rule_only(owning_abstraction) → inspect(local_consistency ∧ diff)
+  | specification: explicit(active_fields ∧ invariants) → "allium check <changed-spec>"
+    | cross_spec_concern → broader_analysis | ¬defer_to_pass_gate
+  | tests_and_probes: direct_API_calls ∧ meaningful_admitted_cases ∧ required_rejections_and_diagnostics
+    ∧ TRACE_ID(new_obligations) ∧ no_heap_evidence()
+    → focused_trace(all_relevant_test_files) → build_and_run(focused_target_filter)
+  | implementation_and_example: fix(controlling_code) only_if(missing ∨ wrong_behavior)
+    ∧ example_evidence() even_if(no_implementation_edit)
+  | integration: generated_outputs() → synchronize(spec_obligations ∧ test_TRACE_IDs)
+    → refresh_snapshot_if_needed("make traceability-spec-to-code-update-snapshot")
+    → authoritative_trace → relevant_focused_gates
+  | ¬substitute(example_assertions, behavioral_tests ∨ resource_probes)
+  | each_layer: validate → report → continue | ¬approval_pause_at_layer_boundary
+  | failed(check) → repair_same_slice → rerun(check) before widen
 
-## Known Validation Commands
+λ evidence_table().
+  contract ≔ final(requirements ∧ vocabulary ∧ architecture ∧ active_spec)
+  | columns ≔ {clause_or_obligation, ordinary_assertion_or_rejection_test,
+               runtime_no_heap_probe_assertion, Doxygen_demonstration, validation_status}
+  | derive_rows(contract) ¬derive_from(existing_tests)
+  | rows_cover(admitted_domains, results, applicable_empty_missing_full_capacity_boundaries,
+               safe_conversions, input_preservation, resource_guarantees)
+  | nonapplicable(cell) → record(contract_based_reason)
+  | examples ≡ representative ¬exhaustive | rejected_calls → compile_fail_tests ¬runnable_examples
+  | inspect(always) ∧ upsert(if_deficient) ∧ unchanged(surface) only_if(case_level_mapping)
+  | exists(file) ∨ pass(gate) ∨ present(TRACE_ID) ≠ sufficient_evidence
 
-- Allium: `allium check <file-or-directory>`, `allium analyse <file-or-directory>`, and `allium plan <file>`; the spelling is `analyse`. For full-spec gates use `allium check specs` and `allium analyse specs`.
-- Structural audits: `make requirements-structure`, `make vocabulary-structure`, and `make audit-scripts`. Use `make trace-id-check SPEC=<spec.allium> TESTS="<test.cpp> [shared.cpp...]"` only for a focused obligation-to-test check. Add `EXACT=1` if the supplied test sources are dedicated to the one spec. `make traceability-spec-to-code` remains the authoritative set-scoped gate.
-- Repository gates: use the named Make targets documented in `Makefile` (for example `make primitive-compile-fail`, `make traceability-spec-to-code`, `make no-heap`, `make docs-examples`, and `make docs`). Follow the hard boundary prohibiting `make git`.
+λ no_heap_evidence().
+  read_and_upsert(existing_target_or_family_probe under tests/no_heap/)
+  | no_suitable_probe → add(current_naming ∧ registration(probes.hpp, harness_main.cpp, build_targets))
+  | ¬parallel_harness
+  | ∀ new_or_changed_admitted_behavior:
+      direct_API_call ∧ observable_result_assertions ∈ dedicated_runtime_no_heap_harness
+  | runtime_derived_inputs where_needed(prevent_constant_folding)
+    | volatile_input → plain_local → API(const_T_reference)
+  | representative(source_operand_families) ∧ meaningful_boundaries ∧ required_input_preservation
+  | rejected_form_without_admitted_runtime_counterpart → explain(table) ∧ retain(compile_fail)
+  | noexcept ∨ static_assert ∨ source_scan ∨ symbol_scan ∨ ordinary_tests ≠ runtime_probe_coverage
+  | final(implementation, probes, harness, amalgamation) → "make no-heap"
+  | pass ≡ source_scan ∧ symbol_checks ∧ executed_successfully(modular ∧ single_header)
+  | reuse(pass) only_if(current(pass) ∧ mapped_behaviors_covered)
 
-## Layered Workflow
+λ example_evidence().
+  read_and_upsert(owning_source_header.Doxygen_contract_and_program)
+  | match(final_domain, canonical_terms, results, boundaries, conversions, preservation)
+  | required even_if(diagnostic_only ∨ implementation_already_correct)
+  | program ≔ '#include "cljonic.hpp"' → file_scope("using namespace cljonic;") → "main()"
+  | C++23 ∧ public_free_functions ∧ representative_named_values ∧ plain_integer_literals
+  | ¬unnecessary_U_suffix ∧ ¬implementation_detail_member_calls
+  | constexpr_results → static_assert | runtime_derived_inputs → checked_runtime_results
+  | cases ≔ normal ∧ applicable_important_boundary_fallback_or_prefix ∧ required_input_preservation
+  | runtime_failure → nonzero_exit | unused_result ∨ unconditional_success ≠ evidence
+  | bare_fences("~~~~~{.cpp}", "~~~~~") ∧ ¬asterisk_prefix_inside_sample
+  | Doxygen_block immediately_before(public_declaration)
+  | concise_user_prose ∧ link(shared_conversion_rules) ∧ fallback_term("default value")
+  | ¬capability_model_jargon ∧ preserve(unrelated_legacy_mainpage_narrative)
+  | source_scan_includes_comments → avoid(forbidden_allocator_container_spellings ∨ prose_token("new "))
+  | format_twice(scoped_clang_format ∧ "scripts/format-doc-samples.pl <header>")
+    → verify(second_pass_changes_nothing ∧ intact_bullets_and_fences)
+  | API_promotion → verify(curated_source_cheatsheet ∧ umbrella_include ∧ extraction_registration)
+  | safe_final_amalgamation → "make docs-examples"
+    → verify(compiled_count ∧ deferred_exclusions ∧ target_extracted_and_compiled_this_invocation)
+  | extracted ≔ configured_build_dir/docs-examples/target_translation_unit
+    | default_build_dir ≔ build/
+  | fresh(extracted) ∧ ¬stale_previous_file ∧ ¬hand_copied_substitute
+  | link(extracted, repository_C++23_compiler_settings) → execute(extracted_program) → require(exit=0)
+  | docs_examples_compile_only("-c") ≠ link_or_runtime_validation
 
-Treat one slash invocation as an end-to-end workflow across all applicable layers. Complete and validate each layer in order, then continue to the next without pausing for approval between layers. Ask only when a substantive product decision remains unresolved or the available evidence is ambiguous; do not use layer boundaries as approval gates. If a focused check fails, repair the same slice and rerun that check before widening scope. If the workflow resumes after context loss or without a reliable current layer, reconstruct it from the latest checkpoint and worktree; ask only when the state is genuinely ambiguous.
+λ generated_outputs().
+  before(any_generator): inspect(status ∧ diff, every_output)
+  | preexisting_or_ambiguous_output_edits → ask_user before overwrite
+  | ¬clean_restore_discard_user_changes
+  | "make cljonic" overwrites(cljonic.hpp)
+    | "make docs-examples" also_invokes("make cljonic")
+  | final_source_formatting → "make cljonic"
+  | default: defer(docs/ HTML, human_final_gate) ∧ report(deferred ¬rendered_current)
+  | explicit_user_request(generation ∨ rendered_verification) → inspect_outputs → "make docs"
+    | warning: "make docs" removes(docs/) before regenerate
+  | deferred_HTML ≠ missing_source_example_evidence
 
-1. **Requirements:** Upsert the existing requirement where possible. Define admitted inputs, observable results, errors or diagnostics, and relevant resource constraints. Preserve identifiers, provenance, and lifecycle decisions. Run `make requirements-structure` after requirement edits.
-2. **Vocabulary:** Add or refine the canonical term and its relationships. Run `make vocabulary-structure` after vocabulary edits; this structural audit complements, but does not replace, `/gybis-vocab-check`.
-3. **Architecture:** Add only the missing architectural rule at the owning abstraction. Check local consistency and the changed diff; do not repeat unrelated requirement or vocabulary audits unless their inputs changed.
-4. **Specification:** Add explicit fields and invariants for the active contract. Do not mark work deferred to make validation pass. Run `allium check` on the changed spec; run broader analysis only when a cross-spec concern warrants it.
-5. **Tests:** Test direct free-function calls for meaningful admitted domains and behaviors. Add rejected-domain and targeted-diagnostic coverage when required by repository policy, and add `TRACE_ID`s for new obligations. Use `make trace-id-check` for the changed spec and all relevant test files as a focused check, then run `make traceability-spec-to-code` after spec/test IDs and the snapshot are aligned. Build the relevant test target and run its focused test filter.
-6. **Implementation, docs, and resource probes:** Fix the controlling implementation only when behavior is missing or wrong. Update the public Doxygen contract and runnable sample when needed. Extend suitable existing no-heap or other resource probes when the contract requires it. Validate changed surfaces with focused tests, `make docs-examples` for changed samples, or `make no-heap` for changed no-heap probes/contracts, as applicable.
-7. **Generated artifacts and integration checks:** Before running any generator, inspect the status and diff of every output path. `make cljonic` overwrites `cljonic.hpp`; `make docs` removes `docs/` before regenerating it. If an output contains pre-existing or ambiguous user edits, stop and ask for approval before running the generator; never clean, restore, or overwrite user changes without approval. After source edits, regenerate `cljonic.hpp` with `make cljonic`; regenerate Doxygen output with `make docs` when a public API declaration/signature or Doxygen comment changed. Refresh the traceability snapshot only after spec obligations and test trace IDs are aligned, then run `make traceability-spec-to-code`. Run only the additional focused gates relevant to changed behavior. Do not run the final repository gate; report that `make git` remains for the user.
+λ validation().
+  each_edit → cheapest_falsifying_check before further_exploration_or_edits
+  | changed(input) → invalidate(only_dependent_checks ∧ affected_contract_mappings)
+  | passing ∧ current(check) → reuse ¬rerun
+  | narrow(checker, target_filter, compile, resource_gate)
+  | ¬full_suite_or_broad_audits_per_layer ∧ ¬final_catch_all_gate
+  | strict_trace only_after(sync(spec ∧ TRACE_IDs ∧ snapshot))
+  | upstream_contract_edit → reopen(affected_probe_example_rows) even_if(unchanged_code)
 
-## Validation Policy
+λ compatibility().
+  baseline ≔ CMakeLists.txt.cxx_std_23
+  | established_idioms ∧ supported_C++23_or_earlier ∧ ¬post_C++23
+  | newer_syntax only_if(concrete_need ∧ relevant_project_compile_pass)
+  | variable_stdlib_support → verify(actual_toolchain) ∧ feature_test_macro_if_useful
+  | preserve(constexpr, noexcept, allocation_contract, concept_admission)
 
-- For each edit, run the cheapest check that can falsify that edit, before further reading or editing.
-- Do not rerun a passing check while its inputs are unchanged. A later edit invalidates only checks that depend on the changed files or generated outputs.
-- Prefer the narrowest relevant checker, test target/filter, compile, or resource gate. Do not run the full test suite or broad audits at every layer merely for reassurance.
-- Reserve cross-layer checks such as strict traceability for after the related spec, test IDs, and snapshot are synchronized.
-- Run no final catch-all gate. In particular, never run `make git`; list it as a user-owned next step.
+λ handoff().
+  each_layer_boundary → report(paths_changed, focused_check_result, unresolved_or_deferred, next_layer)
+  | pause_or_context_loss → checkpoint
+  | resume: compare(checkpoint, git_status, relevant_diffs)
+    | missing_checkpoint → reconstruct(latest_state ∧ worktree)
+    | genuinely_ambiguous → ask_user | ¬repeat_current_checks
+  | complete only_if(all_active_obligations_met ∧ current(evidence_table ∧ no_heap ∧ example)
+                     ∧ ¬missing_or_blocked_evidence)
+  | failed_or_unavailable_validation ∨ stale_inputs ∨ missing_coverage → report(blocked)
+  | final: evidence_table ∧ probe_example_paths_and_cases(added ∨ verified_unchanged)
+    ∧ modular_and_single_header_no_heap_results ∧ example_compile_link_run_results
+    ∧ unresolved_items ∧ HTML_deferral_if_any
+    ∧ state("make git and commits not performed; user-owned")
 
-## C++23 Compatibility
-
-- Treat the repository's `cxx_std_23` target in `CMakeLists.txt` as the language baseline. Use only C++23-or-earlier facilities supported by the configured toolchain; do not introduce post-C++23 features.
-- Prefer established project idioms. Use a C++23 feature only when it solves a concrete API need, and validate it with the relevant project compile target.
-- For standard-library facilities whose implementation support may vary, verify availability in the configured standard library; use a feature-test macro when useful, and compile against the actual project target.
-- Preserve the API's documented constraints such as `constexpr`, `noexcept`, allocation behavior, and concept admission; do not trade them away for newer syntax.
-
-## Handoff
-
-At each layer boundary, report the files changed, the focused check and result, any unresolved or explicitly deferred obligation, and the next layer awaiting approval. Include this copy-pasteable resume checkpoint, filling each field with concise values:
+λ checkpoint().
+  emit(copy_pasteable, concise, fields_below)
 
 ```text
 WORKFLOW=complete
@@ -71,9 +186,9 @@ LAST_COMMAND_STATUS=
 COMPLETED=
 MODIFIED_PATHS=
 CURRENT_VALIDATIONS=
+NO_HEAP_EVIDENCE=
+DOXYGEN_EXAMPLE_EVIDENCE=
 INVALIDATED=
 OPEN_DECISIONS=
 NEXT_ACTION=
 ```
-
-On continuation, compare the checkpoint with `git status` and relevant diffs; do not repeat checks unless their inputs changed. If the checkpoint is missing or ambiguous, ask before resuming. At final handoff, summarize focused validations that passed and clearly state that `make git` and any commit were not performed and remain the user's responsibility.

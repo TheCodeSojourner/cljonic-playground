@@ -6,40 +6,199 @@ user-invocable: true
 disable-model-invocation: true
 ---
 
-# Converge a cljonic Free-Function API
+λ cljonic-api-converge(function, canonical?, mode?).
+  purpose: final cross-layer convergence of one free-function API
+  | gate: explicit_user_invocation("/cljonic-api-converge") ∧ function ∃
+  | canonical ≔ supplied ∨ derive(repository_artifacts) | ambiguous(target) → ask_user
+  | mode ∈ {targeted, full} | default ≔ targeted
+  | sequence: startup → recall → requested_passes → evidence_reconciliation → handoff
+  | notation: ≔ definition | ∧ all | ∨ alternatives | ¬ prohibition | → consequence/order
+  | current(evidence) ≡ inputs_match_final_versions ∧ contract_mapping_valid
 
-Use this skill only when the user explicitly invokes `/cljonic-api-converge`. The required argument is the free-function identifier, such as `count`; the optional canonical API name may be supplied, such as `Count`. The optional mode is `targeted` or `full`; default to `targeted`. Derive omitted API names from repository artifacts, and ask only if the target is ambiguous.
+λ boundaries().
+  forbid(commit ∨ stage ∨ revert ∨ discard_user_edits ∨ run("make git", direct ∨ indirect))
+  | preserve(unrelated ∧ preexisting_edits) ∧ ¬attribute_to_this_API
+  | coordinator ≡ read_only(product) except evidence_repair_scope
+  | evidence_repair_scope ≔ target_no_heap_probes ∪ necessary_harness_build_registration
+      ∪ owning_header_Doxygen_prose_example ∪ corresponding_amalgamation_docs
+  | exception ≠ permission(change_API_behavior ∨ ordinary_tests ∨ req ∨ vocab ∨ arch ∨ spec)
+  | other_changes → owning_gybis_scope_and_approval_gates
+  | invoke(required_gybis, skill_tool) ∧ ¬hand_slash_execution_back_to_user
+  | allowed_skills ≔ matching_check_weed ∪ explicitly_required_internal_support
+  | substantive_choice ∨ requested_approval → ask_user → wait → resume
+  | weed_resolution ≡ human_decision | investigate ∨ skip → unresolved ¬converged
 
-This skill coordinates the user's final cross-layer review and automatically invokes the relevant Gybis skills through the skill tool. The user should not need to invoke those commands separately. The coordinator remains responsible for honoring any approval or decision gates raised by a Gybis skill.
+λ startup().
+  inspect("git status --short") → map(API_related_paths,
+    {requirements, vocabulary, architecture, specs, tests, implementation, docs, generated})
+  | ledger ≔ {command, reported_status, inputs_known, subsequent_edits, current_invalidated_unresolved}
+  | after(each_gybis_invocation): inspect(status ∧ relevant_diffs) → update(ledger)
+  | evidence ≔ concrete_artifacts ∧ actual_skill_reports ¬inferred_success
+  | missing_or_ambiguous_skill_result → inspect(transcript_or_output_if_available)
+    → if_still_missing(ask_user_for_status_findings_modified_paths)
+  | resume_or_context_loss → compare(checkpoint, status, diffs)
+    | ¬assume(prior_skill_ran ∨ result_current, conversation_order)
+  | build(evidence_table) ∧ inspect(existing_probe_bodies ∧ source_example)
+    even_if(empty_diff ∨ diagnostic_only)
 
-Use known repository command spellings rather than probing command-line options or guessing alternatives. For Allium, the supported forms are `allium check <file-or-directory>`, `allium analyse <file-or-directory>`, and `allium plan <file>`; use `analyse` (not `analyze`). For broader gates, inspect and invoke documented Make targets. Do not run `--help` merely to confirm a command whose syntax is specified here or in the repository.
+λ recall().
+  read(current_section([state](../../../mementum/state.md)))
+  | read([probe propagation](../../../mementum/memories/no-heap-probes-propagate-with-feature.md),
+         [Doxygen tooling](../../../mementum/knowledge/doxygen-doc-tooling.md),
+         [header lifecycle](../../../mementum/knowledge/header-addition-and-verification-lifecycle.md))
+  | search(mementum/memories/ ∪ mementum/knowledge/, {target, no_heap, examples, verification})
+  | follow(relevant_related_links) → ledger(read_paths ∧ conflicts)
+  | mandatory even_if(guidance_already_inline)
+  | memory ≡ context ¬authority_over(current_contract ∨ human_decision)
+  | [representative examples](../../../mementum/memories/docs-user-facing-example-style.md)
+      > lifecycle_page_demand(every_collection_in_example)
+  | [defer HTML](../../../mementum/memories/defer-doc-regeneration-until-final-git.md) ≡ default
+  | verify(historical_paths ∧ inventories ∧ gate_descriptions, current_artifacts)
+  | remaining_substantive_conflict → surface ∧ ask_user
 
-For API-specific quick audits, prefer `make requirements-structure` and `make vocabulary-structure` when those layers changed. Use `make trace-id-check SPEC=<spec.allium> TESTS="<test.cpp> [shared.cpp...]"` for the focused spec/test edge; add `EXACT=1` only when supplied tests are dedicated to that spec. Use `make traceability-spec-to-code` as the authoritative set-scoped traceability gate. The repository audit scripts can self-test via `make audit-scripts`.
+λ commands().
+  allium ≔ {"allium check <file-or-directory>", "allium analyse <file-or-directory>", "allium plan <file>"}
+  | use("analyse") ∧ ¬guess(commands) ∧ ¬probe("--help")
+  | uncertain(command) → read(Makefile ∨ owning_skill_guidance)
+  | changed(req ∨ vocab) → prefer("make requirements-structure" ∨ "make vocabulary-structure")
+  | focused_trace ≔ 'make trace-id-check SPEC=<spec.allium> TESTS="<test.cpp> [shared.cpp...]"'
+  | add("EXACT=1") only_if(all_supplied_tests_dedicated_to_one_spec)
+  | authoritative_trace ≔ "make traceability-spec-to-code"
+  | checker_self_tests ≔ "make audit-scripts"
 
-## Hard Boundaries
+λ targeted().
+  scope ≔ API_changed_surfaces ∧ relevant_cross_layer_edges ¬unrelated_content
+  | invoke_in_order:
+    1. "/gybis-req-check" if(requirements_changed ∨ downstream_readiness_not_current)
+       | readiness_probes(vocab ∧ arch ∧ Allium) → ¬duplicate unless(detail_needed ∨ inputs_changed)
+    2. "/gybis-spec-check" if(active_spec_changed ∨ spec_check_not_current)
+       | may_repair(specs) → invalidate_and_rerun(affected_readiness_checks) before weeds
+    3. applicable({"/gybis-req-weed", "/gybis-vocab-weed", "/gybis-arch-weed", "/gybis-spec-weed"})
+       in_dependency_order
+       | req_weed ≠ vocabulary_only | spec_weed includes(strict_trace ∧ possible_tests)
+  | skip(layer) only_if(unchanged_artifacts ∧ current_evidence)
+  | after_each_invocation → ledger_update ∧ dependent_invalidation
+  | continue_noninteractive ∧ ask_user_only_for_decision
+  | finish_passes → evidence_reconciliation mandatory
 
-- Never create a Git commit, stage changes, or discard user changes.
-- Never run `make git`, directly or through another command. The user owns that final gate.
-- Invoke each required Gybis skill with the skill tool; do not ask the user to invoke slash commands manually. Use only the matching check/weed skill and internal support skills it explicitly requires.
-- This coordinator is read-only for product artifacts: inspect files and worktree state, maintain a validation ledger in the conversation, and dispatch Gybis skills. Do not directly edit requirements, vocabulary, architecture, specs, tests, implementation, docs, or generated artifacts. A Gybis skill may make its documented changes; record and validate them.
-- Human decisions remain authoritative. If a Gybis skill requests a choice or approval, use the ask-user tool and wait for the answer before continuing. Never infer approval or resolve a substantive divergence autonomously.
-- Preserve unrelated and pre-existing changes. Do not treat an unresolved, skipped, or investigated divergence as convergence.
+λ full().
+  gate: user_requests(full)
+  | explain(spec_check_may_repair ∧ weeds_may_modify_overlapping_layers
+            ∧ spec_weed_runs(strict_trace ∧ test_suite)) before start
+  | invoke_exact_order:
+    ["/gybis-req-check", "/gybis-vocab-check", "/gybis-arch-check", "/gybis-spec-check",
+     "/gybis-req-weed", "/gybis-vocab-weed", "/gybis-arch-weed", "/gybis-spec-weed"]
+  | after_each → inspect(status ∧ diffs) → ledger_update
+  | before_first_weed:
+      compare(worktree, pre_check_baseline) → invalidate(earlier_results_depending_on_repairs)
+      → rerun(only_affected_checks)
+      | downstream_readiness_predates_spec_repair → rerun("/gybis-req-check") if_needed
+  | weed_allowed only_if(required_owning_checks_current_and_passing)
+  | user_decision → ask_user → resume
+  | ¬duplicate_full_suite unless(later_edit_invalidates)
+  | finish_passes → evidence_reconciliation mandatory even_if(all_gybis_green)
 
-## Startup and Ledger
+λ evidence_table().
+  contract ≔ final(requirements ∧ vocabulary ∧ architecture ∧ active_spec)
+  | columns ≔ {clause_or_obligation, ordinary_assertion_or_rejection_test,
+               runtime_no_heap_probe_assertion, Doxygen_demonstration, validation_status}
+  | derive_rows(contract) ¬derive_from(existing_tests)
+  | rows_cover(admitted_domains, results, applicable_empty_missing_full_capacity_boundaries,
+               safe_conversions, input_preservation, resource_guarantees)
+  | nonapplicable(cell) → contract_based_reason
+  | examples ≡ representative ¬exhaustive | rejected_calls → compile_fail ¬runnable_examples
+  | inspect(always) ∧ upsert(if_deficient) ∧ unchanged(surface) only_if(case_level_mapping)
+  | exists(file) ∨ present(TRACE_ID) ∨ pass(weed ∨ gate) ≠ sufficient_evidence
 
-1. Inspect `git status --short` and identify the API-related changed files. Do not attribute unrelated changes to this API.
-2. Map changed artifacts to layers: requirements, vocabulary, architecture, specs, tests, implementation, docs, and generated outputs.
-3. Maintain a compact ledger in the conversation with:
-   - Each check/weed command and its reported status.
-   - The files it read or validated when known.
-   - Files changed after that result.
-   - Which results are still current, invalidated, or unresolved.
-   - A copy-pasteable resume checkpoint using the fixed format below.
-4. Prefer Gybis skill output and concrete artifact evidence over memory or inferred success. If the skill result is missing or ambiguous, inspect its transcript/output if available; otherwise pause and ask for the concise status, findings, and modified-file summary.
-5. After every Gybis invocation, inspect `git status --short` and relevant diffs, update the ledger, and invalidate only dependent checks.
-6. When resuming after a Gybis invocation or context loss, reread `git status --short` and inspect relevant diffs against the checkpoint. Never assume a skill ran or a prior result is still current based only on conversation order.
+λ evidence_reconciliation().
+  read(actual_probe_bodies ∧ owning_source_Doxygen_program)
+  | no_heap_evidence() → example_evidence() → generated_outputs() → final_validation()
+  | repair within evidence_repair_scope → apply ∧ ledger_update
+  | outside_scope ∨ substantive_contract_decision → owning_skill_approval ∧ keep_unresolved
+  | later_upstream_repair → reopen(affected_rows) → reconcile_again
 
-Use this checkpoint format at every pause, with concise values:
+λ no_heap_evidence().
+  upsert(existing_target_or_family_probe under tests/no_heap/) | ¬parallel_harness
+  | no_suitable_probe → add(current_naming ∧ registration(probes.hpp, harness_main.cpp, build_targets))
+  | ∀ new_or_changed_admitted_behavior:
+      direct_API_call ∧ observable_result_assertions ∈ dedicated_runtime_no_heap_harness
+  | runtime_derived_inputs where_needed(prevent_constant_folding)
+    | volatile_input → plain_local → API(const_T_reference)
+  | representative(source_operand_families) ∧ meaningful_boundaries ∧ required_input_preservation
+  | rejected_form_without_admitted_runtime_counterpart → explain(table) ∧ retain(compile_fail)
+  | noexcept ∨ static_assert ∨ source_scan ∨ symbol_scan ∨ ordinary_tests ≠ runtime_probe_coverage
+
+λ example_evidence().
+  upsert(owning_source_header.Doxygen_contract_and_program) ¬generated_HTML_or_scratch_only
+  | match(final_domain, canonical_terms, results, boundaries, conversions, preservation)
+  | program ≔ '#include "cljonic.hpp"' → file_scope("using namespace cljonic;") → "main()"
+  | C++23 ∧ public_free_functions ∧ representative_named_values ∧ plain_integer_literals
+  | ¬unnecessary_U_suffix ∧ ¬implementation_detail_member_calls
+  | constexpr_results → static_assert | runtime_derived_inputs → checked_results
+  | normal_case ∧ applicable_important_boundary_fallback_or_prefix ∧ required_input_preservation
+  | runtime_failure → nonzero_exit | unused_result ∨ unconditional_success ≠ evidence
+  | bare_fences("~~~~~{.cpp}", "~~~~~") ∧ ¬asterisk_prefix_inside_sample
+  | Doxygen_block immediately_before(public_declaration)
+  | concise_user_prose ∧ link(shared_conversion_rules) ∧ fallback_term("default value")
+  | ¬capability_model_jargon ∧ preserve(unrelated_legacy_mainpage_narrative)
+  | source_scan_includes_comments → avoid(forbidden_allocator_container_spellings ∨ prose_token("new "))
+  | format_twice(scoped_clang_format ∧ "scripts/format-doc-samples.pl <header>")
+    → verify(second_pass_changes_nothing ∧ intact_bullets_and_fences)
+  | promotion → verify(curated_source_cheatsheet ∧ umbrella_include ∧ extraction_registration)
+    | gap_outside_exception → owning_skill_approval
+
+λ generated_outputs().
+  before(any_generator): inspect(status ∧ diff, every_output)
+  | preexisting_or_ambiguous_output_edits → ask_user before overwrite
+  | ¬restore_discard_user_edits
+  | final_source_formatting → "make cljonic" overwrites(cljonic.hpp)
+  | "make docs-examples" also_invokes("make cljonic")
+  | default: defer(docs/ HTML, human_final_gate) ∧ report(deferred ¬rendered_current)
+  | explicit_user_request(generation ∨ rendered_verification) → inspect_outputs → "make docs"
+    | warning: "make docs" removes(docs/) before regenerate
+  | deferred_HTML ≠ missing_source_example_evidence
+
+λ final_validation().
+  final(implementation, probes, harness, amalgamation) → "make no-heap"
+  | require(source_scan ∧ symbol_checks ∧ executed_successfully(modular ∧ single_header))
+  | safe_final_amalgamation → "make docs-examples"
+    → verify(compiled_count ∧ deferred_exclusions ∧ target_extracted_and_compiled_this_invocation)
+  | extracted ≔ configured_build_dir/docs-examples/target_translation_unit
+    | default_build_dir ≔ build/
+  | fresh(extracted) ∧ ¬stale_previous_file ∧ ¬hand_copied_substitute
+  | link(extracted, repository_C++23_compiler_settings) → execute(extracted_program) → require(exit=0)
+  | docs_examples_compile_only("-c") ≠ link_or_runtime_validation
+  | reuse(result) only_if(current(result) ∧ mapped_behaviors_covered)
+  | failed ∨ unavailable(validation) → blocked ¬converged
+
+λ invalidation(changed).
+  req → requirements_check ∧ requirements_to_downstream_comparisons
+  | vocab → vocabulary_check ∧ vocabulary_to_downstream_comparisons
+  | arch → architecture_check ∧ architecture_to_spec_code_comparisons
+  | spec → spec_check ∧ Allium ∧ traceability ∧ spec_comparisons
+  | req ∨ vocab ∨ arch ∨ spec → affected_probe_example_mappings even_if(unchanged_probe_example)
+  | tests ∨ implementation → relevant_tests ∧ spec_to_code
+  | tests/no_heap/ → no_heap | compile_fail_inputs → matching_compile_fail_gate
+  | TRACE_IDs ∨ spec → strict_trace_against_snapshot
+  | executable_public_header → modular_and_single_header_tests ∧ compile_fail ∧ no_heap
+      ∧ amalgamation ∧ docs_examples
+  | Doxygen_only → formatting ∧ amalgamation ∧ example_extract_compile_link_run
+      ∧ comment_sensitive_no_heap_source_scan ∧ HTML
+      | ¬invalidate(unchanged_runtime_behavior_evidence)
+  | output_current only_if(regenerated_from_final_source) | explicitly_deferred_HTML ¬blocks(source_convergence)
+  | after_final_edits → rerun(only_invalidated_owning_checks)
+  | reuse(gybis_builtin_validation) only_if(explicit_report_covers_final_inputs)
+
+λ handoff().
+  converged only_if(no_new_edits_since_last_relevant_pass ∧ required_checks_current_and_passing
+                    ∧ evidence_table_satisfied ∧ no_unresolved_divergence)
+  | missing_probe_example_evidence → ¬converged even_if(all_gybis_green)
+  | otherwise: identify(invalidated_edge ∧ next_needed_action)
+  | final: evidence_table ∧ probe_example_paths_and_cases(added ∨ verified_unchanged)
+    ∧ modular_and_single_header_no_heap_results ∧ exact_example_compile_link_run_results
+    ∧ unresolved_items ∧ HTML_deferral_if_any
+    ∧ state("make git and commits not performed; user-owned")
+  | every_pause → checkpoint(concise, copy_pasteable)
 
 ```text
 WORKFLOW=converge
@@ -49,53 +208,9 @@ LAST_COMMAND_STATUS=
 COMPLETED=
 MODIFIED_PATHS=
 CURRENT_VALIDATIONS=
+NO_HEAP_EVIDENCE=
+DOXYGEN_EXAMPLE_EVIDENCE=
 INVALIDATED=
 OPEN_DECISIONS=
 NEXT_ACTION=
 ```
-
-## Targeted Mode
-
-Use `targeted` mode to validate the API's changed surface and relevant cross-layer edges, not unrelated repository content. Invoke applicable Gybis skills automatically in this order, skipping only layers whose artifacts were not changed and whose current evidence remains valid:
-
-1. `/gybis-req-check` when requirements changed or downstream readiness is not currently established. It probes vocabulary, architecture, and Allium readiness; avoid duplicating those checks unless detailed reports are needed or those artifacts change later.
-2. `/gybis-spec-check` when an active spec changed or lacks a current check. It may repair specs. If it changes specs after requirements/downstream readiness checks, invalidate and rerun only affected checks before weeding.
-3. Applicable weed passes for changed layer edges, in dependency order: `/gybis-req-weed`, `/gybis-vocab-weed`, `/gybis-arch-weed`, `/gybis-spec-weed`. Run only relevant passes. `req-weed` compares requirements with multiple downstream artifacts, not only vocabulary. `/gybis-spec-weed` includes strict obligation-to-test coverage and may run tests.
-4. After every invocation, inspect `git status --short` and relevant diffs, record the reported result/files, and invalidate only checks whose inputs changed. Never mark unresolved, skipped, or investigated divergences as converged.
-5. Continue automatically through non-interactive checks. If a Gybis skill requests a decision, ask the user one question using the ask-user tool, then resume automatically when answered. Do not ask the user to manually invoke a Gybis skill.
-
-## Full Mode
-
-Use `full` mode only when the user requests the complete final sweep. Automatically invoke this exact order, inspecting status/diffs and updating the ledger after each skill:
-
-1. `/gybis-req-check`
-2. `/gybis-vocab-check`
-3. `/gybis-arch-check`
-4. `/gybis-spec-check`
-5. `/gybis-req-weed`
-6. `/gybis-vocab-weed`
-7. `/gybis-arch-weed`
-8. `/gybis-spec-weed`
-
-Before starting, explain that this is not eight read-only checks: `spec-check` can repair specs, and weed commands can modify overlapping layers. `/gybis-spec-weed` includes strict obligation-to-test coverage and runs the test suite. Stop for user decisions when requested, then resume automatically after receiving them. Do not run a duplicate full suite immediately afterward unless later edits invalidate that result.
-
-Before starting step 5, compare the worktree with the state before step 1. If `spec-check` or another check repaired an artifact, mark every earlier result that depended on the changed file as invalid. Rerun only those checks before weeding; in particular, rerun `/gybis-req-check` if its downstream-readiness result predates spec repairs and that result is needed for coverage convergence. Do not begin a weed pass while a required owning check is failing or stale.
-
-## Human Approval Gates
-
-- Do not hand slash-command execution back to the user. Invoke Gybis skills automatically and proceed through non-interactive work.
-- When a Gybis skill requires a substantive user choice or approval, ask through the ask-user tool and pause only for that decision. Include the compact resume checkpoint at such pauses so the workflow can resume without repeating valid checks.
-- The user decides every weed resolution. Record `investigate` or `skip` as unresolved rather than calling the sweep converged.
-- After each skill result, compare the current worktree with the ledger. A skill that changed files invalidates only checks or cross-layer comparisons whose inputs include those files.
-
-## Invalidation and Stop Rules
-
-- A changed requirements artifact invalidates its requirements check and comparisons from requirements to downstream layers.
-- A changed vocabulary artifact invalidates its vocabulary check and comparisons from vocabulary downstream.
-- A changed architecture artifact invalidates its architecture check and architecture-to-spec/code comparisons.
-- Changed specs invalidate their spec check, Allium/traceability results, and comparisons involving specs.
-- Changed tests or implementation invalidate test results and spec-to-code comparisons. Changes under `tests/no_heap/` invalidate `make no-heap`; changes to compile-fail test inputs invalidate their corresponding compile-fail gate. Changed `TRACE_ID`s or specs invalidate strict traceability against the obligation snapshot.
-- Changed public source headers invalidate relevant modular and single-header tests, compile-fail checks, no-heap results, the amalgamated header, and `make docs-examples`. Changes to public API declarations/signatures or Doxygen comments invalidate generated docs. Generated outputs are current only when regenerated from the final source version.
-- After all requested passes, request only the owning checks invalidated by final edits. Reuse a Gybis pass's built-in conditional validation when its report explicitly covers the final file versions.
-- Stop when no new files have changed since the last relevant pass, all required current checks pass, and no unresolved divergence remains. Otherwise identify the specific invalidated edge and recommend only the next needed command.
-- Finish by summarizing current passing evidence, unresolved items, and any user-owned next action. State that `make git` and any commit were not performed; do not run either.
