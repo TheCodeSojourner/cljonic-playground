@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <concepts>
 
 #include "cljonic-test-api.hpp"
 
@@ -9,13 +10,18 @@ TEST_CASE("Get free function operations", "[get]") {
     using cljonic::conj;
     using cljonic::get;
     using cljonic::Map;
+    using cljonic::Queue;
     using cljonic::Set;
     using cljonic::String;
     using cljonic::Vector;
 
     TRACE_ID("entity-fields.Get");
     TRACE_ID("invariant.Get.GetFreeFunctionSupported");
+    TRACE_ID("invariant.Get.AdmitsLookupOrIndexedCollections");
+    TRACE_ID("invariant.Get.PreservesCollectionLookupResultType");
     TRACE_ID("invariant.Get.SupportsDefaultFallback");
+    TRACE_ID("invariant.Get.AdmitsOnlySafeFallbackConversion");
+    TRACE_ID("invariant.Get.RejectsUnsupportedCallsWithTargetedDiagnostic");
     TRACE_ID("invariant.Get.NoHeapAllocation");
     TRACE_ID("invariant.Get.NoRtti");
     TRACE_ID("invariant.Get.NoExceptions");
@@ -27,6 +33,7 @@ TEST_CASE("Get free function operations", "[get]") {
     STATIC_REQUIRE(get(v, 0U) == 10);
     STATIC_REQUIRE(get(v, 9U) == 0);      // default element
     STATIC_REQUIRE(get(v, 9U, -1) == -1); // supplied fallback
+    STATIC_REQUIRE(std::same_as<decltype(get(v, 0U)), int>);
 
     // Map key lookup + fallback
     constexpr Map<int, int, 4> m{};
@@ -34,6 +41,7 @@ TEST_CASE("Get free function operations", "[get]") {
     STATIC_REQUIRE(get(m1, 1) == 100);
     STATIC_REQUIRE(get(m1, 2) == 0);
     STATIC_REQUIRE(get(m1, 2, -1) == -1);
+    STATIC_REQUIRE(std::same_as<decltype(get(m1, 1)), int>);
 
     // Set value lookup + fallback
     constexpr Set<int, 4> s{};
@@ -41,12 +49,21 @@ TEST_CASE("Get free function operations", "[get]") {
     STATIC_REQUIRE(get(s1, 5) == 5);
     STATIC_REQUIRE(get(s1, 8) == 0);
     STATIC_REQUIRE(get(s1, 8, -1) == -1);
+    STATIC_REQUIRE(std::same_as<decltype(get(s1, 5)), int>);
 
     // String indexed lookup + fallback
     constexpr String<4> text{"ab"};
     STATIC_REQUIRE(get(text, 0U) == 'a');
     STATIC_REQUIRE(get(text, 9U) == '\0');
     STATIC_REQUIRE(get(text, 9U, 'x') == 'x');
+    STATIC_REQUIRE(std::same_as<decltype(get(text, 0U)), char>);
+
+    // Rejected calls select diagnostic overloads; compile-fail checks verify
+    // that each overload emits its operation-specific message.
+    STATIC_REQUIRE(requires { get(42, 0); });
+    STATIC_REQUIRE(requires { get(Queue<int, 4>{}, 0); });
+    STATIC_REQUIRE(requires { get(v, 1.5); });
+    STATIC_REQUIRE(requires { get(v, 0, 1.5); });
 
     // Runtime tests for code coverage instrumentation
     volatile int idx_raw = 0;

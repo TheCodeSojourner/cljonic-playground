@@ -73,6 +73,7 @@ TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     STATIC_REQUIRE_FALSE(IndexedProducer<Range<int>>);
     // Range has no callable operator() either, unlike Vector/Map/Set.
     STATIC_REQUIRE_FALSE(std::invocable<Range<int>, std::size_t>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::GetKeyAdmissible<Range<int>, unsigned int>);
 
     // Default start 0 / step 1, inclusive start, exclusive end.
     constexpr Range<int> default_start_and_step{5};

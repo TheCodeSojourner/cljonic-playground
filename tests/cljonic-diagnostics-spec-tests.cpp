@@ -29,6 +29,7 @@ struct GenerateStep {
 
 TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics]") {
     using cljonic::equal;
+    using cljonic::get;
     using cljonic::not_equal;
 
     TRACE_ID("entity-fields.RejectionDiagnostic");
@@ -84,10 +85,13 @@ TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics
 
     // AppliesToCollectionPrimitives: collection primitives expose diagnostic
     // fallbacks for rejected domains. The targeted compile-fail harness checks
-    // dissoc's Map and exact-key rejection cases.
+    // get's collection/key/fallback cases and dissoc's Map and exact-key cases.
     STATIC_REQUIRE_FALSE(cljonic::concepts::AssociativeCollection<cljonic::Set<int, 4>>);
     STATIC_REQUIRE(requires { cljonic::assoc(cljonic::Set<int, 4>{}, 1, 1); });
     STATIC_REQUIRE(requires { cljonic::assoc(cljonic::Map<int, int, 4>{}, 1, 100, 2); });
+    STATIC_REQUIRE(requires { get(42, 0); });
+    STATIC_REQUIRE(requires { get(cljonic::Vector<int, 4>{}, 0.5); });
+    STATIC_REQUIRE(requires { get(cljonic::Vector<int, 4>{}, 0, 1.5); });
     STATIC_REQUIRE(requires { cljonic::dissoc(cljonic::Set<int, 4>{}); });
     STATIC_REQUIRE(requires { cljonic::dissoc(cljonic::Set<int, 4>{}, 1); });
     STATIC_REQUIRE(requires { cljonic::dissoc(cljonic::Set<int, 4>{}, 1, 2); });

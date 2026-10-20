@@ -22,8 +22,7 @@ concept StringIndexOperationsAcceptIndex = requires(const Collection& collection
 };
 
 template <typename Collection, typename Index>
-concept GetFreeFunctionAcceptsIndex =
-    requires(const Collection& collection, Index index) { cljonic::get(collection, index); };
+concept GetFreeFunctionAcceptsIndex = cljonic::concepts_detail::GetKeyAdmissible<Collection, Index>;
 
 } // namespace
 

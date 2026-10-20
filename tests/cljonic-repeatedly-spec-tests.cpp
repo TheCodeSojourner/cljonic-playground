@@ -12,7 +12,7 @@ template <typename T>
 concept HasCallableLookup = requires(const T& value) { value(0U); };
 
 template <typename T>
-concept HasGet = requires(const T& value) { cljonic::get(value, 0U); };
+concept GetDomainAdmissible = cljonic::concepts_detail::GetKeyAdmissible<T, unsigned int>;
 
 // NOTE: rejection is asserted against the admission concept directly, not via a
 // `requires { repeatedly(...) }` callability probe: REQ-DIAG-009 provides a
@@ -159,7 +159,7 @@ TEST_CASE("Repeatedly owns a copyable zero-argument step and exposes counted unc
     STATIC_REQUIRE_FALSE(std::invocable<decltype(uncounted), std::size_t>);
     STATIC_REQUIRE_FALSE(HasContains<decltype(uncounted)>);
     STATIC_REQUIRE_FALSE(HasCallableLookup<decltype(uncounted)>);
-    STATIC_REQUIRE_FALSE(HasGet<decltype(uncounted)>);
+    STATIC_REQUIRE_FALSE(GetDomainAdmissible<decltype(uncounted)>);
     STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<MoveOnlyStep>);
     STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<ThrowingStep>);
     STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<NonConstStep>);

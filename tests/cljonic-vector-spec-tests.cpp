@@ -15,8 +15,7 @@ concept VectorIndexOperationsAcceptIndex = requires(const Collection& collection
 };
 
 template <typename Collection, typename Index>
-concept GetFreeFunctionAcceptsIndex =
-    requires(const Collection& collection, Index index) { cljonic::get(collection, index); };
+concept GetFreeFunctionAcceptsIndex = cljonic::concepts_detail::GetKeyAdmissible<Collection, Index>;
 
 } // namespace
 
@@ -68,10 +67,10 @@ TEST_CASE("Vector construction establishes logical size", "[vector]") {
         constexpr CategoryElement() noexcept = default;
         constexpr explicit CategoryElement(int category_value) noexcept : category(category_value) {
         }
-        constexpr CategoryElement(const CategoryArgument& argument) noexcept : category(1) {
+        constexpr explicit CategoryElement(const CategoryArgument& argument) noexcept : category(1) {
             (void)argument;
         }
-        constexpr CategoryElement(CategoryArgument&& argument) noexcept : category(2) {
+        constexpr explicit CategoryElement(CategoryArgument&& argument) noexcept : category(2) {
             (void)argument;
         }
         constexpr CategoryElement(const CategoryElement&) noexcept = default;

@@ -11,7 +11,7 @@ template <typename T>
 concept HasCallableLookup = requires(const T& value) { value(0U); };
 
 template <typename T>
-concept HasGet = requires(const T& value) { cljonic::get(value, 0U); };
+concept GetDomainAdmissible = cljonic::concepts_detail::GetKeyAdmissible<T, unsigned int>;
 
 TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[repeat]") {
     using cljonic::fits_into;
@@ -128,7 +128,7 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     STATIC_REQUIRE_FALSE(std::invocable<decltype(finite_repeat), std::size_t>);
     STATIC_REQUIRE_FALSE(HasContains<decltype(finite_repeat)>);
     STATIC_REQUIRE_FALSE(HasCallableLookup<decltype(finite_repeat)>);
-    STATIC_REQUIRE_FALSE(HasGet<decltype(finite_repeat)>);
+    STATIC_REQUIRE_FALSE(GetDomainAdmissible<decltype(finite_repeat)>);
 
     auto mutable_value = 7;
     const auto owning_repeat = repeat(mutable_value, 2U);
