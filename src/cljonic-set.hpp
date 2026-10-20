@@ -110,7 +110,8 @@ class Set {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+    explicit(sizeof...(Args) ==
+             1) constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
         static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Set: initializer count exceeds Set CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
                       "cljonic::Set: constructor requires all arguments to construct "
@@ -131,7 +132,8 @@ class Set {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Set(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+    explicit constexpr Set(SourceRange&& source) noexcept(
+        (concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
                       "cljonic::Set: range/view constructor requires each source element to construct "
                       "T safely and requires non-throwing traversal");
@@ -154,7 +156,7 @@ class Set {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Set: you cannot construct a Set from a cljonic collection or producer. A Set is built "
                       "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "

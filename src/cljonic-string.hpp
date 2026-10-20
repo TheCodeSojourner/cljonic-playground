@@ -120,14 +120,14 @@ class String {
     /** Construct from a character array literal. CapacityValue counts content
      * characters; the null terminator is managed separately. */
     template <std::size_t N>
-    constexpr String(const char (&arr)[N]) noexcept {
+    explicit constexpr String(const char (&arr)[N]) noexcept {
         static_assert(N - 1U <= CapacityValue, "cljonic::String: literal too long for capacity");
         copy_from_source(arr, N - 1U);
     }
 
     template <typename Source>
         requires std::same_as<std::remove_cvref_t<Source>, std::string_view>
-    constexpr String(const Source& source) noexcept {
+    explicit constexpr String(const Source& source) noexcept {
         if consteval {
             if (source.size() > CapacityValue) {
                 rejected_oversized_string_source_at_compile_time();
@@ -145,7 +145,7 @@ class String {
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, std::string_view> &&
                  std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<SourceRange>>, char>)
-    constexpr String(SourceRange&& source) noexcept {
+    explicit constexpr String(SourceRange&& source) noexcept {
         static_assert(concepts::NothrowRangeConstruction<char, SourceRange>,
                       "cljonic::String: range/view constructor requires char elements and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
@@ -169,7 +169,7 @@ class String {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::String: you cannot construct a String from a cljonic collection or producer. A String "
                       "is built from its characters, or from a non-cljonic C++ range or view. To materialize a cljonic "

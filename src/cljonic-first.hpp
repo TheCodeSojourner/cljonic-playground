@@ -57,7 +57,7 @@ template <typename KeyType, typename ValueType>
 
 /** Returns the first logical element of a Vector, Map, Set, Queue, or String value. */
 template <concepts::SequenceableCollection C>
-[[nodiscard]] constexpr auto first(const C& collection) noexcept -> typename C::value_type {
+[[nodiscard]] constexpr auto first(const C& collection) noexcept -> C::value_type {
     if (collection.count() == 0U) {
         return typename C::value_type{};
     }

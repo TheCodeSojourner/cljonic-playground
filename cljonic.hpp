@@ -1446,14 +1446,14 @@ class String {
     /** Construct from a character array literal. CapacityValue counts content
      * characters; the null terminator is managed separately. */
     template <std::size_t N>
-    constexpr String(const char (&arr)[N]) noexcept {
+    explicit constexpr String(const char (&arr)[N]) noexcept {
         static_assert(N - 1U <= CapacityValue, "cljonic::String: literal too long for capacity");
         copy_from_source(arr, N - 1U);
     }
 
     template <typename Source>
         requires std::same_as<std::remove_cvref_t<Source>, std::string_view>
-    constexpr String(const Source& source) noexcept {
+    explicit constexpr String(const Source& source) noexcept {
         if consteval {
             if (source.size() > CapacityValue) {
                 rejected_oversized_string_source_at_compile_time();
@@ -1471,7 +1471,7 @@ class String {
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, std::string_view> &&
                  std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<SourceRange>>, char>)
-    constexpr String(SourceRange&& source) noexcept {
+    explicit constexpr String(SourceRange&& source) noexcept {
         static_assert(concepts::NothrowRangeConstruction<char, SourceRange>,
                       "cljonic::String: range/view constructor requires char elements and non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
@@ -1495,7 +1495,7 @@ class String {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::String: you cannot construct a String from a cljonic collection or producer. A String "
                       "is built from its characters, or from a non-cljonic C++ range or view. To materialize a cljonic "
@@ -2297,7 +2297,9 @@ class Vector {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
+    explicit(sizeof...(Args) ==
+             1) constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> &&
+                                                           ...)) {
         static_assert(sizeof...(Args) <= CapacityValue,
                       "cljonic::Vector: initializer count exceeds Vector CapacityValue");
         static_assert(
@@ -2318,7 +2320,8 @@ class Vector {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, ElementType>)
-    constexpr Vector(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<ElementType, SourceRange>)) {
+    explicit constexpr Vector(SourceRange&& source) noexcept(
+        (concepts::NothrowRangeConstruction<ElementType, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<ElementType, SourceRange>,
                       "cljonic::Vector: range/view constructor requires each source element to "
                       "convert safely to ElementType and requires non-throwing traversal");
@@ -2342,7 +2345,7 @@ class Vector {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr Vector([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr Vector([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Vector: you cannot construct a Vector from a cljonic collection or producer. A Vector is built "
@@ -3068,7 +3071,7 @@ inline constexpr bool in_non_cljonic_fallthrough_domain_v =
 // family; Map, Set, and String each form their own family; every other type is
 // outside the family classification.
 template <typename T>
-inline constexpr equality_family equal_family_of_v = []() constexpr -> equality_family {
+inline constexpr equality_family equal_family_of_v = [] constexpr -> equality_family {
     if constexpr (is_cljonic_collection_v<T>) {
         switch (collection_kind_of_v<T>) {
         case collection_kind::vector:
@@ -3650,7 +3653,9 @@ class Map {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
+    explicit(sizeof...(Args) ==
+             1) constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> &&
+                                                        ...)) {
         static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Map: initializer count exceeds Map CapacityValue");
         static_assert(((std::same_as<std::remove_cvref_t<Args>, value_type> &&
                         concepts::NothrowElementConstruction<value_type, Args>) &&
@@ -3667,7 +3672,8 @@ class Map {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Map(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+    explicit constexpr Map(SourceRange&& source) noexcept(
+        (concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
                       "cljonic::Map: range/view constructor requires each source element to construct "
                       "the exact MapEntry type and requires non-throwing traversal");
@@ -3690,7 +3696,7 @@ class Map {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Map: you cannot construct a Map from a cljonic collection or producer. A Map is built "
                       "from MapEntry elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
@@ -3930,7 +3936,7 @@ template <typename KeyType, typename ValueType>
 
 /** Returns the first logical element of a Vector, Map, Set, Queue, or String value. */
 template <concepts::SequenceableCollection C>
-[[nodiscard]] constexpr auto first(const C& collection) noexcept -> typename C::value_type {
+[[nodiscard]] constexpr auto first(const C& collection) noexcept -> C::value_type {
     if (collection.count() == 0U) {
         return typename C::value_type{};
     }
@@ -4019,18 +4025,60 @@ template <typename Dest, typename Source>
 // Begin cljonic-get.hpp
 #pragma once
 
+#include <type_traits>
 #include <utility>
 
 namespace cljonic {
 
+namespace concepts_detail {
+
+template <typename C, typename K>
+concept GetKeyAdmissible =
+    (concepts::LookupCollection<C> && concepts::SafeImplicitConversion<typename C::lookup_type, K>) ||
+    (concepts::IndexedCollection<C> && IntegerIndexType<K>);
+
+template <typename C, typename K>
+using get_result_t = decltype(std::declval<const C&>()(std::declval<const K&>()));
+
+template <typename C, typename K, typename R>
+concept GetFallbackAdmissible = GetKeyAdmissible<C, K> && concepts::SafeImplicitConversion<get_result_t<C, K>, R>;
+
+template <typename C, typename K>
+constexpr auto diagnose_get_key() noexcept -> void {
+    if constexpr (!(concepts::LookupCollection<C> || concepts::IndexedCollection<C>)) {
+        static_assert(dependent_false<C>, "cljonic::get: the first argument must be a Map, Set, Vector, or String.");
+    } else if constexpr (concepts::IndexedCollection<C>) {
+        static_assert(dependent_false<C, K>,
+                      "cljonic::get: a Vector or String index must be a non-boolean, non-character integer type.");
+    } else {
+        static_assert(dependent_false<C, K>,
+                      "cljonic::get: the key must safely convert to the Map's key type or the Set's element type.");
+    }
+}
+
+template <typename C, typename K, typename R>
+constexpr auto diagnose_get_fallback() noexcept -> void {
+    if constexpr (!GetKeyAdmissible<C, K>) {
+        diagnose_get_key<C, K>();
+    } else {
+        static_assert(dependent_false<C, K, R>,
+                      "cljonic::get: the fallback must safely convert to the collection's lookup result type.");
+    }
+}
+
+} // namespace concepts_detail
+
 /** \anchor Get
- * The \b get free function API looks up an element by a key or index, returning the default or
- *        supplied fallback when absent.
+ * The \b get free function API looks up a value in a \ref Map "Map", \ref Set "Set", \ref Vector "Vector", or \ref
+ * String "String", returning the collection's default lookup result or a supplied fallback when no value is present.
  *
- * Dispatches to the collection's callable lookup operation, consistent with the `operator()` behavior of \ref Map
- * "Map", \ref Set "Set", \ref Vector "Vector", and \ref String "String". The fallback defaults to the collection's
- * default lookup result when omitted. For \ref Vector "Vector" and \ref String "String", the index must be an integer.
- * Keys and fallback values accept their declared types and safe numeric widening that preserves every source value.
+ * \ref Map "Map" keys and \ref Set "Set" values must safely convert to their declared lookup type. \ref Vector
+ * "Vector" and \ref String "String" use integer indexes. The result has the same type as the collection's callable
+ * lookup result; a supplied fallback must safely convert to that result type. \ref Queue "Queue" and producers do not
+ * provide lookup and are not accepted.
+ *
+ * Unsupported collections, keys, indexes, or fallback types produce a targeted compile-time diagnostic. Use \ref
+ * Contains "contains" when presence or index validity must be distinguished from a default-valued result.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -4039,33 +4087,46 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{10, 20};
-   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
-   constexpr auto s_const = conj(Set<int, 4>{}, 5);
-   static_assert(get(v_const, 0U) == 10);
-   static_assert(get(v_const, 9U, -1) == -1);
+   constexpr auto v_const = Vector{10, 20};
+   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto s_const = Set{5};
+   constexpr auto text_const = String{"ab"};
+   static_assert(get(v_const, 0) == 10);
+   static_assert(get(v_const, 9, -1) == -1);
    static_assert(get(m_const, 1) == 100);
    static_assert(get(m_const, 2, -1) == -1);
    static_assert(get(s_const, 5) == 5);
    static_assert(get(s_const, 8, -1) == -1);
+   static_assert(get(text_const, 0) == 'a');
+   static_assert(get(text_const, 9, 'x') == 'x');
 
    // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10, 20};
-   const auto val = get(v_runtime, 0U);
+   auto v_runtime = Vector{10, 20};
+   const auto val = get(v_runtime, 0);
 
    return (val == 10) ? 0 : 1;
  }
  ~~~~~
  */
-/** Returns the stored value when present, otherwise the supplied fallback or
- * the collection's default lookup result when no fallback is supplied. */
-template <typename C, typename K,
-          typename V = std::remove_cvref_t<decltype(std::declval<const C&>()(std::declval<const K&>()))>>
-    requires(concepts::LookupCollection<C> || concepts::IndexedCollection<C>) &&
-            requires(const C& collection, const K& key, const V& fallback) { collection(key, fallback); }
-[[nodiscard]] constexpr auto get(const C& collection, const K& key, const V& fallback = V{}) noexcept
+template <typename C, typename K, typename V = std::remove_cvref_t<concepts_detail::get_result_t<C, K>>>
+    requires concepts_detail::GetKeyAdmissible<C, K> && concepts_detail::GetFallbackAdmissible<C, K, V>
+[[nodiscard]] constexpr auto get(const C& collection, const K& key,
+                                 const V& fallback = V{}) noexcept(noexcept(collection(key, fallback)))
     -> decltype(collection(key, fallback)) {
     return collection(key, fallback);
+}
+
+template <typename C, typename K>
+    requires(!concepts_detail::GetKeyAdmissible<C, K>)
+constexpr auto get([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key) noexcept -> void {
+    concepts_detail::diagnose_get_key<C, K>();
+}
+
+template <typename C, typename K, typename R>
+    requires(!concepts_detail::GetFallbackAdmissible<C, K, R>)
+constexpr auto get([[maybe_unused]] const C& collection, [[maybe_unused]] const K& key,
+                   [[maybe_unused]] const R& fallback) noexcept -> void {
+    concepts_detail::diagnose_get_fallback<C, K, R>();
 }
 
 } // namespace cljonic
@@ -4725,7 +4786,8 @@ class Queue {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+    explicit(sizeof...(Args) ==
+             1) constexpr Queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
         static_assert(sizeof...(Args) <= CapacityValue,
                       "cljonic::Queue: initializer count exceeds Queue CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
@@ -4741,7 +4803,8 @@ class Queue {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Queue(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+    explicit constexpr Queue(SourceRange&& source) noexcept(
+        (concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(
             concepts::NothrowRangeConstruction<value_type, SourceRange>,
             "cljonic::Queue: range/view constructor requires safe element conversion and non-throwing traversal");
@@ -4764,7 +4827,7 @@ class Queue {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Queue: you cannot construct a Queue from a cljonic collection or producer. A Queue is built from "
@@ -5821,7 +5884,8 @@ class Set {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+    explicit(sizeof...(Args) ==
+             1) constexpr Set(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
         static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Set: initializer count exceeds Set CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
                       "cljonic::Set: constructor requires all arguments to construct "
@@ -5842,7 +5906,8 @@ class Set {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Set(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+    explicit constexpr Set(SourceRange&& source) noexcept(
+        (concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
                       "cljonic::Set: range/view constructor requires each source element to construct "
                       "T safely and requires non-throwing traversal");
@@ -5865,7 +5930,7 @@ class Set {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Set: you cannot construct a Set from a cljonic collection or producer. A Set is built "
                       "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
@@ -6177,7 +6242,7 @@ class Variant {
 
     template <typename T>
         requires(variant_detail::matching_alternative_count_v<std::remove_cvref_t<T>, Alternatives...> == 1)
-    constexpr Variant(const T& value) noexcept : storage_{value} {
+    explicit constexpr Variant(const T& value) noexcept : storage_{value} {
     }
 
     /** Returns the zero-based index of the active alternative. */

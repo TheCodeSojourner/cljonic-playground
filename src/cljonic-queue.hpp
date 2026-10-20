@@ -139,7 +139,8 @@ class Queue {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
+    explicit(sizeof...(Args) ==
+             1) constexpr Queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<T, Args> && ...)) {
         static_assert(sizeof...(Args) <= CapacityValue,
                       "cljonic::Queue: initializer count exceeds Queue CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
@@ -155,7 +156,8 @@ class Queue {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Queue(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+    explicit constexpr Queue(SourceRange&& source) noexcept(
+        (concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(
             concepts::NothrowRangeConstruction<value_type, SourceRange>,
             "cljonic::Queue: range/view constructor requires safe element conversion and non-throwing traversal");
@@ -178,7 +180,7 @@ class Queue {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr Queue([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Queue: you cannot construct a Queue from a cljonic collection or producer. A Queue is built from "

@@ -168,7 +168,9 @@ class Vector {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...)) {
+    explicit(sizeof...(Args) ==
+             1) constexpr Vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> &&
+                                                           ...)) {
         static_assert(sizeof...(Args) <= CapacityValue,
                       "cljonic::Vector: initializer count exceeds Vector CapacityValue");
         static_assert(
@@ -189,7 +191,8 @@ class Vector {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, ElementType>)
-    constexpr Vector(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<ElementType, SourceRange>)) {
+    explicit constexpr Vector(SourceRange&& source) noexcept(
+        (concepts::NothrowRangeConstruction<ElementType, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<ElementType, SourceRange>,
                       "cljonic::Vector: range/view constructor requires each source element to "
                       "convert safely to ElementType and requires non-throwing traversal");
@@ -213,7 +216,7 @@ class Vector {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr Vector([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr Vector([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Vector: you cannot construct a Vector from a cljonic collection or producer. A Vector is built "

@@ -123,7 +123,9 @@ class Map {
         "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=" CLJONIC_STRINGIFY(CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT));
 
     template <typename... Args>
-    constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> && ...)) {
+    explicit(sizeof...(Args) ==
+             1) constexpr Map(Args&&... args) noexcept((concepts::NothrowElementConstruction<value_type, Args> &&
+                                                        ...)) {
         static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Map: initializer count exceeds Map CapacityValue");
         static_assert(((std::same_as<std::remove_cvref_t<Args>, value_type> &&
                         concepts::NothrowElementConstruction<value_type, Args>) &&
@@ -140,7 +142,8 @@ class Map {
         requires(!concepts_detail::is_cljonic_collection_v<SourceRange> &&
                  !concepts_detail::is_cljonic_producer_v<SourceRange> &&
                  !std::same_as<std::remove_cvref_t<SourceRange>, value_type>)
-    constexpr Map(SourceRange&& source) noexcept((concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
+    explicit constexpr Map(SourceRange&& source) noexcept(
+        (concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
                       "cljonic::Map: range/view constructor requires each source element to construct "
                       "the exact MapEntry type and requires non-throwing traversal");
@@ -163,7 +166,7 @@ class Map {
         requires((concepts_detail::is_cljonic_collection_v<SourceValue> ||
                   concepts_detail::is_cljonic_producer_v<SourceValue>) &&
                  !std::same_as<std::remove_cvref_t<SourceValue>, value_type>)
-    constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
+    explicit constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Map: you cannot construct a Map from a cljonic collection or producer. A Map is built "
                       "from MapEntry elements, or from a non-cljonic C++ range or view. To materialize a cljonic "

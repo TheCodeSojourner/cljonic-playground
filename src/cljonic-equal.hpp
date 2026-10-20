@@ -26,7 +26,7 @@ inline constexpr bool in_non_cljonic_fallthrough_domain_v =
 // family; Map, Set, and String each form their own family; every other type is
 // outside the family classification.
 template <typename T>
-inline constexpr equality_family equal_family_of_v = []() constexpr -> equality_family {
+inline constexpr equality_family equal_family_of_v = [] constexpr -> equality_family {
     if constexpr (is_cljonic_collection_v<T>) {
         switch (collection_kind_of_v<T>) {
         case collection_kind::vector:
