@@ -8,6 +8,41 @@ import re
 import subprocess
 
 PRIMITIVES = {
+    "get": {
+        "diagnostic_anchor": "cljonic::get:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::get(42, 0);",
+                "the first argument must be a Map, Set, Vector, or String",
+            ),
+            "unsupported-queue": (
+                "(void)cljonic::get(cljonic::Queue<int, 4>{}, 0);",
+                "the first argument must be a Map, Set, Vector, or String",
+            ),
+            "unsupported-producer": (
+                "(void)cljonic::get(cljonic::Range<int>{0, 5}, 0U);",
+                "the first argument must be a Map, Set, Vector, or String",
+            ),
+            "invalid-lookup-key": (
+                "(void)cljonic::get(cljonic::Map<int, int, 4>{}, 1.5);",
+                "the key must safely convert to the Map's key type or the Set's element type",
+            ),
+            "invalid-index": (
+                "(void)cljonic::get(cljonic::Vector<int, 4>{}, 1.5);",
+                "a Vector or String index must be a non-boolean, non-character integer type",
+            ),
+            "unsafe-fallback": (
+                "(void)cljonic::get(cljonic::Vector<int, 4>{}, 0, 1.5);",
+                "the fallback must safely convert to the collection's lookup result type",
+            ),
+        },
+        "pass_cases": {
+            "vector-index": "(void)cljonic::get(cljonic::Vector<int, 4>{1, 2}, 0U);",
+            "map-key": "(void)cljonic::get(cljonic::Map<int, long, 4>{}, short{1}, int{2});",
+            "set-value": "(void)cljonic::get(cljonic::Set<int, 4>{1}, short{1});",
+            "string-index": "(void)cljonic::get(cljonic::String<4>{\"ab\"}, 0U, 'x');",
+        },
+    },
     "count": {
         "diagnostic_anchor": "cljonic::count:",
         "diagnostic_cases": {
