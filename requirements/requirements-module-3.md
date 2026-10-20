@@ -199,17 +199,17 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020C(x).
-  ∀ `Vector<T, N>`: satisfies the `Indexed`, `Lookup`, and Clojure-style `Associative` capability semantics under the supported bounded model ∧ satisfies `Seqable` when the deferred sequence capability is implemented for vectors
+  ∀ `Vector<T, N>`: satisfies the `Indexed`, `Lookup`, and Clojure-style `Associative` capability semantics under the supported bounded model ∧ satisfies `Seqable` when the deferred `Seqable` capability is implemented for vectors
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020D(x).
-  ∀ `Map<K, V, N>`: satisfies the `Associative` and `Lookup` capability semantics under the supported bounded model ∧ satisfies `Seqable` when the deferred sequence capability is implemented for maps
+  ∀ `Map<K, V, N>`: satisfies the `Associative` and `Lookup` capability semantics under the supported bounded model ∧ satisfies `Seqable` when the deferred `Seqable` capability is implemented for maps
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020E(x).
   ∀ `Set<T, N>`: satisfies the `Lookup` capability for value-membership lookup, where a present value is the associated lookup result and an absent value follows the documented default or fallback policy
   ∧ ∀ `Queue<T, N>`: ¬∃ requirement to satisfy `Indexed` ∨ `Lookup` ∨ `Associative` ∧ exposes only the sequence and queue operations approved for its lifecycle
-  ∧ ∀ both types: satisfy `Seqable` when the deferred sequence capability is implemented for them
+  ∧ ∀ both types: satisfy `Seqable` when the deferred `Seqable` capability is implemented for them
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020F(x).
