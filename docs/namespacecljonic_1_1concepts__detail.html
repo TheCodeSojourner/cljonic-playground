@@ -236,6 +236,8 @@ Concepts</h2></td></tr>
 <tr class="memitem:EqualSequentialPairAdmissible" id="r_EqualSequentialPairAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_equal_sequential_pair_admissible.html">EqualSequentialPairAdmissible</a></td></tr>
 <tr class="memitem:EqualSetPairAdmissible" id="r_EqualSetPairAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_equal_set_pair_admissible.html">EqualSetPairAdmissible</a></td></tr>
 <tr class="memitem:EqualStringPairAdmissible" id="r_EqualStringPairAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_equal_string_pair_admissible.html">EqualStringPairAdmissible</a></td></tr>
+<tr class="memitem:GetFallbackAdmissible" id="r_GetFallbackAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_get_fallback_admissible.html">GetFallbackAdmissible</a></td></tr>
+<tr class="memitem:GetKeyAdmissible" id="r_GetKeyAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_get_key_admissible.html">GetKeyAdmissible</a></td></tr>
 <tr class="memitem:IntegerIndexType" id="r_IntegerIndexType"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_integer_index_type.html">IntegerIndexType</a></td></tr>
 <tr class="memitem:IterateClassArgument" id="r_IterateClassArgument"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_iterate_class_argument.html">IterateClassArgument</a></td></tr>
 <tr class="memitem:MaterializableSource" id="r_MaterializableSource"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_materializable_source.html">MaterializableSource</a></td></tr>
@@ -256,6 +258,8 @@ Typedefs</h2></td></tr>
 <tr class="memitem:ae2dc0d847f235ce019b6f419da417da0 template"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#ae2dc0d847f235ce019b6f419da417da0">equal_key_type_of_t</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1equal__key__type__of.html">equal_key_type_of</a>&lt;T&gt;<a class="el" href="structcljonic_1_1concepts__detail_1_1equal__value__type__of.html">::type</a></td></tr>
 <tr class="memitem:a9ec0bbabc401295eef4c14d6b7ac411c" id="r_a9ec0bbabc401295eef4c14d6b7ac411c"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a9ec0bbabc401295eef4c14d6b7ac411c template"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#a9ec0bbabc401295eef4c14d6b7ac411c">equal_association_value_type_of_t</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1equal__association__value__type__of.html">equal_association_value_type_of</a>&lt;T&gt;<a class="el" href="structcljonic_1_1concepts__detail_1_1equal__value__type__of.html">::type</a></td></tr>
+<tr class="memitem:ae46a50969fc7e3aa7ab58557eac0a098" id="r_ae46a50969fc7e3aa7ab58557eac0a098"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; </td></tr>
+<tr class="memitem:ae46a50969fc7e3aa7ab58557eac0a098 template"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#ae46a50969fc7e3aa7ab58557eac0a098">get_result_t</a> = decltype(std::declval&lt;const C&amp;&gt;()(std::declval&lt;const K&amp;&gt;()))</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -321,6 +325,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a36db1cb962823291250b17046365c1a9 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="#a36db1cb962823291250b17046365c1a9">fold_dissoc_keys_into</a> (C &amp;result, const K &amp;key, const Rest &amp;... rest) noexcept</td></tr>
 <tr class="memitem:aa5211efa94af71b323cf0a5e407e0564" id="r_aa5211efa94af71b323cf0a5e407e0564"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; </td></tr>
 <tr class="memitem:aa5211efa94af71b323cf0a5e407e0564 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aa5211efa94af71b323cf0a5e407e0564">equal_prefix_walk</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a432efa1e75d7135a0bb445ef74994d56" id="r_a432efa1e75d7135a0bb445ef74994d56"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; </td></tr>
+<tr class="memitem:a432efa1e75d7135a0bb445ef74994d56 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a432efa1e75d7135a0bb445ef74994d56">diagnose_get_key</a> () noexcept -&gt; void</td></tr>
+<tr class="memitem:a6b6a0aedeba9f6ec243d75cf3f2de072" id="r_a6b6a0aedeba9f6ec243d75cf3f2de072"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename R&gt; </td></tr>
+<tr class="memitem:a6b6a0aedeba9f6ec243d75cf3f2de072 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a6b6a0aedeba9f6ec243d75cf3f2de072">diagnose_get_fallback</a> () noexcept -&gt; void</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -425,6 +433,24 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00086">86</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae46a50969fc7e3aa7ab58557eac0a098" name="ae46a50969fc7e3aa7ab58557eac0a098"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae46a50969fc7e3aa7ab58557eac0a098">&#9670;&#160;</a></span>get_result_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename K&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#ae46a50969fc7e3aa7ab58557eac0a098">cljonic::concepts_detail::get_result_t</a> = decltype(std::declval&lt;const C&amp;&gt;()(std::declval&lt;const K&amp;&gt;()))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-get_8hpp_source.html#l00017">17</a> of file <a class="el" href="cljonic-get_8hpp_source.html">cljonic-get.hpp</a>.</p>
 
 </div>
 </div>
@@ -661,6 +687,64 @@ template&lt;typename C, typename V, typename... Rest&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00023">23</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6b6a0aedeba9f6ec243d75cf3f2de072" name="a6b6a0aedeba9f6ec243d75cf3f2de072"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b6a0aedeba9f6ec243d75cf3f2de072">&#9670;&#160;</a></span>diagnose_get_fallback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename K, typename R&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::diagnose_get_fallback </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-get_8hpp_source.html#l00036">36</a> of file <a class="el" href="cljonic-get_8hpp_source.html">cljonic-get.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a432efa1e75d7135a0bb445ef74994d56" name="a432efa1e75d7135a0bb445ef74994d56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a432efa1e75d7135a0bb445ef74994d56">&#9670;&#160;</a></span>diagnose_get_key()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C, typename K&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::diagnose_get_key </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-get_8hpp_source.html#l00023">23</a> of file <a class="el" href="cljonic-get_8hpp_source.html">cljonic-get.hpp</a>.</p>
 
 </div>
 </div>
@@ -1301,7 +1385,7 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">                                                   = []() <span class="keyword">constexpr</span> -&gt; <a class="code hl_enumeration" href="#ac021cea1f07aaa9ffdaf2830762bea39">equality_family</a> {</div>
+<b>Initial value:</b><div class="fragment"><div class="line">                                                   = [] <span class="keyword">constexpr</span> -&gt; <a class="code hl_enumeration" href="#ac021cea1f07aaa9ffdaf2830762bea39">equality_family</a> {</div>
 <div class="line">    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<a class="code hl_variable" href="#a73f7ff005d9e039617b5e5cebc565db1">is_cljonic_collection_v&lt;T&gt;</a>) {</div>
 <div class="line">        <span class="keywordflow">switch</span> (<a class="code hl_variable" href="#aa28e715182329ded226fe9e4779dd265">collection_kind_of_v&lt;T&gt;</a>) {</div>
 <div class="line">        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="#a2e9b3e27bfcfd4e694144ca6f355b122a6ba8844da718b4a65f60dbfd0d92d6ef">collection_kind::vector</a>:</div>

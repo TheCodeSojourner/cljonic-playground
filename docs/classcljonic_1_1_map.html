@@ -121,8 +121,8 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac9af402c8bdb0d35c355755d804f44f5" id="r_ac9af402c8bdb0d35c355755d804f44f5"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:ac9af402c8bdb0d35c355755d804f44f5 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a> (Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a>, Args &gt; &amp;&amp;...))</td></tr>
+<tr class="memitem:af1fc6929f3ec7323eb3151f56cc86ed6" id="r_af1fc6929f3ec7323eb3151f56cc86ed6"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:af1fc6929f3ec7323eb3151f56cc86ed6 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#af1fc6929f3ec7323eb3151f56cc86ed6">explicit</a> (sizeof...(Args)==1) const expr <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a>, Args &gt; &amp;&amp;...))</td></tr>
 <tr class="memitem:aaa75ad4584c6df3dabfcc0640df894b7" id="r_aaa75ad4584c6df3dabfcc0640df894b7"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range SourceRange&gt; <br />
 requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff005d9e039617b5e5cebc565db1">concepts_detail::is_cljonic_collection_v</a>&lt;SourceRange&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a7f57e54306cbb24bed58228def93466f">concepts_detail::is_cljonic_producer_v</a>&lt;SourceRange&gt; &amp;&amp;<br class="typebreak" />
  !std::same_as&lt;std::remove_cvref_t&lt;SourceRange&gt;, <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a>&gt;)</td></tr>
@@ -132,14 +132,14 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
  !std::same_as&lt;std::remove_cvref_t&lt;SourceValue&gt;, <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a>&gt;)</td></tr>
 <tr class="memitem:a54468055024e67394a80e3a94aba7a03 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a54468055024e67394a80e3a94aba7a03">Map</a> (SourceValue &amp;&amp;source) noexcept</td></tr>
 <tr class="memitem:ae75a7d10303fed5a0ffb86f997f2799a" id="r_ae75a7d10303fed5a0ffb86f997f2799a"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ae75a7d10303fed5a0ffb86f997f2799a">count</a> () const noexcept -&gt; std::size_t</td></tr>
-<tr class="memitem:afc4b7c32a76b2eba3c76fd6ca345c48e" id="r_afc4b7c32a76b2eba3c76fd6ca345c48e"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#afc4b7c32a76b2eba3c76fd6ca345c48e">operator==</a> (const <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a> &amp;other) const noexcept -&gt; bool</td></tr>
+<tr class="memitem:afc4b7c32a76b2eba3c76fd6ca345c48e" id="r_afc4b7c32a76b2eba3c76fd6ca345c48e"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#afc4b7c32a76b2eba3c76fd6ca345c48e">operator==</a> (const <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a> &amp;other) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a5c44757b8c95260c05c64a0377429ac7" id="r_a5c44757b8c95260c05c64a0377429ac7"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a5c44757b8c95260c05c64a0377429ac7">contains</a> (const KeyType &amp;key) const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a507726e72e09b11dbd84c4c55d23ab48" id="r_a507726e72e09b11dbd84c4c55d23ab48"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a507726e72e09b11dbd84c4c55d23ab48">operator()</a> (const KeyType &amp;key, const ValueType &amp;fallback=ValueType{}) const noexcept -&gt; ValueType</td></tr>
 <tr class="memitem:af354256613c4cb6d089f6fa22a9dfb4b" id="r_af354256613c4cb6d089f6fa22a9dfb4b"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af354256613c4cb6d089f6fa22a9dfb4b">can_assoc</a> (const KeyType &amp;key, const ValueType &amp;value) const noexcept -&gt; bool</td></tr>
-<tr class="memitem:a1f5afef397dac66beef961e55640bd16" id="r_a1f5afef397dac66beef961e55640bd16"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1f5afef397dac66beef961e55640bd16">assoc</a> (const KeyType &amp;key, const ValueType &amp;value) const noexcept -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a></td></tr>
+<tr class="memitem:a1f5afef397dac66beef961e55640bd16" id="r_a1f5afef397dac66beef961e55640bd16"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1f5afef397dac66beef961e55640bd16">assoc</a> (const KeyType &amp;key, const ValueType &amp;value) const noexcept -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a></td></tr>
 <tr class="memitem:adb0490f3cf0182730c627b331448de71" id="r_adb0490f3cf0182730c627b331448de71"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#adb0490f3cf0182730c627b331448de71">can_conj</a> (const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> &amp;entry) const noexcept -&gt; bool</td></tr>
-<tr class="memitem:a14f77f866c683c30d3300b996b351e3d" id="r_a14f77f866c683c30d3300b996b351e3d"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a14f77f866c683c30d3300b996b351e3d">conj</a> (const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> &amp;entry) const noexcept -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a></td></tr>
-<tr class="memitem:a4ef0e924a413f0ac3e04ea64acf2acd3" id="r_a4ef0e924a413f0ac3e04ea64acf2acd3"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4ef0e924a413f0ac3e04ea64acf2acd3">dissoc</a> (const KeyType &amp;key) const noexcept -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a></td></tr>
+<tr class="memitem:a14f77f866c683c30d3300b996b351e3d" id="r_a14f77f866c683c30d3300b996b351e3d"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a14f77f866c683c30d3300b996b351e3d">conj</a> (const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> &amp;entry) const noexcept -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a></td></tr>
+<tr class="memitem:a4ef0e924a413f0ac3e04ea64acf2acd3" id="r_a4ef0e924a413f0ac3e04ea64acf2acd3"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4ef0e924a413f0ac3e04ea64acf2acd3">dissoc</a> (const KeyType &amp;key) const noexcept -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a></td></tr>
 <tr class="memitem:afd9ec2fa068d1883890abe0d2b0e6978" id="r_afd9ec2fa068d1883890abe0d2b0e6978"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#afd9ec2fa068d1883890abe0d2b0e6978">begin</a> () const noexcept -&gt; const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> *</td></tr>
 <tr class="memitem:ac330f267a3750b2149f17fb03f0f4890" id="r_ac330f267a3750b2149f17fb03f0f4890"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac330f267a3750b2149f17fb03f0f4890">end</a> () const noexcept -&gt; const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> *</td></tr>
 <tr class="memitem:a764b04047667c4ca7fa602677bda8edf" id="r_a764b04047667c4ca7fa602677bda8edf"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a764b04047667c4ca7fa602677bda8edf">view</a> () const noexcept -&gt; std::span&lt; const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> &gt;</td></tr>
@@ -154,16 +154,16 @@ requires (!concepts::SafeImplicitConversion&lt;KeyType, Key&gt; || !concepts::Sa
 <tr class="memitem:a51e83a0a4ae14363c65a0f4d4fff9672 template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a51e83a0a4ae14363c65a0f4d4fff9672">can_assoc</a> (const Key &amp;key, const Value &amp;value) const -&gt; bool=delete</td></tr>
 <tr class="memitem:a5ef5ec64e8e55f7c28201352e272b36e" id="r_a5ef5ec64e8e55f7c28201352e272b36e"><td class="memTemplParams" colspan="2">template&lt;typename Key, typename Value&gt; <br />
 requires (!concepts::SafeImplicitConversion&lt;KeyType, Key&gt; || !concepts::SafeImplicitConversion&lt;ValueType, Value&gt;)</td></tr>
-<tr class="memitem:a5ef5ec64e8e55f7c28201352e272b36e template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a5ef5ec64e8e55f7c28201352e272b36e">assoc</a> (const Key &amp;key, const Value &amp;value) const -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a>=delete</td></tr>
+<tr class="memitem:a5ef5ec64e8e55f7c28201352e272b36e template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a5ef5ec64e8e55f7c28201352e272b36e">assoc</a> (const Key &amp;key, const Value &amp;value) const -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>=delete</td></tr>
 <tr class="memitem:a5118e0ef89341ac78222fa675f35aa6c" id="r_a5118e0ef89341ac78222fa675f35aa6c"><td class="memTemplParams" colspan="2">template&lt;typename Entry&gt; <br />
 requires (!std::same_as&lt;std::remove_cvref_t&lt;Entry&gt;, <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a>&gt;)</td></tr>
 <tr class="memitem:a5118e0ef89341ac78222fa675f35aa6c template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a5118e0ef89341ac78222fa675f35aa6c">can_conj</a> (const Entry &amp;entry) const -&gt; bool=delete</td></tr>
 <tr class="memitem:a099e7064f8c9658f700d4710492922e4" id="r_a099e7064f8c9658f700d4710492922e4"><td class="memTemplParams" colspan="2">template&lt;typename Entry&gt; <br />
 requires (!std::same_as&lt;std::remove_cvref_t&lt;Entry&gt;, <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a>&gt;)</td></tr>
-<tr class="memitem:a099e7064f8c9658f700d4710492922e4 template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a099e7064f8c9658f700d4710492922e4">conj</a> (const Entry &amp;entry) const -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a>=delete</td></tr>
+<tr class="memitem:a099e7064f8c9658f700d4710492922e4 template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a099e7064f8c9658f700d4710492922e4">conj</a> (const Entry &amp;entry) const -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>=delete</td></tr>
 <tr class="memitem:a35b69372cbcd0d927411168db2f3509e" id="r_a35b69372cbcd0d927411168db2f3509e"><td class="memTemplParams" colspan="2">template&lt;typename Key&gt; <br />
 requires (!concepts::SafeImplicitConversion&lt;KeyType, Key&gt;)</td></tr>
-<tr class="memitem:a35b69372cbcd0d927411168db2f3509e template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a35b69372cbcd0d927411168db2f3509e">dissoc</a> (const Key &amp;key) const -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a>=delete</td></tr>
+<tr class="memitem:a35b69372cbcd0d927411168db2f3509e template"><td class="memItemLeft">auto&#160;</td><td class="memItemRight"><a class="el" href="#a35b69372cbcd0d927411168db2f3509e">dissoc</a> (const Key &amp;key) const -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>=delete</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -228,7 +228,7 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">  <span class="keyword">static_assert</span>(from_span(Key{10}).amount == 100);</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span(Key{20}).amount == 200);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> from_span_ctad = <a class="code hl_function" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a>{source_span};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> from_span_ctad = <a class="code hl_function" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>{source_span};</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span_ctad(Key{10}).amount == 100);</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span_ctad.view().size() == 2);</div>
 <div class="line"> </div>
@@ -236,7 +236,7 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">  AccountEntry runtime_buffer[] = {AccountEntry{Key{100}, Value{1000}},</div>
 <div class="line">                                   AccountEntry{Key{200}, Value{2000}}};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_from_span =</div>
-<div class="line">      <a class="code hl_function" href="#ac9af402c8bdb0d35c355755d804f44f5">Map&lt;Key, Value, 4&gt;</a>{std::span&lt;const AccountEntry&gt;{runtime_buffer, 2}};</div>
+<div class="line">      <a class="code hl_function" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map&lt;Key, Value, 4&gt;</a>{std::span&lt;const AccountEntry&gt;{runtime_buffer, 2}};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Use C++ interoperability to sum the values in a map.</span></div>
 <div class="line">  <span class="keywordtype">int</span> value_sum = 0;</div>
@@ -255,8 +255,8 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">             : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00112">cljonic-map.hpp:112</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_map_html_ac9af402c8bdb0d35c355755d804f44f5"><div class="ttname"><a href="#ac9af402c8bdb0d35c355755d804f44f5">cljonic::Map::Map</a></div><div class="ttdeci">constexpr Map(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; value_type, Args &gt; &amp;&amp;...))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00126">cljonic-map.hpp:126</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_map_html_afc4b7c32a76b2eba3c76fd6ca345c48e"><div class="ttname"><a href="#afc4b7c32a76b2eba3c76fd6ca345c48e">cljonic::Map::operator==</a></div><div class="ttdeci">constexpr auto operator==(const Map &amp;other) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00183">cljonic-map.hpp:183</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_map_html_aaa75ad4584c6df3dabfcc0640df894b7"><div class="ttname"><a href="#aaa75ad4584c6df3dabfcc0640df894b7">cljonic::Map::Map</a></div><div class="ttdeci">constexpr Map(SourceRange &amp;&amp;source) noexcept((concepts::NothrowRangeConstruction&lt; value_type, SourceRange &gt;))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00145">cljonic-map.hpp:145</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_map_html_afc4b7c32a76b2eba3c76fd6ca345c48e"><div class="ttname"><a href="#afc4b7c32a76b2eba3c76fd6ca345c48e">cljonic::Map::operator==</a></div><div class="ttdeci">constexpr auto operator==(const Map &amp;other) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00186">cljonic-map.hpp:186</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
 <div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00036">cljonic-map-entry.hpp:36</a></div></div>
 </div><!-- fragment --> 
@@ -353,39 +353,8 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </div>
 </div>
 <a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac9af402c8bdb0d35c355755d804f44f5" name="ac9af402c8bdb0d35c355755d804f44f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9af402c8bdb0d35c355755d804f44f5">&#9670;&#160;</a></span>Map() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType, std::size_t CapacityValue&gt; </div>
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classcljonic_1_1_map.html">cljonic::Map</a>&lt; KeyType, ValueType, CapacityValue &gt;::Map </td>
-          <td>(</td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00126">126</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
-
-</div>
-</div>
 <a id="aaa75ad4584c6df3dabfcc0640df894b7" name="aaa75ad4584c6df3dabfcc0640df894b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa75ad4584c6df3dabfcc0640df894b7">&#9670;&#160;</a></span>Map() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa75ad4584c6df3dabfcc0640df894b7">&#9670;&#160;</a></span>Map() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -408,17 +377,17 @@ requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel explicit">explicit</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00143">143</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00145">145</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a54468055024e67394a80e3a94aba7a03" name="a54468055024e67394a80e3a94aba7a03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54468055024e67394a80e3a94aba7a03">&#9670;&#160;</a></span>Map() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a54468055024e67394a80e3a94aba7a03">&#9670;&#160;</a></span>Map() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -441,12 +410,12 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel explicit">explicit</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00166">166</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00169">169</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -473,7 +442,7 @@ requires (!concepts::SafeImplicitConversion&lt;KeyType, Key&gt; || !concepts::Sa
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Value &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) const -&gt;  <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a>=delete</td>
+          <td class="paramtype">const Value &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) const -&gt;  <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>=delete</td>
         </tr>
       </table>
   </td>
@@ -504,7 +473,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const ValueType &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) const -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a></td>
+          <td class="paramtype">const ValueType &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) const -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a></td>
         </tr>
       </table>
   </td>
@@ -514,7 +483,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00212">212</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00215">215</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -543,7 +512,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00249">249</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00252">252</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -610,7 +579,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00207">207</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00210">210</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -670,7 +639,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </div><div class="memdoc">
 <p>Returns true when the entry's key is present or the map has room for one more entry. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00226">226</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00229">229</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -699,7 +668,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00175">175</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00178">178</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -721,7 +690,7 @@ requires (!std::same_as&lt;std::remove_cvref_t&lt;Entry&gt;, <a class="el" href=
           <td class="memname">auto <a class="el" href="classcljonic_1_1_map.html">cljonic::Map</a>&lt; KeyType, ValueType, CapacityValue &gt;::conj </td>
           <td>(</td>
           <td class="paramtype">const Entry &amp;</td>          <td class="paramname"><span class="paramname"><em>entry</em></span></td><td>)</td>
-          <td> const -&gt;  <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a>=delete</td>
+          <td> const -&gt;  <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>=delete</td>
         </tr>
       </table>
   </td>
@@ -748,7 +717,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
           <td class="memname">auto <a class="el" href="classcljonic_1_1_map.html">cljonic::Map</a>&lt; KeyType, ValueType, CapacityValue &gt;::conj </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="#a786ac18f7351a5fd08525970e11fbb1a">value_type</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>entry</em></span></td><td>)</td>
-          <td> const -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a></td>
+          <td> const -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a></td>
         </tr>
       </table>
   </td>
@@ -759,7 +728,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </div><div class="memdoc">
 <p>Associates the entry's key with its value on a copy: an existing key replaces its value without increasing count; an absent key is added only when capacity remains. Returns an unchanged copy when full. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00233">233</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00236">236</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -818,7 +787,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00197">197</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00200">200</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -847,7 +816,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00179">179</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00182">182</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -869,7 +838,7 @@ requires (!concepts::SafeImplicitConversion&lt;KeyType, Key&gt;)</div>
           <td class="memname">auto <a class="el" href="classcljonic_1_1_map.html">cljonic::Map</a>&lt; KeyType, ValueType, CapacityValue &gt;::dissoc </td>
           <td>(</td>
           <td class="paramtype">const Key &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span></td><td>)</td>
-          <td> const -&gt;  <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a>=delete</td>
+          <td> const -&gt;  <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>=delete</td>
         </tr>
       </table>
   </td>
@@ -896,7 +865,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
           <td class="memname">auto <a class="el" href="classcljonic_1_1_map.html">cljonic::Map</a>&lt; KeyType, ValueType, CapacityValue &gt;::dissoc </td>
           <td>(</td>
           <td class="paramtype">const KeyType &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span></td><td>)</td>
-          <td> const -&gt; <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a></td>
+          <td> const -&gt; <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a></td>
         </tr>
       </table>
   </td>
@@ -906,7 +875,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00237">237</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00240">240</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -935,7 +904,38 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00253">253</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00256">256</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af1fc6929f3ec7323eb3151f56cc86ed6" name="af1fc6929f3ec7323eb3151f56cc86ed6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1fc6929f3ec7323eb3151f56cc86ed6">&#9670;&#160;</a></span>explicit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType, std::size_t CapacityValue&gt; </div>
+<div class="memtemplate">
+template&lt;typename... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcljonic_1_1_map.html">cljonic::Map</a>&lt; KeyType, ValueType, CapacityValue &gt;::explicit </td>
+          <td>(</td>
+          <td class="paramtype">sizeof...</td>          <td class="paramname"><span class="paramname"><em></em></span>Args<span class="paramdefsep"> = </span><span class="paramdefval">=&#160;1</span></td><td>)</td>
+          <td> const &amp;&amp;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00126">126</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -1002,7 +1002,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00201">201</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00204">204</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -1020,7 +1020,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
         <tr>
           <td class="memname">auto <a class="el" href="classcljonic_1_1_map.html">cljonic::Map</a>&lt; KeyType, ValueType, CapacityValue &gt;::operator== </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="#ac9af402c8bdb0d35c355755d804f44f5">Map</a>&lt; KeyType, ValueType, CapacityValue &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>&lt; KeyType, ValueType, CapacityValue &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
           <td> const -&gt; bool</td>
         </tr>
       </table>
@@ -1031,7 +1031,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00183">183</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00186">186</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -1060,7 +1060,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00257">257</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00260">260</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>

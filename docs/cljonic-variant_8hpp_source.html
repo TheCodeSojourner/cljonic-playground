@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    template &lt;typename T&gt;</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        requires(<a class="code hl_namespace" href="namespacecljonic_1_1variant__detail.html">variant_detail</a>::matching_alternative_count_v&lt;std::remove_cvref_t&lt;T&gt;, Alternatives...&gt; == 1)</div>
 <div class="foldopen" id="foldopen00136" data-start="{" data-end="}">
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno"><a class="line" href="classcljonic_1_1_variant.html#aee97b95998cbe5c67a1c1b2d2ac6f5ef">  136</a></span>    constexpr <a class="code hl_function" href="classcljonic_1_1_variant.html#a98f8a03f100ac9f6072e29c538eccb7f">Variant</a>(const T&amp; value) noexcept : storage_{value} {</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno"><a class="line" href="classcljonic_1_1_variant.html#aee97b95998cbe5c67a1c1b2d2ac6f5ef">  136</a></span>    explicit constexpr <a class="code hl_function" href="classcljonic_1_1_variant.html#a98f8a03f100ac9f6072e29c538eccb7f">Variant</a>(const T&amp; value) noexcept : storage_{value} {</div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    }</div>
 </div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span></div>

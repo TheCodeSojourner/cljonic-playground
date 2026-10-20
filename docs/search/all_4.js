@@ -21,5 +21,6 @@ var searchData=
   ['equalscalarpairadmissible_18',['EqualScalarPairAdmissible',['../conceptcljonic_1_1concepts__detail_1_1_equal_scalar_pair_admissible.html',1,'cljonic::concepts_detail']]],
   ['equalsequentialpairadmissible_19',['EqualSequentialPairAdmissible',['../conceptcljonic_1_1concepts__detail_1_1_equal_sequential_pair_admissible.html',1,'cljonic::concepts_detail']]],
   ['equalsetpairadmissible_20',['EqualSetPairAdmissible',['../conceptcljonic_1_1concepts__detail_1_1_equal_set_pair_admissible.html',1,'cljonic::concepts_detail']]],
-  ['equalstringpairadmissible_21',['EqualStringPairAdmissible',['../conceptcljonic_1_1concepts__detail_1_1_equal_string_pair_admissible.html',1,'cljonic::concepts_detail']]]
+  ['equalstringpairadmissible_21',['EqualStringPairAdmissible',['../conceptcljonic_1_1concepts__detail_1_1_equal_string_pair_admissible.html',1,'cljonic::concepts_detail']]],
+  ['explicit_22',['explicit',['../classcljonic_1_1_map.html#af1fc6929f3ec7323eb3151f56cc86ed6',1,'cljonic::Map::explicit()'],['../classcljonic_1_1_queue.html#adf3b547e2373c054ad22bfaa661449fc',1,'cljonic::Queue::explicit()'],['../classcljonic_1_1_set.html#aa39ccaf09f9de08c2306c513964c8ef9',1,'cljonic::Set::explicit()'],['../classcljonic_1_1_vector.html#a7c25cdc7aef4f7a157c56e6945fc47b4',1,'cljonic::Vector::explicit()']]]
 ];
