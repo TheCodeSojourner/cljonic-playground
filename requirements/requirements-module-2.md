@@ -236,7 +236,8 @@ Explanatory definitions; binding obligations reside in the numbered clauses refe
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-BOUNDS-010D(x).
-  ∀ deferred `not_empty` operation: result = (nonempty(input) ? independent_owning_copy(input) : empty_owning_value(type(input))) ∧ preserve(capacity_type_if_present) ∧ ¬boolean_alias_for(`is_empty`)
+  ∀ `not_empty` over `Vector`, `Map`, `Set`, `Queue`, or `String`: result = (nonempty(input) ? independent_owning_copy(input) : empty_owning_value(type(input))) ∧ preserve(capacity_type_if_present) ∧ ¬boolean_alias_for(`is_empty`)
+  ∧ ∀ unsupported input, including producers: rejects at compile time with a targeted diagnostic governed by `REQ-DIAG-009`
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-BOUNDS-011(x).

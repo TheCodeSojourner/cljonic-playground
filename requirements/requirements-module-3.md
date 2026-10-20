@@ -288,7 +288,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-COLL-020T(x).
   ∀ context: the lifecycle classification is also `requirements-backed` for `is_empty` over its supported sequenceable collection and producer inputs, `empty`, `can_conj`, and the `full` predicate or equivalent capacity inspection over their supported bounded collection inputs
-  ∧ ∀ `not_empty`: remain `deferred` until its owning-value behavior is implementation-backed
+  ∧ ∀ `not_empty`: `requirements-backed` active public free function over supported owning collection inputs, with owning-value behavior governed by `REQ-BOUNDS-010D` and `REQ-FN-026`
   ∧ ∀ behavioral contracts for `into` ∧ `fits_into`: approved by Module 2 and Module 4 ∧ both operations are `requirements-backed` active public free functions over `CljonicVector` destinations and `CljonicSource` sources
   {source: stakeholder_decided, decided_by: original_spec_author}
 
