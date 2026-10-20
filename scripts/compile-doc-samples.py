@@ -30,7 +30,6 @@ USING_INDENTED_RE = re.compile(r"(?m)^[ \t]+using namespace cljonic;")
 DEFERRED_NON_PUBLIC_HEADERS = frozenset(
     {
         "cljonic-next.hpp",
-        "cljonic-not-empty.hpp",
         "cljonic-rest.hpp",
         "cljonic-seq.hpp",
     }

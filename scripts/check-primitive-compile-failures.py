@@ -113,6 +113,58 @@ PRIMITIVES = {
             "string": "(void)cljonic::empty(cljonic::String<4>{});",
         },
     },
+    "not_empty": {
+        "diagnostic_anchor": "cljonic::not_empty:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::not_empty(42);",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-producer": (
+                "(void)cljonic::not_empty(cljonic::Range<int>{0, 5});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-repeat": (
+                "(void)cljonic::not_empty(cljonic::Repeat{1});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-cycle": (
+                "(void)cljonic::not_empty(cljonic::cycle(cljonic::Vector{1}));",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-iterate": (
+                "(void)cljonic::not_empty(cljonic::iterate([](int x) noexcept { return x; }, 0));",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-repeatedly": (
+                "(void)cljonic::not_empty(cljonic::repeatedly([]() noexcept { return 1; }));",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-map-entry": (
+                "(void)cljonic::not_empty(cljonic::MapEntry{1, 2});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-external-range": (
+                "int values[]{1, 2}; (void)cljonic::not_empty(values);",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-count-shaped-type": (
+                "struct CountShaped { auto count() const noexcept -> std::size_t { return 0; } }; "
+                "(void)cljonic::not_empty(CountShaped{});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+        },
+        "pass_cases": {
+            "vector": "(void)cljonic::not_empty(cljonic::Vector{1, 2});",
+            "map": "(void)cljonic::not_empty(cljonic::Map{cljonic::MapEntry{1, 2}});",
+            "set": "(void)cljonic::not_empty(cljonic::Set{1, 2});",
+            "queue": "(void)cljonic::not_empty(cljonic::Queue{1, 2});",
+            "string": "(void)cljonic::not_empty(cljonic::String{\"ab\"});",
+            "empty": "(void)cljonic::not_empty(cljonic::Vector<int, 4>{});",
+            "zero-capacity": "(void)cljonic::not_empty(cljonic::Vector<int, 0>{});",
+            "nested": "(void)cljonic::not_empty(cljonic::Vector{cljonic::Vector{1, 2}});",
+        },
+    },
     "first": {
         "diagnostic_anchor": "cljonic::first:",
         "diagnostic_cases": {
