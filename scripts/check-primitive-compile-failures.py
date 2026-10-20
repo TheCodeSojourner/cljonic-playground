@@ -63,13 +63,34 @@ PRIMITIVES = {
                 "(void)cljonic::is_empty(42);",
                 "value must be a collection or producer",
             ),
+            "unsupported-external-range": (
+                "int values[]{1, 2}; (void)cljonic::is_empty(values);",
+                "value must be a collection or producer",
+            ),
+            "unsupported-count-shaped-type": (
+                "struct CountShaped { auto count() const noexcept -> std::size_t { return 0; } }; "
+                "(void)cljonic::is_empty(CountShaped{});",
+                "value must be a collection or producer",
+            ),
+            "unsupported-map-entry": (
+                "(void)cljonic::is_empty(cljonic::MapEntry<int, int>{1, 2});",
+                "value must be a collection or producer",
+            ),
         },
         "pass_cases": {
             "vector-empty": "(void)cljonic::is_empty(cljonic::Vector<int, 4>{});",
+            "map-empty": "(void)cljonic::is_empty(cljonic::Map<int, int, 4>{});",
+            "set-empty": "(void)cljonic::is_empty(cljonic::Set<int, 4>{});",
             "queue-empty": "(void)cljonic::is_empty(cljonic::Queue<int, 4>{});",
             "string-empty": "(void)cljonic::is_empty(cljonic::String<4>{});",
             "empty-range-producer": "(void)cljonic::is_empty(cljonic::Range<int>{0, 0});",
             "nonempty-range-producer": "(void)cljonic::is_empty(cljonic::Range<int>{0, 5});",
+            "repeat-producer": "(void)cljonic::is_empty(cljonic::Repeat{7});",
+            "cycle-producer": "(void)cljonic::is_empty(cljonic::cycle(cljonic::Vector<int, 1>{1}));",
+            "iterate-producer": (
+                "(void)cljonic::is_empty(cljonic::iterate([](int value) noexcept { return value + 1; }, 0));"
+            ),
+            "repeatedly-producer": "(void)cljonic::is_empty(cljonic::repeatedly([]() noexcept { return 7; }));",
         },
     },
     "empty": {
