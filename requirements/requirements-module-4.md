@@ -208,12 +208,14 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 
 λ REQ-FN-027(x).
   ∀ `into` ∧ `fits_into`: materialization and its completeness preflight operate over cljonic sources only
-  ∧ ∀ `fits_into(destination, source)` call: the destination is exactly a `CljonicVector` ∧ the source is exactly a `CljonicCollection` or `CljonicProducer` satisfying `CljonicSource`
-  ∧ ∀ source outside that domain — including any non-cljonic C++ range or view such as `std::span<const T>` or `std::string_view` — ¬∃ admitted as a `fits_into` source
-  ∧ ∀ destination outside `CljonicVector` — including `String<N>`, `Map`, `Set`, and `Queue` — ¬∃ admitted as a `fits_into` destination
+  ∧ ∀ `into(destination, source)` ∧ `fits_into(destination, source)` call: the destination is exactly a `CljonicVector` ∧ the source is exactly a `CljonicCollection` or `CljonicProducer` satisfying `CljonicSource`
+  ∧ ∀ source outside that domain — including any non-cljonic C++ range or view such as `std::span<const T>` or `std::string_view` — ¬∃ admitted as an `into` or `fits_into` source
+  ∧ ∀ destination outside `CljonicVector` — including `String<N>`, `Map`, `Set`, and `Queue` — ¬∃ admitted as an `into` or `fits_into` destination
+  ∧ Vector-only destination admission is the permanent API contract, not an incremental implementation restriction
   ∧ external C++ interoperability sources are materialized only through direct source construction (`REQ-FN-027A`) ∧ ¬∃ (retention of the external view ∨ allocation ∨ throw) by `into` or `fits_into`
   ∧ ∀ admitted `fits_into`: non-throwing ∧ non-allocating ∧ returns whether the complete source fits the destination's remaining capacity ∧ returns `false` for every unbounded producer
   ∧ ∀ rejected `fits_into` call: fails at compile time with the targeted rejection diagnostic governed by `REQ-DIAG-009`
+  ∧ ∀ rejected `into` call: fails at compile time with the targeted rejection diagnostic governed by `REQ-DIAG-009`
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-19, rationale_source: origin_artifact}
 
 λ REQ-FN-027A(x).
