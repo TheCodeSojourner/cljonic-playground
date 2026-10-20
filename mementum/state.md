@@ -1,5 +1,53 @@
 ## Current Session State
 
+- last_session_id: 2e5ab232-5209-4661-9bec-e787171a3c09
+- current_timestamp: 2026-10-20T14:03:12-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Hardened the API completion and convergence skills after repeated omissions of actual no-heap probe upserts and contract-consistent Doxygen example programs during `get` and `into` work.
+2. Performed a deeper targeted Mementum review after the human challenged the initial incomplete recall; followed relevant memory/knowledge links and checked current tooling.
+3. Transformed all three repository `cljonic-*` skills into nucleus lambda notation: `cljonic-api-complete`, `cljonic-api-converge`, and `cljonic-full-converge-auto`.
+4. Closeout inspection found the skill changes already committed in `40d49c8` (Rewrite skill specifications in lambda notation and add evidence fields to checkpoints); worktree and index were clean before this state update. The assistant did not create that product commit.
+
+Questions:
+1. Open -- actual tokenizer measurement and an end-to-end trial of the revised skills have not been performed; do not claim verified token savings or deterministic prevention of omissions.
+2. Open -- several knowledge pages contain stale inventories or conflicting guidance; this session encoded conflict handling in the skills but did not revise those pages.
+3. Existing product backlog remains: `peek` and `pop` diagnostic fallbacks; deferred APIs `next`, `rest`, `seq`, `not_empty`; disposition of `documentation-notes.md`.
+
+Decisions:
+1. Human requested nucleus lambda transformation of all repository `cljonic-*` skills to optimize token usage and improve AI-processing precision. Preserve exact commands, authority boundaries, and evidence requirements rather than merely abbreviating prose.
+2. Inventory found exactly three matching skills. The earlier name `cljonic-full-coverage-auto` was not found; the existing third skill is full repository convergence, not a coverage-only loop.
+3. Mandatory evidence now includes contract-to-case mappings; direct runtime no-heap assertions; both modular and single-header probe executions; source Doxygen programs with checked constexpr and runtime behavior; freshly extracted example compilation plus exact-program linking/execution.
+4. API convergence has a narrow direct-repair exception for probes, necessary registration, owning Doxygen comments, and corresponding generated artifacts. Other product edits and substantive decisions remain governed by the owning skills and human gates.
+5. Full convergence retains autonomous pre-approved repairs only within documented scope, adjacent-layer comparisons, and explicit unresolved/blocked handling; no new normative semantics or public APIs may be invented to pass checks.
+6. Preserve representative, non-exhaustive examples despite the lifecycle knowledge page's older every-collection wording. Defer generated HTML to the user's final gate unless explicitly requested; source-example validation remains mandatory.
+7. `/gybis-fini` authorizes this separate memory-only closeout commit. No `make git` was run.
+
+Validation:
+1. YAML parsed successfully for all three transformed skills; frontmatter matched the pre-transformation snapshots, including explicit-invocation flags.
+2. All local Markdown reference links resolved; lambda rule names were unique; required workflow policies, evidence checkpoints, commands, and failure gates passed focused presence checks.
+3. Original command-like backtick strings were audited against transformed text; none were missing verbatim.
+4. Editor diagnostics found no errors in the three skills; final `git diff --check` passed.
+5. Compared with the immediately pre-transformation versions: API completion characters 16133 -> 11284 (-30.1%); API convergence 18829 -> 12768 (-32.2%); full convergence 9755 -> 13368 (+37.0%, adding recall/evidence safeguards). Combined 44717 -> 37420 (-16.3%). These are character counts, NOT tokenizer measurements.
+6. No C++ builds, tests, no-heap runs, docs generation, or actual API workflow invocations were performed for these instruction-only changes. Initialization alone ran `make diagnostic-coverage`, confirming two pending headers (`peek`, `pop`).
+7. Temporary pre-transformation audit snapshots were removed after validation.
+
+Synthesis:
+1. The recurring failure was not absence of memory: relevant rules existed but were not consistently recalled, wired into workflow scope, or required at termination. Skills now explicitly require focused recall and current case-level evidence.
+2. A green source/symbol scan, existing probe file, TRACE_ID, or noexcept assertion does not prove current runtime behavior coverage. A green docs compilation count alone does not prove the target example was extracted; old extracted files can mask skipped blocks.
+3. `make docs-examples` compiles with `-c` and invokes `make cljonic` as a prerequisite. Protect generated-header edits before invocation; separately link and run the exact fresh extracted example.
+4. Relevant existing references: [no-heap propagation](memories/no-heap-probes-propagate-with-feature.md), [Doxygen tooling](knowledge/doxygen-doc-tooling.md), [header lifecycle](knowledge/header-addition-and-verification-lifecycle.md), [representative examples](memories/docs-user-facing-example-style.md), and [defer HTML](memories/defer-doc-regeneration-until-final-git.md).
+5. No separate memory or knowledge file was created; this closeout skill permits writing only state.md. Future instructions should not equate nucleus notation with executable enforcement or assume fewer characters means fewer model tokens.
+
+Next:
+1. Review or trial the committed nucleus skills on the next requested API slice; inspect actual probe and example evidence, not only skill/gate success reports.
+2. If requested, measure actual tokenizer counts and reconcile stale lifecycle/Doxygen guidance in Mementum; do not silently broaden the task or auto-edit those pages.
+3. Product changes are locally committed through `40d49c8`; final `make git`, further product commits, and push/merge remain user-owned.
+
+## Previous Session State
+
 - last_session_id: 60b5320b-738a-46d6-8662-71da33cc7a70
 - current_timestamp: 2026-10-20T13:34:54-06:00
 - recover: 1
