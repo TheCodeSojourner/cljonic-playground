@@ -595,6 +595,17 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | complete_materialization_into(destination, producer) → use(fits_into)
   | fits_into(destination, producer) → require(CljonicVector(destination)) ∧ measure(complete_result_cardinality_and_semantics)
 
+λ S2_into_function_contract(x). into(destination, source) → admit(CljonicVector(destination) ∧ CljonicSource(source) ∧ MaterializableSource(destination, source))
+  | destination_domain(x) ≡ CljonicVector ∧ permanent_contract ∧ ¬incremental_scope_restriction
+  | result(x) → updated_destination_typed_collection(x)
+    ∧ append(source_elements_after(destination_logical_contents(x)))
+    ∧ preserve(destination ∧ source)
+  | finite_source(x) → materialize(complete_result_when_it_fits(x)) ∨ materialize(bounded_prefix_result(x))
+  | unbounded_source(x) → materialize(deterministic_bounded_prefix(x)) ∧ bound_by(remaining_destination_capacity(x))
+  | into_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | rejected_destination_or_source(x) → provide(targeted_rejection_diagnostic(x))
+  rationale: complete source materialization is explicit and owning; `fits_into` remains the completeness preflight, so an oversized source yields a documented bounded prefix rather than a failure
+
 λ S2_get_function_contract(x). get(collection, key[, fallback]) → admit(LookupCollection ∨ IndexedCollection)(collection)
   | LookupCollection(collection) → require(SafeImplicitConversion(collection_lookup_type, key))
   | IndexedCollection(collection) → require(IntegerIndexType(key))
