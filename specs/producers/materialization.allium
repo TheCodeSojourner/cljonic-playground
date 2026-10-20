@@ -2,6 +2,7 @@
 
 entity ProducerMaterialization {
     into_requires_explicit_bounded_destination: Boolean
+    into_requires_cljonic_vector_destination: Boolean
     into_returns_new_destination_typed_collection: Boolean
     into_appends_after_destination_contents: Boolean
     into_leaves_destination_unchanged: Boolean
@@ -22,9 +23,15 @@ entity ProducerMaterialization {
     materialization_source_domain_is_cljonic_source: Boolean
     cljonic_sources_are_directly_consumable_by_free_functions: Boolean
     into_is_explicit_owning_materialization_path: Boolean
+    into_rejects_unsupported_domain_with_targeted_diagnostic: Boolean
+    into_does_not_allocate_or_throw: Boolean
 
     invariant IntoRequiresExplicitBoundedDestination {
         this.into_requires_explicit_bounded_destination = true
+    }
+
+    invariant IntoRequiresCljonicVectorDestination {
+        this.into_requires_cljonic_vector_destination = true
     }
 
     invariant IntoReturnsNewDestinationTypedCollection {
@@ -105,6 +112,14 @@ entity ProducerMaterialization {
 
     invariant IntoIsExplicitOwningMaterializationPath {
         this.into_is_explicit_owning_materialization_path = true
+    }
+
+    invariant IntoRejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.into_rejects_unsupported_domain_with_targeted_diagnostic = true
+    }
+
+    invariant IntoDoesNotAllocateOrThrow {
+        this.into_does_not_allocate_or_throw = true
     }
 
 }
