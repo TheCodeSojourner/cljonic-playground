@@ -595,6 +595,16 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | complete_materialization_into(destination, producer) → use(fits_into)
   | fits_into(destination, producer) → require(CljonicVector(destination)) ∧ measure(complete_result_cardinality_and_semantics)
 
+λ S2_get_function_contract(x). get(collection, key[, fallback]) → admit(LookupCollection ∨ IndexedCollection)(collection)
+  | LookupCollection(collection) → require(SafeImplicitConversion(collection_lookup_type, key))
+  | IndexedCollection(collection) → require(IntegerIndexType(key))
+  | return(collection(key[, fallback])) ∧ preserve(collection_specific_lookup_result_type)
+  | omitted_fallback(x) → use(collection_default_lookup_result(x))
+  | supplied_fallback(x) → require(SafeImplicitConversion(lookup_result_type, fallback))
+  | unsupported_collection_or_key_or_fallback(x) → reject_at_compile_time_with(targeted_diagnostic ∧ REQ-DIAG-009)
+  | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | classify_as(RequirementsBacked) ∧ trace_to(REQ-COLL-020R ∧ REQ-COLL-020Y)
+
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ first
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
@@ -963,9 +973,8 @@ concept SequenceableProducer =
   | docs(x) ≡ doxygen_html_site
 
 λ S1_interfaces(x). current_interface_types(x) ≡ header_only_member_api
-  ∧ header_only_free_functions ∧ callable_collection_lookup ∧ producer_values
+  ∧ concept_constrained_free_functions ∧ callable_collection_lookup ∧ producer_values
   ∧ explicit_materialization_functions
-  | future_interface_types(x) ≡ template_concept_constrained_apis
   | required_callable_member_adapters(x) → permitted_when(explicitly_specified_and_behaviorally_equivalent(x))
   | optional_member_wrappers(x) ≡ non_canonical
 
