@@ -387,6 +387,9 @@ requires (Extent != std::dynamic_extent)</td></tr>
 <tr class="memitem:a375ca6d156afd5ac8cd31bae763d4062 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a375ca6d156afd5ac8cd31bae763d4062">next</a> (const C &amp;collection) noexcept -&gt; decltype(collection.pop())</td></tr>
 <tr class="memitem:a8180deddc8b1aa7386990604604648f0" id="r_a8180deddc8b1aa7386990604604648f0"><td class="memTemplParams" colspan="2">template&lt;concepts::SequenceableCollection C&gt; </td></tr>
 <tr class="memitem:a8180deddc8b1aa7386990604604648f0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a> (const C &amp;collection) noexcept -&gt; C</td></tr>
+<tr class="memitem:a7afdad8bef78634dcb85d208e41bdb41" id="r_a7afdad8bef78634dcb85d208e41bdb41"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts::SequenceableCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:a7afdad8bef78634dcb85d208e41bdb41 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7afdad8bef78634dcb85d208e41bdb41">not_empty</a> (const C &amp;collection) noexcept -&gt; void</td></tr>
 <tr class="memitem:a52f3ba9511cd0e5899669f9450adbdfb" id="r_a52f3ba9511cd0e5899669f9450adbdfb"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
 requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</td></tr>
 <tr class="memitem:a52f3ba9511cd0e5899669f9450adbdfb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a> (const T &amp;value) noexcept -&gt; bool</td></tr>
@@ -3919,7 +3922,7 @@ template&lt;typename C&gt; </div>
 </div>
 </div>
 <a id="a8180deddc8b1aa7386990604604648f0" name="a8180deddc8b1aa7386990604604648f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8180deddc8b1aa7386990604604648f0">&#9670;&#160;</a></span>not_empty()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8180deddc8b1aa7386990604604648f0">&#9670;&#160;</a></span>not_empty() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3942,28 +3945,60 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="NotEmpty"></a> The <b>not_empty</b> free function API returns a copy of a nonempty <a class="el" href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html" title="concepts::SequenceableCollection">collection</a>, or an empty <a class="el" href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html" title="concepts::SequenceableCollection">collection</a> of the same type otherwise.</p>
-<p>Per REQ-FN-026, <span class="tt"><a class="el" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a></span> preserves the input collection type and capacity and returns an owning copy of the input when nonempty or the corresponding empty value when empty.</p>
-<dl class="section note"><dt>Note</dt><dd>Not yet part of the public API; the sequence-shaping operations are deferred.</dd></dl>
+<p><a class="anchor" id="NotEmpty"></a> The <b>not_empty</b> free function returns an independent owning copy of a nonempty collection, or an empty value of the same type when the input is empty. It accepts <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>, preserves their type and capacity, and leaves the input unchanged. Unlike Clojure's <span class="tt">not-empty</span>, an empty input produces an empty owning collection rather than a nil result. This is not a boolean emptiness predicate; use <a class="el" href="#IsEmpty" title="IsEmpty">is_empty</a> for that purpose.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1};</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> e_const = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(<a class="code hl_function" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a>(v_const)) == 1U);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(<a class="code hl_function" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a>(e_const)) == 0U);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> values = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{10, 20};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> copied = <a class="code hl_function" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a>(values);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(copied, values));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(copied) == 2);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(<a class="code hl_function" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 0&gt;</a>{})));</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> v_runtime = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10};</div>
-<div class="line">  <span class="keyword">auto</span> nv_runtime = <a class="code hl_function" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a>(v_runtime);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> entries = <a class="code hl_class" href="classcljonic_1_1_map.html">Map</a>{<a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a>{1, 100}, <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a>{2, 200}};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> copied_entries = <a class="code hl_function" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a>(entries);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> empty_values = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> copied_empty = <a class="code hl_function" href="#a8180deddc8b1aa7386990604604648f0">not_empty</a>(empty_values);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(nv_runtime) == 1U) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(copied_entries, entries) &amp;&amp; <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(entries) == 2 &amp;&amp;</div>
+<div class="line">                 <a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(copied_empty) &amp;&amp; <a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(empty_values)</div>
+<div class="line">             ? 0</div>
+<div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a8180deddc8b1aa7386990604604648f0"><div class="ttname"><a href="#a8180deddc8b1aa7386990604604648f0">cljonic::not_empty</a></div><div class="ttdeci">constexpr auto not_empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-empty_8hpp_source.html#l00038">cljonic-not-empty.hpp:38</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a8180deddc8b1aa7386990604604648f0"><div class="ttname"><a href="#a8180deddc8b1aa7386990604604648f0">cljonic::not_empty</a></div><div class="ttdeci">constexpr auto not_empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-empty_8hpp_source.html#l00039">cljonic-not-empty.hpp:39</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00038">38</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00039">39</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7afdad8bef78634dcb85d208e41bdb41" name="a7afdad8bef78634dcb85d208e41bdb41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7afdad8bef78634dcb85d208e41bdb41">&#9670;&#160;</a></span>not_empty() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires (!concepts::SequenceableCollection&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::not_empty </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00045">45</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
 
 </div>
 </div>
