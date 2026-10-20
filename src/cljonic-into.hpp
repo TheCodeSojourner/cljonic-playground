@@ -11,9 +11,9 @@ namespace cljonic {
  * Returns an updated destination-typed collection with source elements appended after the destination's existing
  * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
  * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
- * completely. Use \b fits_into beforehand to check whether the complete source fits. The destination must be a
- * \ref Vector "Vector". Other collection types are supported only as sources. Source elements must follow the
- * destination's \ref ImplicitConversions "safe implicit conversion rules".
+ * completely. Use \b fits_into beforehand to check whether the complete source fits. The destination must be a \ref
+ * Vector "Vector". Other collection types are supported only as sources. Source elements must follow the destination's
+ * \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -40,7 +40,8 @@ namespace cljonic {
 
    return (equal(runtime_result, Vector<int, 8>{100, 200, 0, 1, 2, 3, 4}) &&
            equal(runtime_prefix, Vector<int, 4>{100, 200, 0, 1}) &&
-           equal(runtime_destination, Vector<int, 8>{100, 200}) && count(runtime_source) == 5)
+           equal(runtime_destination, Vector<int, 8>{100, 200}) &&
+           count(runtime_source) == 5)
               ? 0
               : 1;
  }

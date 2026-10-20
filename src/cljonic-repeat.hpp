@@ -58,22 +58,30 @@ concept RepeatClassArgument =
    // -----------------------------------------------------------------------
    auto runtime_finite = Repeat{-1, 2U};
 
-   int finite_sum = 0;
-   for (const auto value : finite) {
-     finite_sum += value;
-   }
+   constexpr auto finite_sum = [finite] {
+     int sum = 0;
+     for (const auto value : finite) {
+       sum += value;
+     }
+     return sum;
+   }();
+   static_assert(finite_sum == 21);
 
-   int pixel_sum = 0;
-   for (const auto pixel : pixels) {
-     pixel_sum += pixel.x + pixel.y;
-   }
+   constexpr auto pixel_sum = [pixels] {
+     int sum = 0;
+     for (const auto pixel : pixels) {
+       sum += pixel.x + pixel.y;
+     }
+     return sum;
+   }();
+   static_assert(pixel_sum == 26);
 
    int runtime_sum = 0;
    for (const auto value : runtime_finite) {
      runtime_sum += value;
    }
 
-   return (finite_sum == 21) && (pixel_sum == 26) && (runtime_sum == -2);
+   return runtime_sum == -2 ? 0 : 1;
  }
  ~~~~~
  */

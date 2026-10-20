@@ -4144,9 +4144,9 @@ namespace cljonic {
  * Returns an updated destination-typed collection with source elements appended after the destination's existing
  * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
  * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
- * completely. Use \b fits_into beforehand to check whether the complete source fits. The destination must be a
- * \ref Vector "Vector". Other collection types are supported only as sources. Source elements must follow the
- * destination's \ref ImplicitConversions "safe implicit conversion rules".
+ * completely. Use \b fits_into beforehand to check whether the complete source fits. The destination must be a \ref
+ * Vector "Vector". Other collection types are supported only as sources. Source elements must follow the destination's
+ * \ref ImplicitConversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4173,7 +4173,8 @@ namespace cljonic {
 
    return (equal(runtime_result, Vector<int, 8>{100, 200, 0, 1, 2, 3, 4}) &&
            equal(runtime_prefix, Vector<int, 4>{100, 200, 0, 1}) &&
-           equal(runtime_destination, Vector<int, 8>{100, 200}) && count(runtime_source) == 5)
+           equal(runtime_destination, Vector<int, 8>{100, 200}) &&
+           count(runtime_source) == 5)
               ? 0
               : 1;
  }
@@ -4212,8 +4213,10 @@ constexpr auto into([[maybe_unused]] const Dest& destination, [[maybe_unused]] c
 namespace cljonic {
 
 /** \anchor IsEmpty
- * The \b is_empty free function API returns true when a \ref concepts::SequenceableCollection "collection" or
- *        \ref concepts::SequenceableProducer "producer" is empty.
+ * The \b is_empty free function returns true exactly when \ref Count "count" is zero for a collection or producer. It
+ * leaves the input unchanged and does not throw or allocate. For an unbounded producer, it checks the configured
+ * observation cap, not complete cardinality. Values outside the cljonic collection and producer domain are rejected at
+ * compile time.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -4221,21 +4224,33 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // Compile-time demonstration.
-   constexpr auto e_const = Vector<int, 4>{};
-   constexpr auto v_const = Vector<int, 4>{1};
-   constexpr auto empty_range = Range<int>{0, 0};
-   constexpr auto unbounded_repeat = Repeat<int>{7};
-   static_assert(is_empty(e_const));
-   static_assert(!is_empty(v_const));
+   constexpr auto empty_values = Vector<int, 2>{};
+   constexpr auto values = Vector{1, 2};
+   constexpr auto text = String{"Hi"};
+   constexpr auto empty_range = Range{2, 2};
+   constexpr auto unbounded_repeat = Repeat{7};
+   static_assert(is_empty(empty_values));
+   static_assert(!is_empty(values));
+   static_assert(!is_empty(text));
    static_assert(is_empty(empty_range));
    static_assert(!is_empty(unbounded_repeat));
 
-   // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10};
-   const auto empty_res = is_empty(v_runtime);
+   const int value = 3;
+   const auto runtime_values = Vector{value};
+   const auto original_values = runtime_values;
+   const auto runtime_empty_range = Range{value, value};
+   const auto runtime_range = Range{0, value};
+   const auto original_range = runtime_range;
+   const auto runtime_repeat = Repeat{value};
+   const auto runtime_text = String{"Hi"};
 
-   return (!empty_res) ? 0 : 1;
+   const auto results_match =
+       is_empty(empty_values) && !is_empty(runtime_values) &&
+       !is_empty(runtime_text) && is_empty(runtime_empty_range) &&
+       !is_empty(runtime_range) && !is_empty(runtime_repeat);
+   const auto inputs_preserved =
+       equal(runtime_values, original_values) && runtime_range == original_range;
+   return results_match && inputs_preserved ? 0 : 1;
  }
  ~~~~~
  */
@@ -5052,10 +5067,14 @@ concept RangeClassArgument =
    auto runtime_odds = Range{-1, -11, -2};
 
    // Use C++ interoperability to sum the values in a constexpr range
-   int odds_sum = 0;
-   for (const auto value : odds) {
-     odds_sum += value;
-   }
+   constexpr auto odds_sum = [odds] {
+     int sum = 0;
+     for (const auto value : odds) {
+       sum += value;
+     }
+     return sum;
+   }();
+   static_assert(odds_sum == 36);
 
    // Use C++ interoperability to sum the values in a runtime range
    int runtime_odds_sum = 0;
@@ -5063,7 +5082,7 @@ concept RangeClassArgument =
      runtime_odds_sum += value;
    }
 
-   return (odds_sum == 36) && (runtime_odds_sum == -25);
+   return runtime_odds_sum == -25 ? 0 : 1;
  }
  ~~~~~
  */
@@ -5342,22 +5361,30 @@ concept RepeatClassArgument =
    // -----------------------------------------------------------------------
    auto runtime_finite = Repeat{-1, 2U};
 
-   int finite_sum = 0;
-   for (const auto value : finite) {
-     finite_sum += value;
-   }
+   constexpr auto finite_sum = [finite] {
+     int sum = 0;
+     for (const auto value : finite) {
+       sum += value;
+     }
+     return sum;
+   }();
+   static_assert(finite_sum == 21);
 
-   int pixel_sum = 0;
-   for (const auto pixel : pixels) {
-     pixel_sum += pixel.x + pixel.y;
-   }
+   constexpr auto pixel_sum = [pixels] {
+     int sum = 0;
+     for (const auto pixel : pixels) {
+       sum += pixel.x + pixel.y;
+     }
+     return sum;
+   }();
+   static_assert(pixel_sum == 26);
 
    int runtime_sum = 0;
    for (const auto value : runtime_finite) {
      runtime_sum += value;
    }
 
-   return (finite_sum == 21) && (pixel_sum == 26) && (runtime_sum == -2);
+   return runtime_sum == -2 ? 0 : 1;
  }
  ~~~~~
  */

@@ -67,10 +67,14 @@ concept RangeClassArgument =
    auto runtime_odds = Range{-1, -11, -2};
 
    // Use C++ interoperability to sum the values in a constexpr range
-   int odds_sum = 0;
-   for (const auto value : odds) {
-     odds_sum += value;
-   }
+   constexpr auto odds_sum = [odds] {
+     int sum = 0;
+     for (const auto value : odds) {
+       sum += value;
+     }
+     return sum;
+   }();
+   static_assert(odds_sum == 36);
 
    // Use C++ interoperability to sum the values in a runtime range
    int runtime_odds_sum = 0;
@@ -78,7 +82,7 @@ concept RangeClassArgument =
      runtime_odds_sum += value;
    }
 
-   return (odds_sum == 36) && (runtime_odds_sum == -25);
+   return runtime_odds_sum == -25 ? 0 : 1;
  }
  ~~~~~
  */
