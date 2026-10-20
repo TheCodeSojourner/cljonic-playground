@@ -1,5 +1,56 @@
 ## Current Session State
 
+- last_session_id: 60b5320b-738a-46d6-8662-71da33cc7a70
+- current_timestamp: 2026-10-20T13:34:54-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Completed the `into` free-function diagnostic fallback and converged requirements, vocabulary, architecture, materialization spec, tests, implementation, amalgamation, and Doxygen.
+2. Extended actual behavioral tests and the existing no-heap probe after the human identified that earlier convergence had reused the old probe without expanding it.
+3. Made Vector-only destinations an explicit permanent contract across layers; this is not an incremental restriction or a future extension point.
+4. Replaced the fragmentary Doxygen example with a complete compile-time/runtime program checking full results, capacity-limited prefixes, and preserved inputs. Removed `U` literal suffixes after the human reiterated the existing preference.
+5. Product changes were committed by the human before closeout: `38ffc85` (requirements), `2d621a2` (vocabulary), `638b7d6` (architecture), `9af7e54` (spec), `3868afb` (tests/probes/compile-fail), `bc96da9` (implementation/example), and `a075e52` (docs). Worktree was clean before this memory update.
+
+Questions:
+1. Open -- pending free-function diagnostic fallbacks are now `peek` and `pop`; confirm with `make diagnostic-coverage` when resuming.
+2. Open -- remaining deferred APIs: `next`, `rest`, `seq`, `not_empty`.
+3. Open -- keep or remove `documentation-notes.md` (dormant proposal).
+4. No unresolved product decision or targeted convergence divergence remains for `into`.
+
+Decisions:
+1. Human: `into` destinations are permanently exactly `CljonicVector`; String, Map, Set, and Queue are source-only for this API, never planned destination extensions. `REQ-FN-027` covers both `into` and `fits_into`.
+2. Sources are compatible cljonic collections or producers (`CljonicSource`), not external C++ ranges/views. Admission includes safe, non-throwing element construction.
+3. Human approved an explicit no-allocation/no-throw spec obligation and FP-oriented behavioral/no-heap test extensions.
+4. Human reiterated: use plain integer literals such as `5`, not `5U`, in Doxygen examples. This was already remembered but was missed; apply it before generating examples.
+5. Public API examples should be complete runnable programs with compile-time and runtime demonstrations, following the existing `fits_into` example pattern.
+6. API completion/convergence did not stage or commit product changes or run `make git`. This explicit `/gybis-fini` invocation authorizes the separate memory-only commit.
+
+Validation:
+1. Final targeted convergence: req-check, downstream vocabulary/architecture readiness, spec-check, req-weed, vocab-weed, arch-weed, and spec-weed completed without new changes or unresolved targeted divergence.
+2. `make requirements-structure`: 323 clauses; `make vocabulary-structure`: 187 terms.
+3. Final materialization Allium check/analyse/plan: zero diagnostics/findings, 41 file obligations. Latest whole-set check/analyse predates the final destination invariant; do not represent it as freshly rerun.
+4. Focused materialization trace check and authoritative `make traceability-spec-to-code`: passed after snapshot refresh. The file includes sibling producer storage/equality entities: use all eight shared test files, not only the into test or `EXACT=1`.
+5. `make test`: 226/226 passed in modular and single-header configurations after production/test changes. Subsequent edits were Doxygen-only; the suite was reused, not rerun.
+6. `make primitive-compile-fail`: passed both header configurations, including scalar source, all four non-Vector destinations, and narrowing rejection.
+7. `make no-heap`: source allocator scan, binary allocator-symbol checks, and both probe executables passed after probe expansion. Later edits were Doxygen-only.
+8. Final `make docs-examples`: 31 samples compiled, four intentionally deferred skipped; the exact generated into example also linked and executed successfully. Amalgamation and Doxygen regenerated after plain-literal correction; `git diff --check` passed.
+9. Existing editor constrained-template parsing errors remain despite successful compiler validation; no IDE configuration workaround was made. IDE CMake/test integration was unavailable during this session; documented Make gates provided successful validation.
+
+Synthesis:
+1. Existing related memory remains useful: [materializer versus preflight](memories/materializer-vs-preflight-terminology.md), [destination/source ruling](memories/fits-into-domain-is-cljonic-vector-and-cljonic-source.md), and [collection source interoperability](knowledge/collection-source-interoperability.md). No new knowledge file was created.
+2. A `noexcept` assertion does not prove allocation freedom, and TRACE_ID presence does not establish meaningful behavioral coverage. Inspect assertions and real allocation probes.
+3. The into probe now exercises Vector widening, popped Queue, String characters without a terminator, Set/Map observed traversal after removal, finite/unbounded Range, and empty/full/capacity boundaries. Existing producer probes cover Repeat, Cycle, Iterate, and Repeatedly.
+4. Set/Map materialization tests compare observable traversal without imposing sorted or insertion order. The admitted into algorithm remains unchanged.
+5. Collection Source Interoperability has older bounds/String wording that may warrant a separately scoped review; this session did not revise that knowledge page or treat it as fresh authority over final requirements/specs.
+
+Next:
+1. Product work is committed locally through `a075e52`; push/merge remains user-owned. Do not run `make git` unless requested.
+2. Confirm diagnostic backlog with `make diagnostic-coverage`, then address `peek` or `pop` if requested.
+3. Continue deferred API work or resolve the dormant documentation proposal only when requested.
+
+## Previous Session State
+
 - last_session_id: 95183a5c-30cd-4d0e-bc2a-f75f090364cf
 - current_timestamp: 2026-10-20T11:41:49-06:00
 - recover: 1
