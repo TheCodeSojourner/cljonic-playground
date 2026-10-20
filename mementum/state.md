@@ -1,5 +1,51 @@
 ## Current Session State
 
+- last_session_id: 95183a5c-30cd-4d0e-bc2a-f75f090364cf
+- current_timestamp: 2026-10-20T11:41:49-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Completed and converged the `get` free-function API: concept-based admission, targeted rejection diagnostics, requirements/spec/test/architecture alignment, updated diagnostic coverage, amalgamated header, and Doxygen. The user clarified the S1 wording to say the current free-function API is concept-constrained and there is no distinct future category.
+2. Ran targeted `/cljonic-api-converge get`: requirements/vocabulary structure checks, Allium checks and analysis, spec check, req-weed, arch-weed, and spec-weed found no unresolved `get` divergence. Strict traceability passed for all 12 `get` obligations; all 222 tests passed.
+3. Simplified the `get` Doxygen text to “Vector and String use integer indexes”; changed its example to use CTAD for Vector, Map, Set, String and plain integer index literals. Regenerated public header and docs.
+4. Addressed reported Clang-Tidy warnings: redundant lambda parameter list in equal, redundant typename in first, single-argument collection/range/diagnostic constructors and Variant constructor marked explicit (pack constructors use conditional explicit for one argument to preserve empty-brace initialization), and single-argument CategoryElement test constructors made explicit.
+5. Refactored `get` rejection diagnostic dispatch into helper functions to bring the header under the configured complexity threshold; named the intentionally unused public diagnostic overload parameters after a subsequent lint report.
+6. Extended the existing `get` no-heap probe to cover `String`.
+7. Product changes are committed in `dcb18a0`, `db372e3`, `e100249`, `2866827`, `5d6fe1b`, and `8648e1b`. Worktree was clean at closeout; branch `main` is six commits ahead of `origin/main`.
+
+Questions:
+1. Open — remaining deferred APIs: `next`, `rest`, `seq`, `not_empty`.
+2. Open — keep or remove `documentation-notes.md` (dormant proposal).
+3. Open — remaining free-function diagnostic fallbacks: last known pending items are `into`, `peek`, and `pop`; rerun `make diagnostic-coverage` for current status.
+
+Decisions:
+1. Human: current free-function API is concept-constrained; do not describe a genuinely different future category.
+2. Human: public `get` documentation should describe Vector/String index arguments simply as integer indexes; implementation diagnostics remain precise.
+3. Human: add String lookup to existing `get` no-heap probe.
+
+Validation:
+1. `/cljonic-api-converge get`: owner checks and targeted weed passes completed without unresolved `get` divergence.
+2. `make requirements-structure`: ok (323 clauses); `make vocabulary-structure`: ok (186 terms).
+3. Allium 3.5.3 repository check and analysis: no diagnostics or findings.
+4. `make trace-id-check SPEC=specs/primitives/get.allium TESTS="tests/cljonic-get-spec-tests.cpp" EXACT=1`: ok (12/12); `make traceability-spec-to-code`: ok.
+5. `make test`: 222/222 passed after constructor and get helper changes.
+6. `make primitive-compile-fail`: ok; `make complexity-cli COMPLEXITY_PATH=src/cljonic-get.hpp`: ok.
+7. `make no-heap`: ok, including modular and amalgamated probes and String lookup.
+8. `make docs-examples`: ok (31 compiled, 4 deferred skipped); Doxygen regenerated.
+9. Clang-Tidy on `tests/cljonic-vector-spec-tests.cpp`, clang-format checks on changed source/test files, and `git diff --check`: passed at closeout.
+
+Synthesis:
+1. No new knowledge page was needed; work applies existing diagnostic, collection-source, and public API contracts.
+2. The existing `get` no-heap probe already covered Vector, Map, and Set; it now covers String as requested.
+
+Next:
+1. Product changes are committed locally; push/merge decisions remain user-owned. Do not run `make git` unless requested.
+2. Rerun `make diagnostic-coverage` when resuming to confirm the remaining pending fallbacks.
+3. Continue deferred API promotion or decide the dormant `documentation-notes.md` proposal.
+
+## Previous Session State
+
 - last_session_id: 5c7aa993-8ade-441e-83e1-9201d89193be
 - current_timestamp: 2026-10-19T14:27:17-06:00
 - recover: 1
