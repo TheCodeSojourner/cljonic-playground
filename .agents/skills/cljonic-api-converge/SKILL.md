@@ -133,6 +133,8 @@ disable-model-invocation: true
   | match(final_domain, canonical_terms, results, boundaries, conversions, preservation)
   | program ≔ '#include "cljonic.hpp"' → file_scope("using namespace cljonic;") → "main()"
   | C++23 ∧ public_free_functions ∧ representative_named_values ∧ plain_integer_literals
+  | prefer(CTAD) if(deduction_expresses(intended_type ∧ intended_capacity))
+    | explicit_template_arguments if(deduction_unavailable ∨ demonstrating(specific_type ∨ specific_capacity))
   | ¬unnecessary_U_suffix ∧ ¬implementation_detail_member_calls
   | constexpr_results → static_assert | runtime_derived_inputs → checked_results
   | normal_case ∧ applicable_important_boundary_fallback_or_prefix ∧ required_input_preservation

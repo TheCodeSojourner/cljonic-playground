@@ -150,6 +150,8 @@ disable-model-invocation: true
   repair(owning_source_Doxygen) ∧ match(final_contract) ∧ representative ¬exhaustive
   | C++23: '#include "cljonic.hpp"' → file_scope("using namespace cljonic;") → "main()"
   | public_free_functions ∧ named_values ∧ plain_literals ¬unnecessary_U_suffix
+  | prefer(CTAD) if(deduction_expresses(intended_type ∧ intended_capacity))
+    | explicit_template_arguments if(deduction_unavailable ∨ demonstrating(specific_type ∨ specific_capacity))
   | ¬internal_member_calls ∧ concise_user_prose ∧ link(conversion_rules) ∧ term("default value")
   | constexpr_results → static_assert | runtime_derived_inputs → checked_results
   | normal ∧ applicable_boundary_fallback_prefix ∧ required_input_preservation

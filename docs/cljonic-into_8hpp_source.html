@@ -109,40 +109,40 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a> {</div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">template</span> &lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">requires</span> <a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_materializable_source.html">concepts_detail::MaterializableSource&lt;Dest, Source&gt;</a></div>
-<div class="foldopen" id="foldopen00051" data-start="{" data-end="}">
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">   51</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a>(<span class="keyword">const</span> Dest&amp; destination, <span class="keyword">const</span> Source&amp; source) <span class="keyword">noexcept</span> -&gt; Dest {</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    Dest result = destination;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; item : source) {</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="keyword">const</span> <span class="keyword">auto</span> index = result.count();</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="keywordflow">if</span> (!result.can_assoc(index, item)) {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        }</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        result = result.assoc(index, item);</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    }</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="keyword">template</span> &lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keyword">requires</span> <a class="code hl_concept" href="conceptcljonic_1_1concepts__detail_1_1_materializable_source.html">concepts_detail::MaterializableSource&lt;Dest, Source&gt;</a></div>
+<div class="foldopen" id="foldopen00052" data-start="{" data-end="}">
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">   52</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a>(<span class="keyword">const</span> Dest&amp; destination, <span class="keyword">const</span> Source&amp; source) <span class="keyword">noexcept</span> -&gt; Dest {</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    Dest result = destination;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; item : source) {</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="keyword">const</span> <span class="keyword">auto</span> index = result.count();</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="keywordflow">if</span> (!result.can_assoc(index, item)) {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        }</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        result = result.assoc(index, item);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    }</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
 </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="comment">// Diagnostic fallback (REQ-DIAG-009): a call outside the admitted domain names</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment">// the domain instead of listing failed concept candidates. It produces no value.</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Dest, <span class="keyword">typename</span> Source&gt;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">requires</span>(!concepts_detail::MaterializableSource&lt;Dest, Source&gt;)</div>
-<div class="foldopen" id="foldopen00067" data-start="{" data-end="}">
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a9bc47ef0e49ab57ca9d091f2b3645ba8">   67</a></span><span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a>([[maybe_unused]] <span class="keyword">const</span> Dest&amp; destination, [[maybe_unused]] <span class="keyword">const</span> Source&amp; source) <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keyword">static_assert</span>(<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#ab8fd50010c5a1e2e4f202ac1d645d757">concepts_detail::dependent_false&lt;Dest, Source&gt;</a>,</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                  <span class="stringliteral">&quot;cljonic::into: expected a Vector destination and a cljonic collection or producer source whose &quot;</span></div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                  <span class="stringliteral">&quot;elements convert safely to the Vector&#39;s element type.&quot;</span>);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>}</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment">// Diagnostic fallback (REQ-DIAG-009): a call outside the admitted domain names</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="comment">// the domain instead of listing failed concept candidates. It produces no value.</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Dest, <span class="keyword">typename</span> Source&gt;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keyword">requires</span>(!concepts_detail::MaterializableSource&lt;Dest, Source&gt;)</div>
+<div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="namespacecljonic.html#a9bc47ef0e49ab57ca9d091f2b3645ba8">   68</a></span><span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a>([[maybe_unused]] <span class="keyword">const</span> Dest&amp; destination, [[maybe_unused]] <span class="keyword">const</span> Source&amp; source) <span class="keyword">noexcept</span> -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keyword">static_assert</span>(<a class="code hl_variable" href="namespacecljonic_1_1concepts__detail.html#ab8fd50010c5a1e2e4f202ac1d645d757">concepts_detail::dependent_false&lt;Dest, Source&gt;</a>,</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                  <span class="stringliteral">&quot;cljonic::into: expected a Vector destination and a cljonic collection or producer source whose &quot;</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                  <span class="stringliteral">&quot;elements convert safely to the Vector&#39;s element type.&quot;</span>);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>}</div>
 </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>} <span class="comment">// namespace cljonic</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>} <span class="comment">// namespace cljonic</span></div>
 <div class="ttc" id="acljonic-concepts_8hpp_html"><div class="ttname"><a href="cljonic-concepts_8hpp.html">cljonic-concepts.hpp</a></div></div>
 <div class="ttc" id="aconceptcljonic_1_1concepts__detail_1_1_materializable_source_html"><div class="ttname"><a href="conceptcljonic_1_1concepts__detail_1_1_materializable_source.html">cljonic::concepts_detail::MaterializableSource</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00562">cljonic-concepts.hpp:562</a></div></div>
 <div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_ab8fd50010c5a1e2e4f202ac1d645d757"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#ab8fd50010c5a1e2e4f202ac1d645d757">cljonic::concepts_detail::dependent_false</a></div><div class="ttdeci">constexpr bool dependent_false</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00053">cljonic-concepts.hpp:53</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a6b0a13c640d125d2b026b26ca253f292"><div class="ttname"><a href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">cljonic::into</a></div><div class="ttdeci">constexpr auto into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; Dest</div><div class="ttdef"><b>Definition</b> <a href="#l00051">cljonic-into.hpp:51</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a6b0a13c640d125d2b026b26ca253f292"><div class="ttname"><a href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">cljonic::into</a></div><div class="ttdeci">constexpr auto into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; Dest</div><div class="ttdef"><b>Definition</b> <a href="#l00052">cljonic-into.hpp:52</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
