@@ -496,6 +496,8 @@ invariant.IsEmpty.DiagnosticNamesRejectedOperandAndRequiredSequenceableDomain
 invariant.IsEmpty.FollowsProducerCountObservation
 invariant.IsEmpty.IsEmptyDerivedFromZeroCount
 invariant.IsEmpty.IsEmptyFreeFunctionSupported
+invariant.IsEmpty.IsNoexcept
+invariant.IsEmpty.LeavesInputUnchanged
 invariant.IsEmpty.NoCollectionIsEmptyMember
 invariant.IsEmpty.NoExceptions
 invariant.IsEmpty.NoHeapAllocation
@@ -504,6 +506,7 @@ invariant.IsEmpty.ReferentialTransparency
 invariant.IsEmpty.RejectsUnsupportedDomainWithTargetedDiagnostic
 invariant.IsEmpty.ReturnsBooleanPredicate
 invariant.IsEmpty.SingleThreadedExecutionModel
+invariant.IsEmpty.SupportsConstantEvaluation
 invariant.IsEmpty.SupportsSequenceableCollectionDomain
 invariant.IsEmpty.SupportsSequenceableProducerDomain
 invariant.IsEmpty.ZeroCountMatchesEmptyObservation
