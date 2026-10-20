@@ -136,6 +136,41 @@ PRIMITIVES = {
             "populated-destination": "(void)cljonic::fits_into(cljonic::Vector<int, 8>{1, 2}, cljonic::Range<int>{0, 5});",
         },
     },
+    "into": {
+        "diagnostic_anchor": "cljonic::into:",
+        "diagnostic_cases": {
+            "unsupported-scalar-source": (
+                "(void)cljonic::into(cljonic::Vector<int, 4>{}, 42);",
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+            "unsupported-destination": (
+                "(void)cljonic::into(cljonic::Set<int, 4>{}, cljonic::Range<int>{0, 5});",
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+            "string-destination": (
+                '(void)cljonic::into(cljonic::String<4>{}, cljonic::String<4>{"ab"});',
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+            "map-destination": (
+                "(void)cljonic::into(cljonic::Map<int, int, 4>{}, cljonic::Map<int, int, 4>{});",
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+            "queue-destination": (
+                "(void)cljonic::into(cljonic::Queue<int, 4>{}, cljonic::Range<int>{0, 5});",
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+            "lossy-source-element": (
+                "(void)cljonic::into(cljonic::Vector<short, 4>{}, cljonic::Range<int>{0, 5});",
+                "expected a Vector destination and a cljonic collection or producer source",
+            ),
+        },
+        "pass_cases": {
+            "finite-range": "(void)cljonic::into(cljonic::Vector<int, 8>{}, cljonic::Range<int>{0, 5});",
+            "unbounded-range": "(void)cljonic::into(cljonic::Vector<int, 8>{}, cljonic::Range<int>{0, 5, 0});",
+            "vector-source": "(void)cljonic::into(cljonic::Vector<int, 8>{}, cljonic::Vector<int, 4>{1, 2});",
+            "populated-destination": "(void)cljonic::into(cljonic::Vector<int, 8>{1, 2}, cljonic::Range<int>{0, 5});",
+        },
+    },
     "dissoc": {
         "diagnostic_anchor": "cljonic::dissoc:",
         "diagnostic_cases": {

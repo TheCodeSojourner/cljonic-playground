@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <type_traits>
+
 #include "cljonic-test-api.hpp"
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
@@ -12,6 +14,12 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
 
     TRACE_ID("entity-fields.ProducerMaterialization");
     TRACE_ID("invariant.ProducerMaterialization.IntoRequiresExplicitBoundedDestination");
+    TRACE_ID("invariant.ProducerMaterialization.IntoRequiresCljonicVectorDestination");
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::MaterializableSource<cljonic::String<4>, cljonic::String<4>>);
+    STATIC_REQUIRE_FALSE(
+        cljonic::concepts_detail::MaterializableSource<cljonic::Map<int, int, 4>, cljonic::Map<int, int, 4>>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::MaterializableSource<cljonic::Set<int, 4>, Range<int>>);
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::MaterializableSource<cljonic::Queue<int, 4>, Range<int>>);
     TRACE_ID("invariant.ProducerMaterialization.IntoReturnsNewDestinationTypedCollection");
     TRACE_ID("invariant.ProducerMaterialization.IntoAppendsAfterDestinationContents");
     TRACE_ID("invariant.ProducerMaterialization.IntoLeavesDestinationUnchanged");
@@ -32,6 +40,14 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
     TRACE_ID("invariant.ProducerMaterialization.MaterializationSourceDomainIsCljonicSource");
     TRACE_ID("invariant.ProducerMaterialization.CljonicSourcesAreDirectlyConsumableByFreeFunctions");
     TRACE_ID("invariant.ProducerMaterialization.IntoIsExplicitOwningMaterializationPath");
+    TRACE_ID("invariant.ProducerMaterialization.IntoRejectsUnsupportedDomainWithTargetedDiagnostic");
+    // Rejected calls select the diagnostic overload; compile-fail checks verify
+    // the targeted message. Admission itself is the named concept.
+    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::MaterializableSource<Vector<int, 4>, int>);
+    STATIC_REQUIRE(cljonic::concepts_detail::MaterializableSource<Vector<int, 4>, Range<int>>);
+
+    TRACE_ID("invariant.ProducerMaterialization.IntoDoesNotAllocateOrThrow");
+    STATIC_REQUIRE(noexcept(into(Vector<int, 4>{}, Range<int>{0, 1})));
 
     // A finite source that fits materializes completely, leaving destination and source unchanged.
     constexpr Vector<int, 8> empty_destination{};
@@ -93,4 +109,98 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
     const auto composed_result = into(populated_destination_for_composition, huge_source);
     CHECK(composed_result.count() == 4U);
     CHECK_FALSE(fits_into(populated_destination_for_composition, huge_source));
+}
+
+TEST_CASE("into materializes each collection source without changing its inputs", "[into]") {
+    using namespace cljonic;
+
+    TRACE_ID("invariant.ProducerMaterialization.MaterializationSourceDomainIsCljonicSource");
+    TRACE_ID("invariant.ProducerMaterialization.IntoReturnsNewDestinationTypedCollection");
+    TRACE_ID("invariant.ProducerMaterialization.IntoAppendsAfterDestinationContents");
+    TRACE_ID("invariant.ProducerMaterialization.IntoLeavesDestinationUnchanged");
+    TRACE_ID("invariant.ProducerMaterialization.IntoLeavesSourceUnchanged");
+    TRACE_ID("invariant.ProducerMaterialization.BoundedPrefixPreservesSourceTraversalOrder");
+
+    SECTION("Vector source safely widens into the destination element type") {
+        constexpr Vector<short, 4> source{short{1}, short{2}};
+        constexpr Vector<long long, 5> destination{99LL};
+        constexpr auto result = into(destination, source);
+        STATIC_REQUIRE(std::is_same_v<decltype(into(destination, source)), Vector<long long, 5>>);
+        STATIC_REQUIRE(equal(result, Vector<long long, 5>{99LL, 1LL, 2LL}));
+        STATIC_REQUIRE(equal(source, Vector<short, 4>{short{1}, short{2}}));
+        STATIC_REQUIRE(equal(destination, Vector<long long, 5>{99LL}));
+        STATIC_REQUIRE(noexcept(into(destination, source)));
+    }
+
+    SECTION("Queue source uses front-to-back logical traversal") {
+        const auto source = Queue<int, 4>{10, 20, 30}.pop();
+        const auto destination = Vector<int, 5>{99};
+        const auto result = into(destination, source);
+        CHECK(equal(result, Vector<int, 5>{99, 20, 30}));
+        CHECK(equal(source, Queue<int, 4>{20, 30}));
+        CHECK(equal(destination, Vector<int, 5>{99}));
+    }
+
+    SECTION("String source contributes characters rather than its terminator") {
+        constexpr String<4> source{"ab"};
+        constexpr Vector<char, 5> destination{'x'};
+        constexpr auto result = into(destination, source);
+        STATIC_REQUIRE(equal(result, Vector<char, 5>{'x', 'a', 'b'}));
+        STATIC_REQUIRE(equal(source, String<4>{"ab"}));
+        STATIC_REQUIRE(equal(destination, Vector<char, 5>{'x'}));
+        STATIC_REQUIRE(noexcept(into(destination, source)));
+    }
+
+    SECTION("Set source preserves its observable traversal without defining a sorted order") {
+        const auto source = Set<int, 4>{3, 1, 2}.disj(1);
+        const auto before = source;
+        const auto destination = Vector<int, 5>{99};
+        const auto result = into(destination, source);
+        REQUIRE(result.count() == destination.count() + source.count());
+        CHECK(result(0U) == 99);
+        auto index = destination.count();
+        for (const auto item : source) {
+            CHECK(result(index++) == item);
+        }
+        CHECK(equal(source, before));
+        CHECK(equal(destination, Vector<int, 5>{99}));
+    }
+
+    SECTION("Map source contributes entries in its observable traversal order") {
+        using Entry = MapEntry<int, int>;
+        const auto source = Map<int, int, 4>{Entry{3, 30}, Entry{1, 10}, Entry{2, 20}}.dissoc(1);
+        const auto before = source;
+        const auto destination = Vector<Entry, 5>{Entry{9, 90}};
+        const auto result = into(destination, source);
+        STATIC_REQUIRE(std::is_same_v<decltype(into(destination, source)), Vector<Entry, 5>>);
+        REQUIRE(result.count() == destination.count() + source.count());
+        CHECK(result(0U) == Entry{9, 90});
+        auto index = destination.count();
+        for (const auto& entry : source) {
+            CHECK(result(index++) == entry);
+        }
+        CHECK(equal(source, before));
+        CHECK(equal(destination, Vector<Entry, 5>{Entry{9, 90}}));
+    }
+}
+
+TEST_CASE("into handles empty sources and remaining destination capacity", "[into]") {
+    using namespace cljonic;
+
+    TRACE_ID("invariant.ProducerMaterialization.IntoAppendsAfterDestinationContents");
+    TRACE_ID("invariant.ProducerMaterialization.FiniteSourceMaterializesCompleteResultWhenItFits");
+    TRACE_ID("invariant.ProducerMaterialization.BoundedPrefixPreservesSourceTraversalOrder");
+    TRACE_ID("invariant.ProducerMaterialization.IntoLeavesDestinationUnchanged");
+    TRACE_ID("invariant.ProducerMaterialization.IntoLeavesSourceUnchanged");
+
+    const auto source = Vector<int, 4>{1, 2, 3};
+    const auto full = Vector<int, 2>{7, 8};
+    CHECK(equal(into(full, source), full));
+    CHECK(equal(into(full, Vector<int, 4>{}), full));
+    CHECK(equal(into(Vector<int, 4>{9}, Vector<int, 4>{}), Vector<int, 4>{9}));
+    CHECK(equal(into(Vector<int, 4>{}, Vector<int, 4>{}), Vector<int, 4>{}));
+    CHECK(equal(into(Vector<int, 3>{9, 8}, source), Vector<int, 3>{9, 8, 1}));
+    CHECK(equal(into(Vector<int, 3>{}, source), Vector<int, 3>{1, 2, 3}));
+    CHECK(equal(full, Vector<int, 2>{7, 8}));
+    CHECK(equal(source, Vector<int, 4>{1, 2, 3}));
 }
