@@ -1,5 +1,52 @@
 ## Current Session State
 
+- last_session_id: 04ad004a-565b-41a9-afad-8ebcedb1520c
+- current_timestamp: 2026-10-20T15:58:52-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Explicitly invoked `/cljonic-api-complete not_empty free function api`: completed promotion using the supplied skill context because the skill-loader registry does not expose this local skill.
+2. Earlier clarified that `iterate(step, initial)` is already an active free-function factory. At human request, changed its Sequence traversal cheatsheet display label to lowercase while preserving the `Iterate` target and Producer Types label. That change was already committed by outside activity when the not_empty workflow began; its starting worktree was clean.
+3. Promoted not_empty through REQ-BOUNDS-010D, REQ-COLL-020T, vocabulary, an S2 architecture rule, active specs/primitives/not-empty.allium, ordinary tests, dedicated no-heap probes, public umbrella, diagnostic registry, example extraction, amalgamation, and obligation snapshot.
+4. Subsequently executed explicit targeted `/cljonic-api-converge not_empty free function api`: invoked req-check with vocabulary/architecture/Allium readiness, spec-check, and all four adjacent-layer weed skills. No product repair or unresolved target divergence was found.
+5. Explicit `/gybis-fini` closes the session with a separate memory-only commit. At closeout, product and generated-doc changes were already committed by outside activity through e2d8b9f; only this state file was modified and the index was empty.
+
+Decisions:
+1. Preserve the approved owning-value contract: Vector, Map, Set, Queue, and String inputs return an independent value of exactly the same type and capacity; nonempty inputs retain all logical elements, empty inputs produce the corresponding empty owning value. This is neither a Boolean predicate nor Clojure's nullable not-empty result.
+2. Existing admitted implementation was correct and unchanged. Added only its rejected-domain overload plus documentation and integration; producers, scalars, external ranges, MapEntry, and count-shaped impostors are unsupported.
+3. Tests/probes cover each collection family with nonempty, empty, full, and zero-capacity values, plus default-valued nonempty elements, nested collections, wrapped Queue logical order, unchanged inputs, and independent copies.
+4. Existing cheatsheet entry already linked NotEmpty correctly; only its umbrella include was missing. CMake globs register the added ordinary/probe files without a CMakeLists.txt edit.
+5. Follow representative-example preference over older exhaustive-example lifecycle wording. Doxygen knowledge and promotion-checklist inventories still contain historical deferred entries; current extractor exclusions are exactly next/rest/seq.
+6. This finalization invocation authorizes the memory-only commit; earlier completion/convergence prohibitions on product staging/commits were respected. No make git was run.
+
+Validation:
+1. Requirements/vocabulary structural audits passed: 323 clauses, 187 terms. New Allium check/analyse passed without findings; plan enumerated 16 obligations.
+2. Dedicated Catch2 tests passed 57 assertions in three cases separately for modular and single-header configurations, compiled as C++23 with -Wall -Wextra -Werror -fno-rtti -fno-exceptions. Tests assert the actual function return type (not an auto-local proxy).
+3. Generic test tool found no tests; used existing Catch2 sources/libraries and repository compiler settings for direct focused compilation and execution instead. No full-suite pass is claimed.
+4. Focused existing primitive checker passed nine rejected and eight admitted cases per header variant (34 compilations). Rejections include all five producer families plus scalar, external array, MapEntry, and count-shaped impostor.
+5. Final make no-heap passed source and allocator-symbol scans and executed both modular and single-header harnesses with the registered not_empty probe.
+6. Scoped formatting was idempotent over two passes. Focused clang-tidy passed ordinary/probe translation units in both header configurations; implementation complexity and cheatsheet-format checks passed.
+7. make docs-examples freshly compiled 32 samples, with three explicit deferred exclusions. Verified exact not_empty extraction equality and source/object/public-header freshness; linked that exact extracted C++23 program and ran it successfully.
+8. Snapshot refreshed with exactly 16 added NotEmpty IDs. Focused exact trace check and final authoritative strict trace passed. Diagnostic coverage/message labels passed; peek/pop remain the two unrelated pending fallbacks. Final diff whitespace checks passed.
+9. Targeted convergence reran structure audits and Allium 3.5.3 check/analyse across 39 files each: zero diagnostics/findings. Scoped spec-check needed no repairs, so readiness remained current. Compared all 16 obligations against actual ordinary assertions, compile-fail cases, implementation, and runtime probes; focused and strict trace passed.
+10. Convergence reused the completion tests (57 assertions per header variant), 34 compilation checks, final make no-heap, and 32-example compilation because their inputs were unchanged. Repeated source/symbol scans and both existing no-heap harness executions passed. Verified probe-binary freshness, exact existing example extraction and source/object freshness, amalgamation agreement, and exactly three deferred extractor exclusions. Linked and executed the exact extracted example again with exit zero.
+11. A scratch amalgamation comparison initially failed because the checker removed the include text but retained its newline; a bounded diff showed only that blank-line mismatch. Corrected the checker to remove the full local include line; exact comparison passed without any source/generated repair.
+12. Convergence startup found nine pre-existing modified generated HTML files absent at completion handoff. Preserved them and the existing modified public header; ran no generators, HTML regeneration, staging, or commits. Convergence added only these state notes. No whole-repository convergence or full-suite rerun is claimed.
+
+Questions and synthesis:
+1. No unresolved product decision remains for not_empty. Its identity-like result is intentional under the owning-value contract; do not reinterpret its name as a Boolean or nullable-return API.
+2. A successful trace-ID gate is necessary but not sufficient: the current slice has inspected case-level ordinary/probe evidence and exact extracted-example execution. Preserve the distinction between freshly rerun checks and reused current results.
+3. An exact return-type requirement must test decltype(the API call), not merely an auto local that could hide a reference return.
+4. Historical Mementum inventories still listing first/not_empty as deferred are stale context, not authority over current contracts or public registration. Reconcile them only in an approved memory-maintenance scope; fini writes only state.md.
+
+Next:
+1. Product and generated-doc changes are locally committed through e2d8b9f. This closeout commits only mementum/state.md; final repository gates, any additional product commits, and pushing remain user-owned. The assistant did not run make git or regenerate HTML.
+2. not_empty completion and targeted convergence have no unresolved target evidence gap. Full-repository convergence remains previously BLOCKED: exhaustive per-API evidence reconciliation, capacity-inspection questions, peek/pop gaps, and Variant lifecycle questions were not resolved by this slice.
+3. Remaining deferred sequence APIs are next/rest/seq. Other prior backlog, including documentation-notes.md disposition and stale knowledge/tokenizer reconciliation, is unchanged.
+
+## Previous Session State
+
 - last_session_id: 7092586c-04c1-4ba8-b404-da7429024ad2
 - current_timestamp: 2026-10-20T15:24:27-06:00
 - recover: 1
