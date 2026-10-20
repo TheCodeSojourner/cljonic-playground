@@ -294,6 +294,15 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `fits_into(destination, producer)` or `fits_into(destination, source)` is checked before `into(destination, producer)` or `into(destination, source)` when complete materialization matters.
 
 
+### Into
+- **Destination Domain:** Only `CljonicVector` destinations are admitted. This is the permanent contract; other collection types may be sources but are not future destination extensions.
+- **Definition:** The canonical owning-materialization free function modeled on Clojure's `into`; its C++ spelling is `into`. It returns an updated destination-typed collection with the source elements appended after the destination's existing logical contents, leaving both arguments unchanged. The destination must be a `CljonicVector`, and the source must be a `CljonicSource` whose elements are nothrow-constructible in the destination's element type. A finite source that fits materializes completely; an unbounded or oversized source produces the deterministic bounded prefix permitted by the destination's remaining capacity. Use `fits_into` beforehand when complete materialization matters. External C++ ranges and views are imported only through direct source construction.
+- **Deprecated Synonyms:** `into`, materialization function, owning materialization
+- **Related:** FreeFunction, ProducerMaterialization, FitsInto, CljonicSource, BoundedPrefixResult, CompleteResult
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `into(destination, source)` appends a finite source completely, while an unbounded source fills the destination's remaining capacity
+
+
 ### BoundedResult
 - **Definition:** An owning result whose capacity and maximum represented cardinality are finite under the operation's documented constraints.
 - **Deprecated Synonyms:** bounded output, finite result
