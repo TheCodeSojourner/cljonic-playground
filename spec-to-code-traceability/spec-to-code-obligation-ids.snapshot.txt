@@ -461,11 +461,15 @@ invariant.First.SingleThreadedExecutionModel
 invariant.First.SupportsMapEntryDomain
 invariant.First.SupportsSequenceableCollectionDomain
 invariant.First.VectorAndStringUseIndexZero
+invariant.Get.AdmitsLookupOrIndexedCollections
+invariant.Get.AdmitsOnlySafeFallbackConversion
 invariant.Get.GetFreeFunctionSupported
 invariant.Get.NoExceptions
 invariant.Get.NoHeapAllocation
 invariant.Get.NoRtti
+invariant.Get.PreservesCollectionLookupResultType
 invariant.Get.ReferentialTransparency
+invariant.Get.RejectsUnsupportedCallsWithTargetedDiagnostic
 invariant.Get.SingleThreadedExecutionModel
 invariant.Get.SupportsDefaultFallback
 invariant.ImplicitConversions.AllApiBoundariesShareAdmission
