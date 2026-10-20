@@ -616,15 +616,22 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | classify_as(RequirementsBacked) ∧ trace_to(REQ-COLL-020R ∧ REQ-COLL-020Y)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ first
+λ S2_not_empty_function_contract(x). not_empty(collection) → admit(SequenceableCollection)(collection)
+  | nonempty(collection) → return(independent_owning_copy(collection))
+  | empty(collection) → return(empty_owning_value(type(collection)))
+  | preserve(collection_type ∧ capacity ∧ input_value)
+  | unsupported_input(x) → reject_at_compile_time_with(targeted_diagnostic ∧ REQ-DIAG-009)
+  | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | classify_as(RequirementsBacked) ∧ trace_to(REQ-BOUNDS-010D ∧ REQ-FN-026)
+
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ first ∧ contains ∧ count ∧ fits_into ∧ into
+  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ contains ∧ count ∧ fits_into ∧ into
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | bounded_insertion_capacity_inspection(x) ≡ full ∨ equivalent_capacity_inspection
   | requirements_backed_operations(x) → classify_as(RequirementsBacked)
   | bounded_insertion_capacity_inspection(x) → classify_as(RequirementsBacked)
-  | deferred_empty_operations(x) ≡ not_empty
   | is_empty(value) → admit(SequenceableCollection ∨ SequenceableProducer) ∧ return(count(value) == 0)
     ∧ non_throwing ∧ non_allocating ∧ provide(targeted_rejection_diagnostic(¬(SequenceableCollection ∨ SequenceableProducer)))
   | deferred_sequence_operations(x) ≡ next ∧ rest ∧ seq
