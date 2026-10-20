@@ -2,7 +2,7 @@
 
 ## Current Scope
 
-λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
+λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
   ∧ direct_construction(x) ∧ member_observation(x)
   ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ preflight(fits_into))(x)
   | collection_callable_lookup(x) → Vector ∨ Map ∨ Set ∨ String
@@ -220,7 +220,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | effective_endpoint(x) → normalized_to(EffectiveBoundedPrefixBoundary)
   | producer_materialization(x) → require(ProducerMaterialization) ∧ enforce_synthesis_cap(x)
 
-λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
+λ S3_domain_boundary(x). implemented_value_domain(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
   | text_matching_domain(x) ≡ bounded_regex_values_and_match_results
   | symbolic_key_domain(x) ≡ supported_scoped_enumerations
   | domain_expansion(x) → require(explicit_approved_requirement)
@@ -1118,6 +1118,6 @@ concept SequenceableProducer =
   | module6_numeric_authority(x) ≡ requirements/requirements-module-6.md → govern(checked_arithmetic ∧ callables)
   | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ set_algebra ∧ regex ∧ Atom ∧ formatting ∧ KeywordEnumNameMapping)
 
-λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ Map ∧ Set ∧ Queue ∧ String ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ into ∧ fits_into
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ into ∧ fits_into
   | approved_but_unimplemented(algorithms ∨ regexes) → remain_outside(active_surface(x))
   | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
