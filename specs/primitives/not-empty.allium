@@ -1,0 +1,81 @@
+-- allium: 3
+
+entity NotEmpty {
+    supports_sequenceable_collection_domain: Boolean
+    returns_independent_owning_copy_when_nonempty: Boolean
+    returns_empty_owning_value_when_empty: Boolean
+    preserves_collection_type_and_capacity: Boolean
+    preserves_all_logical_elements: Boolean
+    leaves_input_unchanged: Boolean
+    supports_zero_capacity_and_full_collections: Boolean
+    supports_constant_evaluation: Boolean
+    is_noexcept: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+    rejects_unsupported_domain_with_targeted_diagnostic: Boolean
+
+    invariant SupportsSequenceableCollectionDomain {
+        this.supports_sequenceable_collection_domain = true
+    }
+
+    invariant ReturnsIndependentOwningCopyWhenNonempty {
+        this.returns_independent_owning_copy_when_nonempty = true
+    }
+
+    invariant ReturnsEmptyOwningValueWhenEmpty {
+        this.returns_empty_owning_value_when_empty = true
+    }
+
+    invariant PreservesCollectionTypeAndCapacity {
+        this.preserves_collection_type_and_capacity = true
+    }
+
+    invariant PreservesAllLogicalElements {
+        this.preserves_all_logical_elements = true
+    }
+
+    invariant LeavesInputUnchanged {
+        this.leaves_input_unchanged = true
+    }
+
+    invariant SupportsZeroCapacityAndFullCollections {
+        this.supports_zero_capacity_and_full_collections = true
+    }
+
+    invariant SupportsConstantEvaluation {
+        this.supports_constant_evaluation = true
+    }
+
+    invariant IsNoexcept {
+        this.is_noexcept = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+
+    invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.rejects_unsupported_domain_with_targeted_diagnostic = true
+    }
+}
+
+actor NotEmptyOperator { identified_by: NotEmpty }
