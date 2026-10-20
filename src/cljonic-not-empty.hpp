@@ -5,14 +5,11 @@
 namespace cljonic {
 
 /** \anchor NotEmpty
- * The \b not_empty free function API returns a copy of a nonempty \ref concepts::SequenceableCollection "collection",
- * or an empty
- *        \ref concepts::SequenceableCollection "collection" of the same type otherwise.
- *
- * Per REQ-FN-026, `not_empty` preserves the input collection type and capacity and returns an owning copy of the input
- * when nonempty or the corresponding empty value when empty.
- *
- * \note Not yet part of the public API; the sequence-shaping operations are deferred.
+ * The \b not_empty free function returns an independent owning copy of a nonempty collection, or an empty value of the
+ * same type when the input is empty. It accepts `Vector`, `Map`, `Set`, `Queue`, and `String`, preserves their type
+ * and capacity, and leaves the input unchanged. Unlike Clojure's `not-empty`, an empty input produces an empty owning
+ * collection rather than a nil result. This is not a boolean emptiness predicate; use \ref IsEmpty "is_empty" for that
+ * purpose.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -20,23 +17,34 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{1};
-   constexpr auto e_const = Vector<int, 4>{};
-   static_assert(count(not_empty(v_const)) == 1U);
-   static_assert(count(not_empty(e_const)) == 0U);
+   constexpr auto values = Vector{10, 20};
+   constexpr auto copied = not_empty(values);
+   static_assert(equal(copied, values));
+   static_assert(count(copied) == 2);
+   static_assert(is_empty(not_empty(Vector<int, 0>{})));
 
-   // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10};
-   auto nv_runtime = not_empty(v_runtime);
+   const auto entries = Map{MapEntry{1, 100}, MapEntry{2, 200}};
+   const auto copied_entries = not_empty(entries);
+   const auto empty_values = Vector<int, 4>{};
+   const auto copied_empty = not_empty(empty_values);
 
-   return (count(nv_runtime) == 1U) ? 0 : 1;
+   return equal(copied_entries, entries) && count(entries) == 2 &&
+                  is_empty(copied_empty) && is_empty(empty_values)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
 template <concepts::SequenceableCollection C>
 [[nodiscard]] constexpr auto not_empty(const C& collection) noexcept -> C {
     return is_empty(collection) ? C{} : C{collection};
+}
+
+template <typename C>
+    requires(!concepts::SequenceableCollection<C>)
+constexpr auto not_empty([[maybe_unused]] const C& collection) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::not_empty: expected a Vector, Map, Set, Queue, or String value.");
 }
 
 } // namespace cljonic
