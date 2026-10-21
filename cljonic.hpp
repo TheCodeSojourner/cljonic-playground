@@ -2162,15 +2162,14 @@ template <typename C>
 namespace cljonic {
 
 /** \anchor Vector
- * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
- * operate on the collection is through the library's free-function API. Construction with more initializers than the
- * available capacity is rejected at compile time. A non-cljonic C++ range or view constructor parameter is copied into
- * the collection. A cljonic value is not copied as a range/view source. With an explicit element type, it is accepted
- * as one element only when its type exactly matches the declared element type. Without explicit template arguments, a
- * sole cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
- * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
- * collections or producers, including nested cljonic composites. Element construction, updates, and fallbacks follow
- * the \ref implicit-conversions "safe implicit conversion rules".
+ * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. Construction
+ * with more initializers than the available capacity is rejected at compile time. A non-cljonic C++ range or view
+ * constructor parameter is copied into the collection. A cljonic value is not copied as a range/view source. With an
+ * explicit element type, it is accepted as one element only when its type exactly matches the declared element type.
+ * Without explicit template arguments, a sole cljonic argument determines the element type and yields a one-element
+ * collection. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
+ * Elements may themselves be cljonic collections or producers, including nested cljonic composites. Element
+ * construction, updates, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -2294,8 +2293,9 @@ namespace cljonic {
    const auto runtime_view = runtime_values.view();
 
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
-           pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
-           range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
+           values.count() == 2 && pixel_value == Pixel{3, 4} &&
+           pixel_fallback == Pixel{99, 99} && range_sum == 16 &&
+           runtime_view.size() == 2 && runtime_view[0] == 7 &&
            from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
            runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
               ? 0
@@ -2384,6 +2384,20 @@ class Vector {
         return logical_size_;
     }
 
+    /** \cond INTERNAL */
+    [[nodiscard]] constexpr auto peek() const noexcept -> value_type {
+        return logical_size_ == 0U ? value_type{} : storage_[logical_size_ - 1U];
+    }
+
+    [[nodiscard]] constexpr auto pop() const noexcept -> Vector {
+        Vector result = *this;
+        if (result.logical_size_ > 0U) {
+            --result.logical_size_;
+        }
+        return result;
+    }
+    /** \endcond */
+
     template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback = value_type{}) const noexcept
         -> value_type {
@@ -2453,7 +2467,7 @@ class Vector {
     }
 
     [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
-        return storage_.data() + logical_size_;
+        return view().subspan(logical_size_).data();
     }
 
     [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {
@@ -4702,7 +4716,8 @@ template <typename Lhs, typename Rhs, typename... Rest>
 namespace cljonic {
 
 /** \anchor Peek
- * The \b peek free function API observes the accessible element without removal.
+ * The \b peek free function API returns the last logical element of a \ref Vector "Vector" or the front element of a
+ * \ref Queue "Queue" without removing it. An empty collection returns its element type's default value.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -4711,20 +4726,51 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto q_const = conj(Queue<int, 4>{}, 99);
-   static_assert(peek(q_const) == 99);
+   constexpr auto vector = Vector<int, 4>{10, 20};
+   constexpr auto queue = conj(conj(Queue<int, 4>{}, 30), 40);
+   constexpr auto empty_vector = Vector<int, 4>{};
+   constexpr auto empty_queue = Queue<int, 4>{};
+   static_assert(peek(vector) == 20);
+   static_assert(peek(queue) == 30);
+   static_assert(peek(empty_vector) == 0);
+   static_assert(peek(empty_queue) == 0);
 
    // Runtime demonstration.
-   auto q_runtime = conj(Queue<int, 4>{}, 77);
-   const auto v = peek(q_runtime);
+   volatile int vector_first_raw = 11;
+   volatile int vector_last_raw = 22;
+   volatile int queue_front_raw = 33;
+   volatile int queue_back_raw = 44;
+   int vector_first = vector_first_raw;
+   int vector_last = vector_last_raw;
+   int queue_front = queue_front_raw;
+   int queue_back = queue_back_raw;
+   const auto runtime_vector = Vector<int, 4>{vector_first, vector_last};
+   const auto runtime_queue =
+       conj(conj(Queue<int, 4>{}, queue_front), queue_back);
+   const auto vector_last_value = peek(runtime_vector);
+   const auto queue_front_value = peek(runtime_queue);
+   const auto empty_runtime_vector = empty(runtime_vector);
+   const auto empty_runtime_queue = empty(runtime_queue);
 
-   return (v == 77) ? 0 : 1;
+   return (vector_last_value == 22 && queue_front_value == 33 &&
+           peek(empty_runtime_vector) == 0 && peek(empty_runtime_queue) == 0 &&
+           count(runtime_vector) == 2 && peek(runtime_vector) == 22 &&
+           count(runtime_queue) == 2 && peek(runtime_queue) == 33)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
 template <typename C>
-[[nodiscard]] constexpr auto peek(const C& collection) noexcept {
+    requires concepts::CljonicVector<C> || concepts::CljonicQueue<C>
+[[nodiscard]] constexpr auto peek(const C& collection) noexcept -> C::value_type {
     return collection.peek();
+}
+
+template <typename C>
+    requires(!concepts::CljonicVector<C> && !concepts::CljonicQueue<C>)
+constexpr auto peek([[maybe_unused]] const C& collection) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<C>, "cljonic::peek: the first argument must be a Vector or Queue.");
 }
 
 } // namespace cljonic
@@ -4738,7 +4784,8 @@ namespace cljonic {
 
 /** \anchor Pop
  * The \b pop free function API yields an updated \ref concepts::CljonicCollection "collection" with the accessible
- * element removed.
+ * element removed. For a \ref Vector "Vector", it removes the last logical element; for a \ref Queue "Queue", it
+ * removes the front element.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -4747,21 +4794,40 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto q0_const = conj(conj(Queue<int, 4>{}, 1), 2);
-   constexpr auto q1_const = pop(q0_const);
-   static_assert(peek(q1_const) == 2);
+   constexpr auto vector = Vector<int, 4>{1, 2};
+   constexpr auto vector_after_pop = pop(vector);
+   constexpr auto queue = conj(conj(Queue<int, 4>{}, 1), 2);
+   constexpr auto queue_after_pop = pop(queue);
+   static_assert(peek(vector_after_pop) == 1);
+   static_assert(pop(vector) == vector_after_pop);
+   static_assert(peek(queue_after_pop) == 2);
+   static_assert(vector.count() == 2);
 
    // Runtime demonstration.
-   auto q0_runtime = conj(conj(Queue<int, 4>{}, 10), 20);
-   auto q1_runtime = pop(q0_runtime);
+   auto runtime_vector = Vector<int, 4>{10, 20};
+   auto runtime_vector_after_pop = pop(runtime_vector);
+   auto runtime_queue = conj(conj(Queue<int, 4>{}, 10), 20);
+   auto runtime_queue_after_pop = pop(runtime_queue);
 
-   return (peek(q1_runtime) == 20) ? 0 : 1;
+   return (peek(runtime_vector_after_pop) == 10 &&
+           pop(runtime_vector) == runtime_vector_after_pop &&
+           runtime_vector.count() == 2 && peek(runtime_queue_after_pop) == 20)
+              ? 0
+              : 1;
  }
  ~~~~~
  */
 template <typename C>
+    requires concepts::CljonicCollection<C> && requires(const C& value) { value.pop(); }
 [[nodiscard]] constexpr auto pop(const C& collection) noexcept {
     return collection.pop();
+}
+
+template <typename C>
+    requires(!(concepts::CljonicCollection<C> && requires(const C& value) { value.pop(); }))
+constexpr auto pop([[maybe_unused]] const C& collection) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::pop: the argument must be a cljonic collection with a pop() operation.");
 }
 
 } // namespace cljonic
@@ -4847,7 +4913,7 @@ namespace cljonic {
    }
 
    return (fifo_sum == 600 && from_span_sum == 60 &&
-           runtime_from_span_sum == 600 && from_pipeline.peek() == 11)
+           runtime_from_span_sum == 600 && peek(from_pipeline) == 11)
               ? 0
               : 1;
  }

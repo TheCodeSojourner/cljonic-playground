@@ -13,15 +13,14 @@
 namespace cljonic {
 
 /** \anchor Vector
- * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. The way to
- * operate on the collection is through the library's free-function API. Construction with more initializers than the
- * available capacity is rejected at compile time. A non-cljonic C++ range or view constructor parameter is copied into
- * the collection. A cljonic value is not copied as a range/view source. With an explicit element type, it is accepted
- * as one element only when its type exactly matches the declared element type. Without explicit template arguments, a
- * sole cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
- * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
- * collections or producers, including nested cljonic composites. Element construction, updates, and fallbacks follow
- * the \ref implicit-conversions "safe implicit conversion rules".
+ * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. Construction
+ * with more initializers than the available capacity is rejected at compile time. A non-cljonic C++ range or view
+ * constructor parameter is copied into the collection. A cljonic value is not copied as a range/view source. With an
+ * explicit element type, it is accepted as one element only when its type exactly matches the declared element type.
+ * Without explicit template arguments, a sole cljonic argument determines the element type and yields a one-element
+ * collection. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
+ * Elements may themselves be cljonic collections or producers, including nested cljonic composites. Element
+ * construction, updates, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -145,8 +144,9 @@ namespace cljonic {
    const auto runtime_view = runtime_values.view();
 
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
-           pixel_value == Pixel{3, 4} && pixel_fallback == Pixel{99, 99} &&
-           range_sum == 16 && runtime_view.size() == 2 && runtime_view[0] == 7 &&
+           values.count() == 2 && pixel_value == Pixel{3, 4} &&
+           pixel_fallback == Pixel{99, 99} && range_sum == 16 &&
+           runtime_view.size() == 2 && runtime_view[0] == 7 &&
            from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
            runtime_from_span(0) == 100 && runtime_from_span(1) == 200)
               ? 0
@@ -235,6 +235,20 @@ class Vector {
         return logical_size_;
     }
 
+    /** \cond INTERNAL */
+    [[nodiscard]] constexpr auto peek() const noexcept -> value_type {
+        return logical_size_ == 0U ? value_type{} : storage_[logical_size_ - 1U];
+    }
+
+    [[nodiscard]] constexpr auto pop() const noexcept -> Vector {
+        Vector result = *this;
+        if (result.logical_size_ > 0U) {
+            --result.logical_size_;
+        }
+        return result;
+    }
+    /** \endcond */
+
     template <concepts_detail::IntegerIndexType IndexType>
     [[nodiscard]] constexpr auto operator()(IndexType index, const value_type& fallback = value_type{}) const noexcept
         -> value_type {
@@ -304,7 +318,7 @@ class Vector {
     }
 
     [[nodiscard]] constexpr auto end() const noexcept -> const value_type* {
-        return storage_.data() + logical_size_;
+        return view().subspan(logical_size_).data();
     }
 
     [[nodiscard]] constexpr auto view() const noexcept -> std::span<const value_type> {

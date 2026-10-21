@@ -81,7 +81,7 @@ namespace cljonic {
    }
 
    return (fifo_sum == 600 && from_span_sum == 60 &&
-           runtime_from_span_sum == 600 && from_pipeline.peek() == 11)
+           runtime_from_span_sum == 600 && peek(from_pipeline) == 11)
               ? 0
               : 1;
  }
