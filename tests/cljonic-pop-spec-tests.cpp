@@ -9,9 +9,16 @@ TEST_CASE("Pop free function operations", "[pop]") {
     using cljonic::peek;
     using cljonic::pop;
     using cljonic::Queue;
+    using cljonic::Vector;
 
     TRACE_ID("entity-fields.Pop");
     TRACE_ID("invariant.Pop.PopFreeFunctionSupported");
+    TRACE_ID("invariant.Pop.SupportsVectorAndQueue");
+    TRACE_ID("invariant.Pop.VectorPopRemovesLastLogicalElement");
+    TRACE_ID("invariant.Pop.QueuePopRemovesFrontLogicalElement");
+    TRACE_ID("invariant.Pop.EmptyPopReturnsUnchangedCollection");
+    TRACE_ID("invariant.Pop.PopPreservesTypeCapacityOrderAndInput");
+    TRACE_ID("invariant.Pop.PopIsConstexprNoexceptNonAllocating");
     TRACE_ID("invariant.Pop.NoHeapAllocation");
     TRACE_ID("invariant.Pop.NoRtti");
     TRACE_ID("invariant.Pop.NoExceptions");
@@ -25,6 +32,22 @@ TEST_CASE("Pop free function operations", "[pop]") {
     constexpr auto q2 = pop(q1);
     STATIC_REQUIRE(peek(q2) == 2);
     STATIC_REQUIRE(peek(q1) == 1);
+    STATIC_REQUIRE(q2.count() == 1U);
+    STATIC_REQUIRE(q1.count() == 2U);
+    STATIC_REQUIRE(decltype(q2)::capacity() == decltype(q1)::capacity());
+    STATIC_REQUIRE(noexcept(pop(q1)));
+    STATIC_REQUIRE(pop(q0) == q0);
+
+    constexpr auto vector = Vector<int, 4>{1, 2};
+    constexpr auto vector_after_pop = pop(vector);
+    STATIC_REQUIRE(peek(vector_after_pop) == 1);
+    STATIC_REQUIRE(peek(vector) == 2);
+    STATIC_REQUIRE(vector_after_pop.count() == 1U);
+    STATIC_REQUIRE(vector.count() == 2U);
+    STATIC_REQUIRE(decltype(vector_after_pop)::capacity() == decltype(vector)::capacity());
+    STATIC_REQUIRE(noexcept(pop(vector)));
+    STATIC_REQUIRE(pop(Vector<int, 4>{}) == Vector<int, 4>{});
+    STATIC_REQUIRE(pop(Vector<int, 0>{}) == Vector<int, 0>{});
 
     // Runtime tests for code coverage instrumentation
     volatile int v1_raw = 1;
@@ -36,4 +59,13 @@ TEST_CASE("Pop free function operations", "[pop]") {
     auto rq2 = pop(rq1);
     REQUIRE(peek(rq2) == 2);
     REQUIRE(peek(rq1) == 1);
+    REQUIRE(rq2.count() == 1U);
+    REQUIRE(rq1.count() == 2U);
+
+    auto runtime_vector = Vector<int, 4>{v1, v2};
+    auto runtime_vector_after_pop = pop(runtime_vector);
+    REQUIRE(peek(runtime_vector_after_pop) == 1);
+    REQUIRE(peek(runtime_vector) == 2);
+    REQUIRE(runtime_vector_after_pop.count() == 1U);
+    REQUIRE(runtime_vector.count() == 2U);
 }

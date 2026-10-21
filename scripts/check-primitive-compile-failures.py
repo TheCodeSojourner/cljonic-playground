@@ -86,15 +86,18 @@ PRIMITIVES = {
         "diagnostic_cases": {
             "unsupported-scalar": (
                 "(void)cljonic::pop(42);",
-                "the argument must be a cljonic collection with a pop() operation",
+                "the argument must be a Vector or Queue collection; scalar values, producers, and other collection "
+                "types are not supported",
             ),
             "unsupported-set": (
                 "(void)cljonic::pop(cljonic::Set<int, 4>{1});",
-                "the argument must be a cljonic collection with a pop() operation",
+                "the argument must be a Vector or Queue collection; scalar values, producers, and other collection "
+                "types are not supported",
             ),
             "unsupported-producer": (
                 "(void)cljonic::pop(cljonic::Range<int>{0, 5});",
-                "the argument must be a cljonic collection with a pop() operation",
+                "the argument must be a Vector or Queue collection; scalar values, producers, and other collection "
+                "types are not supported",
             ),
         },
         "pass_cases": {
