@@ -56,18 +56,18 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
 
  int main() {
    // Compile-time demonstration.
-   constexpr Queue<int, 4> q_const{};
+   constexpr auto q_const = Queue<int, 4>{};
    static_assert(can_conj(q_const));
    static_assert(can_conj(q_const, 1));
    static_assert(can_conj(Queue<int, 2>{}, 1, 2));
-   constexpr Queue<int, 1> q_full{1};
+   constexpr auto q_full = Queue{1};
    static_assert(!can_conj(q_full, 2));
-   constexpr Set<int, 4> s_const{};
+   constexpr auto s_const = Set<int, 4>{};
    static_assert(can_conj(s_const, 1));
-   constexpr String<4> text_const{"Hi"};
+   constexpr auto text_const = String<4>{"Hi"};
    static_assert(can_conj(text_const, '!'));
-   constexpr Map<int, int, 4> m_const{MapEntry<int, int>{1, 100}};
-   static_assert(can_conj(m_const, MapEntry<int, int>{1, 999}));
+   constexpr auto m_const = Map{MapEntry{1, 100}};
+   static_assert(can_conj(m_const, MapEntry{1, 999}));
 
    // Runtime demonstration.
    auto q_runtime = Queue<int, 4>{};

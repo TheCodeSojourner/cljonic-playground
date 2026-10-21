@@ -43,7 +43,7 @@ namespace cljonic {
    // materialization from bounded range/view sources without mutating them.
    // --------------------------------------------------------------------------
    static constexpr int source_values[] = {10, 20, 30};
-   constexpr std::span source_span{source_values};
+   constexpr auto source_span = std::span{source_values};
    constexpr auto from_span = Queue<int, 4>{source_span};
    static_assert(from_span.begin()[0] == 10);
    static_assert(from_span.begin()[2] == 30);
@@ -53,7 +53,7 @@ namespace cljonic {
 
    // A standard view pipeline can use an existing Queue as its source and
    // materialize transformed values into another Queue.
-   const auto pipeline_source = Queue<int, 4>{1, 2, 3};
+   const auto pipeline_source = Queue{1, 2, 3};
    const auto shifted_view =
        pipeline_source |
        std::views::transform([](int value) noexcept { return value + 10; });
@@ -65,17 +65,17 @@ namespace cljonic {
        Queue<int, 4>{std::span<const int>{runtime_buffer, 3}};
 
    // Use C++ interoperability to sum the elements of the queue.
-   int fifo_sum = 0;
+   auto fifo_sum = 0;
    for (const auto value : runtime_buffer) {
      fifo_sum += value;
    }
 
-   int from_span_sum = 0;
+   auto from_span_sum = 0;
    for (const auto value : from_span) {
      from_span_sum += value;
    }
 
-   int runtime_from_span_sum = 0;
+   auto runtime_from_span_sum = 0;
    for (const auto value : runtime_from_span) {
      runtime_from_span_sum += value;
    }

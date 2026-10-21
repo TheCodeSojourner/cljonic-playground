@@ -18,13 +18,13 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
-   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
-   constexpr auto q_const = conj(Queue<int, 4>{}, 9);
-   constexpr Range<int> r_const{0, 5};
-   constexpr Repeat<int> finite_repeat{7, 3U};
-   constexpr Repeat<int> unbounded_repeat{7};
-   constexpr Range<int> unbounded_range{0, 0, 0};
+   constexpr auto v_const = Vector{1, 2, 3};
+   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto q_const = Queue{9};
+   constexpr auto r_const = Range{0, 5};
+   constexpr auto finite_repeat = Repeat{7, 3U};
+   constexpr auto unbounded_repeat = Repeat{7};
+   constexpr auto unbounded_range = Range{0, 0, 0};
    static_assert(count(v_const) == 3);
    static_assert(count(m_const) == 1);
    static_assert(count(q_const) == 1);
@@ -36,7 +36,7 @@ namespace cljonic {
                  CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
 
    // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10, 20};
+   auto v_runtime = Vector{10, 20};
    const auto sz = count(v_runtime);
 
    return (sz == 2) ? 0 : 1;

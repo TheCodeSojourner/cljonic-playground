@@ -21,12 +21,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr MapEntry<int, int> e_const{1, 100};
-   static_assert(e_const == MapEntry<int, int>{1, 100});
+   constexpr auto e_const = MapEntry{1, 100};
+   static_assert(e_const == MapEntry{1, 100});
 
    // Runtime demonstration.
-   auto e_runtime = MapEntry<int, int>{2, 200};
-   const auto equal_runtime = e_runtime == MapEntry<int, int>{2, 200};
+   auto e_runtime = MapEntry{2, 200};
+   const auto equal_runtime = e_runtime == MapEntry{2, 200};
 
    return equal_runtime ? 0 : 1;
  }

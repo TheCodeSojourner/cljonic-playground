@@ -856,7 +856,7 @@ namespace cljonic {
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
    static_assert(m_const(1) == 100);
 
-   constexpr auto v_const = assoc(Vector<int, 4>{10, 20}, 1, 200);
+   constexpr auto v_const = assoc(Vector{10, 20}, 1, 200);
    static_assert(v_const(1) == 200);
 
    constexpr auto m_multi = assoc(Map<int, int, 4>{}, 1, 100, 2, 200);
@@ -1018,7 +1018,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr Map<int, int, 4> m_const{};
+   constexpr auto m_const = Map<int, int, 4>{};
    static_assert(can_assoc(m_const, 1, 10));
    static_assert(can_assoc(m_const, 1, 10, 2, 20));
 
@@ -1225,18 +1225,18 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
 
  int main() {
    // Compile-time demonstration.
-   constexpr Queue<int, 4> q_const{};
+   constexpr auto q_const = Queue<int, 4>{};
    static_assert(can_conj(q_const));
    static_assert(can_conj(q_const, 1));
    static_assert(can_conj(Queue<int, 2>{}, 1, 2));
-   constexpr Queue<int, 1> q_full{1};
+   constexpr auto q_full = Queue{1};
    static_assert(!can_conj(q_full, 2));
-   constexpr Set<int, 4> s_const{};
+   constexpr auto s_const = Set<int, 4>{};
    static_assert(can_conj(s_const, 1));
-   constexpr String<4> text_const{"Hi"};
+   constexpr auto text_const = String<4>{"Hi"};
    static_assert(can_conj(text_const, '!'));
-   constexpr Map<int, int, 4> m_const{MapEntry<int, int>{1, 100}};
-   static_assert(can_conj(m_const, MapEntry<int, int>{1, 999}));
+   constexpr auto m_const = Map{MapEntry{1, 100}};
+   static_assert(can_conj(m_const, MapEntry{1, 999}));
 
    // Runtime demonstration.
    auto q_runtime = Queue<int, 4>{};
@@ -1395,7 +1395,7 @@ namespace cljonic {
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
-   auto runtime = String<8>{"Hi"};
+   auto runtime = String{"Hi"};
    const auto first = runtime(0);
    const auto missing = runtime(9, '!');
 
@@ -1406,11 +1406,11 @@ namespace cljonic {
    // string_view's size is not part of its type, so view construction requires
    // an explicit capacity.
    // -------------------------------------------------------------------------
-   static constexpr std::string_view static_source{"from view"};
+   static constexpr auto static_source = std::string_view{"from view"};
    constexpr auto from_static_view = String<16>{static_source};
    static_assert(from_static_view.view() == static_source);
 
-   const std::string_view runtime_source{"runtime view"};
+   const auto runtime_source = std::string_view{"runtime view"};
    const auto from_runtime_view = String<16>{runtime_source};
    const auto runtime_view_copy = from_runtime_view.view();
 
@@ -1423,14 +1423,14 @@ namespace cljonic {
    const auto from_pipeline = String<8>{uppercase_view};
 
    static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
-   static constexpr auto span_source{std::span<const char, 4>{char_source}};
+   static constexpr auto span_source = std::span{char_source};
    constexpr auto from_char_span = String{span_source};
    static_assert(from_char_span.view() == std::string_view{"span"});
 
    static_assert(literal.view() == std::string_view{"Hello"});
 
    // Use C++ interoperability to sum the bytes in a String.
-   int byte_sum = 0;
+   auto byte_sum = 0;
    for (const auto byte : runtime) {
      byte_sum += byte;
    }
@@ -1856,7 +1856,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(v_const(2) == 30);
    constexpr auto text_const = conj(String<4>{"Hi"}, '!');
    static_assert(text_const(2) == '!');
-   constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry<int, int>{1, 100});
+   constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry{1, 100});
    static_assert(m_const(1) == 100);
 
    // Zero-value and variadic arities.
@@ -2025,10 +2025,10 @@ concept ContainsAdmissible =
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+   constexpr auto v_const = Vector{10, 20, 30};
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto s_const = Set{5};
-   constexpr auto st_const = String<8>{"abc"};
+   constexpr auto st_const = String{"abc"};
    static_assert(contains(v_const, 0U));
    static_assert(!contains(v_const, 9U));
    static_assert(contains(m_const, 1));
@@ -2038,7 +2038,7 @@ concept ContainsAdmissible =
    static_assert(contains(st_const, 1U));
 
    // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10, 20};
+   auto v_runtime = Vector{10, 20};
    const auto in_range = contains(v_runtime, 0U);
 
    return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
@@ -2100,13 +2100,13 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
-   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
-   constexpr auto q_const = conj(Queue<int, 4>{}, 9);
-   constexpr Range<int> r_const{0, 5};
-   constexpr Repeat<int> finite_repeat{7, 3U};
-   constexpr Repeat<int> unbounded_repeat{7};
-   constexpr Range<int> unbounded_range{0, 0, 0};
+   constexpr auto v_const = Vector{1, 2, 3};
+   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto q_const = Queue{9};
+   constexpr auto r_const = Range{0, 5};
+   constexpr auto finite_repeat = Repeat{7, 3U};
+   constexpr auto unbounded_repeat = Repeat{7};
+   constexpr auto unbounded_range = Range{0, 0, 0};
    static_assert(count(v_const) == 3);
    static_assert(count(m_const) == 1);
    static_assert(count(q_const) == 1);
@@ -2118,7 +2118,7 @@ namespace cljonic {
                  CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
 
    // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10, 20};
+   auto v_runtime = Vector{10, 20};
    const auto sz = count(v_runtime);
 
    return (sz == 2) ? 0 : 1;
@@ -2210,19 +2210,19 @@ namespace cljonic {
 
    // Vector values can be nested, including through an explicit type alias.
    [[maybe_unused]] constexpr auto nested_int_vectors =
-       Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
+       Vector{Vector{1, 2}, Vector<int, 2>{3}};
    [[maybe_unused]] constexpr auto nested_alias_vectors =
        Vector{Inner{4, 5}, Inner{6}};
 
    // User-defined values and constructor argument categories are supported.
    constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
    constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
-   constexpr Vector<int, 4> values{10, 20};
-   constexpr CategoryArgument category_argument{};
-   constexpr Vector<CategoryElement, 1> lvalue_constructed{
-       CategoryElement{category_argument}};
-   constexpr Vector<CategoryElement, 1> rvalue_constructed{
-       CategoryElement{CategoryArgument{}}};
+   constexpr auto values = Vector<int, 4>{10, 20};
+   constexpr auto category_argument = CategoryArgument{};
+   constexpr auto lvalue_constructed =
+       Vector{CategoryElement{category_argument}};
+   constexpr auto rvalue_constructed =
+       Vector{CategoryElement{CategoryArgument{}}};
 
    // Vector values can be used as a callable function, returning a default-
    // value for invalid indexes or a supplied fallback when provided.
@@ -2243,13 +2243,13 @@ namespace cljonic {
    static_assert(pixels_populated(-1).y == 0);
 
    // Pixel equality validates the runtime result for a user-defined value type.
-   auto runtime_pixels = Vector<Pixel, 4>{Pixel{1, 2}, Pixel{3, 4}};
+   auto runtime_pixels = Vector{Pixel{1, 2}, Pixel{3, 4}};
    const auto pixel_value = runtime_pixels(1);
    const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
-   auto runtime_values = Vector<int, 4>{7, 9};
+   auto runtime_values = Vector{7, 9};
    const auto fallback = runtime_values(4, -1);
    const auto negative_default = runtime_values(-1);
    const auto negative_fallback = runtime_values(-1, 99);
@@ -2267,7 +2267,7 @@ namespace cljonic {
    // storage, retaining only the bounded prefix that fits the capacity.
    // -----------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 33, 44};
-   constexpr std::span source_span{source_values};
+   constexpr auto source_span = std::span{source_values};
    constexpr auto from_span = Vector<int, 4>{source_span};
    static_assert(from_span(1) == 22);
    constexpr auto from_span_ctad = Vector{source_span};
@@ -2280,12 +2280,12 @@ namespace cljonic {
    const auto runtime_from_span =
        Vector<int, 4>{std::span<const int>{runtime_buffer, 3}};
 
-   constexpr auto interop_values = Vector<int, 4>{10, 20, 30};
+   constexpr auto interop_values = Vector{10, 20, 30};
    static_assert(interop_values.begin()[1] == 20);
    static_assert(interop_values.view().size() == 3);
 
    // Use C++ interoperability to sum the values in a vector
-   int range_sum = 0;
+   auto range_sum = 0;
    for (const auto value : runtime_values) {
      range_sum += value;
    }
@@ -2589,18 +2589,18 @@ concept CycleClassArgument =
  using namespace cljonic;
 
  int main() {
-   [[maybe_unused]] constexpr auto finite_cycle = cycle(Vector<int, 3>{1, 2, 3});
+   [[maybe_unused]] constexpr auto finite_cycle = cycle(Vector{1, 2, 3});
    [[maybe_unused]] constexpr auto unbounded_cycle = cycle(Range{0, 0, 0});
 
    // -----------------------------------------------------------------------
    // C++ interoperability: Cycle supports const traversal.
    // -----------------------------------------------------------------------
-   auto runtime_cycle = cycle(Vector<int, 3>{4, 5, 6});
+   auto runtime_cycle = cycle(Vector{4, 5, 6});
    auto runtime_unbounded_cycle = cycle(Range{0, 0, 0});
 
    // Use C++ interoperability to observe a finite source cycle at runtime.
-   int runtime_sum = 0;
-   int runtime_count = 0;
+   auto runtime_sum = 0;
+   auto runtime_count = 0;
    for (const auto value : runtime_cycle) {
      runtime_sum += value;
      if (++runtime_count == 5) {
@@ -2609,8 +2609,8 @@ concept CycleClassArgument =
    }
 
    // Use C++ interoperability to observe an unbounded source cycle at runtime.
-   int runtime_unbounded_sum = 0;
-   int runtime_unbounded_count = 0;
+   auto runtime_unbounded_sum = 0;
+   auto runtime_unbounded_count = 0;
    for (const auto value : runtime_unbounded_cycle) {
      runtime_unbounded_sum += value;
      if (++runtime_unbounded_count == 4) {
@@ -3046,14 +3046,14 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
+   constexpr auto v_const = Vector{1, 2, 3};
    [[maybe_unused]] constexpr auto e_const = empty(v_const);
    static_assert(is_empty(e_const));
 
    // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10, 20};
+   auto v_runtime = Vector{10, 20};
    auto e_runtime = empty(v_runtime);
-   auto m_runtime = Map<int, int, 4>{MapEntry<int, int>{1, 100}};
+   auto m_runtime = Map{MapEntry{1, 100}};
    auto em_runtime = empty(m_runtime);
 
    return (is_empty(e_runtime) && count(v_runtime) == 2 &&
@@ -3336,16 +3336,14 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v = Vector<int, 4>{1, 2, 3};
-   constexpr auto r = Range<int>{1, 4, 1}; // produces 1, 2, 3
-   constexpr auto q = Queue<int, 4>{1, 2, 3};
-   constexpr auto rep = Repeat<int>{1, 3U};
-   constexpr auto m1 =
-       Map<int, int, 4>{MapEntry<int, int>{1, 10}, MapEntry<int, int>{2, 20}};
-   constexpr auto m2 =
-       Map<int, int, 4>{MapEntry<int, int>{2, 20}, MapEntry<int, int>{1, 10}};
-   constexpr auto s1 = Set<int, 4>{3, 1, 2};
-   constexpr auto s2 = Set<int, 4>{1, 2, 3};
+   constexpr auto v = Vector{1, 2, 3};
+   constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
+   constexpr auto q = Queue{1, 2, 3};
+   constexpr auto rep = Repeat{1, 3U};
+   constexpr auto m1 = Map{MapEntry{1, 10}, MapEntry{2, 20}};
+   constexpr auto m2 = Map{MapEntry{2, 20}, MapEntry{1, 10}};
+   constexpr auto s1 = Set{3, 1, 2};
+   constexpr auto s2 = Set{1, 2, 3};
    constexpr auto str1 = String<8>{"abc"};
    constexpr auto str2 = String<16>{"abc"};
    static_assert(equal(1, 1));
@@ -3357,7 +3355,7 @@ namespace cljonic {
                                    // same elements compare equal
    static_assert(equal(v, r));     // Vector vs Range
    static_assert(equal(v, q));     // Vector vs Queue
-   static_assert(equal(Vector<int, 4>{1, 1, 1}, rep));
+   static_assert(equal(Vector{1, 1, 1}, rep));
    static_assert(equal(m1, m2));     // Map equality ignores entry order
    static_assert(equal(s1, s2));     // Set equality ignores element order
    static_assert(equal(str1, str2)); // String equality compares content
@@ -3371,8 +3369,8 @@ namespace cljonic {
        !equal(var_int, Variant<int, long>{1L})); // different alternative
 
    // Runtime demonstration.
-   auto runtime_v = Vector<int, 4>{1, 2, 3};
-   auto runtime_r = Range<int>{1, 4, 1};
+   auto runtime_v = Vector{1, 2, 3};
+   auto runtime_r = Range{1, 4, 1};
    return equal(runtime_v, runtime_r) ? 0 : 1;
  }
  ~~~~~
@@ -3505,12 +3503,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr MapEntry<int, int> e_const{1, 100};
-   static_assert(e_const == MapEntry<int, int>{1, 100});
+   constexpr auto e_const = MapEntry{1, 100};
+   static_assert(e_const == MapEntry{1, 100});
 
    // Runtime demonstration.
-   auto e_runtime = MapEntry<int, int>{2, 200};
-   const auto equal_runtime = e_runtime == MapEntry<int, int>{2, 200};
+   auto e_runtime = MapEntry{2, 200};
+   const auto equal_runtime = e_runtime == MapEntry{2, 200};
 
    return equal_runtime ? 0 : 1;
  }
@@ -3637,7 +3635,7 @@ namespace cljonic {
    // ---------------------------------------------------------------------------
    static constexpr AccountEntry source_entries[] = {
        AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
-   constexpr std::span source_span{source_entries};
+   constexpr auto source_span = std::span{source_entries};
    constexpr auto from_span = AccountMap{source_span};
    static_assert(from_span(Key{10}).amount == 100);
    static_assert(from_span(Key{20}).amount == 200);
@@ -3653,7 +3651,7 @@ namespace cljonic {
        Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
 
    // Use C++ interoperability to sum the values in a map.
-   int value_sum = 0;
+   auto value_sum = 0;
    for (const auto &entry : runtime) {
      value_sum += entry.value.amount;
    }
@@ -3933,29 +3931,28 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
-   constexpr auto m_const = Map<int, int, 4>{MapEntry<int, int>{1, 100}};
-   constexpr auto s_const = Set<int, 4>{7};
-   constexpr auto q_const = Queue<int, 4>{5, 6};
-   constexpr auto text_const = String<4>{"AB"};
-   constexpr MapEntry<int, int> e_const{1, 100};
+   constexpr auto v_const = Vector{10, 20, 30};
+   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto s_const = Set{7};
+   constexpr auto q_const = Queue{5, 6};
+   constexpr auto text_const = String{"AB"};
+   constexpr auto e_const = MapEntry{1, 100};
    static_assert(first(v_const) == 10);
-   static_assert(first(m_const) == MapEntry<int, int>{1, 100});
+   static_assert(first(m_const) == MapEntry{1, 100});
    static_assert(first(s_const) == 7);
    static_assert(first(q_const) == 5);
    static_assert(first(text_const) == 'A');
    static_assert(first(e_const) == 1);
 
    // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{100, 200};
-   auto m_runtime = Map<int, int, 4>{MapEntry<int, int>{2, 200}};
-   auto s_runtime = Set<int, 4>{8};
-   auto q_runtime = Queue<int, 4>{9, 10};
-   auto text_runtime = String<4>{"CD"};
-   auto e_runtime = MapEntry<int, int>{3, 300};
+   auto v_runtime = Vector{100, 200};
+   auto m_runtime = Map{MapEntry{2, 200}};
+   auto s_runtime = Set{8};
+   auto q_runtime = Queue{9, 10};
+   auto text_runtime = String{"CD"};
+   auto e_runtime = MapEntry{3, 300};
 
-   return (first(v_runtime) == 100 &&
-           first(m_runtime) == MapEntry<int, int>{2, 200} &&
+   return (first(v_runtime) == 100 && first(m_runtime) == MapEntry{2, 200} &&
            first(s_runtime) == 8 && first(q_runtime) == 9 &&
            first(text_runtime) == 'C' && first(e_runtime) == 3)
               ? 0
@@ -4008,20 +4005,20 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr Vector<int, 8> destination{};
-   constexpr Range<int> finite_source{0, 5};
+   constexpr auto destination = Vector<int, 8>{};
+   constexpr auto finite_source = Range{0, 5};
    static_assert(fits_into(destination, finite_source));
 
-   constexpr Range<int> unbounded_source{0, 5, 0};
+   constexpr auto unbounded_source = Range{0, 5, 0};
    static_assert(!fits_into(destination, unbounded_source));
 
-   constexpr Vector<int, 2> small_destination{};
+   constexpr auto small_destination = Vector<int, 2>{};
    static_assert(!fits_into(small_destination, finite_source));
 
    // Runtime demonstration.
-   volatile int runtime_end = 5;
+   volatile auto runtime_end = 5;
    const auto runtime_destination = Vector<int, 8>{1, 2};
-   const auto runtime_source = Range<int>{0, runtime_end};
+   const auto runtime_source = Range{0, runtime_end};
    const auto runtime_small_destination = Vector<int, 4>{};
 
    return (fits_into(runtime_destination, runtime_source) &&
@@ -4188,26 +4185,26 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr Vector<int, 8> destination{100, 200};
-   constexpr Range<int> source{0, 5};
+   constexpr auto destination = Vector<int, 8>{100, 200};
+   constexpr auto source = Range{0, 5};
    constexpr auto result = into(destination, source);
-   static_assert(equal(result, Vector<int, 8>{100, 200, 0, 1, 2, 3, 4}));
-   static_assert(equal(destination, Vector<int, 8>{100, 200}));
+   static_assert(equal(result, Vector{100, 200, 0, 1, 2, 3, 4}));
+   static_assert(equal(destination, Vector{100, 200}));
    static_assert(count(source) == 5);
 
    constexpr auto prefix = into(Vector<int, 4>{100, 200}, source);
-   static_assert(equal(prefix, Vector<int, 4>{100, 200, 0, 1}));
+   static_assert(equal(prefix, Vector{100, 200, 0, 1}));
 
    // Runtime demonstration.
-   volatile int runtime_end = 5;
+   volatile auto runtime_end = 5;
    const auto runtime_destination = Vector<int, 8>{100, 200};
-   const auto runtime_source = Range<int>{0, runtime_end};
+   const auto runtime_source = Range{0, runtime_end};
    const auto runtime_result = into(runtime_destination, runtime_source);
    const auto runtime_prefix = into(Vector<int, 4>{100, 200}, runtime_source);
 
-   return (equal(runtime_result, Vector<int, 8>{100, 200, 0, 1, 2, 3, 4}) &&
-           equal(runtime_prefix, Vector<int, 4>{100, 200, 0, 1}) &&
-           equal(runtime_destination, Vector<int, 8>{100, 200}) &&
+   return (equal(runtime_result, Vector{100, 200, 0, 1, 2, 3, 4}) &&
+           equal(runtime_prefix, Vector{100, 200, 0, 1}) &&
+           equal(runtime_destination, Vector{100, 200}) &&
            count(runtime_source) == 5)
               ? 0
               : 1;
@@ -4269,7 +4266,7 @@ namespace cljonic {
    static_assert(is_empty(empty_range));
    static_assert(!is_empty(unbounded_repeat));
 
-   const int value = 3;
+   const auto value = 3;
    const auto runtime_values = Vector{value};
    const auto original_values = runtime_values;
    const auto runtime_empty_range = Range{value, value};
@@ -4350,8 +4347,8 @@ concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concept
    // A named function can be used as the constexpr step callback.
    constexpr auto constexpr_sum = [] {
      constexpr auto values = iterate(add_two, 1);
-     int sum = 0;
-     int observed = 0;
+     auto sum = 0;
+     auto observed = 0;
      for (const auto value : values) {
        sum += value;
        if (++observed == 4) {
@@ -4368,8 +4365,8 @@ concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concept
    // -----------------------------------------------------------------------
    // C++ interoperability: Iterate supports const traversal.
    // -----------------------------------------------------------------------
-   int runtime_sum = 0;
-   int runtime_observed = 0;
+   auto runtime_sum = 0;
+   auto runtime_observed = 0;
    for (const auto value : runtime_values) {
      // A bounded observation makes the unbounded producer safe to inspect.
      runtime_sum += value;
@@ -4611,13 +4608,13 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v = Vector<int, 4>{1, 2, 3};
-   constexpr auto r = Range<int>{1, 4, 1}; // produces 1, 2, 3
-   constexpr auto q = Queue<int, 4>{1, 2, 3};
-   constexpr auto m1 = Map<int, int, 4>{MapEntry<int, int>{1, 10}};
-   constexpr auto m2 = Map<int, int, 4>{MapEntry<int, int>{2, 20}};
-   constexpr auto s1 = Set<int, 4>{3, 1, 2};
-   constexpr auto s2 = Set<int, 4>{1, 2, 3};
+   constexpr auto v = Vector{1, 2, 3};
+   constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
+   constexpr auto q = Queue{1, 2, 3};
+   constexpr auto m1 = Map{MapEntry{1, 10}};
+   constexpr auto m2 = Map{MapEntry{2, 20}};
+   constexpr auto s1 = Set{3, 1, 2};
+   constexpr auto s2 = Set{1, 2, 3};
    static_assert(not_equal(1, 2));
    static_assert(!not_equal(1, 1));
    static_assert(!not_equal(1));                      // single value
@@ -4625,7 +4622,7 @@ namespace cljonic {
    static_assert(!not_equal(1, 1, 1));                // every pair equal
    static_assert(!not_equal(v, r));                   // same elements
    static_assert(not_equal(v, q) == not_equal(q, v)); // symmetric
-   static_assert(not_equal(v, Vector<int, 4>{1, 2, 4}));
+   static_assert(not_equal(v, Vector{1, 2, 4}));
    static_assert(not_equal(m1, m2));  // different entries
    static_assert(!not_equal(s1, s2)); // same elements
 
@@ -4637,12 +4634,12 @@ namespace cljonic {
        !not_equal(var_int, Variant<int, long>{1})); // same alternative and value
 
    // Runtime demonstration.
-   volatile int runtime_raw = 1;
+   volatile auto runtime_raw = 1;
    const auto runtime_first = runtime_raw;
    const auto runtime_v =
-       Vector<int, 4>{runtime_first, runtime_first + 1, runtime_first + 2};
+       Vector{runtime_first, runtime_first + 1, runtime_first + 2};
    const auto runtime_r =
-       Range<int>{runtime_first, runtime_first + 2, 1}; // produces 1, 2
+       Range{runtime_first, runtime_first + 2, 1}; // produces 1, 2
    return not_equal(runtime_v, runtime_r) ? 0 : 1;
  }
  ~~~~~
@@ -4726,8 +4723,8 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto vector = Vector<int, 4>{10, 20};
-   constexpr auto queue = conj(conj(Queue<int, 4>{}, 30), 40);
+   constexpr auto vector = Vector{10, 20};
+   constexpr auto queue = Queue{30, 40};
    constexpr auto empty_vector = Vector<int, 4>{};
    constexpr auto empty_queue = Queue<int, 4>{};
    static_assert(peek(vector) == 20);
@@ -4736,17 +4733,16 @@ namespace cljonic {
    static_assert(peek(empty_queue) == 0);
 
    // Runtime demonstration.
-   volatile int vector_first_raw = 11;
-   volatile int vector_last_raw = 22;
-   volatile int queue_front_raw = 33;
-   volatile int queue_back_raw = 44;
-   int vector_first = vector_first_raw;
-   int vector_last = vector_last_raw;
-   int queue_front = queue_front_raw;
-   int queue_back = queue_back_raw;
-   const auto runtime_vector = Vector<int, 4>{vector_first, vector_last};
-   const auto runtime_queue =
-       conj(conj(Queue<int, 4>{}, queue_front), queue_back);
+   volatile auto vector_first_raw = 11;
+   volatile auto vector_last_raw = 22;
+   volatile auto queue_front_raw = 33;
+   volatile auto queue_back_raw = 44;
+   const auto vector_first = vector_first_raw;
+   const auto vector_last = vector_last_raw;
+   const auto queue_front = queue_front_raw;
+   const auto queue_back = queue_back_raw;
+   const auto runtime_vector = Vector{vector_first, vector_last};
+   const auto runtime_queue = Queue{queue_front, queue_back};
    const auto vector_last_value = peek(runtime_vector);
    const auto queue_front_value = peek(runtime_queue);
    const auto empty_runtime_vector = empty(runtime_vector);
@@ -4794,9 +4790,9 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto vector = Vector<int, 4>{1, 2};
+   constexpr auto vector = Vector{1, 2};
    constexpr auto vector_after_pop = pop(vector);
-   constexpr auto queue = conj(conj(Queue<int, 4>{}, 1), 2);
+   constexpr auto queue = Queue{1, 2};
    constexpr auto queue_after_pop = pop(queue);
    static_assert(peek(vector_after_pop) == 1);
    static_assert(pop(vector) == vector_after_pop);
@@ -4804,9 +4800,9 @@ namespace cljonic {
    static_assert(vector.count() == 2);
 
    // Runtime demonstration.
-   auto runtime_vector = Vector<int, 4>{10, 20};
+   auto runtime_vector = Vector{10, 20};
    auto runtime_vector_after_pop = pop(runtime_vector);
-   auto runtime_queue = conj(conj(Queue<int, 4>{}, 10), 20);
+   auto runtime_queue = Queue{10, 20};
    auto runtime_queue_after_pop = pop(runtime_queue);
 
    return (peek(runtime_vector_after_pop) == 10 &&
@@ -4875,7 +4871,7 @@ namespace cljonic {
    // materialization from bounded range/view sources without mutating them.
    // --------------------------------------------------------------------------
    static constexpr int source_values[] = {10, 20, 30};
-   constexpr std::span source_span{source_values};
+   constexpr auto source_span = std::span{source_values};
    constexpr auto from_span = Queue<int, 4>{source_span};
    static_assert(from_span.begin()[0] == 10);
    static_assert(from_span.begin()[2] == 30);
@@ -4885,7 +4881,7 @@ namespace cljonic {
 
    // A standard view pipeline can use an existing Queue as its source and
    // materialize transformed values into another Queue.
-   const auto pipeline_source = Queue<int, 4>{1, 2, 3};
+   const auto pipeline_source = Queue{1, 2, 3};
    const auto shifted_view =
        pipeline_source |
        std::views::transform([](int value) noexcept { return value + 10; });
@@ -4897,17 +4893,17 @@ namespace cljonic {
        Queue<int, 4>{std::span<const int>{runtime_buffer, 3}};
 
    // Use C++ interoperability to sum the elements of the queue.
-   int fifo_sum = 0;
+   auto fifo_sum = 0;
    for (const auto value : runtime_buffer) {
      fifo_sum += value;
    }
 
-   int from_span_sum = 0;
+   auto from_span_sum = 0;
    for (const auto value : from_span) {
      from_span_sum += value;
    }
 
-   int runtime_from_span_sum = 0;
+   auto runtime_from_span_sum = 0;
    for (const auto value : runtime_from_span) {
      runtime_from_span_sum += value;
    }
@@ -5182,7 +5178,7 @@ concept RangeClassArgument =
  int main() {
    // Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero
    // arguments.
-   [[maybe_unused]] constexpr Range<int> empty{};
+   [[maybe_unused]] constexpr auto empty = Range<int>{};
 
    // Single argument is the exclusive end; start defaults to 0, step to 1.
    [[maybe_unused]] constexpr auto to_five = Range{5};
@@ -5208,7 +5204,7 @@ concept RangeClassArgument =
 
    // Use C++ interoperability to sum the values in a constexpr range
    constexpr auto odds_sum = [odds] {
-     int sum = 0;
+     auto sum = 0;
      for (const auto value : odds) {
        sum += value;
      }
@@ -5217,7 +5213,7 @@ concept RangeClassArgument =
    static_assert(odds_sum == 36);
 
    // Use C++ interoperability to sum the values in a runtime range
-   int runtime_odds_sum = 0;
+   auto runtime_odds_sum = 0;
    for (const auto value : runtime_odds) {
      runtime_odds_sum += value;
    }
@@ -5502,7 +5498,7 @@ concept RepeatClassArgument =
    auto runtime_finite = Repeat{-1, 2U};
 
    constexpr auto finite_sum = [finite] {
-     int sum = 0;
+     auto sum = 0;
      for (const auto value : finite) {
        sum += value;
      }
@@ -5511,7 +5507,7 @@ concept RepeatClassArgument =
    static_assert(finite_sum == 21);
 
    constexpr auto pixel_sum = [pixels] {
-     int sum = 0;
+     auto sum = 0;
      for (const auto pixel : pixels) {
        sum += pixel.x + pixel.y;
      }
@@ -5519,7 +5515,7 @@ concept RepeatClassArgument =
    }();
    static_assert(pixel_sum == 26);
 
-   int runtime_sum = 0;
+   auto runtime_sum = 0;
    for (const auto value : runtime_finite) {
      runtime_sum += value;
    }
@@ -5757,7 +5753,7 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
    // A named function can be used as the constexpr step callback.
    constexpr auto constexpr_sum = [] {
      constexpr auto values = repeatedly(3U, five);
-     int sum = 0;
+     auto sum = 0;
      for (const auto value : values) {
        sum += value;
      }
@@ -5775,7 +5771,7 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
    // -----------------------------------------------------------------------
    // C++ interoperability: Repeatedly supports const traversal.
    // -----------------------------------------------------------------------
-   int runtime_sum = 0;
+   auto runtime_sum = 0;
    for (const auto value : runtime_values) {
      runtime_sum += value;
    }
@@ -6032,7 +6028,7 @@ namespace cljonic {
    // storage, retaining only the bounded prefix that fits the capacity.
    // -------------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 11, 33};
-   constexpr std::span source_span{source_values};
+   constexpr auto source_span = std::span{source_values};
    constexpr auto from_span = AccountSet{source_span};
    static_assert(from_span(11) == 11);
    static_assert(from_span(22) == 22);
@@ -6053,7 +6049,7 @@ namespace cljonic {
    static_assert(literal.view().size() == 3);
 
    // Use C++ interoperability to sum the values in a set.
-   int observed_sum = 0;
+   auto observed_sum = 0;
    for (const auto value : runtime) {
      observed_sum += value;
    }
@@ -6415,7 +6411,7 @@ concept VariantClassArgument =
    [[maybe_unused]] constexpr auto as_long = Variant<int, long>{1L};
 
    // Copy construction preserves the active alternative and its value.
-   [[maybe_unused]] constexpr auto copied = Variant<int, long>{as_int};
+   [[maybe_unused]] constexpr auto copied = as_int;
 
    // A Variant nests inside another Variant and is storable as a collection
    // element or a map key.
@@ -6424,8 +6420,7 @@ concept VariantClassArgument =
    [[maybe_unused]] constexpr auto as_vector_element =
        Vector{Variant<int, long>{1}, Variant<int, long>{2L}};
    [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
-   [[maybe_unused]] constexpr auto as_map_key =
-       MapEntry<Variant<int, long>, int>{as_int, 1};
+   [[maybe_unused]] constexpr auto as_map_key = MapEntry{as_int, 1};
 
    return 0;
  }

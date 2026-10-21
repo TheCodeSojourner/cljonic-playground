@@ -16,8 +16,8 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto vector = Vector<int, 4>{10, 20};
-   constexpr auto queue = conj(conj(Queue<int, 4>{}, 30), 40);
+   constexpr auto vector = Vector{10, 20};
+   constexpr auto queue = Queue{30, 40};
    constexpr auto empty_vector = Vector<int, 4>{};
    constexpr auto empty_queue = Queue<int, 4>{};
    static_assert(peek(vector) == 20);
@@ -26,17 +26,16 @@ namespace cljonic {
    static_assert(peek(empty_queue) == 0);
 
    // Runtime demonstration.
-   volatile int vector_first_raw = 11;
-   volatile int vector_last_raw = 22;
-   volatile int queue_front_raw = 33;
-   volatile int queue_back_raw = 44;
-   int vector_first = vector_first_raw;
-   int vector_last = vector_last_raw;
-   int queue_front = queue_front_raw;
-   int queue_back = queue_back_raw;
-   const auto runtime_vector = Vector<int, 4>{vector_first, vector_last};
-   const auto runtime_queue =
-       conj(conj(Queue<int, 4>{}, queue_front), queue_back);
+   volatile auto vector_first_raw = 11;
+   volatile auto vector_last_raw = 22;
+   volatile auto queue_front_raw = 33;
+   volatile auto queue_back_raw = 44;
+   const auto vector_first = vector_first_raw;
+   const auto vector_last = vector_last_raw;
+   const auto queue_front = queue_front_raw;
+   const auto queue_back = queue_back_raw;
+   const auto runtime_vector = Vector{vector_first, vector_last};
+   const auto runtime_queue = Queue{queue_front, queue_back};
    const auto vector_last_value = peek(runtime_vector);
    const auto queue_front_value = peek(runtime_queue);
    const auto empty_runtime_vector = empty(runtime_vector);

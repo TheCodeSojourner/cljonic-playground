@@ -50,7 +50,7 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
    // A named function can be used as the constexpr step callback.
    constexpr auto constexpr_sum = [] {
      constexpr auto values = repeatedly(3U, five);
-     int sum = 0;
+     auto sum = 0;
      for (const auto value : values) {
        sum += value;
      }
@@ -68,7 +68,7 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
    // -----------------------------------------------------------------------
    // C++ interoperability: Repeatedly supports const traversal.
    // -----------------------------------------------------------------------
-   int runtime_sum = 0;
+   auto runtime_sum = 0;
    for (const auto value : runtime_values) {
      runtime_sum += value;
    }

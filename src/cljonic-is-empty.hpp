@@ -27,7 +27,7 @@ namespace cljonic {
    static_assert(is_empty(empty_range));
    static_assert(!is_empty(unbounded_repeat));
 
-   const int value = 3;
+   const auto value = 3;
    const auto runtime_values = Vector{value};
    const auto original_values = runtime_values;
    const auto runtime_empty_range = Range{value, value};

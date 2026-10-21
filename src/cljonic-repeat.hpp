@@ -59,7 +59,7 @@ concept RepeatClassArgument =
    auto runtime_finite = Repeat{-1, 2U};
 
    constexpr auto finite_sum = [finite] {
-     int sum = 0;
+     auto sum = 0;
      for (const auto value : finite) {
        sum += value;
      }
@@ -68,7 +68,7 @@ concept RepeatClassArgument =
    static_assert(finite_sum == 21);
 
    constexpr auto pixel_sum = [pixels] {
-     int sum = 0;
+     auto sum = 0;
      for (const auto pixel : pixels) {
        sum += pixel.x + pixel.y;
      }
@@ -76,7 +76,7 @@ concept RepeatClassArgument =
    }();
    static_assert(pixel_sum == 26);
 
-   int runtime_sum = 0;
+   auto runtime_sum = 0;
    for (const auto value : runtime_finite) {
      runtime_sum += value;
    }

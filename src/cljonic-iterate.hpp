@@ -47,8 +47,8 @@ concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concept
    // A named function can be used as the constexpr step callback.
    constexpr auto constexpr_sum = [] {
      constexpr auto values = iterate(add_two, 1);
-     int sum = 0;
-     int observed = 0;
+     auto sum = 0;
+     auto observed = 0;
      for (const auto value : values) {
        sum += value;
        if (++observed == 4) {
@@ -65,8 +65,8 @@ concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concept
    // -----------------------------------------------------------------------
    // C++ interoperability: Iterate supports const traversal.
    // -----------------------------------------------------------------------
-   int runtime_sum = 0;
-   int runtime_observed = 0;
+   auto runtime_sum = 0;
+   auto runtime_observed = 0;
    for (const auto value : runtime_values) {
      // A bounded observation makes the unbounded producer safe to inspect.
      runtime_sum += value;

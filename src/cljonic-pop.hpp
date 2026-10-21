@@ -17,9 +17,9 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto vector = Vector<int, 4>{1, 2};
+   constexpr auto vector = Vector{1, 2};
    constexpr auto vector_after_pop = pop(vector);
-   constexpr auto queue = conj(conj(Queue<int, 4>{}, 1), 2);
+   constexpr auto queue = Queue{1, 2};
    constexpr auto queue_after_pop = pop(queue);
    static_assert(peek(vector_after_pop) == 1);
    static_assert(pop(vector) == vector_after_pop);
@@ -27,9 +27,9 @@ namespace cljonic {
    static_assert(vector.count() == 2);
 
    // Runtime demonstration.
-   auto runtime_vector = Vector<int, 4>{10, 20};
+   auto runtime_vector = Vector{10, 20};
    auto runtime_vector_after_pop = pop(runtime_vector);
-   auto runtime_queue = conj(conj(Queue<int, 4>{}, 10), 20);
+   auto runtime_queue = Queue{10, 20};
    auto runtime_queue_after_pop = pop(runtime_queue);
 
    return (peek(runtime_vector_after_pop) == 10 &&

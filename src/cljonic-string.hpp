@@ -49,7 +49,7 @@ namespace cljonic {
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
-   auto runtime = String<8>{"Hi"};
+   auto runtime = String{"Hi"};
    const auto first = runtime(0);
    const auto missing = runtime(9, '!');
 
@@ -60,11 +60,11 @@ namespace cljonic {
    // string_view's size is not part of its type, so view construction requires
    // an explicit capacity.
    // -------------------------------------------------------------------------
-   static constexpr std::string_view static_source{"from view"};
+   static constexpr auto static_source = std::string_view{"from view"};
    constexpr auto from_static_view = String<16>{static_source};
    static_assert(from_static_view.view() == static_source);
 
-   const std::string_view runtime_source{"runtime view"};
+   const auto runtime_source = std::string_view{"runtime view"};
    const auto from_runtime_view = String<16>{runtime_source};
    const auto runtime_view_copy = from_runtime_view.view();
 
@@ -77,14 +77,14 @@ namespace cljonic {
    const auto from_pipeline = String<8>{uppercase_view};
 
    static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
-   static constexpr auto span_source{std::span<const char, 4>{char_source}};
+   static constexpr auto span_source = std::span{char_source};
    constexpr auto from_char_span = String{span_source};
    static_assert(from_char_span.view() == std::string_view{"span"});
 
    static_assert(literal.view() == std::string_view{"Hello"});
 
    // Use C++ interoperability to sum the bytes in a String.
-   int byte_sum = 0;
+   auto byte_sum = 0;
    for (const auto byte : runtime) {
      byte_sum += byte;
    }

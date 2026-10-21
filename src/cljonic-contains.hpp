@@ -42,10 +42,10 @@ concept ContainsAdmissible =
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{10, 20, 30};
+   constexpr auto v_const = Vector{10, 20, 30};
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto s_const = Set{5};
-   constexpr auto st_const = String<8>{"abc"};
+   constexpr auto st_const = String{"abc"};
    static_assert(contains(v_const, 0U));
    static_assert(!contains(v_const, 9U));
    static_assert(contains(m_const, 1));
@@ -55,7 +55,7 @@ concept ContainsAdmissible =
    static_assert(contains(st_const, 1U));
 
    // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10, 20};
+   auto v_runtime = Vector{10, 20};
    const auto in_range = contains(v_runtime, 0U);
 
    return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;

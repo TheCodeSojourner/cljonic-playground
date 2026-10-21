@@ -39,18 +39,18 @@ concept CycleClassArgument =
  using namespace cljonic;
 
  int main() {
-   [[maybe_unused]] constexpr auto finite_cycle = cycle(Vector<int, 3>{1, 2, 3});
+   [[maybe_unused]] constexpr auto finite_cycle = cycle(Vector{1, 2, 3});
    [[maybe_unused]] constexpr auto unbounded_cycle = cycle(Range{0, 0, 0});
 
    // -----------------------------------------------------------------------
    // C++ interoperability: Cycle supports const traversal.
    // -----------------------------------------------------------------------
-   auto runtime_cycle = cycle(Vector<int, 3>{4, 5, 6});
+   auto runtime_cycle = cycle(Vector{4, 5, 6});
    auto runtime_unbounded_cycle = cycle(Range{0, 0, 0});
 
    // Use C++ interoperability to observe a finite source cycle at runtime.
-   int runtime_sum = 0;
-   int runtime_count = 0;
+   auto runtime_sum = 0;
+   auto runtime_count = 0;
    for (const auto value : runtime_cycle) {
      runtime_sum += value;
      if (++runtime_count == 5) {
@@ -59,8 +59,8 @@ concept CycleClassArgument =
    }
 
    // Use C++ interoperability to observe an unbounded source cycle at runtime.
-   int runtime_unbounded_sum = 0;
-   int runtime_unbounded_count = 0;
+   auto runtime_unbounded_sum = 0;
+   auto runtime_unbounded_count = 0;
    for (const auto value : runtime_unbounded_cycle) {
      runtime_unbounded_sum += value;
      if (++runtime_unbounded_count == 4) {

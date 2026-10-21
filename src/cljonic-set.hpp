@@ -61,7 +61,7 @@ namespace cljonic {
    // storage, retaining only the bounded prefix that fits the capacity.
    // -------------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 11, 33};
-   constexpr std::span source_span{source_values};
+   constexpr auto source_span = std::span{source_values};
    constexpr auto from_span = AccountSet{source_span};
    static_assert(from_span(11) == 11);
    static_assert(from_span(22) == 22);
@@ -82,7 +82,7 @@ namespace cljonic {
    static_assert(literal.view().size() == 3);
 
    // Use C++ interoperability to sum the values in a set.
-   int observed_sum = 0;
+   auto observed_sum = 0;
    for (const auto value : runtime) {
      observed_sum += value;
    }

@@ -20,12 +20,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector<int, 4>{1, 2, 3};
+   constexpr auto v_const = Vector{1, 2, 3};
    constexpr auto s_const = seq(v_const);
    static_assert(count(s_const) == 3U);
 
    // Runtime demonstration.
-   auto v_runtime = Vector<int, 4>{10, 20};
+   auto v_runtime = Vector{10, 20};
    auto s_runtime = seq(v_runtime);
 
    return (count(s_runtime) == 2U) ? 0 : 1;

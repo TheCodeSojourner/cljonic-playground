@@ -32,7 +32,7 @@ namespace cljonic {
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
    static_assert(m_const(1) == 100);
 
-   constexpr auto v_const = assoc(Vector<int, 4>{10, 20}, 1, 200);
+   constexpr auto v_const = assoc(Vector{10, 20}, 1, 200);
    static_assert(v_const(1) == 200);
 
    constexpr auto m_multi = assoc(Map<int, int, 4>{}, 1, 100, 2, 200);

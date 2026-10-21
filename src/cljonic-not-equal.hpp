@@ -19,13 +19,13 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v = Vector<int, 4>{1, 2, 3};
-   constexpr auto r = Range<int>{1, 4, 1}; // produces 1, 2, 3
-   constexpr auto q = Queue<int, 4>{1, 2, 3};
-   constexpr auto m1 = Map<int, int, 4>{MapEntry<int, int>{1, 10}};
-   constexpr auto m2 = Map<int, int, 4>{MapEntry<int, int>{2, 20}};
-   constexpr auto s1 = Set<int, 4>{3, 1, 2};
-   constexpr auto s2 = Set<int, 4>{1, 2, 3};
+   constexpr auto v = Vector{1, 2, 3};
+   constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
+   constexpr auto q = Queue{1, 2, 3};
+   constexpr auto m1 = Map{MapEntry{1, 10}};
+   constexpr auto m2 = Map{MapEntry{2, 20}};
+   constexpr auto s1 = Set{3, 1, 2};
+   constexpr auto s2 = Set{1, 2, 3};
    static_assert(not_equal(1, 2));
    static_assert(!not_equal(1, 1));
    static_assert(!not_equal(1));                      // single value
@@ -33,7 +33,7 @@ namespace cljonic {
    static_assert(!not_equal(1, 1, 1));                // every pair equal
    static_assert(!not_equal(v, r));                   // same elements
    static_assert(not_equal(v, q) == not_equal(q, v)); // symmetric
-   static_assert(not_equal(v, Vector<int, 4>{1, 2, 4}));
+   static_assert(not_equal(v, Vector{1, 2, 4}));
    static_assert(not_equal(m1, m2));  // different entries
    static_assert(!not_equal(s1, s2)); // same elements
 
@@ -45,12 +45,12 @@ namespace cljonic {
        !not_equal(var_int, Variant<int, long>{1})); // same alternative and value
 
    // Runtime demonstration.
-   volatile int runtime_raw = 1;
+   volatile auto runtime_raw = 1;
    const auto runtime_first = runtime_raw;
    const auto runtime_v =
-       Vector<int, 4>{runtime_first, runtime_first + 1, runtime_first + 2};
+       Vector{runtime_first, runtime_first + 1, runtime_first + 2};
    const auto runtime_r =
-       Range<int>{runtime_first, runtime_first + 2, 1}; // produces 1, 2
+       Range{runtime_first, runtime_first + 2, 1}; // produces 1, 2
    return not_equal(runtime_v, runtime_r) ? 0 : 1;
  }
  ~~~~~

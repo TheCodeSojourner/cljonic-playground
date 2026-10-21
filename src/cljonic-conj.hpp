@@ -49,7 +49,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(v_const(2) == 30);
    constexpr auto text_const = conj(String<4>{"Hi"}, '!');
    static_assert(text_const(2) == '!');
-   constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry<int, int>{1, 100});
+   constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry{1, 100});
    static_assert(m_const(1) == 100);
 
    // Zero-value and variadic arities.

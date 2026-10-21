@@ -42,7 +42,7 @@ concept RangeClassArgument =
  int main() {
    // Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero
    // arguments.
-   [[maybe_unused]] constexpr Range<int> empty{};
+   [[maybe_unused]] constexpr auto empty = Range<int>{};
 
    // Single argument is the exclusive end; start defaults to 0, step to 1.
    [[maybe_unused]] constexpr auto to_five = Range{5};
@@ -68,7 +68,7 @@ concept RangeClassArgument =
 
    // Use C++ interoperability to sum the values in a constexpr range
    constexpr auto odds_sum = [odds] {
-     int sum = 0;
+     auto sum = 0;
      for (const auto value : odds) {
        sum += value;
      }
@@ -77,7 +77,7 @@ concept RangeClassArgument =
    static_assert(odds_sum == 36);
 
    // Use C++ interoperability to sum the values in a runtime range
-   int runtime_odds_sum = 0;
+   auto runtime_odds_sum = 0;
    for (const auto value : runtime_odds) {
      runtime_odds_sum += value;
    }

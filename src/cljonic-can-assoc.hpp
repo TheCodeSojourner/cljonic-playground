@@ -25,7 +25,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr Map<int, int, 4> m_const{};
+   constexpr auto m_const = Map<int, int, 4>{};
    static_assert(can_assoc(m_const, 1, 10));
    static_assert(can_assoc(m_const, 1, 10, 2, 20));
 

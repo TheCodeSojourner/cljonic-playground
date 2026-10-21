@@ -73,7 +73,7 @@ namespace cljonic {
    // ---------------------------------------------------------------------------
    static constexpr AccountEntry source_entries[] = {
        AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
-   constexpr std::span source_span{source_entries};
+   constexpr auto source_span = std::span{source_entries};
    constexpr auto from_span = AccountMap{source_span};
    static_assert(from_span(Key{10}).amount == 100);
    static_assert(from_span(Key{20}).amount == 200);
@@ -89,7 +89,7 @@ namespace cljonic {
        Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
 
    // Use C++ interoperability to sum the values in a map.
-   int value_sum = 0;
+   auto value_sum = 0;
    for (const auto &entry : runtime) {
      value_sum += entry.value.amount;
    }

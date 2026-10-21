@@ -19,12 +19,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto q0_const = conj(conj(conj(Queue<int, 4>{}, 1), 2), 3);
+   constexpr auto q0_const = Queue{1, 2, 3};
    constexpr auto q1_const = next(q0_const);
    static_assert(peek(q1_const) == 2);
 
    // Runtime demonstration.
-   auto q0_runtime = conj(conj(Queue<int, 4>{}, 10), 20);
+   auto q0_runtime = Queue{10, 20};
    auto q1_runtime = next(q0_runtime);
 
    return (peek(q1_runtime) == 20) ? 0 : 1;

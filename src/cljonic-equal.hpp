@@ -257,16 +257,14 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v = Vector<int, 4>{1, 2, 3};
-   constexpr auto r = Range<int>{1, 4, 1}; // produces 1, 2, 3
-   constexpr auto q = Queue<int, 4>{1, 2, 3};
-   constexpr auto rep = Repeat<int>{1, 3U};
-   constexpr auto m1 =
-       Map<int, int, 4>{MapEntry<int, int>{1, 10}, MapEntry<int, int>{2, 20}};
-   constexpr auto m2 =
-       Map<int, int, 4>{MapEntry<int, int>{2, 20}, MapEntry<int, int>{1, 10}};
-   constexpr auto s1 = Set<int, 4>{3, 1, 2};
-   constexpr auto s2 = Set<int, 4>{1, 2, 3};
+   constexpr auto v = Vector{1, 2, 3};
+   constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
+   constexpr auto q = Queue{1, 2, 3};
+   constexpr auto rep = Repeat{1, 3U};
+   constexpr auto m1 = Map{MapEntry{1, 10}, MapEntry{2, 20}};
+   constexpr auto m2 = Map{MapEntry{2, 20}, MapEntry{1, 10}};
+   constexpr auto s1 = Set{3, 1, 2};
+   constexpr auto s2 = Set{1, 2, 3};
    constexpr auto str1 = String<8>{"abc"};
    constexpr auto str2 = String<16>{"abc"};
    static_assert(equal(1, 1));
@@ -278,7 +276,7 @@ namespace cljonic {
                                    // same elements compare equal
    static_assert(equal(v, r));     // Vector vs Range
    static_assert(equal(v, q));     // Vector vs Queue
-   static_assert(equal(Vector<int, 4>{1, 1, 1}, rep));
+   static_assert(equal(Vector{1, 1, 1}, rep));
    static_assert(equal(m1, m2));     // Map equality ignores entry order
    static_assert(equal(s1, s2));     // Set equality ignores element order
    static_assert(equal(str1, str2)); // String equality compares content
@@ -292,8 +290,8 @@ namespace cljonic {
        !equal(var_int, Variant<int, long>{1L})); // different alternative
 
    // Runtime demonstration.
-   auto runtime_v = Vector<int, 4>{1, 2, 3};
-   auto runtime_r = Range<int>{1, 4, 1};
+   auto runtime_v = Vector{1, 2, 3};
+   auto runtime_r = Range{1, 4, 1};
    return equal(runtime_v, runtime_r) ? 0 : 1;
  }
  ~~~~~

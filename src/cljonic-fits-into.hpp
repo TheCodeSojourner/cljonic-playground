@@ -20,20 +20,20 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr Vector<int, 8> destination{};
-   constexpr Range<int> finite_source{0, 5};
+   constexpr auto destination = Vector<int, 8>{};
+   constexpr auto finite_source = Range{0, 5};
    static_assert(fits_into(destination, finite_source));
 
-   constexpr Range<int> unbounded_source{0, 5, 0};
+   constexpr auto unbounded_source = Range{0, 5, 0};
    static_assert(!fits_into(destination, unbounded_source));
 
-   constexpr Vector<int, 2> small_destination{};
+   constexpr auto small_destination = Vector<int, 2>{};
    static_assert(!fits_into(small_destination, finite_source));
 
    // Runtime demonstration.
-   volatile int runtime_end = 5;
+   volatile auto runtime_end = 5;
    const auto runtime_destination = Vector<int, 8>{1, 2};
-   const auto runtime_source = Range<int>{0, runtime_end};
+   const auto runtime_source = Range{0, runtime_end};
    const auto runtime_small_destination = Vector<int, 4>{};
 
    return (fits_into(runtime_destination, runtime_source) &&

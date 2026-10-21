@@ -109,7 +109,7 @@ concept VariantClassArgument =
    [[maybe_unused]] constexpr auto as_long = Variant<int, long>{1L};
 
    // Copy construction preserves the active alternative and its value.
-   [[maybe_unused]] constexpr auto copied = Variant<int, long>{as_int};
+   [[maybe_unused]] constexpr auto copied = as_int;
 
    // A Variant nests inside another Variant and is storable as a collection
    // element or a map key.
@@ -118,8 +118,7 @@ concept VariantClassArgument =
    [[maybe_unused]] constexpr auto as_vector_element =
        Vector{Variant<int, long>{1}, Variant<int, long>{2L}};
    [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
-   [[maybe_unused]] constexpr auto as_map_key =
-       MapEntry<Variant<int, long>, int>{as_int, 1};
+   [[maybe_unused]] constexpr auto as_map_key = MapEntry{as_int, 1};
 
    return 0;
  }

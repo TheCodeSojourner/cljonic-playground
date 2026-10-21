@@ -61,19 +61,19 @@ namespace cljonic {
 
    // Vector values can be nested, including through an explicit type alias.
    [[maybe_unused]] constexpr auto nested_int_vectors =
-       Vector{Vector<int, 2>{1, 2}, Vector<int, 2>{3}};
+       Vector{Vector{1, 2}, Vector<int, 2>{3}};
    [[maybe_unused]] constexpr auto nested_alias_vectors =
        Vector{Inner{4, 5}, Inner{6}};
 
    // User-defined values and constructor argument categories are supported.
    constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
    constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
-   constexpr Vector<int, 4> values{10, 20};
-   constexpr CategoryArgument category_argument{};
-   constexpr Vector<CategoryElement, 1> lvalue_constructed{
-       CategoryElement{category_argument}};
-   constexpr Vector<CategoryElement, 1> rvalue_constructed{
-       CategoryElement{CategoryArgument{}}};
+   constexpr auto values = Vector<int, 4>{10, 20};
+   constexpr auto category_argument = CategoryArgument{};
+   constexpr auto lvalue_constructed =
+       Vector{CategoryElement{category_argument}};
+   constexpr auto rvalue_constructed =
+       Vector{CategoryElement{CategoryArgument{}}};
 
    // Vector values can be used as a callable function, returning a default-
    // value for invalid indexes or a supplied fallback when provided.
@@ -94,13 +94,13 @@ namespace cljonic {
    static_assert(pixels_populated(-1).y == 0);
 
    // Pixel equality validates the runtime result for a user-defined value type.
-   auto runtime_pixels = Vector<Pixel, 4>{Pixel{1, 2}, Pixel{3, 4}};
+   auto runtime_pixels = Vector{Pixel{1, 2}, Pixel{3, 4}};
    const auto pixel_value = runtime_pixels(1);
    const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
-   auto runtime_values = Vector<int, 4>{7, 9};
+   auto runtime_values = Vector{7, 9};
    const auto fallback = runtime_values(4, -1);
    const auto negative_default = runtime_values(-1);
    const auto negative_fallback = runtime_values(-1, 99);
@@ -118,7 +118,7 @@ namespace cljonic {
    // storage, retaining only the bounded prefix that fits the capacity.
    // -----------------------------------------------------------------------
    static constexpr int source_values[] = {11, 22, 33, 44};
-   constexpr std::span source_span{source_values};
+   constexpr auto source_span = std::span{source_values};
    constexpr auto from_span = Vector<int, 4>{source_span};
    static_assert(from_span(1) == 22);
    constexpr auto from_span_ctad = Vector{source_span};
@@ -131,12 +131,12 @@ namespace cljonic {
    const auto runtime_from_span =
        Vector<int, 4>{std::span<const int>{runtime_buffer, 3}};
 
-   constexpr auto interop_values = Vector<int, 4>{10, 20, 30};
+   constexpr auto interop_values = Vector{10, 20, 30};
    static_assert(interop_values.begin()[1] == 20);
    static_assert(interop_values.view().size() == 3);
 
    // Use C++ interoperability to sum the values in a vector
-   int range_sum = 0;
+   auto range_sum = 0;
    for (const auto value : runtime_values) {
      range_sum += value;
    }
