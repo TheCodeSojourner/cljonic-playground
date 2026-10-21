@@ -1805,7 +1805,7 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(q1) == 100) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a2ac63cbc0316ee0778d32a1adfc9b6c0"><div class="ttname"><a href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">cljonic::peek</a></div><div class="ttdeci">constexpr auto peek(const C &amp;collection) noexcept -&gt; C::value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-peek_8hpp_source.html#l00055">cljonic-peek.hpp:55</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a2ac63cbc0316ee0778d32a1adfc9b6c0"><div class="ttname"><a href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">cljonic::peek</a></div><div class="ttdeci">constexpr auto peek(const C &amp;collection) noexcept -&gt; C::value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-peek_8hpp_source.html#l00051">cljonic-peek.hpp:51</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_ac6a4465d9a31351eb793d28aae002543"><div class="ttname"><a href="#ac6a4465d9a31351eb793d28aae002543">cljonic::conj</a></div><div class="ttdeci">constexpr auto conj(const C &amp;collection, const T &amp;value) noexcept(noexcept(collection.conj(value))) -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-conj_8hpp_source.html#l00073">cljonic-conj.hpp:73</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00073">73</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
@@ -3348,7 +3348,7 @@ requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(small_destination, finite_source));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">volatile</span> <span class="keyword">auto</span> runtime_end = 5;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_end = 5;</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_destination = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 8&gt;</a>{1, 2};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_source = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, runtime_end};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_small_destination = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{};</div>
@@ -3551,7 +3551,7 @@ requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(prefix, <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{100, 200, 0, 1}));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">volatile</span> <span class="keyword">auto</span> runtime_end = 5;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_end = 5;</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_destination = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 8&gt;</a>{100, 200};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_source = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, runtime_end};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_result = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(runtime_destination, runtime_source);</div>
@@ -4037,7 +4037,7 @@ requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00091">91</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00090">90</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -4071,7 +4071,7 @@ requires concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00066">66</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00065">65</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -4110,7 +4110,7 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecl
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00104">104</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00103">103</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -4149,7 +4149,7 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; <a class="el" href="namespacecljo
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00072">72</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00071">71</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -4179,7 +4179,7 @@ requires (!concepts_detail::EqualPairAdmissible&lt;T, T&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00080">80</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00079">79</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -4242,17 +4242,16 @@ requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</div>
 <div class="line">      !<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(var_int, <a class="code hl_class" href="classcljonic_1_1_variant.html">Variant&lt;int, long&gt;</a>{1})); <span class="comment">// same alternative and value</span></div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">volatile</span> <span class="keyword">auto</span> runtime_raw = 1;</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_first = runtime_raw;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_first = 1;</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_v =</div>
 <div class="line">      <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{runtime_first, runtime_first + 1, runtime_first + 2};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_r =</div>
 <div class="line">      <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{runtime_first, runtime_first + 2, 1}; <span class="comment">// produces 1, 2</span></div>
 <div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(runtime_v, runtime_r) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a52f3ba9511cd0e5899669f9450adbdfb"><div class="ttname"><a href="#a52f3ba9511cd0e5899669f9450adbdfb">cljonic::not_equal</a></div><div class="ttdeci">constexpr auto not_equal(const T &amp;value) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-equal_8hpp_source.html#l00060">cljonic-not-equal.hpp:60</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a52f3ba9511cd0e5899669f9450adbdfb"><div class="ttname"><a href="#a52f3ba9511cd0e5899669f9450adbdfb">cljonic::not_equal</a></div><div class="ttdeci">constexpr auto not_equal(const T &amp;value) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-equal_8hpp_source.html#l00059">cljonic-not-equal.hpp:59</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00060">60</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-equal_8hpp_source.html#l00059">59</a> of file <a class="el" href="cljonic-not-equal_8hpp_source.html">cljonic-not-equal.hpp</a>.</p>
 
 </div>
 </div>
@@ -4297,14 +4296,10 @@ requires concepts::CljonicVector&lt;C&gt; || concepts::CljonicQueue&lt;C&gt;</di
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(empty_queue) == 0);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">volatile</span> <span class="keyword">auto</span> vector_first_raw = 11;</div>
-<div class="line">  <span class="keyword">volatile</span> <span class="keyword">auto</span> vector_last_raw = 22;</div>
-<div class="line">  <span class="keyword">volatile</span> <span class="keyword">auto</span> queue_front_raw = 33;</div>
-<div class="line">  <span class="keyword">volatile</span> <span class="keyword">auto</span> queue_back_raw = 44;</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> vector_first = vector_first_raw;</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> vector_last = vector_last_raw;</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> queue_front = queue_front_raw;</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> queue_back = queue_back_raw;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> vector_first = 11;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> vector_last = 22;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> queue_front = 33;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> queue_back = 44;</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{vector_first, vector_last};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_queue = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{queue_front, queue_back};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> vector_last_value = <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_vector);</div>
@@ -4320,7 +4315,7 @@ requires concepts::CljonicVector&lt;C&gt; || concepts::CljonicQueue&lt;C&gt;</di
 <div class="line">             : 1;</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-peek_8hpp_source.html#l00055">55</a> of file <a class="el" href="cljonic-peek_8hpp_source.html">cljonic-peek.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-peek_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-peek_8hpp_source.html">cljonic-peek.hpp</a>.</p>
 
 </div>
 </div>
@@ -4350,7 +4345,7 @@ requires (!concepts::CljonicVector&lt;C&gt; &amp;&amp; !concepts::CljonicQueue&l
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-peek_8hpp_source.html#l00061">61</a> of file <a class="el" href="cljonic-peek_8hpp_source.html">cljonic-peek.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-peek_8hpp_source.html#l00057">57</a> of file <a class="el" href="cljonic-peek_8hpp_source.html">cljonic-peek.hpp</a>.</p>
 
 </div>
 </div>
@@ -4379,37 +4374,43 @@ requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; requires(const C&amp; v
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="Pop"></a> The <b>pop</b> free function API yields an updated <a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html" title="concepts::CljonicCollection">collection</a> with the accessible element removed. For a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, it removes the last logical element; for a <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a>, it removes the front element.</p>
+<p><a class="anchor" id="Pop"></a> The <b>pop</b> free function API yields an updated <a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html" title="concepts::CljonicCollection">collection</a> with the accessible element removed. For a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, it removes the last logical element; for a <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a>, it removes the front element. An empty collection, including a zero-capacity <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, is returned unchanged.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{1, 2};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> vector_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(vector);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queue = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{1, 2};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queue_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(queue);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(vector_after_pop) == 1);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(vector) == vector_after_pop);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(vector) == 2);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(queue_after_pop) == 2);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_enumvalue" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a6ba8844da718b4a65f60dbfd0d92d6ef">vector</a>.count() == 2);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(queue) == 1);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> empty_vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 0&gt;</a>{};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> empty_queue = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{};</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(empty_vector) == empty_vector);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(empty_queue) == empty_queue);</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> runtime_vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{10, 20};</div>
-<div class="line">  <span class="keyword">auto</span> runtime_vector_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(runtime_vector);</div>
-<div class="line">  <span class="keyword">auto</span> runtime_queue = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{10, 20};</div>
-<div class="line">  <span class="keyword">auto</span> runtime_queue_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(runtime_queue);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keywordtype">int</span> vector_first = 10;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keywordtype">int</span> vector_last = 20;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keywordtype">int</span> queue_first = 30;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keywordtype">int</span> queue_last = 40;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{vector_first, vector_last};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_vector_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(runtime_vector);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_queue = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{queue_first, queue_last};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_queue_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(runtime_queue);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_vector_after_pop) == 10 &amp;&amp;</div>
-<div class="line">          <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(runtime_vector) == runtime_vector_after_pop &amp;&amp;</div>
-<div class="line">          runtime_vector.count() == 2 &amp;&amp; <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_queue_after_pop) == 20)</div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_vector_after_pop) == vector_first &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_vector) == vector_last &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_queue_after_pop) == queue_last &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_queue) == queue_first)</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a2e9b3e27bfcfd4e694144ca6f355b122a6ba8844da718b4a65f60dbfd0d92d6ef"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a6ba8844da718b4a65f60dbfd0d92d6ef">cljonic::concepts_detail::collection_kind::vector</a></div><div class="ttdeci">@ vector</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00068">cljonic-concepts.hpp:68</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a35f02dd605389d1cc302f89260a307ca"><div class="ttname"><a href="#a35f02dd605389d1cc302f89260a307ca">cljonic::pop</a></div><div class="ttdeci">constexpr auto pop(const C &amp;collection) noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-pop_8hpp_source.html#l00045">cljonic-pop.hpp:45</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a35f02dd605389d1cc302f89260a307ca"><div class="ttname"><a href="#a35f02dd605389d1cc302f89260a307ca">cljonic::pop</a></div><div class="ttdeci">constexpr auto pop(const C &amp;collection) noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-pop_8hpp_source.html#l00052">cljonic-pop.hpp:52</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-pop_8hpp_source.html#l00045">45</a> of file <a class="el" href="cljonic-pop_8hpp_source.html">cljonic-pop.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-pop_8hpp_source.html#l00052">52</a> of file <a class="el" href="cljonic-pop_8hpp_source.html">cljonic-pop.hpp</a>.</p>
 
 </div>
 </div>
@@ -4439,7 +4440,7 @@ requires (!(concepts::CljonicCollection&lt;C&gt; &amp;&amp; requires(const C&amp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-pop_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-pop_8hpp_source.html">cljonic-pop.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-pop_8hpp_source.html#l00058">58</a> of file <a class="el" href="cljonic-pop_8hpp_source.html">cljonic-pop.hpp</a>.</p>
 
 </div>
 </div>
