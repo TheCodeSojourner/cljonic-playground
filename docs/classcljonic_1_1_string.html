@@ -182,7 +182,7 @@ requires (!std::same_as&lt;std::remove_cvref_t&lt;Value&gt;, char&gt;)</td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t CapacityValue&gt;<br />
 class cljonic::String&lt; CapacityValue &gt;</div><p><a class="anchor" id="String"></a> A <a class="el" href="classcljonic_1_1_string.html">String</a> is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds <span class="tt">0x7F</span> are rejected at compile time and replaced with <span class="tt">.</span> at runtime. Construction with content longer than the available capacity is rejected at compile time.</p>
-<p>Character arguments must be <code>char</code>; numeric values do not implicitly become characters. Text imports follow the <a class="el" href="_implicit_conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a> and retain character validation.</p>
+<p>Character arguments must be <code>char</code>; numeric values do not implicitly become characters. Text imports follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a> and retain character validation.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>

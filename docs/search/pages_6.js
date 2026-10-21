@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['traversal_0',['Sequence traversal',['../index.html#autotoc_md9',1,'']]],
-  ['types_1',['Types',['../index.html#autotoc_md2',1,'Collection Types'],['../index.html#autotoc_md3',1,'Producer Types']]]
+  ['operation_20s_20own_20rules_0',['Check the operation&apos;s own rules',['../implicit-conversions.html#conversion-operation',1,'']]],
+  ['own_20rules_1',['Check the operation&apos;s own rules',['../implicit-conversions.html#conversion-operation',1,'']]]
 ];

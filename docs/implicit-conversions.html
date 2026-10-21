@@ -99,11 +99,24 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="headertitle"><div class="title">Safe implicit conversions </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>Arguments accept their declared types and numeric widening only when every source value is preserved. For example, <code>short</code> can widen to <code>long</code> <code>long</code>, and <code>float</code> can widen to <code>double</code>. Converting an integer to floating point also requires sufficient precision for every source integer. Floating-to-integer conversions and potentially narrowing conversions are rejected even when a particular literal fits.</p>
-<p>Boolean, character, enum, pointer, and user-defined values do not implicitly change types. Convert deliberately before a call when needed, checking representability first; an unchecked cast does not establish safety. The same rules apply to construction, lookup, fallback, update, removal, and their preflight functions.</p>
-<p>Where an operation requires nominal identity or exact types, safe numeric widening does not override that requirement. Conversion admission does not introduce implicit wrapping, callback substitution, or cross-type equality. Each operation documents its accepted domain where needed.</p>
-<p>Some operations explicitly accept a broader input domain and validate representability or content before conversion. These exceptions are documented by the operation; they do not relax the default conversion rules.</p>
-<p>External range imports require safe construction from the actual dereferenced elements and non-throwing traversal. For transformed ranges, the transformation must also be non-throwing. </p>
+<div class="textblock"><p>Use the type an operation asks for whenever possible. For a collection, check its element, key, or value type; for a producer, check its documented value and count types. These rules apply when creating values, looking them up, providing fallbacks, updating or removing them, and checking whether an operation can succeed.</p>
+<h1 class="doxsection"><a class="anchor" id="conversion-automatic"></a>
+When numbers convert automatically</h1>
+<p>You can pass a different numeric type when the conversion preserves every possible value of that type, not just the value you happen to pass:</p><ul>
+<li>A <code>short</code> can become a <code>long</code> <code>long</code> without losing its value.</li>
+<li>A <code>float</code> can become a <code>double</code> without losing precision.</li>
+<li>An integer can become a floating-point number only if the destination can represent every value of the integer type exactly. Do not assume that a floating-point type can hold every integer just because it has a larger range.</li>
+</ul>
+<p>A conversion that could lose information is rejected at compile time, even for a literal that fits. For example, passing an <code>int</code> to an operation expecting <code>short</code> is rejected even when the argument is <code>1</code>. Floating-point numbers do not automatically become integers.</p>
+<h1 class="doxsection"><a class="anchor" id="conversion-explicit"></a>
+What to do when a call is rejected</h1>
+<p>First check that you chose the intended types. If you need to convert a value, check that it fits the destination and that any loss of precision or fractional part is acceptable, then convert it explicitly before the call. <b>Do not add a cast just to silence an error: a cast can discard information, and cljonic cannot recover or check what was lost before the call.</b></p>
+<p>Use the requested type for booleans, characters, enums, pointers, and user-defined values; they do not automatically convert to other types. For example, use <code>true</code> rather than <code>1</code> for a boolean, and a character such as <code>'a'</code> rather than its integer character code.</p>
+<h1 class="doxsection"><a class="anchor" id="conversion-operation"></a>
+Check the operation's own rules</h1>
+<p>Safe numeric conversion is not permission to mix types everywhere. If an operation requires matching types or a particular cljonic type, supply exactly that. Do not expect it to wrap a value in another type, accept a different callback type, or compare otherwise unsupported types for equality.</p>
+<p>Some operations explicitly accept additional types and check their values before converting them. Follow that operation's documentation; do not assume the same exception applies to other calls.</p>
+<p>When importing a standard-library range or view, make sure the values it yields can safely become the destination elements. Iterating the range must not throw. If you use a transform view, make its transformation non-throwing too; use <code>noexcept</code> when the transformation genuinely cannot throw. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->

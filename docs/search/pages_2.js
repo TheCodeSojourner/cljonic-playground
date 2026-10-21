@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['functions_0',['Functions',['../index.html#autotoc_md4',1,'Core Functions'],['../index.html#autotoc_md10',1,'Set Functions'],['../index.html#autotoc_md11',1,'String Functions']]]
+  ['do_20when_20a_20call_20is_20rejected_0',['What to do when a call is rejected',['../implicit-conversions.html#conversion-explicit',1,'']]]
 ];
