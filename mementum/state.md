@@ -1,5 +1,45 @@
 ## Current Session State
 
+- last_session_id: a921bd48-7c97-4a46-9abe-2b0853eafc71
+- current_timestamp: 2026-10-21T14:14:40-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Completed `/cljonic-api-complete pop` and targeted `/cljonic-api-converge pop` for `src/cljonic-pop.hpp`. The implementation already matched the established Vector and Queue behavior; the work formalized the free-function contract and closed test, no-heap, example, and cross-layer reconciliation evidence gaps without changing operation behavior.
+2. Added `REQ-COLL-020AA` for Vector-last and Queue-front removal, empty no-op behavior (including zero-capacity Vector), preserved type/capacity/order/input, constexpr/noexcept/no-allocation, and targeted unsupported-input diagnostics. Updated S2 architecture, Pop vocabulary example, and the Pop Allium spec.
+3. Expanded the dedicated Pop specification test and no-heap probe to cover both collections, runtime-derived values, singleton and empty cases, zero-capacity Vector, retained order, and input preservation.
+4. Reworked the Pop Doxygen program to use only free functions, include compile-time and runtime cases for Vector and Queue, demonstrate empty behavior, and use runtime-derived values. Regenerated `cljonic.hpp`; no `make docs` command was intentionally run.
+5. Removed `volatile` from the user-facing Pop Doxygen example after the user raised the concern that it could look idiomatic to library users. Ordinary named `const int` inputs keep the runtime demonstration readable; volatile-derived inputs remain in tests/probes where they protect execution evidence.
+6. Reviewed every source Doxygen example for `volatile`. Removed the remaining literal-backed uses from Peek, NotEqual, Into, and FitsInto, replacing them with ordinary const locals. No source Doxygen example now uses `volatile`; the remaining volatile inputs in tests/probes remain for runtime instrumentation.
+7. At `/gybis-fini`, checkpointed the Pop API convergence and the broader Doxygen `volatile` cleanup. Source Doxygen examples contain no remaining `volatile`; the remaining uses in tests/probes are intentional runtime-instrumentation safeguards, not user-facing idioms.
+
+Decisions:
+1. `pop` currently admits the nominal `Vector` and `Queue` collection types; Vector removes its last logical element and Queue removes its front. Empty collections remain unchanged.
+2. The generic implementation was already correct; no functional code change was needed. During convergence, clarified Pop's compile-fail diagnostic to state that only Vector and Queue collections are supported, matching the closed domain and `REQ-DIAG-009`.
+3. Preserve the existing public source examples and no-heap harness registration; the existing harness invokes the updated `pop_probe()` in both modular and single-header builds. Targeted requirement/vocabulary/architecture/spec comparisons found no remaining Pop contract divergence; user confirmed the vocabulary style question was Doxygen-only.
+4. No additional Mementum memory was needed; existing Doxygen and no-heap guidance covered the reusable patterns. The user confirmed that the preference against free-function mentions applies to Doxygen collection descriptions only, so vocabulary entries remain unchanged.
+
+Validation:
+1. `make requirements-structure` and `make vocabulary-structure` passed; full `allium check specs` and `allium analyse specs` passed without findings.
+2. `make trace-id-check SPEC=specs/primitives/pop.allium TESTS="tests/cljonic-pop-spec-tests.cpp"` passed with 15 obligations/traces; refreshed the obligation snapshot and `make traceability-spec-to-code` passed.
+3. `cmake --build build --target cljonic_tests -j2` passed. `./build/cljonic_tests '[pop],[vector][stack],[queue]'` passed: 105 assertions in 4 cases. After the diagnostic repair, `make test` passed all 240 tests.
+4. `make no-heap` passed source scanning, allocator symbol scanning, and execution of both modular and single-header probes.
+5. `make docs-examples` regenerated `cljonic.hpp`, compiled 32 public examples, and reported 3 explicit deferred examples. Linked and executed the exact extracted `build/docs-examples/cljonic-pop-example-1.cpp` with C++23, `-Wall -Wextra -Werror`; exit status was 0.
+6. `make primitive-compile-fail` passed after updating Pop's unsupported scalar, Set, and producer diagnostic expectations; `make diagnostic-coverage` passed. `clang-format --dry-run --Werror src/cljonic-pop.hpp` and `git diff --check` passed. Earlier scoped Doxygen formatting was idempotent across two passes. A direct clang-format check of generated `cljonic.hpp` reports generated-boundary formatting diagnostics; the source header is the formatter target.
+7. After removing `volatile` from the source example, `make cljonic`, `make docs-examples` (32 compiled, 3 deferred), linking/running the exact extracted Pop example, and `make no-heap` all passed.
+8. Four tracked `docs/` HTML files became modified during validation. The user explicitly chose to leave them untouched; generated HTML was not inspected or reverted.
+9. After removing the remaining source-example `volatile` uses, scoped Doxygen formatting was idempotent across two passes, `make cljonic` and `make docs-examples` passed (32 compiled, 3 deferred), and the exact updated Peek, NotEqual, Into, and FitsInto example programs linked and ran successfully with C++23 warning-as-error flags.
+
+Open questions:
+1. None.
+
+Next:
+1. No implementation work remains for this request. The user explicitly chose to leave four generated `docs/` HTML changes untouched; do not revert them. Generated HTML was not intentionally requested or inspected.
+2. The `/gybis-fini` commit should include only `mementum/state.md`; preserve all product and generated HTML worktree changes unstaged.
+
+## Previous Session State
+
 - last_session_id: 043c5198-6f1a-467f-b094-6e4e1a23cbac
 - current_timestamp: 2026-10-21T13:01:55-06:00
 - recover: 1
