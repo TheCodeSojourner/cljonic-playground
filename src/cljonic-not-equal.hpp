@@ -45,8 +45,12 @@ namespace cljonic {
        !not_equal(var_int, Variant<int, long>{1})); // same alternative and value
 
    // Runtime demonstration.
-   auto runtime_v = Vector<int, 4>{1, 2, 3};
-   auto runtime_r = Range<int>{0, 3, 1}; // produces 0, 1, 2
+   volatile int runtime_raw = 1;
+   const auto runtime_first = runtime_raw;
+   const auto runtime_v =
+       Vector<int, 4>{runtime_first, runtime_first + 1, runtime_first + 2};
+   const auto runtime_r =
+       Range<int>{runtime_first, runtime_first + 2, 1}; // produces 1, 2
    return not_equal(runtime_v, runtime_r) ? 0 : 1;
  }
  ~~~~~
