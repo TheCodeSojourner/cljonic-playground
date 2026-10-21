@@ -624,6 +624,21 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | classify_as(RequirementsBacked) ∧ trace_to(REQ-BOUNDS-010D ∧ REQ-FN-026)
 
+λ S2_peek_function_contract(x). peek(collection) → admit(CljonicVector ∨ CljonicQueue)(collection)
+  | nonempty(Vector) → return(last_logical_element)
+  | nonempty(Queue) → return(front_logical_element)
+  | empty(collection) → return(value_type_default_value(collection))
+  | preserve(input_collection_value(x)) ∧ return_by_value(x)
+  | unsupported_collection(x) → reject_at_compile_time_with(targeted_diagnostic ∧ REQ-DIAG-009)
+  | peek_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | classify_as(RequirementsBacked) ∧ trace_to(REQ-COLL-020Z)
+
+λ S2_vector_stack_methods(x). Vector.peek() → return(last_logical_element ∨ value_type_default_value_if_empty)
+  ∧ Vector.pop() → return(copy_with_last_logical_element_removed ∨ unchanged_copy_if_empty)
+  | free_functions(peek(vector) ∧ pop(vector)) → preserve(Vector_member_semantics)
+  | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating ∧ preserve(Vector_type ∧ capacity)
+  | classify_as(RequirementsBacked) ∧ trace_to(REQ-COLL-022)
+
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
