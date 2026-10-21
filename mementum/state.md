@@ -1,5 +1,38 @@
 ## Current Session State
 
+- last_session_id: 043c5198-6f1a-467f-b094-6e4e1a23cbac
+- current_timestamp: 2026-10-21T13:01:55-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human requested idiomatic CTAD construction for the Peek Queue example, then explicitly requested a careful review of all Doxygen example programs for CTAD and auto usage.
+2. Reviewed all 35 source-header example programs; updated 30 headers and regenerated cljonic.hpp. Five programs already needed no change. Changes to source/generated headers are exclusively within the example blocks; library implementation is unchanged.
+3. Simplified ordinary collection/producer/MapEntry construction, replaced unnecessary nested conj setup with CTAD literals, and used auto for deducible local declarations and counters while preserving volatile runtime inputs.
+4. At explicit /gybis-fini closeout, outside activity had committed the reviewed product changes as b24ae87 and generated HTML as 81fa388. Product worktree and index were clean; only this state file remained modified. This invocation authorizes the separate memory-only closeout commit.
+
+Decisions:
+1. CTAD is the default idiom encouraged in user-facing examples, not an unconditional rewrite rule. Preserve explicit arguments for empty construction, intentional storage headroom, insertion/materialization bounds, capacity-specific lookup, cross-capacity equality, compatible nested element types, named value models, and Variant alternatives.
+2. Explicit storage provisioning and auto work together: use constexpr auto values = Vector<int, 4>{10, 20} when spare capacity is intentional.
+3. The assistant preserved pre-existing generated HTML and performed no HTML regeneration or product staging/commits. Outside activity subsequently updated and committed generated documentation.
+4. The existing docs-user-facing-example-style memory already captures the governing CTAD preference; no new memory file or knowledge page is needed. Preserve the distinction between auto deduction of a variable and CTAD deduction of a constructed class, especially when explicit capacity must remain.
+
+Validation:
+1. Scoped documentation formatting was idempotent across two passes. make docs-examples regenerated the public header and compiled all 32 public programs with C++23 and -Wall -Wextra -Werror.
+2. Linked and executed all 32 exact extracted public examples successfully. Also extracted the three deferred next/rest/seq programs, substituted modular core plus their owning header only in generated validation copies, then linked and executed all three successfully. Public registration/exclusions are unchanged.
+3. Verified all 31 changed source/generated headers differ from HEAD only within Doxygen example blocks. git diff --check passed.
+4. Closeout confirmed no source/public-header delta between b24ae87 and HEAD, so the example validation remains current. No full unit, no-heap, coverage, or strict integration suite was rerun for this documentation-only change.
+
+Questions:
+1. No unresolved decision for this documentation update. Rendered HTML was subsequently committed by outside activity but has not been browser-verified by the assistant.
+
+Next:
+1. No implementation work remains for this request. If rendered documentation verification is requested, inspect the committed HTML without assuming a successful browser check from the example compiler results.
+2. Keep CTAD and auto as the user-facing default, while retaining intentional overprovisioning and other semantic exceptions during future example edits.
+3. Finalization stages and commits only Mementum state; no product changes or pushes are part of this operation.
+
+## Previous Session State
+
 - last_session_id: 68649dc3-151f-46c7-a46e-56793bc7618a
 - current_timestamp: 2026-10-21T12:43:57-06:00
 - recover: 1
