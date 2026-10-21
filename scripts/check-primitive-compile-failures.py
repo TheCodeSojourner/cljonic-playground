@@ -234,6 +234,36 @@ PRIMITIVES = {
             "map-entry": "(void)cljonic::first(cljonic::MapEntry<int, int>{1, 100});",
         },
     },
+    "next": {
+        "diagnostic_anchor": "cljonic::next:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::next(42);",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-producer": (
+                "(void)cljonic::next(cljonic::Range<int>{0, 5});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-map-entry": (
+                "(void)cljonic::next(cljonic::MapEntry<int, int>{1, 100});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-external-range": (
+                "int values[]{1, 2}; (void)cljonic::next(values);",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+        },
+        "pass_cases": {
+            "vector": "(void)cljonic::next(cljonic::Vector<int, 4>{10, 20});",
+            "map": "(void)cljonic::next(cljonic::Map<int, int, 4>{cljonic::MapEntry<int, int>{1, 100}});",
+            "set": "(void)cljonic::next(cljonic::Set<int, 4>{7, 8});",
+            "queue": "(void)cljonic::next(cljonic::Queue<int, 4>{10, 20});",
+            "string": '(void)cljonic::next(cljonic::String<4>{"ab"});',
+            "empty": "(void)cljonic::next(cljonic::Vector<int, 4>{});",
+            "zero-capacity": "(void)cljonic::next(cljonic::Vector<int, 0>{});",
+        },
+    },
     "fits_into": {
         "diagnostic_anchor": "cljonic::fits_into:",
         "diagnostic_cases": {
