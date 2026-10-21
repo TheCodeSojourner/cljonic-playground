@@ -2,6 +2,12 @@
 
 entity Pop {
     supports_pop_free_function: Boolean
+    supports_vector_and_queue: Boolean
+    vector_pop_removes_last_logical_element: Boolean
+    queue_pop_removes_front_logical_element: Boolean
+    empty_pop_returns_unchanged_collection: Boolean
+    pop_preserves_type_capacity_order_and_input: Boolean
+    pop_is_constexpr_noexcept_non_allocating: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
@@ -12,6 +18,30 @@ entity Pop {
 
     invariant PopFreeFunctionSupported {
         this.supports_pop_free_function = true
+    }
+
+    invariant SupportsVectorAndQueue {
+        this.supports_vector_and_queue = true
+    }
+
+    invariant VectorPopRemovesLastLogicalElement {
+        this.vector_pop_removes_last_logical_element = true
+    }
+
+    invariant QueuePopRemovesFrontLogicalElement {
+        this.queue_pop_removes_front_logical_element = true
+    }
+
+    invariant EmptyPopReturnsUnchangedCollection {
+        this.empty_pop_returns_unchanged_collection = true
+    }
+
+    invariant PopPreservesTypeCapacityOrderAndInput {
+        this.pop_preserves_type_capacity_order_and_input = true
+    }
+
+    invariant PopIsConstexprNoexceptNonAllocating {
+        this.pop_is_constexpr_noexcept_non_allocating = true
     }
 
     invariant NoHeapAllocation {
