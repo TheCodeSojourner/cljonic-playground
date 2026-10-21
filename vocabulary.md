@@ -787,7 +787,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** pop front, pop back, dequeue
 - **Related:** Peek, Queue, Vector, CopyOnModifyCollection
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `pop(q)` dequeues the front element; `v.pop()` and `pop(v)` return a vector copy without its trailing element.
+- **Examples:** `pop(q)` returns a queue copy without its front element; `pop(v)` returns a vector copy without its last logical element. Empty collections return unchanged copies.
 
 
 ### Seq
