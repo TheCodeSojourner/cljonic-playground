@@ -14,9 +14,9 @@ and `Repeatedly`
 producers,
 the active unbounded `cycle(source)` producer, their direct construction,
 member-observation, callable collection forms, current primitive free-function
-operations, and explicit producer materialization through `into`, preflighted by
-`fits_into`. Semantic sequence operations remain deferred future work for every
-collection;
+operations, including `first` and `next`, and explicit producer materialization
+through `into`, preflighted by `fits_into`. Sequence conversion and `rest` remain
+deferred future work for every collection;
 const range traversal and read-only C++ interoperability are active
 infrastructure. Module 3 establishes the concrete, array-backed, bounded
 collection types, their contiguous storage strategies, linear scan lookup
@@ -67,7 +67,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** ordered sequence, sequential value
 - **Related:** Collection, Sequenceable, Traversal, LogicalTraversalOrder, Producer
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `first` is part of the current traversal API; a future semantic traversal increment may define `seq`, `next`, and `rest`. Current collections expose const range traversal in addition to `first`.
+- **Examples:** `first` and `next` are part of the current traversal API; `seq` and `rest` remain future semantic traversal operations. Current collections expose const range traversal in addition to these free functions.
 
 
 ### Sequenceable
@@ -75,7 +75,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence capability
 - **Related:** Sequence, Seqable, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A collection may be sequenceable when the deferred `Seqable` capability is implemented; current collections provide `count()` and the `is_empty(collection)` free function without claiming the full sequence interface.
+- **Examples:** `next(collection)` returns a bounded `Vector` of the remaining traversal elements; `seq` conversion remains deferred. Current collections also provide `count()` and `is_empty(collection)`.
 
 
 ### Indexed
@@ -123,7 +123,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence traversal, iteration
 - **Related:** Sequence, ProducerIteration, BoundedInspection, LogicalTraversalOrder
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `first` is an active traversal operation; `next` and `rest` remain deferred and will be implemented for all collections in a future increment.
+- **Examples:** `first` and `next` are active traversal operations; `rest` remains deferred.
 
 
 ### ConstRangeTraversal
@@ -773,6 +773,14 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** IsEmpty, Empty
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
 - **Examples:** `not_empty(Vector<int, 4>{1, 2})` returns an independent `Vector<int, 4>` containing `1, 2`; an empty input returns an empty `Vector<int, 4>`.
+
+### Next
+- **Definition:** The free function that returns the logical tail of a `Vector`, `Map`, `Set`, `Queue`, or `String` as an owning `Vector` with the same static capacity as the source. It contains every element after the first in the source's logical traversal order; map elements remain value-semantic `MapEntry` values. Map and Set traversal order remains semantically unordered, and Queue results retain FIFO order. An empty input returns an empty Vector. The operation preserves its input and is `constexpr`, non-allocating, non-throwing, and part of the current public API.
+- **Deprecated Synonyms:** tail, sequence remainder
+- **Related:** First, Seq, Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, Vector, MapEntry, Queue
+- **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
+- **Examples:** `next(Vector<int, 4>{10, 20, 30})` returns a `Vector<int, 4>` containing `20, 30`; `next(Queue<int, 4>{10, 20})` returns a `Vector<int, 4>` containing `20`.
+
 
 ### Peek
 - **Definition:** The primitive sequential operation that returns the accessible element without removing it: `Vector::peek()` or `peek(vector)` returns the last logical element, while `Queue::peek()` or `peek(queue)` returns the front element. An empty input returns its `value_type` default value.
