@@ -146,7 +146,7 @@
  * - \ref Core_Juxt "Juxt"
  * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy"
  * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy"
- * - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref NotEqual "not_equal", \ref Core_NotEvery "NotEvery",
+ * - \ref Core_NotAny "NotAny", \ref Next "next", \ref NotEmpty "not_empty", \ref NotEqual "not_equal", \ref Core_NotEvery "NotEvery",
  * \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
  * - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll", \ref Core_PartitionBy "PartitionBy",
  * \ref Peek "peek", \ref Pop "pop"
@@ -212,6 +212,7 @@
 #include <cljonic-is-empty.hpp>
 #include <cljonic-iterate.hpp>
 #include <cljonic-map.hpp>
+#include <cljonic-next.hpp>
 #include <cljonic-not-empty.hpp>
 #include <cljonic-not-equal.hpp>
 #include <cljonic-peek.hpp>

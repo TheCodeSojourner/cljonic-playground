@@ -157,7 +157,7 @@
  * - \ref Core_Juxt "Juxt"
  * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy"
  * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy"
- * - \ref Core_NotAny "NotAny", \ref NotEmpty "not_empty", \ref NotEqual "not_equal", \ref Core_NotEvery "NotEvery",
+ * - \ref Core_NotAny "NotAny", \ref Next "next", \ref NotEmpty "not_empty", \ref NotEqual "not_equal", \ref Core_NotEvery "NotEvery",
  * \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
  * - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll", \ref Core_PartitionBy "PartitionBy",
  * \ref Peek "peek", \ref Pop "pop"
@@ -4537,6 +4537,118 @@ struct contains_standard_range<Iterate<T, Step>> : std::bool_constant<contains_s
 
 } // namespace cljonic::concepts_detail
 // End cljonic-iterate.hpp
+// Begin cljonic-next.hpp
+#pragma once
+
+
+namespace cljonic {
+
+namespace concepts_detail {
+
+template <typename C>
+concept NextSequenceableCollection =
+    concepts::SequenceableCollection<C> && concepts::NothrowConstInputRange<C> &&
+    (concepts::CljonicVector<C> || concepts::CljonicMap<C> || concepts::CljonicSet<C> || concepts::CljonicQueue<C> ||
+     concepts::CljonicString<C>);
+
+} // namespace concepts_detail
+
+/** \anchor Next
+ * The \b next free function returns the logical tail of a \ref Vector "Vector", \ref Map "Map", \ref Set "Set", \ref
+ * Queue "Queue", or \ref String "String" as an owning \ref Vector "Vector". The result has the same static capacity as
+ * the source and contains every logical element after the first in the source's traversal order. A map's elements
+ * remain value-semantic \ref MapEntry "MapEntry" values. Map and Set traversal order is not semantically significant,
+ * while Queue retains FIFO order. An empty input returns an empty Vector.
+ *
+ * The input remains unchanged.
+ *
+ * \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Compile-time demonstration.
+   constexpr auto vector = Vector{10, 20, 30};
+   constexpr auto vector_tail = next(vector);
+   static_assert(count(vector_tail) == 2);
+   static_assert(vector_tail(0) == 20 && vector_tail(1) == 30);
+
+   constexpr auto map = Map{MapEntry{1, 100}, MapEntry{2, 200}};
+   constexpr auto map_tail = next(map);
+   static_assert(count(map_tail) == 1);
+   static_assert(map_tail(0) == MapEntry{2, 200} ||
+                 map_tail(0) == MapEntry{1, 100});
+
+   constexpr auto set = Set{10, 20, 30};
+   constexpr auto set_tail = next(set);
+   static_assert(count(set_tail) == 2);
+
+   constexpr auto queue = Queue{10, 20, 30};
+   constexpr auto queue_tail = next(queue);
+   static_assert(queue_tail(0) == 20 && queue_tail(1) == 30);
+
+   constexpr auto text = String{"ABC"};
+   constexpr auto text_tail = next(text);
+   static_assert(text_tail(0) == 'B' && text_tail(1) == 'C');
+   static_assert(count(next(Vector<int, 3>{})) == 0);
+   static_assert(count(next(Vector{10})) == 0);
+
+   // Runtime demonstration.
+   const auto runtime_values = Vector<int, 4>{40, 50};
+   const auto runtime_tail = next(runtime_values);
+   const auto runtime_queue = Queue<int, 4>{60, 70};
+   const auto runtime_queue_tail = next(runtime_queue);
+   const auto runtime_map = Map<int, int, 4>{MapEntry{3, 300}, MapEntry{4, 400}};
+   const auto runtime_map_tail = next(runtime_map);
+   const auto runtime_set = Set<int, 4>{80, 90};
+   const auto runtime_set_tail = next(runtime_set);
+   const auto runtime_text = String<4>{"DE"};
+   const auto runtime_text_tail = next(runtime_text);
+
+   return (count(runtime_tail) == 1 && runtime_tail(0) == 50 &&
+           count(runtime_values) == 2 && runtime_values(0) == 40 &&
+           runtime_values(1) == 50 && runtime_queue_tail(0) == 70 &&
+           count(runtime_queue) == 2 && peek(runtime_queue) == 60 &&
+           runtime_queue.begin()[1] == 70 && count(runtime_map_tail) == 1 &&
+           (runtime_map_tail(0) == MapEntry{3, 300} ||
+            runtime_map_tail(0) == MapEntry{4, 400}) &&
+           count(runtime_map) == 2 && get(runtime_map, 3) == 300 &&
+           get(runtime_map, 4) == 400 && count(runtime_set_tail) == 1 &&
+           (runtime_set_tail(0) == 80 || runtime_set_tail(0) == 90) &&
+           count(runtime_set) == 2 && contains(runtime_set, 80) &&
+           contains(runtime_set, 90) && runtime_text_tail(0) == 'E' &&
+           count(runtime_text) == 2 && runtime_text(0) == 'D' &&
+           runtime_text(1) == 'E')
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <concepts_detail::NextSequenceableCollection C>
+[[nodiscard]] constexpr auto next(const C& collection) noexcept -> Vector<typename C::value_type, C::capacity()> {
+    using Result = Vector<typename C::value_type, C::capacity()>;
+    Result result{};
+    auto iterator = collection.begin();
+    const auto end = collection.end();
+    if (iterator != end) {
+        ++iterator;
+    }
+    for (; iterator != end; ++iterator) {
+        result = result.conj(*iterator);
+    }
+    return result;
+}
+
+template <typename C>
+    requires(!concepts_detail::NextSequenceableCollection<C>)
+constexpr auto next([[maybe_unused]] const C& value) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<C>,
+                  "cljonic::next: expected a Vector, Map, Set, Queue, or String value.");
+}
+
+} // namespace cljonic
+// End cljonic-next.hpp
 // Begin cljonic-not-empty.hpp
 #pragma once
 
