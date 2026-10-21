@@ -1,5 +1,49 @@
 ## Current Session State
 
+- last_session_id: 2cdd299e-adfe-4b44-830c-3b82bde24159
+- current_timestamp: 2026-10-21T10:33:10-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Executed explicit `/cljonic-api-complete not_equal` and targeted `/cljonic-api-converge not_equal` for src/cljonic-not-equal.hpp using the supplied workflow contexts.
+2. Existing requirements, vocabulary, S2 architecture, active specs/sequences/not-equal.allium, admitted implementation, diagnostic fallbacks, ordinary tests, and registration were already present. Left their behavior unchanged.
+3. Expanded tests/no_heap/cljonic-not-equal-probes.cpp from constant Vector-only calls to runtime-derived scalar arities, Vector/Range/Queue/Repeat comparisons, Map, Set, String, Variant, nested Variant values, representative input-preservation checks, and bounded equal/unequal unbounded Repeat pairs.
+4. Updated the owning Doxygen program to use a volatile-derived input and a checked unequal-length Vector/Range comparison; regenerated cljonic.hpp. Generated HTML was deferred during both workflows.
+5. Targeted convergence was reported complete after the human clarified comparator purity. Required check/weed skills were loaded and the target artifacts were compared; this does not establish whole-repository semantic convergence.
+6. At finalization the worktree and index were clean. Outside activity had committed the product and documentation changes through 8bf8bfc (Update docs), following 9500a0c (probe expansion) and 4ac97d1 (runtime demonstration). This invocation authorizes a separate memory-only closeout commit.
+
+Decisions:
+1. Human explicitly selected caller_precondition for custom equality side effects: the library itself must not mutate operands; purity of a caller-supplied operator== is the caller's responsibility. A const noexcept comparison can mutate mutable members, so type constraints alone cannot prove comparator purity. No domain narrowing or normative-file edit was approved or performed.
+2. not_equal remains the thin logical negation of equal over identical admission gates: unary false, binary negation, and variadic negation of the adjacent-pair conjunction. Native producer operator== remains parameter equality; top-level named comparisons use bounded traversal.
+3. Reuse current checks when their inputs are unchanged. Probe-only convergence repairs invalidated the no-heap result, not ordinary test, rejection, or documentation-example evidence.
+4. Representative examples govern over the older lifecycle page's exhaustive-example wording. Existing explicit template capacities in the example were preserved.
+5. Completion and convergence did not stage or commit product changes and did not run make git. Fini writes only state.md and commits memory.
+
+Validation:
+1. Requirements structure passed with 323 unique clauses; vocabulary structure passed with 187 terms. Focused Allium check/analyse had zero findings, plan enumerated 12 NotEqual obligations, and exact focused trace passed with 12 obligations and 12 traces in the dedicated test file.
+2. make not-equal-compile-fail passed the existing rejected/admitted cases and diagnostic-content checks for modular and single-header configurations.
+3. Built both ordinary test binaries and ran focused not_equal CTest entries: 2/2 passed. Subsequently make test passed all 238 repository CTest entries, including both not_equal variants. The final change after that full-suite run only added runtime Repeat assertions to the no-heap probe; make no-heap then passed again.
+4. Final make no-heap passed source scanning, forbidden allocator-symbol checks, and successful execution of both modular and single-header harnesses with the final probe.
+5. make docs-examples freshly compiled 32 samples; exclusions were exactly next/rest/seq. Read the extracted build/docs-examples/cljonic-not-equal-example-1.cpp, compiled/linked that exact program with C++23, -Wall -Wextra -Werror, and executed it with exit zero. Convergence reused this result because its source/header inputs were unchanged.
+6. Scoped formatting ran twice during completion; subsequent clang-format dry-run checks and git diff --check passed. No focused clang-tidy or measured coverage run was performed in this session.
+7. Convergence ran allium check specs and allium analyse specs successfully over 39 files with empty diagnostics/findings; no spec repair was needed. Strict make traceability-spec-to-code passed during completion and convergence; no obligation/snapshot change was needed.
+8. Diagnostic coverage/message-label gates passed; peek/pop remain the two unrelated pending diagnostic fallbacks. Confirmed umbrella include, curated NotEqual cheatsheet entry, and no-heap declaration/invocation were already registered.
+
+Questions and synthesis:
+1. No unresolved target decision was reported at handoff. Preserve the human comparator-purity interpretation above in future equality work; it is recorded here, not yet incorporated into normative contracts or the equality knowledge page.
+2. Evidence is stronger than an existing probe file or green TRACE_ID gate: the previous constant Vector-only probe lacked runtime-derived and family-level evidence. Dedicated runtime checks now exercise representative supported families and arities without changing admitted implementation.
+3. The prior completion response incorrectly claimed that Mementum listed not_equal as deferred. Convergence corrected this: stale inventories concern first/not_empty and other historical APIs, not not_equal.
+4. mementum/knowledge/value-equality-domain.md may be stale: its categorical sequence-equality prohibition conflicts with its later bounded-prefix named-equality discussion and current contracts. Treat current requirements/specs as authority; reconcile only within approved memory maintenance.
+5. Existing ordinary tests have broad semantic checks, but this session did not add dedicated ordinary post-call preservation assertions or claim exhaustive case-by-case runtime coverage of every admitted type. Input-preservation additions were in the dedicated no-heap probe.
+
+Next:
+1. This memory closeout is the only assistant-created commit in this session. Product/generated-doc changes were already committed by outside activity through 8bf8bfc; further repository gates, product commits, and pushing remain user-owned.
+2. Targeted not_equal completion/convergence was reported complete; do not infer whole-repository convergence from the 238-test pass or strict trace gate. Earlier exhaustive evidence reconciliation, capacity-inspection questions, peek/pop gaps, and Variant lifecycle questions remain outside this slice.
+3. Existing backlog remains: deferred next/rest/seq, documentation-notes.md disposition, stale Mementum reconciliation, and actual tokenizer measurement. Consider incorporating the approved comparator-purity clarification into durable equality guidance when authorized.
+
+## Previous Session State
+
 - last_session_id: 04ad004a-565b-41a9-afad-8ebcedb1520c
 - current_timestamp: 2026-10-20T15:58:52-06:00
 - recover: 1
