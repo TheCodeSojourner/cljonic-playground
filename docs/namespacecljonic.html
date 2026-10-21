@@ -3945,7 +3945,7 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="NotEmpty"></a> The <b>not_empty</b> free function returns an independent owning copy of a nonempty collection, or an empty value of the same type when the input is empty. It accepts <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>, preserves their type and capacity, and leaves the input unchanged. Unlike Clojure's <span class="tt">not-empty</span>, an empty input produces an empty owning collection rather than a nil result. This is not a boolean emptiness predicate; use <a class="el" href="#IsEmpty" title="IsEmpty">is_empty</a> for that purpose.</p>
+<p><a class="anchor" id="NotEmpty"></a> The <b>not_empty</b> free function returns an independent owning copy of a nonempty collection, or an empty value of the same type when the input is empty. It accepts <span class="tt"><a class="el" href="classcljonic_1_1_vector.html">Vector</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_map.html">Map</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_set.html">Set</a></span>, <span class="tt"><a class="el" href="classcljonic_1_1_queue.html">Queue</a></span>, and <span class="tt"><a class="el" href="classcljonic_1_1_string.html">String</a></span>, preserves their type and capacity, and leaves the input unchanged. This is not a boolean emptiness predicate; use <a class="el" href="#IsEmpty" title="IsEmpty">is_empty</a> for that purpose.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -3966,9 +3966,9 @@ template&lt;concepts::SequenceableCollection C&gt; </div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a8180deddc8b1aa7386990604604648f0"><div class="ttname"><a href="#a8180deddc8b1aa7386990604604648f0">cljonic::not_empty</a></div><div class="ttdeci">constexpr auto not_empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-empty_8hpp_source.html#l00039">cljonic-not-empty.hpp:39</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a8180deddc8b1aa7386990604604648f0"><div class="ttname"><a href="#a8180deddc8b1aa7386990604604648f0">cljonic::not_empty</a></div><div class="ttdeci">constexpr auto not_empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-not-empty_8hpp_source.html#l00038">cljonic-not-empty.hpp:38</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00039">39</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00038">38</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
 
 </div>
 </div>
@@ -3998,7 +3998,7 @@ requires (!concepts::SequenceableCollection&lt;C&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00045">45</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-not-empty_8hpp_source.html#l00044">44</a> of file <a class="el" href="cljonic-not-empty_8hpp_source.html">cljonic-not-empty.hpp</a>.</p>
 
 </div>
 </div>
