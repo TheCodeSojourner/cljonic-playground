@@ -633,6 +633,15 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | peek_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | classify_as(RequirementsBacked) ∧ trace_to(REQ-COLL-020Z)
 
+λ S2_pop_function_contract(x). pop(collection) → admit(CljonicVector ∨ CljonicQueue)(collection)
+  | nonempty(Vector) → return(copy_with_last_logical_element_removed)
+  | nonempty(Queue) → return(copy_with_front_logical_element_removed)
+  | empty(collection) → return(unchanged_collection_value)
+  | preserve(collection_type ∧ capacity ∧ logical_order_of_retained_elements ∧ input_collection_value(x))
+  | unsupported_collection(x) → reject_at_compile_time_with(targeted_diagnostic ∧ REQ-DIAG-009)
+  | pop_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
+  | classify_as(RequirementsBacked) ∧ trace_to(REQ-COLL-020AA ∧ REQ-COLL-022)
+
 λ S2_vector_stack_methods(x). Vector.peek() → return(last_logical_element ∨ value_type_default_value_if_empty)
   ∧ Vector.pop() → return(copy_with_last_logical_element_removed ∨ unchanged_copy_if_empty)
   | free_functions(peek(vector) ∧ pop(vector)) → preserve(Vector_member_semantics)
