@@ -4016,7 +4016,7 @@ namespace cljonic {
    static_assert(!fits_into(small_destination, finite_source));
 
    // Runtime demonstration.
-   volatile auto runtime_end = 5;
+   const auto runtime_end = 5;
    const auto runtime_destination = Vector<int, 8>{1, 2};
    const auto runtime_source = Range{0, runtime_end};
    const auto runtime_small_destination = Vector<int, 4>{};
@@ -4196,7 +4196,7 @@ namespace cljonic {
    static_assert(equal(prefix, Vector{100, 200, 0, 1}));
 
    // Runtime demonstration.
-   volatile auto runtime_end = 5;
+   const auto runtime_end = 5;
    const auto runtime_destination = Vector<int, 8>{100, 200};
    const auto runtime_source = Range{0, runtime_end};
    const auto runtime_result = into(runtime_destination, runtime_source);
@@ -4634,8 +4634,7 @@ namespace cljonic {
        !not_equal(var_int, Variant<int, long>{1})); // same alternative and value
 
    // Runtime demonstration.
-   volatile auto runtime_raw = 1;
-   const auto runtime_first = runtime_raw;
+   const auto runtime_first = 1;
    const auto runtime_v =
        Vector{runtime_first, runtime_first + 1, runtime_first + 2};
    const auto runtime_r =
@@ -4733,14 +4732,10 @@ namespace cljonic {
    static_assert(peek(empty_queue) == 0);
 
    // Runtime demonstration.
-   volatile auto vector_first_raw = 11;
-   volatile auto vector_last_raw = 22;
-   volatile auto queue_front_raw = 33;
-   volatile auto queue_back_raw = 44;
-   const auto vector_first = vector_first_raw;
-   const auto vector_last = vector_last_raw;
-   const auto queue_front = queue_front_raw;
-   const auto queue_back = queue_back_raw;
+   const auto vector_first = 11;
+   const auto vector_last = 22;
+   const auto queue_front = 33;
+   const auto queue_back = 44;
    const auto runtime_vector = Vector{vector_first, vector_last};
    const auto runtime_queue = Queue{queue_front, queue_back};
    const auto vector_last_value = peek(runtime_vector);
@@ -4781,7 +4776,7 @@ namespace cljonic {
 /** \anchor Pop
  * The \b pop free function API yields an updated \ref concepts::CljonicCollection "collection" with the accessible
  * element removed. For a \ref Vector "Vector", it removes the last logical element; for a \ref Queue "Queue", it
- * removes the front element.
+ * removes the front element. An empty collection, including a zero-capacity Vector, is returned unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -4789,25 +4784,32 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // Compile-time demonstration.
    constexpr auto vector = Vector{1, 2};
    constexpr auto vector_after_pop = pop(vector);
    constexpr auto queue = Queue{1, 2};
    constexpr auto queue_after_pop = pop(queue);
    static_assert(peek(vector_after_pop) == 1);
-   static_assert(pop(vector) == vector_after_pop);
+   static_assert(peek(vector) == 2);
    static_assert(peek(queue_after_pop) == 2);
-   static_assert(vector.count() == 2);
+   static_assert(peek(queue) == 1);
+   constexpr auto empty_vector = Vector<int, 0>{};
+   constexpr auto empty_queue = Queue<int, 4>{};
+   static_assert(pop(empty_vector) == empty_vector);
+   static_assert(pop(empty_queue) == empty_queue);
 
-   // Runtime demonstration.
-   auto runtime_vector = Vector{10, 20};
-   auto runtime_vector_after_pop = pop(runtime_vector);
-   auto runtime_queue = Queue{10, 20};
-   auto runtime_queue_after_pop = pop(runtime_queue);
+   const int vector_first = 10;
+   const int vector_last = 20;
+   const int queue_first = 30;
+   const int queue_last = 40;
+   const auto runtime_vector = Vector{vector_first, vector_last};
+   const auto runtime_vector_after_pop = pop(runtime_vector);
+   const auto runtime_queue = Queue{queue_first, queue_last};
+   const auto runtime_queue_after_pop = pop(runtime_queue);
 
-   return (peek(runtime_vector_after_pop) == 10 &&
-           pop(runtime_vector) == runtime_vector_after_pop &&
-           runtime_vector.count() == 2 && peek(runtime_queue_after_pop) == 20)
+   return (peek(runtime_vector_after_pop) == vector_first &&
+           peek(runtime_vector) == vector_last &&
+           peek(runtime_queue_after_pop) == queue_last &&
+           peek(runtime_queue) == queue_first)
               ? 0
               : 1;
  }
@@ -4823,7 +4825,8 @@ template <typename C>
     requires(!(concepts::CljonicCollection<C> && requires(const C& value) { value.pop(); }))
 constexpr auto pop([[maybe_unused]] const C& collection) noexcept -> void {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::pop: the argument must be a cljonic collection with a pop() operation.");
+                  "cljonic::pop: the argument must be a Vector or Queue collection; scalar values, producers, and "
+                  "other collection types are not supported.");
 }
 
 } // namespace cljonic

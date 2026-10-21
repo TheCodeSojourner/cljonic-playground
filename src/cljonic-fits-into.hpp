@@ -31,7 +31,7 @@ namespace cljonic {
    static_assert(!fits_into(small_destination, finite_source));
 
    // Runtime demonstration.
-   volatile auto runtime_end = 5;
+   const auto runtime_end = 5;
    const auto runtime_destination = Vector<int, 8>{1, 2};
    const auto runtime_source = Range{0, runtime_end};
    const auto runtime_small_destination = Vector<int, 4>{};

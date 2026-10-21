@@ -32,7 +32,7 @@ namespace cljonic {
    static_assert(equal(prefix, Vector{100, 200, 0, 1}));
 
    // Runtime demonstration.
-   volatile auto runtime_end = 5;
+   const auto runtime_end = 5;
    const auto runtime_destination = Vector<int, 8>{100, 200};
    const auto runtime_source = Range{0, runtime_end};
    const auto runtime_result = into(runtime_destination, runtime_source);

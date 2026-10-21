@@ -26,14 +26,10 @@ namespace cljonic {
    static_assert(peek(empty_queue) == 0);
 
    // Runtime demonstration.
-   volatile auto vector_first_raw = 11;
-   volatile auto vector_last_raw = 22;
-   volatile auto queue_front_raw = 33;
-   volatile auto queue_back_raw = 44;
-   const auto vector_first = vector_first_raw;
-   const auto vector_last = vector_last_raw;
-   const auto queue_front = queue_front_raw;
-   const auto queue_back = queue_back_raw;
+   const auto vector_first = 11;
+   const auto vector_last = 22;
+   const auto queue_front = 33;
+   const auto queue_back = 44;
    const auto runtime_vector = Vector{vector_first, vector_last};
    const auto runtime_queue = Queue{queue_front, queue_back};
    const auto vector_last_value = peek(runtime_vector);
