@@ -1,0 +1,86 @@
+-- allium: 3
+
+entity Next {
+    supports_next_free_function: Boolean
+    supports_sequenceable_collection_domain: Boolean
+    returns_bounded_vector: Boolean
+    returns_elements_after_first: Boolean
+    result_capacity_matches_source: Boolean
+    empty_returns_empty_vector: Boolean
+    map_entries_remain_value_semantic: Boolean
+    map_set_order_is_not_semantically_significant: Boolean
+    queue_preserves_fifo_order: Boolean
+    preserves_input: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    constexpr_capable: Boolean
+    rejects_unsupported_domain_with_targeted_diagnostic: Boolean
+    diagnostic_names_supported_domains: Boolean
+
+    invariant NextFreeFunctionSupported {
+        this.supports_next_free_function = true
+    }
+
+    invariant SupportsSequenceableCollectionDomain {
+        this.supports_sequenceable_collection_domain = true
+    }
+
+    invariant ReturnsBoundedVector {
+        this.returns_bounded_vector = true
+    }
+
+    invariant ReturnsElementsAfterFirst {
+        this.returns_elements_after_first = true
+    }
+
+    invariant ResultCapacityMatchesSource {
+        this.result_capacity_matches_source = true
+    }
+
+    invariant EmptyReturnsEmptyVector {
+        this.empty_returns_empty_vector = true
+    }
+
+    invariant MapEntriesRemainValueSemantic {
+        this.map_entries_remain_value_semantic = true
+    }
+
+    invariant MapSetOrderIsNotSemanticallySignificant {
+        this.map_set_order_is_not_semantically_significant = true
+    }
+
+    invariant QueuePreservesFifoOrder {
+        this.queue_preserves_fifo_order = true
+    }
+
+    invariant PreservesInput {
+        this.preserves_input = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant ConstexprCapable {
+        this.constexpr_capable = true
+    }
+
+    invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.rejects_unsupported_domain_with_targeted_diagnostic = true
+    }
+
+    invariant DiagnosticNamesSupportedDomains {
+        this.diagnostic_names_supported_domains = true
+    }
+}
+
+actor NextOperator { identified_by: Next }
