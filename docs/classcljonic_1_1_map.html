@@ -223,7 +223,7 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">  <span class="comment">// ---------------------------------------------------------------------------</span></div>
 <div class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> AccountEntry source_entries[] = {</div>
 <div class="line">      AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};</div>
-<div class="line">  <span class="keyword">constexpr</span> std::span source_span{source_entries};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> source_span = std::span{source_entries};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> from_span = AccountMap{source_span};</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span(Key{10}).amount == 100);</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span(Key{20}).amount == 200);</div>
@@ -239,7 +239,7 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">      <a class="code hl_function" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map&lt;Key, Value, 4&gt;</a>{std::span&lt;const AccountEntry&gt;{runtime_buffer, 2}};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Use C++ interoperability to sum the values in a map.</span></div>
-<div class="line">  <span class="keywordtype">int</span> value_sum = 0;</div>
+<div class="line">  <span class="keyword">auto</span> value_sum = 0;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;entry : runtime) {</div>
 <div class="line">    value_sum += entry.value.amount;</div>
 <div class="line">  }</div>

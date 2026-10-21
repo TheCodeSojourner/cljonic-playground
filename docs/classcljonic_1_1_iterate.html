@@ -144,8 +144,8 @@ class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"><
 <div class="line">  <span class="comment">// A named function can be used as the constexpr step callback.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> constexpr_sum = [] {</div>
 <div class="line">    <span class="keyword">constexpr</span> <span class="keyword">auto</span> values = <a class="code hl_function" href="namespacecljonic.html#a63314a7947b7251553be23329779260a">iterate</a>(add_two, 1);</div>
-<div class="line">    <span class="keywordtype">int</span> sum = 0;</div>
-<div class="line">    <span class="keywordtype">int</span> observed = 0;</div>
+<div class="line">    <span class="keyword">auto</span> sum = 0;</div>
+<div class="line">    <span class="keyword">auto</span> observed = 0;</div>
 <div class="line">    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : values) {</div>
 <div class="line">      sum += value;</div>
 <div class="line">      <span class="keywordflow">if</span> (++observed == 4) {</div>
@@ -162,8 +162,8 @@ class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"><
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
 <div class="line">  <span class="comment">// C++ interoperability: Iterate supports const traversal.</span></div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="keywordtype">int</span> runtime_sum = 0;</div>
-<div class="line">  <span class="keywordtype">int</span> runtime_observed = 0;</div>
+<div class="line">  <span class="keyword">auto</span> runtime_sum = 0;</div>
+<div class="line">  <span class="keyword">auto</span> runtime_observed = 0;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : runtime_values) {</div>
 <div class="line">    <span class="comment">// A bounded observation makes the unbounded producer safe to inspect.</span></div>
 <div class="line">    runtime_sum += value;</div>

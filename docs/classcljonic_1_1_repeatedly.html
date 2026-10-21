@@ -148,7 +148,7 @@ class cljonic::Repeatedly&lt; T, Step &gt;</div><p><a class="anchor" id="Repeate
 <div class="line">  <span class="comment">// A named function can be used as the constexpr step callback.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> constexpr_sum = [] {</div>
 <div class="line">    <span class="keyword">constexpr</span> <span class="keyword">auto</span> values = <a class="code hl_function" href="namespacecljonic.html#ada46d509c8f0d0124e524878e323c208">repeatedly</a>(3U, five);</div>
-<div class="line">    <span class="keywordtype">int</span> sum = 0;</div>
+<div class="line">    <span class="keyword">auto</span> sum = 0;</div>
 <div class="line">    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : values) {</div>
 <div class="line">      sum += value;</div>
 <div class="line">    }</div>
@@ -166,7 +166,7 @@ class cljonic::Repeatedly&lt; T, Step &gt;</div><p><a class="anchor" id="Repeate
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
 <div class="line">  <span class="comment">// C++ interoperability: Repeatedly supports const traversal.</span></div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="keywordtype">int</span> runtime_sum = 0;</div>
+<div class="line">  <span class="keyword">auto</span> runtime_sum = 0;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : runtime_values) {</div>
 <div class="line">    runtime_sum += value;</div>
 <div class="line">  }</div>

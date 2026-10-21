@@ -146,18 +146,18 @@ class cljonic::Cycle&lt; Source &gt;</div><p><a class="anchor" id="Cycle"></a> A
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite_cycle = <a class="code hl_function" href="namespacecljonic.html#a63b0a319ce6349c3b49b17b3ab5db240">cycle</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 3&gt;</a>{1, 2, 3});</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite_cycle = <a class="code hl_function" href="namespacecljonic.html#a63b0a319ce6349c3b49b17b3ab5db240">cycle</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{1, 2, 3});</div>
 <div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded_cycle = <a class="code hl_function" href="namespacecljonic.html#a63b0a319ce6349c3b49b17b3ab5db240">cycle</a>(<a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, 0, 0});</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
 <div class="line">  <span class="comment">// C++ interoperability: Cycle supports const traversal.</span></div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="keyword">auto</span> runtime_cycle = <a class="code hl_function" href="namespacecljonic.html#a63b0a319ce6349c3b49b17b3ab5db240">cycle</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 3&gt;</a>{4, 5, 6});</div>
+<div class="line">  <span class="keyword">auto</span> runtime_cycle = <a class="code hl_function" href="namespacecljonic.html#a63b0a319ce6349c3b49b17b3ab5db240">cycle</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{4, 5, 6});</div>
 <div class="line">  <span class="keyword">auto</span> runtime_unbounded_cycle = <a class="code hl_function" href="namespacecljonic.html#a63b0a319ce6349c3b49b17b3ab5db240">cycle</a>(<a class="code hl_function" href="namespacecljonic.html#a86b5d56cea96940cbddff96fa334fae1">Range</a>{0, 0, 0});</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Use C++ interoperability to observe a finite source cycle at runtime.</span></div>
-<div class="line">  <span class="keywordtype">int</span> runtime_sum = 0;</div>
-<div class="line">  <span class="keywordtype">int</span> runtime_count = 0;</div>
+<div class="line">  <span class="keyword">auto</span> runtime_sum = 0;</div>
+<div class="line">  <span class="keyword">auto</span> runtime_count = 0;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : runtime_cycle) {</div>
 <div class="line">    runtime_sum += value;</div>
 <div class="line">    <span class="keywordflow">if</span> (++runtime_count == 5) {</div>
@@ -166,8 +166,8 @@ class cljonic::Cycle&lt; Source &gt;</div><p><a class="anchor" id="Cycle"></a> A
 <div class="line">  }</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Use C++ interoperability to observe an unbounded source cycle at runtime.</span></div>
-<div class="line">  <span class="keywordtype">int</span> runtime_unbounded_sum = 0;</div>
-<div class="line">  <span class="keywordtype">int</span> runtime_unbounded_count = 0;</div>
+<div class="line">  <span class="keyword">auto</span> runtime_unbounded_sum = 0;</div>
+<div class="line">  <span class="keyword">auto</span> runtime_unbounded_count = 0;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : runtime_unbounded_cycle) {</div>
 <div class="line">    runtime_unbounded_sum += value;</div>
 <div class="line">    <span class="keywordflow">if</span> (++runtime_unbounded_count == 4) {</div>

@@ -206,19 +206,19 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Vector values can be nested, including through an explicit type alias.</span></div>
 <div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> nested_int_vectors =</div>
-<div class="line">      <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{<a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 2&gt;</a>{1, 2}, <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 2&gt;</a>{3}};</div>
+<div class="line">      <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{<a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{1, 2}, <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 2&gt;</a>{3}};</div>
 <div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> nested_alias_vectors =</div>
 <div class="line">      <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{Inner{4, 5}, Inner{6}};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// User-defined values and constructor argument categories are supported.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> doubles_populated = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;double, 3&gt;</a>{1.5, 2.5};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> pixels_populated = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{Pixel{1, 2}, Pixel{3, 4}};</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 4&gt;</a> values{10, 20};</div>
-<div class="line">  <span class="keyword">constexpr</span> CategoryArgument category_argument{};</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;CategoryElement, 1&gt;</a> lvalue_constructed{</div>
-<div class="line">      CategoryElement{category_argument}};</div>
-<div class="line">  <span class="keyword">constexpr</span> <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;CategoryElement, 1&gt;</a> rvalue_constructed{</div>
-<div class="line">      CategoryElement{CategoryArgument{}}};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> values = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 4&gt;</a>{10, 20};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> category_argument = CategoryArgument{};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> lvalue_constructed =</div>
+<div class="line">      <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{CategoryElement{category_argument}};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> rvalue_constructed =</div>
+<div class="line">      <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{CategoryElement{CategoryArgument{}}};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Vector values can be used as a callable function, returning a default-</span></div>
 <div class="line">  <span class="comment">// value for invalid indexes or a supplied fallback when provided.</span></div>
@@ -239,13 +239,13 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="keyword">static_assert</span>(pixels_populated(-1).y == 0);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Pixel equality validates the runtime result for a user-defined value type.</span></div>
-<div class="line">  <span class="keyword">auto</span> runtime_pixels = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;Pixel, 4&gt;</a>{Pixel{1, 2}, Pixel{3, 4}};</div>
+<div class="line">  <span class="keyword">auto</span> runtime_pixels = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{Pixel{1, 2}, Pixel{3, 4}};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> pixel_value = runtime_pixels(1);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> pixel_fallback = runtime_pixels(4, Pixel{99, 99});</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime construction supports the same callable lookup and fallback</span></div>
 <div class="line">  <span class="comment">// behavior.</span></div>
-<div class="line">  <span class="keyword">auto</span> runtime_values = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 4&gt;</a>{7, 9};</div>
+<div class="line">  <span class="keyword">auto</span> runtime_values = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{7, 9};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> fallback = runtime_values(4, -1);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> negative_default = runtime_values(-1);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> negative_fallback = runtime_values(-1, 99);</div>
@@ -263,7 +263,7 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="comment">// storage, retaining only the bounded prefix that fits the capacity.</span></div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
 <div class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> source_values[] = {11, 22, 33, 44};</div>
-<div class="line">  <span class="keyword">constexpr</span> std::span source_span{source_values};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> source_span = std::span{source_values};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> from_span = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 4&gt;</a>{source_span};</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span(1) == 22);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> from_span_ctad = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{source_span};</div>
@@ -276,12 +276,12 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_from_span =</div>
 <div class="line">      <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 4&gt;</a>{std::span&lt;const int&gt;{runtime_buffer, 3}};</div>
 <div class="line"> </div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> interop_values = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector&lt;int, 4&gt;</a>{10, 20, 30};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> interop_values = <a class="code hl_function" href="#a118834181d7acbf93e1acc5c1eebf224">Vector</a>{10, 20, 30};</div>
 <div class="line">  <span class="keyword">static_assert</span>(interop_values.begin()[1] == 20);</div>
 <div class="line">  <span class="keyword">static_assert</span>(interop_values.view().size() == 3);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Use C++ interoperability to sum the values in a vector</span></div>
-<div class="line">  <span class="keywordtype">int</span> range_sum = 0;</div>
+<div class="line">  <span class="keyword">auto</span> range_sum = 0;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : runtime_values) {</div>
 <div class="line">    range_sum += value;</div>
 <div class="line">  }</div>
@@ -289,7 +289,7 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_view = runtime_values.view();</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (fallback == -1 &amp;&amp; negative_default == 0 &amp;&amp; negative_fallback == 99 &amp;&amp;</div>
-<div class="line">          values.<a class="code hl_function" href="#af3a8f9df8505364d41714f6806f3b673">count</a>() == 2 &amp;&amp; pixel_value == Pixel{3, 4} &amp;&amp;</div>
+<div class="line">          values.count() == 2 &amp;&amp; pixel_value == Pixel{3, 4} &amp;&amp;</div>
 <div class="line">          pixel_fallback == Pixel{99, 99} &amp;&amp; range_sum == 16 &amp;&amp;</div>
 <div class="line">          runtime_view.size() == 2 &amp;&amp; runtime_view[0] == 7 &amp;&amp;</div>
 <div class="line">          from_pipeline(0) == 14 &amp;&amp; from_pipeline(1) == 18 &amp;&amp;</div>
@@ -299,7 +299,6 @@ class cljonic::Vector&lt; ElementType, CapacityValue &gt;</div><p><a class="anch
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html_a118834181d7acbf93e1acc5c1eebf224"><div class="ttname"><a href="#a118834181d7acbf93e1acc5c1eebf224">cljonic::Vector::Vector</a></div><div class="ttdeci">constexpr Vector(SourceRange &amp;&amp;source) noexcept((concepts::NothrowRangeConstruction&lt; ElementType, SourceRange &gt;))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00194">cljonic-vector.hpp:194</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html_ab511d049c458171909125c715cad0ee5"><div class="ttname"><a href="#ab511d049c458171909125c715cad0ee5">cljonic::Vector::operator==</a></div><div class="ttdeci">constexpr auto operator==(const Vector &amp;other) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00302">cljonic-vector.hpp:302</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_vector_html_af3a8f9df8505364d41714f6806f3b673"><div class="ttname"><a href="#af3a8f9df8505364d41714f6806f3b673">cljonic::Vector::count</a></div><div class="ttdeci">constexpr auto count() const noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00234">cljonic-vector.hpp:234</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>

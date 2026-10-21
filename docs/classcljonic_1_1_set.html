@@ -197,7 +197,7 @@ class cljonic::Set&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Set">
 <div class="line">  <span class="comment">// storage, retaining only the bounded prefix that fits the capacity.</span></div>
 <div class="line">  <span class="comment">// -------------------------------------------------------------------------</span></div>
 <div class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> source_values[] = {11, 22, 11, 33};</div>
-<div class="line">  <span class="keyword">constexpr</span> std::span source_span{source_values};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> source_span = std::span{source_values};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> from_span = AccountSet{source_span};</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span(11) == 11);</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span(22) == 22);</div>
@@ -218,7 +218,7 @@ class cljonic::Set&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Set">
 <div class="line">  <span class="keyword">static_assert</span>(literal.view().size() == 3);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Use C++ interoperability to sum the values in a set.</span></div>
-<div class="line">  <span class="keywordtype">int</span> observed_sum = 0;</div>
+<div class="line">  <span class="keyword">auto</span> observed_sum = 0;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> value : runtime) {</div>
 <div class="line">    observed_sum += value;</div>
 <div class="line">  }</div>
