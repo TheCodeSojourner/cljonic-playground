@@ -12,7 +12,7 @@ namespace cljonic {
  * safely to the Vector's element type. Reports whether appending the complete \p source to \p destination fits within
  * the destination's remaining capacity, using the same cardinality semantics as `into`. It returns `false` for every
  * unbounded producer, even though its normal const traversal is capped. Source elements must follow the same \ref
- * ImplicitConversions "safe implicit conversion rules" as \ref Into "into".
+ * implicit-conversions "safe implicit conversion rules" as \ref Into "into".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

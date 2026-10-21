@@ -19,7 +19,7 @@ namespace cljonic {
  * view constructor parameter is copied into the \ref Map "Map"; a cljonic collection or producer is not a constructor
  * source. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
  *
- Keys, mapped values, and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+ Keys, mapped values, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
  Construction from entries requires the exact declared entry type.
 
  \b Examples

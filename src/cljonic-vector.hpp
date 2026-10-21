@@ -21,7 +21,7 @@ namespace cljonic {
  * sole cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
  * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
  * collections or producers, including nested cljonic composites. Element construction, updates, and fallbacks follow
- * the \ref ImplicitConversions "safe implicit conversion rules".
+ * the \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

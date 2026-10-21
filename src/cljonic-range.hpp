@@ -34,7 +34,7 @@ concept RangeClassArgument =
  * zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow
- * the \ref ImplicitConversions "safe implicit conversion rules".
+ * the \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

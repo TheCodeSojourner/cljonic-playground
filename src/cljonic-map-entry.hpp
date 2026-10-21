@@ -11,7 +11,7 @@ namespace cljonic {
  * collections. Keys and values may themselves be cljonic collections or producers, including nested cljonic
  * composites, provided they satisfy their respective constraints.
  *
- * Key and value construction follows the \ref ImplicitConversions "safe implicit conversion rules". The public fields
+ * Key and value construction follows the \ref implicit-conversions "safe implicit conversion rules". The public fields
  * remain available, but MapEntry is not a C++ aggregate.
  *
  * \b Examples

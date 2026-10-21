@@ -13,7 +13,7 @@ namespace cljonic {
  * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
  * completely. Use \b fits_into beforehand to check whether the complete source fits. The destination must be a \ref
  * Vector "Vector". Other collection types are supported only as sources. Source elements must follow the destination's
- * \ref ImplicitConversions "safe implicit conversion rules".
+ * \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

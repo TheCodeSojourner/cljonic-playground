@@ -19,7 +19,7 @@ namespace cljonic {
  * capacity is rejected at compile time.
  *
  * Character arguments must be \c char; numeric values do not implicitly become characters. Text imports follow the
- * \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
+ * \ref implicit-conversions "safe implicit conversion rules" and retain character validation.
  *
  \b Examples
  ~~~~~{.cpp}

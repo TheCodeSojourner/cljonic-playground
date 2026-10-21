@@ -20,7 +20,7 @@ namespace cljonic {
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
  * a full-capacity map or append index) is skipped and the remaining pairs still apply.
  *
- * Keys and stored values follow the \ref ImplicitConversions "safe implicit conversion rules".
+ * Keys and stored values follow the \ref implicit-conversions "safe implicit conversion rules".
  *
  * \b Examples
  ~~~~~{.cpp}

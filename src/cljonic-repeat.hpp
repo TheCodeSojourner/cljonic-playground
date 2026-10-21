@@ -30,8 +30,8 @@ concept RepeatClassArgument =
  * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Values and finite counts follow
- * the \ref ImplicitConversions "safe implicit conversion rules"; counts use unsigned integer types whose ranges fit \c
- * std::size_t.
+ * the \ref implicit-conversions "safe implicit conversion rules"; counts use unsigned integer types whose ranges fit
+ * \c std::size_t.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

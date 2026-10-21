@@ -23,7 +23,7 @@ namespace cljonic {
  * collection or producer into a destination \ref Vector "Vector", use \b into.
  *
  Elements may themselves be cljonic collections or producers, including nested cljonic composites. Elements and
- fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+ fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
 
  \b Examples
  ~~~~~{.cpp}

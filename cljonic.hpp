@@ -70,15 +70,13 @@
  *
  * ## Aliases
  *
- * Namespace                      | "using" C++ Statement
+ * Namespace                      | C++ "using" Statement
  * ------------------------------ | ---------------------------------------------
  * \ref Namespace_Core "Core"     | using **core** = cljonic::core;
  * \ref Namespace_Set "Set"       | using **set** = cljonic::set;
  * \ref Namespace_String "String" | using **string** = cljonic::string;
  *
  * ## Collection Types
- *
- * Argument admission follows the \ref ImplicitConversions "safe implicit conversion rules".
  *
  * - \ref Map "Map", \ref MapEntry "MapEntry"
  * - \ref Queue "Queue"
@@ -222,25 +220,47 @@
 #include <utility>
 #include <variant>
 
-/** \page ImplicitConversions Safe implicit conversions
- * Arguments accept their declared types and numeric widening only when every source value is preserved. For example,
- * \c short can widen to \c long \c long, and \c float can widen to \c double. Converting an integer to floating point
- * also requires sufficient precision for every source integer. Floating-to-integer conversions and potentially
- * narrowing conversions are rejected even when a particular literal fits.
+/** \page implicit-conversions Safe implicit conversions
+ * Use the type an operation asks for whenever possible. For a collection, check its element, key, or value type; for a
+ * producer, check its documented value and count types. These rules apply when creating values, looking them up,
+ * providing fallbacks, updating or removing them, and checking whether an operation can succeed.
  *
- * Boolean, character, enum, pointer, and user-defined values do not implicitly change types. Convert deliberately
- * before a call when needed, checking representability first; an unchecked cast does not establish safety. The same
- * rules apply to construction, lookup, fallback, update, removal, and their preflight functions.
+ * \section conversion-automatic When numbers convert automatically
  *
- * Where an operation requires nominal identity or exact types, safe numeric widening does not override that
- * requirement. Conversion admission does not introduce implicit wrapping, callback substitution, or cross-type
- * equality. Each operation documents its accepted domain where needed.
+ * You can pass a different numeric type when the conversion preserves every possible value of that type, not just the
+ * value you happen to pass:
+ * - A \c short can become a \c long \c long without losing its value.
+ * - A \c float can become a \c double without losing precision.
+ * - An integer can become a floating-point number only if the destination can represent every value of the integer
+ *   type exactly. Do not assume that a floating-point type can hold every integer just because it has a larger range.
  *
- * Some operations explicitly accept a broader input domain and validate representability or content before conversion.
- * These exceptions are documented by the operation; they do not relax the default conversion rules.
+ * A conversion that could lose information is rejected at compile time, even for a literal that fits. For example,
+ * passing an \c int to an operation expecting \c short is rejected even when the argument is \c 1. Floating-point
+ * numbers do not automatically become integers.
  *
- * External range imports require safe construction from the actual dereferenced elements and non-throwing traversal.
- * For transformed ranges, the transformation must also be non-throwing.
+ * \section conversion-explicit What to do when a call is rejected
+ *
+ * First check that you chose the intended types. If you need to convert a value, check that it fits the destination
+ * and that any loss of precision or fractional part is acceptable, then convert it explicitly before the call. **Do
+ * not add a cast just to silence an error: a cast can discard information, and cljonic cannot recover or check what
+ * was lost before the call.**
+ *
+ * Use the requested type for booleans, characters, enums, pointers, and user-defined values; they do not automatically
+ * convert to other types. For example, use \c true rather than \c 1 for a boolean, and a character such as \c 'a'
+ * rather than its integer character code.
+ *
+ * \section conversion-operation Check the operation's own rules
+ *
+ * Safe numeric conversion is not permission to mix types everywhere. If an operation requires matching types or a
+ * particular cljonic type, supply exactly that. Do not expect it to wrap a value in another type, accept a different
+ * callback type, or compare otherwise unsupported types for equality.
+ *
+ * Some operations explicitly accept additional types and check their values before converting them. Follow that
+ * operation's documentation; do not assume the same exception applies to other calls.
+ *
+ * When importing a standard-library range or view, make sure the values it yields can safely become the destination
+ * elements. Iterating the range must not throw. If you use a transform view, make its transformation non-throwing too;
+ * use \c noexcept when the transformation genuinely cannot throw.
  */
 
 namespace cljonic {
@@ -824,7 +844,7 @@ namespace cljonic {
  * left to right into the result, as if each were a separate `assoc`. A pair that cannot be applied (an invalid key, or
  * a full-capacity map or append index) is skipped and the remaining pairs still apply.
  *
- * Keys and stored values follow the \ref ImplicitConversions "safe implicit conversion rules".
+ * Keys and stored values follow the \ref implicit-conversions "safe implicit conversion rules".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -989,7 +1009,7 @@ namespace cljonic {
  * rejected. The variadic form checks pairs left to right against the state produced by earlier pairs, returning true
  * only when every pair preflight succeeds. All forms leave the source unchanged.
  *
- * Keys and values use the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Assoc "assoc".
+ * Keys and values use the same \ref implicit-conversions "safe implicit conversion rules" as \ref Assoc "assoc".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -1196,7 +1216,7 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
  * value replacement that needs no capacity. An absent element or key returns true only when capacity remains; when
  * full, it returns false.
  *
- * Values use the same \ref ImplicitConversions "safe implicit conversion rules" as \ref Conj "conj".
+ * Values use the same \ref implicit-conversions "safe implicit conversion rules" as \ref Conj "conj".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -1345,7 +1365,7 @@ namespace cljonic {
  * capacity is rejected at compile time.
  *
  * Character arguments must be \c char; numeric values do not implicitly become characters. Text imports follow the
- * \ref ImplicitConversions "safe implicit conversion rules" and retain character validation.
+ * \ref implicit-conversions "safe implicit conversion rules" and retain character validation.
  *
  \b Examples
  ~~~~~{.cpp}
@@ -1818,7 +1838,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
  * equals `conj(conj(c, x₁), x₂)`. Each value must be one the collection can hold, as described above; a value that
  * does not fit because the collection is full is skipped.
  *
- * Stored values follow the \ref ImplicitConversions "safe implicit conversion rules".
+ * Stored values follow the \ref implicit-conversions "safe implicit conversion rules".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -2150,7 +2170,7 @@ namespace cljonic {
  * sole cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
  * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
  * collections or producers, including nested cljonic composites. Element construction, updates, and fallbacks follow
- * the \ref ImplicitConversions "safe implicit conversion rules".
+ * the \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3461,7 +3481,7 @@ namespace cljonic {
  * collections. Keys and values may themselves be cljonic collections or producers, including nested cljonic
  * composites, provided they satisfy their respective constraints.
  *
- * Key and value construction follows the \ref ImplicitConversions "safe implicit conversion rules". The public fields
+ * Key and value construction follows the \ref implicit-conversions "safe implicit conversion rules". The public fields
  * remain available, but MapEntry is not a C++ aggregate.
  *
  * \b Examples
@@ -3549,7 +3569,7 @@ namespace cljonic {
  * view constructor parameter is copied into the \ref Map "Map"; a cljonic collection or producer is not a constructor
  * source. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
  *
- Keys, mapped values, and fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+ Keys, mapped values, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
  Construction from entries requires the exact declared entry type.
 
  \b Examples
@@ -3966,7 +3986,7 @@ namespace cljonic {
  * safely to the Vector's element type. Reports whether appending the complete \p source to \p destination fits within
  * the destination's remaining capacity, using the same cardinality semantics as `into`. It returns `false` for every
  * unbounded producer, even though its normal const traversal is capped. Source elements must follow the same \ref
- * ImplicitConversions "safe implicit conversion rules" as \ref Into "into".
+ * implicit-conversions "safe implicit conversion rules" as \ref Into "into".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4146,7 +4166,7 @@ namespace cljonic {
  * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
  * completely. Use \b fits_into beforehand to check whether the complete source fits. The destination must be a \ref
  * Vector "Vector". Other collection types are supported only as sources. Source elements must follow the destination's
- * \ref ImplicitConversions "safe implicit conversion rules".
+ * \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -4769,7 +4789,7 @@ namespace cljonic {
  * \b into.
  *
  Elements may themselves be cljonic collections or producers, including nested cljonic composites. Elements follow
- the \ref ImplicitConversions "safe implicit conversion rules".
+ the \ref implicit-conversions "safe implicit conversion rules".
 
  \b Examples
  ~~~~~{.cpp}
@@ -5088,7 +5108,7 @@ concept RangeClassArgument =
  * zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow
- * the \ref ImplicitConversions "safe implicit conversion rules".
+ * the \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -5387,8 +5407,8 @@ concept RepeatClassArgument =
  * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Values and finite counts follow
- * the \ref ImplicitConversions "safe implicit conversion rules"; counts use unsigned integer types whose ranges fit \c
- * std::size_t.
+ * the \ref implicit-conversions "safe implicit conversion rules"; counts use unsigned integer types whose ranges fit
+ * \c std::size_t.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -5658,7 +5678,7 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
  * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Finite counts follow the \ref
- * ImplicitConversions "safe implicit conversion rules": use unsigned integer types whose ranges fit \c std::size_t.
+ * implicit-conversions "safe implicit conversion rules": use unsigned integer types whose ranges fit \c std::size_t.
  * Callback types and produced element types remain exact.
  *
  ~~~~~{.cpp}
@@ -5908,7 +5928,7 @@ namespace cljonic {
  * collection or producer into a destination \ref Vector "Vector", use \b into.
  *
  Elements may themselves be cljonic collections or producers, including nested cljonic composites. Elements and
- fallbacks follow the \ref ImplicitConversions "safe implicit conversion rules".
+ fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
 
  \b Examples
  ~~~~~{.cpp}

@@ -31,7 +31,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
  * equals `conj(conj(c, x₁), x₂)`. Each value must be one the collection can hold, as described above; a value that
  * does not fit because the collection is full is skipped.
  *
- * Stored values follow the \ref ImplicitConversions "safe implicit conversion rules".
+ * Stored values follow the \ref implicit-conversions "safe implicit conversion rules".
  *
  * \b Examples
  ~~~~~{.cpp}

@@ -23,7 +23,7 @@ namespace cljonic {
  * \b into.
  *
  Elements may themselves be cljonic collections or producers, including nested cljonic composites. Elements follow
- the \ref ImplicitConversions "safe implicit conversion rules".
+ the \ref implicit-conversions "safe implicit conversion rules".
 
  \b Examples
  ~~~~~{.cpp}

@@ -59,15 +59,13 @@
  *
  * ## Aliases
  *
- * Namespace                      | "using" C++ Statement
+ * Namespace                      | C++ "using" Statement
  * ------------------------------ | ---------------------------------------------
  * \ref Namespace_Core "Core"     | using **core** = cljonic::core;
  * \ref Namespace_Set "Set"       | using **set** = cljonic::set;
  * \ref Namespace_String "String" | using **string** = cljonic::string;
  *
  * ## Collection Types
- *
- * Argument admission follows the \ref ImplicitConversions "safe implicit conversion rules".
  *
  * - \ref Map "Map", \ref MapEntry "MapEntry"
  * - \ref Queue "Queue"
