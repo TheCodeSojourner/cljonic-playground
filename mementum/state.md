@@ -1,35 +1,31 @@
 ## Current Session State
 
-- last_session_id: 217a78c8-05b8-403a-bdd6-33f32e9f7cd5
-- current_timestamp: 2026-10-21T11:07:38-06:00
+- last_session_id: 68649dc3-151f-46c7-a46e-56793bc7618a
+- current_timestamp: 2026-10-21T12:43:57-06:00
 - recover: 1
 - session_complete: true
 
 Task:
-1. Investigated the deployed safe implicit conversions link: the index returned HTTP 200, but `_implicit_conversions.html` returned 404 despite the page being tracked locally. No docs/.nojekyll exists; Jekyll underscore filtering is the likely cause. GitHub Pages configuration could not be inspected because gh is unauthenticated.
-2. Human selected renaming rather than adding .nojekyll. Renamed the Doxygen page identifier from `ImplicitConversions` to `implicit-conversions` and updated all 16 source references.
-3. Ran `make cljonic docs`: regenerated the single header and HTML, producing docs/implicit-conversions.html and removing the old generated page.
-4. Validated the new page and 18 links across 13 generated HTML files; no old page IDs or URLs remain in generated HTML/JavaScript or source/header references. `git diff --check` passed. Changes affect documentation comments and generated documentation only.
-5. At human request, rewrote the safe implicit conversions page as user guidance: choosing input types, examples of automatic numeric conversions, why fitting literals can still be rejected, checking before explicit conversion, operation-specific restrictions, and non-throwing range/view imports. Regenerated with `make cljonic docs`, checked all three guidance-section anchors in the rendered page, and passed `git diff --check`. No behavioral changes.
-6. Human reported malformed rendered section headings: the prose formatter had joined each section title to its following paragraph. Added blank comment lines after the three section commands, ran the scoped prose formatter twice (identical SHA-256), regenerated the single header and HTML, and verified the exact three rendered h1 titles with an HTML parser. The earlier anchor-only check missed the formatting defect. No formatter implementation changes were needed.
-7. Made the entire cast warning bold at human request; regenerated and verified the complete warning occurs in a bold HTML element. Removed the redundant conversion-rules sentence from the cheatsheet while preserving references on individual API pages; regenerated again.
-8. Reviewed README.md at human request: no old page URL needs repair and existing guidance is consistent. Explained optional editorial changes (link its Safe implicit conversions heading to the new page and shorten the duplicated rules to a practical overview). Human did not request implementing them; README.md remains unchanged.
-9. At closeout, only state.md was modified and the index was empty. Outside activity had committed documentation/product changes through fbcc0b1 (Update docs), following b512636 (Update safe implicit conversions documentation). This invocation authorizes a separate memory-only closeout commit.
+1. Completed `/cljonic-api-converge peek` after the earlier API work added `Vector::peek()` and `Vector::pop()` while retaining the free functions. The final contract covers Vector-last and Queue-front peek, defaults on empty inputs, and immutable Vector stack behavior. Requirements, vocabulary, architecture, specs, tests, probes, implementation, diagnostics, and source documentation were reconciled with no unresolved target divergence.
+2. At human request, removed Vector member-operation calls and claims from the user-facing Vector type documentation, hid the implementation members from Doxygen, and removed member mentions from Peek/Pop function documentation. Human clarified that collection/producer descriptions must not enumerate free functions; function behavior belongs in each function's own documentation.
+3. At human request, changed the Queue Doxygen example from `from_pipeline.peek()` to `peek(from_pipeline)`. Its remaining `.begin()` use demonstrates C++ interoperability.
+4. Fixed the reported lint errors: removed redundant `typename` from Peek's trailing return type; rewrote Vector::end() to use `view().subspan(logical_size_).data()` instead of pointer arithmetic.
+5. Regenerated `cljonic.hpp` after source documentation/code changes. Generated HTML under `docs/` was already modified and was deliberately not regenerated or overwritten.
+6. Final product worktree was clean before this memory update; current branch was `main`, ahead of `origin/main` by 7 commits, and index empty. This closeout changes only `mementum/state.md`.
 
 Decisions and synthesis:
-1. Preserve the lowercase, hyphenated Doxygen page ID so regeneration produces a GitHub Pages-friendly filename. Renaming generated HTML alone would not persist and would leave references inconsistent. No .nojekyll or Pages configuration change was made.
-2. Keep conversion guidance user-facing: explain what to pass and what to do about rejection rather than narrating admission machinery. Keep the cast warning bold and avoid redundant guidance on the cheatsheet.
-3. Preserve blank comment lines after Doxygen section commands: the prose formatter can otherwise merge body text into heading titles. Verification must inspect exact rendered heading text after formatting; anchor presence alone is insufficient.
-4. The session revealed additions worth incorporating into existing documentation-tooling knowledge, but this fini writes only state.md; it did not modify knowledge or create separate memory files.
+1. Human preference: do not mention or enumerate free functions in collection/producer type descriptions; each free-function header documents its own behavior.
+2. Human preference: cljonic collection/producer operations in examples should use the free-function API rather than member calls. Queue's own Doxygen example now checks the pipeline result with `peek(from_pipeline)`.
+3. Preserve free-function/member behavior and implementation; the documentation corrections did not remove public member operations. The `Vector::end()` implementation still returns the original raw-pointer interface.
+4. Keep user-owned/pre-existing generated HTML untouched during incremental work. Regenerate `cljonic.hpp` from source as needed; defer `docs/` unless explicitly requested and confirmed safe.
 
 Questions:
-1. Live success at the renamed URL remains unverified. The initial 404 is confirmed, but Jekyll filtering was inferred rather than verified from Pages configuration because gh was unauthenticated.
-2. Optional README editorial changes were discussed, not approved or implemented.
+1. No API or behavioral decision remains open. Generated HTML is not verified against the final source because regeneration was deferred to preserve pre-existing user edits.
 
 Next:
-1. Product/documentation changes are already committed through fbcc0b1. Push/deployment remains user-owned; after Pages deploys, verify https://thecodesojourner.github.io/cljonic-playground/implicit-conversions.html and an API-page link to it. Do not claim deployment success from local generation.
-2. Prior equality-guidance caveats and unrelated backlog below remain unchanged.
-3. This closeout commits only Mementum state. No C++ behavior changed; validation was documentation generation, scoped formatter idempotency, rendered heading/link/bold checks, and whitespace checks, not unit tests or full repository gates.
+1. If the user requests rendered-doc verification, inspect the modified `docs/` outputs before running `make docs`, since that target removes and recreates the directory.
+2. Remaining validation caveat: latest `make test` passed 240/240, `make no-heap` passed both harnesses, `make docs-examples` compiled 32 examples, and focused `make lint LINT_FILE=...` passed for Peek and Vector. The final pointer-iterator change was covered by these gates.
+3. This closeout commits only Mementum state. No product files are staged or committed by this operation.
 
 ## Previous Session State
 
