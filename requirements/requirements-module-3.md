@@ -331,6 +331,16 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ unsupported collection: reject_at_compile_time_with(targeted_diagnostic ∧ `REQ-DIAG-009`)
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-21}
 
+λ REQ-COLL-020AA(x).
+  ∀ `pop(const C&) -> C`: admit(`Vector<T, N>` ∨ `Queue<T, N>`) only
+  ∧ ∀ nonempty `Vector<T, N>`: remove(last_logical_element)
+  ∧ ∀ nonempty `Queue<T, N>`: remove(front_logical_element)
+  ∧ ∀ empty admitted collection: return(unchanged_collection_value) including zero-capacity vectors
+  ∧ ∀ result: return_by_value ∧ preserve(collection_type ∧ capacity ∧ logical_order_of_retained_elements ∧ input)
+  ∧ ∀ operation: constexpr ∧ noexcept ∧ non_allocating
+  ∧ ∀ unsupported collection: reject_at_compile_time_with(targeted_diagnostic ∧ `REQ-DIAG-009`)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-21}
+
 ## Collection Equality
 
 λ REQ-COLL-021(x).
@@ -661,5 +671,5 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `empty`, `is_empty`, `not_empty`, `first`, `next`, `rest`, `seq`).
-- **Governed REQs**: `REQ-COLL-001`, `REQ-COLL-001A`, `REQ-COLL-002`, `REQ-COLL-002A`, `REQ-COLL-004`, `REQ-COLL-004A`–`004C`, `REQ-COLL-005`, `REQ-COLL-005A`–`005B`, `REQ-COLL-006`–`007`, `REQ-COLL-007A`, `REQ-COLL-008`–`010`, `REQ-COLL-010A`–`010B`, `REQ-COLL-011`–`012`, `REQ-COLL-012A`, `REQ-COLL-013`, `REQ-COLL-013A`–`013B`, `REQ-COLL-014`–`018`, `REQ-COLL-018A`, `REQ-COLL-019`, `REQ-COLL-019A`–`019B`, `REQ-COLL-020`, `REQ-COLL-020A`–`020Z`, `REQ-COLL-021`–`022`, `REQ-SEQ-001`–`002`, `REQ-SEQ-002A`–`002B`, `REQ-SEQ-003`–`014`, `REQ-FN-001`–`002`, `REQ-FN-002A`, `REQ-FN-002A1`, `REQ-FN-002B`–`002H`, `REQ-FN-002M`, `REQ-FN-002P`–`002Y`, `REQ-FN-003`–`008`, `REQ-FN-008A`, `REQ-FN-026`.
+- **Governed REQs**: `REQ-COLL-001`, `REQ-COLL-001A`, `REQ-COLL-002`, `REQ-COLL-002A`, `REQ-COLL-004`, `REQ-COLL-004A`–`004C`, `REQ-COLL-005`, `REQ-COLL-005A`–`005B`, `REQ-COLL-006`–`007`, `REQ-COLL-007A`, `REQ-COLL-008`–`010`, `REQ-COLL-010A`–`010B`, `REQ-COLL-011`–`012`, `REQ-COLL-012A`, `REQ-COLL-013`, `REQ-COLL-013A`–`013B`, `REQ-COLL-014`–`018`, `REQ-COLL-018A`, `REQ-COLL-019`, `REQ-COLL-019A`–`019B`, `REQ-COLL-020`, `REQ-COLL-020A`–`020AA`, `REQ-COLL-021`–`022`, `REQ-SEQ-001`–`002`, `REQ-SEQ-002A`–`002B`, `REQ-SEQ-003`–`014`, `REQ-FN-001`–`002`, `REQ-FN-002A`, `REQ-FN-002A1`, `REQ-FN-002B`–`002H`, `REQ-FN-002M`, `REQ-FN-002P`–`002Y`, `REQ-FN-003`–`008`, `REQ-FN-008A`, `REQ-FN-026`.
 - **Deferred REQs**: `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-002A`–`002B`.
