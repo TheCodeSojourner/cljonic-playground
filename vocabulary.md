@@ -606,11 +606,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Vector
-- **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates.
+- **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates. Its `peek()` and `pop()` members provide stack-style access to the last logical element; the corresponding free functions are also supported.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
 - **Related:** CopyOnModifyCollection, String, CapacityConstruction, Indexed, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `count()`, `capacity()`, `operator()`, and `contains` provide direct member and free-function observation.
+- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `peek()` returns `2` and whose `pop()` returns a copy containing `1`; `peek(v)` and `pop(v)` provide the same operations through the free-function API.
 
 
 ### Map
@@ -775,19 +775,19 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `not_empty(Vector<int, 4>{1, 2})` returns an independent `Vector<int, 4>` containing `1, 2`; an empty input returns an empty `Vector<int, 4>`.
 
 ### Peek
-- **Definition:** The primitive sequential free function that observes the first or accessible element without removal (`Vector` top/last, `Queue` front) returning `DefaultElement` if empty.
+- **Definition:** The primitive sequential operation that returns the accessible element without removing it: `Vector::peek()` or `peek(vector)` returns the last logical element, while `Queue::peek()` or `peek(queue)` returns the front element. An empty input returns its `value_type` default value.
 - **Deprecated Synonyms:** peek front, peek top
 - **Related:** Pop, Queue, Vector, SentinelBasedAccess
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `peek(q)` observes the head of the FIFO queue; `peek(v)` observes the last element of the vector.
+- **Examples:** `peek(q)` and `q.peek()` return the head of a nonempty FIFO queue; `peek(v)` and `v.peek()` return the last logical element of a nonempty vector. Empty inputs return their element type's default value.
 
 
 ### Pop
-- **Definition:** The primitive sequential free function that returns a new collection with the accessible element removed (`Vector` last element, `Queue` front element).
+- **Definition:** The primitive sequential operation that returns a new collection with its accessible element removed: `Vector::pop()` or `pop(vector)` removes the last logical element, while `Queue::pop()` or `pop(queue)` removes the front element. Empty collections return unchanged copies.
 - **Deprecated Synonyms:** pop front, pop back, dequeue
 - **Related:** Peek, Queue, Vector, CopyOnModifyCollection
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `pop(q)` dequeues the front element; `pop(v)` removes the trailing element.
+- **Examples:** `pop(q)` dequeues the front element; `v.pop()` and `pop(v)` return a vector copy without its trailing element.
 
 
 ### Seq
