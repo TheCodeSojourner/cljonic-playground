@@ -249,3 +249,53 @@ TEST_CASE("Vector imports from std::span without allocating or mutating the sour
     CHECK(source[0] == 11);
     CHECK(source[4] == 55);
 }
+
+TEST_CASE("Vector stack operations observe and remove the last element immutably", "[vector][stack]") {
+    using cljonic::peek;
+    using cljonic::pop;
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.Vector");
+    TRACE_ID("invariant.Vector.SupportsStackPeekMethod");
+    TRACE_ID("invariant.Vector.PeekReturnsLastLogicalElementOrDefaultWhenEmpty");
+    TRACE_ID("invariant.Vector.SupportsStackPopMethod");
+    TRACE_ID("invariant.Vector.PopRemovesLastElementFromCopyAndPreservesEmptyValue");
+
+    constexpr Vector<int, 4> values{10, 20};
+    constexpr auto member_popped = values.pop();
+    constexpr auto function_popped = pop(values);
+    STATIC_REQUIRE(values.peek() == 20);
+    STATIC_REQUIRE(peek(values) == 20);
+    STATIC_REQUIRE(member_popped.count() == 1U);
+    STATIC_REQUIRE(member_popped.peek() == 10);
+    STATIC_REQUIRE(function_popped == member_popped);
+    STATIC_REQUIRE(values.count() == 2U);
+    STATIC_REQUIRE(noexcept(values.peek()));
+    STATIC_REQUIRE(noexcept(values.pop()));
+    STATIC_REQUIRE(noexcept(peek(values)));
+    STATIC_REQUIRE(noexcept(pop(values)));
+
+    constexpr Vector<int, 4> empty_values{};
+    constexpr Vector<int, 0> zero_capacity_values{};
+    STATIC_REQUIRE(empty_values.peek() == 0);
+    STATIC_REQUIRE(peek(empty_values) == 0);
+    STATIC_REQUIRE(empty_values.pop() == empty_values);
+    STATIC_REQUIRE(pop(empty_values) == empty_values);
+    STATIC_REQUIRE(zero_capacity_values.peek() == 0);
+    STATIC_REQUIRE(zero_capacity_values.pop() == zero_capacity_values);
+
+    volatile int first_raw = 31;
+    volatile int last_raw = 62;
+    const int first_value = first_raw;
+    const int last_value = last_raw;
+    const auto runtime_values = Vector<int, 4>{first_value, last_value};
+    const auto runtime_member_popped = runtime_values.pop();
+    const auto runtime_function_popped = pop(runtime_values);
+    CHECK(runtime_values.peek() == 62);
+    CHECK(peek(runtime_values) == 62);
+    CHECK(runtime_member_popped.count() == 1U);
+    CHECK(runtime_member_popped.peek() == 31);
+    CHECK(runtime_function_popped == runtime_member_popped);
+    CHECK(runtime_values.count() == 2U);
+    CHECK(runtime_values.peek() == 62);
+}

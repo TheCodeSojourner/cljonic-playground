@@ -63,8 +63,8 @@ REGISTRY: dict[str, str] = {
     "cljonic-is-empty.hpp": "fallback",
     "cljonic-empty.hpp": "fallback",
     "cljonic-first.hpp": "fallback",
-    "cljonic-peek.hpp": "pending",
-    "cljonic-pop.hpp": "pending",
+    "cljonic-peek.hpp": "fallback",
+    "cljonic-pop.hpp": "fallback",
     # Documented exclusions.
     "cljonic-map-entry.hpp": "excluded",   # aggregate-like; domain is type-argument gated
     "cljonic-variant.hpp": "excluded",     # free-function API deferred (Slice B)

@@ -56,6 +56,51 @@ PRIMITIVES = {
             "range-producer": "(void)cljonic::count(cljonic::Range<int>{0, 5});",
         },
     },
+    "peek": {
+        "diagnostic_anchor": "cljonic::peek:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::peek(42);",
+                "the first argument must be a Vector or Queue",
+            ),
+            "unsupported-set": (
+                "(void)cljonic::peek(cljonic::Set<int, 4>{1});",
+                "the first argument must be a Vector or Queue",
+            ),
+            "unsupported-producer": (
+                "(void)cljonic::peek(cljonic::Range<int>{0, 5});",
+                "the first argument must be a Vector or Queue",
+            ),
+        },
+        "pass_cases": {
+            "vector": "(void)cljonic::peek(cljonic::Vector<int, 4>{1, 2});",
+            "queue": "(void)cljonic::peek(cljonic::Queue<int, 4>{1, 2});",
+            "empty-vector": "(void)cljonic::peek(cljonic::Vector<int, 4>{});",
+            "empty-queue": "(void)cljonic::peek(cljonic::Queue<int, 4>{});",
+            "zero-capacity-vector": "(void)cljonic::peek(cljonic::Vector<int, 0>{});",
+            "zero-capacity-queue": "(void)cljonic::peek(cljonic::Queue<int, 0>{});",
+        },
+    },
+    "pop": {
+        "diagnostic_anchor": "cljonic::pop:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::pop(42);",
+                "the argument must be a cljonic collection with a pop() operation",
+            ),
+            "unsupported-set": (
+                "(void)cljonic::pop(cljonic::Set<int, 4>{1});",
+                "the argument must be a cljonic collection with a pop() operation",
+            ),
+            "unsupported-producer": (
+                "(void)cljonic::pop(cljonic::Range<int>{0, 5});",
+                "the argument must be a cljonic collection with a pop() operation",
+            ),
+        },
+        "pass_cases": {
+            "queue": "(void)cljonic::pop(cljonic::Queue<int, 4>{1, 2});",
+        },
+    },
     "is_empty": {
         "diagnostic_anchor": "cljonic::is_empty:",
         "diagnostic_cases": {
