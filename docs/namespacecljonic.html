@@ -408,10 +408,18 @@ requires (!concepts_detail::EqualPairAdmissible&lt;Lhs, Rhs&gt;)</td></tr>
 <tr class="memitem:a04b820028ce48bb450346106b43b6683" id="r_a04b820028ce48bb450346106b43b6683"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs, typename... Rest&gt; <br />
 requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#acd7526228af5a829349aa3e83ee12d45">concepts_detail::all_adjacent_pairs_admissible_v</a>&lt;Lhs, Rhs, Rest...&gt;))</td></tr>
 <tr class="memitem:a04b820028ce48bb450346106b43b6683 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a04b820028ce48bb450346106b43b6683">not_equal</a> (const Lhs &amp;lhs, const Rhs &amp;rhs, const Rest &amp;... rest) -&gt; bool</td></tr>
-<tr class="memitem:a154b02fc5978c390177002efc2458ecb" id="r_a154b02fc5978c390177002efc2458ecb"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
-<tr class="memitem:a154b02fc5978c390177002efc2458ecb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a154b02fc5978c390177002efc2458ecb">peek</a> (const C &amp;collection) noexcept</td></tr>
-<tr class="memitem:ae5dbb35c399af69858bad79bc26a8d01" id="r_ae5dbb35c399af69858bad79bc26a8d01"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
-<tr class="memitem:ae5dbb35c399af69858bad79bc26a8d01 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ae5dbb35c399af69858bad79bc26a8d01">pop</a> (const C &amp;collection) noexcept</td></tr>
+<tr class="memitem:a2ac63cbc0316ee0778d32a1adfc9b6c0" id="r_a2ac63cbc0316ee0778d32a1adfc9b6c0"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::CljonicVector&lt;C&gt; || concepts::CljonicQueue&lt;C&gt;</td></tr>
+<tr class="memitem:a2ac63cbc0316ee0778d32a1adfc9b6c0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a> (const C &amp;collection) noexcept -&gt; C::value_type</td></tr>
+<tr class="memitem:adf65790a0168d9c29944396c3472505e" id="r_adf65790a0168d9c29944396c3472505e"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts::CljonicVector&lt;C&gt; &amp;&amp; !concepts::CljonicQueue&lt;C&gt;)</td></tr>
+<tr class="memitem:adf65790a0168d9c29944396c3472505e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#adf65790a0168d9c29944396c3472505e">peek</a> (const C &amp;collection) noexcept -&gt; void</td></tr>
+<tr class="memitem:a35f02dd605389d1cc302f89260a307ca" id="r_a35f02dd605389d1cc302f89260a307ca"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; requires(const C&amp; value) { value.pop(); }</td></tr>
+<tr class="memitem:a35f02dd605389d1cc302f89260a307ca template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a35f02dd605389d1cc302f89260a307ca">pop</a> (const C &amp;collection) noexcept</td></tr>
+<tr class="memitem:a45e588b42915f88541ed0f9d5e412d3d" id="r_a45e588b42915f88541ed0f9d5e412d3d"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!(concepts::CljonicCollection&lt;C&gt; &amp;&amp; requires(const C&amp; value) { value.pop(); }))</td></tr>
+<tr class="memitem:a45e588b42915f88541ed0f9d5e412d3d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a45e588b42915f88541ed0f9d5e412d3d">pop</a> (const C &amp;collection) noexcept -&gt; void</td></tr>
 <tr class="memitem:a1ccca56ddfbbc85bcfba4064a08761d3" id="r_a1ccca56ddfbbc85bcfba4064a08761d3"><td class="memTemplParams" colspan="2">template&lt;typename First, typename... Rest&gt; </td></tr>
 <tr class="memitem:a1ccca56ddfbbc85bcfba4064a08761d3 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a1ccca56ddfbbc85bcfba4064a08761d3">Queue</a> (First, Rest...) -&gt; Queue&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
 <tr class="memitem:a44b34db5eafc1d524d79f26d82784b20" id="r_a44b34db5eafc1d524d79f26d82784b20"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t CapacityValue&gt; </td></tr>
@@ -1773,7 +1781,7 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 10);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{}, 20);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q_const) == 10);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(q_const) == 10);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s_const, 20));</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10, 20}, 30);</div>
@@ -1795,9 +1803,9 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line">  <span class="keyword">auto</span> q_runtime = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> q1 = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(q_runtime, 100);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1) == 100) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(q1) == 100) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a154b02fc5978c390177002efc2458ecb"><div class="ttname"><a href="#a154b02fc5978c390177002efc2458ecb">cljonic::peek</a></div><div class="ttdeci">constexpr auto peek(const C &amp;collection) noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-peek_8hpp_source.html#l00030">cljonic-peek.hpp:30</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a2ac63cbc0316ee0778d32a1adfc9b6c0"><div class="ttname"><a href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">cljonic::peek</a></div><div class="ttdeci">constexpr auto peek(const C &amp;collection) noexcept -&gt; C::value_type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-peek_8hpp_source.html#l00056">cljonic-peek.hpp:56</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_ac6a4465d9a31351eb793d28aae002543"><div class="ttname"><a href="#ac6a4465d9a31351eb793d28aae002543">cljonic::conj</a></div><div class="ttdeci">constexpr auto conj(const C &amp;collection, const T &amp;value) noexcept(noexcept(collection.conj(value))) -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-conj_8hpp_source.html#l00073">cljonic-conj.hpp:73</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-conj_8hpp_source.html#l00073">73</a> of file <a class="el" href="cljonic-conj_8hpp_source.html">cljonic-conj.hpp</a>.</p>
@@ -3907,13 +3915,13 @@ template&lt;typename C&gt; </div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q0_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 1), 2), 3);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q1_const = <a class="code hl_function" href="#a375ca6d156afd5ac8cd31bae763d4062">next</a>(q0_const);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_const) == 2);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(q1_const) == 2);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> q0_runtime = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 10), 20);</div>
 <div class="line">  <span class="keyword">auto</span> q1_runtime = <a class="code hl_function" href="#a375ca6d156afd5ac8cd31bae763d4062">next</a>(q0_runtime);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_runtime) == 20) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(q1_runtime) == 20) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html_a375ca6d156afd5ac8cd31bae763d4062"><div class="ttname"><a href="#a375ca6d156afd5ac8cd31bae763d4062">cljonic::next</a></div><div class="ttdeci">constexpr auto next(const C &amp;collection) noexcept -&gt; decltype(collection.pop())</div><div class="ttdef"><b>Definition</b> <a href="cljonic-next_8hpp_source.html#l00035">cljonic-next.hpp:35</a></div></div>
 </div><!-- fragment --> 
@@ -4251,13 +4259,14 @@ requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</div>
 
 </div>
 </div>
-<a id="a154b02fc5978c390177002efc2458ecb" name="a154b02fc5978c390177002efc2458ecb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a154b02fc5978c390177002efc2458ecb">&#9670;&#160;</a></span>peek()</h2>
+<a id="a2ac63cbc0316ee0778d32a1adfc9b6c0" name="a2ac63cbc0316ee0778d32a1adfc9b6c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">&#9670;&#160;</a></span>peek() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename C&gt; </div>
+template&lt;typename C&gt; <br />
+requires concepts::CljonicVector&lt;C&gt; || concepts::CljonicQueue&lt;C&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -4266,7 +4275,7 @@ template&lt;typename C&gt; </div>
           <td class="memname">auto cljonic::peek </td>
           <td>(</td>
           <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
-          <td></td>
+          <td> -&gt; C::value_type</td>
         </tr>
       </table>
   </td>
@@ -4275,33 +4284,88 @@ template&lt;typename C&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="Peek"></a> The <b>peek</b> free function API observes the accessible element without removal.</p>
+<p><a class="anchor" id="Peek"></a> The <b>peek</b> free function API returns the last logical element of a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> or the front element of a <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a> without removing it. An empty collection returns its element type's default value.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 99);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q_const) == 99);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10, 20};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queue = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 30), 40);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> empty_vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> empty_queue = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{};</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(vector) == 20);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(queue) == 30);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(empty_vector) == 0);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(empty_queue) == 0);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> q_runtime = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 77);</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> v = <a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q_runtime);</div>
+<div class="line">  <span class="keyword">volatile</span> <span class="keywordtype">int</span> vector_first_raw = 11;</div>
+<div class="line">  <span class="keyword">volatile</span> <span class="keywordtype">int</span> vector_last_raw = 22;</div>
+<div class="line">  <span class="keyword">volatile</span> <span class="keywordtype">int</span> queue_front_raw = 33;</div>
+<div class="line">  <span class="keyword">volatile</span> <span class="keywordtype">int</span> queue_back_raw = 44;</div>
+<div class="line">  <span class="keywordtype">int</span> vector_first = vector_first_raw;</div>
+<div class="line">  <span class="keywordtype">int</span> vector_last = vector_last_raw;</div>
+<div class="line">  <span class="keywordtype">int</span> queue_front = queue_front_raw;</div>
+<div class="line">  <span class="keywordtype">int</span> queue_back = queue_back_raw;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{vector_first, vector_last};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_queue =</div>
+<div class="line">      <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, queue_front), queue_back);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> vector_last_value = <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_vector);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> queue_front_value = <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_queue);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> empty_runtime_vector = <a class="code hl_function" href="#a96b19d0a5b0898ddc04d1470d18cdb68">empty</a>(runtime_vector);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> empty_runtime_queue = <a class="code hl_function" href="#a96b19d0a5b0898ddc04d1470d18cdb68">empty</a>(runtime_queue);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (v == 77) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (vector_last_value == 22 &amp;&amp; queue_front_value == 33 &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(empty_runtime_vector) == 0 &amp;&amp; <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(empty_runtime_queue) == 0 &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(runtime_vector) == 2 &amp;&amp; <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_vector) == 22 &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(runtime_queue) == 2 &amp;&amp; <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_queue) == 33)</div>
+<div class="line">             ? 0</div>
+<div class="line">             : 1;</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-peek_8hpp_source.html#l00030">30</a> of file <a class="el" href="cljonic-peek_8hpp_source.html">cljonic-peek.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-peek_8hpp_source.html#l00056">56</a> of file <a class="el" href="cljonic-peek_8hpp_source.html">cljonic-peek.hpp</a>.</p>
 
 </div>
 </div>
-<a id="ae5dbb35c399af69858bad79bc26a8d01" name="ae5dbb35c399af69858bad79bc26a8d01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5dbb35c399af69858bad79bc26a8d01">&#9670;&#160;</a></span>pop()</h2>
+<a id="adf65790a0168d9c29944396c3472505e" name="adf65790a0168d9c29944396c3472505e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf65790a0168d9c29944396c3472505e">&#9670;&#160;</a></span>peek() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename C&gt; </div>
+template&lt;typename C&gt; <br />
+requires (!concepts::CljonicVector&lt;C&gt; &amp;&amp; !concepts::CljonicQueue&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::peek </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-peek_8hpp_source.html#l00062">62</a> of file <a class="el" href="cljonic-peek_8hpp_source.html">cljonic-peek.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a35f02dd605389d1cc302f89260a307ca" name="a35f02dd605389d1cc302f89260a307ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35f02dd605389d1cc302f89260a307ca">&#9670;&#160;</a></span>pop() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; requires(const C&amp; value) { value.pop(); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -4319,25 +4383,67 @@ template&lt;typename C&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="Pop"></a> The <b>pop</b> free function API yields an updated <a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html" title="concepts::CljonicCollection">collection</a> with the accessible element removed.</p>
+<p><a class="anchor" id="Pop"></a> The <b>pop</b> free function API yields an updated <a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_collection.html" title="concepts::CljonicCollection">collection</a> with the accessible element removed. For a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, it removes the last logical element; for a <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a>, it removes the front element.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q0_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 1), 2);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q1_const = <a class="code hl_function" href="#ae5dbb35c399af69858bad79bc26a8d01">pop</a>(q0_const);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_const) == 2);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{1, 2};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> vector_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(vector);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queue = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 1), 2);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queue_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(queue);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(vector_after_pop) == 1);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(vector) == vector_after_pop);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(queue_after_pop) == 2);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_enumvalue" href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a6ba8844da718b4a65f60dbfd0d92d6ef">vector</a>.count() == 2);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> q0_runtime = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 10), 20);</div>
-<div class="line">  <span class="keyword">auto</span> q1_runtime = <a class="code hl_function" href="#ae5dbb35c399af69858bad79bc26a8d01">pop</a>(q0_runtime);</div>
+<div class="line">  <span class="keyword">auto</span> runtime_vector = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 4&gt;</a>{10, 20};</div>
+<div class="line">  <span class="keyword">auto</span> runtime_vector_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(runtime_vector);</div>
+<div class="line">  <span class="keyword">auto</span> runtime_queue = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 10), 20);</div>
+<div class="line">  <span class="keyword">auto</span> runtime_queue_after_pop = <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(runtime_queue);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_runtime) == 20) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_vector_after_pop) == 10 &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#a35f02dd605389d1cc302f89260a307ca">pop</a>(runtime_vector) == runtime_vector_after_pop &amp;&amp;</div>
+<div class="line">          runtime_vector.count() == 2 &amp;&amp; <a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(runtime_queue_after_pop) == 20)</div>
+<div class="line">             ? 0</div>
+<div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_ae5dbb35c399af69858bad79bc26a8d01"><div class="ttname"><a href="#ae5dbb35c399af69858bad79bc26a8d01">cljonic::pop</a></div><div class="ttdeci">constexpr auto pop(const C &amp;collection) noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-pop_8hpp_source.html#l00032">cljonic-pop.hpp:32</a></div></div>
+<div class="ttc" id="anamespacecljonic_1_1concepts__detail_html_a2e9b3e27bfcfd4e694144ca6f355b122a6ba8844da718b4a65f60dbfd0d92d6ef"><div class="ttname"><a href="namespacecljonic_1_1concepts__detail.html#a2e9b3e27bfcfd4e694144ca6f355b122a6ba8844da718b4a65f60dbfd0d92d6ef">cljonic::concepts_detail::collection_kind::vector</a></div><div class="ttdeci">@ vector</div><div class="ttdef"><b>Definition</b> <a href="cljonic-concepts_8hpp_source.html#l00068">cljonic-concepts.hpp:68</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a35f02dd605389d1cc302f89260a307ca"><div class="ttname"><a href="#a35f02dd605389d1cc302f89260a307ca">cljonic::pop</a></div><div class="ttdeci">constexpr auto pop(const C &amp;collection) noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-pop_8hpp_source.html#l00045">cljonic-pop.hpp:45</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-pop_8hpp_source.html#l00032">32</a> of file <a class="el" href="cljonic-pop_8hpp_source.html">cljonic-pop.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-pop_8hpp_source.html#l00045">45</a> of file <a class="el" href="cljonic-pop_8hpp_source.html">cljonic-pop.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a45e588b42915f88541ed0f9d5e412d3d" name="a45e588b42915f88541ed0f9d5e412d3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45e588b42915f88541ed0f9d5e412d3d">&#9670;&#160;</a></span>pop() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires (!(concepts::CljonicCollection&lt;C&gt; &amp;&amp; requires(const C&amp; value) { value.pop(); }))</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::pop </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-pop_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-pop_8hpp_source.html">cljonic-pop.hpp</a>.</p>
 
 </div>
 </div>
@@ -4856,13 +4962,13 @@ template&lt;typename C&gt; </div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q0_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 1), 2);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q1_const = <a class="code hl_function" href="#abf6c2fa3e470e828b91b5bb6a12afba7">rest</a>(q0_const);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_const) == 2);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(q1_const) == 2);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> q0_runtime = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 100), 200);</div>
 <div class="line">  <span class="keyword">auto</span> q1_runtime = <a class="code hl_function" href="#abf6c2fa3e470e828b91b5bb6a12afba7">rest</a>(q0_runtime);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a154b02fc5978c390177002efc2458ecb">peek</a>(q1_runtime) == 200) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(q1_runtime) == 200) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html_abf6c2fa3e470e828b91b5bb6a12afba7"><div class="ttname"><a href="#abf6c2fa3e470e828b91b5bb6a12afba7">cljonic::rest</a></div><div class="ttdeci">constexpr auto rest(const C &amp;collection) noexcept -&gt; decltype(collection.pop())</div><div class="ttdef"><b>Definition</b> <a href="cljonic-rest_8hpp_source.html#l00036">cljonic-rest.hpp:36</a></div></div>
 </div><!-- fragment --> 

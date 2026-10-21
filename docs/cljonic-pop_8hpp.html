@@ -117,8 +117,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae5dbb35c399af69858bad79bc26a8d01" id="r_ae5dbb35c399af69858bad79bc26a8d01"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
-<tr class="memitem:ae5dbb35c399af69858bad79bc26a8d01 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ae5dbb35c399af69858bad79bc26a8d01">cljonic::pop</a> (const C &amp;collection) noexcept</td></tr>
+<tr class="memitem:a35f02dd605389d1cc302f89260a307ca" id="r_a35f02dd605389d1cc302f89260a307ca"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires concepts::CljonicCollection&lt;C&gt; &amp;&amp; requires(const C&amp; value) { value.pop(); }</td></tr>
+<tr class="memitem:a35f02dd605389d1cc302f89260a307ca template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a35f02dd605389d1cc302f89260a307ca">cljonic::pop</a> (const C &amp;collection) noexcept</td></tr>
+<tr class="memitem:a45e588b42915f88541ed0f9d5e412d3d" id="r_a45e588b42915f88541ed0f9d5e412d3d"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!(concepts::CljonicCollection&lt;C&gt; &amp;&amp; requires(const C&amp; value) { value.pop(); }))</td></tr>
+<tr class="memitem:a45e588b42915f88541ed0f9d5e412d3d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a45e588b42915f88541ed0f9d5e412d3d">cljonic::pop</a> (const C &amp;collection) noexcept -&gt; void</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

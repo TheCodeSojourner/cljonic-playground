@@ -209,11 +209,12 @@ class cljonic::Queue&lt; T, CapacityValue &gt;</div><p><a class="anchor" id="Que
 <div class="line">  }</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (fifo_sum == 600 &amp;&amp; from_span_sum == 60 &amp;&amp;</div>
-<div class="line">          runtime_from_span_sum == 600 &amp;&amp; from_pipeline.peek() == 11)</div>
+<div class="line">          runtime_from_span_sum == 600 &amp;&amp; <a class="code hl_function" href="#a5f306ec2a9ba4a3cb703289b4162eb4b">peek</a>(from_pipeline) == 11)</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00091">cljonic-queue.hpp:91</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html_a5f306ec2a9ba4a3cb703289b4162eb4b"><div class="ttname"><a href="#a5f306ec2a9ba4a3cb703289b4162eb4b">cljonic::Queue::peek</a></div><div class="ttdeci">constexpr auto peek() const noexcept -&gt; T</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00247">cljonic-queue.hpp:247</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_queue_html_af65a57f7f8319738db76ffd405ffd8fa"><div class="ttname"><a href="#af65a57f7f8319738db76ffd405ffd8fa">cljonic::Queue::Queue</a></div><div class="ttdeci">constexpr Queue(SourceRange &amp;&amp;source) noexcept((concepts::NothrowRangeConstruction&lt; value_type, SourceRange &gt;))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00159">cljonic-queue.hpp:159</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
 </div><!-- fragment --> 
