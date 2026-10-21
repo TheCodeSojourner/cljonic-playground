@@ -56,6 +56,10 @@ entity Vector {
     compile_time_capacity_overflow_is_rejected: Boolean
     runtime_capacity_failures_have_documented_policy: Boolean
     default_access_has_preflight_predicate: Boolean
+    supports_stack_peek_method: Boolean
+    peek_returns_last_logical_element_or_default_when_empty: Boolean
+    supports_stack_pop_method: Boolean
+    pop_removes_last_element_from_copy_and_preserves_empty_value: Boolean
 
     invariant CapacityIsNonNegative {
         this.capacity_limit >= 0
@@ -279,6 +283,22 @@ entity Vector {
 
     invariant DefaultAccessHasPreflightPredicate {
         this.default_access_has_preflight_predicate = true
+    }
+
+    invariant SupportsStackPeekMethod {
+        this.supports_stack_peek_method = true
+    }
+
+    invariant PeekReturnsLastLogicalElementOrDefaultWhenEmpty {
+        this.peek_returns_last_logical_element_or_default_when_empty = true
+    }
+
+    invariant SupportsStackPopMethod {
+        this.supports_stack_pop_method = true
+    }
+
+    invariant PopRemovesLastElementFromCopyAndPreservesEmptyValue {
+        this.pop_removes_last_element_from_copy_and_preserves_empty_value = true
     }
 
 }

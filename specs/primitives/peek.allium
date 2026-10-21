@@ -2,14 +2,46 @@
 
 entity Peek {
     supports_peek_free_function: Boolean
+    admits_vector_and_queue_only: Boolean
+    returns_last_vector_element: Boolean
+    returns_queue_front_element: Boolean
+    returns_default_value_when_empty: Boolean
+    returns_value_by_value: Boolean
+    leaves_input_unchanged: Boolean
     no_heap_allocation: Boolean
     no_rtti: Boolean
     no_exceptions: Boolean
     single_threaded_execution_model: Boolean
     referential_transparency: Boolean
+    rejects_unsupported_domain_with_targeted_diagnostic: Boolean
+    diagnostic_names_supported_domains: Boolean
 
     invariant PeekFreeFunctionSupported {
         this.supports_peek_free_function = true
+    }
+
+    invariant AdmitsVectorAndQueueOnly {
+        this.admits_vector_and_queue_only = true
+    }
+
+    invariant ReturnsLastVectorElement {
+        this.returns_last_vector_element = true
+    }
+
+    invariant ReturnsQueueFrontElement {
+        this.returns_queue_front_element = true
+    }
+
+    invariant ReturnsDefaultValueWhenEmpty {
+        this.returns_default_value_when_empty = true
+    }
+
+    invariant ReturnsValueByValue {
+        this.returns_value_by_value = true
+    }
+
+    invariant LeavesInputUnchanged {
+        this.leaves_input_unchanged = true
     }
 
     invariant NoHeapAllocation {
@@ -30,6 +62,14 @@ entity Peek {
 
     invariant ReferentialTransparency {
         this.referential_transparency = true
+    }
+
+    invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.rejects_unsupported_domain_with_targeted_diagnostic = true
+    }
+
+    invariant DiagnosticNamesSupportedDomains {
+        this.diagnostic_names_supported_domains = true
     }
 }
 
