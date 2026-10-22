@@ -1,45 +1,40 @@
 ## Current Session State
 
-- last_session_id: 24accf32-f17f-411f-b360-f77f0a1906f9
-- current_timestamp: 2026-10-22T11:51:16-06:00
+- last_session_id: 6759219f-01a1-4c72-9656-99d80ed38c5a
+- current_timestamp: 2026-10-22T13:45:24-06:00
 - recover: 1
 - session_complete: true
 
 Task:
-1. Added the lowercase Vector factory with inferred/explicit element type, typed empty, and explicit-capacity forms. Retained the public Vector type and supported constructors. Propagated through REQ-FN-029A, vocabulary, S5/S2 architecture, vector-factory Allium specification, ordinary and compile-fail tests, runtime no-heap probes, generated header, and user-facing documentation.
-2. Swept source Doxygen examples and documentation for the lowercase Vector creation idiom. Human rejected member-method assertions, type-trait implementation proofs, and semantically redundant introductory examples. Final owning example uses observable values, callable lookup, and documented C++ interoperability accessors.
-3. Completed targeted `/cljonic-api-converge` for Vector and related methods/factories, including a repeat verification. Reconciled actual assertion bodies, runtime probes, and freshly extracted executable documentation rather than relying only on trace IDs or green gates. Added the explicitly approved factory reference to the curated mainpage index.
-4. Recorded approved future collection factory names and principles in deferred, non-binding REQ-FN-029B/C and S4 architecture. Corrected SourceConstructionDiagnostic vocabulary to recommend the enclosure form, using lowercase factories where available.
-5. Fixed two subsequently reported gate failures: replaced intentional moved-from-object observations with external move-observer flags in ordinary/no-heap test probes; extracted VectorFactoryHasElementType and reused it in admission and rejection so the diagnostic overload meets CCN 4.
-6. Explained documentation-notes.md as an unimplemented historical AI-native single-header design/restart document, not current API authority. Some inventories and sample contract records are stale; no implementation of that proposal was requested.
-7. At closeout, outside activity had committed product/memory guidance and rendered docs through 117bb2d. Only mementum/state.md remained modified and the index was empty. This closeout writes and commits memory only; no product staging, make git, push, or HTML generation.
+1. Completed targeted Doxygen prose improvements for Map and Vector in their owning headers. Reorganized descriptions by topic, preserving constructor and factory semantics. Fixed Doxygen's false symbol warning in `HashMapFactoryPairArguments` by moving the tuple expression into a consteval helper; the concept's behavior is unchanged.
+2. Reflowed Doxygen descriptions throughout `src/*.hpp` into more natural topical paragraphs, removed awkward repeated "free function API" wording, and retained documented behavior and examples. Left `empty` and `first` descriptions unchanged because they already read naturally; `cljonic-config.hpp` has no description.
+3. Updated the Core cheatsheet in `src/cljonic-core.hpp` per human/coworker direction: removed the function subcategories and made one alphabetical Core Functions list. Kept Set Functions and String Functions intact. Removed `hash_map` and `vector` from Collection Types, added them to Core Functions, and added the producer factories (`cycle`, `range`, `repeat`, `repeatedly`) alongside existing `iterate`. Fixed the previously unlinked Frequencies entry.
+4. Regenerated `cljonic.hpp`. A user-side Doxygen run had modified the tracked `docs/` tree before the cheatsheet task; those rendered files were not edited or committed by this closeout.
+
+Questions:
+1. None blocking.
 
 Decisions:
-1. Idiomatic Vector creation uses vector(args...), vector<T>(args...), vector<T>(), or vector<T, Capacity>(args...), at runtime and constant evaluation. Inferred type is the unqualified first argument type, not a common type. Explicit capacity permits empty/spare-capacity results and must bound the argument count and configured maximum.
-2. Preserve safe non-throwing conversions, independent ownership, lvalue preservation and permitted moves from rvalues. The factory constructs individual elements; it is not a range materializer. Direct Vector<T, Capacity>{external_range_or_view} remains the import surface; a sole cljonic collection/producer may be enclosed as one element.
-3. Future names: Map -> hash_map, MapEntry -> map_entry, Set -> hash_set, Queue -> queue, String -> string. These factories are not implemented. Share construction principles where meaningful, not identical overloads. MapEntry has no spare-capacity form; Map key/value deduction and entry-vs-alternating arguments require separate approval; String must preserve text-import/byte-validity rules.
-4. Public examples remain concise and user-facing: free functions rather than implementation members; callable lookup and documented begin/view interoperability are allowed. Avoid type-introspection proofs and duplicate semantic cases.
-5. Producer-tail work remains postponed. Do not edit next-producers.md or resume implementation without a new human request.
-6. Existing requirements/specifications and updated memory guidance already encode durable construction policy; no additional knowledge file is needed. This state preserves the convergence evidence and validation caveats.
+1. Mainpage taxonomy: Collection Types contains types only; factory functions belong in Core Functions. Core Functions is one alphabetical list, not multiple categories. Preserve the dedicated Set Functions and String Functions sections.
+2. Use a single primary alphabetical listing for the large/future Core function surface to avoid proliferating semantic categories. Continue to label planned functions as planned pending approved requirements.
+3. Keep Doxygen paragraphs grouped by reader topic while preserving all API claims and detailed construction rules. Do not alter the rendered docs tree as part of source-description edits unless specifically requested.
 
 Validation:
-1. Before the final lint/complexity repairs, full rebuilt modular/generated ordinary tests passed all 250 CTest entries; repeated convergence confirmed the same result. All 41 Allium files passed check/analyse earlier; scoped Vector/factory rechecks had zero findings.
-2. After the move-observer fix, focused bugprone-use-after-move clang-tidy passed both ordinary and no-heap translation units for both build configurations. Factory tests and both no-heap binaries passed. The broader clang-tidy invocation failed on unrelated duplicate-include diagnostics in the generated header; no clean full lint gate is claimed.
-3. After the complexity repair, scoped lizard passed the configured CCN <= 4 and length <= 25 thresholds; the affected rejection overload measured CCN 4 and length 16. Both factory test variants passed after rebuild; factory compile-fail admission/rejection diagnostics and strict traceability passed.
-4. Final make no-heap passed source and allocator-symbol scans and executed modular and generated-header harnesses. Probes exercise runtime-derived factory inputs, widening, typed/zero/reserved empties, ownership/copy/move, collection/producer enclosure, indexed fallback, const interop, immutable association/conj/full-capacity and peek/pop behavior.
-5. Final docs-examples compiled 33 samples, excluding only rest and seq. The exact freshly extracted Vector program compiled and linked with C++23, -Wall -Wextra -Werror, and exited zero. The public header was regenerated after the final implementation edit.
-6. Requirements/vocabulary structure passed with 328 unique clauses and 188 terms. Audit-script self-tests, diagnostic coverage/message labels, mainpage formatting, focused/strict traces and whitespace checks passed during convergence. Owning-header formatting was checked twice for idempotency.
-7. Assistant deferred HTML regeneration during convergence and did not browser-verify rendered output. Outside activity subsequently committed rendered docs in 117bb2d; do not attribute that generation or a full make git success to the assistant.
+1. Doxygen was run with output in temporary directories: 0 warnings after the tuple helper change, and 0 warnings after the mainpage and description edits.
+2. `make docs-examples`: 33 compiled; only deferred `rest` and `seq` examples skipped. `make no-heap` passed.
+3. `make test`: all 252 tests passed. `make hash-map-factory-compile-fail`, complexity, diagnostic coverage, traceability, requirements/vocabulary structure, and `git diff --check` passed during the convergence and follow-up edits.
+4. `core-cheatsheet-format` and its self-test passed. clang-format dry-run passed. `cljonic.hpp` regeneration was hash-stable on repeat.
+5. Full clang-tidy/strict gate is not established; pre-existing diagnostics remain in the generated amalgamation and unrelated Variant/no-heap API files. Focused Map probe lint passed.
 
 Open questions:
-1. No unresolved Vector API decision. Each future collection factory still requires individual contract approval before specification/implementation.
+1. No unresolved Map or Vector API decision. `map_entry`, `hash_set`, `queue`, and `string` factories remain deferred and require their own human-approved contracts.
 2. AI-native header proposal in documentation-notes.md remains unimplemented and needs current-fact verification before reuse.
-3. A clean full lint/strict gate is not established by the focused successful checks; preserve the broader clang-tidy caveat above.
+3. The repo-wide "into a Vector" wording in Map, Set, Queue, and String source-construction prose/diagnostics remains outside this task's scope.
 
 Next:
-1. Await the next human task; Vector convergence and the reported use-after-move/complexity fixes are complete. Do not automatically implement the deferred factories or AI-native header proposal.
-2. If resuming validation, distinguish the last full 250-test result from the focused tests after final repairs; run only checks invalidated by new changes and do not claim a full make git pass without evidence.
-3. Preserve next-producers.md as-is and do not resume producer-tail work without explicit direction.
+1. User review of the new alphabetical Core Functions list and source Doxygen organization.
+2. Leave existing user-generated `docs/` modifications untouched; do not stage or commit them during this memory-only closeout.
+3. Do not automatically implement remaining deferred factories or the AI-native header proposal.
 
 ## Previous Session State
 
