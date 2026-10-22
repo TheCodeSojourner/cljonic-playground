@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-10-19
+last_updated: 2026-10-22
 status: draft
 ---
 
@@ -187,7 +187,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** direct source import, bounded source import
 - **Related:** Collection, Capacity, BoundedStorage, OwningValue, PlatformInteroperability, RangeViewMaterialization, EnclosureConstruction, SameTypeArgumentIsOneElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<int, 4>{source_range}`, `Map<Key, Value, 4>{source_view}`, and analogous constructors for `Set`, `Queue`, and `String` perform SourceConstruction.
+- **Examples:** `Vector<int, 4>{source_range}`, `Map<Key, Value, 4>{source_view}`, and analogous constructors for `Set`, `Queue`, and `String` perform SourceConstruction. This direct constructor is for external C++ ranges and views; ordinary Vector creation uses the lowercase `vector` factory.
 
 
 ### SameTypeArgumentIsOneElement
@@ -195,19 +195,19 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** pack preference, single-argument disambiguation
 - **Related:** SourceConstruction, RangeViewMaterialization, ProducerMaterialization, CapacityConstruction, Conj, EnclosureConstruction
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<Range<int>, 4>{r}` constructs a vector containing the single producer value `r`; `into(Vector<int, 4>{}, Range<int>{0, 3, 1})` materializes the producer's elements.
+- **Examples:** `vector<Range<int>, 4>(r)` constructs a vector containing the single producer value `r`; `into(vector<int, 4>(), Range<int>{0, 3, 1})` materializes the producer's elements.
 
 
 ### EnclosureConstruction
-- **Definition:** The class-template-argument-deduction form (no explicit template argument list) in which a sole cljonic collection or producer argument deduces a destination whose element type is that argument's type and whose capacity is one, producing a one-element value that encloses the argument. EnclosureConstruction mirrors a Clojure collection literal (`[v]`, `#{v}`) and performs neither a copy nor element materialization; same-type copy construction requires an explicit template argument list naming the argument's own type and capacity.
+- **Definition:** Construction in which a sole cljonic collection or producer argument becomes the single element of a destination whose element type is that argument's type and whose capacity is one. The lowercase `vector(value)` factory is idiomatic; the corresponding class-template-argument-deduction form remains available. EnclosureConstruction mirrors a Clojure collection literal (`[v]`, `#{v}`) and performs neither a copy nor element materialization. For a same-type copy, use ordinary copy initialization (`auto copy = value`).
 - **Deprecated Synonyms:** nesting construction, wrapping construction
 - **Related:** SameTypeArgumentIsOneElement, SourceConstruction, Collection, Producer, CapacityConstruction
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector{Vector<int, 2>{1, 2}}` deduces `Vector<Vector<int, 2>, 1>` containing one element; `Vector<int, 2>{v}` copies `v`.
+- **Examples:** `vector(vector<int, 2>(1, 2))` produces a `Vector<Vector<int, 2>, 1>` containing one element; `auto copy = v` copies `v`.
 
 
 ### SourceConstructionDiagnostic
-- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection, the violated source-construction rule, and the correct alternatives (`into` for materialization, preflighted by `fits_into`, or the enclosure form for a single element). It never produces a value and is never a supported call target.
+- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection, the violated source-construction rule, and the correct alternatives (`into` for materialization, preflighted by `fits_into`, or the enclosure form for a single element, using the lowercase factory where available). Vector uses `vector(...)`; other collection factories remain planned rather than implemented. It never produces a value and is never a supported call target.
 - **Deprecated Synonyms:** constructor rejection message, source-construction fallback
 - **Related:** SourceConstruction, EnclosureConstruction, RejectionDiagnostic, SameTypeArgumentIsOneElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -420,7 +420,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** cycle producer, repeating sequence producer
 - **Related:** Producer, UnboundedProducer, ProducerMaterialization, PreflightPredicate, OwningValue, SequenceableProducer, CljonicCycle
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `cycle(Vector<int, 3>{1, 2, 3})` produces the repeating sequence `1, 2, 3, 1, 2, 3, ...`; `cycle(range())` has the same bounded observable prefix as `range()`; materializing the finite-source case into `Vector<int, 5>` yields `1, 2, 3, 1, 2`.
+- **Examples:** `cycle(vector<int, 3>(1, 2, 3))` produces the repeating sequence `1, 2, 3, 1, 2, 3, ...`; `cycle(range())` has the same bounded observable prefix as `range()`; materializing the finite-source case into `Vector<int, 5>` yields `1, 2, 3, 1, 2`.
 
 
 ### MapEntry
@@ -444,7 +444,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence equality family, cross-type sequential comparison
 - **Related:** Equal, GeneralEquality, FiniteDeepEquality, ProducerParameterEquality, FiniteObservation, StableEqualityComparable
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `equal(Vector<int, 4>{1, 2, 3}, Range<int>{1, 4, 1})` is true because both produce `1, 2, 3`; `equal(Vector<int, 3>{1, 1, 1}, repeat(3U, 1))` is true; `equal(cycle(Vector<int, 2>{1, 2}), Vector<int, 4>{1, 2, 3})` is false after the third element without materializing the Cycle; `equal(repeat(1), repeat(1))` is true by bounded-prefix comparison. Map, Set, and String are never members of the sequential family.
+- **Examples:** `equal(vector<int, 4>(1, 2, 3), Range<int>{1, 4, 1})` is true because both produce `1, 2, 3`; `equal(vector<int, 3>(1, 1, 1), repeat(3U, 1))` is true; `equal(cycle(vector<int, 2>(1, 2)), vector<int, 4>(1, 2, 3))` is false after the third element without materializing the Cycle; `equal(repeat(1), repeat(1))` is true by bounded-prefix comparison. Map, Set, and String are never members of the sequential family.
 
 
 ### Equal
@@ -452,7 +452,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** `=`, general equality function, Clojure equals
 - **Related:** GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, NothrowEqualityComparable, ProducerParameterEquality, FiniteDeepEquality, AlternativeStrictEquality, CompileTimeFailure
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `equal(1, 1)` is true by scalar comparison; `equal(1)` is true as the unary arity; `equal(1, 1, 1)` is true as the variadic arity over adjacent pairs; `equal(1, 2, 1)` is false at the first adjacent pair; `equal(Vector<int, 3>{1, 2, 3}, Range<int>{1, 4, 1})` is true by sequential equality; `equal(map, map)` compares key/value mappings without entry order; `equal(1.0, 1.0)` and `equal(Vector<float, 2>{}, Vector<float, 2>{})` fail at compile time under the floating-point rule; `equal(Vector<int, 2>{1}, 1)` fails at compile time because a collection is never equal to a scalar; `equal(1, Vector<int, 2>{1}, 2)` fails at compile time because every adjacent pair in the variadic form is gated. Producer `==` remains producer parameter equality and is distinct from `equal`, which may compare produced sequences at the top level.
+- **Examples:** `equal(1, 1)` is true by scalar comparison; `equal(1)` is true as the unary arity; `equal(1, 1, 1)` is true as the variadic arity over adjacent pairs; `equal(1, 2, 1)` is false at the first adjacent pair; `equal(vector<int, 3>(1, 2, 3), Range<int>{1, 4, 1})` is true by sequential equality; `equal(map, map)` compares key/value mappings without entry order; `equal(1.0, 1.0)` and `equal(vector<float, 2>(), vector<float, 2>())` fail at compile time under the floating-point rule; `equal(vector<int, 2>(1), 1)` fails at compile time because a collection is never equal to a scalar; `equal(1, vector<int, 2>(1), 2)` fails at compile time because every adjacent pair in the variadic form is gated. Producer `==` remains producer parameter equality and is distinct from `equal`, which may compare produced sequences at the top level.
 
 
 ### NotEqual
@@ -460,7 +460,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** `not=`, inequality function, Clojure not-equals
 - **Related:** Equal, GeneralEquality, SequentialEquality, NumericEquality, StableEqualityComparable, NothrowEqualityComparable, CompileTimeFailure
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `not_equal(1, 2)` is true; `not_equal(1, 1)` is false; `not_equal(1)` is false as the unary arity; `not_equal(1, 2, 1)` is true at the first unequal adjacent pair; `not_equal(Vector<int, 4>{1, 2, 3}, Range<int>{0, 3, 1})` is true because the first element pair differs; `not_equal(1.0, 1.0)` fails at compile time under the floating-point rule.
+- **Examples:** `not_equal(1, 2)` is true; `not_equal(1, 1)` is false; `not_equal(1)` is false as the unary arity; `not_equal(1, 2, 1)` is true at the first unequal adjacent pair; `not_equal(vector<int, 4>(1, 2, 3), Range<int>{0, 3, 1})` is true because the first element pair differs; `not_equal(1.0, 1.0)` fails at compile time under the floating-point rule.
 
 
 ### NumericEquality
@@ -578,7 +578,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** Copy-on-Modify Collection, bounded immutable collection, fixed-capacity collection, array-backed collection, deep copy on write, deep copying on write
 - **Related:** PersistentValueSemantics, DeepCopyUpdate, StaticInspectableStorage, Vector, Map, Set, Queue, String, SentinelBasedAccess
 - **Usage:** Specification and implementation
-- **Examples:** `auto xs = Vector<int, 4>{1, 2, 3}; auto ys = conj(xs, 4);`
+- **Examples:** `auto xs = vector<int, 4>(1, 2, 3); auto ys = conj(xs, 4);`
 
 
 ### SentinelBasedAccess
@@ -606,11 +606,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Vector
-- **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates. Its `peek()` and `pop()` members provide stack-style access to the last logical element; the corresponding free functions are also supported.
+- **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates. Use the lowercase `vector(...)`, `vector<T>(...)`, or `vector<T, Capacity>(...)` factory as the idiomatic way to create vectors at runtime or compile time. The public `Vector<T, Capacity>` type and its existing constructors remain supported, including direct construction from external C++ ranges and views. The idiomatic `peek` and `pop` free functions provide stack-style access to the last logical element.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
 - **Related:** CopyOnModifyCollection, String, CapacityConstruction, Indexed, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<int, 4>{1, 2}` constructs a fixed-capacity value whose `peek()` returns `2` and whose `pop()` returns a copy containing `1`; `peek(v)` and `pop(v)` provide the same operations through the free-function API.
+- **Examples:** `auto v = vector<int, 4>(1, 2);` creates a vector with spare capacity; `peek(v)` returns `2`, and `pop(v)` returns a copy containing `1`.
 
 
 ### Map
@@ -742,7 +742,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** element count function, count operation
 - **Related:** SequenceableCollection, SequenceableProducer, CollectionMaximumElementCount, ProducerIteration
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `count(Vector<int, 4>{1, 2})` and `count(Repeat{3U, 7})` return exact counts; `count(Repeat{7})` returns the `CollectionMaximumElementCount` observation cap.
+- **Examples:** `count(vector<int, 4>(1, 2))` and `count(Repeat{3U, 7})` return exact counts; `count(Repeat{7})` returns the `CollectionMaximumElementCount` observation cap.
 
 
 ### IsEmpty
@@ -750,7 +750,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** empty predicate, emptiness check
 - **Related:** Collection, SequenceableCollection, SequenceableProducer, Count, FreeFunction, StatePredicate, SemanticPredicateName, RejectionDiagnostic, Empty, NotEmpty
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `is_empty(Vector<int, 4>{})` is true; `is_empty(Vector<int, 4>{1})` is false; `is_empty(Range<int>{0, 3})` is false; a zero-step unbounded range has a nonzero observation count and is therefore not empty.
+- **Examples:** `is_empty(vector<int, 4>())` is true; `is_empty(vector<int, 4>(1))` is false; `is_empty(Range<int>{0, 3})` is false; a zero-step unbounded range has a nonzero observation count and is therefore not empty.
 
 
 ### Empty
@@ -758,28 +758,28 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** empty owning-value operation
 - **Related:** IsEmpty, NotEmpty
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
-- **Examples:** `empty(Vector<int, 4>{1, 2})` returns an empty `Vector<int, 4>` while leaving its input unchanged.
+- **Examples:** `empty(vector<int, 4>(1, 2))` returns an empty `Vector<int, 4>` while leaving its input unchanged.
 
 ### First
 - **Definition:** The free function that returns the first logical element of a `Vector`, `String`, `Queue`, `Map`, or `Set`, or the key of a `MapEntry`. `Vector` and `String` yield the element at index zero, `Queue` yields its front element without removal, `Map` yields one value-semantic `MapEntry`, and `Set` yields one stored element. `Map` and `Set` traversal order is not semantically significant. An empty sequenceable collection yields its `DefaultElement`. The operation is non-mutating, non-allocating, non-throwing, and part of the current public API.
 - **Deprecated Synonyms:** head, first element, first entry
 - **Related:** Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, MapEntry, DefaultElement, Peek
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
-- **Examples:** `first(Vector<int, 4>{10, 20})` is `10`; `first(Queue<int, 4>{5, 6})` is `5`; `first(MapEntry<int, int>{1, 100})` is `1`; `first(Vector<int, 4>{})` is the default `int` value.
+- **Examples:** `first(vector<int, 4>(10, 20))` is `10`; `first(Queue<int, 4>{5, 6})` is `5`; `first(MapEntry<int, int>{1, 100})` is `1`; `first(vector<int, 4>())` is the default `int` value.
 
 ### NotEmpty
 - **Definition:** The `not_empty` free function whose result is an independent owning copy of a nonempty input or the corresponding empty owning value when the input is empty, preserving the supported collection type and capacity when present. It admits `Vector`, `Map`, `Set`, `Queue`, and `String`, but not producers or external ranges. It preserves the input and requires no allocation or exceptions. It is not a boolean alias for IsEmpty and is part of the current public API.
 - **Deprecated Synonyms:** nonempty owning-value operation
 - **Related:** IsEmpty, Empty
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
-- **Examples:** `not_empty(Vector<int, 4>{1, 2})` returns an independent `Vector<int, 4>` containing `1, 2`; an empty input returns an empty `Vector<int, 4>`.
+- **Examples:** `not_empty(vector<int, 4>(1, 2))` returns an independent `Vector<int, 4>` containing `1, 2`; an empty input returns an empty `Vector<int, 4>`.
 
 ### Next
 - **Definition:** The free function that returns the logical tail of a `Vector`, `Map`, `Set`, `Queue`, or `String` as an owning `Vector` with the same static capacity as the source. It contains every element after the first in the source's logical traversal order; map elements remain value-semantic `MapEntry` values. Map and Set traversal order remains semantically unordered, and Queue results retain FIFO order. An empty input returns an empty Vector. The operation preserves its input and is `constexpr`, non-allocating, non-throwing, and part of the current public API.
 - **Deprecated Synonyms:** tail, sequence remainder
 - **Related:** First, Seq, Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, Vector, MapEntry, Queue
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
-- **Examples:** `next(Vector<int, 4>{10, 20, 30})` returns a `Vector<int, 4>` containing `20, 30`; `next(Queue<int, 4>{10, 20})` returns a `Vector<int, 4>` containing `20`.
+- **Examples:** `next(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 4>` containing `20, 30`; `next(Queue<int, 4>{10, 20})` returns a `Vector<int, 4>` containing `20`.
 
 
 ### Peek
@@ -1095,7 +1095,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** diagnostic fallback, rejection fallback, diagnostic overload, targeted rejection diagnostic
 - **Related:** CompileTimeFailure, CapacityConstruction, Equal, NotEqual, Variant, Assoc, Conj, Contains, Lookup, SequenceableCollection, Dissoc, Disj, Peek, Pop, CanAssoc, CanConj, StatePredicate, ProducerMaterialization, FitsInto
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `equal(1.0, 1.0)`, `equal(Vector<int, 2>{1}, 1)`, and `not_equal(1.0, 1.0)` each resolve to a diagnostic overload whose `static_assert` names the operation and the violated equality-domain rule; the valid overloads are still selected for admitted operands. The collection primitives (`assoc`, `conj`, `get`, `contains`, `count`, `dissoc`, `disj`, `peek`, `pop`, `can_assoc`, `can_conj`, `is_empty`, `into`, `fits_into`) carry the same obligation, each with a fallback where its rejection surface admits one.
+- **Examples:** `equal(1.0, 1.0)`, `equal(vector<int, 2>(1), 1)`, and `not_equal(1.0, 1.0)` each resolve to a diagnostic overload whose `static_assert` names the operation and the violated equality-domain rule; the valid overloads are still selected for admitted operands. The collection primitives (`assoc`, `conj`, `get`, `contains`, `count`, `dissoc`, `disj`, `peek`, `pop`, `can_assoc`, `can_conj`, `is_empty`, `into`, `fits_into`) carry the same obligation, each with a fallback where its rejection surface admits one.
 
 
 ### DiagnosticMessageLabel
