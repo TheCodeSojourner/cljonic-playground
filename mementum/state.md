@@ -1,5 +1,48 @@
 ## Current Session State
 
+- last_session_id: 24accf32-f17f-411f-b360-f77f0a1906f9
+- current_timestamp: 2026-10-22T11:51:16-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Added the lowercase Vector factory with inferred/explicit element type, typed empty, and explicit-capacity forms. Retained the public Vector type and supported constructors. Propagated through REQ-FN-029A, vocabulary, S5/S2 architecture, vector-factory Allium specification, ordinary and compile-fail tests, runtime no-heap probes, generated header, and user-facing documentation.
+2. Swept source Doxygen examples and documentation for the lowercase Vector creation idiom. Human rejected member-method assertions, type-trait implementation proofs, and semantically redundant introductory examples. Final owning example uses observable values, callable lookup, and documented C++ interoperability accessors.
+3. Completed targeted `/cljonic-api-converge` for Vector and related methods/factories, including a repeat verification. Reconciled actual assertion bodies, runtime probes, and freshly extracted executable documentation rather than relying only on trace IDs or green gates. Added the explicitly approved factory reference to the curated mainpage index.
+4. Recorded approved future collection factory names and principles in deferred, non-binding REQ-FN-029B/C and S4 architecture. Corrected SourceConstructionDiagnostic vocabulary to recommend the enclosure form, using lowercase factories where available.
+5. Fixed two subsequently reported gate failures: replaced intentional moved-from-object observations with external move-observer flags in ordinary/no-heap test probes; extracted VectorFactoryHasElementType and reused it in admission and rejection so the diagnostic overload meets CCN 4.
+6. Explained documentation-notes.md as an unimplemented historical AI-native single-header design/restart document, not current API authority. Some inventories and sample contract records are stale; no implementation of that proposal was requested.
+7. At closeout, outside activity had committed product/memory guidance and rendered docs through 117bb2d. Only mementum/state.md remained modified and the index was empty. This closeout writes and commits memory only; no product staging, make git, push, or HTML generation.
+
+Decisions:
+1. Idiomatic Vector creation uses vector(args...), vector<T>(args...), vector<T>(), or vector<T, Capacity>(args...), at runtime and constant evaluation. Inferred type is the unqualified first argument type, not a common type. Explicit capacity permits empty/spare-capacity results and must bound the argument count and configured maximum.
+2. Preserve safe non-throwing conversions, independent ownership, lvalue preservation and permitted moves from rvalues. The factory constructs individual elements; it is not a range materializer. Direct Vector<T, Capacity>{external_range_or_view} remains the import surface; a sole cljonic collection/producer may be enclosed as one element.
+3. Future names: Map -> hash_map, MapEntry -> map_entry, Set -> hash_set, Queue -> queue, String -> string. These factories are not implemented. Share construction principles where meaningful, not identical overloads. MapEntry has no spare-capacity form; Map key/value deduction and entry-vs-alternating arguments require separate approval; String must preserve text-import/byte-validity rules.
+4. Public examples remain concise and user-facing: free functions rather than implementation members; callable lookup and documented begin/view interoperability are allowed. Avoid type-introspection proofs and duplicate semantic cases.
+5. Producer-tail work remains postponed. Do not edit next-producers.md or resume implementation without a new human request.
+6. Existing requirements/specifications and updated memory guidance already encode durable construction policy; no additional knowledge file is needed. This state preserves the convergence evidence and validation caveats.
+
+Validation:
+1. Before the final lint/complexity repairs, full rebuilt modular/generated ordinary tests passed all 250 CTest entries; repeated convergence confirmed the same result. All 41 Allium files passed check/analyse earlier; scoped Vector/factory rechecks had zero findings.
+2. After the move-observer fix, focused bugprone-use-after-move clang-tidy passed both ordinary and no-heap translation units for both build configurations. Factory tests and both no-heap binaries passed. The broader clang-tidy invocation failed on unrelated duplicate-include diagnostics in the generated header; no clean full lint gate is claimed.
+3. After the complexity repair, scoped lizard passed the configured CCN <= 4 and length <= 25 thresholds; the affected rejection overload measured CCN 4 and length 16. Both factory test variants passed after rebuild; factory compile-fail admission/rejection diagnostics and strict traceability passed.
+4. Final make no-heap passed source and allocator-symbol scans and executed modular and generated-header harnesses. Probes exercise runtime-derived factory inputs, widening, typed/zero/reserved empties, ownership/copy/move, collection/producer enclosure, indexed fallback, const interop, immutable association/conj/full-capacity and peek/pop behavior.
+5. Final docs-examples compiled 33 samples, excluding only rest and seq. The exact freshly extracted Vector program compiled and linked with C++23, -Wall -Wextra -Werror, and exited zero. The public header was regenerated after the final implementation edit.
+6. Requirements/vocabulary structure passed with 328 unique clauses and 188 terms. Audit-script self-tests, diagnostic coverage/message labels, mainpage formatting, focused/strict traces and whitespace checks passed during convergence. Owning-header formatting was checked twice for idempotency.
+7. Assistant deferred HTML regeneration during convergence and did not browser-verify rendered output. Outside activity subsequently committed rendered docs in 117bb2d; do not attribute that generation or a full make git success to the assistant.
+
+Open questions:
+1. No unresolved Vector API decision. Each future collection factory still requires individual contract approval before specification/implementation.
+2. AI-native header proposal in documentation-notes.md remains unimplemented and needs current-fact verification before reuse.
+3. A clean full lint/strict gate is not established by the focused successful checks; preserve the broader clang-tidy caveat above.
+
+Next:
+1. Await the next human task; Vector convergence and the reported use-after-move/complexity fixes are complete. Do not automatically implement the deferred factories or AI-native header proposal.
+2. If resuming validation, distinguish the last full 250-test result from the focused tests after final repairs; run only checks invalidated by new changes and do not claim a full make git pass without evidence.
+3. Preserve next-producers.md as-is and do not resume producer-tail work without explicit direction.
+
+## Previous Session State
+
 - last_session_id: 34e9a55d-aba9-4c23-98b5-c15a95e261ea
 - current_timestamp: 2026-10-22T09:31:07-06:00
 - recover: 1
@@ -11,10 +54,12 @@ Task:
 3. Implemented `repeat(count, value)`, `Repeat<T>{count, value}`, and deduced `Repeat{count, value}`. Updated deleted admission overload, CTAD diagnostic guide, factory fallback, source examples, Repeatedly's diagnostic guidance, affected ordinary/no-heap tests and compile-fail scripts, public amalgamation, and traceability snapshot.
 4. Human then requested plain integer count literals in Doxygen examples and approved extending Repeat and Repeatedly count admission to signed integers, with nonpositive counts producing empty finite values. Propagated through separately approved requirements, vocabulary, architecture, specifications, tests, and implementation. Shared ProducerCount now checks nonnegative type-range representability; normalize_producer_count checks nonpositive values before conversion. Both counted constructors call that helper, with factory and CTAD integration preserved. Updated four source examples and the restart prompt.
 5. Human invoked `/gybis-fini`, explicitly excluding next-producers.md from edits, deletion, staging, and commits. At closeout, outside activity had committed product changes through 935859b and rendered documentation in 7106f84; the index was empty and only this state file plus the untracked restart prompt remained.
+6. Human specified lowercase `vector(...)` as the idiomatic runtime and compile-time Vector creation API while retaining the public `Vector` type. Existing Doxygen, vocabulary, and guidance examples are being updated accordingly; direct `Vector` construction remains appropriate for external C++ range/view imports.
 
 Decisions:
 1. Count-first is the only counted Repeat argument order; no compatibility overload or order inference. Counts now admit signed and unsigned integral types whose nonnegative range fits size_t, excluding Boolean and character types. Nonpositive counts normalize to zero before unsigned conversion. This is a producer-count semantic exception, not a relaxation of general SafeImplicitConversion. Element deduction comes from the second argument. One-argument unbounded and default finite-empty forms are unchanged.
 2. Numeric calls always mean count then value; old calls with both arguments otherwise valid cannot reliably be diagnosed as legacy calls. Signed-count admission makes repeat(7, 3U) a valid seven-element Repeat<unsigned int>, so legacy rejection cases now use distinguishable nonnumeric count arguments.
+3. Current Vector guidance supersedes the older CTAD preference recorded below: use lowercase `vector(...)` (or its explicit-type/capacity forms) for Vector creation. Retain `Vector<T, Capacity>` and direct class construction for the external C++ range/view source-import case.
 3. Producer support for `next` remains postponed and unimplemented. Restart prompt examples have been migrated to count-first.
 4. No separate memory or knowledge page is needed: approved requirements and specifications encode the count policy; this state records the migration and validation caveat. Existing example-style guidance remains applicable.
 
@@ -85,7 +130,7 @@ Task:
 
 Decisions:
 1. CTAD is the default idiom encouraged in user-facing examples, not an unconditional rewrite rule. Preserve explicit arguments for empty construction, intentional storage headroom, insertion/materialization bounds, capacity-specific lookup, cross-capacity equality, compatible nested element types, named value models, and Variant alternatives.
-2. Explicit storage provisioning and auto work together: use constexpr auto values = Vector<int, 4>{10, 20} when spare capacity is intentional.
+2. Explicit storage provisioning and auto work together: use constexpr auto values = vector<int, 4>(10, 20) when spare capacity is intentional.
 3. The assistant preserved pre-existing generated HTML and performed no HTML regeneration or product staging/commits. Outside activity subsequently updated and committed generated documentation.
 4. The existing docs-user-facing-example-style memory already captures the governing CTAD preference; no new memory file or knowledge page is needed. Preserve the distinction between auto deduction of a variable and CTAD deduction of a constructed class, especially when explicit capacity must remain.
 
@@ -947,7 +992,7 @@ Next:
 
 Task:
 1. `conj` arity expansion — COMPLETE, uncommitted: Clojure's zero-value and variadic arities were added alongside the existing one-value form. `conj(collection)` returns an unchanged copy (mirroring the `disj` zero-value contract); `conj(collection, value₁, value₂, …)` folds two or more values left to right (mirroring the `assoc` variadic precedent), each value admitted under the same collection-specific domain, with a value that cannot be added at full capacity a per-value no-op that does not stop the remaining values. The one-value arity is unchanged. Updated `REQ-FN-002Y` (plus a cross-reference in `REQ-FN-002T`), architecture `S2_conj_contract`, `specs/primitives/conj.allium` (8 new invariants), `tests/cljonic-conj-spec-tests.cpp`, `src/cljonic-conj.hpp` (two overloads plus three diagnostic fallbacks), the conj compile-fail harness, vocabulary, the traceability snapshot, and `docs/`.
-2. Excluded Clojure's nullary `(conj)` → `[]` (human decision): no typed realization exists — cljonic has no unbounded or default collection, and the `REQ-COLL-004` pack-literal precedent already gives the zero-argument empty collection through default construction (`Vector<T,N>{}`), not a function form. `(conj nil item)` is likewise inapplicable (no `nil` or list type; module 7 maps Clojure nil-returning operations to typed absence semantics).
+2. Excluded Clojure's nullary `(conj)` → `[]` (human decision): no typed realization exists — cljonic has no unbounded or default collection, and the typed factory already provides an empty vector through `vector<T>()`; this does not make zero-argument `conj()` well-typed. `(conj nil item)` is likewise inapplicable (no `nil` or list type; module 7 maps Clojure nil-returning operations to typed absence semantics).
 3. Mementum memory — proposed and declined (human decision): the requirement clause is the durable record, so no memory file was created.
 
 Questions:
@@ -1465,7 +1510,7 @@ Questions:
 Decisions:
 1. Generator testing (human, 2026-10-03): NOT adopted. Reversed the prior "Prefer Catch2 GENERATE-based parametrization" guidance; rationale: no coverage gain at 100.0%, recurring sanitizer/coverage cost across the several builds, runtime `auto` cannot feed `STATIC_REQUIRE`, and `random()` injects unstated distribution assumptions.
 2. Source-construction admission (human, 2026-10-03): the direct source constructor admits only non-cljonic C++ range/view sources; a cljonic collection or producer is admissible only as one element of exactly the element type (pack) — mirroring a Clojure literal whose contents are elements (`#{(range 10)}`) — or via enclosure; materializing a cljonic source is the role of `into`, preflighted by `fits_into`. Applies to same-kind as well (e.g. `Set<int,4>{Set<int,2>{…}}` is rejected). Supported by Clojure evidence: `#{(range 10)}` succeeds (one element); `#{(range)}` fails; `(into #{} …)` is the materializing form.
-3. Enclosure (human, 2026-10-03): achieve as-close-as-possible Clojure enclosure. Implemented with same-class CTAD deduction guides (`Vector(Vector<T,N>) -> Vector<Vector<T,N>,1>`), which out-prefer the implicit copy-deduction candidate. Verified standard-sanctioned ([over.match.best]: a guide as specialized as the copy candidate is preferred; matches the standard's own `A(A<T>) -> A<A<T>>` example) and cross-compiler (GCC 16.2, clang 22.1). Accepted tradeoff: CTAD `Vector{v}` where `v` is a `Vector` now encloses (one element) rather than copying; same-type copy remains via an explicit argument list (`Vector<int,2>{v}`).
+3. Enclosure (human, 2026-10-03): achieve as-close-as-possible Clojure enclosure. Implemented with same-class CTAD deduction guides (`Vector(Vector<T,N>) -> Vector<Vector<T,N>,1>`), which out-prefer the implicit copy-deduction candidate. Verified standard-sanctioned ([over.match.best]: a guide as specialized as the copy candidate is preferred; matches the standard's own `A(A<T>) -> A<A<T>>` example) and cross-compiler (GCC 16.2, clang 22.1). Accepted tradeoff: CTAD `Vector{v}` where `v` is a `Vector` now encloses (one element) rather than copying; legacy same-type copy syntax remains available, while ordinary copies use `auto copy = v`. The lowercase `vector(...)` factory is now the idiomatic way to create vectors.
 4. REQ-DIAG-010 (human, 2026-10-03): approved extending the rejection-diagnostic policy to constructors. The `requires` clause is a gate, not a teacher — without a fallback the rejected argument falls through to the pack constructor's generic element-conversion message, which misleads. Message wording must be conditional ("valid here only as one element of exactly the element type"), not a universal claim, because the pack/enclosure path is valid when the argument IS the element type.
 5. Scope (human, 2026-10-03): implemented REQ-DIAG-010 for all five collections (not Vector-only), as part of this slice.
 6. Gate discipline (human, 2026-10-03): do not re-run `upsert-gate-strict` during this session; stop running the full test battery after every small change.
@@ -1729,7 +1774,7 @@ Decisions:
 3. Element-type policy (human, 2026-09-26): identical element types for cross-category sequential comparison; same-type sequential equal coincides with REQ-COLL-021 operator==.
 4. Cross-family pairs (human, 2026-09-26): compile-time reject; Map↔Map, Set↔Set, String↔String only; family compatibility is a compile-time concept.
 5. Nested producer elements (human, 2026-09-26): producer parameter equality (REQ-FN-014B) for nested producer components; REQ-SEQ-016/017 unchanged; sequential prefix equality exists only on the named `equal` function.
-5a. Mixed pairs (human, 2026-09-26, approved): equal(Vector{1}, 1) and any cljonic↔non-cljonic pair is compile-time rejected, mirroring AlternativeStrictEquality — including every adjacent pair in the variadic form.
+5a. Mixed pairs (human, 2026-09-26, approved): equal(vector(1), 1) and any cljonic↔non-cljonic pair is compile-time rejected, mirroring AlternativeStrictEquality — including every adjacent pair in the variadic form.
 6. Non-cljonic fallthrough domain (human, 2026-09-26, approved option 1): `equal` is NOT part of the C++ interoperability surface; standard-library range/container types are compile-time rejected; fallthrough is the closed value domain only (scalars, scoped enums, aggregate-like structs with stable ==, std::variant composites).
 7. Standing decisions 2026-09-25: alternative-strict variant equality FINAL and exclusive; cross-type numeric unification permanently out of scope (Stream D retired). NoHeap probe rule: every behavior change needs a dedicated probe in both builds.
 
