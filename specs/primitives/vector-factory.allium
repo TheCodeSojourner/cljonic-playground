@@ -1,0 +1,142 @@
+-- allium: 3
+-- REQ-FN-029A: vector<T>() creates a typed empty zero-capacity Vector.
+-- Non-empty calls may deduce the element type from the first argument or
+-- explicitly select it. An explicit capacity form vector<T, Capacity>(args...)
+-- preserves spare capacity and accepts an empty pack. Every argument uses
+-- the safe, non-throwing construction rules. Lvalue arguments remain
+-- unchanged; rvalues may be moved.
+
+entity VectorFactory {
+    supports_typed_empty_factory: Boolean
+    typed_empty_factory_has_zero_capacity: Boolean
+    supports_deduced_variadic_factory: Boolean
+    deduced_element_type_is_unqualified_first_argument: Boolean
+    supports_explicit_element_type_variadic_factory: Boolean
+    explicit_element_type_determines_result_element_type: Boolean
+    variadic_capacity_equals_argument_count: Boolean
+    variadic_forms_require_at_least_one_argument: Boolean
+    supports_explicit_capacity_factory: Boolean
+    explicit_capacity_determines_result_capacity: Boolean
+    explicit_capacity_factory_supports_empty_arguments: Boolean
+    explicit_capacity_is_at_least_argument_count: Boolean
+    explicit_capacity_is_bounded_by_configured_maximum: Boolean
+    invalid_explicit_capacity_is_compile_time_rejected: Boolean
+    element_type_satisfies_nothrow_collection_element: Boolean
+    every_argument_satisfies_nothrow_element_construction: Boolean
+    argument_count_is_bounded_by_configured_maximum: Boolean
+    oversized_argument_pack_is_compile_time_rejected: Boolean
+    untyped_empty_call_is_rejected: Boolean
+    returns_independently_owning_vector: Boolean
+    preserves_lvalue_arguments: Boolean
+    permits_moving_from_rvalue_arguments: Boolean
+    constexpr_noexcept_nonallocating: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    referential_transparency: Boolean
+
+    invariant SupportsTypedEmptyFactory {
+        this.supports_typed_empty_factory = true
+    }
+
+    invariant TypedEmptyFactoryHasZeroCapacity {
+        this.typed_empty_factory_has_zero_capacity = true
+    }
+
+    invariant SupportsDeducedVariadicFactory {
+        this.supports_deduced_variadic_factory = true
+    }
+
+    invariant DeducedElementTypeIsUnqualifiedFirstArgument {
+        this.deduced_element_type_is_unqualified_first_argument = true
+    }
+
+    invariant SupportsExplicitElementTypeVariadicFactory {
+        this.supports_explicit_element_type_variadic_factory = true
+    }
+
+    invariant ExplicitElementTypeDeterminesResultElementType {
+        this.explicit_element_type_determines_result_element_type = true
+    }
+
+    invariant VariadicCapacityEqualsArgumentCount {
+        this.variadic_capacity_equals_argument_count = true
+    }
+
+    invariant VariadicFormsRequireAtLeastOneArgument {
+        this.variadic_forms_require_at_least_one_argument = true
+    }
+
+    invariant SupportsExplicitCapacityFactory {
+        this.supports_explicit_capacity_factory = true
+    }
+
+    invariant ExplicitCapacityDeterminesResultCapacity {
+        this.explicit_capacity_determines_result_capacity = true
+    }
+
+    invariant ExplicitCapacityFactorySupportsEmptyArguments {
+        this.explicit_capacity_factory_supports_empty_arguments = true
+    }
+
+    invariant ExplicitCapacityIsAtLeastArgumentCount {
+        this.explicit_capacity_is_at_least_argument_count = true
+    }
+
+    invariant ExplicitCapacityIsBoundedByConfiguredMaximum {
+        this.explicit_capacity_is_bounded_by_configured_maximum = true
+    }
+
+    invariant InvalidExplicitCapacityIsCompileTimeRejected {
+        this.invalid_explicit_capacity_is_compile_time_rejected = true
+    }
+
+    invariant ElementTypeSatisfiesNothrowCollectionElement {
+        this.element_type_satisfies_nothrow_collection_element = true
+    }
+
+    invariant EveryArgumentSatisfiesNothrowElementConstruction {
+        this.every_argument_satisfies_nothrow_element_construction = true
+    }
+
+    invariant ArgumentCountIsBoundedByConfiguredMaximum {
+        this.argument_count_is_bounded_by_configured_maximum = true
+    }
+
+    invariant OversizedArgumentPackIsCompileTimeRejected {
+        this.oversized_argument_pack_is_compile_time_rejected = true
+    }
+
+    invariant UntypedEmptyCallIsRejected {
+        this.untyped_empty_call_is_rejected = true
+    }
+
+    invariant ReturnsIndependentlyOwningVector {
+        this.returns_independently_owning_vector = true
+    }
+
+    invariant PreservesLvalueArguments {
+        this.preserves_lvalue_arguments = true
+    }
+
+    invariant PermitsMovingFromRvalueArguments {
+        this.permits_moving_from_rvalue_arguments = true
+    }
+
+    invariant ConstexprNoexceptNonallocating {
+        this.constexpr_noexcept_nonallocating = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+actor VectorFactoryOperator { identified_by: VectorFactory }
