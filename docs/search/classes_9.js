@@ -1,9 +1,13 @@
 var searchData=
 [
-  ['set_0',['Set',['../classcljonic_1_1_set.html',1,'cljonic']]],
-  ['static_5fextent_1',['static_extent',['../structcljonic_1_1concepts__detail_1_1static__extent.html',1,'cljonic::concepts_detail']]],
-  ['static_5fextent_3c_20elementtype_5bextent_5d_3e_2',['static_extent&lt; ElementType[Extent]&gt;',['../structcljonic_1_1concepts__detail_1_1static__extent_3_01_element_type_0f_extent_0e_4.html',1,'cljonic::concepts_detail']]],
-  ['static_5fextent_3c_20std_3a_3aarray_3c_20elementtype_2c_20extent_20_3e_20_3e_3',['static_extent&lt; std::array&lt; ElementType, Extent &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1static__extent_3_01std_1_1array_3_01_element_type_00_01_extent_01_4_01_4.html',1,'cljonic::concepts_detail']]],
-  ['static_5fextent_3c_20std_3a_3aspan_3c_20elementtype_2c_20extent_20_3e_20_3e_4',['static_extent&lt; std::span&lt; ElementType, Extent &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1static__extent_3_01std_1_1span_3_01_element_type_00_01_extent_01_4_01_4.html',1,'cljonic::concepts_detail']]],
-  ['string_5',['String',['../classcljonic_1_1_string.html',1,'cljonic']]]
+  ['range_0',['Range',['../classcljonic_1_1_range.html',1,'cljonic']]],
+  ['range_3c_20concepts_5fdetail_3a_3arangeelementdomainviolation_20_3e_1',['Range&lt; concepts_detail::RangeElementDomainViolation &gt;',['../classcljonic_1_1_range_3_01concepts__detail_1_1_range_element_domain_violation_01_4.html',1,'cljonic']]],
+  ['rangeelementdomainviolation_2',['RangeElementDomainViolation',['../structcljonic_1_1concepts__detail_1_1_range_element_domain_violation.html',1,'cljonic::concepts_detail']]],
+  ['rejectedproducerfactory_3',['RejectedProducerFactory',['../structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html',1,'cljonic::concepts_detail']]],
+  ['repeat_4',['Repeat',['../classcljonic_1_1_repeat.html',1,'cljonic']]],
+  ['repeat_3c_20concepts_5fdetail_3a_3arepeatelementdomainviolation_20_3e_5',['Repeat&lt; concepts_detail::RepeatElementDomainViolation &gt;',['../classcljonic_1_1_repeat_3_01concepts__detail_1_1_repeat_element_domain_violation_01_4.html',1,'cljonic']]],
+  ['repeatedly_6',['Repeatedly',['../classcljonic_1_1_repeatedly.html',1,'cljonic']]],
+  ['repeatedly_3c_20concepts_5fdetail_3a_3arepeatedlydomainviolation_2c_20concepts_5fdetail_3a_3arepeatedlydomainviolation_20_3e_7',['Repeatedly&lt; concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation &gt;',['../classcljonic_1_1_repeatedly_3_01concepts__detail_1_1_repeatedly_domain_violation_00_01concepts__a14cbd13f5a5036b68ab7e49d50a791c.html',1,'cljonic']]],
+  ['repeatedlydomainviolation_8',['RepeatedlyDomainViolation',['../structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html',1,'cljonic::concepts_detail']]],
+  ['repeatelementdomainviolation_9',['RepeatElementDomainViolation',['../structcljonic_1_1concepts__detail_1_1_repeat_element_domain_violation.html',1,'cljonic::concepts_detail']]]
 ];
