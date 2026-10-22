@@ -1,7 +1,7 @@
 ## Current Session State
 
 - last_session_id: 6a3c9a1a-95a9-4bea-8239-b6884508d8cb
-- current_timestamp: 2026-10-22T16:05:00-06:00
+- current_timestamp: 2026-10-22T16:03:00-06:00
 - recover: 1
 - session_complete: true
 
@@ -28,13 +28,17 @@ Validation:
 5. `make traceability-spec-to-code-update-snapshot` and `make traceability-spec-to-code` passed; `make trace-id-check SPEC=specs/primitives/map-entry-factory.allium` reported 18 obligations traced.
 6. `make no-heap`, `make format`, `make lint LINT_FILE=src/cljonic-map-entry.hpp`, `make complexity-cli COMPLEXITY_PATH=src/cljonic-map-entry.hpp`, `make core-cheatsheet-format`, and `git diff --check` passed.
 
+Memory/synthesis:
+1. Stored `factory-consistency-for-user-createable-values` (🎯) during the session.
+2. `gybis-fini` synthesis: updated `mementum/knowledge/collection-api-surface-discipline.md` in place with the factory-consistency rule and the fixed-shape/no-capacity rule; no new knowledge page.
+
 Open questions:
 1. `hash_set`, `queue`, and `string` factories remain deferred under `REQ-FN-029B`/`029C` and still need individual contracts.
 2. The `Map` vocabulary and Doxygen prose still show `MapEntry{...}` in examples; not changed, since entry construction remains supported and the task covered the factory surface.
 
 Next:
 1. If requested, promote the next deferred factory in the required layer order.
-2. Leave rendered `docs/` modifications untouched; do not stage or commit them.
+2. Rendered `docs/` was committed by the human as `b2b5a11` after this session's feature commit; no further docs work is pending from this session.
 
 ## Previous Session State
 
