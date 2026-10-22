@@ -187,7 +187,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** direct source import, bounded source import
 - **Related:** Collection, Capacity, BoundedStorage, OwningValue, PlatformInteroperability, RangeViewMaterialization, EnclosureConstruction, SameTypeArgumentIsOneElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `Vector<int, 4>{source_range}`, `Map<Key, Value, 4>{source_view}`, and analogous constructors for `Set`, `Queue`, and `String` perform SourceConstruction. This direct constructor is for external C++ ranges and views; ordinary Vector creation uses the lowercase `vector` factory.
+- **Examples:** `Vector<int, 4>{source_range}`, `Map<Key, Value, 4>{source_view}`, and analogous constructors for `Set`, `Queue`, and `String` perform SourceConstruction. This direct constructor is for external C++ ranges and views; ordinary Vector creation uses the lowercase `vector` factory, and ordinary Map creation uses the lowercase `hash_map` factory.
 
 
 ### SameTypeArgumentIsOneElement
@@ -207,7 +207,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### SourceConstructionDiagnostic
-- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection, the violated source-construction rule, and the correct alternatives (`into` for materialization, preflighted by `fits_into`, or the enclosure form for a single element, using the lowercase factory where available). Vector uses `vector(...)`; other collection factories remain planned rather than implemented. It never produces a value and is never a supported call target.
+- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection, the violated source-construction rule, and the correct alternatives (`into` for materialization, preflighted by `fits_into`, or the enclosure form for a single element, using the lowercase factory where available). Vector uses `vector(...)`; Map creation uses `hash_map(...)`, which takes alternating keys and values rather than enclosing a single element; the remaining collection factories are planned rather than implemented. It never produces a value and is never a supported call target.
 - **Deprecated Synonyms:** constructor rejection message, source-construction fallback
 - **Related:** SourceConstruction, EnclosureConstruction, RejectionDiagnostic, SameTypeArgumentIsOneElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -608,17 +608,33 @@ producer building blocks used across all higher-order algorithms.
 ### Vector
 - **Definition:** The cljonic fixed-capacity sequential collection type for ordered element storage with immutable copy-on-modify updates. Use the lowercase `vector(...)`, `vector<T>(...)`, or `vector<T, Capacity>(...)` factory as the idiomatic way to create vectors at runtime or compile time. The public `Vector<T, Capacity>` type and its existing constructors remain supported, including direct construction from external C++ ranges and views. The idiomatic `peek` and `pop` free functions provide stack-style access to the last logical element.
 - **Deprecated Synonyms:** vector collection, bounded vector, fixed-capacity vector
-- **Related:** CopyOnModifyCollection, String, CapacityConstruction, Indexed, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** CopyOnModifyCollection, String, CapacityConstruction, Indexed, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor, VectorFactory
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `auto v = vector<int, 4>(1, 2);` creates a vector with spare capacity; `peek(v)` returns `2`, and `pop(v)` returns a copy containing `1`.
 
 
+### VectorFactory
+- **Definition:** The lowercase `vector` free-function family that is the idiomatic way to create a `Vector` at runtime or compile time from individual element arguments. `vector(first, rest...)` deduces the element type from the unqualified first argument and the capacity from the argument count; `vector<T>(...)` names the element type; `vector<T>()` creates an empty `Vector<T, 0>`; `vector<T, Capacity>(...)` names the capacity, which bounds the argument count and permits an empty or spare-capacity result. Every argument constructs the element safely without throwing, and the factory never allocates. It constructs individual elements and is not a range materializer.
+- **Deprecated Synonyms:** vector maker, make_vector
+- **Related:** Vector, EnclosureConstruction, SameTypeArgumentIsOneElement, SourceConstruction, CapacityConstruction, NothrowElementConstruction, CollectionMaximumElementCount
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `vector(1, 2, 3)` creates a `Vector<int, 3>`; `vector<int, 4>()` creates an empty `Vector<int, 4>`.
+
+
 ### Map
-- **Definition:** The cljonic fixed-capacity associative collection type mapping unique, stably comparable keys to mapped values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates. Key lookup through `operator()` or `get` returns the mapped value `V`; `MapEntry<K, V>` is a separate key-value pair representation used for entry construction and traversal. Both keys and values satisfy the `NothrowCollectionElement` storage contract at template admission.
+- **Definition:** The cljonic fixed-capacity associative collection type mapping unique, stably comparable keys to mapped values using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates. Key lookup through `operator()` or `get` returns the mapped value `V`; `MapEntry<K, V>` is a separate key-value pair representation used for entry construction and traversal. Both keys and values satisfy the `NothrowCollectionElement` storage contract at template admission. Use the lowercase `hash_map(k1, v1, ...)`, `hash_map<K, V>(...)`, or `hash_map<K, V, Capacity>(...)` factory, which takes alternating keys and values, as the idiomatic way to create maps at runtime or compile time. The public `Map<K, V, Capacity>` type and its existing constructors remain supported, including entry construction and direct construction from external C++ ranges and views.
 - **Deprecated Synonyms:** bounded map, fixed-capacity map, associative map
-- **Related:** MapEntry, Associative, Lookup, Contains, LinearScan, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** MapEntry, Associative, Lookup, Contains, LinearScan, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor, HashMapFactory
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback. `Map{MapEntry{1, 10}, MapEntry{2, 20}}` deduces `Map<int, int, 2>` and folds `assoc` over each entry in argument order; every argument must be exactly `MapEntry<int, int>`, and at least one argument is required (use `Map<int, int, N>{}` for the empty case).
+- **Examples:** `hash_map(1, 10, 2, 20)` creates a `Map<int, int, 2>`, and a later duplicate key replaces the earlier value; `hash_map<int, int, 4>()` creates an empty `Map<int, int, 4>`. `Map<int, String<16>, 4>{}` creates a bounded associative collection supporting `assoc`, `dissoc`, `contains`, `get`, and callable lookup `m(k)`; a missing key returns `String<16>{}` or a supplied fallback. `Map{MapEntry{1, 10}, MapEntry{2, 20}}` deduces `Map<int, int, 2>` and folds `assoc` over each entry in argument order; every argument must be exactly `MapEntry<int, int>`, and at least one argument is required (use `Map<int, int, N>{}` for the empty case).
+
+
+### HashMapFactory
+- **Definition:** The lowercase `hash_map` free-function family that is the idiomatic way to create a `Map` at runtime or compile time from alternating key and value arguments. `hash_map(k1, v1, ...)` deduces the key and value types from the unqualified first key and first value and the capacity from the pair count; `hash_map<K, V>(...)` names the key and value types; `hash_map<K, V, Capacity>(...)` names the capacity, which bounds the pair count and permits an empty or spare-capacity result. An empty call requires explicit key type, value type, and capacity, and an odd argument count is rejected at compile time. Every key and value constructs its declared type safely without throwing, pairs are associated in argument order so a later duplicate key replaces the earlier value, and the factory never allocates.
+- **Deprecated Synonyms:** map maker, make_map
+- **Related:** Map, MapEntry, Assoc, SourceConstruction, NothrowElementConstruction, CollectionMaximumElementCount, VectorFactory
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `hash_map(1, 10, 2, 20)` creates a `Map<int, int, 2>`; `hash_map(1, 10, 1, 20)` maps `1` to `20`; `hash_map<int, int, 4>()` creates an empty `Map<int, int, 4>`.
 
 
 ### Set
