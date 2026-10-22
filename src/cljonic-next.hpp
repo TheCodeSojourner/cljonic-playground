@@ -31,7 +31,7 @@ concept NextSequenceableCollection =
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto vector = Vector{10, 20, 30};
+   constexpr auto vector = cljonic::vector(10, 20, 30);
    constexpr auto vector_tail = next(vector);
    static_assert(count(vector_tail) == 2);
    static_assert(vector_tail(0) == 20 && vector_tail(1) == 30);
@@ -53,11 +53,11 @@ concept NextSequenceableCollection =
    constexpr auto text = String{"ABC"};
    constexpr auto text_tail = next(text);
    static_assert(text_tail(0) == 'B' && text_tail(1) == 'C');
-   static_assert(count(next(Vector<int, 3>{})) == 0);
-   static_assert(count(next(Vector{10})) == 0);
+   static_assert(count(next(cljonic::vector<int, 3>())) == 0);
+   static_assert(count(next(cljonic::vector(10))) == 0);
 
    // Runtime demonstration.
-   const auto runtime_values = Vector<int, 4>{40, 50};
+   const auto runtime_values = cljonic::vector<int, 4>(40, 50);
    const auto runtime_tail = next(runtime_values);
    const auto runtime_queue = Queue<int, 4>{60, 70};
    const auto runtime_queue_tail = next(runtime_queue);

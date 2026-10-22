@@ -16,15 +16,15 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   constexpr auto values = Vector{10, 20};
+   constexpr auto values = vector(10, 20);
    constexpr auto copied = not_empty(values);
    static_assert(equal(copied, values));
    static_assert(count(copied) == 2);
-   static_assert(is_empty(not_empty(Vector<int, 0>{})));
+   static_assert(is_empty(not_empty(vector<int, 0>())));
 
    const auto entries = Map{MapEntry{1, 100}, MapEntry{2, 200}};
    const auto copied_entries = not_empty(entries);
-   const auto empty_values = Vector<int, 4>{};
+   const auto empty_values = vector<int, 4>();
    const auto copied_empty = not_empty(empty_values);
 
    return equal(copied_entries, entries) && count(entries) == 2 &&

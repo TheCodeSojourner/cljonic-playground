@@ -63,7 +63,7 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{10, 20};
+   constexpr auto v_const = vector(10, 20);
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto s_const = Set{5};
    constexpr auto text_const = String{"ab"};
@@ -77,7 +77,7 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
    static_assert(get(text_const, 9, 'x') == 'x');
 
    // Runtime demonstration.
-   auto v_runtime = Vector{10, 20};
+   auto v_runtime = vector(10, 20);
    const auto val = get(v_runtime, 0);
 
    return (val == 10) ? 0 : 1;

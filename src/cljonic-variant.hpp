@@ -116,7 +116,7 @@ concept VariantClassArgument =
    [[maybe_unused]] constexpr auto nested =
        Variant<Variant<int, long>, char>{as_int};
    [[maybe_unused]] constexpr auto as_vector_element =
-       Vector{Variant<int, long>{1}, Variant<int, long>{2L}};
+       vector(Variant<int, long>{1}, Variant<int, long>{2L});
    [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
    [[maybe_unused]] constexpr auto as_map_key = MapEntry{as_int, 1};
 

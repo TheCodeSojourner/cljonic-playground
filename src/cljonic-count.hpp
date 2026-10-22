@@ -18,7 +18,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{1, 2, 3};
+   constexpr auto v_const = vector(1, 2, 3);
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto q_const = Queue{9};
    constexpr auto r_const = Range{0, 5};
@@ -36,7 +36,7 @@ namespace cljonic {
                  CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
 
    // Runtime demonstration.
-   auto v_runtime = Vector{10, 20};
+   auto v_runtime = vector(10, 20);
    const auto sz = count(v_runtime);
 
    return (sz == 2) ? 0 : 1;

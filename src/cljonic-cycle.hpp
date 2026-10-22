@@ -39,13 +39,13 @@ concept CycleClassArgument =
  using namespace cljonic;
 
  int main() {
-   [[maybe_unused]] constexpr auto finite_cycle = cycle(Vector{1, 2, 3});
+   [[maybe_unused]] constexpr auto finite_cycle = cycle(vector(1, 2, 3));
    [[maybe_unused]] constexpr auto unbounded_cycle = cycle(Range{0, 0, 0});
 
    // -----------------------------------------------------------------------
    // C++ interoperability: Cycle supports const traversal.
    // -----------------------------------------------------------------------
-   auto runtime_cycle = cycle(Vector{4, 5, 6});
+   auto runtime_cycle = cycle(vector(4, 5, 6));
    auto runtime_unbounded_cycle = cycle(Range{0, 0, 0});
 
    // Use C++ interoperability to observe a finite source cycle at runtime.
@@ -175,8 +175,8 @@ class Cycle {
      *  sequence. It is the only producer parameter-equality surface; the
      *  `equal` free function instead compares bounded logical observations of
      *  the produced sequences. The owned source compares by its own stable
-     *  equality, so `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 3})` is true
-     *  while `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 4})` is false. O(1),
+     *  equality, so `cycle(vector(1, 2, 3)) == cycle(vector(1, 2, 3))` is true
+     *  while `cycle(vector(1, 2, 3)) == cycle(vector(1, 2, 4))` is false. O(1),
      *  no traversal, no allocation. */
     [[nodiscard]] friend constexpr auto operator==(const Cycle& lhs, const Cycle& rhs) noexcept -> bool
         requires concepts::StableEqualityComparable<Source>

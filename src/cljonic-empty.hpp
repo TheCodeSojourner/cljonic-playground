@@ -15,12 +15,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{1, 2, 3};
+   constexpr auto v_const = vector(1, 2, 3);
    [[maybe_unused]] constexpr auto e_const = empty(v_const);
    static_assert(is_empty(e_const));
 
    // Runtime demonstration.
-   auto v_runtime = Vector{10, 20};
+   auto v_runtime = vector(10, 20);
    auto e_runtime = empty(v_runtime);
    auto m_runtime = Map{MapEntry{1, 100}};
    auto em_runtime = empty(m_runtime);

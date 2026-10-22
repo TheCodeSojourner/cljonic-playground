@@ -71,7 +71,7 @@
  * - \ref Queue "Queue"
  * - \ref Set "Set"
  * - \ref String "String"
- * - \ref Vector "Vector"
+ * - \ref Vector "Vector", created with \ref cljonic::vector "vector"
  *
  * ## Producer Types
  *

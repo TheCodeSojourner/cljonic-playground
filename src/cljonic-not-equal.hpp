@@ -19,7 +19,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v = Vector{1, 2, 3};
+   constexpr auto v = vector(1, 2, 3);
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
    constexpr auto q = Queue{1, 2, 3};
    constexpr auto m1 = Map{MapEntry{1, 10}};
@@ -33,7 +33,7 @@ namespace cljonic {
    static_assert(!not_equal(1, 1, 1));                // every pair equal
    static_assert(!not_equal(v, r));                   // same elements
    static_assert(not_equal(v, q) == not_equal(q, v)); // symmetric
-   static_assert(not_equal(v, Vector{1, 2, 4}));
+   static_assert(not_equal(v, vector(1, 2, 4)));
    static_assert(not_equal(m1, m2));  // different entries
    static_assert(!not_equal(s1, s2)); // same elements
 
@@ -47,7 +47,7 @@ namespace cljonic {
    // Runtime demonstration.
    const auto runtime_first = 1;
    const auto runtime_v =
-       Vector{runtime_first, runtime_first + 1, runtime_first + 2};
+       vector(runtime_first, runtime_first + 1, runtime_first + 2);
    const auto runtime_r =
        Range{runtime_first, runtime_first + 2, 1}; // produces 1, 2
    return not_equal(runtime_v, runtime_r) ? 0 : 1;

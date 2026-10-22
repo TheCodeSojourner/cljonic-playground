@@ -21,26 +21,26 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto destination = Vector<int, 8>{100, 200};
+   constexpr auto destination = vector<int, 8>(100, 200);
    constexpr auto source = Range{0, 5};
    constexpr auto result = into(destination, source);
-   static_assert(equal(result, Vector{100, 200, 0, 1, 2, 3, 4}));
-   static_assert(equal(destination, Vector{100, 200}));
+   static_assert(equal(result, vector(100, 200, 0, 1, 2, 3, 4)));
+   static_assert(equal(destination, vector(100, 200)));
    static_assert(count(source) == 5);
 
-   constexpr auto prefix = into(Vector<int, 4>{100, 200}, source);
-   static_assert(equal(prefix, Vector{100, 200, 0, 1}));
+   constexpr auto prefix = into(vector<int, 4>(100, 200), source);
+   static_assert(equal(prefix, vector(100, 200, 0, 1)));
 
    // Runtime demonstration.
    const auto runtime_end = 5;
-   const auto runtime_destination = Vector<int, 8>{100, 200};
+   const auto runtime_destination = vector<int, 8>(100, 200);
    const auto runtime_source = Range{0, runtime_end};
    const auto runtime_result = into(runtime_destination, runtime_source);
-   const auto runtime_prefix = into(Vector<int, 4>{100, 200}, runtime_source);
+   const auto runtime_prefix = into(vector<int, 4>(100, 200), runtime_source);
 
-   return (equal(runtime_result, Vector{100, 200, 0, 1, 2, 3, 4}) &&
-           equal(runtime_prefix, Vector{100, 200, 0, 1}) &&
-           equal(runtime_destination, Vector{100, 200}) &&
+   return (equal(runtime_result, vector(100, 200, 0, 1, 2, 3, 4)) &&
+           equal(runtime_prefix, vector(100, 200, 0, 1)) &&
+           equal(runtime_destination, vector(100, 200)) &&
            count(runtime_source) == 5)
               ? 0
               : 1;

@@ -20,7 +20,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{10, 20, 30};
+   constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto s_const = Set{7};
    constexpr auto q_const = Queue{5, 6};
@@ -34,7 +34,7 @@ namespace cljonic {
    static_assert(first(e_const) == 1);
 
    // Runtime demonstration.
-   auto v_runtime = Vector{100, 200};
+   auto v_runtime = vector(100, 200);
    auto m_runtime = Map{MapEntry{2, 200}};
    auto s_runtime = Set{8};
    auto q_runtime = Queue{9, 10};

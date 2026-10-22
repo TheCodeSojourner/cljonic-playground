@@ -82,7 +82,7 @@
  * - \ref Queue "Queue"
  * - \ref Set "Set"
  * - \ref String "String"
- * - \ref Vector "Vector"
+ * - \ref Vector "Vector", created with \ref cljonic::vector "vector"
  *
  * ## Producer Types
  *
@@ -862,13 +862,13 @@ namespace cljonic {
    constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
    static_assert(m_const(1) == 100);
 
-   constexpr auto v_const = assoc(Vector{10, 20}, 1, 200);
+   constexpr auto v_const = assoc(vector(10, 20), 1, 200);
    static_assert(v_const(1) == 200);
 
    constexpr auto m_multi = assoc(Map<int, int, 4>{}, 1, 100, 2, 200);
    static_assert(m_multi(2) == 200);
 
-   constexpr auto v_multi = assoc(Vector<int, 4>{10, 20}, 1, 200, 2, 300);
+   constexpr auto v_multi = assoc(vector<int, 4>(10, 20), 1, 200, 2, 300);
    static_assert(v_multi(2) == 300);
 
    // Runtime demonstration.
@@ -1858,7 +1858,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(peek(q_const) == 10);
    static_assert(contains(s_const, 20));
 
-   constexpr auto v_const = conj(Vector<int, 4>{10, 20}, 30);
+   constexpr auto v_const = conj(vector<int, 4>(10, 20), 30);
    static_assert(v_const(2) == 30);
    constexpr auto text_const = conj(String<4>{"Hi"}, '!');
    static_assert(text_const(2) == '!');
@@ -1868,7 +1868,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    // Zero-value and variadic arities.
    constexpr auto v_same = conj(v_const);
    static_assert(v_same.count() == 3U);
-   constexpr auto v_many = conj(Vector<int, 4>{10}, 20, 30);
+   constexpr auto v_many = conj(vector<int, 4>(10), 20, 30);
    static_assert(v_many(2) == 30);
    constexpr auto text_many = conj(String<4>{"H"}, 'i', '!');
    static_assert(text_many(2) == '!');
@@ -2031,7 +2031,7 @@ concept ContainsAdmissible =
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{10, 20, 30};
+   constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto s_const = Set{5};
    constexpr auto st_const = String{"abc"};
@@ -2044,7 +2044,7 @@ concept ContainsAdmissible =
    static_assert(contains(st_const, 1U));
 
    // Runtime demonstration.
-   auto v_runtime = Vector{10, 20};
+   auto v_runtime = vector(10, 20);
    const auto in_range = contains(v_runtime, 0U);
 
    return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
@@ -2106,7 +2106,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{1, 2, 3};
+   constexpr auto v_const = vector(1, 2, 3);
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto q_const = Queue{9};
    constexpr auto r_const = Range{0, 5};
@@ -2124,7 +2124,7 @@ namespace cljonic {
                  CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
 
    // Runtime demonstration.
-   auto v_runtime = Vector{10, 20};
+   auto v_runtime = vector(10, 20);
    const auto sz = count(v_runtime);
 
    return (sz == 2) ? 0 : 1;
@@ -2175,7 +2175,11 @@ namespace cljonic {
  * Without explicit template arguments, a sole cljonic argument determines the element type and yields a one-element
  * collection. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
  * Elements may themselves be cljonic collections or producers, including nested cljonic composites. Element
- * construction, updates, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
+ * construction, updates, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules". The
+ * lowercase \c vector factory is the idiomatic way to create Vector values, at runtime or during constant evaluation.
+ * Use \c vector(args...) to infer the element type and capacity, \c vector<T>(args...) to select an element type, or
+ * \c vector<T, Capacity>(args...) to provide an explicit capacity, including for an empty vector. \c Vector<T,
+ * Capacity> remains the value's type; direct construction is useful when importing a C++ range or view.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -2191,44 +2195,27 @@ namespace cljonic {
    }
  };
 
- struct CategoryArgument {};
-
- struct CategoryElement {
-   int category = 0;
-
-   constexpr CategoryElement() noexcept = default;
-   constexpr CategoryElement(const CategoryArgument &) noexcept : category(1) {}
-   constexpr CategoryElement(CategoryArgument &&) noexcept : category(2) {}
-   constexpr CategoryElement(const CategoryElement &) noexcept = default;
-   constexpr auto operator=(const CategoryElement &) noexcept
-       -> CategoryElement & = default;
- };
-
- using Inner = Vector<int, 2>;
-
  int main() {
-   // CTAD infers Vector<int, 3> from the initializer count.
-   [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
+   // The lowercase factory is the idiomatic way to create vectors.
+   constexpr auto ints_empty = vector<int>();
+   constexpr auto ints_at_capacity = vector(1, 2, 3);
 
-   // Explicit capacity permits a partially populated Vector and an empty Vector.
-   [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
-   [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
+   // Explicit capacity permits a partially populated or empty vector.
+   constexpr auto ints_populated = vector<int, 4>(1, 2);
+   constexpr auto ints_reserved = vector<int, 4>();
+   static_assert(ints_empty(0, 99) == 99);
+   static_assert(ints_at_capacity(2) == 3);
+   static_assert(ints_populated(1) == 2);
+   static_assert(ints_reserved(0, 99) == 99);
 
-   // Vector values can be nested, including through an explicit type alias.
-   [[maybe_unused]] constexpr auto nested_int_vectors =
-       Vector{Vector{1, 2}, Vector<int, 2>{3}};
-   [[maybe_unused]] constexpr auto nested_alias_vectors =
-       Vector{Inner{4, 5}, Inner{6}};
+   // Vectors can be nested.
+   constexpr auto nested_int_vectors = vector(vector(1, 2), vector<int, 2>(3));
+   static_assert(nested_int_vectors(1)(0) == 3);
 
-   // User-defined values and constructor argument categories are supported.
-   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
-   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
-   constexpr auto values = Vector<int, 4>{10, 20};
-   constexpr auto category_argument = CategoryArgument{};
-   constexpr auto lvalue_constructed =
-       Vector{CategoryElement{category_argument}};
-   constexpr auto rvalue_constructed =
-       Vector{CategoryElement{CategoryArgument{}}};
+   // An explicit element type and user-defined values are supported.
+   constexpr auto doubles_populated = vector<double>(1.5f, 2.5f);
+   constexpr auto pixels_populated = vector(Pixel{1, 2}, Pixel{3, 4});
+   constexpr auto values = vector<int, 4>(10, 20);
 
    // Vector values can be used as a callable function, returning a default-
    // value for invalid indexes or a supplied fallback when provided.
@@ -2237,11 +2224,9 @@ namespace cljonic {
    static_assert(values(2, 99) == 99);
    static_assert(values(-1) == 0);
    static_assert(values(-1, 99) == 99);
-   static_assert(std::same_as<decltype(doubles_populated(0)), double>);
+   static_assert(doubles_populated(0) == 1.5);
    static_assert(pixels_populated(0).x == 1);
    static_assert(pixels_populated(1).y == 4);
-   static_assert(lvalue_constructed(0).category == 1);
-   static_assert(rvalue_constructed(0).category == 2);
 
    // Without a fallback, an invalid lookup returns value_type{}; Pixel's int
    // members have a default value of zero.
@@ -2249,13 +2234,15 @@ namespace cljonic {
    static_assert(pixels_populated(-1).y == 0);
 
    // Pixel equality validates the runtime result for a user-defined value type.
-   auto runtime_pixels = Vector{Pixel{1, 2}, Pixel{3, 4}};
+   volatile int runtime_first_raw = 7;
+   const int runtime_first = runtime_first_raw;
+   auto runtime_pixels = vector(Pixel{1, 2}, Pixel{runtime_first - 4, 4});
    const auto pixel_value = runtime_pixels(1);
    const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
-   auto runtime_values = Vector{7, 9};
+   auto runtime_values = vector(runtime_first, runtime_first + 2);
    const auto fallback = runtime_values(4, -1);
    const auto negative_default = runtime_values(-1);
    const auto negative_fallback = runtime_values(-1, 99);
@@ -2286,7 +2273,7 @@ namespace cljonic {
    const auto runtime_from_span =
        Vector<int, 4>{std::span<const int>{runtime_buffer, 3}};
 
-   constexpr auto interop_values = Vector{10, 20, 30};
+   constexpr auto interop_values = vector(10, 20, 30);
    static_assert(interop_values.begin()[1] == 20);
    static_assert(interop_values.view().size() == 3);
 
@@ -2299,7 +2286,7 @@ namespace cljonic {
    const auto runtime_view = runtime_values.view();
 
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
-           values.count() == 2 && pixel_value == Pixel{3, 4} &&
+           values(1) == 20 && pixel_value == Pixel{3, 4} &&
            pixel_fallback == Pixel{99, 99} && range_sum == 16 &&
            runtime_view.size() == 2 && runtime_view[0] == 7 &&
            from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
@@ -2379,7 +2366,7 @@ class Vector {
             "collection or "
             "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
             "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
-            "element, write Vector{...}.");
+            "element, write vector(...).");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2527,6 +2514,97 @@ class Vector {
     std::size_t logical_size_ = 0;
 };
 
+namespace concepts_detail {
+
+struct DeducedVectorElementType {};
+
+template <typename RequestedElementType, typename... Args>
+struct vector_factory_element_type {
+    using type = RequestedElementType;
+};
+
+template <typename First, typename... Rest>
+struct vector_factory_element_type<DeducedVectorElementType, First, Rest...> {
+    using type = std::remove_cvref_t<First>;
+};
+
+template <typename RequestedElementType, typename... Args>
+using vector_factory_element_t = vector_factory_element_type<RequestedElementType, Args...>::type;
+
+template <typename RequestedElementType, typename... Args>
+concept VectorFactoryHasElementType =
+    sizeof...(Args) > 0U || !std::same_as<RequestedElementType, DeducedVectorElementType>;
+
+template <typename RequestedElementType, typename... Args>
+concept VectorFactoryArguments =
+    VectorFactoryHasElementType<RequestedElementType, Args...> &&
+    concepts::NothrowCollectionElement<vector_factory_element_t<RequestedElementType, Args...>> &&
+    sizeof...(Args) <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    (concepts::NothrowElementConstruction<vector_factory_element_t<RequestedElementType, Args...>, Args> && ...);
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+concept VectorFactoryCapacityArguments =
+    concepts::NothrowCollectionElement<ElementType> && Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    sizeof...(Args) <= Capacity && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
+
+} // namespace concepts_detail
+
+/** Creates a bounded Vector from its arguments, or a typed empty Vector when called as \c vector<T>(). */
+template <typename RequestedElementType = concepts_detail::DeducedVectorElementType, typename... Args>
+    requires concepts_detail::VectorFactoryArguments<RequestedElementType, Args...>
+[[nodiscard]] constexpr auto vector(Args&&... args) noexcept(
+    (concepts::NothrowElementConstruction<concepts_detail::vector_factory_element_t<RequestedElementType, Args...>,
+                                          Args> &&
+     ...)) -> Vector<concepts_detail::vector_factory_element_t<RequestedElementType, Args...>, sizeof...(Args)> {
+    using ElementType = concepts_detail::vector_factory_element_t<RequestedElementType, Args...>;
+    return Vector<ElementType, sizeof...(Args)>{std::forward<Args>(args)...};
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedVectorElementType, typename... Args>
+    requires(!concepts_detail::VectorFactoryArguments<RequestedElementType, Args...>)
+constexpr auto vector([[maybe_unused]] Args&&... args) noexcept -> void {
+    using ElementType = concepts_detail::vector_factory_element_t<RequestedElementType, Args...>;
+    if constexpr (!concepts_detail::VectorFactoryHasElementType<RequestedElementType, Args...>) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::vector: an empty Vector requires an explicit element type; write vector<T>().");
+    } else if constexpr (!concepts::NothrowCollectionElement<ElementType>) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::vector: the element type must satisfy NothrowCollectionElement.");
+    } else if constexpr (sizeof...(Args) > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::vector: argument count exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::vector: every argument must safely construct the element type without throwing.");
+    }
+}
+
+/** Creates a bounded Vector with an explicit capacity, including for an empty argument pack. */
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires concepts_detail::VectorFactoryCapacityArguments<ElementType, Capacity, Args...>
+[[nodiscard]] constexpr auto vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> &&
+                                                              ...)) -> Vector<ElementType, Capacity> {
+    return Vector<ElementType, Capacity>{std::forward<Args>(args)...};
+}
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires(!concepts_detail::VectorFactoryCapacityArguments<ElementType, Capacity, Args...>)
+constexpr auto vector([[maybe_unused]] Args&&... args) noexcept -> void {
+    if constexpr (!concepts::NothrowCollectionElement<ElementType>) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::vector: the element type must satisfy NothrowCollectionElement.");
+    } else if constexpr (Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::vector: capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else if constexpr (sizeof...(Args) > Capacity) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::vector: capacity must be at least the number of arguments.");
+    } else {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::vector: every argument must safely construct the element type without throwing.");
+    }
+}
+
 template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
 
@@ -2595,13 +2673,13 @@ concept CycleClassArgument =
  using namespace cljonic;
 
  int main() {
-   [[maybe_unused]] constexpr auto finite_cycle = cycle(Vector{1, 2, 3});
+   [[maybe_unused]] constexpr auto finite_cycle = cycle(vector(1, 2, 3));
    [[maybe_unused]] constexpr auto unbounded_cycle = cycle(Range{0, 0, 0});
 
    // -----------------------------------------------------------------------
    // C++ interoperability: Cycle supports const traversal.
    // -----------------------------------------------------------------------
-   auto runtime_cycle = cycle(Vector{4, 5, 6});
+   auto runtime_cycle = cycle(vector(4, 5, 6));
    auto runtime_unbounded_cycle = cycle(Range{0, 0, 0});
 
    // Use C++ interoperability to observe a finite source cycle at runtime.
@@ -2731,8 +2809,8 @@ class Cycle {
      *  sequence. It is the only producer parameter-equality surface; the
      *  `equal` free function instead compares bounded logical observations of
      *  the produced sequences. The owned source compares by its own stable
-     *  equality, so `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 3})` is true
-     *  while `cycle(Vector{1, 2, 3}) == cycle(Vector{1, 2, 4})` is false. O(1),
+     *  equality, so `cycle(vector(1, 2, 3)) == cycle(vector(1, 2, 3))` is true
+     *  while `cycle(vector(1, 2, 3)) == cycle(vector(1, 2, 4))` is false. O(1),
      *  no traversal, no allocation. */
     [[nodiscard]] friend constexpr auto operator==(const Cycle& lhs, const Cycle& rhs) noexcept -> bool
         requires concepts::StableEqualityComparable<Source>
@@ -3052,12 +3130,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{1, 2, 3};
+   constexpr auto v_const = vector(1, 2, 3);
    [[maybe_unused]] constexpr auto e_const = empty(v_const);
    static_assert(is_empty(e_const));
 
    // Runtime demonstration.
-   auto v_runtime = Vector{10, 20};
+   auto v_runtime = vector(10, 20);
    auto e_runtime = empty(v_runtime);
    auto m_runtime = Map{MapEntry{1, 100}};
    auto em_runtime = empty(m_runtime);
@@ -3342,7 +3420,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v = Vector{1, 2, 3};
+   constexpr auto v = vector(1, 2, 3);
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
    constexpr auto q = Queue{1, 2, 3};
    constexpr auto rep = Repeat{3, 1};
@@ -3361,7 +3439,7 @@ namespace cljonic {
                                    // same elements compare equal
    static_assert(equal(v, r));     // Vector vs Range
    static_assert(equal(v, q));     // Vector vs Queue
-   static_assert(equal(Vector{1, 1, 1}, rep));
+   static_assert(equal(vector(1, 1, 1), rep));
    static_assert(equal(m1, m2));     // Map equality ignores entry order
    static_assert(equal(s1, s2));     // Set equality ignores element order
    static_assert(equal(str1, str2)); // String equality compares content
@@ -3375,7 +3453,7 @@ namespace cljonic {
        !equal(var_int, Variant<int, long>{1L})); // different alternative
 
    // Runtime demonstration.
-   auto runtime_v = Vector{1, 2, 3};
+   auto runtime_v = vector(1, 2, 3);
    auto runtime_r = Range{1, 4, 1};
    return equal(runtime_v, runtime_r) ? 0 : 1;
  }
@@ -3937,7 +4015,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{10, 20, 30};
+   constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto s_const = Set{7};
    constexpr auto q_const = Queue{5, 6};
@@ -3951,7 +4029,7 @@ namespace cljonic {
    static_assert(first(e_const) == 1);
 
    // Runtime demonstration.
-   auto v_runtime = Vector{100, 200};
+   auto v_runtime = vector(100, 200);
    auto m_runtime = Map{MapEntry{2, 200}};
    auto s_runtime = Set{8};
    auto q_runtime = Queue{9, 10};
@@ -4011,21 +4089,21 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto destination = Vector<int, 8>{};
+   constexpr auto destination = vector<int, 8>();
    constexpr auto finite_source = Range{0, 5};
    static_assert(fits_into(destination, finite_source));
 
    constexpr auto unbounded_source = Range{0, 5, 0};
    static_assert(!fits_into(destination, unbounded_source));
 
-   constexpr auto small_destination = Vector<int, 2>{};
+   constexpr auto small_destination = vector<int, 2>();
    static_assert(!fits_into(small_destination, finite_source));
 
    // Runtime demonstration.
    const auto runtime_end = 5;
-   const auto runtime_destination = Vector<int, 8>{1, 2};
+   const auto runtime_destination = vector<int, 8>(1, 2);
    const auto runtime_source = Range{0, runtime_end};
-   const auto runtime_small_destination = Vector<int, 4>{};
+   const auto runtime_small_destination = vector<int, 4>();
 
    return (fits_into(runtime_destination, runtime_source) &&
            !fits_into(runtime_small_destination, runtime_source))
@@ -4124,7 +4202,7 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v_const = Vector{10, 20};
+   constexpr auto v_const = vector(10, 20);
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto s_const = Set{5};
    constexpr auto text_const = String{"ab"};
@@ -4138,7 +4216,7 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
    static_assert(get(text_const, 9, 'x') == 'x');
 
    // Runtime demonstration.
-   auto v_runtime = Vector{10, 20};
+   auto v_runtime = vector(10, 20);
    const auto val = get(v_runtime, 0);
 
    return (val == 10) ? 0 : 1;
@@ -4191,26 +4269,26 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto destination = Vector<int, 8>{100, 200};
+   constexpr auto destination = vector<int, 8>(100, 200);
    constexpr auto source = Range{0, 5};
    constexpr auto result = into(destination, source);
-   static_assert(equal(result, Vector{100, 200, 0, 1, 2, 3, 4}));
-   static_assert(equal(destination, Vector{100, 200}));
+   static_assert(equal(result, vector(100, 200, 0, 1, 2, 3, 4)));
+   static_assert(equal(destination, vector(100, 200)));
    static_assert(count(source) == 5);
 
-   constexpr auto prefix = into(Vector<int, 4>{100, 200}, source);
-   static_assert(equal(prefix, Vector{100, 200, 0, 1}));
+   constexpr auto prefix = into(vector<int, 4>(100, 200), source);
+   static_assert(equal(prefix, vector(100, 200, 0, 1)));
 
    // Runtime demonstration.
    const auto runtime_end = 5;
-   const auto runtime_destination = Vector<int, 8>{100, 200};
+   const auto runtime_destination = vector<int, 8>(100, 200);
    const auto runtime_source = Range{0, runtime_end};
    const auto runtime_result = into(runtime_destination, runtime_source);
-   const auto runtime_prefix = into(Vector<int, 4>{100, 200}, runtime_source);
+   const auto runtime_prefix = into(vector<int, 4>(100, 200), runtime_source);
 
-   return (equal(runtime_result, Vector{100, 200, 0, 1, 2, 3, 4}) &&
-           equal(runtime_prefix, Vector{100, 200, 0, 1}) &&
-           equal(runtime_destination, Vector{100, 200}) &&
+   return (equal(runtime_result, vector(100, 200, 0, 1, 2, 3, 4)) &&
+           equal(runtime_prefix, vector(100, 200, 0, 1)) &&
+           equal(runtime_destination, vector(100, 200)) &&
            count(runtime_source) == 5)
               ? 0
               : 1;
@@ -4261,8 +4339,8 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   constexpr auto empty_values = Vector<int, 2>{};
-   constexpr auto values = Vector{1, 2};
+   constexpr auto empty_values = vector<int, 2>();
+   constexpr auto values = vector(1, 2);
    constexpr auto text = String{"Hi"};
    constexpr auto empty_range = Range{2, 2};
    constexpr auto unbounded_repeat = Repeat{7};
@@ -4273,7 +4351,7 @@ namespace cljonic {
    static_assert(!is_empty(unbounded_repeat));
 
    const auto value = 3;
-   const auto runtime_values = Vector{value};
+   const auto runtime_values = vector(value);
    const auto original_values = runtime_values;
    const auto runtime_empty_range = Range{value, value};
    const auto runtime_range = Range{0, value};
@@ -4575,7 +4653,7 @@ concept NextSequenceableCollection =
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto vector = Vector{10, 20, 30};
+   constexpr auto vector = cljonic::vector(10, 20, 30);
    constexpr auto vector_tail = next(vector);
    static_assert(count(vector_tail) == 2);
    static_assert(vector_tail(0) == 20 && vector_tail(1) == 30);
@@ -4597,11 +4675,11 @@ concept NextSequenceableCollection =
    constexpr auto text = String{"ABC"};
    constexpr auto text_tail = next(text);
    static_assert(text_tail(0) == 'B' && text_tail(1) == 'C');
-   static_assert(count(next(Vector<int, 3>{})) == 0);
-   static_assert(count(next(Vector{10})) == 0);
+   static_assert(count(next(cljonic::vector<int, 3>())) == 0);
+   static_assert(count(next(cljonic::vector(10))) == 0);
 
    // Runtime demonstration.
-   const auto runtime_values = Vector<int, 4>{40, 50};
+   const auto runtime_values = cljonic::vector<int, 4>(40, 50);
    const auto runtime_tail = next(runtime_values);
    const auto runtime_queue = Queue<int, 4>{60, 70};
    const auto runtime_queue_tail = next(runtime_queue);
@@ -4673,15 +4751,15 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   constexpr auto values = Vector{10, 20};
+   constexpr auto values = vector(10, 20);
    constexpr auto copied = not_empty(values);
    static_assert(equal(copied, values));
    static_assert(count(copied) == 2);
-   static_assert(is_empty(not_empty(Vector<int, 0>{})));
+   static_assert(is_empty(not_empty(vector<int, 0>())));
 
    const auto entries = Map{MapEntry{1, 100}, MapEntry{2, 200}};
    const auto copied_entries = not_empty(entries);
-   const auto empty_values = Vector<int, 4>{};
+   const auto empty_values = vector<int, 4>();
    const auto copied_empty = not_empty(empty_values);
 
    return equal(copied_entries, entries) && count(entries) == 2 &&
@@ -4726,7 +4804,7 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto v = Vector{1, 2, 3};
+   constexpr auto v = vector(1, 2, 3);
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
    constexpr auto q = Queue{1, 2, 3};
    constexpr auto m1 = Map{MapEntry{1, 10}};
@@ -4740,7 +4818,7 @@ namespace cljonic {
    static_assert(!not_equal(1, 1, 1));                // every pair equal
    static_assert(!not_equal(v, r));                   // same elements
    static_assert(not_equal(v, q) == not_equal(q, v)); // symmetric
-   static_assert(not_equal(v, Vector{1, 2, 4}));
+   static_assert(not_equal(v, vector(1, 2, 4)));
    static_assert(not_equal(m1, m2));  // different entries
    static_assert(!not_equal(s1, s2)); // same elements
 
@@ -4754,7 +4832,7 @@ namespace cljonic {
    // Runtime demonstration.
    const auto runtime_first = 1;
    const auto runtime_v =
-       Vector{runtime_first, runtime_first + 1, runtime_first + 2};
+       vector(runtime_first, runtime_first + 1, runtime_first + 2);
    const auto runtime_r =
        Range{runtime_first, runtime_first + 2, 1}; // produces 1, 2
    return not_equal(runtime_v, runtime_r) ? 0 : 1;
@@ -4840,9 +4918,9 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto vector = Vector{10, 20};
+   constexpr auto vector = cljonic::vector(10, 20);
    constexpr auto queue = Queue{30, 40};
-   constexpr auto empty_vector = Vector<int, 4>{};
+   constexpr auto empty_vector = cljonic::vector<int, 4>();
    constexpr auto empty_queue = Queue<int, 4>{};
    static_assert(peek(vector) == 20);
    static_assert(peek(queue) == 30);
@@ -4854,7 +4932,7 @@ namespace cljonic {
    const auto vector_last = 22;
    const auto queue_front = 33;
    const auto queue_back = 44;
-   const auto runtime_vector = Vector{vector_first, vector_last};
+   const auto runtime_vector = cljonic::vector(vector_first, vector_last);
    const auto runtime_queue = Queue{queue_front, queue_back};
    const auto vector_last_value = peek(runtime_vector);
    const auto queue_front_value = peek(runtime_queue);
@@ -4902,7 +4980,7 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   constexpr auto vector = Vector{1, 2};
+   constexpr auto vector = cljonic::vector(1, 2);
    constexpr auto vector_after_pop = pop(vector);
    constexpr auto queue = Queue{1, 2};
    constexpr auto queue_after_pop = pop(queue);
@@ -4910,7 +4988,7 @@ namespace cljonic {
    static_assert(peek(vector) == 2);
    static_assert(peek(queue_after_pop) == 2);
    static_assert(peek(queue) == 1);
-   constexpr auto empty_vector = Vector<int, 0>{};
+   constexpr auto empty_vector = cljonic::vector<int, 0>();
    constexpr auto empty_queue = Queue<int, 4>{};
    static_assert(pop(empty_vector) == empty_vector);
    static_assert(pop(empty_queue) == empty_queue);
@@ -4919,7 +4997,7 @@ namespace cljonic {
    const int vector_last = 20;
    const int queue_first = 30;
    const int queue_last = 40;
-   const auto runtime_vector = Vector{vector_first, vector_last};
+   const auto runtime_vector = cljonic::vector(vector_first, vector_last);
    const auto runtime_vector_after_pop = pop(runtime_vector);
    const auto runtime_queue = Queue{queue_first, queue_last};
    const auto runtime_queue_after_pop = pop(runtime_queue);
@@ -6546,7 +6624,7 @@ concept VariantClassArgument =
    [[maybe_unused]] constexpr auto nested =
        Variant<Variant<int, long>, char>{as_int};
    [[maybe_unused]] constexpr auto as_vector_element =
-       Vector{Variant<int, long>{1}, Variant<int, long>{2L}};
+       vector(Variant<int, long>{1}, Variant<int, long>{2L});
    [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
    [[maybe_unused]] constexpr auto as_map_key = MapEntry{as_int, 1};
 
