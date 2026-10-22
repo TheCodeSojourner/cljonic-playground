@@ -111,7 +111,7 @@ PASS_CASES = {
     "Equal-vector-vs-queue": ("(void)cljonic::equal(cljonic::Vector<int, 4>{1, 2, 3}, "
                               "cljonic::Queue<int, 4>{1, 2, 3});"),
     "Equal-vector-vs-repeat": ("(void)cljonic::equal(cljonic::Vector<int, 4>{1, 1, 1}, "
-                               "cljonic::Repeat<int>{1, 3U});"),
+                               "cljonic::Repeat<int>{3U, 1});"),
     "Equal-repeat-unbounded-pair": ("(void)cljonic::equal(cljonic::Repeat<int>{7}, "
                                     "cljonic::Repeat<int>{7});"),
     "Equal-cycle-vs-vector-early-exit": ("(void)cljonic::equal(cljonic::cycle(cljonic::Vector<int, 2>{1, 2}), "
@@ -122,9 +122,9 @@ PASS_CASES = {
     "Equal-string-pair": ("(void)cljonic::equal(cljonic::String<8>{\"abc\"}, cljonic::String<4>{\"abc\"});"),
     "Equal-aggregate": ("EqualPixel a{1, 2}; EqualPixel b{1, 2}; (void)cljonic::equal(a, b);"),
     "Equal-nested-producer-parameter-equality": ("(void)cljonic::equal(cljonic::Vector<cljonic::Repeat<int>, 2>"
-                                                 "{cljonic::Repeat<int>{7, 3U}}, "
+                                                 "{cljonic::Repeat<int>{3U, 7}}, "
                                                  "cljonic::Vector<cljonic::Repeat<int>, 2>"
-                                                 "{cljonic::Repeat<int>{7, 3U}});"),
+                                                 "{cljonic::Repeat<int>{3U, 7}});"),
     "Equal-unary-scalar": "(void)cljonic::equal(1);",
     "Equal-unary-collection": "(void)cljonic::equal(cljonic::Vector<int, 2>{});",
     "Equal-unary-producer": "(void)cljonic::equal(cljonic::Repeat<int>{7});",

@@ -15,7 +15,7 @@ namespace cljonic::no_heap::probes {
     constexpr auto vector_of_one_range = Vector<Range<int>, 4>{range};
     static_assert(vector_of_one_range.count() == 1U);
 
-    constexpr auto inner = Vector<Repeat<int>, 2>{Repeat<int>{9, 2U}, Repeat<int>{}};
+    constexpr auto inner = Vector<Repeat<int>, 2>{Repeat<int>{2U, 9}, Repeat<int>{}};
     constexpr auto nested = Vector<Vector<Repeat<int>, 2>, 2>{inner};
     static_assert(nested.count() == 1U);
 

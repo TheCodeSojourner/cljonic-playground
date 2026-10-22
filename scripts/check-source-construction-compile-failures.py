@@ -40,7 +40,7 @@ FAILURE_CASES = {
                           "cljonic::Set:"),
     "queue-from-queue": ("  cljonic::Queue<int, 4> value{cljonic::Queue<int, 2>{1, 2}}; (void)value;",
                          "cljonic::Queue:"),
-    "queue-from-producer": ("  cljonic::Queue<int, 4> value{cljonic::Repeat<int>{7, 2U}}; (void)value;",
+    "queue-from-producer": ("  cljonic::Queue<int, 4> value{cljonic::Repeat<int>{2U, 7}}; (void)value;",
                             "cljonic::Queue:"),
     "map-from-map": ("  cljonic::Map<int, int, 4> value{cljonic::Map<int, int, 2>"
                      "{cljonic::MapEntry<int, int>{1, 2}}}; (void)value;",
@@ -54,7 +54,7 @@ FAILURE_CASES = {
                           "cljonic::Map:"),
     "string-from-string": ("  cljonic::String<4> value{cljonic::String<2>{\"ab\"}}; (void)value;",
                            "cljonic::String:"),
-    "string-from-producer": ("  cljonic::String<4> value{cljonic::Repeat<char>{'a', 2U}}; (void)value;",
+    "string-from-producer": ("  cljonic::String<4> value{cljonic::Repeat<char>{2U, 'a'}}; (void)value;",
                              "cljonic::String:"),
 }
 
@@ -73,7 +73,7 @@ POSITIVE_CASES = {
     "same-type-vector-producer-element": ("  static_assert(cljonic::Vector<cljonic::Range<int>, 4>"
                                           "{cljonic::Range<int>{0, 3, 1}}.count() == 1U);"),
     "same-type-queue-producer-element": ("  static_assert(cljonic::Queue<cljonic::Repeat<int>, 4>"
-                                         "{cljonic::Repeat<int>{7, 2U}}.count() == 1U);"),
+                                         "{cljonic::Repeat<int>{2U, 7}}.count() == 1U);"),
     "same-type-map-entry": ("  static_assert(cljonic::Map<int, int, 4>"
                             "{cljonic::MapEntry<int, int>{1, 2}}.count() == 1U);"),
     # EnclosureConstruction (CTAD, no explicit template argument list): a sole
@@ -84,8 +84,8 @@ POSITIVE_CASES = {
     "enclosure-vector": "  static_assert(cljonic::Vector{cljonic::Vector<int, 2>{1, 2}}.count() == 1U);",
     "enclosure-set": "  static_assert(cljonic::Set{cljonic::Set<int, 2>{1, 2}}.count() == 1U);",
     "enclosure-queue": "  static_assert(cljonic::Queue{cljonic::Queue<int, 2>{1, 2}}.count() == 1U);",
-    "enclosure-vector-producer": "  static_assert(cljonic::Vector{cljonic::Repeat<int>{7, 3U}}.count() == 1U);",
-    "enclosure-queue-producer": "  static_assert(cljonic::Queue{cljonic::Repeat<int>{7, 3U}}.count() == 1U);",
+    "enclosure-vector-producer": "  static_assert(cljonic::Vector{cljonic::Repeat<int>{3U, 7}}.count() == 1U);",
+    "enclosure-queue-producer": "  static_assert(cljonic::Queue{cljonic::Repeat<int>{3U, 7}}.count() == 1U);",
     "enclosure-set-producer": "  static_assert(cljonic::Set{cljonic::Range<int>{0, 5, 1}}.count() == 1U);",
     "enclosure-vector-cross-class": "  static_assert(cljonic::Vector{cljonic::Set<int, 2>{1, 2}}.count() == 1U);",
     "enclosure-queue-cross-class": "  static_assert(cljonic::Queue{cljonic::Set<int, 2>{1, 2}}.count() == 1U);",

@@ -13,7 +13,7 @@ namespace cljonic::no_heap::probes {
                               !equal(Vector<int, 4>{1, 2, 3}, Vector<int, 4>{1, 2, 3}, Vector<int, 4>{1, 2, 4});
     constexpr auto sequential_ok =
         equal(Vector<int, 4>{1, 2, 3}, Range<int>{1, 4, 1}) && equal(Vector<int, 4>{1, 2, 3}, Queue<int, 4>{1, 2, 3}) &&
-        equal(Vector<int, 4>{1, 1, 1}, Repeat<int>{1, 3U}) &&
+        equal(Vector<int, 4>{1, 1, 1}, Repeat<int>{3U, 1}) &&
         !equal(cycle(Vector<int, 3>{1, 2}), Vector<int, 4>{1, 2, 3}) && equal(Repeat<int>{7}, Repeat<int>{7}) &&
         equal(Vector<int, 4>{}, Range<int>{5, 5, 1});
     constexpr auto map_ok =
@@ -25,7 +25,7 @@ namespace cljonic::no_heap::probes {
     constexpr auto string_ok = equal(String<8>{"abc"}, String<16>{"abc"}) && !equal(String<8>{"abc"}, String<8>{"abd"});
     constexpr auto nested_ok =
         equal(Vector<Range<int>, 4>{Range<int>{1, 3, 1}}, Vector<Range<int>, 4>{Range<int>{1, 3, 1}}) &&
-        !equal(Vector<Repeat<int>, 2>{Repeat<int>{7, 3U}}, Vector<Repeat<int>, 2>{Repeat<int>{7}});
+        !equal(Vector<Repeat<int>, 2>{Repeat<int>{3U, 7}}, Vector<Repeat<int>, 2>{Repeat<int>{7}});
 
     // Runtime probe defeats constexpr folding so the no-heap artifact truly
     // executes the comparisons at runtime.

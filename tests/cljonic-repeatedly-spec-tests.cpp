@@ -1,9 +1,51 @@
 #include "cljonic-test-api.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <concepts>
+#include <limits>
 #include <utility>
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
+
+TEST_CASE("Repeatedly normalizes signed counts without invoking empty callbacks", "[repeatedly]") {
+    using namespace cljonic;
+    TRACE_ID("invariant.Repeatedly.SignedCountFactoryAndConstructorAreSupported");
+    TRACE_ID("invariant.Repeatedly.NegativeCountProducesEmptyFiniteResult");
+    TRACE_ID("invariant.Repeatedly.NonpositiveCountNeverInvokesCallback");
+
+    constexpr auto step = []() noexcept { return 7; };
+    constexpr auto positive = repeatedly(2, step);
+    constexpr auto negative = repeatedly(std::numeric_limits<int>::min(), step);
+    constexpr auto explicit_negative = Repeatedly<int, decltype(step)>{step, -2};
+    STATIC_REQUIRE(positive.count() == 2);
+    STATIC_REQUIRE(into(Vector<int, 3>{}, positive)(1) == 7);
+    STATIC_REQUIRE(negative.count() == 0);
+    STATIC_REQUIRE(negative.is_finite());
+    STATIC_REQUIRE(negative.begin() == negative.end());
+    STATIC_REQUIRE(explicit_negative.count() == 0);
+    STATIC_REQUIRE(noexcept(repeatedly(-2, step)));
+
+    for (const auto count : {std::numeric_limits<int>::min(), -2, 0, 1, 3}) {
+        auto calls = 0;
+        const auto callback = [&calls]() noexcept { return ++calls; };
+        const auto factory = repeatedly(count, callback);
+        const auto constructed = Repeatedly<int, decltype(callback)>{callback, count};
+        const auto expected = count <= 0 ? std::size_t{0} : static_cast<std::size_t>(count);
+        CHECK(calls == 0);
+        CHECK(factory.is_finite());
+        CHECK(factory.count() == expected);
+        CHECK(constructed.count() == expected);
+        if (count <= 0) {
+            CHECK(factory.begin() == factory.end());
+            CHECK(constructed.begin() == constructed.end());
+            CHECK(fits_into(Vector<int, 4>{}, factory));
+            CHECK(calls == 0);
+        }
+        CHECK(into(Vector<int, 4>{}, factory).count() == expected);
+        CHECK(calls == static_cast<int>(expected));
+        CHECK(into(Vector<int, 4>{}, constructed).count() == expected);
+        CHECK(calls == 2 * static_cast<int>(expected));
+    }
+}
 
 template <typename T>
 concept HasContains = requires(const T& value) { value.contains(0U); };

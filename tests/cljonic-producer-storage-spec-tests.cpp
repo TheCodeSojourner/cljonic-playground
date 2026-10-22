@@ -96,7 +96,7 @@ TEST_CASE("Producers may be stored as map values, vector elements, and queue ele
 
     // Vector of Repeat values.
     const auto vector_of_repeats =
-        cljonic::Vector<cljonic::Repeat<int>, 4>{cljonic::Repeat<int>{}, cljonic::Repeat<int>{7, 3U}};
+        cljonic::Vector<cljonic::Repeat<int>, 4>{cljonic::Repeat<int>{}, cljonic::Repeat<int>{3U, 7}};
     CHECK(vector_of_repeats.count() == 2U);
     CHECK(vector_of_repeats(0U).is_finite());
     CHECK(vector_of_repeats(0U).count() == 0U);
@@ -108,7 +108,7 @@ TEST_CASE("Producers may be stored as map values, vector elements, and queue ele
 
     // Map with a producer as value.
     const auto map_with_repeat = cljonic::Map<int, cljonic::Repeat<int>, 4>{
-        cljonic::MapEntry<int, cljonic::Repeat<int>>{1, cljonic::Repeat<int>{7, 3U}}};
+        cljonic::MapEntry<int, cljonic::Repeat<int>>{1, cljonic::Repeat<int>{3U, 7}}};
     CHECK(map_with_repeat.count() == 1U);
     CHECK(map_with_repeat(1).count() == 3U);
 
@@ -130,7 +130,7 @@ TEST_CASE("Producers may be stored as map values, vector elements, and queue ele
     // (A single collection/producer argument matching the element type is one
     // element; use into to materialize a producer as a source, preflighted by
     // fits_into.)
-    const auto inner = cljonic::Vector<cljonic::Repeat<int>, 2>{cljonic::Repeat<int>{9, 2U}, cljonic::Repeat<int>{}};
+    const auto inner = cljonic::Vector<cljonic::Repeat<int>, 2>{cljonic::Repeat<int>{2U, 9}, cljonic::Repeat<int>{}};
     const auto nested = cljonic::Vector<cljonic::Vector<cljonic::Repeat<int>, 2>, 2>{inner};
     CHECK(nested.count() == 1U);
     CHECK(nested(0U)(0U).count() == 2U);

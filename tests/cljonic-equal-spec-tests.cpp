@@ -36,11 +36,11 @@ TEST_CASE("Sequential equality observes each operand cap without claiming infini
     TRACE_ID("invariant.EqualFunction.SequentialEqualityRequiresEqualObservedCountsAndElements");
     constexpr auto cap = cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
     const auto unbounded = cljonic::repeat(1);
-    const auto finite = cljonic::repeat(1, cap);
+    const auto finite = cljonic::repeat(cap, 1);
     CHECK(cljonic::equal(unbounded, finite));
     CHECK(cljonic::equal(finite, unbounded));
-    CHECK_FALSE(cljonic::equal(unbounded, cljonic::repeat(1, cap - 1)));
-    CHECK_FALSE(cljonic::equal(cljonic::repeat(1, cap - 1), unbounded));
+    CHECK_FALSE(cljonic::equal(unbounded, cljonic::repeat(cap - 1, 1)));
+    CHECK_FALSE(cljonic::equal(cljonic::repeat(cap - 1, 1), unbounded));
     std::size_t calls = 0;
     const auto differs_after_cap = cljonic::repeatedly([&calls]() noexcept { return ++calls <= cap ? 1 : 2; });
     CHECK(cljonic::equal(unbounded, differs_after_cap));
@@ -160,9 +160,9 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     // ------------------------------------------------------------------------
     STATIC_REQUIRE(equal(Vector<int, 4>{1, 2, 3}, Range<int>{1, 4, 1}));
     STATIC_REQUIRE(equal(Vector<int, 4>{1, 2, 3}, Queue<int, 4>{1, 2, 3}));
-    STATIC_REQUIRE(equal(Vector<int, 4>{1, 1, 1}, Repeat<int>{1, 3U}));
+    STATIC_REQUIRE(equal(Vector<int, 4>{1, 1, 1}, Repeat<int>{3U, 1}));
     STATIC_REQUIRE(equal(Queue<int, 4>{1, 2, 3}, Range<int>{1, 4, 1}));
-    STATIC_REQUIRE(equal(Range<int>{5, 6, 1}, Repeat<int>{5, 1U})); // both produce [5]
+    STATIC_REQUIRE(equal(Range<int>{5, 6, 1}, Repeat<int>{1U, 5})); // both produce [5]
     // A finite sequential value is not equal to an unbounded producer whose
     // prefix agrees: the finite operand exhausts before the unbounded operand
     // reaches its configured traversal cap (bounded-prefix rule).
@@ -218,8 +218,8 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     STATIC_REQUIRE(!equal(VariantVector{VariantValue{1}, VariantValue{Vector<int, 4>{2, 3}}},
                           VariantVector{VariantValue{1}, VariantValue{Vector<int, 4>{2, 4}}}));
     using ProducerVector = Vector<Repeat<int>, 4>;
-    STATIC_REQUIRE(equal(ProducerVector{Repeat<int>{7, 3U}}, ProducerVector{Repeat<int>{7, 3U}}));
-    STATIC_REQUIRE(!equal(ProducerVector{Repeat<int>{7, 3U}}, ProducerVector{Repeat<int>{7}}));
+    STATIC_REQUIRE(equal(ProducerVector{Repeat<int>{3U, 7}}, ProducerVector{Repeat<int>{3U, 7}}));
+    STATIC_REQUIRE(!equal(ProducerVector{Repeat<int>{3U, 7}}, ProducerVector{Repeat<int>{7}}));
 
     // ------------------------------------------------------------------------
     // Arities: unary admits a single domain operand; the variadic form
@@ -306,8 +306,8 @@ TEST_CASE("equal implements general value equality over the supported domain", "
     auto runtime_repeat_unbounded = Repeat<int>{runtime_one};
     CHECK(equal(runtime_repeat_unbounded, Repeat<int>{runtime_one}));
 
-    auto runtime_producer_vector = ProducerVector{Repeat<int>{runtime_one, 3U}};
-    CHECK(equal(runtime_producer_vector, ProducerVector{Repeat<int>{runtime_one, 3U}}));
+    auto runtime_producer_vector = ProducerVector{Repeat<int>{3U, runtime_one}};
+    CHECK(equal(runtime_producer_vector, ProducerVector{Repeat<int>{3U, runtime_one}}));
     CHECK_FALSE(equal(runtime_producer_vector, ProducerVector{Repeat<int>{runtime_one}}));
 
     auto runtime_variant_vector = VariantVector{VariantValue{runtime_one}};

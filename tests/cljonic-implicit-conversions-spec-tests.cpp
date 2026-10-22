@@ -119,7 +119,7 @@ TEST_CASE("Same-type producer and Variant arguments preserve nonthrowing copy se
     STATIC_REQUIRE_FALSE(concepts::NothrowElementConstruction<CopyPreservingValue, volatile CopyPreservingValue&>);
     volatile int raw = 7;
     const CopyPreservingValue value{raw};
-    const auto repeated = repeat(CopyPreservingValue{raw}, 2U);
+    const auto repeated = repeat(2U, CopyPreservingValue{raw});
     CHECK((*repeated.begin()).value == 7);
     const auto cycled = cycle(Vector<CopyPreservingValue, 1>{value});
     CHECK((*cycled.begin()).value == 7);
@@ -153,7 +153,7 @@ TEST_CASE("Safe conversions agree across construction lookup update and removal"
     constexpr Vector<long long, 4> vector{value};
     STATIC_REQUIRE(get(conj(vector, key), 1) == key);
     STATIC_REQUIRE(can_conj(Queue<long long, 4>{value}, key));
-    STATIC_REQUIRE(Repeat<long long>{value, 2U}.count() == 2U);
+    STATIC_REQUIRE(Repeat<long long>{2U, value}.count() == 2U);
     STATIC_REQUIRE(Range<long long>{short{0}, short{3}}.count() == 3U);
     STATIC_REQUIRE(Vector<double, 2>{value}(0) == 12.0);
     STATIC_REQUIRE(Queue<double, 2>{value}.peek() == 12.0);
@@ -201,14 +201,19 @@ TEST_CASE("Range imports and materialization use safe actual element expressions
 
 TEST_CASE("Counts and checked semantic exceptions retain explicit domains", "[conversions]") {
     using namespace cljonic;
-    TRACE_ID("invariant.ImplicitConversions.CountsRequireUnsignedNoncharacterIntegerTypes");
+    TRACE_ID("invariant.ImplicitConversions.CountsAdmitSignedAndUnsignedNoncharacterIntegerTypes");
     TRACE_ID("invariant.ImplicitConversions.FiniteCountsExcludeBooleanAndCharacterTypes");
-    TRACE_ID("invariant.ImplicitConversions.FiniteCountEntireTypeRangeMustFitSizeT");
+    TRACE_ID("invariant.ImplicitConversions.FiniteCountNonnegativeTypeRangeMustFitSizeT");
+    TRACE_ID("invariant.ImplicitConversions.NonpositiveCountsNormalizeToZeroBeforeUnsignedConversion");
+    TRACE_ID("invariant.ImplicitConversions.PositiveCountsArePreservedExactly");
     TRACE_ID("invariant.ImplicitConversions.UnsupportedCountTypesRejectedWithoutWrappingOrTruncation");
     TRACE_ID("invariant.ImplicitConversions.CheckedIndexAndCharacterExceptionsArePreserved");
     TRACE_ID("invariant.ImplicitConversions.PreservesNominalDomains");
     STATIC_REQUIRE(concepts_detail::ProducerCount<unsigned int>);
-    STATIC_REQUIRE_FALSE(concepts_detail::ProducerCount<int>);
+    STATIC_REQUIRE(concepts_detail::ProducerCount<int>);
+    STATIC_REQUIRE(concepts_detail::ProducerCount<short>);
+    STATIC_REQUIRE(concepts_detail::ProducerCount<long long> ==
+                   (std::numeric_limits<long long>::digits <= std::numeric_limits<std::size_t>::digits));
     STATIC_REQUIRE_FALSE(concepts_detail::ProducerCount<bool>);
     STATIC_REQUIRE_FALSE(concepts_detail::ProducerCount<unsigned char>);
     STATIC_REQUIRE_FALSE(concepts_detail::ProducerCount<char>);
@@ -222,8 +227,16 @@ TEST_CASE("Counts and checked semantic exceptions retain explicit domains", "[co
     STATIC_REQUIRE(concepts_detail::ProducerCount<std::size_t>);
     STATIC_REQUIRE(concepts_detail::ProducerCount<unsigned long long> ==
                    (std::numeric_limits<unsigned long long>::digits <= std::numeric_limits<std::size_t>::digits));
-    STATIC_REQUIRE(repeat(1, 2U).count() == 2U);
+    STATIC_REQUIRE(repeat(2U, 1).count() == 2U);
     STATIC_REQUIRE(repeatedly(2U, []() noexcept { return 1; }).count() == 2U);
+    STATIC_REQUIRE(repeat(2, 1).count() == 2);
+    STATIC_REQUIRE(repeat(-1, 1).count() == 0);
+    STATIC_REQUIRE(repeat(std::numeric_limits<int>::min(), 1).count() == 0);
+    STATIC_REQUIRE(repeatedly(-1, []() noexcept { return 1; }).count() == 0);
+    STATIC_REQUIRE(repeat(std::numeric_limits<int>::max(), 1).count() ==
+                   static_cast<std::size_t>(std::numeric_limits<int>::max()));
+    STATIC_REQUIRE(repeat(std::numeric_limits<std::size_t>::max(), 1).count() ==
+                   std::numeric_limits<std::size_t>::max());
     constexpr Vector<int, 2> vector{1};
     STATIC_REQUIRE_FALSE(contains(vector, -1));
     STATIC_REQUIRE(get(vector, std::numeric_limits<unsigned long long>::max(), -1) == -1);

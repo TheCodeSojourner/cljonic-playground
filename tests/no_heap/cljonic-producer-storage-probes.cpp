@@ -36,8 +36,8 @@ struct Generate {
         concepts::NothrowCollectionElement<Cycle<Vector<int, 4>>> && !Cycle<Vector<int, 4>>{}.is_finite();
 
     // Producers stored in storage-only positions.
-    const auto storage = Vector<Repeat<int>, 4>{Repeat<int>{}, Repeat<int>{7, 3U}}.count() == 2U &&
-                         Map<int, Repeat<int>, 4>{MapEntry<int, Repeat<int>>{1, Repeat<int>{7, 2U}}}(1).count() == 2U;
+    const auto storage = Vector<Repeat<int>, 4>{Repeat<int>{}, Repeat<int>{3U, 7}}.count() == 2U &&
+                         Map<int, Repeat<int>, 4>{MapEntry<int, Repeat<int>>{1, Repeat<int>{2U, 7}}}(1).count() == 2U;
 
     return range_ok && repeat_ok && repeatedly_ok && iterate_ok && cycle_ok && storage;
 }

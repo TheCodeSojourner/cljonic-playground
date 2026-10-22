@@ -81,7 +81,7 @@ TEST_CASE("RejectionDiagnostic targeted compile-time diagnostics", "[diagnostics
     STATIC_REQUIRE(requires { cljonic::repeatedly(3, 42); });
     STATIC_REQUIRE(requires { cljonic::iterate(42, 1); });
     STATIC_REQUIRE(requires { cljonic::repeat(NonStorable{}); });
-    STATIC_REQUIRE(requires { cljonic::repeat(NonStorable{}, 3); });
+    STATIC_REQUIRE(requires { cljonic::repeat(3U, NonStorable{}); });
 
     // AppliesToCollectionPrimitives: collection primitives expose diagnostic
     // fallbacks for rejected domains. The targeted compile-fail harness checks
@@ -154,7 +154,7 @@ TEST_CASE("ClassTemplateDeductionDiagnostic redirects out-of-domain deduction", 
     STATIC_REQUIRE(
         std::same_as<decltype(Repeat{"Hello"}), Repeat<cljonic::concepts_detail::RepeatElementDomainViolation>>);
     STATIC_REQUIRE(
-        std::same_as<decltype(Repeat{"Hello", 3U}), Repeat<cljonic::concepts_detail::RepeatElementDomainViolation>>);
+        std::same_as<decltype(Repeat{3U, "Hello"}), Repeat<cljonic::concepts_detail::RepeatElementDomainViolation>>);
     STATIC_REQUIRE(std::same_as<decltype(Cycle{"Hello"}), Cycle<cljonic::concepts_detail::CycleSourceDomainViolation>>);
     STATIC_REQUIRE(
         std::same_as<decltype(Iterate{1, "Hello"}), Iterate<cljonic::concepts_detail::IterateDomainViolation,
@@ -171,7 +171,7 @@ TEST_CASE("ClassTemplateDeductionDiagnostic redirects out-of-domain deduction", 
 
     // Their explicit forms are untouched.
     STATIC_REQUIRE(std::same_as<decltype(Repeat{7}), Repeat<int>>);
-    STATIC_REQUIRE(std::same_as<decltype(Repeat{7, 3U}), Repeat<int>>);
+    STATIC_REQUIRE(std::same_as<decltype(Repeat{3U, 7}), Repeat<int>>);
     STATIC_REQUIRE(std::same_as<decltype(Cycle{cljonic::Vector<int, 3>{1, 2, 3}}), Cycle<cljonic::Vector<int, 3>>>);
     STATIC_REQUIRE(std::same_as<decltype(cljonic::Variant<int, long>{1}), cljonic::Variant<int, long>>);
 }

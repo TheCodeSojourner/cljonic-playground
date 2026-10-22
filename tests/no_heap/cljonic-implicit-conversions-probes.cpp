@@ -9,7 +9,7 @@ namespace cljonic::no_heap::probes {
     const short key = input;
     const auto map = assoc(Map<long long, double, 2>{}, key, key);
     const auto set = Set<long long, 2>{key};
-    const auto vector = into(Vector<long long, 2>{}, repeat(key, 2U));
+    const auto vector = into(Vector<long long, 2>{}, repeat(2U, key));
     return contains(map, key) && get(map, key) == 7.0 && is_empty(dissoc(map, key)) && is_empty(disj(set, key)) &&
            get(vector, 1) == key;
 }

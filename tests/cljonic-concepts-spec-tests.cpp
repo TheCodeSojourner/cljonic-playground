@@ -869,7 +869,7 @@ TEST_CASE("Producer effects stay within explicitly supplied callback state", "[c
     TRACE_ID("invariant.CljonicProducer.EffectsAreLimitedToGoverningContractScope");
     TRACE_ID("invariant.CljonicProducer.EffectsDoNotAuthorizeHiddenStateOrInputCollectionMutation");
 
-    constexpr auto pure = cljonic::repeat(7, std::size_t{2});
+    constexpr auto pure = cljonic::repeat(std::size_t{2}, 7);
     STATIC_REQUIRE(
         cljonic::equal(cljonic::into(cljonic::Vector<int, 2>{}, pure), cljonic::into(cljonic::Vector<int, 2>{}, pure)));
     int calls = 0;
@@ -898,7 +898,7 @@ TEST_CASE("Bounded values support constant initialization without hidden callbac
     static constinit const cljonic::String<2> string{"ab"};
     static constinit const cljonic::Variant<int, long> variant{1};
     static constinit const cljonic::Range<int> range{0, 2};
-    static constinit const auto repeated = cljonic::repeat(1, std::size_t{2});
+    static constinit const auto repeated = cljonic::repeat(std::size_t{2}, 1);
     static constinit const auto cycled = cljonic::cycle(cljonic::Vector<int, 2>{1, 2});
     static constinit const auto iterated = cljonic::iterate([](int value) noexcept { return value + 1; }, 0);
     static constinit const auto generated = cljonic::repeatedly(std::size_t{2}, []() noexcept { return 1; });

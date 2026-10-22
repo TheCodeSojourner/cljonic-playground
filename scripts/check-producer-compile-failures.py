@@ -22,13 +22,23 @@ FAILURE_CASES = {
     "Repeatedly-counted-non-callable": "auto x = cljonic::repeatedly(3, 42); (void)x;",
     "Iterate-non-callable": "auto x = cljonic::iterate(42, 1); (void)x;",
     "Repeat-non-storable": "auto x = cljonic::repeat(NonStorable{}); (void)x;",
-    "Repeat-counted-non-storable": "auto x = cljonic::repeat(NonStorable{}, 3); (void)x;",
+    "Repeat-counted-non-storable": "auto x = cljonic::repeat(3U, NonStorable{}); (void)x;",
+    "Repeat-value-first-factory": "(void)cljonic::repeat(cljonic::Vector{7}, 3);",
+    "Repeat-value-first-constructor": "(void)cljonic::Repeat<cljonic::Vector<int, 1>>{cljonic::Vector{7}, 3};",
+    "Repeat-value-first-deduction": "(void)cljonic::Repeat{cljonic::Vector{7}, 3};",
 }
 
 # In-domain calls must still compile.
 PASS_CASES = {
     "Repeat-value": "auto x = cljonic::repeat(7); (void)x;",
-    "Repeat-counted": "auto x = cljonic::repeat(7, 3U); (void)x;",
+    "Repeat-counted": "auto x = cljonic::repeat(3U, 7); (void)x;",
+    "Repeat-counted-constructor": "auto x = cljonic::Repeat<int>{3U, 7}; (void)x;",
+    "Repeat-counted-deduction": "auto x = cljonic::Repeat{3U, 7}; (void)x;",
+    "Repeat-signed-count": "static_assert(cljonic::repeat(3, 7).count() == 3);",
+    "Repeat-negative-count": "static_assert(cljonic::Repeat{-2, 7}.count() == 0);",
+    "Repeat-numeric-order": "static_assert(cljonic::repeat(7, 3U).count() == 7);",
+    "Repeatedly-signed-count": "static_assert(cljonic::repeatedly(3, []() noexcept { return 7; }).count() == 3);",
+    "Repeatedly-negative-count": "static_assert(cljonic::repeatedly(-2, []() noexcept { return 7; }).count() == 0);",
     "Cycle-collection": "auto x = cljonic::cycle(cljonic::Vector<int, 3>{1, 2, 3}); (void)x;",
     "Iterate-step": "auto x = cljonic::iterate([](int v) noexcept { return v + 1; }, 0); (void)x;",
     "Repeatedly-named": "constexpr auto five = []() noexcept { return 5; }; auto x = cljonic::repeatedly(five); (void)x;",

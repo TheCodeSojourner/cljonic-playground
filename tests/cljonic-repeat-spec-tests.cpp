@@ -1,6 +1,7 @@
 #include "cljonic-test-api.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <concepts>
+#include <limits>
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
@@ -63,7 +64,7 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     TRACE_ID("invariant.Repeat.GetContainsAndLookupAreExcluded");
 
     constexpr Vector<int, 4> empty_destination{};
-    constexpr auto finite_repeat = repeat(7, 3U);
+    constexpr auto finite_repeat = repeat(3U, 7);
     STATIC_REQUIRE(finite_repeat.count() == 3U);
     STATIC_REQUIRE(finite_repeat.is_finite());
     constexpr auto finite_result = into(empty_destination, finite_repeat);
@@ -72,7 +73,7 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     STATIC_REQUIRE(finite_result(2U) == 7);
     STATIC_REQUIRE(fits_into(empty_destination, finite_repeat));
 
-    constexpr auto empty_repeat = repeat(7, 0U);
+    constexpr auto empty_repeat = repeat(0U, 7);
     STATIC_REQUIRE(empty_repeat.count() == 0U);
     STATIC_REQUIRE(empty_repeat.is_finite());
     constexpr auto empty_result = into(empty_destination, empty_repeat);
@@ -106,9 +107,9 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     // stored value, count, and finite-form parameters, never the produced
     // sequence. The unbounded form, the zero-count finite form, and a counted
     // form are pairwise distinct even when their produced prefixes coincide.
-    constexpr auto counted_a = repeat(7, 3U);
-    constexpr auto counted_b = repeat(7, 3U);
-    constexpr auto counted_c = repeat(7, 2U);
+    constexpr auto counted_a = repeat(3U, 7);
+    constexpr auto counted_b = repeat(3U, 7);
+    constexpr auto counted_c = repeat(2U, 7);
     STATIC_REQUIRE(counted_a == counted_b);
     STATIC_REQUIRE(!(counted_a == counted_c));
     STATIC_REQUIRE(!(counted_a == unbounded_repeat));
@@ -120,9 +121,9 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     // Repeat is admitted as a set element. The capability is type-level: the
     // unbounded and finite forms share the Repeat<int> type, so both admit
     // producer parameter equality even though their stored parameters differ.
-    constexpr Set<Repeat<int>, 4> repeat_set{repeat(7, 3U), repeat(8, 2U)};
+    constexpr Set<Repeat<int>, 4> repeat_set{repeat(3U, 7), repeat(2U, 8)};
     STATIC_REQUIRE(repeat_set.count() == 2U);
-    STATIC_REQUIRE(repeat_set.contains(repeat(7, 3U)));
+    STATIC_REQUIRE(repeat_set.contains(repeat(3U, 7)));
     STATIC_REQUIRE(StableEqualityComparable<std::remove_cvref_t<decltype(unbounded_repeat)>>);
 
     STATIC_REQUIRE_FALSE(std::invocable<decltype(finite_repeat), std::size_t>);
@@ -131,13 +132,13 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     STATIC_REQUIRE_FALSE(GetDomainAdmissible<decltype(finite_repeat)>);
 
     auto mutable_value = 7;
-    const auto owning_repeat = repeat(mutable_value, 2U);
+    const auto owning_repeat = repeat(2U, mutable_value);
     mutable_value = 9;
     const auto owning_result = into(Vector<int, 2>{}, owning_repeat);
     CHECK(owning_result(0U) == 7);
     CHECK(owning_result(1U) == 7);
 
-    const auto runtime_finite_repeat = repeat(11, 2U);
+    const auto runtime_finite_repeat = repeat(2U, 11);
     CHECK(runtime_finite_repeat.count() == 2U);
     CHECK(runtime_finite_repeat.is_finite());
     const auto runtime_finite_result = into(Vector<int, 4>{}, runtime_finite_repeat);
@@ -153,4 +154,99 @@ TEST_CASE("Repeat owns a value and materializes finite and unbounded forms", "[r
     CHECK(runtime_prefix_result(0U) == 13);
     CHECK(runtime_prefix_result(1U) == 13);
     CHECK_FALSE(fits_into(Vector<int, 2>{}, runtime_unbounded_repeat));
+}
+
+TEST_CASE("Repeat normalizes signed counts without changing count-first semantics", "[repeat]") {
+    using namespace cljonic;
+    TRACE_ID("invariant.Repeat.SignedCountFactoryConstructorAndDeductionAreSupported");
+    TRACE_ID("invariant.Repeat.NegativeCountProducesEmptyFiniteResult");
+
+    constexpr auto positive = repeat(2, 7);
+    STATIC_REQUIRE(positive == Repeat{2, 7});
+    STATIC_REQUIRE(positive == Repeat<int>{2, 7});
+    STATIC_REQUIRE(std::same_as<decltype(repeat(2, 7)), Repeat<int>>);
+    STATIC_REQUIRE(std::same_as<std::remove_cv_t<decltype(Repeat{2, 7})>, Repeat<int>>);
+    STATIC_REQUIRE(positive.count() == 2);
+    STATIC_REQUIRE(*positive.begin() == 7);
+    STATIC_REQUIRE(noexcept(repeat(-2, 7)));
+    STATIC_REQUIRE(noexcept(Repeat{-2, 7}));
+    constexpr auto numeric = repeat(7, 3U);
+    STATIC_REQUIRE(numeric.count() == 7);
+    STATIC_REQUIRE(*numeric.begin() == 3U);
+    STATIC_REQUIRE(std::same_as<std::remove_cv_t<decltype(numeric)>, Repeat<unsigned int>>);
+
+    for (const auto count : {std::numeric_limits<int>::min(), -2, 0, 1, 3}) {
+        const auto factory = repeat(count, 7);
+        const auto deduced = Repeat{count, 7};
+        const auto explicit_type = Repeat<int>{count, 7};
+        const auto saved = factory;
+        const auto expected = count <= 0 ? std::size_t{0} : static_cast<std::size_t>(count);
+        CHECK(factory.count() == expected);
+        CHECK(factory.is_finite());
+        CHECK(factory == deduced);
+        CHECK(factory == explicit_type);
+        CHECK(into(Vector<int, 4>{}, factory).count() == expected);
+        CHECK(fits_into(Vector<int, 4>{}, factory));
+        CHECK(factory == saved);
+    }
+    constexpr auto minimum = Repeat{std::numeric_limits<int>::min(), 7};
+    STATIC_REQUIRE(minimum.count() == 0);
+    STATIC_REQUIRE(minimum.is_finite());
+    STATIC_REQUIRE(minimum.begin() == minimum.end());
+    STATIC_REQUIRE(minimum == Repeat{0, 7});
+    STATIC_REQUIRE(minimum != repeat(7));
+}
+
+TEST_CASE("Repeat counted factory and construction use count-first ordering", "[repeat]") {
+    using namespace cljonic;
+
+    TRACE_ID("invariant.Repeat.CountedFactoryUsesCountThenValue");
+    TRACE_ID("invariant.Repeat.CountedConstructorUsesCountThenValue");
+    TRACE_ID("invariant.Repeat.CountedDeductionUsesSecondArgumentValueType");
+    TRACE_ID("invariant.Repeat.CountedFormsExcludeValueFirstOverloadsAndOrderInference");
+
+    constexpr auto factory = repeat(3U, 7U);
+    constexpr auto deduced = Repeat{3U, 7U};
+    constexpr auto explicit_type = Repeat<unsigned int>{3U, 7U};
+    STATIC_REQUIRE(factory.count() == 3U);
+    STATIC_REQUIRE(*factory.begin() == 7U);
+    STATIC_REQUIRE(factory == deduced);
+    STATIC_REQUIRE(factory == explicit_type);
+    STATIC_REQUIRE(factory.is_finite());
+    STATIC_REQUIRE(noexcept(repeat(3U, 7U)));
+    STATIC_REQUIRE(noexcept(Repeat{3U, 7U}));
+
+    constexpr auto signed_value = Repeat{std::size_t{2}, -7};
+    STATIC_REQUIRE(std::same_as<std::remove_cv_t<decltype(signed_value)>, Repeat<int>>);
+    STATIC_REQUIRE(std::same_as<decltype(repeat(std::size_t{2}, -7)), Repeat<int>>);
+    STATIC_REQUIRE(signed_value.count() == 2U);
+    STATIC_REQUIRE(*signed_value.begin() == -7);
+    constexpr auto nested = Repeat{2U, Vector{10, 20}};
+    STATIC_REQUIRE(std::same_as<std::remove_cv_t<decltype(nested)>, Repeat<Vector<int, 2>>>);
+    STATIC_REQUIRE(nested.count() == 2U);
+    STATIC_REQUIRE(*nested.begin() == Vector{10, 20});
+
+    constexpr auto zero = Repeat{0U, 7};
+    constexpr auto singleton = Repeat{1U, 7};
+    STATIC_REQUIRE(zero.is_finite());
+    STATIC_REQUIRE(zero.count() == 0U);
+    STATIC_REQUIRE(zero.begin() == zero.end());
+    STATIC_REQUIRE(singleton.count() == 1U);
+    STATIC_REQUIRE(*singleton.begin() == 7);
+    STATIC_REQUIRE(into(Vector<int, 3>{}, singleton).count() == 1U);
+
+    volatile unsigned int runtime_count = 3U;
+    volatile int runtime_value = -11;
+    const auto count = runtime_count;
+    const auto value = runtime_value;
+    const auto from_factory = repeat(count, value);
+    const auto from_constructor = Repeat{count, value};
+    const auto saved = from_factory;
+    const auto result = into(Vector<int, 4>{}, from_factory);
+    CHECK(result.count() == 3U);
+    CHECK(result(0U) == -11);
+    CHECK(result(2U) == -11);
+    CHECK(from_factory == from_constructor);
+    CHECK(from_factory == saved);
+    CHECK(fits_into(Vector<int, 4>{}, from_factory));
 }

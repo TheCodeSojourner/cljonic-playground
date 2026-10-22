@@ -70,7 +70,7 @@ TEST_CASE("Count free function reports producer observations", "[count][producer
     TRACE_ID("invariant.Count.UnboundedProducerCountIsObservableCap");
 
     constexpr auto finite_range = Range{0, 5};
-    constexpr auto finite_repeat = Repeat{7, 3U};
+    constexpr auto finite_repeat = Repeat{3U, 7};
     constexpr auto finite_repeatedly = repeatedly(3U, []() constexpr noexcept { return 42; });
     STATIC_REQUIRE(count(finite_range) == 5U);
     STATIC_REQUIRE(count(finite_repeat) == 3U);

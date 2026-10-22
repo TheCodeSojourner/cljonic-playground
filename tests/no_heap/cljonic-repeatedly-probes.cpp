@@ -10,13 +10,20 @@ namespace cljonic::no_heap::probes {
     // factory is the only construction surface at runtime; the rejected deduction is a compile-time error covered
     // by scripts/check-ctad-diagnostics.py.
     const auto destination = Vector<int, 4>{};
-    const auto counted = repeatedly(3U, []() noexcept { return 5; });
+    volatile int runtime_count = 3;
+    volatile int runtime_negative = -2;
+    const auto counted = repeatedly(static_cast<int>(runtime_count), []() noexcept { return 5; });
     const auto copied = counted;
     const auto counted_result = into(destination, copied);
     const auto uncounted = repeatedly([]() noexcept { return 5; });
     const auto uncounted_result = into(destination, uncounted);
     const auto empty_result = into(destination, repeatedly(0U, []() noexcept { return 5; }));
-    return counted.is_finite() && counted.count() == 3U && counted_result.count() == 3U && counted_result(0U) == 5 &&
+    auto calls = 0;
+    const auto step = [&calls]() noexcept { return ++calls; };
+    const auto negative = repeatedly(static_cast<int>(runtime_negative), step);
+    const auto negative_result = into(destination, negative);
+    return calls == 0 && negative.is_finite() && negative.count() == 0 && negative_result.count() == 0 &&
+           counted.is_finite() && counted.count() == 3U && counted_result.count() == 3U && counted_result(0U) == 5 &&
            counted_result(2U) == 5 && uncounted.count() == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
            !uncounted.is_finite() && !fits_into(destination, uncounted) &&
            uncounted_result.count() == destination.capacity() && uncounted_result(0U) == 5 &&

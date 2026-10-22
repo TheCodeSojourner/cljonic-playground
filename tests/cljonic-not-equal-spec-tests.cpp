@@ -71,7 +71,7 @@ TEST_CASE("not_equal negates general value equality over the supported domain", 
     STATIC_REQUIRE(not_equal(Vector<int, 4>{1, 2, 3}, Vector<int, 4>{1, 2, 4}));
     STATIC_REQUIRE(!not_equal(Vector<int, 4>{1, 2, 3}, Range<int>{1, 4, 1}));
     STATIC_REQUIRE(not_equal(Vector<int, 4>{1, 2, 3}, Queue<int, 4>{1, 2, 4}));
-    STATIC_REQUIRE(!not_equal(Vector<int, 4>{1, 1, 1}, Repeat<int>{1, 3U}));
+    STATIC_REQUIRE(!not_equal(Vector<int, 4>{1, 1, 1}, Repeat<int>{3U, 1}));
     // not_equal remains available for pairs with no native cross-type operator,
     // such as a Vector compared with a Range.
     STATIC_REQUIRE(not_equal(Vector<int, 4>{1, 2, 3}, Range<int>{1, 3, 1}));

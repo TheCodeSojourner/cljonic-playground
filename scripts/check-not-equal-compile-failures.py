@@ -94,7 +94,7 @@ PASS_CASES = {
     "NotEqual-vector-vs-queue": ("(void)cljonic::not_equal(cljonic::Vector<int, 4>{1, 2, 3}, "
                                  "cljonic::Queue<int, 4>{1, 2, 3});"),
     "NotEqual-vector-vs-repeat": ("(void)cljonic::not_equal(cljonic::Vector<int, 4>{1, 1, 1}, "
-                                  "cljonic::Repeat<int>{1, 3U});"),
+                                  "cljonic::Repeat<int>{3U, 1});"),
     "NotEqual-repeat-unbounded-pair": ("(void)cljonic::not_equal(cljonic::Repeat<int>{7}, "
                                        "cljonic::Repeat<int>{7});"),
     "NotEqual-cycle-vs-vector-early-exit": ("(void)cljonic::not_equal(cljonic::cycle(cljonic::Vector<int, 2>{1, 2}), "
@@ -105,9 +105,9 @@ PASS_CASES = {
     "NotEqual-string-pair": ("(void)cljonic::not_equal(cljonic::String<8>{\"abc\"}, cljonic::String<4>{\"abc\"});"),
     "NotEqual-aggregate": ("NotEqualPixel a{1, 2}; NotEqualPixel b{1, 2}; (void)cljonic::not_equal(a, b);"),
     "NotEqual-nested-producer-parameter-equality": ("(void)cljonic::not_equal(cljonic::Vector<cljonic::Repeat<int>, 2>"
-                                                    "{cljonic::Repeat<int>{7, 3U}}, "
+                                                    "{cljonic::Repeat<int>{3U, 7}}, "
                                                     "cljonic::Vector<cljonic::Repeat<int>, 2>"
-                                                    "{cljonic::Repeat<int>{7, 3U}});"),
+                                                    "{cljonic::Repeat<int>{3U, 7}});"),
     "NotEqual-unary-scalar": "(void)cljonic::not_equal(1);",
     "NotEqual-unary-collection": "(void)cljonic::not_equal(cljonic::Vector<int, 2>{});",
     "NotEqual-unary-producer": "(void)cljonic::not_equal(cljonic::Repeat<int>{7});",

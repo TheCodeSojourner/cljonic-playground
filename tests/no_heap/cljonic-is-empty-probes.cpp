@@ -30,8 +30,8 @@ namespace {
     const auto vacant_range = Range{value, value};
     const auto finite_range = Range{0, value};
     const auto descending_range = Range{value, 0, -1};
-    const auto vacant_repeat = Repeat{value, zero};
-    const auto finite_repeat = Repeat{value, std::size_t{2}};
+    const auto vacant_repeat = Repeat{zero, value};
+    const auto finite_repeat = Repeat{std::size_t{2}, value};
     const auto step = [value] noexcept { return value; };
     const auto vacant_repeatedly = repeatedly(zero, step);
     const auto finite_repeatedly = repeatedly(std::size_t{2}, step);

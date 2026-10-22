@@ -204,11 +204,11 @@ TEST_CASE("IsEmpty follows finite and unbounded producer counts without changing
     }
 
     SECTION("Repeat") {
-        STATIC_REQUIRE(is_empty(Repeat{7, std::size_t{0}}));
-        STATIC_REQUIRE_FALSE(is_empty(Repeat{7, std::size_t{2}}));
+        STATIC_REQUIRE(is_empty(Repeat{std::size_t{0}, 7}));
+        STATIC_REQUIRE_FALSE(is_empty(Repeat{std::size_t{2}, 7}));
         STATIC_REQUIRE(noexcept(is_empty(Repeat{7})));
-        const auto vacant = Repeat{value, zero};
-        const auto finite = Repeat{value, std::size_t{2}};
+        const auto vacant = Repeat{zero, value};
+        const auto finite = Repeat{std::size_t{2}, value};
         const auto unbounded = Repeat{value};
         const auto original = finite;
         REQUIRE(is_empty(vacant));

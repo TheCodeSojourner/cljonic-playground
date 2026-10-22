@@ -51,10 +51,15 @@ def rejection_cases() -> dict[str, str]:
         cases[f"materialization-{operation}"] = (
             f"(void)cljonic::{operation}(cljonic::Vector<short, 2>{{}}, cljonic::Range<int>{{0, 2}});"
         )
-    for count in ("-1", "2", "1.5", "true", "'a'", "IntConversion{}"):
-        cases[f"repeat-count-{count}"] = f"(void)cljonic::repeat(1, {count});"
+    for count in ("1.5", "true", "'a'", "IntConversion{}"):
+        cases[f"repeat-count-{count}"] = f"(void)cljonic::repeat({count}, 1);"
         cases[f"repeatedly-count-{count}"] = f"(void)cljonic::repeatedly({count}, []() noexcept {{ return 1; }});"
-        cases[f"Repeat-count-{count}"] = f"(void)cljonic::Repeat<int>(1, {count});"
+        cases[f"Repeat-count-{count}"] = f"(void)cljonic::Repeat<int>({count}, 1);"
+        cases[f"Repeat-deduced-count-{count}"] = f"(void)cljonic::Repeat{{{count}, 1}};"
+        cases[f"Repeatedly-constructor-count-{count}"] = (
+            f"const auto step = []() noexcept {{ return 1; }}; "
+            f"(void)cljonic::Repeatedly<int, decltype(step)>{{step, {count}}};"
+        )
     cases["variadic-assoc"] = "(void)cljonic::assoc(cljonic::Map<int, int, 2>{}, 0, 1, 1.5, 2);"
     cases["variadic-dissoc"] = "(void)cljonic::dissoc(cljonic::Map<int, int, 2>{}, 0, 1.5);"
     cases["variadic-disj"] = "(void)cljonic::disj(cljonic::Set<int, 2>{}, 0, 1.5);"
