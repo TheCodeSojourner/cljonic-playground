@@ -153,6 +153,39 @@ This module specifies specialized domain conveniences built on top of lower modu
   ∀ context: the additional core convenience family includes `get_in`, `assoc_in`, `update`, `update_in`, `merge`, `merge_with`, `select_keys`, `keys`, `vals`, `zipmap`, `update_keys`, `update_vals`, `vector`, `vec`, `hash_map`, `hash_set`, `swap_vals`, `reset_vals`, `str`, `pr_str`, `prn_str`, and `replicate`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
+λ REQ-FN-029A(x).
+  ∀ user-facing Vector creation guidance: prefers the lowercase `vector` factory at runtime and compile time ∧ the public `Vector<T, Capacity>` type and its existing constructors remain supported, including direct construction from external non-cljonic C++ ranges and views
+  ∧ ∀ `vector<T>()`: returns an empty owning `Vector<T, 0>` ∧ `T` satisfies the `NothrowCollectionElement` storage contract
+  ∧ ∀ `vector(first, rest...)` without an explicit element type: returns an owning `Vector<T, argument_count>` where `T` is the unqualified type of `first` ∧ `argument_count` is at least one
+  ∧ ∀ `vector<T>(first, rest...)` with an explicit element type: returns an owning `Vector<T, argument_count>` ∧ `argument_count` is at least one
+  ∧ ∀ `vector<T, Capacity>(args...)`: returns an owning `Vector<T, Capacity>` ∧ `0 ≤ argument_count ≤ Capacity` ∧ `Capacity` does not exceed `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`
+  ∧ ∀ explicit-capacity `vector<T, Capacity>()`: returns an empty owning `Vector<T, Capacity>`, including when `Capacity` is zero
+  ∧ ∀ `Capacity < argument_count` or `Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`: rejected at compile time
+  ∧ ∀ argument: satisfies `NothrowElementConstruction<T, argument>` under `REQ-CONV-001`
+  ∧ ∀ argument_count: does not exceed `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` ∧ a larger count is rejected at compile time
+  ∧ ∀ `vector`: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ preserves lvalue arguments ∧ permits moving from rvalue arguments during element construction
+  ∧ ∀ untyped zero-argument `vector()`: rejected because the element type cannot be deduced
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
+
+## Collection Factory Family (Deferred, Non-Binding)
+
+The following clauses record approved future API direction, not currently available overloads. `vector` remains active under `REQ-FN-029A`; the other factories require individually approved behavioral specifications before implementation.
+
+λ REQ-FN-029B(x).
+  ∀ planned collection factory naming: `Map` → `hash_map`, `MapEntry` → `map_entry`, `Set` → `hash_set`, `Queue` → `queue`, and `String` → `string`
+  ∧ preferred: lowercase factories are the idiomatic creation surface at runtime and compile time, using Clojure names where applicable rather than claiming exact Clojure equivalence
+  ∧ ∀ factory introduction: preserves the public type and its existing supported constructors
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
+
+λ REQ-FN-029C(x).
+  ∀ planned collection factory contract: follows the `vector` construction principles where meaningful — inferred types, explicit types, explicit capacity, typed empty construction, safe conversions, and non-throwing, non-allocating value construction
+  ∧ ∀ factory: preserves its collection's semantics rather than requiring identical overloads across types
+  ∧ ∀ `map_entry`: constructs a fixed key/value pair ∧ ¬∃ spare-capacity option
+  ∧ ∀ `hash_map`: key/value deduction and entry versus alternating key/value argument forms require separate human approval before specification or implementation
+  ∧ ∀ `string`: preserves the existing text-import and byte-validity contracts
+  ∧ ∀ planned factory: concrete overloads and boundaries require individual contract approval before behavioral specification and implementation
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
+
 ## User Struct & Scoped Keyword Enum Invariants
 
 λ REQ-PLAT-024(x).
@@ -217,4 +250,4 @@ This module specifies specialized domain conveniences built on top of lower modu
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Relational algebra functions (`index`, `project`, `rename`, `join`), string/regex functions, `fits_print`/`print_to`, `Atom<T>`, and the test suite (`REQ-TEST-*`).
-- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
+- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`029C`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.

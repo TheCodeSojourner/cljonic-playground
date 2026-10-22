@@ -20,7 +20,11 @@ namespace cljonic {
  * Without explicit template arguments, a sole cljonic argument determines the element type and yields a one-element
  * collection. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
  * Elements may themselves be cljonic collections or producers, including nested cljonic composites. Element
- * construction, updates, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
+ * construction, updates, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules". The
+ * lowercase \c vector factory is the idiomatic way to create Vector values, at runtime or during constant evaluation.
+ * Use \c vector(args...) to infer the element type and capacity, \c vector<T>(args...) to select an element type, or
+ * \c vector<T, Capacity>(args...) to provide an explicit capacity, including for an empty vector. \c Vector<T,
+ * Capacity> remains the value's type; direct construction is useful when importing a C++ range or view.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -36,44 +40,27 @@ namespace cljonic {
    }
  };
 
- struct CategoryArgument {};
-
- struct CategoryElement {
-   int category = 0;
-
-   constexpr CategoryElement() noexcept = default;
-   constexpr CategoryElement(const CategoryArgument &) noexcept : category(1) {}
-   constexpr CategoryElement(CategoryArgument &&) noexcept : category(2) {}
-   constexpr CategoryElement(const CategoryElement &) noexcept = default;
-   constexpr auto operator=(const CategoryElement &) noexcept
-       -> CategoryElement & = default;
- };
-
- using Inner = Vector<int, 2>;
-
  int main() {
-   // CTAD infers Vector<int, 3> from the initializer count.
-   [[maybe_unused]] constexpr auto ints_at_capacity = Vector{1, 2, 3};
+   // The lowercase factory is the idiomatic way to create vectors.
+   constexpr auto ints_empty = vector<int>();
+   constexpr auto ints_at_capacity = vector(1, 2, 3);
 
-   // Explicit capacity permits a partially populated Vector and an empty Vector.
-   [[maybe_unused]] constexpr auto ints_populated = Vector<int, 4>{1, 2};
-   [[maybe_unused]] constexpr auto ints_empty = Vector<int, 4>{};
+   // Explicit capacity permits a partially populated or empty vector.
+   constexpr auto ints_populated = vector<int, 4>(1, 2);
+   constexpr auto ints_reserved = vector<int, 4>();
+   static_assert(ints_empty(0, 99) == 99);
+   static_assert(ints_at_capacity(2) == 3);
+   static_assert(ints_populated(1) == 2);
+   static_assert(ints_reserved(0, 99) == 99);
 
-   // Vector values can be nested, including through an explicit type alias.
-   [[maybe_unused]] constexpr auto nested_int_vectors =
-       Vector{Vector{1, 2}, Vector<int, 2>{3}};
-   [[maybe_unused]] constexpr auto nested_alias_vectors =
-       Vector{Inner{4, 5}, Inner{6}};
+   // Vectors can be nested.
+   constexpr auto nested_int_vectors = vector(vector(1, 2), vector<int, 2>(3));
+   static_assert(nested_int_vectors(1)(0) == 3);
 
-   // User-defined values and constructor argument categories are supported.
-   constexpr auto doubles_populated = Vector<double, 3>{1.5, 2.5};
-   constexpr auto pixels_populated = Vector{Pixel{1, 2}, Pixel{3, 4}};
-   constexpr auto values = Vector<int, 4>{10, 20};
-   constexpr auto category_argument = CategoryArgument{};
-   constexpr auto lvalue_constructed =
-       Vector{CategoryElement{category_argument}};
-   constexpr auto rvalue_constructed =
-       Vector{CategoryElement{CategoryArgument{}}};
+   // An explicit element type and user-defined values are supported.
+   constexpr auto doubles_populated = vector<double>(1.5f, 2.5f);
+   constexpr auto pixels_populated = vector(Pixel{1, 2}, Pixel{3, 4});
+   constexpr auto values = vector<int, 4>(10, 20);
 
    // Vector values can be used as a callable function, returning a default-
    // value for invalid indexes or a supplied fallback when provided.
@@ -82,11 +69,9 @@ namespace cljonic {
    static_assert(values(2, 99) == 99);
    static_assert(values(-1) == 0);
    static_assert(values(-1, 99) == 99);
-   static_assert(std::same_as<decltype(doubles_populated(0)), double>);
+   static_assert(doubles_populated(0) == 1.5);
    static_assert(pixels_populated(0).x == 1);
    static_assert(pixels_populated(1).y == 4);
-   static_assert(lvalue_constructed(0).category == 1);
-   static_assert(rvalue_constructed(0).category == 2);
 
    // Without a fallback, an invalid lookup returns value_type{}; Pixel's int
    // members have a default value of zero.
@@ -94,13 +79,15 @@ namespace cljonic {
    static_assert(pixels_populated(-1).y == 0);
 
    // Pixel equality validates the runtime result for a user-defined value type.
-   auto runtime_pixels = Vector{Pixel{1, 2}, Pixel{3, 4}};
+   volatile int runtime_first_raw = 7;
+   const int runtime_first = runtime_first_raw;
+   auto runtime_pixels = vector(Pixel{1, 2}, Pixel{runtime_first - 4, 4});
    const auto pixel_value = runtime_pixels(1);
    const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
-   auto runtime_values = Vector{7, 9};
+   auto runtime_values = vector(runtime_first, runtime_first + 2);
    const auto fallback = runtime_values(4, -1);
    const auto negative_default = runtime_values(-1);
    const auto negative_fallback = runtime_values(-1, 99);
@@ -131,7 +118,7 @@ namespace cljonic {
    const auto runtime_from_span =
        Vector<int, 4>{std::span<const int>{runtime_buffer, 3}};
 
-   constexpr auto interop_values = Vector{10, 20, 30};
+   constexpr auto interop_values = vector(10, 20, 30);
    static_assert(interop_values.begin()[1] == 20);
    static_assert(interop_values.view().size() == 3);
 
@@ -144,7 +131,7 @@ namespace cljonic {
    const auto runtime_view = runtime_values.view();
 
    return (fallback == -1 && negative_default == 0 && negative_fallback == 99 &&
-           values.count() == 2 && pixel_value == Pixel{3, 4} &&
+           values(1) == 20 && pixel_value == Pixel{3, 4} &&
            pixel_fallback == Pixel{99, 99} && range_sum == 16 &&
            runtime_view.size() == 2 && runtime_view[0] == 7 &&
            from_pipeline(0) == 14 && from_pipeline(1) == 18 &&
@@ -224,7 +211,7 @@ class Vector {
             "collection or "
             "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
             "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
-            "element, write Vector{...}.");
+            "element, write vector(...).");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -371,6 +358,97 @@ class Vector {
     std::array<value_type, CapacityValue> storage_{};
     std::size_t logical_size_ = 0;
 };
+
+namespace concepts_detail {
+
+struct DeducedVectorElementType {};
+
+template <typename RequestedElementType, typename... Args>
+struct vector_factory_element_type {
+    using type = RequestedElementType;
+};
+
+template <typename First, typename... Rest>
+struct vector_factory_element_type<DeducedVectorElementType, First, Rest...> {
+    using type = std::remove_cvref_t<First>;
+};
+
+template <typename RequestedElementType, typename... Args>
+using vector_factory_element_t = vector_factory_element_type<RequestedElementType, Args...>::type;
+
+template <typename RequestedElementType, typename... Args>
+concept VectorFactoryHasElementType =
+    sizeof...(Args) > 0U || !std::same_as<RequestedElementType, DeducedVectorElementType>;
+
+template <typename RequestedElementType, typename... Args>
+concept VectorFactoryArguments =
+    VectorFactoryHasElementType<RequestedElementType, Args...> &&
+    concepts::NothrowCollectionElement<vector_factory_element_t<RequestedElementType, Args...>> &&
+    sizeof...(Args) <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    (concepts::NothrowElementConstruction<vector_factory_element_t<RequestedElementType, Args...>, Args> && ...);
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+concept VectorFactoryCapacityArguments =
+    concepts::NothrowCollectionElement<ElementType> && Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    sizeof...(Args) <= Capacity && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
+
+} // namespace concepts_detail
+
+/** Creates a bounded Vector from its arguments, or a typed empty Vector when called as \c vector<T>(). */
+template <typename RequestedElementType = concepts_detail::DeducedVectorElementType, typename... Args>
+    requires concepts_detail::VectorFactoryArguments<RequestedElementType, Args...>
+[[nodiscard]] constexpr auto vector(Args&&... args) noexcept(
+    (concepts::NothrowElementConstruction<concepts_detail::vector_factory_element_t<RequestedElementType, Args...>,
+                                          Args> &&
+     ...)) -> Vector<concepts_detail::vector_factory_element_t<RequestedElementType, Args...>, sizeof...(Args)> {
+    using ElementType = concepts_detail::vector_factory_element_t<RequestedElementType, Args...>;
+    return Vector<ElementType, sizeof...(Args)>{std::forward<Args>(args)...};
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedVectorElementType, typename... Args>
+    requires(!concepts_detail::VectorFactoryArguments<RequestedElementType, Args...>)
+constexpr auto vector([[maybe_unused]] Args&&... args) noexcept -> void {
+    using ElementType = concepts_detail::vector_factory_element_t<RequestedElementType, Args...>;
+    if constexpr (!concepts_detail::VectorFactoryHasElementType<RequestedElementType, Args...>) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::vector: an empty Vector requires an explicit element type; write vector<T>().");
+    } else if constexpr (!concepts::NothrowCollectionElement<ElementType>) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::vector: the element type must satisfy NothrowCollectionElement.");
+    } else if constexpr (sizeof...(Args) > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::vector: argument count exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::vector: every argument must safely construct the element type without throwing.");
+    }
+}
+
+/** Creates a bounded Vector with an explicit capacity, including for an empty argument pack. */
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires concepts_detail::VectorFactoryCapacityArguments<ElementType, Capacity, Args...>
+[[nodiscard]] constexpr auto vector(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> &&
+                                                              ...)) -> Vector<ElementType, Capacity> {
+    return Vector<ElementType, Capacity>{std::forward<Args>(args)...};
+}
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires(!concepts_detail::VectorFactoryCapacityArguments<ElementType, Capacity, Args...>)
+constexpr auto vector([[maybe_unused]] Args&&... args) noexcept -> void {
+    if constexpr (!concepts::NothrowCollectionElement<ElementType>) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::vector: the element type must satisfy NothrowCollectionElement.");
+    } else if constexpr (Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::vector: capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else if constexpr (sizeof...(Args) > Capacity) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::vector: capacity must be at least the number of arguments.");
+    } else {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::vector: every argument must safely construct the element type without throwing.");
+    }
+}
 
 template <typename First, typename... Rest>
 Vector(First, Rest...) -> Vector<First, 1 + sizeof...(Rest)>;
