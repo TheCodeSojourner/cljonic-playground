@@ -148,9 +148,11 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 
 λ REQ-FN-013B(x).
   ∀ `repeat(value)`: constructs an unbounded `Repeat<T>` producer that owns a copy of `value` ∧ produces the same value indefinitely
-  ∧ ∀ `repeat(value, count)`: constructs a finite `Repeat<T>` producer that owns a copy of `value` ∧ produces exactly `count` copies, including an empty result when `count` is zero
+  ∧ ∀ `repeat(count, value)`: constructs a finite `Repeat<T>` producer that owns a copy of `value` ∧ produces exactly the normalized count of copies under `REQ-CONV-002E`, including an empty result when `count` ≤ 0
+  ∧ ∀ counted `Repeat` construction: uses `Repeat<T>{count, value}` ∨ deduced `Repeat{count, value}` ∧ when deduced, repeated element type is determined by `value` ∧ finite count admission follows `REQ-CONV-002E`
+  ∧ ∀ counted factory ∨ constructor: first argument is always the count ∧ second argument is always the repeated value ∧ ¬∃ alternate value-first overload ∨ argument-order inference
   ∧ ∀ `Repeat<T>`: exposes `count()` and `is_finite()` as specified by `REQ-VAL-016` and `REQ-VAL-017A` ∧ ¬∃ (exposure of `contains` ∨ positional retrieval ∨ key-based lookup ∨ `get` ∨ callable lookup)
-  ∧ ∀ counted_form: uses `count` as its exact runtime result count for `into` and `fits_into` ∧ ∀ uncounted_form: materializes at most the explicit destination's remaining capacity ∧ reports `false` from `fits_into`
+  ∧ ∀ counted_form: uses the normalized count as its exact runtime result count for `into` and `fits_into` ∧ ∀ uncounted_form: materializes at most the explicit destination's remaining capacity ∧ reports `false` from `fits_into`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-013C(x).
@@ -166,7 +168,7 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 
 λ REQ-FN-013D(x).
   ∀ `repeatedly(step)`: constructs an unbounded `Repeatedly<T, Step>` producer that owns a decayed copy of the zero-argument step callback ∧ produces a fresh element by invoking the step for each produced element
-  ∧ ∀ `repeatedly(count, step)`: constructs a finite `Repeatedly<T, Step>` producer that produces exactly `count` elements, including an empty result when `count` is zero ∧ invokes the step exactly once per produced element during each complete materialization
+  ∧ ∀ `repeatedly(count, step)`: constructs a finite `Repeatedly<T, Step>` producer that produces exactly the normalized count of elements under `REQ-CONV-002E`, including an empty result when `count` ≤ 0 ∧ invokes the step exactly once per produced element during each complete materialization
   ∧ ∀ counted_form: places the count before the step, mirroring Clojure's `(repeatedly n f)` form
   ∧ ∀ factory: accepts named functions, lambdas, and function objects ∧ stores `std::decay_t<Step>` — named functions are accepted and stored as copyable function pointers ∧ lambdas and function objects are stored as their decayed value types
   ∧ ∀ `Step`: copy constructible ∧ the step MAY be moved from an rvalue during construction when supported

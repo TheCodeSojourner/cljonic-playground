@@ -43,9 +43,12 @@ This module establishes the C++20 concept capability framework, result status ou
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-CONV-002E(x).
-  ∀ P ∈ {`Repeat`, `Repeatedly`}, count ∈ finite_count_arguments(P): require(unsigned_integral(type(count)) ∧ ¬Boolean(type(count)) ∧ ¬character(type(count)) ∧ range(type(count)) ⊆ range(`std::size_t`))
-  ∧ ∀ P ∈ {`Repeat`, `Repeatedly`}, count ∈ finite_count_arguments(P): type(count) ∈ {signed, floating, user_defined} → reject ∧ ¬wrap ∧ ¬truncate
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
+  ∀ P ∈ {`Repeat`, `Repeatedly`}, count ∈ finite_count_arguments(P): require(integral(type(count)) ∧ ¬Boolean(type(count)) ∧ ¬character(type(count)) ∧ nonnegative_range(type(count)) ⊆ range(`std::size_t`))
+  ∧ ∀ admitted count ≤ 0: normalize_to_zero_before_unsigned_conversion ∧ construct(empty_finite_producer) ∧ ¬wrap
+  ∧ ∀ admitted count > 0: preserve_exact_count ∧ ¬truncate
+  ∧ ∀ P ∈ {`Repeat`, `Repeatedly`}, count ∈ finite_count_arguments(P): type(count) ∈ {Boolean, character, floating, user_defined} ∨ ¬nonnegative_range_fits_size_t(type(count)) → reject
+  ∧ ∀ counted `Repeatedly` with admitted count ≤ 0: ¬invoke(callback_during_construction_or_traversal)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
 
 λ REQ-CONV-003(x).
   ∀ default_rule_exception: explicit(documentation ∧ tests)
