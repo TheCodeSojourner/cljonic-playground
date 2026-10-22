@@ -28,10 +28,9 @@ concept RepeatClassArgument =
  * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(count, value)` yields
  * exactly \p count values.
  *
- * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the requested count, or by an
- * explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime
- * code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required.
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
+ * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
+ * cljonic operations that accept a source.
  *
  * Values and finite counts follow the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed
  * or unsigned integer types whose nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero

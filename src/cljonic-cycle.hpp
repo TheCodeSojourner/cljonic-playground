@@ -27,15 +27,12 @@ concept CycleClassArgument =
 /** \anchor Cycle
  * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. The
  * source's elements may themselves be cljonic collections or producers, including nested cljonic composites. A finite
- * source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without first
- * materializing the whole source.
+ * source sequence is repeated from the beginning after exhaustion.
  *
  * The only approved public form is `cycle(source)`. It supports const C++ range traversal in both constant evaluation
- * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required.
+ * and runtime code. Values can be passed directly to cljonic operations that accept a source.
  *
- * Observation yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements, or fewer when materialized
- * into a destination with an explicit capacity.
+ * Observation yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

@@ -1410,7 +1410,7 @@ namespace cljonic {
    const auto runtime_view_copy = from_runtime_view.view();
 
    // A standard view pipeline can use an existing String as its source and
-   // materialize transformed characters into another String.
+   // Construct another String from the transformed characters.
    const auto uppercase_view =
        runtime | std::views::transform([](char byte) noexcept {
          return byte == 'i' ? 'I' : byte;
@@ -1513,10 +1513,7 @@ class String {
     explicit constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::String: you cannot construct a String from a cljonic collection or producer. A String "
-                      "is built from its characters, or from a non-cljonic C++ range or view. To materialize a cljonic "
-                      "collection or producer into a Vector, use into(destination, source); call "
-                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
-                      "remaining capacity.");
+                      "is built from its characters, or from a non-cljonic C++ range or view.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2169,8 +2166,7 @@ namespace cljonic {
  * Direct construction is useful when importing a C++ range or view: its elements are copied into the Vector. A cljonic
  * value is not copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one
  * element only when its type exactly matches the declared element type. Without explicit template arguments, a sole
- * cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
- * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
+ * cljonic argument determines the element type and yields a one-element collection. Elements may themselves be cljonic
  * collections or producers, including nested cljonic composites.
  *
  * Construction with more initializers than the available capacity is rejected at compile time. Element construction,
@@ -2243,7 +2239,7 @@ namespace cljonic {
    const auto negative_fallback = runtime_values(-1, 99);
 
    // A standard view pipeline can use an existing Vector as its source and
-   // materialize transformed values into another Vector.
+   // Construct another Vector from the transformed values.
    const auto doubled_view =
        runtime_values |
        std::views::transform([](int value) noexcept { return value * 2; });
@@ -2357,11 +2353,8 @@ class Vector {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Vector: you cannot construct a Vector from a cljonic collection or producer. A Vector is built "
-            "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
-            "collection or "
-            "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
-            "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
-            "element, write vector(...).");
+            "from its individual elements, or from a non-cljonic C++ range or view. To keep it as a single element, "
+            "write vector(...).");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -2656,15 +2649,12 @@ concept CycleClassArgument =
 /** \anchor Cycle
  * A Cycle is an unbounded producer over an owned source value, which must be a cljonic collection or producer. The
  * source's elements may themselves be cljonic collections or producers, including nested cljonic composites. A finite
- * source sequence is repeated from the beginning after exhaustion; an unbounded source can be observed without first
- * materializing the whole source.
+ * source sequence is repeated from the beginning after exhaustion.
  *
  * The only approved public form is `cycle(source)`. It supports const C++ range traversal in both constant evaluation
- * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required.
+ * and runtime code. Values can be passed directly to cljonic operations that accept a source.
  *
- * Observation yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements, or fewer when materialized
- * into a destination with an explicit capacity.
+ * Observation yields at most \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE elements.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -3677,8 +3667,7 @@ namespace cljonic {
  * map. \c Map<K, V, Capacity> remains the value's type.
  *
  * Direct construction is useful when importing a C++ range or view: its entries are copied into the Map. A cljonic
- * collection or producer is not a constructor source. To materialize a cljonic collection or producer into a
- * destination \ref Vector "Vector", use \b into.
+ * collection or producer is not a constructor source.
  *
  * Construction with more entries than the available capacity is rejected at compile time. Construction from entries
  * requires the exact declared entry type. Keys, mapped values, and fallbacks follow the \ref implicit-conversions
@@ -3724,7 +3713,7 @@ namespace cljonic {
    const auto missing = runtime(Key{4}, Value{77});
 
    // A standard view pipeline can use an existing Map as its source and
-   // materialize the transformed entries into another Map.
+   // Construct another Map from the transformed entries.
    const auto copied_view =
        runtime | std::views::transform([](const AccountEntry &entry) noexcept {
          return AccountEntry{entry.key, Value{entry.value.amount * 2}};
@@ -3847,10 +3836,7 @@ class Map {
     explicit constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Map: you cannot construct a Map from a cljonic collection or producer. A Map is built "
-                      "from MapEntry elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
-                      "collection or producer into a Vector, use into(destination, source); call "
-                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
-                      "remaining capacity.");
+                      "from MapEntry elements, or from a non-cljonic C++ range or view.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -4647,10 +4633,9 @@ concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concept
  * The initial and produced values may themselves be cljonic collections or producers, including nested cljonic
  * composites. The step may be a lambda, a named function, or a function object.
  *
- * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by an explicit destination capacity,
- * and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
- * directly to cljonic operations that accept a source, or converted into an owning destination with `into` when
- * explicit materialization is required.
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE and supports const C++ range traversal
+ * in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a
+ * source.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -5283,9 +5268,8 @@ namespace cljonic {
  * Direct construction can import a C++ range or view: its elements are copied into the Queue. A cljonic value is not
  * copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one element only
  * when its type exactly matches the declared element type. Without explicit template arguments, a sole cljonic
- * argument determines the element type and yields a one-element collection. To materialize a cljonic collection or
- * producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic collections or
- * producers, including nested cljonic composites.
+ * argument determines the element type and yields a one-element collection. Elements may themselves be cljonic
+ * collections or producers, including nested cljonic composites.
  *
  * Construction with more values than the available capacity is rejected at compile time. Elements follow the \ref
  * implicit-conversions "safe implicit conversion rules".
@@ -5317,7 +5301,7 @@ namespace cljonic {
    static_assert(from_span_ctad.begin()[1] == 20);
 
    // A standard view pipeline can use an existing Queue as its source and
-   // materialize transformed values into another Queue.
+   // Construct another Queue from the transformed values.
    const auto pipeline_source = Queue{1, 2, 3};
    const auto shifted_view =
        pipeline_source |
@@ -5449,10 +5433,8 @@ class Queue {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Queue: you cannot construct a Queue from a cljonic collection or producer. A Queue is built from "
-            "its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic collection or "
-            "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
-            "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
-            "element, write Queue{...}.");
+            "its individual elements, or from a non-cljonic C++ range or view. To keep it as a single element, write "
+            "Queue{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -5606,10 +5588,9 @@ concept RangeClassArgument =
  * A zero step repeats \p start indefinitely, taking precedence over otherwise-empty-range cases, including equal start
  * and end. A nonzero step that moves away from \p end produces an empty range.
  *
- * Observation is bounded by its finite span, by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a zero-step
- * range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation
- * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required.
+ * Observation is bounded by its finite span or by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a zero-step
+ * range, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
+ * directly to cljonic operations that accept a source.
  *
  * Explicitly typed parameters follow the \ref implicit-conversions "safe implicit conversion rules".
  *
@@ -5668,8 +5649,8 @@ class Range {
   public:
     using value_type = T;
 
-    /** A bounded, generating const iterator used by free-function observation
-     *  (e.g. \ref Into "into"); it does not expose start/end/step parameters. */
+    /** A bounded, generating const iterator used for free-function observation;
+     *  it does not expose start/end/step parameters. */
     class const_iterator {
       public:
         using value_type = T;
@@ -5735,8 +5716,8 @@ class Range {
                  !concepts::SafeImplicitConversion<T, Step>)
     Range(Start start, End end, Step step) = delete;
 
-    /** Conservative materialization size: the synthesis cap for a zero step, otherwise the
-     *  exact finite cardinality saturated at the synthesis cap. */
+    /** Conservative observation count: the synthesis cap for a zero step, otherwise
+     *  the exact finite cardinality saturated at the synthesis cap. */
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return step_ == T{0} ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE : saturate(nonzero_step_extent());
     }
@@ -5780,7 +5761,7 @@ class Range {
   private:
     using ExtentType = std::make_unsigned_t<T>;
 
-    /** Caps an internal extent at the public materialization maximum. */
+    /** Caps an internal extent at the public observation maximum. */
     [[nodiscard]] static constexpr auto saturate(ExtentType raw_count) noexcept -> std::size_t {
         return raw_count > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
                    ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
@@ -5909,10 +5890,9 @@ concept RepeatClassArgument =
  * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(count, value)` yields
  * exactly \p count values.
  *
- * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the requested count, or by an
- * explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime
- * code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required.
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
+ * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
+ * cljonic operations that accept a source.
  *
  * Values and finite counts follow the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed
  * or unsigned integer types whose nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero
@@ -6189,10 +6169,9 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
  * The step may be a lambda, a named function, or a function object. It may maintain state or produce side effects, but
  * it must not throw or allocate when invoked. Callback types and produced element types remain exact.
  *
- * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the requested count, or by an
- * explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime
- * code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
- * destination with `into` when explicit materialization is required.
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
+ * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
+ * cljonic operations that accept a source.
  *
  * Finite counts follow the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed or
  * unsigned integer types whose nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero or
@@ -6444,9 +6423,8 @@ namespace cljonic {
  * Direct construction can import a C++ range or view: its elements are copied into the Set. A cljonic value is not
  * copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one element only
  * when its type exactly matches the declared element type. Without explicit template arguments, a sole cljonic
- * argument determines the element type and yields a one-element collection. To materialize a cljonic collection or
- * producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic collections or
- * producers, including nested cljonic composites.
+ * argument determines the element type and yields a one-element collection. Elements may themselves be cljonic
+ * collections or producers, including nested cljonic composites.
  *
  * Construction with more values than the available capacity is rejected at compile time. Elements and fallbacks follow
  * the \ref implicit-conversions "safe implicit conversion rules".
@@ -6475,7 +6453,7 @@ namespace cljonic {
    const auto missing = runtime(30, -1);
 
    // A standard view pipeline can use an existing Set as its source and
-   // materialize transformed values into another Set.
+   // Construct another Set from the transformed values.
    const auto doubled_view =
        runtime |
        std::views::transform([](int value) noexcept { return value * 2; });
@@ -6585,10 +6563,8 @@ class Set {
     explicit constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Set: you cannot construct a Set from a cljonic collection or producer. A Set is built "
-                      "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
-                      "collection or producer into a Vector, use into(destination, source); call "
-                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
-                      "remaining capacity; to keep it as a single element, write Set{...}.");
+                      "from its individual elements, or from a non-cljonic C++ range or view. To keep it as a single "
+                      "element, write Set{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

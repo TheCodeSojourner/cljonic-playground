@@ -20,9 +20,8 @@ namespace cljonic {
  * Direct construction can import a C++ range or view: its elements are copied into the Set. A cljonic value is not
  * copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one element only
  * when its type exactly matches the declared element type. Without explicit template arguments, a sole cljonic
- * argument determines the element type and yields a one-element collection. To materialize a cljonic collection or
- * producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic collections or
- * producers, including nested cljonic composites.
+ * argument determines the element type and yields a one-element collection. Elements may themselves be cljonic
+ * collections or producers, including nested cljonic composites.
  *
  * Construction with more values than the available capacity is rejected at compile time. Elements and fallbacks follow
  * the \ref implicit-conversions "safe implicit conversion rules".
@@ -51,7 +50,7 @@ namespace cljonic {
    const auto missing = runtime(30, -1);
 
    // A standard view pipeline can use an existing Set as its source and
-   // materialize transformed values into another Set.
+   // Construct another Set from the transformed values.
    const auto doubled_view =
        runtime |
        std::views::transform([](int value) noexcept { return value * 2; });
@@ -161,10 +160,8 @@ class Set {
     explicit constexpr Set([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Set: you cannot construct a Set from a cljonic collection or producer. A Set is built "
-                      "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
-                      "collection or producer into a Vector, use into(destination, source); call "
-                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
-                      "remaining capacity; to keep it as a single element, write Set{...}.");
+                      "from its individual elements, or from a non-cljonic C++ range or view. To keep it as a single "
+                      "element, write Set{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

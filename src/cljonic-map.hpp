@@ -25,8 +25,7 @@ namespace cljonic {
  * map. \c Map<K, V, Capacity> remains the value's type.
  *
  * Direct construction is useful when importing a C++ range or view: its entries are copied into the Map. A cljonic
- * collection or producer is not a constructor source. To materialize a cljonic collection or producer into a
- * destination \ref Vector "Vector", use \b into.
+ * collection or producer is not a constructor source.
  *
  * Construction with more entries than the available capacity is rejected at compile time. Construction from entries
  * requires the exact declared entry type. Keys, mapped values, and fallbacks follow the \ref implicit-conversions
@@ -72,7 +71,7 @@ namespace cljonic {
    const auto missing = runtime(Key{4}, Value{77});
 
    // A standard view pipeline can use an existing Map as its source and
-   // materialize the transformed entries into another Map.
+   // Construct another Map from the transformed entries.
    const auto copied_view =
        runtime | std::views::transform([](const AccountEntry &entry) noexcept {
          return AccountEntry{entry.key, Value{entry.value.amount * 2}};
@@ -195,10 +194,7 @@ class Map {
     explicit constexpr Map([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Map: you cannot construct a Map from a cljonic collection or producer. A Map is built "
-                      "from MapEntry elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
-                      "collection or producer into a Vector, use into(destination, source); call "
-                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
-                      "remaining capacity.");
+                      "from MapEntry elements, or from a non-cljonic C++ range or view.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

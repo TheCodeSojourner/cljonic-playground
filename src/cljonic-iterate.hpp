@@ -35,10 +35,9 @@ concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concept
  * The initial and produced values may themselves be cljonic collections or producers, including nested cljonic
  * composites. The step may be a lambda, a named function, or a function object.
  *
- * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by an explicit destination capacity,
- * and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
- * directly to cljonic operations that accept a source, or converted into an owning destination with `into` when
- * explicit materialization is required.
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE and supports const C++ range traversal
+ * in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a
+ * source.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

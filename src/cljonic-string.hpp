@@ -70,7 +70,7 @@ namespace cljonic {
    const auto runtime_view_copy = from_runtime_view.view();
 
    // A standard view pipeline can use an existing String as its source and
-   // materialize transformed characters into another String.
+   // Construct another String from the transformed characters.
    const auto uppercase_view =
        runtime | std::views::transform([](char byte) noexcept {
          return byte == 'i' ? 'I' : byte;
@@ -173,10 +173,7 @@ class String {
     explicit constexpr String([[maybe_unused]] SourceValue&& source) noexcept {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::String: you cannot construct a String from a cljonic collection or producer. A String "
-                      "is built from its characters, or from a non-cljonic C++ range or view. To materialize a cljonic "
-                      "collection or producer into a Vector, use into(destination, source); call "
-                      "fits_into(destination, source) first to check whether the complete source fits in the Vector's "
-                      "remaining capacity.");
+                      "is built from its characters, or from a non-cljonic C++ range or view.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

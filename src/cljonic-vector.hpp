@@ -24,8 +24,7 @@ namespace cljonic {
  * Direct construction is useful when importing a C++ range or view: its elements are copied into the Vector. A cljonic
  * value is not copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one
  * element only when its type exactly matches the declared element type. Without explicit template arguments, a sole
- * cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
- * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
+ * cljonic argument determines the element type and yields a one-element collection. Elements may themselves be cljonic
  * collections or producers, including nested cljonic composites.
  *
  * Construction with more initializers than the available capacity is rejected at compile time. Element construction,
@@ -98,7 +97,7 @@ namespace cljonic {
    const auto negative_fallback = runtime_values(-1, 99);
 
    // A standard view pipeline can use an existing Vector as its source and
-   // materialize transformed values into another Vector.
+   // Construct another Vector from the transformed values.
    const auto doubled_view =
        runtime_values |
        std::views::transform([](int value) noexcept { return value * 2; });
@@ -212,11 +211,8 @@ class Vector {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Vector: you cannot construct a Vector from a cljonic collection or producer. A Vector is built "
-            "from its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic "
-            "collection or "
-            "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
-            "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
-            "element, write vector(...).");
+            "from its individual elements, or from a non-cljonic C++ range or view. To keep it as a single element, "
+            "write vector(...).");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

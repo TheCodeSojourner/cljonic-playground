@@ -19,9 +19,8 @@ namespace cljonic {
  * Direct construction can import a C++ range or view: its elements are copied into the Queue. A cljonic value is not
  * copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one element only
  * when its type exactly matches the declared element type. Without explicit template arguments, a sole cljonic
- * argument determines the element type and yields a one-element collection. To materialize a cljonic collection or
- * producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic collections or
- * producers, including nested cljonic composites.
+ * argument determines the element type and yields a one-element collection. Elements may themselves be cljonic
+ * collections or producers, including nested cljonic composites.
  *
  * Construction with more values than the available capacity is rejected at compile time. Elements follow the \ref
  * implicit-conversions "safe implicit conversion rules".
@@ -53,7 +52,7 @@ namespace cljonic {
    static_assert(from_span_ctad.begin()[1] == 20);
 
    // A standard view pipeline can use an existing Queue as its source and
-   // materialize transformed values into another Queue.
+   // Construct another Queue from the transformed values.
    const auto pipeline_source = Queue{1, 2, 3};
    const auto shifted_view =
        pipeline_source |
@@ -185,10 +184,8 @@ class Queue {
         static_assert(
             concepts_detail::dependent_false<SourceValue>,
             "cljonic::Queue: you cannot construct a Queue from a cljonic collection or producer. A Queue is built from "
-            "its individual elements, or from a non-cljonic C++ range or view. To materialize a cljonic collection or "
-            "producer into a Vector, use into(destination, source); call fits_into(destination, source) first to "
-            "check whether the complete source fits in the Vector's remaining capacity; to keep it as a single "
-            "element, write Queue{...}.");
+            "its individual elements, or from a non-cljonic C++ range or view. To keep it as a single element, write "
+            "Queue{...}.");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {

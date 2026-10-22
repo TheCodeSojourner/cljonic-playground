@@ -33,10 +33,9 @@ concept RangeClassArgument =
  * A zero step repeats \p start indefinitely, taking precedence over otherwise-empty-range cases, including equal start
  * and end. A nonzero step that moves away from \p end produces an empty range.
  *
- * Observation is bounded by its finite span, by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a zero-step
- * range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation
- * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
- * owning destination with `into` when explicit materialization is required.
+ * Observation is bounded by its finite span or by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a zero-step
+ * range, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
+ * directly to cljonic operations that accept a source.
  *
  * Explicitly typed parameters follow the \ref implicit-conversions "safe implicit conversion rules".
  *
@@ -95,8 +94,8 @@ class Range {
   public:
     using value_type = T;
 
-    /** A bounded, generating const iterator used by free-function observation
-     *  (e.g. \ref Into "into"); it does not expose start/end/step parameters. */
+    /** A bounded, generating const iterator used for free-function observation;
+     *  it does not expose start/end/step parameters. */
     class const_iterator {
       public:
         using value_type = T;
@@ -162,8 +161,8 @@ class Range {
                  !concepts::SafeImplicitConversion<T, Step>)
     Range(Start start, End end, Step step) = delete;
 
-    /** Conservative materialization size: the synthesis cap for a zero step, otherwise the
-     *  exact finite cardinality saturated at the synthesis cap. */
+    /** Conservative observation count: the synthesis cap for a zero step, otherwise
+     *  the exact finite cardinality saturated at the synthesis cap. */
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return step_ == T{0} ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE : saturate(nonzero_step_extent());
     }
@@ -207,7 +206,7 @@ class Range {
   private:
     using ExtentType = std::make_unsigned_t<T>;
 
-    /** Caps an internal extent at the public materialization maximum. */
+    /** Caps an internal extent at the public observation maximum. */
     [[nodiscard]] static constexpr auto saturate(ExtentType raw_count) noexcept -> std::size_t {
         return raw_count > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
                    ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
