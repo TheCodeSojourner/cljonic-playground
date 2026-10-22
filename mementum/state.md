@@ -29,7 +29,7 @@ Validation:
 5. An initial requirements-structure check caught missing rationale-source metadata after editing `REQ-DIAG-010`; corrected the attribution and reran the check successfully.
 
 Open questions:
-1. `mementum/knowledge/collection-source-interoperability.md` still describes the old `REQ-DIAG-010` recommendation to direct callers to `into`/`fits_into`; its knowledge-page update was outside the approved layer scope.
+1. Resolved 2026-10-22 (commit bc716d0): the source-interoperability knowledge page now reflects the revised `REQ-DIAG-010` diagnostic policy (no materialization/`into`/`fits_into` advice in constructor diagnostics).
 
 Next:
 1. If requested, update the stale source-interoperability knowledge page so it reflects the revised diagnostic policy.
