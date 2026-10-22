@@ -443,21 +443,21 @@ requires (!(concepts::RangeElement&lt;std::remove_cvref_t&lt;Start&gt;&gt; &amp;
 <tr class="memitem:a60031e5b341a21ae5b89c5a42bd49589" id="r_a60031e5b341a21ae5b89c5a42bd49589"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
 requires (!concepts::NothrowCollectionElement&lt;T&gt;)</td></tr>
 <tr class="memitem:a60031e5b341a21ae5b89c5a42bd49589 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a60031e5b341a21ae5b89c5a42bd49589">Repeat</a> (const T &amp;) -&gt; Repeat&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeat_element_domain_violation.html">concepts_detail::RepeatElementDomainViolation</a> &gt;</td></tr>
-<tr class="memitem:af4202e7b278be86169629d488ee226a8" id="r_af4202e7b278be86169629d488ee226a8"><td class="memTemplParams" colspan="2">template&lt;typename T, typename Count&gt; <br />
+<tr class="memitem:af8082522e637cde425a2bd57a1afb533" id="r_af8082522e637cde425a2bd57a1afb533"><td class="memTemplParams" colspan="2">template&lt;typename T, typename Count&gt; <br />
 requires (!concepts::NothrowCollectionElement&lt;T&gt; || !concepts_detail::ProducerCount&lt;Count&gt;)</td></tr>
-<tr class="memitem:af4202e7b278be86169629d488ee226a8 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#af4202e7b278be86169629d488ee226a8">Repeat</a> (const T &amp;, Count) -&gt; Repeat&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeat_element_domain_violation.html">concepts_detail::RepeatElementDomainViolation</a> &gt;</td></tr>
+<tr class="memitem:af8082522e637cde425a2bd57a1afb533 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#af8082522e637cde425a2bd57a1afb533">Repeat</a> (Count, const T &amp;) -&gt; Repeat&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeat_element_domain_violation.html">concepts_detail::RepeatElementDomainViolation</a> &gt;</td></tr>
 <tr class="memitem:af31c4c3eb2e82ffcc9d64da7ea5ca8bc" id="r_af31c4c3eb2e82ffcc9d64da7ea5ca8bc"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
 requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</td></tr>
 <tr class="memitem:af31c4c3eb2e82ffcc9d64da7ea5ca8bc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">repeat</a> (T &amp;&amp;value) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td></tr>
-<tr class="memitem:a59bc5cbf4c56e6535d531711288991a2" id="r_a59bc5cbf4c56e6535d531711288991a2"><td class="memTemplParams" colspan="2">template&lt;typename T, concepts_detail::ProducerCount Count&gt; <br />
+<tr class="memitem:aa1970b0e6a53667624fbe750ef5d2176" id="r_aa1970b0e6a53667624fbe750ef5d2176"><td class="memTemplParams" colspan="2">template&lt;typename T, concepts_detail::ProducerCount Count&gt; <br />
 requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</td></tr>
-<tr class="memitem:a59bc5cbf4c56e6535d531711288991a2 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a59bc5cbf4c56e6535d531711288991a2">repeat</a> (T &amp;&amp;value, Count count) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td></tr>
+<tr class="memitem:aa1970b0e6a53667624fbe750ef5d2176 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aa1970b0e6a53667624fbe750ef5d2176">repeat</a> (Count count, T &amp;&amp;value) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td></tr>
 <tr class="memitem:afb5b53b26d1289977d662c878565ec78" id="r_afb5b53b26d1289977d662c878565ec78"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; <br />
 requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;)</td></tr>
 <tr class="memitem:afb5b53b26d1289977d662c878565ec78 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#afb5b53b26d1289977d662c878565ec78">repeat</a> (T &amp;&amp;value) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
-<tr class="memitem:a50e8983ed2797a25ea3c8cd5e2fdd6b8" id="r_a50e8983ed2797a25ea3c8cd5e2fdd6b8"><td class="memTemplParams" colspan="2">template&lt;typename T, typename Count&gt; <br />
+<tr class="memitem:a086e8717694490a282326097a28fbf04" id="r_a086e8717694490a282326097a28fbf04"><td class="memTemplParams" colspan="2">template&lt;typename T, typename Count&gt; <br />
 requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt; || !concepts_detail::ProducerCount&lt;Count&gt;)</td></tr>
-<tr class="memitem:a50e8983ed2797a25ea3c8cd5e2fdd6b8 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a50e8983ed2797a25ea3c8cd5e2fdd6b8">repeat</a> (T &amp;&amp;value, Count count) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
+<tr class="memitem:a086e8717694490a282326097a28fbf04 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a086e8717694490a282326097a28fbf04">repeat</a> (Count count, T &amp;&amp;value) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
 <tr class="memitem:a09c518db52e13e7d9a954924c6d58902" id="r_a09c518db52e13e7d9a954924c6d58902"><td class="memTemplParams" colspan="2">template&lt;typename Step&gt; </td></tr>
 <tr class="memitem:a09c518db52e13e7d9a954924c6d58902 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a09c518db52e13e7d9a954924c6d58902">Repeatedly</a> (const Step &amp;) -&gt; Repeatedly&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a>, <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a> &gt;</td></tr>
 <tr class="memitem:a682b02f8859c8dfe601c763868eeaf57" id="r_a682b02f8859c8dfe601c763868eeaf57"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename Count&gt; </td></tr>
@@ -2141,7 +2141,7 @@ requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProd
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_class" href="classcljonic_1_1_map.html">Map</a>{<a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a>{1, 100}};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{9};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> r_const = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, 5};</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite_repeat = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat</a>{7, 3U};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite_repeat = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat</a>{3, 7};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded_repeat = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat</a>{7};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded_range = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, 0, 0};</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(v_const) == 3);</div>
@@ -2161,7 +2161,7 @@ requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProd
 <div class="line">  <span class="keywordflow">return</span> (sz == 2) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00090">cljonic-range.hpp:90</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_repeat_html"><div class="ttname"><a href="classcljonic_1_1_repeat.html">cljonic::Repeat</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00089">cljonic-repeat.hpp:89</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_repeat_html"><div class="ttname"><a href="classcljonic_1_1_repeat.html">cljonic::Repeat</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00090">cljonic-repeat.hpp:90</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a41fa65c16edb0a95aa942c48307777d6"><div class="ttname"><a href="#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a></div><div class="ttdeci">constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-collection-maximum-element-count_8hpp_source.html#l00015">cljonic-core-collection-maximum-element-count.hpp:15</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_af5da07418b370bc5072eacf31957e0ee"><div class="ttname"><a href="#af5da07418b370bc5072eacf31957e0ee">cljonic::count</a></div><div class="ttdeci">constexpr auto count(const C &amp;collection) noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-count_8hpp_source.html#l00048">cljonic-count.hpp:48</a></div></div>
 </div><!-- fragment --> 
@@ -2968,7 +2968,7 @@ requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v = <a class="code hl_class" href="classcljonic_1_1_vector.html">Vector</a>{1, 2, 3};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> r = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{1, 4, 1}; <span class="comment">// produces 1, 2, 3</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{1, 2, 3};</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> rep = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat</a>{1, 3U};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> rep = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat</a>{3, 1};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m1 = <a class="code hl_class" href="classcljonic_1_1_map.html">Map</a>{<a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a>{1, 10}, <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a>{2, 20}};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m2 = <a class="code hl_class" href="classcljonic_1_1_map.html">Map</a>{<a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a>{2, 20}, <a class="code hl_struct" href="structcljonic_1_1_map_entry.html">MapEntry</a>{1, 10}};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1 = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{3, 1, 2};</div>
@@ -4680,8 +4680,8 @@ requires (!concepts::NothrowCollectionElement&lt;T&gt;)</div>
 
 </div>
 </div>
-<a id="af4202e7b278be86169629d488ee226a8" name="af4202e7b278be86169629d488ee226a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4202e7b278be86169629d488ee226a8">&#9670;&#160;</a></span>Repeat() <span class="overload">[2/2]</span></h2>
+<a id="af8082522e637cde425a2bd57a1afb533" name="af8082522e637cde425a2bd57a1afb533"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8082522e637cde425a2bd57a1afb533">&#9670;&#160;</a></span>Repeat() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -4692,20 +4692,88 @@ requires (!concepts::NothrowCollectionElement&lt;T&gt; || !concepts_detail::Prod
         <tr>
           <td class="memname">cljonic::Repeat </td>
           <td>(</td>
-          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;) -&gt;  Repeat&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeat_element_domain_violation.html">concepts_detail::RepeatElementDomainViolation</a> &gt;</td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;) -&gt;  Repeat&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeat_element_domain_violation.html">concepts_detail::RepeatElementDomainViolation</a> &gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
+<a id="a086e8717694490a282326097a28fbf04" name="a086e8717694490a282326097a28fbf04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a086e8717694490a282326097a28fbf04">&#9670;&#160;</a></span>repeat() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename Count&gt; <br />
+requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt; || !concepts_detail::ProducerCount&lt;Count&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::repeat </td>
+          <td>(</td>
+          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em>count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00240">240</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa1970b0e6a53667624fbe750ef5d2176" name="aa1970b0e6a53667624fbe750ef5d2176"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1970b0e6a53667624fbe750ef5d2176">&#9670;&#160;</a></span>repeat() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, concepts_detail::ProducerCount Count&gt; <br />
+requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::repeat </td>
+          <td>(</td>
+          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em>count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00222">222</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+
+</div>
+</div>
 <a id="afb5b53b26d1289977d662c878565ec78" name="afb5b53b26d1289977d662c878565ec78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb5b53b26d1289977d662c878565ec78">&#9670;&#160;</a></span>repeat() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#afb5b53b26d1289977d662c878565ec78">&#9670;&#160;</a></span>repeat() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -4730,12 +4798,12 @@ requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00227">227</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00231">231</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
 <a id="af31c4c3eb2e82ffcc9d64da7ea5ca8bc" name="af31c4c3eb2e82ffcc9d64da7ea5ca8bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">&#9670;&#160;</a></span>repeat() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">&#9670;&#160;</a></span>repeat() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -4760,75 +4828,7 @@ requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;<
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00212">212</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a50e8983ed2797a25ea3c8cd5e2fdd6b8" name="a50e8983ed2797a25ea3c8cd5e2fdd6b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50e8983ed2797a25ea3c8cd5e2fdd6b8">&#9670;&#160;</a></span>repeat() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T, typename Count&gt; <br />
-requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt; || !concepts_detail::ProducerCount&lt;Count&gt;)</div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto cljonic::repeat </td>
-          <td>(</td>
-          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00236">236</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a59bc5cbf4c56e6535d531711288991a2" name="a59bc5cbf4c56e6535d531711288991a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59bc5cbf4c56e6535d531711288991a2">&#9670;&#160;</a></span>repeat() <span class="overload">[4/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T, concepts_detail::ProducerCount Count&gt; <br />
-requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;</div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto cljonic::repeat </td>
-          <td>(</td>
-          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) -&gt; <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00218">218</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00216">216</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -4905,7 +4905,7 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt; || !concepts_detail:
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00228">228</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00231">231</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -4939,7 +4939,7 @@ requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00208">208</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00211">211</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -4969,7 +4969,7 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00217">217</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00220">220</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -4999,7 +4999,7 @@ requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00201">201</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00204">204</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>

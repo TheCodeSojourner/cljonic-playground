@@ -124,13 +124,14 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aad9a9a113fd2a846fdc26c9eb582bdce" id="r_aad9a9a113fd2a846fdc26c9eb582bdce"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a> () noexcept</td></tr>
 <tr class="memitem:a006cd6b51a729ee545f28c8a9b53587e" id="r_a006cd6b51a729ee545f28c8a9b53587e"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#a006cd6b51a729ee545f28c8a9b53587e">Repeat</a> (const T &amp;value) noexcept</td></tr>
-<tr class="memitem:af4703049ba5c8483fbaf5451f5f9d3fe" id="r_af4703049ba5c8483fbaf5451f5f9d3fe"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#af4703049ba5c8483fbaf5451f5f9d3fe">Repeat</a> (const T &amp;value, std::size_t count) noexcept</td></tr>
+<tr class="memitem:ade5b9a5359911596ad446cc439df51d0" id="r_ade5b9a5359911596ad446cc439df51d0"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::ProducerCount Count&gt; </td></tr>
+<tr class="memitem:ade5b9a5359911596ad446cc439df51d0 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><a class="el" href="#ade5b9a5359911596ad446cc439df51d0">Repeat</a> (Count count, const T &amp;value) noexcept</td></tr>
 <tr class="memitem:a7f980ccde0d7f51bc86567460dfbaaf1" id="r_a7f980ccde0d7f51bc86567460dfbaaf1"><td class="memTemplParams" colspan="2">template&lt;typename Value&gt; <br />
 requires (!concepts::SafeImplicitConversion&lt;T, Value&gt;)</td></tr>
 <tr class="memitem:a7f980ccde0d7f51bc86567460dfbaaf1 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a7f980ccde0d7f51bc86567460dfbaaf1">Repeat</a> (Value value)=delete</td></tr>
-<tr class="memitem:aa24b0cf914159df6d6f5241d4a796930" id="r_aa24b0cf914159df6d6f5241d4a796930"><td class="memTemplParams" colspan="2">template&lt;typename Value, typename Count&gt; <br />
+<tr class="memitem:a802b5dd1fc0fdfef7d07aacf57059fa8" id="r_a802b5dd1fc0fdfef7d07aacf57059fa8"><td class="memTemplParams" colspan="2">template&lt;typename Value, typename Count&gt; <br />
 requires (!concepts::SafeImplicitConversion&lt;T, Value&gt; || !concepts_detail::ProducerCount&lt;Count&gt;)</td></tr>
-<tr class="memitem:aa24b0cf914159df6d6f5241d4a796930 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#aa24b0cf914159df6d6f5241d4a796930">Repeat</a> (Value value, Count count)=delete</td></tr>
+<tr class="memitem:a802b5dd1fc0fdfef7d07aacf57059fa8 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a802b5dd1fc0fdfef7d07aacf57059fa8">Repeat</a> (Count count, Value value)=delete</td></tr>
 <tr class="memitem:a4e95ae84875155308db3313271bb9abb" id="r_a4e95ae84875155308db3313271bb9abb"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4e95ae84875155308db3313271bb9abb">count</a> () const noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:ae2a3728657632f6b35d855c76206c8f4" id="r_ae2a3728657632f6b35d855c76206c8f4"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ae2a3728657632f6b35d855c76206c8f4">is_finite</a> () const noexcept -&gt; bool</td></tr>
 <tr class="memitem:a9001eb9066f88994bd6ce18ad6327337" id="r_a9001eb9066f88994bd6ce18ad6327337"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a9001eb9066f88994bd6ce18ad6327337">begin</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_repeat_1_1const__iterator.html">const_iterator</a></td></tr>
@@ -142,7 +143,7 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts_detail::RepeatClassArgument T&gt;<br />
-class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a> is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or producer, including nested cljonic composites. <span class="tt">repeat(value)</span> is unbounded, while <span class="tt">repeat(value, count)</span> yields exactly <code class="param">count</code> values. Observation is bounded by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b>, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a></span> when explicit materialization is required. Values and finite counts follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>; counts use unsigned integer types whose ranges fit <code>std::size_t</code>.</p>
+class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a> is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or producer, including nested cljonic composites. <span class="tt">repeat(value)</span> is unbounded, while <span class="tt">repeat(count, value)</span> yields exactly <code class="param">count</code> values. Observation is bounded by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b>, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a></span> when explicit materialization is required. Values and finite counts follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>. Counts accept signed or unsigned integer types whose nonnegative ranges fit <code>std::size_t</code>, excluding Boolean and character types. Zero or negative counts produce an empty finite <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -156,8 +157,8 @@ class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// A finite Repeat yields the value exactly the requested number of times.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{7, 3U};</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> pixels = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{Pixel{4, 9}, 2U};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{3, 7};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> pixels = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{2, Pixel{4, 9}};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// An uncounted Repeat is an unbounded producer.</span></div>
 <div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{7};</div>
@@ -165,7 +166,7 @@ class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
 <div class="line">  <span class="comment">// C++ interoperability: Repeat supports const traversal.</span></div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="keyword">auto</span> runtime_finite = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{-1, 2U};</div>
+<div class="line">  <span class="keyword">auto</span> runtime_finite = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{2, -1};</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite_sum = [finite] {</div>
 <div class="line">    <span class="keyword">auto</span> sum = 0;</div>
@@ -192,10 +193,10 @@ class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> runtime_sum == -2 ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_repeat_html_aad9a9a113fd2a846fdc26c9eb582bdce"><div class="ttname"><a href="#aad9a9a113fd2a846fdc26c9eb582bdce">cljonic::Repeat::Repeat</a></div><div class="ttdeci">constexpr Repeat() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00129">cljonic-repeat.hpp:129</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_repeat_html_aad9a9a113fd2a846fdc26c9eb582bdce"><div class="ttname"><a href="#aad9a9a113fd2a846fdc26c9eb582bdce">cljonic::Repeat::Repeat</a></div><div class="ttdeci">constexpr Repeat() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00130">cljonic-repeat.hpp:130</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00089">89</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00090">90</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a5924fb8240dfd237fffe94d87b516f73" name="a5924fb8240dfd237fffe94d87b516f73"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5924fb8240dfd237fffe94d87b516f73">&#9670;&#160;</a></span>value_type</h2>
@@ -211,7 +212,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00091">91</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00092">92</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -241,7 +242,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00129">129</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00130">130</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -270,17 +271,19 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00132">132</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00133">133</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
-<a id="af4703049ba5c8483fbaf5451f5f9d3fe" name="af4703049ba5c8483fbaf5451f5f9d3fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4703049ba5c8483fbaf5451f5f9d3fe">&#9670;&#160;</a></span>Repeat() <span class="overload">[3/5]</span></h2>
+<a id="ade5b9a5359911596ad446cc439df51d0" name="ade5b9a5359911596ad446cc439df51d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade5b9a5359911596ad446cc439df51d0">&#9670;&#160;</a></span>Repeat() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
+<div class="memtemplate">
+template&lt;concepts_detail::ProducerCount Count&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -288,12 +291,12 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::Repeat </td>
           <td>(</td>
-          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
+          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em>count</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -303,7 +306,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00135">135</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00137">137</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -337,8 +340,8 @@ requires (!concepts::SafeImplicitConversion&lt;T, Value&gt;)</div>
 
 </div>
 </div>
-<a id="aa24b0cf914159df6d6f5241d4a796930" name="aa24b0cf914159df6d6f5241d4a796930"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa24b0cf914159df6d6f5241d4a796930">&#9670;&#160;</a></span>Repeat() <span class="overload">[5/5]</span></h2>
+<a id="a802b5dd1fc0fdfef7d07aacf57059fa8" name="a802b5dd1fc0fdfef7d07aacf57059fa8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a802b5dd1fc0fdfef7d07aacf57059fa8">&#9670;&#160;</a></span>Repeat() <span class="overload">[5/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -354,12 +357,12 @@ requires (!concepts::SafeImplicitConversion&lt;T, Value&gt; || !concepts_detail:
         <tr>
           <td class="memname"><a class="el" href="classcljonic_1_1_repeat.html">cljonic::Repeat</a>&lt; T &gt;::Repeat </td>
           <td>(</td>
-          <td class="paramtype">Value</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
+          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em>count</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+          <td class="paramtype">Value</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -397,7 +400,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00154">154</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00157">157</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -426,7 +429,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00146">146</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00149">149</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -455,7 +458,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00161">161</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -484,7 +487,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00150">150</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00153">153</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -517,9 +520,9 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Producer parameter equality (REQ-FN-014B): compares only the stored value, count, and finite-form parameters, never the produced sequence. It is the only producer parameter-equality surface; the <span class="tt"><a class="el" href="namespacecljonic.html#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a></span> free function instead compares bounded logical observations of the produced sequences. The unbounded <span class="tt">repeat(value)</span> form is distinct from the finite <span class="tt">repeat(value, count)</span> forms even when their produced prefixes coincide, and a counted form with count zero is distinct from the unbounded form. O(1), no traversal, no allocation. </p>
+<p>Producer parameter equality (REQ-FN-014B): compares only the stored value, count, and finite-form parameters, never the produced sequence. It is the only producer parameter-equality surface; the <span class="tt"><a class="el" href="namespacecljonic.html#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a></span> free function instead compares bounded logical observations of the produced sequences. The unbounded <span class="tt">repeat(value)</span> form is distinct from the finite <span class="tt">repeat(count, value)</span> forms even when their produced prefixes coincide, and a counted form with count zero is distinct from the unbounded form. O(1), no traversal, no allocation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00170">170</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00173">173</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>

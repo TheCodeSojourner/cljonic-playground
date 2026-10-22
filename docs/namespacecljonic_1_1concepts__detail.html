@@ -316,6 +316,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a44caa6451a82185e99690a6b5b0aefbc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a44caa6451a82185e99690a6b5b0aefbc">value_fits_char</a> (T value) noexcept -&gt; bool</td></tr>
 <tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6" id="r_a4ca1374dc952d90d209ac69dbee803c6"><td class="memTemplParams" colspan="2">template&lt;IntegerIndexType IndexType&gt; </td></tr>
 <tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4ca1374dc952d90d209ac69dbee803c6">try_normalize_index</a> (IndexType index) noexcept -&gt; std::optional&lt; std::size_t &gt;</td></tr>
+<tr class="memitem:a7170267924d77e1a2a3f23394976665d" id="r_a7170267924d77e1a2a3f23394976665d"><td class="memTemplParams" colspan="2">template&lt;ProducerCount Count&gt; </td></tr>
+<tr class="memitem:a7170267924d77e1a2a3f23394976665d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7170267924d77e1a2a3f23394976665d">normalize_producer_count</a> (Count count) noexcept -&gt; std::size_t</td></tr>
 <tr class="memitem:afa5131551ae8ca8b54874c62dfaeee36" id="r_afa5131551ae8ca8b54874c62dfaeee36"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
 <tr class="memitem:afa5131551ae8ca8b54874c62dfaeee36 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="#afa5131551ae8ca8b54874c62dfaeee36">fold_conj_values_into</a> (C &amp;result) noexcept</td></tr>
 <tr class="memitem:a57cc2613eb4edaa719daef2956b187ec" id="r_a57cc2613eb4edaa719daef2956b187ec"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T, typename... Rest&gt; </td></tr>
@@ -985,6 +987,35 @@ template&lt;typename C, typename K, typename... Rest&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="cljonic-dissoc_8hpp_source.html#l00033">33</a> of file <a class="el" href="cljonic-dissoc_8hpp_source.html">cljonic-dissoc.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7170267924d77e1a2a3f23394976665d" name="a7170267924d77e1a2a3f23394976665d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7170267924d77e1a2a3f23394976665d">&#9670;&#160;</a></span>normalize_producer_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;ProducerCount Count&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::normalize_producer_count </td>
+          <td>(</td>
+          <td class="paramtype">Count</td>          <td class="paramname"><span class="paramname"><em>count</em></span></td><td>)</td>
+          <td> -&gt; std::size_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00585">585</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
 
 </div>
 </div>
