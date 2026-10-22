@@ -5,9 +5,9 @@
 namespace cljonic {
 
 /** \anchor NotEqual
- * The \b not_equal free function API compares one or more values for inequality.
+ * The \b not_equal free function compares one or more values for inequality.
  *
- * \b NotEqual is the negation of \ref Equal "equal" and uses the same supported values and comparison rules. Calling
+ * It is the negation of \ref Equal "equal" and uses the same supported values and comparison rules. Calling
  * `not_equal` with one value returns false. With multiple values, it returns true when at least one adjacent pair is
  * unequal.
  *

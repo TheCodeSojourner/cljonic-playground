@@ -31,8 +31,8 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
 } // namespace concepts_detail
 
 /** \anchor CanConj
- * The \b can_conj free function API checks whether \ref Conj "conj" can add one or more values to a
- *        \ref concepts::CljonicCollection "collection".
+ * The \b can_conj free function checks whether \ref Conj "conj" can add one or more values to a \ref
+ * concepts::CljonicCollection "collection".
  *
  * `can_conj(collection)` returns true. The one-value form checks that value against the collection. The variadic form
  * checks each value left to right against the state produced by the preceding values, and returns true only if every
@@ -40,8 +40,10 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
  *
  * Supported for \ref Vector "Vector", \ref Set "Set", \ref Map "Map", \ref Queue "Queue", and \ref String "String".
  * For \ref Vector "Vector" and \ref Queue "Queue", the result depends only on remaining capacity; the value does not
- * affect the preflight. For \ref String "String", both remaining capacity and a valid character are required; see \ref
- * String "String" for character validation policy. An invalid character returns false.
+ * affect the preflight.
+ *
+ * For \ref String "String", both remaining capacity and a valid character are required; see \ref String "String" for
+ * character validation policy. An invalid character returns false.
  *
  * For a \ref Set "Set" element or \ref Map "Map" key already present, returns true because insertion is a no-op or a
  * value replacement that needs no capacity. An absent element or key returns true only when capacity remains; when

@@ -14,17 +14,19 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
 } // namespace concepts_detail
 
 /** \anchor Conj
- * The \b conj free function API returns a \ref concepts::CljonicCollection "collection" with the supplied values
- * added.
+ * The \b conj free function returns a \ref concepts::CljonicCollection "collection" with the supplied values added.
+ * Each operation returns a distinct collection value and preserves the source.
  *
  * Supported for \ref Vector "Vector", \ref Set "Set", \ref Map "Map", \ref Queue "Queue", and \ref String "String".
  * \ref Vector "Vector" appends at the end. \ref Queue "Queue" enqueues at the rear. \ref String "String" appends at
  * its logical count. For \ref String "String", invalid characters are rejected at compile time and replaced with `.`
- * at runtime; see \ref String "String" for character validation and normalization policy. \ref Set "Set" adds absent
- * elements; duplicates are no-ops. \ref Map "Map" associates a \ref MapEntry "MapEntry"; an existing key's value is
- * replaced. At full capacity, \ref Vector "Vector", \ref Queue "Queue", and \ref String "String" return unchanged
- * copies. A full \ref Set "Set" or \ref Map "Map" also returns an unchanged copy when the element or key is absent.
- * Each operation returns a distinct collection value and preserves the source.
+ * at runtime; see \ref String "String" for character validation and normalization policy.
+ *
+ * \ref Set "Set" adds absent elements; duplicates are no-ops. \ref Map "Map" associates a \ref MapEntry "MapEntry"; an
+ * existing key's value is replaced.
+ *
+ * At full capacity, \ref Vector "Vector", \ref Queue "Queue", and \ref String "String" return unchanged copies. A full
+ * \ref Set "Set" or \ref Map "Map" also returns an unchanged copy when the element or key is absent.
  *
  * Three arities are provided: `conj(collection)` returns an unchanged copy, `conj(collection, value)` adds one value,
  * and `conj(collection, value₁, value₂, …)` adds two or more values left to right, so `conj(c, x₁, x₂)`

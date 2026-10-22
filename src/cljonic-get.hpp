@@ -45,16 +45,16 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
 } // namespace concepts_detail
 
 /** \anchor Get
- * The \b get free function API looks up a value in a \ref Map "Map", \ref Set "Set", \ref Vector "Vector", or \ref
- * String "String", returning the collection's default lookup result or a supplied fallback when no value is present.
+ * The \b get free function looks up a value in a \ref Map "Map", \ref Set "Set", \ref Vector "Vector", or \ref String
+ * "String", returning the collection's default lookup result or a supplied fallback when no value is present.
  *
  * \ref Map "Map" keys and \ref Set "Set" values must safely convert to their declared lookup type. \ref Vector
  * "Vector" and \ref String "String" use integer indexes. The result has the same type as the collection's callable
- * lookup result; a supplied fallback must safely convert to that result type. \ref Queue "Queue" and producers do not
- * provide lookup and are not accepted.
+ * lookup result; a supplied fallback must safely convert to that result type.
  *
- * Unsupported collections, keys, indexes, or fallback types produce a targeted compile-time diagnostic. Use \ref
- * Contains "contains" when presence or index validity must be distinguished from a default-valued result.
+ * \ref Queue "Queue" and producers do not provide lookup and are not accepted. Unsupported collections, keys, indexes,
+ * or fallback types produce a targeted compile-time diagnostic. Use \ref Contains "contains" when presence or index
+ * validity must be distinguished from a default-valued result.
  *
  * \b Examples
  ~~~~~{.cpp}

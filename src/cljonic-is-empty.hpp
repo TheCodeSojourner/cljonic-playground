@@ -6,9 +6,10 @@ namespace cljonic {
 
 /** \anchor IsEmpty
  * The \b is_empty free function returns true exactly when \ref Count "count" is zero for a collection or producer. It
- * leaves the input unchanged and does not throw or allocate. For an unbounded producer, it checks the configured
- * observation cap, not complete cardinality. Values outside the cljonic collection and producer domain are rejected at
- * compile time.
+ * leaves the input unchanged and does not throw or allocate.
+ *
+ * For an unbounded producer, it checks the configured observation cap, not complete cardinality. Values outside the
+ * cljonic collection and producer domain are rejected at compile time.
  *
  * \b Examples
  ~~~~~{.cpp}

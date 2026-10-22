@@ -5,15 +5,18 @@
 namespace cljonic {
 
 /** \anchor Into
- * The \b into free function API appends elements from a \ref concepts::CljonicSource "source" to a \ref Vector
- * "Vector", up to its remaining capacity.
+ * The \b into free function appends elements from a \ref concepts::CljonicSource "source" to a \ref Vector "Vector",
+ * up to its remaining capacity.
  *
  * Returns an updated destination-typed collection with source elements appended after the destination's existing
- * logical contents, leaving both \p destination and \p source unchanged. An unbounded or oversized source produces a
- * deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes
- * completely. Use \b fits_into beforehand to check whether the complete source fits. The destination must be a \ref
- * Vector "Vector". Other collection types are supported only as sources. Source elements must follow the destination's
- * \ref implicit-conversions "safe implicit conversion rules".
+ * logical contents, leaving both \p destination and \p source unchanged.
+ *
+ * An unbounded or oversized source produces a deterministic bounded prefix limited by the destination's remaining
+ * capacity; a finite source that fits materializes completely. Use \b fits_into beforehand to check whether the
+ * complete source fits.
+ *
+ * The destination must be a \ref Vector "Vector". Other collection types are supported only as sources. Source
+ * elements must follow the destination's \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

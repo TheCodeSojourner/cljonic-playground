@@ -8,11 +8,13 @@ namespace cljonic {
  * The \b fits_into free function checks whether the complete contents of a cljonic collection or producer fit within
  * the remaining capacity of a \ref Vector "Vector".
  *
+ * It reports whether appending the complete \p source to \p destination fits within the destination's remaining
+ * capacity, using the same cardinality semantics as `into`. It returns `false` for every unbounded producer, even
+ * though its normal const traversal is capped.
+ *
  * The destination must be a Vector, and the source must be a cljonic collection or producer whose elements convert
- * safely to the Vector's element type. Reports whether appending the complete \p source to \p destination fits within
- * the destination's remaining capacity, using the same cardinality semantics as `into`. It returns `false` for every
- * unbounded producer, even though its normal const traversal is capped. Source elements must follow the same \ref
- * implicit-conversions "safe implicit conversion rules" as \ref Into "into".
+ * safely to the Vector's element type. Source elements must follow the same \ref implicit-conversions "safe implicit
+ * conversion rules" as \ref Into "into".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

@@ -38,12 +38,13 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
 } // namespace concepts_detail
 
 /** \anchor Dissoc
- * The \b dissoc free function API removes zero or more keys from a \ref Map "Map".
+ * The \b dissoc free function removes zero or more keys from a \ref Map "Map". The source map is never modified.
  *
- * `dissoc` is supported only for \ref Map "Map". With no keys it returns an unchanged copy; otherwise it removes keys
- * left-to-right. Keys may use the map's key type or a numeric type whose entire range is preserved by conversion to
- * that type. Each present key is removed; absent keys leave the map unchanged, and repeating a key has no further
- * effect. The source map is never modified.
+ * With no keys it returns an unchanged copy; otherwise it removes keys from left to right. Each present key is
+ * removed; absent keys leave the map unchanged, and repeating a key has no further effect.
+ *
+ * `dissoc` is supported only for \ref Map "Map". Keys may use the map's key type or a numeric type whose entire range
+ * is preserved by conversion to that type.
  *
  * \b Examples
  ~~~~~{.cpp}

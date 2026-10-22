@@ -13,18 +13,23 @@
 namespace cljonic {
 
 /** \anchor Vector
- * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. Construction
- * with more initializers than the available capacity is rejected at compile time. A non-cljonic C++ range or view
- * constructor parameter is copied into the collection. A cljonic value is not copied as a range/view source. With an
- * explicit element type, it is accepted as one element only when its type exactly matches the declared element type.
- * Without explicit template arguments, a sole cljonic argument determines the element type and yields a one-element
- * collection. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
- * Elements may themselves be cljonic collections or producers, including nested cljonic composites. Element
- * construction, updates, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules". The
- * lowercase \c vector factory is the idiomatic way to create Vector values, at runtime or during constant evaluation.
- * Use \c vector(args...) to infer the element type and capacity, \c vector<T>(args...) to select an element type, or
- * \c vector<T, Capacity>(args...) to provide an explicit capacity, including for an empty vector. \c Vector<T,
- * Capacity> remains the value's type; direct construction is useful when importing a C++ range or view.
+ * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. Other
+ * operations use the library's free-function API.
+ *
+ * The lowercase \c vector factory is the idiomatic way to create Vector values, at runtime or during constant
+ * evaluation. Use \c vector(args...) to infer the element type and capacity, \c vector<T>(args...) to select an
+ * element type, or \c vector<T, Capacity>(args...) to provide an explicit capacity, including for an empty vector. \c
+ * Vector<T, Capacity> remains the value's type.
+ *
+ * Direct construction is useful when importing a C++ range or view: its elements are copied into the Vector. A cljonic
+ * value is not copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one
+ * element only when its type exactly matches the declared element type. Without explicit template arguments, a sole
+ * cljonic argument determines the element type and yields a one-element collection. To materialize a cljonic
+ * collection or producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic
+ * collections or producers, including nested cljonic composites.
+ *
+ * Construction with more initializers than the available capacity is rejected at compile time. Element construction,
+ * updates, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

@@ -26,13 +26,16 @@ concept RepeatClassArgument =
 /** \anchor Repeat
  * A Repeat is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or
  * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(count, value)` yields
- * exactly \p count values. Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the
- * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
- * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
- * into an owning destination with `into` when explicit materialization is required. Values and finite counts follow
- * the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed or unsigned integer types whose
- * nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero or negative counts produce an
- * empty finite Repeat.
+ * exactly \p count values.
+ *
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the requested count, or by an
+ * explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime
+ * code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning
+ * destination with `into` when explicit materialization is required.
+ *
+ * Values and finite counts follow the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed
+ * or unsigned integer types whose nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero
+ * or negative counts produce an empty finite Repeat.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -164,6 +167,7 @@ class Repeat {
 
     /** Producer parameter equality (REQ-FN-014B): compares only the stored
      *  value, count, and finite-form parameters, never the produced sequence.
+     *
      *  It is the only producer parameter-equality surface; the `equal` free
      *  function instead compares bounded logical observations of the produced
      *  sequences. The unbounded `repeat(value)` form is distinct from the

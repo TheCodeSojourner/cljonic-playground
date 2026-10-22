@@ -15,15 +15,23 @@
 namespace cljonic {
 
 /** \anchor Map
- * A Map is a bounded, associative collection that maps unique keys to values that provides callable lookup with
- * optional fallback values. The way to operate on the collection is through the library's free-function API.
- * Construction with more entries than the available capacity is rejected at compile time. A non-cljonic C++ range or
- * view constructor parameter is copied into the \ref Map "Map"; a cljonic collection or producer is not a constructor
- * source. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use \b into.
+ * A Map is a bounded, associative collection that maps unique keys to values and provides callable lookup with
+ * optional fallback values. Other operations use the library's free-function API.
  *
- Keys, mapped values, and fallbacks follow the \ref implicit-conversions "safe implicit conversion rules".
- Construction from entries requires the exact declared entry type.
-
+ * The lowercase \c hash_map factory is the idiomatic way to create Map values, at runtime or during constant
+ * evaluation. It accepts alternating keys and values, and a later duplicate key replaces the earlier value. Use \c
+ * hash_map(k, v, ...) to infer the key type, value type, and capacity, \c hash_map<K, V>(k, v, ...) to select the key
+ * and value types, or \c hash_map<K, V, Capacity>(k, v, ...) to provide an explicit capacity, including for an empty
+ * map. \c Map<K, V, Capacity> remains the value's type.
+ *
+ * Direct construction is useful when importing a C++ range or view: its entries are copied into the Map. A cljonic
+ * collection or producer is not a constructor source. To materialize a cljonic collection or producer into a
+ * destination \ref Vector "Vector", use \b into.
+ *
+ * Construction with more entries than the available capacity is rejected at compile time. Construction from entries
+ * requires the exact declared entry type. Keys, mapped values, and fallbacks follow the \ref implicit-conversions
+ * "safe implicit conversion rules".
+ *
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -44,7 +52,8 @@ namespace cljonic {
  using AccountMap = Map<Key, Value, 2>;
 
  int main() {
-   // The hash_map factory accepts alternating keys and values.
+   // The lowercase factory is the idiomatic way to create maps. It accepts
+   // alternating keys and values.
    constexpr auto factory_map = hash_map(Key{1}, Value{10}, Key{2}, Value{20});
    static_assert(factory_map(Key{2}).amount == 20);
 
@@ -376,9 +385,14 @@ hash_map_factory_pairs_are_nothrow([[maybe_unused]] std::index_sequence<PairIndi
 }
 
 template <typename KeyType, typename ValueType, typename... Args>
+[[nodiscard]] consteval auto hash_map_factory_arguments_are_nothrow() noexcept -> bool {
+    return hash_map_factory_pairs_are_nothrow<KeyType, ValueType, std::tuple<Args...>>(
+        std::make_index_sequence<sizeof...(Args) / 2U>{});
+}
+
+template <typename KeyType, typename ValueType, typename... Args>
 concept HashMapFactoryPairArguments = sizeof...(Args) > 0U && sizeof...(Args) % 2U == 0U &&
-                                      hash_map_factory_pairs_are_nothrow<KeyType, ValueType, std::tuple<Args...>>(
-                                          std::make_index_sequence<sizeof...(Args) / 2U>{});
+                                      hash_map_factory_arguments_are_nothrow<KeyType, ValueType, Args...>();
 
 template <typename KeyType, typename ValueType>
 concept HashMapFactoryElementTypes = concepts::NothrowStableEqualityComparable<KeyType> &&
@@ -409,9 +423,11 @@ template <typename KeyType, typename ValueType, std::size_t Capacity, typename K
 } // namespace concepts_detail
 
 /** \anchor HashMapFactory
- * Creates a bounded \ref Map "Map" from alternating key/value arguments. Deduced calls use the first pair's
- * unqualified types and have capacity equal to their pair count. Explicit types use \c hash_map<Key, Value>(...);
- * explicit capacity uses \c hash_map<Key, Value, Capacity>(...), including for an empty map.
+ * Creates a bounded \ref Map "Map" from alternating key/value arguments.
+ *
+ * Deduced calls use the first pair's unqualified types and have capacity equal to their pair count. Explicit types use
+ * \c hash_map<Key, Value>(...); explicit capacity uses \c hash_map<Key, Value, Capacity>(...), including for an empty
+ * map.
  */
 template <typename RequestedKeyType = concepts_detail::DeducedHashMapKeyType,
           typename RequestedValueType = concepts_detail::DeducedHashMapValueType, typename... Args>

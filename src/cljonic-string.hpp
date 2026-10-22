@@ -14,9 +14,10 @@ namespace cljonic {
 
 /** \anchor String
  * A String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
- * callable lookup with optional fallback values. NUL and characters whose unsigned byte value exceeds `0x7F` are
- * rejected at compile time and replaced with `.` at runtime. Construction with content longer than the available
- * capacity is rejected at compile time.
+ * callable lookup with optional fallback values.
+ *
+ * NUL and characters whose unsigned byte value exceeds `0x7F` are rejected at compile time and replaced with `.` at
+ * runtime. Construction with content longer than the available capacity is rejected at compile time.
  *
  * Character arguments must be \c char; numeric values do not implicitly become characters. Text imports follow the
  * \ref implicit-conversions "safe implicit conversion rules" and retain character validation.

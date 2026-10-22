@@ -333,9 +333,11 @@ concept NothrowElementConstruction = SafeImplicitConversion<T, Arg> && requires(
 
 /** Requires stable value equality comparison, explicitly rejecting
  *  floating-point types to prevent NaN/precision instabilities in map keys
- *  and set elements. For composite values this is recursive: every stored
- *  component must admit stable equality, callable components are always
- *  rejected, and the composite's own equality must be valid. */
+ *  and set elements.
+ *
+ *  For composite values this is recursive: every stored component must admit
+ *  stable equality, callable components are always rejected, and the composite's
+ *  own equality must be valid. */
 template <typename T>
 concept StableEqualityComparable = std::equality_comparable<T> && !concepts_detail::contains_floating_point_v<T> &&
                                    !concepts_detail::contains_callable_v<T>;
@@ -346,9 +348,10 @@ concept TotallyOrdered = StableEqualityComparable<T> && std::totally_ordered<T>;
 
 /** Requires stable equality whose comparison cannot throw, so operations
  *  declared \c noexcept (such as \c equal and \c not_equal) cannot terminate
- *  through a throwing \c operator==. std::variant relational operators are not
- *  declared noexcept by the standard, so composites recurse over their
- *  alternatives. */
+ *  through a throwing \c operator==.
+ *
+ *  std::variant relational operators are not declared noexcept by the standard,
+ *  so composites recurse over their alternatives. */
 template <typename T>
 concept NothrowEqualityComparable = StableEqualityComparable<T> && concepts_detail::nothrow_equality_v<T>;
 
@@ -497,12 +500,13 @@ concept IndexedCollection = CljonicCollection<C> && requires(const C& c, std::si
 };
 
 /** Requires an admitted collection to expose a named lookup
- * domain, callable lookup, and matching membership predicate. The member-type
- * reference lives in the requires-expression body, never its parameter list, so
- * the concept stays SFINAE-friendly for a type that lacks `lookup_type`
- * (REQ-DIAG-001): naming it in the parameter list makes evaluation hard-error
- * instead of yielding false, which would break boundary-constrained free
- * functions such as `get`. */
+ * domain, callable lookup, and matching membership predicate.
+ *
+ * The member-type reference lives in the requires-expression body, never its
+ * parameter list, so the concept stays SFINAE-friendly for a type that lacks
+ * `lookup_type` (REQ-DIAG-001): naming it in the parameter list makes
+ * evaluation hard-error instead of yielding false, which would break
+ * boundary-constrained free functions such as `get`. */
 template <typename C>
 concept LookupCollection = CljonicCollection<C> && requires(const C& c) {
     typename C::lookup_type;
@@ -512,12 +516,13 @@ concept LookupCollection = CljonicCollection<C> && requires(const C& c) {
 
 /** Requires that an admitted collection provides immutable association and
  *  its key/value/capacity preflight operation over the complete association
- *  argument set. The member-type references live in the requires-expression
- *  body, never its parameter list, so the concept stays SFINAE-friendly for a
- *  type that lacks `key_type`/`association_value_type` (REQ-DIAG-001): naming
- *  them in the parameter list makes evaluation hard-error instead of yielding
- *  false, which would break boundary-constrained free functions such as
- *  `assoc`. */
+ *  argument set.
+ *
+ *  The member-type references live in the requires-expression body, never its
+ *  parameter list, so the concept stays SFINAE-friendly for a type that lacks
+ *  `key_type`/`association_value_type` (REQ-DIAG-001): naming them in the
+ *  parameter list makes evaluation hard-error instead of yielding false, which
+ *  would break boundary-constrained free functions such as `assoc`. */
 template <typename C>
 concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
     typename C::key_type;
@@ -533,10 +538,10 @@ concept AssociativeCollection = CljonicCollection<C> && requires(const C& c) {
 
 /** Requires that an admitted collection provides immutable element insertion
  *  plus its matching capacity/element preflight operation. A `Conjable`
- *  collection is one of \ref Vector "Vector", \ref Set "Set", \ref Map "Map", \ref Queue "Queue", or \ref String "String". The value-type
- *  reference lives in the requires-expression body,
- *  never its parameter list, so the concept stays SFINAE-friendly
- *  (REQ-DIAG-001). */
+ *  collection is one of \ref Vector "Vector", \ref Set "Set", \ref Map "Map", \ref Queue "Queue", or \ref String "String".
+ *
+ *  The value-type reference lives in the requires-expression body, never its
+ *  parameter list, so the concept stays SFINAE-friendly (REQ-DIAG-001). */
 template <typename C>
 concept ConjableCollection = CljonicCollection<C> && requires(const C& c) {
     typename C::value_type;
@@ -554,10 +559,11 @@ concept SequenceableProducer = CljonicProducer<C> && requires(const C& c) {
 };
 
 /** Requires that an admitted producer provides non-throwing positional value access
- *  and a matching contains(i) predicate over the same bounded index domain. A
- *  contains(i) predicate alone reports only bounded-observation availability and
- *  does not make a producer Indexed. No currently supported producer provides
- *  positional value retrieval. */
+ *  and a matching contains(i) predicate over the same bounded index domain.
+ *
+ *  A contains(i) predicate alone reports only bounded-observation availability
+ *  and does not make a producer Indexed. No currently supported producer
+ *  provides positional value retrieval. */
 template <typename C>
 concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t i) {
     { c(i) } noexcept;
@@ -567,8 +573,10 @@ concept IndexedProducer = CljonicProducer<C> && requires(const C& c, std::size_t
 /** The named element-domain rule for \ref Range "Range" (REQ-DIAG-012): a
  *  `Range` element must be a signed integral type, because a `Range` describes a
  *  signed arithmetic sequence and its span arithmetic requires a signed element
- *  type. An out-of-domain element type fails this concept, so the type-level
- *  gate stays soft and SFINAE-friendly rather than becoming ill-formed. */
+ *  type.
+ *
+ *  An out-of-domain element type fails this concept, so the type-level gate
+ *  stays soft and SFINAE-friendly rather than becoming ill-formed. */
 template <typename T>
 concept RangeElement = std::signed_integral<T>;
 

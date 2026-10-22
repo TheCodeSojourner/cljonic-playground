@@ -47,12 +47,13 @@ template <typename T>
 } // namespace concepts_detail
 
 /** \anchor CharacterIsValid
- * The \b character_is_valid free function API checks whether a value converts to a valid \ref String "String"
- * character.
+ * The \b character_is_valid free function checks whether a value converts to a valid \ref String "String" character.
  *
  * Accepts non-`bool` integral values and one-character C-strings. Values outside the range representable by `char`
  * return false without conversion; otherwise the character is valid when it is not NUL and its unsigned byte value is
- * no greater than `0x7F`. Other input types are rejected at compile time with a targeted diagnostic.
+ * no greater than `0x7F`.
+ *
+ * Other input types are rejected at compile time with a targeted diagnostic.
  *
  * \b Examples
  ~~~~~{.cpp}

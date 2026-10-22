@@ -14,17 +14,18 @@
 namespace cljonic {
 
 /** \anchor Queue
- * A Queue is a bounded FIFO collection. The way to operate on the collection is through the library's free-function
- * API. Construction with more values than the available capacity is rejected at compile time. A non-cljonic C++ range
- * or view constructor parameter is copied into the collection. A cljonic value is not copied as a range/view source.
- * With an explicit element type, it is accepted as one element only when its type exactly matches the declared element
- * type. Without explicit template arguments, a sole cljonic argument determines the element type and yields a
- * one-element collection. To materialize a cljonic collection or producer into a destination \ref Vector "Vector", use
- * \b into.
+ * A Queue is a bounded FIFO collection. Operations use the library's free-function API.
  *
- Elements may themselves be cljonic collections or producers, including nested cljonic composites. Elements follow
- the \ref implicit-conversions "safe implicit conversion rules".
-
+ * Direct construction can import a C++ range or view: its elements are copied into the Queue. A cljonic value is not
+ * copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one element only
+ * when its type exactly matches the declared element type. Without explicit template arguments, a sole cljonic
+ * argument determines the element type and yields a one-element collection. To materialize a cljonic collection or
+ * producer into a destination \ref Vector "Vector", use \b into. Elements may themselves be cljonic collections or
+ * producers, including nested cljonic composites.
+ *
+ * Construction with more values than the available capacity is rejected at compile time. Elements follow the \ref
+ * implicit-conversions "safe implicit conversion rules".
+ *
  \b Examples
  ~~~~~{.cpp}
  #include "cljonic.hpp"

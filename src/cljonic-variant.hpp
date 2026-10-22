@@ -69,27 +69,20 @@ concept VariantClassArgument =
 } // namespace concepts_detail
 
 /** \anchor Variant
- * A composite value holding exactly one of several alternatives.
+ * A Variant is the supported composite value in the cljonic value domain. It holds exactly one of several alternatives
+ * and has no empty or valueless state.
  *
- * A composite value holding exactly one of several alternatives. It is the supported composite in the cljonic value
- * domain.
+ * Every alternative must have a default value and be copyable without throwing, so a Variant is a storable value: it
+ * can be a map value, a vector element, or a queue element.
  *
- * - Every alternative must have a default value and be copyable without
- *   throwing, so a Variant is a storable value: it can be a map value, a
- *   vector element, or a queue element.
- * - Two values compare equal only when they hold the same alternative and that
- *   alternative's values compare equal (alternative-strict equality). Values
- *   holding different alternatives always compare unequal.
- * - Equality is provided only when every alternative is comparable without
- *   throwing; otherwise `==` is not provided and the value cannot be used in an
- *   equality position. A Variant may therefore be storable without being
- *   comparable, exactly like a collection of floating-point numbers. When it is
- *   comparable, a Variant takes part in cljonic equality: as an `equal` or
- *   `not_equal` operand, as a map key or set element, and as a stored member of a
- *   collection or producer whose own equality is used; when it is not, all of
- *   those equality positions reject it.
- * - A Variant always holds an active alternative: it has no empty or
- *   valueless state.
+ * Two values compare equal only when they hold the same alternative and that alternative's values compare equal
+ * (alternative-strict equality). Values holding different alternatives always compare unequal.
+ *
+ * Equality is provided only when every alternative is comparable without throwing; otherwise `==` is not provided and
+ * the value cannot be used in an equality position. A Variant may therefore be storable without being comparable,
+ * exactly like a collection of floating-point numbers. When it is comparable, a Variant takes part in cljonic
+ * equality: as an `equal` or `not_equal` operand, as a map key or set element, and as a stored member of a collection
+ * or producer whose own equality is used. When it is not, all of those equality positions reject it.
  *
  * \b Examples
  *

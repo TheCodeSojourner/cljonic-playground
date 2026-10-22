@@ -6,10 +6,11 @@
 namespace cljonic {
 
 /** \anchor Count
- * The \b count free function API returns the number of elements in a \ref concepts::SequenceableCollection
- * "collection" or
- *        \ref concepts::SequenceableProducer "producer". For unbounded \ref concepts::SequenceableProducer "producers",
- *        returns \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE.
+ * The \b count free function returns the number of elements in a \ref concepts::SequenceableCollection "collection" or
+ * \ref concepts::SequenceableProducer "producer".
+ *
+ * For unbounded \ref concepts::SequenceableProducer "producers", it returns \b
+ * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE.
  *
  * \b Examples
  ~~~~~{.cpp}

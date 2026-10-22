@@ -17,12 +17,13 @@ concept NextSequenceableCollection =
 
 /** \anchor Next
  * The \b next free function returns the logical tail of a \ref Vector "Vector", \ref Map "Map", \ref Set "Set", \ref
- * Queue "Queue", or \ref String "String" as an owning \ref Vector "Vector". The result has the same static capacity as
- * the source and contains every logical element after the first in the source's traversal order. A map's elements
- * remain value-semantic \ref MapEntry "MapEntry" values. Map and Set traversal order is not semantically significant,
- * while Queue retains FIFO order. An empty input returns an empty Vector.
+ * Queue "Queue", or \ref String "String" as an owning \ref Vector "Vector". The input remains unchanged.
  *
- * The input remains unchanged.
+ * The result has the same static capacity as the source and contains every logical element after the first in the
+ * source's traversal order. An empty input returns an empty Vector.
+ *
+ * A map's elements remain value-semantic \ref MapEntry "MapEntry" values. Map and Set traversal order is not
+ * semantically significant, while Queue retains FIFO order.
  *
  * \b Examples
  ~~~~~{.cpp}

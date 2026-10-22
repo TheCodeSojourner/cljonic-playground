@@ -30,12 +30,15 @@ concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concept
 /** \anchor Iterate
  * An Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy
  * of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted
- * value. For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`. The initial
- * and produced values may themselves be cljonic collections or producers, including nested cljonic composites. The
- * step may be a lambda, a named function, or a function object. Observation is bounded by \b
- * CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by an explicit destination capacity, and it supports const C++
- * range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations
- * that accept a source, or converted into an owning destination with `into` when explicit materialization is required.
+ * value. For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`.
+ *
+ * The initial and produced values may themselves be cljonic collections or producers, including nested cljonic
+ * composites. The step may be a lambda, a named function, or a function object.
+ *
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by an explicit destination capacity,
+ * and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
+ * directly to cljonic operations that accept a source, or converted into an owning destination with `into` when
+ * explicit materialization is required.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"

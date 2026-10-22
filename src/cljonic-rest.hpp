@@ -5,7 +5,7 @@
 namespace cljonic {
 
 /** \anchor Rest
- * The \b rest free function API returns a \ref concepts::CljonicCollection "collection" without its first/accessible
+ * The \b rest free function returns a \ref concepts::CljonicCollection "collection" without its first/accessible
  * element.
  *
  * For a \ref Queue "Queue", this removes the front element. Unlike `next`, `rest` returns an empty collection rather

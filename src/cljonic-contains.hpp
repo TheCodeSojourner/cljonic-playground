@@ -25,15 +25,12 @@ concept ContainsAdmissible =
 } // namespace concepts_detail
 
 /** \anchor Contains
- * The \b contains free function API tests key presence, element membership, or index validity in a \ref Map "Map",
- * \ref Set "Set", \ref Vector
- *        "Vector", or \ref String "String".
+ * The \b contains free function tests key presence, element membership, or index validity in a \ref Map "Map", \ref
+ * Set "Set", \ref Vector "Vector", or \ref String "String". It returns `true` when the key or element is present, or
+ * when the index is valid; otherwise, it returns `false`.
  *
  * \ref Map "Map" keys and \ref Set "Set" elements admit their declared type and safe numeric widening that preserves
  * every source value. \ref Vector "Vector" and \ref String "String" accept an integer index.
- *
- * `contains` returns `true` when the key or element is present, or when the index is valid; otherwise, it returns
- * `false`.
  *
  * \b Examples
  ~~~~~{.cpp}

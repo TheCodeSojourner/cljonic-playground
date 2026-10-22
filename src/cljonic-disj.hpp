@@ -15,11 +15,12 @@ concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value
 } // namespace concepts_detail
 
 /** \anchor Disj
- * The \b disj free function API disjoins zero or more elements from a \ref Set "Set".
+ * The \b disj free function removes zero or more elements from a \ref Set "Set". Values are removed from left to
+ * right; absent or repeated values are no-ops after any prior removal. Calling `disj(set)` with no values returns an
+ * unchanged copy.
  *
  * `disj(set, values...)` accepts the \ref Set "Set"'s element type and safe numeric widening conversions. A conversion
- * must preserve every source value. Values are removed from left to right; absent or repeated values are no-ops after
- * any prior removal. Calling `disj(set)` with no values returns an unchanged copy.
+ * must preserve every source value.
  *
  * \b Examples
  ~~~~~{.cpp}

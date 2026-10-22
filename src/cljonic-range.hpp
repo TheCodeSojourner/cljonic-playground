@@ -28,13 +28,17 @@ concept RangeClassArgument =
 
 /** \anchor Range
  * A Range is a producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by a fixed
- * \p step, defaulting to start `0` and step `1`. A zero step repeats \p start indefinitely, taking precedence over
- * otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from \p end produces an
- * empty range. Observation is bounded by its finite span, by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a
- * zero-step range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
- * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
- * into an owning destination with `into` when explicit materialization is required. Explicitly typed parameters follow
- * the \ref implicit-conversions "safe implicit conversion rules".
+ * \p step, defaulting to start `0` and step `1`.
+ *
+ * A zero step repeats \p start indefinitely, taking precedence over otherwise-empty-range cases, including equal start
+ * and end. A nonzero step that moves away from \p end produces an empty range.
+ *
+ * Observation is bounded by its finite span, by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a zero-step
+ * range, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation
+ * and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an
+ * owning destination with `into` when explicit materialization is required.
+ *
+ * Explicitly typed parameters follow the \ref implicit-conversions "safe implicit conversion rules".
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -188,13 +192,14 @@ class Range {
     }
 
     /** Producer parameter equality (REQ-FN-014B): compares only the stored
-     *  start/end/step parameters, never the produced sequence. It is the only
-     *  producer parameter-equality surface; the `equal` free function instead
-     *  compares bounded logical observations of the produced sequences. Two
+     *  start/end/step parameters, never the produced sequence.
+     *
+     *  It is the only producer parameter-equality surface; the `equal` free function
+     *  instead compares bounded logical observations of the produced sequences. Two
      *  Range values with different parameters compare unequal even when their
-     *  produced or observed sequences coincide (for example two zero-step
-     *  ranges with different endpoints both produce an infinite repetition of
-     *  their respective start values). O(1), no traversal, no allocation. */
+     *  produced or observed sequences coincide (for example two zero-step ranges
+     *  with different endpoints both produce an infinite repetition of their
+     *  respective start values). O(1), no traversal, no allocation. */
     [[nodiscard]] friend constexpr auto operator==(const Range& lhs, const Range& rhs) noexcept -> bool {
         return lhs.start_ == rhs.start_ && lhs.end_ == rhs.end_ && lhs.step_ == rhs.step_;
     }

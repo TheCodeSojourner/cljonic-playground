@@ -5,8 +5,7 @@
 namespace cljonic {
 
 /** \anchor Seq
- * The \b seq free function API returns the elements of a \ref concepts::SequenceableCollection "collection" as a
- * sequence.
+ * The \b seq free function returns the elements of a \ref concepts::SequenceableCollection "collection" as a sequence.
  *
  * For a \ref Vector "Vector" this returns the owning vector itself; for other sequenceable collections it produces an
  * owning \ref Vector "Vector" of their traversal elements.

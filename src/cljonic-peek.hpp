@@ -6,8 +6,10 @@
 namespace cljonic {
 
 /** \anchor Peek
- * The \b peek free function API returns the last logical element of a \ref Vector "Vector" or the front element of a
- * \ref Queue "Queue" without removing it. An empty collection returns its element type's default value.
+ * The \b peek free function returns the last logical element of a \ref Vector "Vector" or the front element of a \ref
+ * Queue "Queue" without removing it.
+ *
+ * An empty collection returns its element type's default value.
  *
  * \b Examples
  ~~~~~{.cpp}

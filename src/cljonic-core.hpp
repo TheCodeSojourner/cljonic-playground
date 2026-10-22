@@ -3,11 +3,12 @@
 #include <cljonic-config.hpp>
 
 /** \mainpage
- * \b cljonic is a \b header-only C++ library designed to allow an \b embedded \b system C++ developer to program in a
- * \b Functional \b Programming \b Style using a set of functions \b similar in \b name and \b function to \b Clojure.
- * To address the embedded system focus, \b cljonic \b DOES \b NOT use the heap or exceptions, and uses \b Modern \b
- * C++ features to \b protect , \b guide , and \b teach C++ developers. Finally, \b cljonic is a library that includes
- * unit tests with nearly <b>100% coverage</b>, and is designed to be efficiently maintained.
+ * \b cljonic is a header-only C++ library for embedded system developers who want to program in a functional style. It
+ * provides functions similar in name and behavior to Clojure.
+ *
+ * To address its embedded system focus, cljonic does not use the heap or exceptions. It uses modern C++ features to
+ * protect, guide, and teach C++ developers, includes unit tests with nearly <b>100% coverage</b>, and is designed to
+ * be efficiently maintained.
  *
  * The motivation for \b cljonic comes from observations made about the pragmatic use of C++ for embedded system
  * software development, the progression of the C++ language (e.g., C++11, C++14, C++17, C++20, C++23), and the counsel
@@ -18,9 +19,10 @@
  * every C++ feature, and many <b>may not have time</b> to follow the progression of the language.  Rather, many
  * embedded system C++ developers have <b>strong hardware backgrounds</B>, and <B>know a pragmatic specific subset of
  * C++</B> that is often sufficient to deliver reasonably good software in a predictable amount of time, though this is
- * often <b>not optimized for minimal long term cost of ownership</b>. Generally speaking, many C++ developers use a
- * subset of the \b C programming language with some of C++'s <b>Object Oriented</b> capabilities.  This begs a
- * question:
+ * often <b>not optimized for minimal long term cost of ownership</b>.
+ *
+ * Generally speaking, many C++ developers use a subset of the \b C programming language with some of C++'s <b>Object
+ * Oriented</b> capabilities. This begs a question:
  *
  * <b>Is there a pragmatic subset of Modern C++ that enables embedded system developers to produce higher-quality, more
  * efficient, and more maintainable code?</b>
@@ -67,11 +69,11 @@
  *
  * ## Collection Types
  *
- * - \ref Map "Map", \ref HashMapFactory "hash_map", \ref MapEntry "MapEntry"
+ * - \ref Map "Map", \ref MapEntry "MapEntry"
  * - \ref Queue "Queue"
  * - \ref Set "Set"
  * - \ref String "String"
- * - \ref Vector "Vector", created with \ref cljonic::vector "vector"
+ * - \ref Vector "Vector"
  *
  * ## Producer Types
  *
@@ -83,78 +85,53 @@
  *
  * ## Core Functions
  *
- * ### Composition
- *
- * - \ref Core_Partial "Partial"
- *
- * ### Control
- *
- * - \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes"
- * - \ref Core_If "If"
- * - \ref Core_Unless "Unless"
- * - \ref Core_When "When", \ref Core_WhenNot "WhenNot"
- *
- * ### Predicate
- *
- * - \ref Core_Compare "Compare"
- * - \ref Core_EQ "EQ"
- * - \ref Core_GE "GE", \ref Core_GT "GT"
- * - \ref Core_IsAlpha "IsAlpha", \ref Core_IsAlphanumeric "IsAlphanumeric", \ref Core_IsBlank "IsBlank",
- * \ref Core_IsControl "IsControl", \ref Core_IsDigit "IsDigit", \ref Core_IsEven "IsEven", \ref Core_IsGraphical
- * "IsGraphical", \ref Core_IsHexDigit "IsHexDigit", \ref Core_IsLowercase "IsLowercase", \ref Core_IsNatural
- * "IsNatural", \ref Core_IsNegative "IsNegative", \ref Core_IsOdd "IsOdd", \ref Core_IsPositive "IsPositive", \ref
- * Core_IsPrintable "IsPrintable", \ref Core_IsPunctuation "IsPunctuation", \ref Core_IsSpace "IsSpace", \ref
- * Core_IsUppercase "IsUppercase", \ref Core_IsZero "IsZero"
- * - \ref Core_LE "LE", \ref Core_LT "LT"
- * - \ref Core_NE "NE"
- *
- * ### Primitive
- *
- * - \ref Core_Abs "Abs", \ref Core_Add "Add"
- * - \ref Core_Char "Char", \ref Core_Combinations "Combinations", \ref Core_CString "CString"
- * - \ref Core_Dec "Dec", \ref Core_Div "Div"
- * - \ref Core_Factorial "Factorial"
- * - \ref Core_Inc "Inc"
- * - \ref Core_Lowercase "Lowercase"
- * - \ref Core_Max "Max", \ref Core_Min "Min", \ref Core_Mod "Mod", \ref Core_Mul "Mul"
- * - \ref Core_Ord "Ord"
- * - \ref Core_Permutations "Permutations"
- * - \ref Core_Sub "Sub"
- * - \ref Core_Uppercase "Uppercase"
- *
- * ### Sequence traversal
- *
  * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
  * when their requirements are approved.
  *
- * - \ref Assoc "assoc"
- * - \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref CharacterIsValid "character_is_valid",
- * \ref Conj "conj", \ref Contains "contains", \ref Count "count"
- * - \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy", \ref Core_DefaultElement "DefaultElement",
- * \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different "Different", \ref Disj "disj", \ref Dissoc
- * "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy "DistinctBy", \ref Core_Drop "Drop", \ref
+ * - \ref Core_Abs "Abs", \ref Core_Add "Add", \ref Assoc "assoc"
+ * - \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref Core_Char "Char",
+ * \ref CharacterIsValid "character_is_valid", \ref Core_Combinations "Combinations", \ref Core_Compare "Compare", \ref
+ * Conj "conj", \ref Contains "contains", \ref Count "count", \ref Core_CString "CString", \ref Cycle "cycle"
+ * - \ref Core_Dec "Dec", \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy",
+ * \ref Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different
+ * "Different", \ref Disj "disj", \ref Dissoc "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy
+ * "DistinctBy", \ref Core_Div "Div", \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes", \ref Core_Drop "Drop", \ref
  * Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
- * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Equal "equal", \ref Core_EqualBy "EqualBy",
- * \ref Core_Every "Every"
- * - \ref Core_Filter "Filter", \ref First "first", \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize",
- * Core_Frequencies "Frequencies", \ref Core_FrequenciesBy "FrequenciesBy", \ref FitsInto "fits_into"
- * - \ref Get "get"
- * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy
- * "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose "Interpose", \ref Into "into", \ref
- * Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref IsEmpty "is_empty", \ref Core_IsFull
- * "IsFull", \ref Iterate "iterate"
+ * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_EQ "EQ", \ref Equal "equal",
+ * \ref Core_EqualBy "EqualBy", \ref Core_Every "Every"
+ * - \ref Core_Factorial "Factorial", \ref Core_Filter "Filter", \ref First "first", \ref FitsInto "fits_into",
+ * \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize", \ref Core_Frequencies "Frequencies", \ref
+ * Core_FrequenciesBy "FrequenciesBy"
+ * - \ref Core_GE "GE", \ref Get "get", \ref Core_GT "GT"
+ * - \ref HashMapFactory "hash_map"
+ * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_If "If", \ref Core_Inc "Inc",
+ * \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose
+ * "Interpose", \ref Into "into", \ref IsEmpty "is_empty", \ref Core_IsAlpha "IsAlpha", \ref Core_IsAlphanumeric
+ * "IsAlphanumeric", \ref Core_IsBlank "IsBlank", \ref Core_IsControl "IsControl", \ref Core_IsDigit "IsDigit", \ref
+ * Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref Core_IsEven "IsEven", \ref Core_IsFull
+ * "IsFull", \ref Core_IsGraphical "IsGraphical", \ref Core_IsHexDigit "IsHexDigit", \ref Core_IsLowercase
+ * "IsLowercase", \ref Core_IsNatural "IsNatural", \ref Core_IsNegative "IsNegative", \ref Core_IsOdd "IsOdd", \ref
+ * Core_IsPositive "IsPositive", \ref Core_IsPrintable "IsPrintable", \ref Core_IsPunctuation "IsPunctuation", \ref
+ * Core_IsSpace "IsSpace", \ref Core_IsUppercase "IsUppercase", \ref Core_IsZero "IsZero", \ref Iterate "iterate"
  * - \ref Core_Juxt "Juxt"
- * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy"
- * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy"
- * - \ref Core_NotAny "NotAny", \ref Next "next", \ref NotEmpty "not_empty", \ref NotEqual "not_equal", \ref Core_NotEvery "NotEvery",
- * \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
- * - \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll", \ref Core_PartitionBy "PartitionBy",
- * \ref Peek "peek", \ref Pop "pop"
- * - \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove", \ref Core_Replace
- * "Replace", \ref Core_Reverse "Reverse"
- * - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort", \ref
- * Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Subs "Subs"
+ * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy",
+ * \ref Core_LE "LE", \ref Core_Lowercase "Lowercase", \ref Core_LT "LT"
+ * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy",
+ * \ref Core_Mod "Mod", \ref Core_Mul "Mul"
+ * - \ref Core_NE "NE", \ref Next "next", \ref NotEmpty "not_empty", \ref NotEqual "not_equal",
+ * \ref Core_NotAny "NotAny", \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
+ * - \ref Core_Ord "Ord"
+ * - \ref Core_Partial "Partial", \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
+ * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Core_Permutations "Permutations", \ref Pop "pop"
+ * - \ref Range "range", \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove",
+ * \ref Repeat "repeat", \ref Repeatedly "repeatedly", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse"
+ * - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort",
+ * \ref Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Sub "Sub", \ref
+ * Core_Subs "Subs"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
+ * - \ref Core_Unless "Unless", \ref Core_Uppercase "Uppercase"
+ * - \ref cljonic::vector "vector"
+ * - \ref Core_When "When", \ref Core_WhenNot "WhenNot"
  *
  * ## Set Functions
  *

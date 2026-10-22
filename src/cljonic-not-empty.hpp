@@ -7,8 +7,9 @@ namespace cljonic {
 /** \anchor NotEmpty
  * The \b not_empty free function returns an independent owning copy of a nonempty collection, or an empty value of the
  * same type when the input is empty. It accepts `Vector`, `Map`, `Set`, `Queue`, and `String`, preserves their type
- * and capacity, and leaves the input unchanged. This is not a boolean emptiness predicate; use \ref IsEmpty "is_empty"
- * for that purpose.
+ * and capacity, and leaves the input unchanged.
+ *
+ * This is not a boolean emptiness predicate; use \ref IsEmpty "is_empty" for that purpose.
  *
  * \b Examples
  ~~~~~{.cpp}

@@ -6,9 +6,11 @@
 namespace cljonic {
 
 /** \anchor Pop
- * The \b pop free function API yields an updated \ref concepts::CljonicCollection "collection" with the accessible
- * element removed. For a \ref Vector "Vector", it removes the last logical element; for a \ref Queue "Queue", it
- * removes the front element. An empty collection, including a zero-capacity Vector, is returned unchanged.
+ * The \b pop free function yields an updated \ref concepts::CljonicCollection "collection" with the accessible element
+ * removed. For a \ref Vector "Vector", it removes the last logical element; for a \ref Queue "Queue", it removes the
+ * front element.
+ *
+ * An empty collection, including a zero-capacity Vector, is returned unchanged.
  *
  * \b Examples
  ~~~~~{.cpp}

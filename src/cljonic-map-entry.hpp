@@ -5,14 +5,15 @@
 namespace cljonic {
 
 /** \anchor MapEntry
- * A MapEntry is a value-semantic pair representing a single key-value association. Keys must support reliable,
- * non-throwing equality comparison and non-throwing storage operations. Values must have a default value, and be
- * copyable, assignable, and destructible without throwing, so the entry remains safe to copy and update in bounded
- * collections. Keys and values may themselves be cljonic collections or producers, including nested cljonic
- * composites, provided they satisfy their respective constraints.
+ * A MapEntry is a value-semantic pair representing a single key-value association. Its fields are public, but MapEntry
+ * is not a C++ aggregate.
  *
- * Key and value construction follows the \ref implicit-conversions "safe implicit conversion rules". The public fields
- * remain available, but MapEntry is not a C++ aggregate.
+ * Keys must support reliable, non-throwing equality comparison and non-throwing storage operations. Values must have a
+ * default value and be copyable, assignable, and destructible without throwing, so the entry remains safe to copy and
+ * update in bounded collections. Keys and values may themselves be cljonic collections or producers, including nested
+ * cljonic composites, provided they satisfy their respective constraints.
+ *
+ * Key and value construction follows the \ref implicit-conversions "safe implicit conversion rules".
  *
  * \b Examples
  ~~~~~{.cpp}
