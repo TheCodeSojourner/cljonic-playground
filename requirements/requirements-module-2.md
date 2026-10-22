@@ -389,14 +389,14 @@ Explanatory definitions; binding obligations reside in the numbered clauses refe
 λ REQ-DIAG-010(x).
   ∀ public_constructor whose source domain is closed and expressible through named constraints (for example a cljonic collection's direct source constructor, which admits only non-cljonic C++ range or view sources — `REQ-FN-027A`):
   ∧ primary admission: expressed through named constraints at the constructor boundary, so a cljonic collection or producer argument that is not the destination's element type is excluded from source construction
-  ∧ preferred diagnostic fallback: an additional constructor overload constrained on the negation of the source-admission rule, so that a rejected cljonic collection or producer argument fails with one targeted `static_assert` that names the collection, states the violated source-construction rule, and directs the caller to `into` for materialization (preflighted by `fits_into`) or to the enclosure form for a single element (`REQ-DIAG-003`)
+  ∧ preferred diagnostic fallback: an additional constructor overload constrained on the negation of the source-admission rule, so that a rejected cljonic collection or producer argument fails with one targeted `static_assert` that names the collection and states the violated source-construction rule; it does not recommend materialization or refer callers to `into` or `fits_into`; where a single-element form is supported, it may identify that form (`REQ-DIAG-003`)
   ∧ the diagnostic fallback exists to explain rejection, not to accept it: it never produces a value and is never a supported call target
   ∧ ∀ diagnostic_fallback message: states the meaning and the violated constraint in user-facing terms rather than relying on a generic element-conversion message, and does not depend on compiler-specific wording (`REQ-DIAG-004`)
   ∧ ∀ constructor whose rejection occurs at class instantiation (a type argument gated by the class-template `requires`: `Range`, `MapEntry`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly`, `Variant`): excluded — no constructor is reached, so a constructor-level fallback is unreachable; the out-of-domain *deduction* path is governed by `REQ-DIAG-012` instead, and explicit naming of the specialization yields one named constraint diagnostic
   ∧ ∀ constructor-level `requires` used as an availability guard rather than a source-domain rejection (`Iterate` and `Repeatedly` default constructors): excluded — it is not a closed source-domain rejection
   ∧ ∀ `MapEntry` field_argument: require(SafeImplicitConversion) ∧ ∃ rejection_diagnostic: deleted_overload(named_constraint)
   rationale: without the fallback the rejected argument falls through to the pack constructor's generic conversion diagnostic (for example "could not convert a producer to the element type"), which misleads the caller because no element conversion was intended; one targeted, educational diagnostic is more accurate and keeps the rejection reason discoverable
-  {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22, rationale_source: origin_artifact}
 
 λ REQ-DIAG-011(x).
   ∀ targeted_compile_time_diagnostic_message, present ∨ added_in_future, emitted as a `static_assert` message in `src/`:
