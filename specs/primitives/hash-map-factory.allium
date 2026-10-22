@@ -1,0 +1,143 @@
+-- allium: 3
+-- REQ-FN-029D: `hash_map` is the idiomatic Map factory. Its type and
+-- capacity inference follow the approved first-pair and pair-count rules.
+
+entity HashMapFactory {
+    supports_deduced_alternating_pair_factory: Boolean
+    deduced_key_type_is_unqualified_first_key: Boolean
+    deduced_value_type_is_unqualified_first_value: Boolean
+    supports_explicit_key_value_type_factory: Boolean
+    supports_explicit_capacity_factory: Boolean
+    deduced_capacity_equals_pair_count: Boolean
+    explicit_capacity_determines_result_capacity: Boolean
+    explicit_capacity_factory_supports_empty_arguments: Boolean
+    explicit_capacity_empty_factory_supports_zero_capacity: Boolean
+    explicit_capacity_is_at_least_pair_count: Boolean
+    explicit_capacity_is_bounded_by_configured_maximum: Boolean
+    empty_factory_requires_explicit_key_value_types_and_capacity: Boolean
+    empty_factory_without_explicit_capacity_is_compile_time_rejected: Boolean
+    nonempty_forms_require_complete_key_value_pairs: Boolean
+    odd_argument_count_is_compile_time_rejected: Boolean
+    pair_count_is_bounded_by_configured_maximum: Boolean
+    oversized_pair_count_is_compile_time_rejected: Boolean
+    every_key_and_value_satisfies_map_element_admission: Boolean
+    every_pair_constructs_safely_without_throwing: Boolean
+    pairs_are_associated_in_argument_order: Boolean
+    later_duplicate_key_replaces_earlier_value: Boolean
+    preserves_public_map_type_and_existing_constructors: Boolean
+    returns_independently_owning_map: Boolean
+    constexpr_noexcept_nonallocating: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    referential_transparency: Boolean
+
+    invariant SupportsDeducedAlternatingPairFactory {
+        this.supports_deduced_alternating_pair_factory = true
+    }
+
+    invariant DeducedKeyTypeIsUnqualifiedFirstKey {
+        this.deduced_key_type_is_unqualified_first_key = true
+    }
+
+    invariant DeducedValueTypeIsUnqualifiedFirstValue {
+        this.deduced_value_type_is_unqualified_first_value = true
+    }
+
+    invariant SupportsExplicitKeyValueTypeFactory {
+        this.supports_explicit_key_value_type_factory = true
+    }
+
+    invariant SupportsExplicitCapacityFactory {
+        this.supports_explicit_capacity_factory = true
+    }
+
+    invariant DeducedCapacityEqualsPairCount {
+        this.deduced_capacity_equals_pair_count = true
+    }
+
+    invariant ExplicitCapacityDeterminesResultCapacity {
+        this.explicit_capacity_determines_result_capacity = true
+    }
+
+    invariant ExplicitCapacityFactorySupportsEmptyArguments {
+        this.explicit_capacity_factory_supports_empty_arguments = true
+    }
+
+    invariant ExplicitCapacityEmptyFactorySupportsZeroCapacity {
+        this.explicit_capacity_empty_factory_supports_zero_capacity = true
+    }
+
+    invariant ExplicitCapacityIsAtLeastPairCount {
+        this.explicit_capacity_is_at_least_pair_count = true
+    }
+
+    invariant ExplicitCapacityIsBoundedByConfiguredMaximum {
+        this.explicit_capacity_is_bounded_by_configured_maximum = true
+    }
+
+    invariant EmptyFactoryRequiresExplicitKeyValueTypesAndCapacity {
+        this.empty_factory_requires_explicit_key_value_types_and_capacity = true
+    }
+
+    invariant EmptyFactoryWithoutExplicitCapacityIsCompileTimeRejected {
+        this.empty_factory_without_explicit_capacity_is_compile_time_rejected = true
+    }
+
+    invariant NonemptyFormsRequireCompleteKeyValuePairs {
+        this.nonempty_forms_require_complete_key_value_pairs = true
+    }
+
+    invariant OddArgumentCountIsCompileTimeRejected {
+        this.odd_argument_count_is_compile_time_rejected = true
+    }
+
+    invariant PairCountIsBoundedByConfiguredMaximum {
+        this.pair_count_is_bounded_by_configured_maximum = true
+    }
+
+    invariant OversizedPairCountIsCompileTimeRejected {
+        this.oversized_pair_count_is_compile_time_rejected = true
+    }
+
+    invariant EveryKeyAndValueSatisfiesMapElementAdmission {
+        this.every_key_and_value_satisfies_map_element_admission = true
+    }
+
+    invariant EveryPairConstructsSafelyWithoutThrowing {
+        this.every_pair_constructs_safely_without_throwing = true
+    }
+
+    invariant PairsAreAssociatedInArgumentOrder {
+        this.pairs_are_associated_in_argument_order = true
+    }
+
+    invariant LaterDuplicateKeyReplacesEarlierValue {
+        this.later_duplicate_key_replaces_earlier_value = true
+    }
+
+    invariant PreservesPublicMapTypeAndExistingConstructors {
+        this.preserves_public_map_type_and_existing_constructors = true
+    }
+
+    invariant ReturnsIndependentlyOwningMap {
+        this.returns_independently_owning_map = true
+    }
+
+    invariant ConstexprNoexceptNonallocating {
+        this.constexpr_noexcept_nonallocating = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+actor HashMapFactoryOperator { identified_by: HashMapFactory }
