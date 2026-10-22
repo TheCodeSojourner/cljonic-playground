@@ -22,6 +22,12 @@ unchanged, and is independent of the source lifetime. A checked constructor is
 not planned: constructors do not gain an optional, result, exception, or other
 error channel.
 
+For ordinary Vector creation, use the lowercase `vector(...)` factory at
+runtime and compile time, with `vector<T>(...)` or
+`vector<T, Capacity>(...)` when the element type or capacity is explicit.
+`Vector<T, Capacity>` remains a public type; its direct construction from an
+external C++ range or view is the deliberate source-import exception.
+
 ## Three admission paths (do not conflate)
 
 A collection constructor with a single non-scalar argument resolves through
@@ -34,16 +40,17 @@ exactly one of three mechanisms:
    REQ-FN-027A).
 2. **SameTypeArgumentIsOneElement** — a single argument whose type is exactly
    the element type is pack construction of one element, never source
-   materialization. Example: `Vector<Range<int>, 4>{r}` is a one-element vector.
+   materialization. Example: `vector<Range<int>, 4>(r)` is a one-element vector.
    A cljonic collection/producer that is *not* exactly the element type is
    rejected as a source argument.
 3. **EnclosureConstruction** — the CTAD form (no explicit template argument
    list) whose sole argument is a cljonic collection or producer deduces the
    element type from the argument and a capacity of one, producing a one-element
-   value that encloses the argument. It mirrors a Clojure collection literal
-   (`[v]`, `#{v}`) and performs neither a copy nor element materialization.
-   Same-type copy construction still exists via an explicit template argument
-   list naming the argument's own type and capacity.
+   value that encloses the argument. For Vector, use the lowercase
+   `vector(value)` factory as the idiomatic form; CTAD remains available. It
+   mirrors a Clojure collection literal (`[v]`, `#{v}`) and performs neither a
+   copy nor element materialization. Same-type copying uses ordinary copy
+   initialization, such as `auto copy = v`.
 
 ## Materialization pair: `into` vs `fits_into`
 
@@ -60,7 +67,9 @@ exactly one of three mechanisms:
 
 Do not write "use `into` (or `fits_into`) to materialize a range, view, or
 producer": external ranges/views materialize through the direct source
-constructor, not `into`.
+constructor, not `into`. For a Vector, express that import with
+`Vector<T, Capacity>{external_range}`; use the lowercase factory for ordinary
+element-pack creation.
 
 ## Bounds and overflow
 
@@ -106,7 +115,8 @@ and arithmetic conversions that preserve the entire source-type value domain.
 Boolean, character, enum, pointer, and user-defined domains do not implicitly
 change types. Safe integer-to-floating widening uses constrained direct
 initialization: brace initialization alone would reject even exactly
-representable integer domains. Vector retains CTAD and a read-only `view()`.
+representable integer domains. Vector retains CTAD and a read-only `view()`,
+but its lowercase factory is the idiomatic creation surface.
 
 MapEntry has safe key/value constructors and is no longer a C++ aggregate.
 Map packs and entry updates still require the exact declared MapEntry type.

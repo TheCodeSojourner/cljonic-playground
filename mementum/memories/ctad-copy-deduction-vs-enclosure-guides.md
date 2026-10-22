@@ -4,6 +4,11 @@ symbol: 💡
 title: ctad-copy-deduction-vs-enclosure-guides
 related: [/mementum/knowledge/collection-source-interoperability.md, /mementum/memories/same-type-constructor-pack-preference.md]
 ---
+Caution: This note records the class-template argument deduction behavior and its
+historical implementation. CTAD remains available, but lowercase `vector(...)`
+is now the idiomatic way to create vectors; use `auto copy = value` for an
+ordinary same-type copy.
+
 Clojure-style enclosure (`[v]` wraps `v` as one element) is achievable in
 cljonic via a user-defined deduction guide, despite C++'s "copy over wrap"
 default.
