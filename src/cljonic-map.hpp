@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <ranges>
 #include <span>
+#include <tuple>
+#include <utility>
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-config.hpp>
@@ -42,6 +44,19 @@ namespace cljonic {
  using AccountMap = Map<Key, Value, 2>;
 
  int main() {
+   // The hash_map factory accepts alternating keys and values.
+   constexpr auto factory_map = hash_map(Key{1}, Value{10}, Key{2}, Value{20});
+   static_assert(factory_map(Key{2}).amount == 20);
+
+   // Explicit key, value, and capacity types create an empty Map with room
+   // for later associations.
+   constexpr auto reserved = hash_map<Key, Value, 4>();
+   static_assert(reserved(Key{1}).amount == 0);
+
+   // The factory also works with runtime values.
+   const auto runtime_amount = 40;
+   const auto runtime_factory = hash_map(Key{4}, Value{runtime_amount});
+
    // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
    auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
    const auto present = runtime(Key{3});
@@ -98,6 +113,8 @@ namespace cljonic {
 
    return (present.amount == 30 && missing.amount == 77 && value_sum == 30 &&
            runtime_view.size() == 1 && runtime_view[0].value.amount == 30 &&
+           factory_map(Key{1}).amount == 10 &&
+           runtime_factory(Key{4}).amount == 40 &&
            from_span(Key{10}).amount == 100 &&
            from_pipeline(Key{3}).amount == 60 &&
            runtime_from_span(Key{100}).amount == 1000)
@@ -326,6 +343,189 @@ Map(std::span<const MapEntry<KeyType, ValueType>, Extent>) -> Map<KeyType, Value
 template <typename KeyType, typename ValueType, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
 Map(std::span<MapEntry<KeyType, ValueType>, Extent>) -> Map<KeyType, ValueType, Extent>;
+
+namespace concepts_detail {
+
+struct DeducedHashMapKeyType {};
+struct DeducedHashMapValueType {};
+
+template <typename RequestedKeyType, typename RequestedValueType, typename... Args>
+struct hash_map_factory_types {
+    using key_type = RequestedKeyType;
+    using value_type = RequestedValueType;
+};
+
+template <typename FirstKey, typename FirstValue, typename... Rest>
+struct hash_map_factory_types<DeducedHashMapKeyType, DeducedHashMapValueType, FirstKey, FirstValue, Rest...> {
+    using key_type = std::remove_cvref_t<FirstKey>;
+    using value_type = std::remove_cvref_t<FirstValue>;
+};
+
+template <typename RequestedKeyType, typename RequestedValueType, typename... Args>
+using hash_map_factory_key_type_t = hash_map_factory_types<RequestedKeyType, RequestedValueType, Args...>::key_type;
+
+template <typename RequestedKeyType, typename RequestedValueType, typename... Args>
+using hash_map_factory_value_type_t = hash_map_factory_types<RequestedKeyType, RequestedValueType, Args...>::value_type;
+
+template <typename KeyType, typename ValueType, typename Tuple, std::size_t... PairIndices>
+[[nodiscard]] consteval auto
+hash_map_factory_pairs_are_nothrow([[maybe_unused]] std::index_sequence<PairIndices...> indices) noexcept -> bool {
+    return (concepts::NothrowElementConstruction<KeyType, std::tuple_element_t<2U * PairIndices, Tuple>> && ...) &&
+           (concepts::NothrowElementConstruction<ValueType, std::tuple_element_t<(2U * PairIndices) + 1U, Tuple>> &&
+            ...);
+}
+
+template <typename KeyType, typename ValueType, typename... Args>
+concept HashMapFactoryPairArguments = sizeof...(Args) > 0U && sizeof...(Args) % 2U == 0U &&
+                                      hash_map_factory_pairs_are_nothrow<KeyType, ValueType, std::tuple<Args...>>(
+                                          std::make_index_sequence<sizeof...(Args) / 2U>{});
+
+template <typename KeyType, typename ValueType>
+concept HashMapFactoryElementTypes = concepts::NothrowStableEqualityComparable<KeyType> &&
+                                     concepts::NothrowCollectionElement<ValueType> && !is_std_variant_v<KeyType>;
+
+template <typename KeyType, typename ValueType, std::size_t Capacity, typename... Args>
+concept HashMapFactoryCapacityArguments =
+    HashMapFactoryElementTypes<KeyType, ValueType> && Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    sizeof...(Args) % 2U == 0U && sizeof...(Args) / 2U <= Capacity &&
+    sizeof...(Args) / 2U <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    (sizeof...(Args) == 0U || HashMapFactoryPairArguments<KeyType, ValueType, Args...>);
+
+template <typename KeyType, typename ValueType, std::size_t Capacity>
+[[nodiscard]] constexpr auto build_hash_map_factory_result(Map<KeyType, ValueType, Capacity> result) noexcept
+    -> Map<KeyType, ValueType, Capacity> {
+    return result;
+}
+
+template <typename KeyType, typename ValueType, std::size_t Capacity, typename KeyArgument, typename ValueArgument,
+          typename... Rest>
+[[nodiscard]] constexpr auto build_hash_map_factory_result(Map<KeyType, ValueType, Capacity> result, KeyArgument&& key,
+                                                           ValueArgument&& value, Rest&&... rest) noexcept
+    -> Map<KeyType, ValueType, Capacity> {
+    return build_hash_map_factory_result(
+        result.assoc(std::forward<KeyArgument>(key), std::forward<ValueArgument>(value)), std::forward<Rest>(rest)...);
+}
+
+} // namespace concepts_detail
+
+/** \anchor HashMapFactory
+ * Creates a bounded \ref Map "Map" from alternating key/value arguments. Deduced calls use the first pair's
+ * unqualified types and have capacity equal to their pair count. Explicit types use \c hash_map<Key, Value>(...);
+ * explicit capacity uses \c hash_map<Key, Value, Capacity>(...), including for an empty map.
+ */
+template <typename RequestedKeyType = concepts_detail::DeducedHashMapKeyType,
+          typename RequestedValueType = concepts_detail::DeducedHashMapValueType, typename... Args>
+    requires(
+        concepts_detail::HashMapFactoryElementTypes<
+            concepts_detail::hash_map_factory_key_type_t<RequestedKeyType, RequestedValueType, Args...>,
+            concepts_detail::hash_map_factory_value_type_t<RequestedKeyType, RequestedValueType, Args...>> &&
+        concepts_detail::HashMapFactoryPairArguments<
+            concepts_detail::hash_map_factory_key_type_t<RequestedKeyType, RequestedValueType, Args...>,
+            concepts_detail::hash_map_factory_value_type_t<RequestedKeyType, RequestedValueType, Args...>, Args...> &&
+        sizeof...(Args) / 2U <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE)
+[[nodiscard]] constexpr auto hash_map(Args&&... args) noexcept
+    -> Map<concepts_detail::hash_map_factory_key_type_t<RequestedKeyType, RequestedValueType, Args...>,
+           concepts_detail::hash_map_factory_value_type_t<RequestedKeyType, RequestedValueType, Args...>,
+           sizeof...(Args) / 2U> {
+    using KeyType = concepts_detail::hash_map_factory_key_type_t<RequestedKeyType, RequestedValueType, Args...>;
+    using ValueType = concepts_detail::hash_map_factory_value_type_t<RequestedKeyType, RequestedValueType, Args...>;
+    return concepts_detail::build_hash_map_factory_result<KeyType, ValueType, sizeof...(Args) / 2U>(
+        Map<KeyType, ValueType, sizeof...(Args) / 2U>{}, std::forward<Args>(args)...);
+}
+
+template <typename RequestedKeyType = concepts_detail::DeducedHashMapKeyType,
+          typename RequestedValueType = concepts_detail::DeducedHashMapValueType, typename... Args>
+    requires(sizeof...(Args) == 0U || sizeof...(Args) % 2U != 0U)
+constexpr auto hash_map([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedKeyType, RequestedValueType, Args...>,
+                  "cljonic::hash_map: empty calls require explicit key, value, and capacity types; nonempty calls "
+                  "require complete alternating key/value pairs.");
+}
+
+template <typename RequestedKeyType = concepts_detail::DeducedHashMapKeyType,
+          typename RequestedValueType = concepts_detail::DeducedHashMapValueType, typename... Args>
+    requires(sizeof...(Args) > 0U && sizeof...(Args) % 2U == 0U &&
+             !concepts_detail::HashMapFactoryElementTypes<
+                 concepts_detail::hash_map_factory_key_type_t<RequestedKeyType, RequestedValueType, Args...>,
+                 concepts_detail::hash_map_factory_value_type_t<RequestedKeyType, RequestedValueType, Args...>>)
+constexpr auto hash_map([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedKeyType, RequestedValueType, Args...>,
+                  "cljonic::hash_map: key and value types must satisfy Map element requirements.");
+}
+
+template <typename RequestedKeyType = concepts_detail::DeducedHashMapKeyType,
+          typename RequestedValueType = concepts_detail::DeducedHashMapValueType, typename... Args>
+    requires(sizeof...(Args) > 0U && sizeof...(Args) % 2U == 0U &&
+             concepts_detail::HashMapFactoryElementTypes<
+                 concepts_detail::hash_map_factory_key_type_t<RequestedKeyType, RequestedValueType, Args...>,
+                 concepts_detail::hash_map_factory_value_type_t<RequestedKeyType, RequestedValueType, Args...>> &&
+             sizeof...(Args) / 2U > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE)
+constexpr auto hash_map([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedKeyType, RequestedValueType, Args...>,
+                  "cljonic::hash_map: pair count exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+}
+
+template <typename RequestedKeyType = concepts_detail::DeducedHashMapKeyType,
+          typename RequestedValueType = concepts_detail::DeducedHashMapValueType, typename... Args>
+    requires(
+        sizeof...(Args) > 0U && sizeof...(Args) % 2U == 0U &&
+        concepts_detail::HashMapFactoryElementTypes<
+            concepts_detail::hash_map_factory_key_type_t<RequestedKeyType, RequestedValueType, Args...>,
+            concepts_detail::hash_map_factory_value_type_t<RequestedKeyType, RequestedValueType, Args...>> &&
+        sizeof...(Args) / 2U <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+        !concepts_detail::HashMapFactoryPairArguments<
+            concepts_detail::hash_map_factory_key_type_t<RequestedKeyType, RequestedValueType, Args...>,
+            concepts_detail::hash_map_factory_value_type_t<RequestedKeyType, RequestedValueType, Args...>, Args...>)
+constexpr auto hash_map([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedKeyType, RequestedValueType, Args...>,
+                  "cljonic::hash_map: every key and value must safely construct its declared type without "
+                  "throwing.");
+}
+
+/** Creates a bounded Map with explicit capacity, including an empty Map. */
+template <typename KeyType, typename ValueType, std::size_t Capacity, typename... Args>
+    requires concepts_detail::HashMapFactoryCapacityArguments<KeyType, ValueType, Capacity, Args...>
+[[nodiscard]] constexpr auto hash_map(Args&&... args) noexcept -> Map<KeyType, ValueType, Capacity> {
+    return concepts_detail::build_hash_map_factory_result<KeyType, ValueType, Capacity>(
+        Map<KeyType, ValueType, Capacity>{}, std::forward<Args>(args)...);
+}
+
+template <typename KeyType, typename ValueType, std::size_t Capacity, typename... Args>
+    requires(!concepts_detail::HashMapFactoryElementTypes<KeyType, ValueType>)
+constexpr auto hash_map([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<KeyType, ValueType, Args...>,
+                  "cljonic::hash_map: key and value types must satisfy Map element requirements.");
+}
+
+template <typename KeyType, typename ValueType, std::size_t Capacity, typename... Args>
+    requires(concepts_detail::HashMapFactoryElementTypes<KeyType, ValueType> &&
+             Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE)
+constexpr auto hash_map([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<KeyType, ValueType, Args...>,
+                  "cljonic::hash_map: capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+}
+
+template <typename KeyType, typename ValueType, std::size_t Capacity, typename... Args>
+    requires(concepts_detail::HashMapFactoryElementTypes<KeyType, ValueType> &&
+             Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+             (sizeof...(Args) % 2U != 0U || sizeof...(Args) / 2U > Capacity))
+constexpr auto hash_map([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<KeyType, ValueType, Args...>,
+                  "cljonic::hash_map: arguments must be complete key/value pairs and fit within the selected "
+                  "capacity.");
+}
+
+template <typename KeyType, typename ValueType, std::size_t Capacity, typename... Args>
+    requires(concepts_detail::HashMapFactoryElementTypes<KeyType, ValueType> &&
+             Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE && sizeof...(Args) % 2U == 0U &&
+             sizeof...(Args) / 2U <= Capacity &&
+             sizeof...(Args) / 2U <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE && sizeof...(Args) > 0U &&
+             !concepts_detail::HashMapFactoryPairArguments<KeyType, ValueType, Args...>)
+constexpr auto hash_map([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<KeyType, ValueType, Args...>,
+                  "cljonic::hash_map: every key and value must safely construct its declared type without "
+                  "throwing.");
+}
 
 } // namespace cljonic
 
