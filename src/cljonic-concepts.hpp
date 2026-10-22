@@ -577,8 +577,14 @@ concept RangeElement = std::signed_integral<T>;
 namespace concepts_detail {
 
 template <typename Count>
-concept ProducerCount = IntegerIndexType<Count> && std::unsigned_integral<std::remove_cvref_t<Count>> &&
-                        concepts::SafeImplicitConversion<std::size_t, Count>;
+concept ProducerCount =
+    IntegerIndexType<Count> &&
+    (std::numeric_limits<std::remove_cvref_t<Count>>::digits <= std::numeric_limits<std::size_t>::digits);
+
+template <ProducerCount Count>
+[[nodiscard]] constexpr auto normalize_producer_count(Count count) noexcept -> std::size_t {
+    return count <= 0 ? std::size_t{0} : static_cast<std::size_t>(count);
+}
 
 template <typename Dest, typename Source>
 concept MaterializableSource =

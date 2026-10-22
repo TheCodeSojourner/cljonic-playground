@@ -25,13 +25,14 @@ concept RepeatClassArgument =
 
 /** \anchor Repeat
  * A Repeat is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or
- * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(value, count)` yields
+ * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(count, value)` yields
  * exactly \p count values. Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE, by the
  * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Values and finite counts follow
- * the \ref implicit-conversions "safe implicit conversion rules"; counts use unsigned integer types whose ranges fit
- * \c std::size_t.
+ * the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed or unsigned integer types whose
+ * nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero or negative counts produce an
+ * empty finite Repeat.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -47,8 +48,8 @@ concept RepeatClassArgument =
 
  int main() {
    // A finite Repeat yields the value exactly the requested number of times.
-   constexpr auto finite = Repeat{7, 3U};
-   constexpr auto pixels = Repeat{Pixel{4, 9}, 2U};
+   constexpr auto finite = Repeat{3, 7};
+   constexpr auto pixels = Repeat{2, Pixel{4, 9}};
 
    // An uncounted Repeat is an unbounded producer.
    [[maybe_unused]] constexpr auto unbounded = Repeat{7};
@@ -56,7 +57,7 @@ concept RepeatClassArgument =
    // -----------------------------------------------------------------------
    // C++ interoperability: Repeat supports const traversal.
    // -----------------------------------------------------------------------
-   auto runtime_finite = Repeat{-1, 2U};
+   auto runtime_finite = Repeat{2, -1};
 
    constexpr auto finite_sum = [finite] {
      auto sum = 0;
@@ -132,7 +133,9 @@ class Repeat {
     constexpr explicit Repeat(const T& value) noexcept : value_(value), count_(0U), is_finite_(false) {
     }
 
-    constexpr Repeat(const T& value, std::size_t count) noexcept : value_(value), count_(count), is_finite_(true) {
+    template <concepts_detail::ProducerCount Count>
+    constexpr Repeat(Count count, const T& value) noexcept
+        : value_(value), count_(concepts_detail::normalize_producer_count(count)), is_finite_(true) {
     }
 
     template <typename Value>
@@ -141,7 +144,7 @@ class Repeat {
 
     template <typename Value, typename Count>
         requires(!concepts::SafeImplicitConversion<T, Value> || !concepts_detail::ProducerCount<Count>)
-    Repeat(Value value, Count count) = delete;
+    Repeat(Count count, Value value) = delete;
 
     [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
         return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
@@ -164,7 +167,7 @@ class Repeat {
      *  It is the only producer parameter-equality surface; the `equal` free
      *  function instead compares bounded logical observations of the produced
      *  sequences. The unbounded `repeat(value)` form is distinct from the
-     *  finite `repeat(value, count)` forms even when their produced prefixes
+     *  finite `repeat(count, value)` forms even when their produced prefixes
      *  coincide, and a counted form with count zero is distinct from the
      *  unbounded form. O(1), no traversal, no allocation. */
     [[nodiscard]] friend constexpr auto operator==(const Repeat& lhs, const Repeat& rhs) noexcept -> bool
@@ -191,7 +194,8 @@ class Repeat<concepts_detail::RepeatElementDomainViolation> {
         static_assert(concepts_detail::dependent_false<Args...>,
                       "cljonic::Repeat: the repeated value must be storable without throwing. The value must be "
                       "copyable and safe to create, store, and destroy without throwing, and a finite count must be "
-                      "an unsigned integral value representable by std::size_t.");
+                      "a non-boolean, non-character integer type whose nonnegative range fits std::size_t. "
+                      "Use Repeat{value} or Repeat{count, value}.");
     }
 };
 
@@ -205,7 +209,7 @@ Repeat(const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
 
 template <typename T, typename Count>
     requires(!concepts::NothrowCollectionElement<T> || !concepts_detail::ProducerCount<Count>)
-Repeat(const T&, Count) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
+Repeat(Count, const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
 
 template <typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
@@ -215,8 +219,8 @@ template <typename T>
 
 template <typename T, concepts_detail::ProducerCount Count>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
-[[nodiscard]] constexpr auto repeat(T&& value, Count count) noexcept -> Repeat<std::remove_cvref_t<T>> {
-    return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value), count};
+[[nodiscard]] constexpr auto repeat(Count count, T&& value) noexcept -> Repeat<std::remove_cvref_t<T>> {
+    return Repeat<std::remove_cvref_t<T>>{count, std::forward<T>(value)};
 }
 
 // Diagnostic fallback (REQ-DIAG-009): the value argument is outside the closed
@@ -233,12 +237,12 @@ constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::R
 
 template <typename T, typename Count>
     requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>> || !concepts_detail::ProducerCount<Count>)
-constexpr auto repeat([[maybe_unused]] T&& value, [[maybe_unused]] Count count) noexcept
+constexpr auto repeat([[maybe_unused]] Count count, [[maybe_unused]] T&& value) noexcept
     -> concepts_detail::RejectedProducerFactory {
     static_assert(concepts_detail::dependent_false<T>,
                   "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
                   "safe to create, store, and destroy without throwing. The count must be a non-boolean, "
-                  "non-character unsigned integer type whose range fits std::size_t.");
+                  "non-character integer type whose nonnegative range fits std::size_t. Use repeat(count, value).");
     return {};
 }
 

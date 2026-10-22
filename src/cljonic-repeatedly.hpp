@@ -37,8 +37,9 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
  * requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant
  * evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted
  * into an owning destination with `into` when explicit materialization is required. Finite counts follow the \ref
- * implicit-conversions "safe implicit conversion rules": use unsigned integer types whose ranges fit \c std::size_t.
- * Callback types and produced element types remain exact.
+ * implicit-conversions "safe implicit conversion rules". Counts accept signed or unsigned integer types whose
+ * nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero or negative counts produce an
+ * empty finite Repeatedly without invoking the callback. Callback types and produced element types remain exact.
  *
  ~~~~~{.cpp}
  #include "cljonic.hpp"
@@ -49,7 +50,7 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
  int main() {
    // A named function can be used as the constexpr step callback.
    constexpr auto constexpr_sum = [] {
-     constexpr auto values = repeatedly(3U, five);
+     constexpr auto values = repeatedly(3, five);
      auto sum = 0;
      for (const auto value : values) {
        sum += value;
@@ -58,7 +59,7 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
    }();
 
    // Runtime construction also accepts an inline lambda step callback.
-   auto runtime_values = repeatedly(2U, []() noexcept { return 7; });
+   auto runtime_values = repeatedly(2, []() noexcept { return 7; });
 
    // An uncounted Repeatedly is an unbounded producer whose observation is
    // bounded by CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or a destination
@@ -137,7 +138,9 @@ class Repeatedly {
     constexpr explicit Repeatedly(const Step& step) noexcept : step_(step), count_(0U), is_finite_(false) {
     }
 
-    constexpr Repeatedly(const Step& step, std::size_t count) noexcept : step_(step), count_(count), is_finite_(true) {
+    template <concepts_detail::ProducerCount Count>
+    constexpr Repeatedly(const Step& step, Count count) noexcept
+        : step_(step), count_(concepts_detail::normalize_producer_count(count)), is_finite_(true) {
     }
 
     template <typename OtherStep>
@@ -219,7 +222,7 @@ constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_det
                   "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
                   "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
                   "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
-                  "cljonic::repeat(value, count).");
+                  "cljonic::repeat(count, value).");
     return {};
 }
 
@@ -231,8 +234,8 @@ constexpr auto repeatedly([[maybe_unused]] Count count, [[maybe_unused]] Step&& 
                   "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
                   "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
                   "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
-                  "cljonic::repeat(value, count). The count must be a non-boolean, non-character unsigned integer "
-                  "type whose range fits std::size_t.");
+                  "cljonic::repeat(count, value). The count must be a non-boolean, non-character integer "
+                  "type whose nonnegative range fits std::size_t.");
     return {};
 }
 

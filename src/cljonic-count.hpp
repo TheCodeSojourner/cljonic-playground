@@ -22,7 +22,7 @@ namespace cljonic {
    constexpr auto m_const = Map{MapEntry{1, 100}};
    constexpr auto q_const = Queue{9};
    constexpr auto r_const = Range{0, 5};
-   constexpr auto finite_repeat = Repeat{7, 3U};
+   constexpr auto finite_repeat = Repeat{3, 7};
    constexpr auto unbounded_repeat = Repeat{7};
    constexpr auto unbounded_range = Range{0, 0, 0};
    static_assert(count(v_const) == 3);

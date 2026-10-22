@@ -260,7 +260,7 @@ namespace cljonic {
    constexpr auto v = Vector{1, 2, 3};
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
    constexpr auto q = Queue{1, 2, 3};
-   constexpr auto rep = Repeat{1, 3U};
+   constexpr auto rep = Repeat{3, 1};
    constexpr auto m1 = Map{MapEntry{1, 10}, MapEntry{2, 20}};
    constexpr auto m2 = Map{MapEntry{2, 20}, MapEntry{1, 10}};
    constexpr auto s1 = Set{3, 1, 2};
