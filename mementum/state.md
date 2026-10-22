@@ -1,5 +1,42 @@
 ## Current Session State
 
+- last_session_id: 11d7dee5-51d1-4deb-adf8-ce2724a8ca39
+- current_timestamp: 2026-10-22T15:06:44-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human approved removing materialization/`into`/`fits_into` advice from collection and producer Doxygen descriptions and collection source-construction diagnostic messages, starting at requirements and propagating through vocabulary, architecture, specifications, tests, and code.
+2. Updated `REQ-DIAG-010`: targeted source-construction diagnostics still identify the collection and violated rule, may identify a supported single-element form, and do not recommend materialization or mention `into`/`fits_into`.
+3. Updated the `SourceConstructionDiagnostic` vocabulary entry, the S3 source-constructor rejection policy, and `specs/collections/source-construction.allium` with a new invariant that source-construction diagnostics omit materialization advice.
+4. Updated the source-construction tests to trace that invariant and reject materialization/`into`/`fits_into` wording in all collection source-construction fallback diagnostics. Removed that advice from Vector, Map, Set, Queue, and String diagnostics; retained useful single-element guidance where applicable.
+5. Removed materialization advice from Vector and producer type Doxygen descriptions, removed the Range iterator's `into` reference, and clarified example comments. The `into`/`fits_into` operation documentation and behavior remain unchanged.
+6. Regenerated `cljonic.hpp` and refreshed the spec-to-code obligation snapshot.
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. The request changes diagnostic wording only; constructor admission, source construction, `into`, and `fits_into` behavior remain unchanged.
+2. Keep the targeted rejection explanation and supported single-element guidance; do not suggest materialization as a workaround for a rejected constructor source.
+3. Preserve the user's pre-existing rendered `docs/` modifications; validate Doxygen in an isolated temporary copy.
+
+Validation:
+1. `make requirements-structure vocabulary-structure source-construction-compile-fail`: passed; 329 unique requirement clauses, 190 vocabulary terms, and modular/single-header source-construction diagnostics passed.
+2. Allium check for `specs/collections/source-construction.allium` and set analysis for `specs/`: passed with no findings.
+3. `make test`: all 252 tests passed. `make docs-examples`: 33 compiled; deferred `rest` and `seq` skipped.
+4. Isolated `make docs`: passed. `make traceability-spec-to-code`: passed after refreshing the obligation snapshot. `git diff --check`: passed.
+5. An initial requirements-structure check caught missing rationale-source metadata after editing `REQ-DIAG-010`; corrected the attribution and reran the check successfully.
+
+Open questions:
+1. `mementum/knowledge/collection-source-interoperability.md` still describes the old `REQ-DIAG-010` recommendation to direct callers to `into`/`fits_into`; its knowledge-page update was outside the approved layer scope.
+
+Next:
+1. If requested, update the stale source-interoperability knowledge page so it reflects the revised diagnostic policy.
+2. Leave rendered `docs/` modifications and unrelated pre-existing worktree changes untouched; do not stage or commit.
+
+## Previous Session State
+
 - last_session_id: 6759219f-01a1-4c72-9656-99d80ed38c5a
 - current_timestamp: 2026-10-22T13:45:24-06:00
 - recover: 1
