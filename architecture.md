@@ -51,6 +51,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ direct_external_cpp_range_or_view_import(x) → retain(SourceConstruction(x))
   | trace_to(REQ-FN-029A)
 
+λ S5_map_creation_policy(x). user_facing_Map_creation(x) → prefer(lowercase_hash_map_factory(x))
+  | runtime_creation(x) ∧ constant_evaluation_creation(x) → same_factory_surface(x)
+  | preserve(public_Map_type ∧ existing_Map_constructors)
+    ∧ direct_external_cpp_range_or_view_import(x) → retain(SourceConstruction(x))
+  | trace_to(REQ-FN-029D)
+
 λ S5_change_policy(x). public_change(x) → preserve(S5_identity(x))
 
 λ S5_authorized_effect_policy(x). public_operation(x) → require(DeterministicBehavior(x) ∧ ReferentialTransparency(x))
@@ -87,10 +93,10 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | stable_handle_model(x)
 
 λ S4_collection_factory_direction(x). approved_future_factory_names(x) ≡ {
-  Map: hash_map, MapEntry: map_entry, Set: hash_set, Queue: queue, String: string
+  MapEntry: map_entry, Set: hash_set, Queue: queue, String: string
   }
   | trace_to(REQ-FN-029B ∧ REQ-FN-029C) ∧ deferred_non_binding_direction(x)
-    ∧ distinguish_from(active_vector_factory_under(REQ-FN-029A))
+    ∧ distinguish_from(active_vector_factory_under(REQ-FN-029A) ∧ active_hash_map_factory_under(REQ-FN-029D))
   | future_creation_guidance(x) → prefer(lowercase_factory_at_runtime_and_constant_evaluation)
     ∧ use(Clojure_names_where_applicable) ∧ ¬claim(exact_Clojure_API_equivalence)
     ∧ preserve(public_types ∧ existing_supported_constructors)
@@ -99,7 +105,6 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ preserve(safe_conversion ∧ non_throwing_non_allocating_value_construction)
     ∧ ¬require(identical_overloads_across_collection_types)
   | MapEntry(x) → fixed_key_value_pair ∧ ¬spare_capacity_option
-  | Map(x) → require(separate_human_approval_of(key_value_deduction ∧ entry_or_alternating_argument_forms))
   | String(x) → preserve(existing_text_import ∧ byte_validity_contracts)
   | each_future_factory(x) → require(individual_contract_approval_before_behavioral_specification_and_implementation)
     ∧ ¬classify_as(current_implemented_surface)
@@ -418,6 +423,22 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | constexpr ∧ noexcept ∧ non_allocating ∧ independently_owning_result
     ∧ preserve(lvalue_arguments) ∧ permit(move_from_rvalue_arguments)
   | trace_to(REQ-FN-029A) ∧ realize(S5_vector_creation_policy)
+
+λ S2_hash_map_factory_contract(x). hash_map(k1, v1, ...) → construct(owning_Map_by_associating_alternating_key_value_pairs_in_order(x))
+  | hash_map(k1, v1, rest...) → key_type(unqualified_type(k1)) ∧ value_type(unqualified_type(v1)) ∧ capacity(pair_count)
+  | hash_map<K, V>(pairs...) → key_type(K) ∧ value_type(V) ∧ capacity(pair_count) ∧ require(pair_count ≥ 1)
+  | hash_map<K, V, Capacity>(pairs...) → return(Map<K, V, Capacity>)
+    ∧ require(pair_count ≤ Capacity ≤ CollectionMaximumElementCount)
+    ∧ empty_argument_pack(x) → return(empty_Map<K, V, Capacity>)
+  | require(Map_key_and_value_element_requirements(K, V)
+    ∧ ∀ key_or_value_argument: NothrowElementConstruction(declared_type(x), argument)
+    ∧ pair_count ≤ CollectionMaximumElementCount)
+    ∧ reuse(S3_conversion_admission)
+  | odd_argument_count(x) ∨ untyped_or_capacityless_empty_call(x) ∨ invalid_element_or_argument(x) ∨ invalid_capacity(x)
+    → compile_time_rejection(x) ∧ targeted_operation_diagnostic(x)
+  | duplicate_key(x) → later_value_replaces_earlier(x)
+  | constexpr ∧ noexcept ∧ non_allocating ∧ independently_owning_result
+  | trace_to(REQ-FN-029D) ∧ realize(S5_map_creation_policy)
 
 λ S2_associative_contract(x). Associative(collection) → require(assoc(collection, key, value) ∧ can_assoc(collection, key, value))
   | assoc(x) ∧ can_assoc(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
