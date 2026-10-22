@@ -218,6 +218,7 @@ TEST_CASE("Cljonic sources are enclosed as one element, never a source construct
     TRACE_ID("invariant.CollectionSourceConstruction.CljonicSourceIsNotConstructorSource");
     TRACE_ID("invariant.CollectionSourceConstruction.SoleArgumentEnclosureYieldsOneElement");
     TRACE_ID("invariant.CollectionSourceConstruction.CljonicSourceRejectionUsesTargetedDiagnostic");
+    TRACE_ID("invariant.CollectionSourceConstruction.SourceConstructionDiagnosticOmitsMaterializationAdvice");
 
     // EnclosureConstruction (REQ-FN-027A): a sole cljonic argument derives the
     // destination with that argument's type as the element type and a capacity

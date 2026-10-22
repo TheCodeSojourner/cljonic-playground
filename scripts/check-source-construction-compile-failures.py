@@ -4,9 +4,9 @@
 A cljonic collection or producer is NOT a direct source constructor argument:
 only a non-cljonic C++ range/view imports into a collection's source
 constructor. A cljonic value that is not exactly the destination's element type
-must fail to compile (materialization is the role of into, preflighted by
-fits_into). A cljonic value whose type is exactly the element type is admitted
-as one element (pack construction), and a sole argument in a
+must fail to compile with a targeted diagnostic that does not recommend
+materialization. A cljonic value whose type is exactly the element type is
+admitted as one element (pack construction), and a sole argument in a
 class-template-argument-deduction form is enclosed as one element.
 
 Both the rejected and the admitted forms are controlled -- positive cases assert
@@ -25,6 +25,7 @@ import subprocess
 # conversion error. Each case also pins the collection's operation token so a
 # rejection routed through the wrong collection's overload cannot pass.
 REQUIRED_MESSAGE_ANCHOR = "you cannot construct a"
+FORBIDDEN_MESSAGE_FRAGMENTS = ("materializ", "into", "fits_into")
 
 # name -> (probe body, expected diagnostic operation token). Each entry must
 # FAIL to compile: a cljonic collection or producer whose type is not the
@@ -153,6 +154,8 @@ def main() -> int:
                 failures.append(f"{configuration}/{name} (rejected without the targeted diagnostic)")
             elif operation not in output:
                 failures.append(f"{configuration}/{name} (rejection not routed through {operation})")
+            elif any(fragment in output.lower() for fragment in FORBIDDEN_MESSAGE_FRAGMENTS):
+                failures.append(f"{configuration}/{name} (diagnostic contains materialization advice)")
         for name, body in POSITIVE_CASES.items():
             compiled, _ = compile_snippet(compiler, include_dir, header, body)
             if not compiled:
