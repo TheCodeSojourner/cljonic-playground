@@ -1,5 +1,43 @@
 ## Current Session State
 
+- last_session_id: 6a3c9a1a-95a9-4bea-8239-b6884508d8cb
+- current_timestamp: 2026-10-22T16:05:00-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human argued that `map_entry` should exist for consistency with `hash_map`, `hash_set`, etc., wherever users would otherwise write `MapEntry{key, value}`. Approved the full chain with a two-argument-only contract.
+2. Promoted the already-recorded naming from deferred `REQ-FN-029B`/`029C` into active `REQ-FN-029E`; removed `MapEntry` from the deferred factory list and added `map_entry` to the index marker and governed-REQ range.
+3. Added the `MapEntryFactory` vocabulary term, updated the `MapEntry` entry, added S5/S2/S4 architecture contracts and the `map_entry_factory` surface, and created `specs/primitives/map-entry-factory.allium`.
+4. Implemented `map_entry` in `src/cljonic-map-entry.hpp` with deduced and explicit-type forms, `constexpr`/`noexcept`, no capacity dimension, and three mutually exclusive targeted `static_assert` fallbacks (arity, element admission, throwing construction).
+5. Added spec tests, no-heap probe coverage, a `map-entry-factory-compile-fail` Makefile target with `scripts/check-map-entry-factory-compile-failures.py`, Doxygen example/prose, and the mainpage Core Functions entry.
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. Arity is exactly two arguments. No single-argument entry with a defaulted value, no capacity parameter, no spare-capacity form.
+2. The factory mirrors `MapEntry`'s own admission (including no std::variant key exclusion, since `MapEntry` does not exclude variants) and behaves identically to the equivalent constructor.
+3. The factory is justified by public-surface consistency, not new capability; `MapEntry` remains public and brace construction stays supported.
+
+Validation:
+1. `make cljonic` regenerated `cljonic.hpp`; hash stable across repeated regeneration after formatting.
+2. `make map-entry-factory-compile-fail`: passed for modular and single-header configurations, including all three targeted diagnostics.
+3. `make test`: all 254 tests passed. `make docs-examples`: 33 compiled; deferred `rest` and `seq` skipped.
+4. `make requirements-structure vocabulary-structure` passed (330 clauses, 191 terms); `make diagnostic-coverage diagnostic-message-labels audit-scripts` passed.
+5. `make traceability-spec-to-code-update-snapshot` and `make traceability-spec-to-code` passed; `make trace-id-check SPEC=specs/primitives/map-entry-factory.allium` reported 18 obligations traced.
+6. `make no-heap`, `make format`, `make lint LINT_FILE=src/cljonic-map-entry.hpp`, `make complexity-cli COMPLEXITY_PATH=src/cljonic-map-entry.hpp`, `make core-cheatsheet-format`, and `git diff --check` passed.
+
+Open questions:
+1. `hash_set`, `queue`, and `string` factories remain deferred under `REQ-FN-029B`/`029C` and still need individual contracts.
+2. The `Map` vocabulary and Doxygen prose still show `MapEntry{...}` in examples; not changed, since entry construction remains supported and the task covered the factory surface.
+
+Next:
+1. If requested, promote the next deferred factory in the required layer order.
+2. Leave rendered `docs/` modifications untouched; do not stage or commit them.
+
+## Previous Session State
+
 - last_session_id: 11d7dee5-51d1-4deb-adf8-ce2724a8ca39
 - current_timestamp: 2026-10-22T15:06:44-06:00
 - recover: 1
