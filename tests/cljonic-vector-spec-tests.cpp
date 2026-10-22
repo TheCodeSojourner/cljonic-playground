@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <utility>
+
 #include "cljonic-test-api.hpp"
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
@@ -298,4 +300,102 @@ TEST_CASE("Vector stack operations observe and remove the last element immutably
     CHECK(runtime_function_popped == runtime_member_popped);
     CHECK(runtime_values.count() == 2U);
     CHECK(runtime_values.peek() == 62);
+}
+
+TEST_CASE("Vector factory creates typed bounded values from its arguments", "[vector][factory]") {
+    using cljonic::Vector;
+    using cljonic::vector;
+
+    TRACE_ID("entity-fields.VectorFactory");
+    TRACE_ID("invariant.VectorFactory.SupportsTypedEmptyFactory");
+    TRACE_ID("invariant.VectorFactory.TypedEmptyFactoryHasZeroCapacity");
+    TRACE_ID("invariant.VectorFactory.SupportsDeducedVariadicFactory");
+    TRACE_ID("invariant.VectorFactory.DeducedElementTypeIsUnqualifiedFirstArgument");
+    TRACE_ID("invariant.VectorFactory.SupportsExplicitElementTypeVariadicFactory");
+    TRACE_ID("invariant.VectorFactory.ExplicitElementTypeDeterminesResultElementType");
+    TRACE_ID("invariant.VectorFactory.VariadicCapacityEqualsArgumentCount");
+    TRACE_ID("invariant.VectorFactory.VariadicFormsRequireAtLeastOneArgument");
+    TRACE_ID("invariant.VectorFactory.SupportsExplicitCapacityFactory");
+    TRACE_ID("invariant.VectorFactory.ExplicitCapacityDeterminesResultCapacity");
+    TRACE_ID("invariant.VectorFactory.ExplicitCapacityFactorySupportsEmptyArguments");
+    TRACE_ID("invariant.VectorFactory.ExplicitCapacityIsAtLeastArgumentCount");
+    TRACE_ID("invariant.VectorFactory.ExplicitCapacityIsBoundedByConfiguredMaximum");
+    TRACE_ID("invariant.VectorFactory.InvalidExplicitCapacityIsCompileTimeRejected");
+    TRACE_ID("invariant.VectorFactory.ElementTypeSatisfiesNothrowCollectionElement");
+    TRACE_ID("invariant.VectorFactory.EveryArgumentSatisfiesNothrowElementConstruction");
+    TRACE_ID("invariant.VectorFactory.ArgumentCountIsBoundedByConfiguredMaximum");
+    TRACE_ID("invariant.VectorFactory.OversizedArgumentPackIsCompileTimeRejected");
+    TRACE_ID("invariant.VectorFactory.UntypedEmptyCallIsRejected");
+    TRACE_ID("invariant.VectorFactory.ReturnsIndependentlyOwningVector");
+    TRACE_ID("invariant.VectorFactory.PreservesLvalueArguments");
+    TRACE_ID("invariant.VectorFactory.PermitsMovingFromRvalueArguments");
+    TRACE_ID("invariant.VectorFactory.ConstexprNoexceptNonallocating");
+    TRACE_ID("invariant.VectorFactory.NoRtti");
+    TRACE_ID("invariant.VectorFactory.NoExceptions");
+    TRACE_ID("invariant.VectorFactory.ReferentialTransparency");
+
+    constexpr auto typed_empty = vector<int>();
+    constexpr auto reserved_empty = vector<int, 4>();
+    constexpr auto deduced = vector(1, short{2}, 3);
+    constexpr auto explicitly_typed = vector<long>(short{4}, 5);
+    constexpr auto explicitly_sized = vector<int, 5>(short{6}, 7);
+    constexpr auto const_lvalue = 6;
+    constexpr auto deduced_from_const_lvalue = vector(const_lvalue);
+
+    STATIC_REQUIRE((std::same_as<std::remove_cvref_t<decltype(typed_empty)>, Vector<int, 0>>));
+    STATIC_REQUIRE((std::same_as<std::remove_cvref_t<decltype(reserved_empty)>, Vector<int, 4>>));
+    STATIC_REQUIRE((std::same_as<std::remove_cvref_t<decltype(deduced)>, Vector<int, 3>>));
+    STATIC_REQUIRE((std::same_as<std::remove_cvref_t<decltype(explicitly_typed)>, Vector<long, 2>>));
+    STATIC_REQUIRE((std::same_as<std::remove_cvref_t<decltype(explicitly_sized)>, Vector<int, 5>>));
+    STATIC_REQUIRE((std::same_as<std::remove_cvref_t<decltype(deduced_from_const_lvalue)>, Vector<int, 1>>));
+    STATIC_REQUIRE(typed_empty.count() == 0U);
+    STATIC_REQUIRE(typed_empty.capacity() == 0U);
+    STATIC_REQUIRE(reserved_empty.count() == 0U);
+    STATIC_REQUIRE(reserved_empty.capacity() == 4U);
+    STATIC_REQUIRE(deduced.count() == 3U);
+    STATIC_REQUIRE(deduced.capacity() == 3U);
+    STATIC_REQUIRE(deduced(0U) == 1);
+    STATIC_REQUIRE(deduced(1U) == 2);
+    STATIC_REQUIRE(deduced(2U) == 3);
+    STATIC_REQUIRE(explicitly_typed(0U) == 4L);
+    STATIC_REQUIRE(explicitly_typed(1U) == 5L);
+    STATIC_REQUIRE(explicitly_sized.count() == 2U);
+    STATIC_REQUIRE(explicitly_sized.capacity() == 5U);
+    STATIC_REQUIRE(explicitly_sized(0U) == 6);
+    STATIC_REQUIRE(explicitly_sized(1U) == 7);
+    STATIC_REQUIRE(noexcept(vector<int>()));
+    STATIC_REQUIRE(noexcept(vector(1, short{2})));
+    STATIC_REQUIRE(noexcept(vector<long>(short{4}, 5)));
+    STATIC_REQUIRE(noexcept(vector<int, 4>()));
+    STATIC_REQUIRE(noexcept(vector<int, 5>(short{6}, 7)));
+
+    struct MoveProbe {
+        int value = 0;
+        bool* move_observed = nullptr;
+
+        constexpr MoveProbe() noexcept = default;
+        constexpr explicit MoveProbe(int initial_value, bool* observer = nullptr) noexcept
+            : value(initial_value), move_observed(observer) {
+        }
+        constexpr MoveProbe(const MoveProbe&) noexcept = default;
+        constexpr MoveProbe(MoveProbe&& other) noexcept : value(other.value) {
+            if (other.move_observed != nullptr) {
+                *other.move_observed = true;
+            }
+        }
+        constexpr auto operator=(const MoveProbe&) noexcept -> MoveProbe& = default;
+    };
+
+    MoveProbe lvalue{6};
+    const auto from_lvalue = vector(lvalue);
+    CHECK(lvalue.value == 6);
+    CHECK(from_lvalue(0U).value == 6);
+    lvalue.value = 8;
+    CHECK(from_lvalue(0U).value == 6);
+
+    bool move_observed = false;
+    MoveProbe rvalue{7, &move_observed};
+    const auto from_rvalue = vector(std::move(rvalue));
+    CHECK(move_observed);
+    CHECK(from_rvalue(0U).value == 7);
 }
