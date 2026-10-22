@@ -94,9 +94,11 @@ element-pack creation.
 Primary admission is expressed through named constraints. A rejected cljonic
 collection/producer argument is caught by an additional constructor overload
 constrained on the negation of the source-admission rule, emitting one targeted
-`static_assert` (`SourceConstructionDiagnostic`) that names the collection, the
-violated rule, and both alternatives: `into` for materialization (preflighted by
-`fits_into`), or the enclosure form for a single element. The fallback exists to
+`static_assert` (`SourceConstructionDiagnostic`) that names the collection and
+the violated rule. Per the revised `REQ-DIAG-010` (session 11d7dee5), the
+diagnostic must not recommend materialization or mention `into`/`fits_into`
+as a workaround; it may identify a supported single-element (enclosure) form
+where applicable, but never suggests materializing the rejected source. The fallback exists to
 explain rejection, not to accept it — it never produces a value and is never a
 supported call target. The harness asserts the message anchor "you cannot
 construct a" (whitespace-normalized), so wording drift fails the gate.
