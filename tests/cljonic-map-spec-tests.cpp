@@ -184,3 +184,75 @@ TEST_CASE("Map construction and basic lookup", "[map]") {
     REQUIRE(rm1(missing_key) == 0);
     REQUIRE(rm1(missing_key, -7) == -7);
 }
+
+TEST_CASE("hash_map factory builds bounded maps from alternating key-value arguments", "[map][factory]") {
+    using cljonic::hash_map;
+    using cljonic::Map;
+
+    TRACE_ID("entity-fields.HashMapFactory");
+    TRACE_ID("invariant.HashMapFactory.SupportsDeducedAlternatingPairFactory");
+    TRACE_ID("invariant.HashMapFactory.DeducedKeyTypeIsUnqualifiedFirstKey");
+    TRACE_ID("invariant.HashMapFactory.DeducedValueTypeIsUnqualifiedFirstValue");
+    TRACE_ID("invariant.HashMapFactory.SupportsExplicitKeyValueTypeFactory");
+    TRACE_ID("invariant.HashMapFactory.SupportsExplicitCapacityFactory");
+    TRACE_ID("invariant.HashMapFactory.DeducedCapacityEqualsPairCount");
+    TRACE_ID("invariant.HashMapFactory.ExplicitCapacityDeterminesResultCapacity");
+    TRACE_ID("invariant.HashMapFactory.ExplicitCapacityFactorySupportsEmptyArguments");
+    TRACE_ID("invariant.HashMapFactory.ExplicitCapacityEmptyFactorySupportsZeroCapacity");
+    TRACE_ID("invariant.HashMapFactory.ExplicitCapacityIsAtLeastPairCount");
+    TRACE_ID("invariant.HashMapFactory.ExplicitCapacityIsBoundedByConfiguredMaximum");
+    TRACE_ID("invariant.HashMapFactory.EmptyFactoryRequiresExplicitKeyValueTypesAndCapacity");
+    TRACE_ID("invariant.HashMapFactory.EmptyFactoryWithoutExplicitCapacityIsCompileTimeRejected");
+    TRACE_ID("invariant.HashMapFactory.NonemptyFormsRequireCompleteKeyValuePairs");
+    TRACE_ID("invariant.HashMapFactory.OddArgumentCountIsCompileTimeRejected");
+    TRACE_ID("invariant.HashMapFactory.PairCountIsBoundedByConfiguredMaximum");
+    TRACE_ID("invariant.HashMapFactory.OversizedPairCountIsCompileTimeRejected");
+    TRACE_ID("invariant.HashMapFactory.EveryKeyAndValueSatisfiesMapElementAdmission");
+    TRACE_ID("invariant.HashMapFactory.EveryPairConstructsSafelyWithoutThrowing");
+    TRACE_ID("invariant.HashMapFactory.PairsAreAssociatedInArgumentOrder");
+    TRACE_ID("invariant.HashMapFactory.LaterDuplicateKeyReplacesEarlierValue");
+    TRACE_ID("invariant.HashMapFactory.PreservesPublicMapTypeAndExistingConstructors");
+    TRACE_ID("invariant.HashMapFactory.ReturnsIndependentlyOwningMap");
+    TRACE_ID("invariant.HashMapFactory.ConstexprNoexceptNonallocating");
+    TRACE_ID("invariant.HashMapFactory.NoRtti");
+    TRACE_ID("invariant.HashMapFactory.NoExceptions");
+    TRACE_ID("invariant.HashMapFactory.ReferentialTransparency");
+
+    constexpr auto deduced = hash_map(1, 10L, short{2}, 20);
+    constexpr auto explicit_types = hash_map<long, long>(short{1}, short{10}, 2, 20);
+    constexpr auto explicit_capacity = hash_map<int, int, 4>(1, 10, 2, 20);
+    constexpr auto empty = hash_map<int, int, 0>();
+    constexpr auto reserved_empty = hash_map<int, int, 4>();
+    constexpr auto duplicate = hash_map(1, 10, 1, 20);
+
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(deduced)>, Map<int, long, 2>>);
+    STATIC_REQUIRE(deduced.capacity() == 2U);
+    STATIC_REQUIRE(deduced.count() == 2U);
+    STATIC_REQUIRE(deduced(1) == 10L);
+    STATIC_REQUIRE(deduced(2) == 20L);
+    STATIC_REQUIRE(std::same_as<std::remove_cvref_t<decltype(explicit_types)>, Map<long, long, 2>>);
+    STATIC_REQUIRE(explicit_types(1L) == 10L);
+    STATIC_REQUIRE(explicit_types(2L) == 20L);
+    STATIC_REQUIRE(explicit_capacity.capacity() == 4U);
+    STATIC_REQUIRE(explicit_capacity.count() == 2U);
+    STATIC_REQUIRE(empty.capacity() == 0U);
+    STATIC_REQUIRE(empty.count() == 0U);
+    STATIC_REQUIRE(reserved_empty.capacity() == 4U);
+    STATIC_REQUIRE(reserved_empty.count() == 0U);
+    STATIC_REQUIRE(duplicate.capacity() == 2U);
+    STATIC_REQUIRE(duplicate.count() == 1U);
+    STATIC_REQUIRE(duplicate(1) == 20);
+    STATIC_REQUIRE(noexcept(hash_map(1, 10)));
+
+    volatile int runtime_key_raw = 7;
+    volatile short runtime_value_raw = 70;
+    const int runtime_key = runtime_key_raw;
+    const short runtime_value = runtime_value_raw;
+    const auto runtime = hash_map(runtime_key, runtime_value, 8, short{80});
+    REQUIRE(runtime.capacity() == 2U);
+    REQUIRE(runtime.count() == 2U);
+    REQUIRE(runtime(runtime_key) == 70);
+    REQUIRE(runtime(8) == 80);
+    REQUIRE(deduced(2) == 20L);
+    REQUIRE(duplicate(1) == 20);
+}
