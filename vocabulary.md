@@ -426,9 +426,9 @@ producer building blocks used across all higher-order algorithms.
 ### MapEntry
 - **Definition:** The bounded owning key-value pair representation used when a map association is explicitly constructed or exposed as an entry value, such as during map traversal. Its key and value are named fields; `first` returns the key, and typed `key` and `val` free functions remain planned user-facing accessors. A Map lookup returns its mapped value `V`, not a `MapEntry<K, V>`. Any future fixed two-element sequence behavior remains deferred until an indexed result representation is approved.
 - **Deprecated Synonyms:** map entry, key-value entry
-- **Related:** Map, Lookup, Seqable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue, First
+- **Related:** Map, Lookup, Seqable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue, First, MapEntryFactory
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A map-entry result owns its key and value rather than borrowing hidden map storage.
+- **Examples:** A map-entry result owns its key and value rather than borrowing hidden map storage. Use the lowercase `map_entry(key, value)` factory as the idiomatic creation surface; `MapEntry{key, value}` remains supported.
 
 
 ### GeneralEquality
@@ -635,6 +635,14 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** Map, MapEntry, Assoc, SourceConstruction, NothrowElementConstruction, CollectionMaximumElementCount, VectorFactory
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `hash_map(1, 10, 2, 20)` creates a `Map<int, int, 2>`; `hash_map(1, 10, 1, 20)` maps `1` to `20`; `hash_map<int, int, 4>()` creates an empty `Map<int, int, 4>`.
+
+
+### MapEntryFactory
+- **Definition:** The lowercase `map_entry` free-function family that is the idiomatic way to create a `MapEntry` at runtime or compile time from exactly one key and one value. `map_entry(key, value)` deduces the key and value types from the unqualified argument types; `map_entry<K, V>(key, value)` names the key and value types. It constructs a fixed key/value pair, so it has no capacity parameter and no spare-capacity form; a call with arity other than two is rejected at compile time. Every key and value constructs its declared type safely without throwing, and the factory never allocates. It duplicates no collection behavior: the result is exactly the value the equivalent `MapEntry` constructor produces.
+- **Deprecated Synonyms:** map entry maker, make_map_entry
+- **Related:** MapEntry, Map, HashMapFactory, VectorFactory, NothrowElementConstruction
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `map_entry(1, 10)` creates a `MapEntry<int, int>`; `map_entry<long, long>(1, 10)` creates a `MapEntry<long, long>`.
 
 
 ### Set

@@ -1,0 +1,93 @@
+-- allium: 3
+-- REQ-FN-029E: `map_entry` is the idiomatic MapEntry factory. Its single
+-- key/value pair is fixed, so the factory has no capacity dimension.
+
+entity MapEntryFactory {
+    supports_deduced_key_value_factory: Boolean
+    deduced_key_type_is_unqualified_key: Boolean
+    deduced_value_type_is_unqualified_value: Boolean
+    supports_explicit_key_value_type_factory: Boolean
+    arity_is_exactly_two: Boolean
+    other_arity_is_compile_time_rejected: Boolean
+    has_no_capacity_parameter: Boolean
+    has_no_spare_capacity_form: Boolean
+    every_key_and_value_satisfies_map_entry_element_admission: Boolean
+    key_and_value_construct_safely_without_throwing: Boolean
+    preserves_public_map_entry_type_and_existing_constructors: Boolean
+    result_matches_equivalent_map_entry_constructor: Boolean
+    returns_value_semantic_pair: Boolean
+    constexpr_noexcept_nonallocating: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    referential_transparency: Boolean
+
+    invariant SupportsDeducedKeyValueFactory {
+        this.supports_deduced_key_value_factory = true
+    }
+
+    invariant DeducedKeyTypeIsUnqualifiedKey {
+        this.deduced_key_type_is_unqualified_key = true
+    }
+
+    invariant DeducedValueTypeIsUnqualifiedValue {
+        this.deduced_value_type_is_unqualified_value = true
+    }
+
+    invariant SupportsExplicitKeyValueTypeFactory {
+        this.supports_explicit_key_value_type_factory = true
+    }
+
+    invariant ArityIsExactlyTwo {
+        this.arity_is_exactly_two = true
+    }
+
+    invariant OtherArityIsCompileTimeRejected {
+        this.other_arity_is_compile_time_rejected = true
+    }
+
+    invariant HasNoCapacityParameter {
+        this.has_no_capacity_parameter = true
+    }
+
+    invariant HasNoSpareCapacityForm {
+        this.has_no_spare_capacity_form = true
+    }
+
+    invariant EveryKeyAndValueSatisfiesMapEntryElementAdmission {
+        this.every_key_and_value_satisfies_map_entry_element_admission = true
+    }
+
+    invariant KeyAndValueConstructSafelyWithoutThrowing {
+        this.key_and_value_construct_safely_without_throwing = true
+    }
+
+    invariant PreservesPublicMapEntryTypeAndExistingConstructors {
+        this.preserves_public_map_entry_type_and_existing_constructors = true
+    }
+
+    invariant ResultMatchesEquivalentMapEntryConstructor {
+        this.result_matches_equivalent_map_entry_constructor = true
+    }
+
+    invariant ReturnsValueSemanticPair {
+        this.returns_value_semantic_pair = true
+    }
+
+    invariant ConstexprNoexceptNonallocating {
+        this.constexpr_noexcept_nonallocating = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+actor MapEntryFactoryOperator { identified_by: MapEntryFactory }

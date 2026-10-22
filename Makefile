@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail ctad-compile-fail vector-factory-compile-fail hash-map-factory-compile-fail header-guards diagnostic-coverage diagnostic-message-labels requirements-structure vocabulary-structure audit-scripts trace-id-check _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail ctad-compile-fail vector-factory-compile-fail hash-map-factory-compile-fail map-entry-factory-compile-fail header-guards diagnostic-coverage diagnostic-message-labels requirements-structure vocabulary-structure audit-scripts trace-id-check _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -63,6 +63,7 @@ help:
 	@printf '%-12s %s\n' 'producer-compile-fail' 'Verify producer factory rejections use targeted RejectionDiagnostic messages'
 	@printf '%-12s %s\n' 'vector-factory-compile-fail' 'Verify vector factory admission, argument bounds, and targeted rejection diagnostics'
 	@printf '%-12s %s\n' 'hash-map-factory-compile-fail' 'Verify hash_map factory admission, capacity bounds, and targeted rejection diagnostics'
+	@printf '%-12s %s\n' 'map-entry-factory-compile-fail' 'Verify map_entry factory arity, element admission, and targeted rejection diagnostics'
 	@printf '%-12s %s\n' 'ctad-compile-fail' 'Verify out-of-domain Range deduction fails with one labeled REQ-DIAG-012 message'
 	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and modular/generated parallel test run'
 	@printf '%-12s %s\n' 'traceability-category-report' 'Non-blocking obligation-family diagnostics from snapshot vs test TRACE_ID coverage'
@@ -196,6 +197,9 @@ vector-factory-compile-fail: cljonic scripts/check-vector-factory-compile-failur
 
 hash-map-factory-compile-fail: cljonic scripts/check-hash-map-factory-compile-failures.py
 	@python3 scripts/check-hash-map-factory-compile-failures.py
+
+map-entry-factory-compile-fail: cljonic scripts/check-map-entry-factory-compile-failures.py
+	@python3 scripts/check-map-entry-factory-compile-failures.py
 
 ctad-compile-fail: cljonic scripts/check-ctad-diagnostics.py
 	@python3 scripts/check-ctad-diagnostics.py

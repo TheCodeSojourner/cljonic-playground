@@ -116,8 +116,8 @@
  * - \ref Core_Juxt "Juxt"
  * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy",
  * \ref Core_LE "LE", \ref Core_Lowercase "Lowercase", \ref Core_LT "LT"
- * - \ref Core_Map "Map", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy", \ref Core_Min "Min", \ref Core_MinBy "MinBy",
- * \ref Core_Mod "Mod", \ref Core_Mul "Mul"
+ * - \ref Core_Map "Map", \ref MapEntryFactory "map_entry", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy",
+ * \ref Core_Min "Min", \ref Core_MinBy "MinBy", \ref Core_Mod "Mod", \ref Core_Mul "Mul"
  * - \ref Core_NE "NE", \ref Next "next", \ref NotEmpty "not_empty", \ref NotEqual "not_equal",
  * \ref Core_NotAny "NotAny", \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
  * - \ref Core_Ord "Ord"

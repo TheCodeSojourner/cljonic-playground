@@ -169,10 +169,10 @@ This module specifies specialized domain conveniences built on top of lower modu
 
 ## Collection Factory Family (Deferred, Non-Binding)
 
-The following clauses record approved future API direction, not currently available overloads. `vector` remains active under `REQ-FN-029A` and `hash_map` under `REQ-FN-029D`; the other factories require individually approved behavioral specifications before implementation.
+The following clauses record approved future API direction, not currently available overloads. `vector` remains active under `REQ-FN-029A`, `hash_map` under `REQ-FN-029D`, and `map_entry` under `REQ-FN-029E`; the other factories require individually approved behavioral specifications before implementation.
 
 λ REQ-FN-029B(x).
-  ∀ planned collection factory naming beyond the active `vector` and `hash_map` factories: `MapEntry` → `map_entry`, `Set` → `hash_set`, `Queue` → `queue`, and `String` → `string`
+  ∀ planned collection factory naming beyond the active `vector`, `hash_map`, and `map_entry` factories: `Set` → `hash_set`, `Queue` → `queue`, and `String` → `string`
   ∧ preferred: lowercase factories are the idiomatic creation surface at runtime and compile time, using Clojure names where applicable rather than claiming exact Clojure equivalence
   ∧ ∀ factory introduction: preserves the public type and its existing supported constructors
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
@@ -180,7 +180,6 @@ The following clauses record approved future API direction, not currently availa
 λ REQ-FN-029C(x).
   ∀ planned collection factory contract: follows the `vector` construction principles where meaningful — inferred types, explicit types, explicit capacity, typed empty construction, safe conversions, and non-throwing, non-allocating value construction
   ∧ ∀ factory: preserves its collection's semantics rather than requiring identical overloads across types
-  ∧ ∀ `map_entry`: constructs a fixed key/value pair ∧ ¬∃ spare-capacity option
   ∧ ∀ `string`: preserves the existing text-import and byte-validity contracts
   ∧ ∀ planned factory: concrete overloads and boundaries require individual contract approval before behavioral specification and implementation
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
@@ -196,6 +195,19 @@ The following clauses record approved future API direction, not currently availa
   ∧ ∀ `K` and `V`: satisfy the Map key and value element requirements ∧ ∀ key and value argument: satisfies `NothrowElementConstruction` for its declared type under `REQ-CONV-001`
   ∧ ∀ pairs: associated in argument order ∧ a later duplicate key replaces the earlier value
   ∧ ∀ `hash_map`: `constexpr` ∧ `noexcept` ∧ non-allocating
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
+
+## MapEntry Factory
+
+λ REQ-FN-029E(x).
+  ∀ user-facing MapEntry creation guidance: prefers the lowercase `map_entry` factory at runtime and compile time ∧ the public `MapEntry<Key, Value>` type and its existing constructors remain supported
+  ∧ ∀ `map_entry(key, value)` without explicit types: returns `MapEntry<K, V>` where `K` and `V` are the unqualified types of the key and value arguments
+  ∧ ∀ `map_entry<K, V>(key, value)` with explicit key and value types: returns `MapEntry<K, V>`
+  ∧ ∀ arity other than exactly two arguments: rejected at compile time
+  ∧ ∀ `K` and `V`: satisfy the MapEntry key and value element requirements ∧ ∀ key and value argument: satisfies `NothrowElementConstruction` for its declared type under `REQ-CONV-001`
+  ∧ ∀ rejected call: one targeted `static_assert` names `map_entry` and the violated rule (REQ-DIAG-002)
+  ∧ ∀ `map_entry`: constructs a fixed key/value pair ∧ ¬∃ spare-capacity option ∧ ¬∃ capacity parameter
+  ∧ ∀ `map_entry`: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ value-semantic ∧ behaves identically to the equivalent `MapEntry` constructor
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
 
 ## User Struct & Scoped Keyword Enum Invariants
@@ -262,4 +274,4 @@ The following clauses record approved future API direction, not currently availa
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Relational algebra functions (`index`, `project`, `rename`, `join`), string/regex functions, `fits_print`/`print_to`, `Atom<T>`, and the test suite (`REQ-TEST-*`).
-- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`029D`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
+- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`029E`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
