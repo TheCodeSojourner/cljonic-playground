@@ -1,5 +1,45 @@
 ## Current Session State
 
+- last_session_id: 34e9a55d-aba9-4c23-98b5-c15a95e261ea
+- current_timestamp: 2026-10-22T09:31:07-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Discussed extending `next` to producers, then postponed that work. Human requested `next-producers.md` as a restart prompt. It records producer-owned next/tail implementation as the recommended direction, Repeat as the first slice, and unresolved observation-cap and callback-timing policies; none are approved producer-tail requirements.
+2. Human identified Repeat's counted argument-order mismatch with Clojure and approved correcting both the free function and constructor to count-first. Proceeded through separate human approval boundaries for requirements, vocabulary, architecture, specification, tests, and implementation.
+3. Implemented `repeat(count, value)`, `Repeat<T>{count, value}`, and deduced `Repeat{count, value}`. Updated deleted admission overload, CTAD diagnostic guide, factory fallback, source examples, Repeatedly's diagnostic guidance, affected ordinary/no-heap tests and compile-fail scripts, public amalgamation, and traceability snapshot.
+4. Human then requested plain integer count literals in Doxygen examples and approved extending Repeat and Repeatedly count admission to signed integers, with nonpositive counts producing empty finite values. Propagated through separately approved requirements, vocabulary, architecture, specifications, tests, and implementation. Shared ProducerCount now checks nonnegative type-range representability; normalize_producer_count checks nonpositive values before conversion. Both counted constructors call that helper, with factory and CTAD integration preserved. Updated four source examples and the restart prompt.
+5. Human invoked `/gybis-fini`, explicitly excluding next-producers.md from edits, deletion, staging, and commits. At closeout, outside activity had committed product changes through 935859b and rendered documentation in 7106f84; the index was empty and only this state file plus the untracked restart prompt remained.
+
+Decisions:
+1. Count-first is the only counted Repeat argument order; no compatibility overload or order inference. Counts now admit signed and unsigned integral types whose nonnegative range fits size_t, excluding Boolean and character types. Nonpositive counts normalize to zero before unsigned conversion. This is a producer-count semantic exception, not a relaxation of general SafeImplicitConversion. Element deduction comes from the second argument. One-argument unbounded and default finite-empty forms are unchanged.
+2. Numeric calls always mean count then value; old calls with both arguments otherwise valid cannot reliably be diagnosed as legacy calls. Signed-count admission makes repeat(7, 3U) a valid seven-element Repeat<unsigned int>, so legacy rejection cases now use distinguishable nonnumeric count arguments.
+3. Producer support for `next` remains postponed and unimplemented. Restart prompt examples have been migrated to count-first.
+4. No separate memory or knowledge page is needed: approved requirements and specifications encode the count policy; this state records the migration and validation caveat. Existing example-style guidance remains applicable.
+
+Validation:
+1. Full modular and single-header builds passed; CTest passed all 244 tests. Focused Repeat tests passed 79 assertions in two cases after first confirming the new tests failed against both old header configurations.
+2. `make no-heap` passed source and allocator-symbol scans and executed both probe binaries. Repeat's probe exercises factory and constructor with runtime-derived inputs.
+3. Producer, CTAD, implicit-conversion (142 cases), equal, not-equal, source-construction, and Variant compile-fail suites passed.
+4. All 40 Allium files passed check/analyse without findings after the spec change. Repeat has 33 planned obligations, with all trace IDs present; four obligations were added. Updated snapshot and strict spec-to-code traceability passed.
+5. Requirements/vocabulary structure, audit-script self-tests, diagnostic coverage/message-label checks, complexity, cheatsheet format, scoped clang-format, and diff whitespace checks passed.
+6. Documentation extractor compiled all 33 public examples, skipping only deferred rest/seq. Exact extracted Repeat, Count, and Equal programs were linked with C++23 and strict warnings, then executed successfully.
+7. After signed-count implementation, focused Repeat/Repeatedly/conversion tests passed 352 assertions across ten cases; full modular and single-header builds and all 248 CTest entries passed. Updated no-heap probes, producer and CTAD compile-fail checks, 146 implicit-conversion rejection cases, diagnostics, document structure, complexity, traceability, formatting, and whitespace checks passed.
+8. All 33 examples freshly compiled after removing count suffixes; exact extracted Repeat, Repeatedly, Count, and Equal examples linked with C++23 strict warnings and executed successfully. Spec check/analyse over all 40 files had no findings; revised obligations have matching trace IDs and snapshot.
+9. Focused clang-tidy invocation on three test translation units failed with warnings-as-errors, including Catch2 dependency diagnostics and existing redundant lambda parameter lists. No clean clang-tidy result or full strict validation pass is claimed.
+
+Open questions:
+1. No unresolved decision for the Repeat count-first correction. Producer-tail design questions remain in next-producers.md.
+
+Next:
+1. Finalization commits only mementum/state.md. Product changes and rendered documentation are already committed by outside activity; no product staging, commits, pushes, or documentation regeneration are part of this closeout.
+2. Leave next-producers.md untouched and untracked per explicit human instruction. Do not stage, commit, delete, or update it during finalization.
+3. Do not resume producer support for next without a new human command; use the restart prompt when requested. Producer-owned next/tail design, Repeat-first scope, observation-cap policy, and callback timing remain discussion proposals rather than approved extension contracts.
+4. Preserve the clang-tidy caveat: focused static analysis failed and a full strict gate was not run. Rendered documentation was not browser-verified by the assistant.
+
+## Previous Session State
+
 - last_session_id: dd30114d-ca34-4e0e-bc85-c0802f4e0775
 - current_timestamp: 2026-10-21T15:48:18-06:00
 - recover: 1
