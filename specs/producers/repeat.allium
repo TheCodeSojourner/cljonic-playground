@@ -1,4 +1,9 @@
 -- allium: 3
+-- REQ-FN-013B: repeat(count, value), Repeat<T>{count, value}, and
+-- Repeat{count, value} use count-first ordering; repeat(value) is unchanged.
+-- Count admission remains governed by REQ-CONV-002E.
+-- Counted results use the normalized count: nonpositive counts produce a finite
+-- empty result, while positive counts retain their exact value.
 
 entity Repeat {
     supports_header_only_distribution: Boolean
@@ -12,7 +17,13 @@ entity Repeat {
     referential_transparency: Boolean
     uncounted_form_is_unbounded: Boolean
     counted_form_is_finite: Boolean
+    counted_factory_uses_count_then_value: Boolean
+    counted_constructor_uses_count_then_value: Boolean
+    counted_deduction_uses_second_argument_value_type: Boolean
+    counted_forms_exclude_value_first_overloads_and_order_inference: Boolean
     zero_count_produces_empty_result: Boolean
+    signed_count_factory_constructor_and_deduction_are_supported: Boolean
+    negative_count_produces_empty_finite_result: Boolean
     exposes_count_and_is_finite: Boolean
     counted_form_uses_runtime_count_for_materialization: Boolean
     counted_form_count_is_exact: Boolean
@@ -73,8 +84,32 @@ entity Repeat {
         this.counted_form_is_finite = true
     }
 
+    invariant CountedFactoryUsesCountThenValue {
+        this.counted_factory_uses_count_then_value = true
+    }
+
+    invariant CountedConstructorUsesCountThenValue {
+        this.counted_constructor_uses_count_then_value = true
+    }
+
+    invariant CountedDeductionUsesSecondArgumentValueType {
+        this.counted_deduction_uses_second_argument_value_type = true
+    }
+
+    invariant CountedFormsExcludeValueFirstOverloadsAndOrderInference {
+        this.counted_forms_exclude_value_first_overloads_and_order_inference = true
+    }
+
     invariant ZeroCountProducesEmptyResult {
         this.zero_count_produces_empty_result = true
+    }
+
+    invariant SignedCountFactoryConstructorAndDeductionAreSupported {
+        this.signed_count_factory_constructor_and_deduction_are_supported = true
+    }
+
+    invariant NegativeCountProducesEmptyFiniteResult {
+        this.negative_count_produces_empty_finite_result = true
     }
 
     invariant ExposesCountAndIsFinite {

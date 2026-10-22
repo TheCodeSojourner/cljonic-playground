@@ -5,9 +5,11 @@
 -- its cv-qualification and reference category wherever that gate applies.
 -- Safe conversion alone does not prove non-throwing construction; collection
 -- storage admission remains the separate NothrowCollectionElement contract.
--- Finite Repeat/Repeatedly counts require a non-Boolean, non-character unsigned
--- integral type whose entire range fits std::size_t; signed, floating-point,
--- and user-defined counts are rejected without wrapping or truncation.
+-- Finite Repeat/Repeatedly counts admit non-Boolean, non-character signed or
+-- unsigned integral types whose nonnegative range fits std::size_t.
+-- Nonpositive counts normalize to zero before unsigned conversion; positive
+-- counts are preserved exactly. Unsupported types are rejected without wrapping
+-- or truncation (REQ-CONV-002E).
 -- This is not the checked-value normalization policy for Vector/String indexes.
 
 entity ImplicitConversions {
@@ -21,9 +23,11 @@ entity ImplicitConversions {
     safe_conversion_alone_does_not_prove_nothrow_construction: Boolean
     argument_construction_gate_is_distinct_from_collection_storage_admission: Boolean
     ranges_check_actual_reference_and_nothrow_traversal: Boolean
-    counts_require_unsigned_noncharacter_integer_types: Boolean
+    counts_admit_signed_and_unsigned_noncharacter_integer_types: Boolean
     finite_counts_exclude_boolean_and_character_types: Boolean
-    finite_count_entire_type_range_must_fit_size_t: Boolean
+    finite_count_nonnegative_type_range_must_fit_size_t: Boolean
+    nonpositive_counts_normalize_to_zero_before_unsigned_conversion: Boolean
+    positive_counts_are_preserved_exactly: Boolean
     unsupported_count_types_rejected_without_wrapping_or_truncation: Boolean
     checked_index_and_character_exceptions_are_preserved: Boolean
     nominal_source_callback_entry_variant_and_equality_domains_are_preserved: Boolean
@@ -68,16 +72,24 @@ entity ImplicitConversions {
         this.ranges_check_actual_reference_and_nothrow_traversal = true
     }
 
-    invariant CountsRequireUnsignedNoncharacterIntegerTypes {
-        this.counts_require_unsigned_noncharacter_integer_types = true
+    invariant CountsAdmitSignedAndUnsignedNoncharacterIntegerTypes {
+        this.counts_admit_signed_and_unsigned_noncharacter_integer_types = true
     }
 
     invariant FiniteCountsExcludeBooleanAndCharacterTypes {
         this.finite_counts_exclude_boolean_and_character_types = true
     }
 
-    invariant FiniteCountEntireTypeRangeMustFitSizeT {
-        this.finite_count_entire_type_range_must_fit_size_t = true
+    invariant FiniteCountNonnegativeTypeRangeMustFitSizeT {
+        this.finite_count_nonnegative_type_range_must_fit_size_t = true
+    }
+
+    invariant NonpositiveCountsNormalizeToZeroBeforeUnsignedConversion {
+        this.nonpositive_counts_normalize_to_zero_before_unsigned_conversion = true
+    }
+
+    invariant PositiveCountsArePreservedExactly {
+        this.positive_counts_are_preserved_exactly = true
     }
 
     invariant UnsupportedCountTypesRejectedWithoutWrappingOrTruncation {

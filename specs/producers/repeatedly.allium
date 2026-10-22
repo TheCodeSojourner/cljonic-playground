@@ -1,6 +1,9 @@
 -- allium: 3
 -- Callable parameters exclude native ==, not admitted
 -- top-level equal comparisons over bounded sequential observations.
+-- REQ-CONV-002E: counted results use the normalized count. Nonpositive
+-- signed or unsigned counts produce a finite empty result without invoking the
+-- callback during construction or traversal; positive counts remain exact.
 
 entity Repeatedly {
     supports_header_only_distribution: Boolean
@@ -22,6 +25,9 @@ entity Repeatedly {
     uncounted_form_is_unbounded: Boolean
     counted_form_is_finite: Boolean
     zero_count_produces_empty_result: Boolean
+    signed_count_factory_and_constructor_are_supported: Boolean
+    negative_count_produces_empty_finite_result: Boolean
+    nonpositive_count_never_invokes_callback: Boolean
     exposes_count_and_is_finite: Boolean
     counted_form_uses_runtime_count_for_materialization: Boolean
     counted_form_count_is_exact: Boolean
@@ -113,6 +119,18 @@ entity Repeatedly {
 
     invariant ZeroCountProducesEmptyResult {
         this.zero_count_produces_empty_result = true
+    }
+
+    invariant SignedCountFactoryAndConstructorAreSupported {
+        this.signed_count_factory_and_constructor_are_supported = true
+    }
+
+    invariant NegativeCountProducesEmptyFiniteResult {
+        this.negative_count_produces_empty_finite_result = true
+    }
+
+    invariant NonpositiveCountNeverInvokesCallback {
+        this.nonpositive_count_never_invokes_callback = true
     }
 
     invariant ExposesCountAndIsFinite {
