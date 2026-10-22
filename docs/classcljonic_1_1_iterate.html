@@ -136,7 +136,7 @@ requires (!concepts::SafeImplicitConversion&lt;T, Initial&gt; || !std::same_as&l
 requires concepts_detail::IterateClassArgument&lt;T, Step&gt;<br />
 class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"></a> An <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a> producer is unbounded and created with <span class="tt">iterate(step, initial)</span>. It stores the initial value and a copy of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted value. For an initial value x and step function f, the observed sequence is <span class="tt">x, (f x), (f (f x)), ...</span>.</p>
 <p>The initial and produced values may themselves be cljonic collections or producers, including nested cljonic composites. The step may be a lambda, a named function, or a function object.</p>
-<p>Observation is bounded by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b> or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a></span> when explicit materialization is required.</p>
+<p>Observation is bounded by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b> and supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -177,9 +177,9 @@ class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"><
 <div class="line">  <span class="keywordflow">return</span> constexpr_sum == 16 &amp;&amp; runtime_sum == 30 ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a63314a7947b7251553be23329779260a"><div class="ttname"><a href="namespacecljonic.html#a63314a7947b7251553be23329779260a">cljonic::iterate</a></div><div class="ttdeci">constexpr auto iterate(Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; Iterate&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-iterate_8hpp_source.html#l00194">cljonic-iterate.hpp:194</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a63314a7947b7251553be23329779260a"><div class="ttname"><a href="namespacecljonic.html#a63314a7947b7251553be23329779260a">cljonic::iterate</a></div><div class="ttdeci">constexpr auto iterate(Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; Iterate&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-iterate_8hpp_source.html#l00193">cljonic-iterate.hpp:193</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00087">87</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00086">86</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="abf2d980482bbd50d75a8ec3b6e0bd82a" name="abf2d980482bbd50d75a8ec3b6e0bd82a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abf2d980482bbd50d75a8ec3b6e0bd82a">&#9670;&#160;</a></span>value_type</h2>
@@ -195,7 +195,7 @@ template&lt;typename T, typename Step&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00089">89</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00088">88</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -225,7 +225,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00135">135</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00134">134</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -258,7 +258,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00140">140</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00139">139</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -322,7 +322,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00155">155</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00154">154</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -351,7 +351,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00147">147</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00146">146</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -380,7 +380,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00159">159</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -409,7 +409,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00151">151</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00150">150</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>

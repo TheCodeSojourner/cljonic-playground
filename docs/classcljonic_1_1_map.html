@@ -174,7 +174,7 @@ Static Public Member Functions</h2></td></tr>
 requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;KeyType&gt;)<br />
 class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="anchor" id="Map"></a> A <a class="el" href="classcljonic_1_1_map.html">Map</a> is a bounded, associative collection that maps unique keys to values and provides callable lookup with optional fallback values. Other operations use the library's free-function API.</p>
 <p>The lowercase <code>hash_map</code> factory is the idiomatic way to create <a class="el" href="classcljonic_1_1_map.html">Map</a> values, at runtime or during constant evaluation. It accepts alternating keys and values, and a later duplicate key replaces the earlier value. Use <code>hash_map(k, v, ...)</code> to infer the key type, value type, and capacity, <code>hash_map&lt;K, V&gt;(k, v, ...)</code> to select the key and value types, or <code>hash_map&lt;K, V, Capacity&gt;(k, v, ...)</code> to provide an explicit capacity, including for an empty map. <code>Map&lt;K, V, Capacity&gt;</code> remains the value's type.</p>
-<p>Direct construction is useful when importing a C++ range or view: its entries are copied into the <a class="el" href="classcljonic_1_1_map.html">Map</a>. A cljonic collection or producer is not a constructor source. To materialize a cljonic collection or producer into a destination <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, use <b>into</b>.</p>
+<p>Direct construction is useful when importing a C++ range or view: its entries are copied into the <a class="el" href="classcljonic_1_1_map.html">Map</a>. A cljonic collection or producer is not a constructor source.</p>
 <p>Construction with more entries than the available capacity is rejected at compile time. Construction from entries requires the exact declared entry type. Keys, mapped values, and fallbacks follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -214,7 +214,7 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> missing = runtime(Key{4}, Value{77});</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// A standard view pipeline can use an existing Map as its source and</span></div>
-<div class="line">  <span class="comment">// materialize the transformed entries into another Map.</span></div>
+<div class="line">  <span class="comment">// Construct another Map from the transformed entries.</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> copied_view =</div>
 <div class="line">      runtime | std::views::transform([](<span class="keyword">const</span> AccountEntry &amp;entry) <span class="keyword">noexcept</span> {</div>
 <div class="line">        <span class="keywordflow">return</span> AccountEntry{entry.key, Value{entry.value.amount * 2}};</div>
@@ -272,14 +272,14 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00138">cljonic-map.hpp:138</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_map_html_aaa75ad4584c6df3dabfcc0640df894b7"><div class="ttname"><a href="#aaa75ad4584c6df3dabfcc0640df894b7">cljonic::Map::Map</a></div><div class="ttdeci">constexpr Map(SourceRange &amp;&amp;source) noexcept((concepts::NothrowRangeConstruction&lt; value_type, SourceRange &gt;))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00171">cljonic-map.hpp:171</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_map_html_afc4b7c32a76b2eba3c76fd6ca345c48e"><div class="ttname"><a href="#afc4b7c32a76b2eba3c76fd6ca345c48e">cljonic::Map::operator==</a></div><div class="ttdeci">constexpr auto operator==(const Map &amp;other) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00212">cljonic-map.hpp:212</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00137">cljonic-map.hpp:137</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_map_html_aaa75ad4584c6df3dabfcc0640df894b7"><div class="ttname"><a href="#aaa75ad4584c6df3dabfcc0640df894b7">cljonic::Map::Map</a></div><div class="ttdeci">constexpr Map(SourceRange &amp;&amp;source) noexcept((concepts::NothrowRangeConstruction&lt; value_type, SourceRange &gt;))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00170">cljonic-map.hpp:170</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_map_html_afc4b7c32a76b2eba3c76fd6ca345c48e"><div class="ttname"><a href="#afc4b7c32a76b2eba3c76fd6ca345c48e">cljonic::Map::operator==</a></div><div class="ttdeci">constexpr auto operator==(const Map &amp;other) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00208">cljonic-map.hpp:208</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a2aa4197e029c665443f7f5d0ebcf61d8"><div class="ttname"><a href="namespacecljonic.html#a2aa4197e029c665443f7f5d0ebcf61d8">cljonic::hash_map</a></div><div class="ttdeci">constexpr auto hash_map(Args &amp;&amp;... args) noexcept -&gt; Map&lt; concepts_detail::hash_map_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::hash_map_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, sizeof...(Args)/2U &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00442">cljonic-map.hpp:442</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a2aa4197e029c665443f7f5d0ebcf61d8"><div class="ttname"><a href="namespacecljonic.html#a2aa4197e029c665443f7f5d0ebcf61d8">cljonic::hash_map</a></div><div class="ttdeci">constexpr auto hash_map(Args &amp;&amp;... args) noexcept -&gt; Map&lt; concepts_detail::hash_map_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::hash_map_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, sizeof...(Args)/2U &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00438">cljonic-map.hpp:438</a></div></div>
 <div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00037">cljonic-map-entry.hpp:37</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00138">138</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00137">137</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a380f101836f7b09a7b0d78d5de0fd817" name="a380f101836f7b09a7b0d78d5de0fd817"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a380f101836f7b09a7b0d78d5de0fd817">&#9670;&#160;</a></span>association_value_type</h2>
@@ -295,7 +295,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00143">143</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00142">142</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -313,7 +313,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00140">140</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00139">139</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -331,7 +331,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00141">141</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00140">140</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -349,7 +349,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00142">142</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00141">141</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -367,7 +367,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00144">144</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00143">143</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -401,7 +401,7 @@ requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00171">171</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00170">170</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -434,7 +434,7 @@ requires ((<a class="el" href="namespacecljonic_1_1concepts__detail.html#a73f7ff
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00195">195</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00194">194</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -502,7 +502,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00241">241</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00237">237</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -531,7 +531,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00278">278</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00274">274</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -598,7 +598,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00236">236</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00232">232</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -658,7 +658,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </div><div class="memdoc">
 <p>Returns true when the entry's key is present or the map has room for one more entry. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00255">255</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00251">251</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -687,7 +687,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00204">204</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00200">200</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -747,7 +747,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </div><div class="memdoc">
 <p>Associates the entry's key with its value on a copy: an existing key replaces its value without increasing count; an absent key is added only when capacity remains. Returns an unchanged copy when full. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00262">262</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00258">258</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -806,7 +806,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00226">226</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00222">222</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -835,7 +835,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00208">208</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00204">204</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -894,7 +894,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00266">266</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00262">262</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -923,7 +923,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00282">282</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00278">278</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -954,7 +954,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00152">152</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00151">151</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -1021,7 +1021,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00230">230</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00226">226</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -1050,7 +1050,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00212">212</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00208">208</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -1079,7 +1079,7 @@ template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::Nothrow
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00286">286</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00282">282</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>

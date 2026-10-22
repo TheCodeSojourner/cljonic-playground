@@ -706,9 +706,9 @@ requires concepts::AssociativeCollection&lt;C&gt; &amp;&amp; requires(const C&am
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(m1, 2) &amp;&amp; m1(2) == 200) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00138">cljonic-map.hpp:138</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_map_html"><div class="ttname"><a href="classcljonic_1_1_map.html">cljonic::Map</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00137">cljonic-map.hpp:137</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a11e270768e9485445f2885cdecb1c4eb"><div class="ttname"><a href="#a11e270768e9485445f2885cdecb1c4eb">cljonic::vector</a></div><div class="ttdeci">constexpr auto vector(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::vector_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Vector&lt; concepts_detail::vector_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00405">cljonic-vector.hpp:405</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a11e270768e9485445f2885cdecb1c4eb"><div class="ttname"><a href="#a11e270768e9485445f2885cdecb1c4eb">cljonic::vector</a></div><div class="ttdeci">constexpr auto vector(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::vector_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Vector&lt; concepts_detail::vector_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00401">cljonic-vector.hpp:401</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a2fb743a916443eaa52b84a83056cc872"><div class="ttname"><a href="#a2fb743a916443eaa52b84a83056cc872">cljonic::assoc</a></div><div class="ttdeci">constexpr auto assoc(const C &amp;collection, const K &amp;key, const V &amp;value) noexcept(noexcept(collection.assoc(key, value))) -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00055">cljonic-assoc.hpp:55</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a5b8275162678a23d519d3711df6d9a2b"><div class="ttname"><a href="#a5b8275162678a23d519d3711df6d9a2b">cljonic::contains</a></div><div class="ttdeci">constexpr auto contains(const C &amp;collection, const K &amp;key) noexcept(noexcept(collection.contains(key))) -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-contains_8hpp_source.html#l00064">cljonic-contains.hpp:64</a></div></div>
 </div><!-- fragment --> 
@@ -1330,8 +1330,8 @@ requires concepts::ConjableCollection&lt;C&gt;</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> q_ok ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00092">cljonic-queue.hpp:92</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00104">cljonic-set.hpp:104</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00091">cljonic-queue.hpp:91</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00103">cljonic-set.hpp:103</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00105">cljonic-string.hpp:105</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_aff01cd8591c08e661bde74c6276e9c40"><div class="ttname"><a href="#aff01cd8591c08e661bde74c6276e9c40">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00084">cljonic-can-conj.hpp:84</a></div></div>
 <div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00037">cljonic-map-entry.hpp:37</a></div></div>
@@ -2226,8 +2226,8 @@ requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProd
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (sz == 2) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00094">cljonic-range.hpp:94</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_repeat_html"><div class="ttname"><a href="classcljonic_1_1_repeat.html">cljonic::Repeat</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00093">cljonic-repeat.hpp:93</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00093">cljonic-range.hpp:93</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_repeat_html"><div class="ttname"><a href="classcljonic_1_1_repeat.html">cljonic::Repeat</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00092">cljonic-repeat.hpp:92</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a41fa65c16edb0a95aa942c48307777d6"><div class="ttname"><a href="#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a></div><div class="ttdeci">constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-collection-maximum-element-count_8hpp_source.html#l00016">cljonic-core-collection-maximum-element-count.hpp:16</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_af5da07418b370bc5072eacf31957e0ee"><div class="ttname"><a href="#af5da07418b370bc5072eacf31957e0ee">cljonic::count</a></div><div class="ttdeci">constexpr auto count(const C &amp;collection) noexcept -&gt; std::size_t</div><div class="ttdef"><b>Definition</b> <a href="cljonic-count_8hpp_source.html#l00049">cljonic-count.hpp:49</a></div></div>
 </div><!-- fragment --> 
@@ -2282,7 +2282,7 @@ requires concepts::NothrowCollectionElement&lt;std::ranges::range_value_t&lt;con
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00228">228</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00225">225</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 
 </div>
 </div>
@@ -2312,7 +2312,7 @@ requires (!concepts_detail::ValidCycleSource&lt;Source&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00237">237</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-cycle_8hpp_source.html#l00234">234</a> of file <a class="el" href="cljonic-cycle_8hpp_source.html">cljonic-cycle.hpp</a>.</p>
 
 </div>
 </div>
@@ -3609,7 +3609,7 @@ requires ( concepts_detail::HashMapFactoryElementTypes&lt; <a class="el" href="n
 <p><a class="anchor" id="HashMapFactory"></a>Creates a bounded <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a> from alternating key/value arguments.</p>
 <p>Deduced calls use the first pair's unqualified types and have capacity equal to their pair count. Explicit types use <code>hash_map&lt;Key, Value&gt;(...)</code>; explicit capacity uses <code>hash_map&lt;Key, Value, Capacity&gt;(...)</code>, including for an empty map. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00442">442</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00438">438</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3640,7 +3640,7 @@ requires concepts_detail::HashMapFactoryCapacityArguments&lt;KeyType, ValueType,
 </div><div class="memdoc">
 <p>Creates a bounded <a class="el" href="classcljonic_1_1_map.html">Map</a> with explicit capacity, including an empty <a class="el" href="classcljonic_1_1_map.html">Map</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00504">504</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00500">500</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3673,7 +3673,7 @@ requires (concepts_detail::HashMapFactoryElementTypes&lt;KeyType, ValueType&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00540">540</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00536">536</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3704,7 +3704,7 @@ requires (concepts_detail::HashMapFactoryElementTypes&lt;KeyType, ValueType&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00528">528</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00524">524</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3735,7 +3735,7 @@ requires (concepts_detail::HashMapFactoryElementTypes&lt;KeyType, ValueType&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00519">519</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00515">515</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3765,7 +3765,7 @@ requires (!concepts_detail::HashMapFactoryElementTypes&lt;KeyType, ValueType&gt;
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00511">511</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00507">507</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3800,7 +3800,7 @@ requires ( sizeof...(Args) &gt; 0U &amp;&amp; sizeof...(Args) % 2U == 0U &amp;&a
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00495">495</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00491">491</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3833,7 +3833,7 @@ requires (sizeof...(Args) &gt; 0U &amp;&amp; sizeof...(Args) % 2U == 0U &amp;&am
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00479">479</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00475">475</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3865,7 +3865,7 @@ requires (sizeof...(Args) &gt; 0U &amp;&amp; sizeof...(Args) % 2U == 0U &amp;&am
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00467">467</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00463">463</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -3895,7 +3895,7 @@ requires (sizeof...(Args) == 0U || sizeof...(Args) % 2U != 0U)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00455">455</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00451">451</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 
 </div>
 </div>
@@ -4151,7 +4151,7 @@ requires (!(concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&g
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00205">205</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00204">204</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -4186,7 +4186,7 @@ requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt; 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00194">194</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00193">193</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -5133,7 +5133,7 @@ requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00244">244</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00243">243</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -5167,7 +5167,7 @@ requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;<
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00226">226</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00225">225</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -5197,7 +5197,7 @@ requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00235">235</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00234">234</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -5227,7 +5227,7 @@ requires concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt;<
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00220">220</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00219">219</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -5304,7 +5304,7 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt; || !concepts_detail:
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00235">235</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00234">234</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -5338,7 +5338,7 @@ requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00215">215</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00214">214</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -5368,7 +5368,7 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00224">224</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00223">223</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -5398,7 +5398,7 @@ requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00208">208</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00207">207</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -5707,7 +5707,7 @@ requires (!concepts_detail::VectorFactoryCapacityArguments&lt;ElementType, Capac
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00442">442</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00438">438</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -5737,7 +5737,7 @@ requires (!concepts_detail::VectorFactoryArguments&lt;RequestedElementType, Args
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00415">415</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00411">411</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -5768,7 +5768,7 @@ requires concepts_detail::VectorFactoryArguments&lt;RequestedElementType, Args..
 </div><div class="memdoc">
 <p>Creates a bounded <a class="el" href="classcljonic_1_1_vector.html">Vector</a> from its arguments, or a typed empty <a class="el" href="classcljonic_1_1_vector.html">Vector</a> when called as <code><a class="el" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;T&gt;()</a></code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00405">405</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00401">401</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -5799,7 +5799,7 @@ requires concepts_detail::VectorFactoryCapacityArguments&lt;ElementType, Capacit
 </div><div class="memdoc">
 <p>Creates a bounded <a class="el" href="classcljonic_1_1_vector.html">Vector</a> with an explicit capacity, including for an empty argument pack. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00435">435</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-vector_8hpp_source.html#l00431">431</a> of file <a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>.</p>
 
 </div>
 </div>
