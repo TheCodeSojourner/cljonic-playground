@@ -290,7 +290,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ empty ∧ is_empty ∧ first ∧ into ∧ fits_into
   | collection_primitives(x) → ¬narrow(universal_obligation(x))
   | producer_factory_functions(x) ≡ repeat ∧ cycle ∧ iterate ∧ repeatedly
-  | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ direct_to(into ∨ enclosure_form) ∧ preflight(fits_into)
+  | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ optionally_identify(enclosure_form when applicable) ∧ ¬recommend(materialization ∨ into ∨ fits_into)
   | producer_factory_rejection(x) → name(operation ∧ violated_producer_admission_rule(x)) ∧ state_correct_usage(x)
   | class_template_type_argument_rejection(x) → governed_by(S3_class_template_deduction_diagnostic(x)) ∧ not_exempted_here(x)
   | rejection_diagnostic(x) → trace_to(REQ-DIAG-009 ∧ REQ-DIAG-010 ∧ REQ-DIAG-001 ∧ REQ-DIAG-003)
