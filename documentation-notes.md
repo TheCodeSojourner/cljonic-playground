@@ -162,9 +162,9 @@ The manual must carry what an AI cannot derive from signatures. Ranked by value:
 2. **Negative knowledge / forbidden idioms** — where an LLM loses to its std priors. Suppress
    priors with explicit prohibitions: `optional` on lookup, `throw`, `std::vector`,
    `std::variant`, assuming negative index is an error.
-3. **Deltas** from both std C++ and Clojure. Canonical example: `Vector{span}` *copies* elements
-   vs `Vector{Vector{...}}` *encloses* the inner vector as one element (SameTypeArgumentIsOneElement).
-   Same syntax, opposite meaning.
+3. **Deltas** from both std C++ and Clojure. Canonical example: the `Vector<T, N>{span}` source
+   constructor *copies* range elements, while `vector(vector(...))` encloses the inner vector as one
+   element (EnclosureConstruction). Use the lowercase factory for ordinary vector creation.
 4. **Contract records** — sentinel-vs-preflight semantics, cost model (copy-on-modify is
    O(capacity), not O(delta)), bounds/failure behavior.
 5. **Canonical idioms** — 8–10 compiler-approved snippet closings for common tasks.
