@@ -15,6 +15,7 @@ entity CollectionSourceConstruction {
     cljonic_source_is_not_a_constructor_source: Boolean
     sole_argument_enclosure_yields_one_element: Boolean
     cljonic_source_rejection_uses_targeted_diagnostic: Boolean
+    source_construction_diagnostic_omits_materialization_advice: Boolean
 
     invariant DirectSourceConstructionIsOwned {
         this.direct_source_construction_is_owned = true
@@ -70,6 +71,10 @@ entity CollectionSourceConstruction {
 
     invariant CljonicSourceRejectionUsesTargetedDiagnostic {
         this.cljonic_source_rejection_uses_targeted_diagnostic = true
+    }
+
+    invariant SourceConstructionDiagnosticOmitsMaterializationAdvice {
+        this.source_construction_diagnostic_omits_materialization_advice = true
     }
 }
 
