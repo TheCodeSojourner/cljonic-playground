@@ -2,17 +2,15 @@ var searchData=
 [
   ['peek_0',['peek',['../classcljonic_1_1_queue.html#a5f306ec2a9ba4a3cb703289b4162eb4b',1,'cljonic::Queue::peek()'],['../namespacecljonic.html#a2ac63cbc0316ee0778d32a1adfc9b6c0',1,'cljonic::peek(const C &amp;collection) noexcept -&gt; C::value_type'],['../namespacecljonic.html#adf65790a0168d9c29944396c3472505e',1,'cljonic::peek(const C &amp;collection) noexcept -&gt; void']]],
   ['pop_1',['pop',['../classcljonic_1_1_queue.html#a32407b5e0f44ef39bf07b5c18fee3c9c',1,'cljonic::Queue::pop()'],['../namespacecljonic.html#a35f02dd605389d1cc302f89260a307ca',1,'cljonic::pop(const C &amp;collection) noexcept'],['../namespacecljonic.html#a45e588b42915f88541ed0f9d5e412d3d',1,'cljonic::pop(const C &amp;collection) noexcept -&gt; void']]],
-  ['predicate_2',['Predicate',['../index.html#autotoc_md7',1,'']]],
-  ['primitive_3',['Primitive',['../index.html#autotoc_md8',1,'']]],
-  ['producer_20types_4',['Producer Types',['../index.html#autotoc_md3',1,'']]],
-  ['producer_5fkind_5',['producer_kind',['../namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74c',1,'cljonic::concepts_detail']]],
-  ['producer_5fkind_5fof_5fv_6',['producer_kind_of_v',['../namespacecljonic_1_1concepts__detail.html#a9b6e0fa83ede71e749bff9da7c691ca7',1,'cljonic::concepts_detail']]],
-  ['producer_5ftraits_7',['producer_traits',['../structcljonic_1_1concepts__detail_1_1producer__traits.html',1,'cljonic::concepts_detail']]],
-  ['producer_5ftraits_3c_20cycle_3c_20source_20_3e_20_3e_8',['producer_traits&lt; Cycle&lt; Source &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_cycle_3_01_source_01_4_01_4.html',1,'cljonic::concepts_detail']]],
-  ['producer_5ftraits_3c_20iterate_3c_20t_2c_20step_20_3e_20_3e_9',['producer_traits&lt; Iterate&lt; T, Step &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_iterate_3_01_t_00_01_step_01_4_01_4.html',1,'cljonic::concepts_detail']]],
-  ['producer_5ftraits_3c_20range_3c_20t_20_3e_20_3e_10',['producer_traits&lt; Range&lt; T &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_range_3_01_t_01_4_01_4.html',1,'cljonic::concepts_detail']]],
-  ['producer_5ftraits_3c_20repeat_3c_20t_20_3e_20_3e_11',['producer_traits&lt; Repeat&lt; T &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_repeat_3_01_t_01_4_01_4.html',1,'cljonic::concepts_detail']]],
-  ['producer_5ftraits_3c_20repeatedly_3c_20t_2c_20step_20_3e_20_3e_12',['producer_traits&lt; Repeatedly&lt; T, Step &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_repeatedly_3_01_t_00_01_step_01_4_01_4.html',1,'cljonic::concepts_detail']]],
-  ['producercount_13',['ProducerCount',['../conceptcljonic_1_1concepts__detail_1_1_producer_count.html',1,'cljonic::concepts_detail']]],
-  ['put_14',['put',['../classcljonic_1_1_string.html#a0bc6910e362de3c10b21a49dde58717e',1,'cljonic::String::put(IndexType index, char c) const noexcept -&gt; String'],['../classcljonic_1_1_string.html#ad4d7f60e98b724174a9d550388c6c296',1,'cljonic::String::put(Index index, Value value) const -&gt; String=delete']]]
+  ['producer_20types_2',['Producer Types',['../index.html#autotoc_md3',1,'']]],
+  ['producer_5fkind_3',['producer_kind',['../namespacecljonic_1_1concepts__detail.html#ae7b205beabb5ee36d468e0b1ca49b74c',1,'cljonic::concepts_detail']]],
+  ['producer_5fkind_5fof_5fv_4',['producer_kind_of_v',['../namespacecljonic_1_1concepts__detail.html#a9b6e0fa83ede71e749bff9da7c691ca7',1,'cljonic::concepts_detail']]],
+  ['producer_5ftraits_5',['producer_traits',['../structcljonic_1_1concepts__detail_1_1producer__traits.html',1,'cljonic::concepts_detail']]],
+  ['producer_5ftraits_3c_20cycle_3c_20source_20_3e_20_3e_6',['producer_traits&lt; Cycle&lt; Source &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_cycle_3_01_source_01_4_01_4.html',1,'cljonic::concepts_detail']]],
+  ['producer_5ftraits_3c_20iterate_3c_20t_2c_20step_20_3e_20_3e_7',['producer_traits&lt; Iterate&lt; T, Step &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_iterate_3_01_t_00_01_step_01_4_01_4.html',1,'cljonic::concepts_detail']]],
+  ['producer_5ftraits_3c_20range_3c_20t_20_3e_20_3e_8',['producer_traits&lt; Range&lt; T &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_range_3_01_t_01_4_01_4.html',1,'cljonic::concepts_detail']]],
+  ['producer_5ftraits_3c_20repeat_3c_20t_20_3e_20_3e_9',['producer_traits&lt; Repeat&lt; T &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_repeat_3_01_t_01_4_01_4.html',1,'cljonic::concepts_detail']]],
+  ['producer_5ftraits_3c_20repeatedly_3c_20t_2c_20step_20_3e_20_3e_10',['producer_traits&lt; Repeatedly&lt; T, Step &gt; &gt;',['../structcljonic_1_1concepts__detail_1_1producer__traits_3_01_repeatedly_3_01_t_00_01_step_01_4_01_4.html',1,'cljonic::concepts_detail']]],
+  ['producercount_11',['ProducerCount',['../conceptcljonic_1_1concepts__detail_1_1_producer_count.html',1,'cljonic::concepts_detail']]],
+  ['put_12',['put',['../classcljonic_1_1_string.html#a0bc6910e362de3c10b21a49dde58717e',1,'cljonic::String::put(IndexType index, char c) const noexcept -&gt; String'],['../classcljonic_1_1_string.html#ad4d7f60e98b724174a9d550388c6c296',1,'cljonic::String::put(Index index, Value value) const -&gt; String=delete']]]
 ];

@@ -139,7 +139,10 @@ requires (!std::same_as&lt;std::remove_cvref_t&lt;OtherStep&gt;, Step&gt; || !co
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename Step&gt;<br />
 requires concepts_detail::RepeatedlyClassArgument&lt;T, Step&gt;<br />
-class cljonic::Repeatedly&lt; T, Step &gt;</div><p><a class="anchor" id="Repeatedly"></a> A <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a> producer is created with <span class="tt">repeatedly(step)</span> or <span class="tt">repeatedly(count, step)</span>. It stores a copy of the zero-argument step callable and produces a fresh element by invoking the step for every observed element. The step may maintain state or produce side effects, but it must not throw or allocate when invoked. <span class="tt">repeatedly(step)</span> is unbounded, while <span class="tt">repeatedly(count, step)</span> yields exactly <code class="param">count</code> elements. The step may be a lambda, a named function, or a function object. Observation is bounded by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b>, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a></span> when explicit materialization is required. Finite counts follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>. Counts accept signed or unsigned integer types whose nonnegative ranges fit <code>std::size_t</code>, excluding Boolean and character types. Zero or negative counts produce an empty finite <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a> without invoking the callback. Callback types and produced element types remain exact.</p>
+class cljonic::Repeatedly&lt; T, Step &gt;</div><p><a class="anchor" id="Repeatedly"></a> A <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a> producer is created with <span class="tt">repeatedly(step)</span> or <span class="tt">repeatedly(count, step)</span>. It stores a copy of the zero-argument step callable and produces a fresh element by invoking the step for every observed element. <span class="tt">repeatedly(step)</span> is unbounded, while <span class="tt">repeatedly(count, step)</span> yields exactly <code class="param">count</code> elements.</p>
+<p>The step may be a lambda, a named function, or a function object. It may maintain state or produce side effects, but it must not throw or allocate when invoked. Callback types and produced element types remain exact.</p>
+<p>Observation is bounded by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b>, by the requested count, or by an explicit destination capacity, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source, or converted into an owning destination with <span class="tt"><a class="el" href="namespacecljonic.html#a6b0a13c640d125d2b026b26ca253f292">into</a></span> when explicit materialization is required.</p>
+<p>Finite counts follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>. Counts accept signed or unsigned integer types whose nonnegative ranges fit <code>std::size_t</code>, excluding Boolean and character types. Zero or negative counts produce an empty finite <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a> without invoking the callback.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -175,9 +178,9 @@ class cljonic::Repeatedly&lt; T, Step &gt;</div><p><a class="anchor" id="Repeate
 <div class="line">  <span class="keywordflow">return</span> constexpr_sum == 15 &amp;&amp; runtime_sum == 14 ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ada46d509c8f0d0124e524878e323c208"><div class="ttname"><a href="namespacecljonic.html#ada46d509c8f0d0124e524878e323c208">cljonic::repeatedly</a></div><div class="ttdeci">constexpr auto repeatedly(Step &amp;&amp;step) noexcept -&gt; Repeatedly&lt; T, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeatedly_8hpp_source.html#l00204">cljonic-repeatedly.hpp:204</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_ada46d509c8f0d0124e524878e323c208"><div class="ttname"><a href="namespacecljonic.html#ada46d509c8f0d0124e524878e323c208">cljonic::repeatedly</a></div><div class="ttdeci">constexpr auto repeatedly(Step &amp;&amp;step) noexcept -&gt; Repeatedly&lt; T, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeatedly_8hpp_source.html#l00208">cljonic-repeatedly.hpp:208</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00083">83</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00087">87</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="afa9d2a3219848879a20924de7440a825" name="afa9d2a3219848879a20924de7440a825"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afa9d2a3219848879a20924de7440a825">&#9670;&#160;</a></span>value_type</h2>
@@ -193,7 +196,7 @@ template&lt;typename T, typename Step&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00085">85</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00089">89</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -223,7 +226,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00133">133</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00137">137</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -252,7 +255,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00138">138</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00142">142</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -287,7 +290,7 @@ template&lt;concepts_detail::ProducerCount Count&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00142">142</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00146">146</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -381,7 +384,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00162">162</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00166">166</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -410,7 +413,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00154">154</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -439,7 +442,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00166">166</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00170">170</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -468,7 +471,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00162">162</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
