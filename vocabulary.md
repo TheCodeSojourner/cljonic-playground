@@ -207,11 +207,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### SourceConstructionDiagnostic
-- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection, the violated source-construction rule, and the correct alternatives (`into` for materialization, preflighted by `fits_into`, or the enclosure form for a single element, using the lowercase factory where available). Vector uses `vector(...)`; Map creation uses `hash_map(...)`, which takes alternating keys and values rather than enclosing a single element; the remaining collection factories are planned rather than implemented. It never produces a value and is never a supported call target.
+- **Definition:** The targeted compile-time diagnostic that explains why a cljonic collection or producer argument is rejected by a collection's direct source constructor (REQ-DIAG-010). It is a constructor overload constrained on the negation of the source-admission rule that emits a single `static_assert` naming the collection and the violated source-construction rule. Where a supported single-element form applies, the message may identify it; it does not recommend materialization or refer to `into` or `fits_into`. It never produces a value and is never a supported call target.
 - **Deprecated Synonyms:** constructor rejection message, source-construction fallback
 - **Related:** SourceConstruction, EnclosureConstruction, RejectionDiagnostic, SameTypeArgumentIsOneElement
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** Passing `Range<int>` to a `Vector<int, N>` source constructor reports a `SourceConstructionDiagnostic` directing the caller to `into` for materialization (preflighted by `fits_into`) instead of a generic element-conversion error.
+- **Examples:** Passing `Range<int>` to a `Vector<int, N>` source constructor reports a `SourceConstructionDiagnostic` explaining that the cljonic producer is not a source-constructor argument, instead of a generic element-conversion error.
 
 
 ### RangeViewMaterialization
