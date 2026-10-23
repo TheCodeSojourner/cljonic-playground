@@ -28,20 +28,20 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr auto m_const = assoc(hash_map<int, int, 4>(), 1, 100);
    static_assert(m_const(1) == 100);
 
    constexpr auto v_const = assoc(vector(10, 20), 1, 200);
    static_assert(v_const(1) == 200);
 
-   constexpr auto m_multi = assoc(Map<int, int, 4>{}, 1, 100, 2, 200);
+   constexpr auto m_multi = assoc(hash_map<int, int, 4>(), 1, 100, 2, 200);
    static_assert(m_multi(2) == 200);
 
    constexpr auto v_multi = assoc(vector<int, 4>(10, 20), 1, 200, 2, 300);
    static_assert(v_multi(2) == 300);
 
    // Runtime demonstration.
-   auto m_runtime = Map<int, int, 4>{};
+   auto m_runtime = hash_map<int, int, 4>();
    const auto m1 = assoc(m_runtime, 2, 200);
 
    return (contains(m1, 2) && m1(2) == 200) ? 0 : 1;

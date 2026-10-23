@@ -20,14 +20,14 @@ namespace cljonic {
  int main() {
    constexpr auto vector = cljonic::vector(1, 2);
    constexpr auto vector_after_pop = pop(vector);
-   constexpr auto queue = Queue{1, 2};
-   constexpr auto queue_after_pop = pop(queue);
+   constexpr auto q = queue(1, 2);
+   constexpr auto queue_after_pop = pop(q);
    static_assert(peek(vector_after_pop) == 1);
    static_assert(peek(vector) == 2);
    static_assert(peek(queue_after_pop) == 2);
-   static_assert(peek(queue) == 1);
+   static_assert(peek(q) == 1);
    constexpr auto empty_vector = cljonic::vector<int, 0>();
-   constexpr auto empty_queue = Queue<int, 4>{};
+   constexpr auto empty_queue = queue<int, 4>();
    static_assert(pop(empty_vector) == empty_vector);
    static_assert(pop(empty_queue) == empty_queue);
 
@@ -37,7 +37,7 @@ namespace cljonic {
    const int queue_last = 40;
    const auto runtime_vector = cljonic::vector(vector_first, vector_last);
    const auto runtime_vector_after_pop = pop(runtime_vector);
-   const auto runtime_queue = Queue{queue_first, queue_last};
+   const auto runtime_queue = queue(queue_first, queue_last);
    const auto runtime_queue_after_pop = pop(runtime_queue);
 
    return (peek(runtime_vector_after_pop) == vector_first &&

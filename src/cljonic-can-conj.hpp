@@ -58,11 +58,11 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto q_const = Queue<int, 4>{};
+   constexpr auto q_const = queue<int, 4>();
    static_assert(can_conj(q_const));
    static_assert(can_conj(q_const, 1));
-   static_assert(can_conj(Queue<int, 2>{}, 1, 2));
-   constexpr auto q_full = Queue{1};
+   static_assert(can_conj(queue<int, 2>(), 1, 2));
+   constexpr auto q_full = queue(1);
    static_assert(!can_conj(q_full, 2));
    constexpr auto s_const = hash_set<int, 4>();
    static_assert(can_conj(s_const, 1));
@@ -72,7 +72,7 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
    static_assert(can_conj(m_const, map_entry(1, 999)));
 
    // Runtime demonstration.
-   auto q_runtime = Queue<int, 4>{};
+   auto q_runtime = queue<int, 4>();
    const auto q_ok = can_conj(q_runtime, 1);
 
    return q_ok ? 0 : 1;

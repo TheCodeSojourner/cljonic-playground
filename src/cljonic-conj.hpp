@@ -42,7 +42,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto q_const = conj(Queue<int, 4>{}, 10);
+   constexpr auto q_const = conj(queue<int, 4>(), 10);
    constexpr auto s_const = conj(hash_set<int, 4>(), 20);
    static_assert(peek(q_const) == 10);
    static_assert(contains(s_const, 20));
@@ -51,7 +51,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(v_const(2) == 30);
    constexpr auto text_const = conj(String<4>{"Hi"}, '!');
    static_assert(text_const(2) == '!');
-   constexpr auto m_const = conj(Map<int, int, 4>{}, map_entry(1, 100));
+   constexpr auto m_const = conj(hash_map<int, int, 4>(), map_entry(1, 100));
    static_assert(m_const(1) == 100);
 
    // Zero-value and variadic arities.
@@ -63,7 +63,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(text_many(2) == '!');
 
    // Runtime demonstration.
-   auto q_runtime = Queue<int, 4>{};
+   auto q_runtime = queue<int, 4>();
    const auto q1 = conj(q_runtime, 100);
 
    return (peek(q1) == 100) ? 0 : 1;

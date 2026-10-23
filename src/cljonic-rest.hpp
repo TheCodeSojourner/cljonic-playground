@@ -20,12 +20,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto q0_const = Queue{1, 2};
+   constexpr auto q0_const = queue(1, 2);
    constexpr auto q1_const = rest(q0_const);
    static_assert(peek(q1_const) == 2);
 
    // Runtime demonstration.
-   auto q0_runtime = Queue{100, 200};
+   auto q0_runtime = queue(100, 200);
    auto q1_runtime = rest(q0_runtime);
 
    return (peek(q1_runtime) == 200) ? 0 : 1;

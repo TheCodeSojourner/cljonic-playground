@@ -24,7 +24,7 @@ namespace cljonic {
    constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = hash_set(7);
-   constexpr auto q_const = Queue{5, 6};
+   constexpr auto q_const = queue(5, 6);
    constexpr auto text_const = String{"AB"};
    constexpr auto e_const = map_entry(1, 100);
    static_assert(first(v_const) == 10);
@@ -38,7 +38,7 @@ namespace cljonic {
    auto v_runtime = vector(100, 200);
    auto m_runtime = hash_map(2, 200);
    auto s_runtime = hash_set(8);
-   auto q_runtime = Queue{9, 10};
+   auto q_runtime = queue(9, 10);
    auto text_runtime = String{"CD"};
    auto e_runtime = map_entry(3, 300);
 

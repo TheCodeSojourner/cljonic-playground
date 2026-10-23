@@ -122,7 +122,8 @@
  * \ref Core_NotAny "NotAny", \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
  * - \ref Core_Ord "Ord"
  * - \ref Core_Partial "Partial", \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
- * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Core_Permutations "Permutations", \ref Pop "pop"
+ * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Core_Permutations "Permutations", \ref Pop "pop", \ref
+ * QueueFactory "queue"
  * - \ref Range "range", \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove",
  * \ref Repeat "repeat", \ref Repeatedly "repeatedly", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse"
  * - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort",

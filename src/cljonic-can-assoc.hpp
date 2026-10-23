@@ -26,12 +26,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto m_const = Map<int, int, 4>{};
+   constexpr auto m_const = hash_map<int, int, 4>();
    static_assert(can_assoc(m_const, 1, 10));
    static_assert(can_assoc(m_const, 1, 10, 2, 20));
 
    // Runtime demonstration.
-   auto m_runtime = Map<int, int, 4>{};
+   auto m_runtime = hash_map<int, int, 4>();
    const auto ok = can_assoc(m_runtime, 2, 20);
 
    return ok ? 0 : 1;

@@ -133,7 +133,8 @@
  * \ref Core_NotAny "NotAny", \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
  * - \ref Core_Ord "Ord"
  * - \ref Core_Partial "Partial", \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
- * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Core_Permutations "Permutations", \ref Pop "pop"
+ * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Core_Permutations "Permutations", \ref Pop "pop", \ref
+ * QueueFactory "queue"
  * - \ref Range "range", \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove",
  * \ref Repeat "repeat", \ref Repeatedly "repeatedly", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse"
  * - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort",
@@ -843,20 +844,20 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto m_const = assoc(Map<int, int, 4>{}, 1, 100);
+   constexpr auto m_const = assoc(hash_map<int, int, 4>(), 1, 100);
    static_assert(m_const(1) == 100);
 
    constexpr auto v_const = assoc(vector(10, 20), 1, 200);
    static_assert(v_const(1) == 200);
 
-   constexpr auto m_multi = assoc(Map<int, int, 4>{}, 1, 100, 2, 200);
+   constexpr auto m_multi = assoc(hash_map<int, int, 4>(), 1, 100, 2, 200);
    static_assert(m_multi(2) == 200);
 
    constexpr auto v_multi = assoc(vector<int, 4>(10, 20), 1, 200, 2, 300);
    static_assert(v_multi(2) == 300);
 
    // Runtime demonstration.
-   auto m_runtime = Map<int, int, 4>{};
+   auto m_runtime = hash_map<int, int, 4>();
    const auto m1 = assoc(m_runtime, 2, 200);
 
    return (contains(m1, 2) && m1(2) == 200) ? 0 : 1;
@@ -1009,12 +1010,12 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto m_const = Map<int, int, 4>{};
+   constexpr auto m_const = hash_map<int, int, 4>();
    static_assert(can_assoc(m_const, 1, 10));
    static_assert(can_assoc(m_const, 1, 10, 2, 20));
 
    // Runtime demonstration.
-   auto m_runtime = Map<int, int, 4>{};
+   auto m_runtime = hash_map<int, int, 4>();
    const auto ok = can_assoc(m_runtime, 2, 20);
 
    return ok ? 0 : 1;
@@ -1218,11 +1219,11 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto q_const = Queue<int, 4>{};
+   constexpr auto q_const = queue<int, 4>();
    static_assert(can_conj(q_const));
    static_assert(can_conj(q_const, 1));
-   static_assert(can_conj(Queue<int, 2>{}, 1, 2));
-   constexpr auto q_full = Queue{1};
+   static_assert(can_conj(queue<int, 2>(), 1, 2));
+   constexpr auto q_full = queue(1);
    static_assert(!can_conj(q_full, 2));
    constexpr auto s_const = hash_set<int, 4>();
    static_assert(can_conj(s_const, 1));
@@ -1232,7 +1233,7 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
    static_assert(can_conj(m_const, map_entry(1, 999)));
 
    // Runtime demonstration.
-   auto q_runtime = Queue<int, 4>{};
+   auto q_runtime = queue<int, 4>();
    const auto q_ok = can_conj(q_runtime, 1);
 
    return q_ok ? 0 : 1;
@@ -1842,7 +1843,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto q_const = conj(Queue<int, 4>{}, 10);
+   constexpr auto q_const = conj(queue<int, 4>(), 10);
    constexpr auto s_const = conj(hash_set<int, 4>(), 20);
    static_assert(peek(q_const) == 10);
    static_assert(contains(s_const, 20));
@@ -1851,7 +1852,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(v_const(2) == 30);
    constexpr auto text_const = conj(String<4>{"Hi"}, '!');
    static_assert(text_const(2) == '!');
-   constexpr auto m_const = conj(Map<int, int, 4>{}, map_entry(1, 100));
+   constexpr auto m_const = conj(hash_map<int, int, 4>(), map_entry(1, 100));
    static_assert(m_const(1) == 100);
 
    // Zero-value and variadic arities.
@@ -1863,7 +1864,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(text_many(2) == '!');
 
    // Runtime demonstration.
-   auto q_runtime = Queue<int, 4>{};
+   auto q_runtime = queue<int, 4>();
    const auto q1 = conj(q_runtime, 100);
 
    return (peek(q1) == 100) ? 0 : 1;
@@ -2095,7 +2096,7 @@ namespace cljonic {
    // Compile-time demonstration.
    constexpr auto v_const = vector(1, 2, 3);
    constexpr auto m_const = hash_map(1, 100);
-   constexpr auto q_const = Queue{9};
+   constexpr auto q_const = queue(9);
    constexpr auto r_const = Range{0, 5};
    constexpr auto finite_repeat = Repeat{3, 7};
    constexpr auto unbounded_repeat = Repeat{7};
@@ -3416,7 +3417,7 @@ namespace cljonic {
    // Compile-time demonstration.
    constexpr auto v = vector(1, 2, 3);
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
-   constexpr auto q = Queue{1, 2, 3};
+   constexpr auto q = queue(1, 2, 3);
    constexpr auto rep = Repeat{3, 1};
    constexpr auto m1 = hash_map(1, 10, 2, 20);
    constexpr auto m2 = hash_map(2, 20, 1, 10);
@@ -4345,7 +4346,7 @@ namespace cljonic {
    constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = hash_set(7);
-   constexpr auto q_const = Queue{5, 6};
+   constexpr auto q_const = queue(5, 6);
    constexpr auto text_const = String{"AB"};
    constexpr auto e_const = map_entry(1, 100);
    static_assert(first(v_const) == 10);
@@ -4359,7 +4360,7 @@ namespace cljonic {
    auto v_runtime = vector(100, 200);
    auto m_runtime = hash_map(2, 200);
    auto s_runtime = hash_set(8);
-   auto q_runtime = Queue{9, 10};
+   auto q_runtime = queue(9, 10);
    auto text_runtime = String{"CD"};
    auto e_runtime = map_entry(3, 300);
 
@@ -5004,9 +5005,9 @@ concept NextSequenceableCollection =
    constexpr auto set_tail = next(set);
    static_assert(count(set_tail) == 2);
 
-   constexpr auto queue = Queue{10, 20, 30};
-   constexpr auto queue_tail = next(queue);
-   static_assert(queue_tail(0) == 20 && queue_tail(1) == 30);
+   constexpr auto q = queue(10, 20, 30);
+   constexpr auto q_tail = next(q);
+   static_assert(q_tail(0) == 20 && q_tail(1) == 30);
 
    constexpr auto text = String{"ABC"};
    constexpr auto text_tail = next(text);
@@ -5017,7 +5018,7 @@ concept NextSequenceableCollection =
    // Runtime demonstration.
    const auto runtime_values = cljonic::vector<int, 4>(40, 50);
    const auto runtime_tail = next(runtime_values);
-   const auto runtime_queue = Queue<int, 4>{60, 70};
+   const auto runtime_queue = queue<int, 4>(60, 70);
    const auto runtime_queue_tail = next(runtime_queue);
    const auto runtime_map = hash_map<int, int, 4>(3, 300, 4, 400);
    const auto runtime_map_tail = next(runtime_map);
@@ -5143,7 +5144,7 @@ namespace cljonic {
    // Compile-time demonstration.
    constexpr auto v = vector(1, 2, 3);
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
-   constexpr auto q = Queue{1, 2, 3};
+   constexpr auto q = queue(1, 2, 3);
    constexpr auto m1 = hash_map(1, 10);
    constexpr auto m2 = hash_map(2, 20);
    constexpr auto s1 = hash_set(3, 1, 2);
@@ -5258,11 +5259,11 @@ namespace cljonic {
  int main() {
    // Compile-time demonstration.
    constexpr auto vector = cljonic::vector(10, 20);
-   constexpr auto queue = Queue{30, 40};
+   constexpr auto q = queue(30, 40);
    constexpr auto empty_vector = cljonic::vector<int, 4>();
-   constexpr auto empty_queue = Queue<int, 4>{};
+   constexpr auto empty_queue = queue<int, 4>();
    static_assert(peek(vector) == 20);
-   static_assert(peek(queue) == 30);
+   static_assert(peek(q) == 30);
    static_assert(peek(empty_vector) == 0);
    static_assert(peek(empty_queue) == 0);
 
@@ -5272,7 +5273,7 @@ namespace cljonic {
    const auto queue_front = 33;
    const auto queue_back = 44;
    const auto runtime_vector = cljonic::vector(vector_first, vector_last);
-   const auto runtime_queue = Queue{queue_front, queue_back};
+   const auto runtime_queue = queue(queue_front, queue_back);
    const auto vector_last_value = peek(runtime_vector);
    const auto queue_front_value = peek(runtime_queue);
    const auto empty_runtime_vector = empty(runtime_vector);
@@ -5323,14 +5324,14 @@ namespace cljonic {
  int main() {
    constexpr auto vector = cljonic::vector(1, 2);
    constexpr auto vector_after_pop = pop(vector);
-   constexpr auto queue = Queue{1, 2};
-   constexpr auto queue_after_pop = pop(queue);
+   constexpr auto q = queue(1, 2);
+   constexpr auto queue_after_pop = pop(q);
    static_assert(peek(vector_after_pop) == 1);
    static_assert(peek(vector) == 2);
    static_assert(peek(queue_after_pop) == 2);
-   static_assert(peek(queue) == 1);
+   static_assert(peek(q) == 1);
    constexpr auto empty_vector = cljonic::vector<int, 0>();
-   constexpr auto empty_queue = Queue<int, 4>{};
+   constexpr auto empty_queue = queue<int, 4>();
    static_assert(pop(empty_vector) == empty_vector);
    static_assert(pop(empty_queue) == empty_queue);
 
@@ -5340,7 +5341,7 @@ namespace cljonic {
    const int queue_last = 40;
    const auto runtime_vector = cljonic::vector(vector_first, vector_last);
    const auto runtime_vector_after_pop = pop(runtime_vector);
-   const auto runtime_queue = Queue{queue_first, queue_last};
+   const auto runtime_queue = queue(queue_first, queue_last);
    const auto runtime_queue_after_pop = pop(runtime_queue);
 
    return (peek(runtime_vector_after_pop) == vector_first &&
@@ -5384,6 +5385,11 @@ namespace cljonic {
 /** \anchor Queue
  * A Queue is a bounded FIFO collection. Operations use the library's free-function API.
  *
+ * The \c queue factory is the idiomatic way to create Queue values at runtime or during constant evaluation. Use \c
+ * queue(e, ...) to infer the element type and capacity, \c queue<T>(e, ...) to select the element type, \c queue<T,
+ * Capacity>(e, ...) to provide an explicit capacity, or \c queue<T>() for an empty zero-capacity Queue. \c Queue<T,
+ * Capacity> remains the value's type.
+ *
  * Direct construction can import a C++ range or view: its elements are copied into the Queue. A cljonic value is not
  * copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one element only
  * when its type exactly matches the declared element type. Without explicit template arguments, a sole cljonic
@@ -5399,12 +5405,12 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // CTAD infers Queue<int, 3> from the initializer count.
-   [[maybe_unused]] constexpr auto ints_at_capacity = Queue{1, 2, 3};
+   // The factory infers Queue<int, 3> from the argument count.
+   [[maybe_unused]] constexpr auto ints_at_capacity = queue(1, 2, 3);
 
    // Explicit capacity permits a partially populated Queue and an empty Queue.
-   [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
-   [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
+   [[maybe_unused]] constexpr auto ints_populated = queue<int, 4>(1, 2);
+   [[maybe_unused]] constexpr auto ints_empty = queue<int, 4>();
 
    // --------------------------------------------------------------------------
    // C++ interoperability: a Queue supports const traversal and accepts owned
@@ -5421,7 +5427,7 @@ namespace cljonic {
 
    // A standard view pipeline can use an existing Queue as its source and
    // Construct another Queue from the transformed values.
-   const auto pipeline_source = Queue{1, 2, 3};
+   const auto pipeline_source = queue(1, 2, 3);
    const auto shifted_view =
        pipeline_source |
        std::views::transform([](int value) noexcept { return value + 10; });
@@ -5651,6 +5657,137 @@ Queue(Queue<ElementType, CapacityValue>) -> Queue<Queue<ElementType, CapacityVal
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
 Queue(std::span<SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
+
+namespace concepts_detail {
+
+struct DeducedQueueElementType {};
+
+template <typename RequestedElementType, typename... Args>
+struct queue_factory_element_type {
+    using type = RequestedElementType;
+};
+
+template <typename First, typename... Rest>
+struct queue_factory_element_type<DeducedQueueElementType, First, Rest...> {
+    using type = std::remove_cvref_t<First>;
+};
+
+template <typename RequestedElementType, typename... Args>
+using queue_factory_element_t = queue_factory_element_type<RequestedElementType, Args...>::type;
+
+template <typename RequestedElementType, typename... Args>
+concept QueueFactoryHasElementType =
+    sizeof...(Args) > 0U || !std::same_as<RequestedElementType, DeducedQueueElementType>;
+
+template <typename RequestedElementType, typename... Args>
+concept QueueFactoryArguments =
+    QueueFactoryHasElementType<RequestedElementType, Args...> &&
+    concepts::NothrowCollectionElement<queue_factory_element_t<RequestedElementType, Args...>> &&
+    sizeof...(Args) <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    (concepts::NothrowElementConstruction<queue_factory_element_t<RequestedElementType, Args...>, Args> && ...);
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+concept QueueFactoryCapacityArguments =
+    concepts::NothrowCollectionElement<ElementType> && Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    sizeof...(Args) <= Capacity && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
+
+} // namespace concepts_detail
+
+/** Creates a bounded Queue from its arguments, or a typed empty zero-capacity Queue when called as \c queue<T>(). */
+template <typename RequestedElementType = concepts_detail::DeducedQueueElementType, typename... Args>
+    requires concepts_detail::QueueFactoryArguments<RequestedElementType, Args...>
+[[nodiscard]] constexpr auto queue(Args&&... args) noexcept(
+    (concepts::NothrowElementConstruction<concepts_detail::queue_factory_element_t<RequestedElementType, Args...>,
+                                          Args> &&
+     ...)) -> Queue<concepts_detail::queue_factory_element_t<RequestedElementType, Args...>, sizeof...(Args)> {
+    using ElementType = concepts_detail::queue_factory_element_t<RequestedElementType, Args...>;
+    return Queue<ElementType, sizeof...(Args)>{std::forward<Args>(args)...};
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedQueueElementType, typename... Args>
+    requires(!concepts_detail::QueueFactoryArguments<RequestedElementType, Args...>)
+constexpr auto queue([[maybe_unused]] Args&&... args) noexcept -> void {
+    using ElementType = concepts_detail::queue_factory_element_t<RequestedElementType, Args...>;
+    if constexpr (!concepts_detail::QueueFactoryHasElementType<RequestedElementType, Args...>) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::queue: an empty Queue requires an explicit element type; write queue<T>().");
+    } else if constexpr (!concepts::NothrowCollectionElement<ElementType>) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::queue: the element type must satisfy NothrowCollectionElement.");
+    } else if constexpr (sizeof...(Args) > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::queue: argument count exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::queue: every argument must safely construct the element type without throwing.");
+    }
+}
+
+/** \anchor QueueFactory
+ * Creates a bounded \ref Queue "Queue" from individual element arguments.
+ *
+ * Deduced calls use the first argument's unqualified type and have capacity equal to their argument count, with the
+ * first argument becoming the queue front. Explicit element type uses \c queue<T>(...); explicit capacity uses \c
+ * queue<T, Capacity>(...), including for an empty queue; \c queue<T>() creates an empty zero-capacity Queue. An
+ * untyped empty call is rejected at compile time.
+ *
+ \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Deduced calls infer the element type from the first argument and the
+   // capacity from the argument count. The first argument becomes the front.
+   constexpr auto fifo = queue(1, 2, 3);
+   static_assert(fifo.capacity() == 3);
+   static_assert(fifo.peek() == 1);
+   static_assert(fifo.pop().peek() == 2);
+   static_assert(fifo.pop().pop().pop() == Queue<int, 3>{});
+
+   // Explicit element type and explicit capacity create a queue with room for
+   // later conj operations, including an empty zero-capacity queue.
+   constexpr auto reserved = queue<int, 4>();
+   constexpr auto zero = queue<int, 0>();
+
+   // The factory also works with runtime values.
+   const auto runtime_value = 40;
+   const auto runtime_queue = queue(runtime_value, 50);
+
+   // A named queue type keeps the element and capacity contract explicit.
+   constexpr auto typed = queue<int, 4>(1, 2, 3);
+
+   return (typed.count() == 3 && typed.peek() == 1 && reserved.count() == 0 &&
+           zero.count() == 0 && runtime_queue.peek() == 40)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires concepts_detail::QueueFactoryCapacityArguments<ElementType, Capacity, Args...>
+[[nodiscard]] constexpr auto queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> &&
+                                                             ...)) -> Queue<ElementType, Capacity> {
+    return Queue<ElementType, Capacity>{std::forward<Args>(args)...};
+}
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires(!concepts_detail::QueueFactoryCapacityArguments<ElementType, Capacity, Args...>)
+constexpr auto queue([[maybe_unused]] Args&&... args) noexcept -> void {
+    if constexpr (!concepts::NothrowCollectionElement<ElementType>) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::queue: the element type must satisfy NothrowCollectionElement.");
+    } else if constexpr (Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::queue: capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else if constexpr (sizeof...(Args) > Capacity) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::queue: capacity must be at least the number of arguments.");
+    } else {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::queue: every argument must safely construct the element type without throwing.");
+    }
+}
 
 } // namespace cljonic
 

@@ -19,11 +19,11 @@ namespace cljonic {
  int main() {
    // Compile-time demonstration.
    constexpr auto vector = cljonic::vector(10, 20);
-   constexpr auto queue = Queue{30, 40};
+   constexpr auto q = queue(30, 40);
    constexpr auto empty_vector = cljonic::vector<int, 4>();
-   constexpr auto empty_queue = Queue<int, 4>{};
+   constexpr auto empty_queue = queue<int, 4>();
    static_assert(peek(vector) == 20);
-   static_assert(peek(queue) == 30);
+   static_assert(peek(q) == 30);
    static_assert(peek(empty_vector) == 0);
    static_assert(peek(empty_queue) == 0);
 
@@ -33,7 +33,7 @@ namespace cljonic {
    const auto queue_front = 33;
    const auto queue_back = 44;
    const auto runtime_vector = cljonic::vector(vector_first, vector_last);
-   const auto runtime_queue = Queue{queue_front, queue_back};
+   const auto runtime_queue = queue(queue_front, queue_back);
    const auto vector_last_value = peek(runtime_vector);
    const auto queue_front_value = peek(runtime_queue);
    const auto empty_runtime_vector = empty(runtime_vector);

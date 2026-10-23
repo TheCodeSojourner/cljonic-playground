@@ -16,6 +16,11 @@ namespace cljonic {
 /** \anchor Queue
  * A Queue is a bounded FIFO collection. Operations use the library's free-function API.
  *
+ * The \c queue factory is the idiomatic way to create Queue values at runtime or during constant evaluation. Use \c
+ * queue(e, ...) to infer the element type and capacity, \c queue<T>(e, ...) to select the element type, \c queue<T,
+ * Capacity>(e, ...) to provide an explicit capacity, or \c queue<T>() for an empty zero-capacity Queue. \c Queue<T,
+ * Capacity> remains the value's type.
+ *
  * Direct construction can import a C++ range or view: its elements are copied into the Queue. A cljonic value is not
  * copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one element only
  * when its type exactly matches the declared element type. Without explicit template arguments, a sole cljonic
@@ -31,12 +36,12 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // CTAD infers Queue<int, 3> from the initializer count.
-   [[maybe_unused]] constexpr auto ints_at_capacity = Queue{1, 2, 3};
+   // The factory infers Queue<int, 3> from the argument count.
+   [[maybe_unused]] constexpr auto ints_at_capacity = queue(1, 2, 3);
 
    // Explicit capacity permits a partially populated Queue and an empty Queue.
-   [[maybe_unused]] constexpr auto ints_populated = Queue<int, 4>{1, 2};
-   [[maybe_unused]] constexpr auto ints_empty = Queue<int, 4>{};
+   [[maybe_unused]] constexpr auto ints_populated = queue<int, 4>(1, 2);
+   [[maybe_unused]] constexpr auto ints_empty = queue<int, 4>();
 
    // --------------------------------------------------------------------------
    // C++ interoperability: a Queue supports const traversal and accepts owned
@@ -53,7 +58,7 @@ namespace cljonic {
 
    // A standard view pipeline can use an existing Queue as its source and
    // Construct another Queue from the transformed values.
-   const auto pipeline_source = Queue{1, 2, 3};
+   const auto pipeline_source = queue(1, 2, 3);
    const auto shifted_view =
        pipeline_source |
        std::views::transform([](int value) noexcept { return value + 10; });
@@ -283,6 +288,137 @@ Queue(Queue<ElementType, CapacityValue>) -> Queue<Queue<ElementType, CapacityVal
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
 Queue(std::span<SourceElement, Extent>) -> Queue<std::remove_cv_t<SourceElement>, Extent>;
+
+namespace concepts_detail {
+
+struct DeducedQueueElementType {};
+
+template <typename RequestedElementType, typename... Args>
+struct queue_factory_element_type {
+    using type = RequestedElementType;
+};
+
+template <typename First, typename... Rest>
+struct queue_factory_element_type<DeducedQueueElementType, First, Rest...> {
+    using type = std::remove_cvref_t<First>;
+};
+
+template <typename RequestedElementType, typename... Args>
+using queue_factory_element_t = queue_factory_element_type<RequestedElementType, Args...>::type;
+
+template <typename RequestedElementType, typename... Args>
+concept QueueFactoryHasElementType =
+    sizeof...(Args) > 0U || !std::same_as<RequestedElementType, DeducedQueueElementType>;
+
+template <typename RequestedElementType, typename... Args>
+concept QueueFactoryArguments =
+    QueueFactoryHasElementType<RequestedElementType, Args...> &&
+    concepts::NothrowCollectionElement<queue_factory_element_t<RequestedElementType, Args...>> &&
+    sizeof...(Args) <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    (concepts::NothrowElementConstruction<queue_factory_element_t<RequestedElementType, Args...>, Args> && ...);
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+concept QueueFactoryCapacityArguments =
+    concepts::NothrowCollectionElement<ElementType> && Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    sizeof...(Args) <= Capacity && (concepts::NothrowElementConstruction<ElementType, Args> && ...);
+
+} // namespace concepts_detail
+
+/** Creates a bounded Queue from its arguments, or a typed empty zero-capacity Queue when called as \c queue<T>(). */
+template <typename RequestedElementType = concepts_detail::DeducedQueueElementType, typename... Args>
+    requires concepts_detail::QueueFactoryArguments<RequestedElementType, Args...>
+[[nodiscard]] constexpr auto queue(Args&&... args) noexcept(
+    (concepts::NothrowElementConstruction<concepts_detail::queue_factory_element_t<RequestedElementType, Args...>,
+                                          Args> &&
+     ...)) -> Queue<concepts_detail::queue_factory_element_t<RequestedElementType, Args...>, sizeof...(Args)> {
+    using ElementType = concepts_detail::queue_factory_element_t<RequestedElementType, Args...>;
+    return Queue<ElementType, sizeof...(Args)>{std::forward<Args>(args)...};
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedQueueElementType, typename... Args>
+    requires(!concepts_detail::QueueFactoryArguments<RequestedElementType, Args...>)
+constexpr auto queue([[maybe_unused]] Args&&... args) noexcept -> void {
+    using ElementType = concepts_detail::queue_factory_element_t<RequestedElementType, Args...>;
+    if constexpr (!concepts_detail::QueueFactoryHasElementType<RequestedElementType, Args...>) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::queue: an empty Queue requires an explicit element type; write queue<T>().");
+    } else if constexpr (!concepts::NothrowCollectionElement<ElementType>) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::queue: the element type must satisfy NothrowCollectionElement.");
+    } else if constexpr (sizeof...(Args) > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::queue: argument count exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else {
+        static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                      "cljonic::queue: every argument must safely construct the element type without throwing.");
+    }
+}
+
+/** \anchor QueueFactory
+ * Creates a bounded \ref Queue "Queue" from individual element arguments.
+ *
+ * Deduced calls use the first argument's unqualified type and have capacity equal to their argument count, with the
+ * first argument becoming the queue front. Explicit element type uses \c queue<T>(...); explicit capacity uses \c
+ * queue<T, Capacity>(...), including for an empty queue; \c queue<T>() creates an empty zero-capacity Queue. An
+ * untyped empty call is rejected at compile time.
+ *
+ \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // Deduced calls infer the element type from the first argument and the
+   // capacity from the argument count. The first argument becomes the front.
+   constexpr auto fifo = queue(1, 2, 3);
+   static_assert(fifo.capacity() == 3);
+   static_assert(fifo.peek() == 1);
+   static_assert(fifo.pop().peek() == 2);
+   static_assert(fifo.pop().pop().pop() == Queue<int, 3>{});
+
+   // Explicit element type and explicit capacity create a queue with room for
+   // later conj operations, including an empty zero-capacity queue.
+   constexpr auto reserved = queue<int, 4>();
+   constexpr auto zero = queue<int, 0>();
+
+   // The factory also works with runtime values.
+   const auto runtime_value = 40;
+   const auto runtime_queue = queue(runtime_value, 50);
+
+   // A named queue type keeps the element and capacity contract explicit.
+   constexpr auto typed = queue<int, 4>(1, 2, 3);
+
+   return (typed.count() == 3 && typed.peek() == 1 && reserved.count() == 0 &&
+           zero.count() == 0 && runtime_queue.peek() == 40)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires concepts_detail::QueueFactoryCapacityArguments<ElementType, Capacity, Args...>
+[[nodiscard]] constexpr auto queue(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> &&
+                                                             ...)) -> Queue<ElementType, Capacity> {
+    return Queue<ElementType, Capacity>{std::forward<Args>(args)...};
+}
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires(!concepts_detail::QueueFactoryCapacityArguments<ElementType, Capacity, Args...>)
+constexpr auto queue([[maybe_unused]] Args&&... args) noexcept -> void {
+    if constexpr (!concepts::NothrowCollectionElement<ElementType>) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::queue: the element type must satisfy NothrowCollectionElement.");
+    } else if constexpr (Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::queue: capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else if constexpr (sizeof...(Args) > Capacity) {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::queue: capacity must be at least the number of arguments.");
+    } else {
+        static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                      "cljonic::queue: every argument must safely construct the element type without throwing.");
+    }
+}
 
 } // namespace cljonic
 

@@ -21,7 +21,7 @@ namespace cljonic {
    // Compile-time demonstration.
    constexpr auto v = vector(1, 2, 3);
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
-   constexpr auto q = Queue{1, 2, 3};
+   constexpr auto q = queue(1, 2, 3);
    constexpr auto m1 = hash_map(1, 10);
    constexpr auto m2 = hash_map(2, 20);
    constexpr auto s1 = hash_set(3, 1, 2);
