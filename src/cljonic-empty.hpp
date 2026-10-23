@@ -22,7 +22,7 @@ namespace cljonic {
    // Runtime demonstration.
    auto v_runtime = vector(10, 20);
    auto e_runtime = empty(v_runtime);
-   auto m_runtime = Map{MapEntry{1, 100}};
+   auto m_runtime = hash_map(1, 100);
    auto em_runtime = empty(m_runtime);
 
    return (is_empty(e_runtime) && count(v_runtime) == 2 &&

@@ -64,7 +64,7 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
  int main() {
    // Compile-time demonstration.
    constexpr auto v_const = vector(10, 20);
-   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = Set{5};
    constexpr auto text_const = String{"ab"};
    static_assert(get(v_const, 0) == 10);

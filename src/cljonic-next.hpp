@@ -22,7 +22,7 @@ concept NextSequenceableCollection =
  * The result has the same static capacity as the source and contains every logical element after the first in the
  * source's traversal order. An empty input returns an empty Vector.
  *
- * A map's elements remain value-semantic \ref MapEntry "MapEntry" values. Map and Set traversal order is not
+ * A map's elements remain value-semantic \ref MapEntryFactory "map_entry" values. Map and Set traversal order is not
  * semantically significant, while Queue retains FIFO order.
  *
  * \b Examples
@@ -37,11 +37,11 @@ concept NextSequenceableCollection =
    static_assert(count(vector_tail) == 2);
    static_assert(vector_tail(0) == 20 && vector_tail(1) == 30);
 
-   constexpr auto map = Map{MapEntry{1, 100}, MapEntry{2, 200}};
+   constexpr auto map = hash_map(1, 100, 2, 200);
    constexpr auto map_tail = next(map);
    static_assert(count(map_tail) == 1);
-   static_assert(map_tail(0) == MapEntry{2, 200} ||
-                 map_tail(0) == MapEntry{1, 100});
+   static_assert(map_tail(0) == map_entry(2, 200) ||
+                 map_tail(0) == map_entry(1, 100));
 
    constexpr auto set = Set{10, 20, 30};
    constexpr auto set_tail = next(set);
@@ -62,7 +62,7 @@ concept NextSequenceableCollection =
    const auto runtime_tail = next(runtime_values);
    const auto runtime_queue = Queue<int, 4>{60, 70};
    const auto runtime_queue_tail = next(runtime_queue);
-   const auto runtime_map = Map<int, int, 4>{MapEntry{3, 300}, MapEntry{4, 400}};
+   const auto runtime_map = hash_map<int, int, 4>(3, 300, 4, 400);
    const auto runtime_map_tail = next(runtime_map);
    const auto runtime_set = Set<int, 4>{80, 90};
    const auto runtime_set_tail = next(runtime_set);
@@ -74,8 +74,8 @@ concept NextSequenceableCollection =
            runtime_values(1) == 50 && runtime_queue_tail(0) == 70 &&
            count(runtime_queue) == 2 && peek(runtime_queue) == 60 &&
            runtime_queue.begin()[1] == 70 && count(runtime_map_tail) == 1 &&
-           (runtime_map_tail(0) == MapEntry{3, 300} ||
-            runtime_map_tail(0) == MapEntry{4, 400}) &&
+           (runtime_map_tail(0) == map_entry(3, 300) ||
+            runtime_map_tail(0) == map_entry(4, 400)) &&
            count(runtime_map) == 2 && get(runtime_map, 3) == 300 &&
            get(runtime_map, 4) == 400 && count(runtime_set_tail) == 1 &&
            (runtime_set_tail(0) == 80 || runtime_set_tail(0) == 90) &&

@@ -53,8 +53,7 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto m0_const =
-       Map{MapEntry{1, 100}, MapEntry{2, 200}, MapEntry{3, 300}};
+   constexpr auto m0_const = hash_map(1, 100, 2, 200, 3, 300);
    constexpr auto unchanged_const = dissoc(m0_const);
    static_assert(contains(unchanged_const, 1));
    static_assert(contains(unchanged_const, 2));
@@ -66,7 +65,7 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
    static_assert(contains(m0_const, 1));
 
    // Runtime demonstration.
-   auto m0_runtime = Map{MapEntry{2, 200}};
+   auto m0_runtime = hash_map(2, 200);
    auto m1_runtime = dissoc(m0_runtime, 2);
 
    return (!contains(m1_runtime, 2) && contains(m0_runtime, 2) &&

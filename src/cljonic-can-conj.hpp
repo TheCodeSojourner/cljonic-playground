@@ -68,8 +68,8 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
    static_assert(can_conj(s_const, 1));
    constexpr auto text_const = String<4>{"Hi"};
    static_assert(can_conj(text_const, '!'));
-   constexpr auto m_const = Map{MapEntry{1, 100}};
-   static_assert(can_conj(m_const, MapEntry{1, 999}));
+   constexpr auto m_const = hash_map(1, 100);
+   static_assert(can_conj(m_const, map_entry(1, 999)));
 
    // Runtime demonstration.
    auto q_runtime = Queue<int, 4>{};

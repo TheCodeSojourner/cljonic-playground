@@ -7,11 +7,12 @@ namespace cljonic {
 
 /** \anchor First
  * The \b first free function returns the first logical element of a `Vector`, `Map`, `Set`, `Queue`, or `String`
- * value, or the key of a \ref MapEntry "MapEntry" value.
+ * value, or the key of a \ref MapEntryFactory "map_entry" value.
  *
  * `Vector` and `String` yield the element at index zero, `Queue` yields its front element, `Map` yields one
- * value-semantic `MapEntry`, and `Set` yields one stored element. `Map` and `Set` traversal order is not semantically
- * significant. An empty collection yields its \ref DefaultElement "default element".
+ * value-semantic \ref MapEntryFactory "map_entry" value, and `Set` yields one stored element. `Map` and `Set`
+ * traversal order is not semantically significant. An empty collection yields its \ref DefaultElement "default
+ * element".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -21,13 +22,13 @@ namespace cljonic {
  int main() {
    // Compile-time demonstration.
    constexpr auto v_const = vector(10, 20, 30);
-   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = Set{7};
    constexpr auto q_const = Queue{5, 6};
    constexpr auto text_const = String{"AB"};
-   constexpr auto e_const = MapEntry{1, 100};
+   constexpr auto e_const = map_entry(1, 100);
    static_assert(first(v_const) == 10);
-   static_assert(first(m_const) == MapEntry{1, 100});
+   static_assert(first(m_const) == map_entry(1, 100));
    static_assert(first(s_const) == 7);
    static_assert(first(q_const) == 5);
    static_assert(first(text_const) == 'A');
@@ -35,13 +36,13 @@ namespace cljonic {
 
    // Runtime demonstration.
    auto v_runtime = vector(100, 200);
-   auto m_runtime = Map{MapEntry{2, 200}};
+   auto m_runtime = hash_map(2, 200);
    auto s_runtime = Set{8};
    auto q_runtime = Queue{9, 10};
    auto text_runtime = String{"CD"};
-   auto e_runtime = MapEntry{3, 300};
+   auto e_runtime = map_entry(3, 300);
 
-   return (first(v_runtime) == 100 && first(m_runtime) == MapEntry{2, 200} &&
+   return (first(v_runtime) == 100 && first(m_runtime) == map_entry(2, 200) &&
            first(s_runtime) == 8 && first(q_runtime) == 9 &&
            first(text_runtime) == 'C' && first(e_runtime) == 3)
               ? 0

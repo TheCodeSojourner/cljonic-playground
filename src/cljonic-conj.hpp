@@ -22,8 +22,8 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
  * its logical count. For \ref String "String", invalid characters are rejected at compile time and replaced with `.`
  * at runtime; see \ref String "String" for character validation and normalization policy.
  *
- * \ref Set "Set" adds absent elements; duplicates are no-ops. \ref Map "Map" associates a \ref MapEntry "MapEntry"; an
- * existing key's value is replaced.
+ * \ref Set "Set" adds absent elements; duplicates are no-ops. \ref Map "Map" associates a \ref MapEntry; an existing
+ * key's value is replaced.
  *
  * At full capacity, \ref Vector "Vector", \ref Queue "Queue", and \ref String "String" return unchanged copies. A full
  * \ref Set "Set" or \ref Map "Map" also returns an unchanged copy when the element or key is absent.
@@ -51,7 +51,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(v_const(2) == 30);
    constexpr auto text_const = conj(String<4>{"Hi"}, '!');
    static_assert(text_const(2) == '!');
-   constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry{1, 100});
+   constexpr auto m_const = conj(Map<int, int, 4>{}, map_entry(1, 100));
    static_assert(m_const(1) == 100);
 
    // Zero-value and variadic arities.

@@ -1228,8 +1228,8 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
    static_assert(can_conj(s_const, 1));
    constexpr auto text_const = String<4>{"Hi"};
    static_assert(can_conj(text_const, '!'));
-   constexpr auto m_const = Map{MapEntry{1, 100}};
-   static_assert(can_conj(m_const, MapEntry{1, 999}));
+   constexpr auto m_const = hash_map(1, 100);
+   static_assert(can_conj(m_const, map_entry(1, 999)));
 
    // Runtime demonstration.
    auto q_runtime = Queue<int, 4>{};
@@ -1822,8 +1822,8 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
  * its logical count. For \ref String "String", invalid characters are rejected at compile time and replaced with `.`
  * at runtime; see \ref String "String" for character validation and normalization policy.
  *
- * \ref Set "Set" adds absent elements; duplicates are no-ops. \ref Map "Map" associates a \ref MapEntry "MapEntry"; an
- * existing key's value is replaced.
+ * \ref Set "Set" adds absent elements; duplicates are no-ops. \ref Map "Map" associates a \ref MapEntry; an existing
+ * key's value is replaced.
  *
  * At full capacity, \ref Vector "Vector", \ref Queue "Queue", and \ref String "String" return unchanged copies. A full
  * \ref Set "Set" or \ref Map "Map" also returns an unchanged copy when the element or key is absent.
@@ -1851,7 +1851,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(v_const(2) == 30);
    constexpr auto text_const = conj(String<4>{"Hi"}, '!');
    static_assert(text_const(2) == '!');
-   constexpr auto m_const = conj(Map<int, int, 4>{}, MapEntry{1, 100});
+   constexpr auto m_const = conj(Map<int, int, 4>{}, map_entry(1, 100));
    static_assert(m_const(1) == 100);
 
    // Zero-value and variadic arities.
@@ -2018,7 +2018,7 @@ concept ContainsAdmissible =
  int main() {
    // Compile-time demonstration.
    constexpr auto v_const = vector(10, 20, 30);
-   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = Set{5};
    constexpr auto st_const = String{"abc"};
    static_assert(contains(v_const, 0U));
@@ -2094,7 +2094,7 @@ namespace cljonic {
  int main() {
    // Compile-time demonstration.
    constexpr auto v_const = vector(1, 2, 3);
-   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto m_const = hash_map(1, 100);
    constexpr auto q_const = Queue{9};
    constexpr auto r_const = Range{0, 5};
    constexpr auto finite_repeat = Repeat{3, 7};
@@ -3010,8 +3010,7 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto m0_const =
-       Map{MapEntry{1, 100}, MapEntry{2, 200}, MapEntry{3, 300}};
+   constexpr auto m0_const = hash_map(1, 100, 2, 200, 3, 300);
    constexpr auto unchanged_const = dissoc(m0_const);
    static_assert(contains(unchanged_const, 1));
    static_assert(contains(unchanged_const, 2));
@@ -3023,7 +3022,7 @@ constexpr void fold_dissoc_keys_into(C& result, const K& key, const Rest&... res
    static_assert(contains(m0_const, 1));
 
    // Runtime demonstration.
-   auto m0_runtime = Map{MapEntry{2, 200}};
+   auto m0_runtime = hash_map(2, 200);
    auto m1_runtime = dissoc(m0_runtime, 2);
 
    return (!contains(m1_runtime, 2) && contains(m0_runtime, 2) &&
@@ -3129,7 +3128,7 @@ namespace cljonic {
    // Runtime demonstration.
    auto v_runtime = vector(10, 20);
    auto e_runtime = empty(v_runtime);
-   auto m_runtime = Map{MapEntry{1, 100}};
+   auto m_runtime = hash_map(1, 100);
    auto em_runtime = empty(m_runtime);
 
    return (is_empty(e_runtime) && count(v_runtime) == 2 &&
@@ -3419,8 +3418,8 @@ namespace cljonic {
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
    constexpr auto q = Queue{1, 2, 3};
    constexpr auto rep = Repeat{3, 1};
-   constexpr auto m1 = Map{MapEntry{1, 10}, MapEntry{2, 20}};
-   constexpr auto m2 = Map{MapEntry{2, 20}, MapEntry{1, 10}};
+   constexpr auto m1 = hash_map(1, 10, 2, 20);
+   constexpr auto m2 = hash_map(2, 20, 1, 10);
    constexpr auto s1 = Set{3, 1, 2};
    constexpr auto s2 = Set{1, 2, 3};
    constexpr auto str1 = String<8>{"abc"};
@@ -3826,8 +3825,8 @@ namespace cljonic {
    const auto runtime_amount = 40;
    const auto runtime_factory = hash_map(Key{4}, Value{runtime_amount});
 
-   // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
-   auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
+   // Runtime CTAD deduces Map<Key, Value, 1> from the map_entry value.
+   auto runtime = Map{map_entry(Key{3}, Value{30})};
    const auto present = runtime(Key{3});
    const auto missing = runtime(Key{4}, Value{77});
 
@@ -3835,15 +3834,15 @@ namespace cljonic {
    // Construct another Map from the transformed entries.
    const auto copied_view =
        runtime | std::views::transform([](const AccountEntry &entry) noexcept {
-         return AccountEntry{entry.key, Value{entry.value.amount * 2}};
+         return map_entry(entry.key, Value{entry.value.amount * 2});
        });
    const auto from_pipeline = AccountMap{copied_view};
 
    // A named map type and its named entry type make the intended value model
    // explicit. A later duplicate key replaces the earlier value (i.e., the
    // right-most value associated with a duplicate key).
-   constexpr auto literal = AccountMap{AccountEntry{Key{1}, Value{10}},
-                                       AccountEntry{Key{1}, Value{20}}};
+   constexpr auto literal =
+       AccountMap{map_entry(Key{1}, Value{10}), map_entry(Key{1}, Value{20})};
 
    // A Map is callable for present-key lookup and missing-key fallback.
    static_assert(literal(Key{1}).amount == 20);
@@ -3856,7 +3855,7 @@ namespace cljonic {
    // storage, retaining only the bounded prefix that fits the capacity.
    // ---------------------------------------------------------------------------
    static constexpr AccountEntry source_entries[] = {
-       AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
+       map_entry(Key{10}, Value{100}), map_entry(Key{20}, Value{200})};
    constexpr auto source_span = std::span{source_entries};
    constexpr auto from_span = AccountMap{source_span};
    static_assert(from_span(Key{10}).amount == 100);
@@ -3867,8 +3866,8 @@ namespace cljonic {
    static_assert(from_span_ctad.view().size() == 2);
 
    // Constructing a Map from a runtime C++ array/span
-   AccountEntry runtime_buffer[] = {AccountEntry{Key{100}, Value{1000}},
-                                    AccountEntry{Key{200}, Value{2000}}};
+   AccountEntry runtime_buffer[] = {map_entry(Key{100}, Value{1000}),
+                                    map_entry(Key{200}, Value{2000})};
    const auto runtime_from_span =
        Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
 
@@ -4329,11 +4328,12 @@ namespace cljonic {
 
 /** \anchor First
  * The \b first free function returns the first logical element of a `Vector`, `Map`, `Set`, `Queue`, or `String`
- * value, or the key of a \ref MapEntry "MapEntry" value.
+ * value, or the key of a \ref MapEntryFactory "map_entry" value.
  *
  * `Vector` and `String` yield the element at index zero, `Queue` yields its front element, `Map` yields one
- * value-semantic `MapEntry`, and `Set` yields one stored element. `Map` and `Set` traversal order is not semantically
- * significant. An empty collection yields its \ref DefaultElement "default element".
+ * value-semantic \ref MapEntryFactory "map_entry" value, and `Set` yields one stored element. `Map` and `Set`
+ * traversal order is not semantically significant. An empty collection yields its \ref DefaultElement "default
+ * element".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -4343,13 +4343,13 @@ namespace cljonic {
  int main() {
    // Compile-time demonstration.
    constexpr auto v_const = vector(10, 20, 30);
-   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = Set{7};
    constexpr auto q_const = Queue{5, 6};
    constexpr auto text_const = String{"AB"};
-   constexpr auto e_const = MapEntry{1, 100};
+   constexpr auto e_const = map_entry(1, 100);
    static_assert(first(v_const) == 10);
-   static_assert(first(m_const) == MapEntry{1, 100});
+   static_assert(first(m_const) == map_entry(1, 100));
    static_assert(first(s_const) == 7);
    static_assert(first(q_const) == 5);
    static_assert(first(text_const) == 'A');
@@ -4357,13 +4357,13 @@ namespace cljonic {
 
    // Runtime demonstration.
    auto v_runtime = vector(100, 200);
-   auto m_runtime = Map{MapEntry{2, 200}};
+   auto m_runtime = hash_map(2, 200);
    auto s_runtime = Set{8};
    auto q_runtime = Queue{9, 10};
    auto text_runtime = String{"CD"};
-   auto e_runtime = MapEntry{3, 300};
+   auto e_runtime = map_entry(3, 300);
 
-   return (first(v_runtime) == 100 && first(m_runtime) == MapEntry{2, 200} &&
+   return (first(v_runtime) == 100 && first(m_runtime) == map_entry(2, 200) &&
            first(s_runtime) == 8 && first(q_runtime) == 9 &&
            first(text_runtime) == 'C' && first(e_runtime) == 3)
               ? 0
@@ -4532,7 +4532,7 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
  int main() {
    // Compile-time demonstration.
    constexpr auto v_const = vector(10, 20);
-   constexpr auto m_const = Map{MapEntry{1, 100}};
+   constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = Set{5};
    constexpr auto text_const = String{"ab"};
    static_assert(get(v_const, 0) == 10);
@@ -4979,7 +4979,7 @@ concept NextSequenceableCollection =
  * The result has the same static capacity as the source and contains every logical element after the first in the
  * source's traversal order. An empty input returns an empty Vector.
  *
- * A map's elements remain value-semantic \ref MapEntry "MapEntry" values. Map and Set traversal order is not
+ * A map's elements remain value-semantic \ref MapEntryFactory "map_entry" values. Map and Set traversal order is not
  * semantically significant, while Queue retains FIFO order.
  *
  * \b Examples
@@ -4994,11 +4994,11 @@ concept NextSequenceableCollection =
    static_assert(count(vector_tail) == 2);
    static_assert(vector_tail(0) == 20 && vector_tail(1) == 30);
 
-   constexpr auto map = Map{MapEntry{1, 100}, MapEntry{2, 200}};
+   constexpr auto map = hash_map(1, 100, 2, 200);
    constexpr auto map_tail = next(map);
    static_assert(count(map_tail) == 1);
-   static_assert(map_tail(0) == MapEntry{2, 200} ||
-                 map_tail(0) == MapEntry{1, 100});
+   static_assert(map_tail(0) == map_entry(2, 200) ||
+                 map_tail(0) == map_entry(1, 100));
 
    constexpr auto set = Set{10, 20, 30};
    constexpr auto set_tail = next(set);
@@ -5019,7 +5019,7 @@ concept NextSequenceableCollection =
    const auto runtime_tail = next(runtime_values);
    const auto runtime_queue = Queue<int, 4>{60, 70};
    const auto runtime_queue_tail = next(runtime_queue);
-   const auto runtime_map = Map<int, int, 4>{MapEntry{3, 300}, MapEntry{4, 400}};
+   const auto runtime_map = hash_map<int, int, 4>(3, 300, 4, 400);
    const auto runtime_map_tail = next(runtime_map);
    const auto runtime_set = Set<int, 4>{80, 90};
    const auto runtime_set_tail = next(runtime_set);
@@ -5031,8 +5031,8 @@ concept NextSequenceableCollection =
            runtime_values(1) == 50 && runtime_queue_tail(0) == 70 &&
            count(runtime_queue) == 2 && peek(runtime_queue) == 60 &&
            runtime_queue.begin()[1] == 70 && count(runtime_map_tail) == 1 &&
-           (runtime_map_tail(0) == MapEntry{3, 300} ||
-            runtime_map_tail(0) == MapEntry{4, 400}) &&
+           (runtime_map_tail(0) == map_entry(3, 300) ||
+            runtime_map_tail(0) == map_entry(4, 400)) &&
            count(runtime_map) == 2 && get(runtime_map, 3) == 300 &&
            get(runtime_map, 4) == 400 && count(runtime_set_tail) == 1 &&
            (runtime_set_tail(0) == 80 || runtime_set_tail(0) == 90) &&
@@ -5094,7 +5094,7 @@ namespace cljonic {
    static_assert(count(copied) == 2);
    static_assert(is_empty(not_empty(vector<int, 0>())));
 
-   const auto entries = Map{MapEntry{1, 100}, MapEntry{2, 200}};
+   const auto entries = hash_map(1, 100, 2, 200);
    const auto copied_entries = not_empty(entries);
    const auto empty_values = vector<int, 4>();
    const auto copied_empty = not_empty(empty_values);
@@ -5144,8 +5144,8 @@ namespace cljonic {
    constexpr auto v = vector(1, 2, 3);
    constexpr auto r = Range{1, 4, 1}; // produces 1, 2, 3
    constexpr auto q = Queue{1, 2, 3};
-   constexpr auto m1 = Map{MapEntry{1, 10}};
-   constexpr auto m2 = Map{MapEntry{2, 20}};
+   constexpr auto m1 = hash_map(1, 10);
+   constexpr auto m2 = hash_map(2, 20);
    constexpr auto s1 = Set{3, 1, 2};
    constexpr auto s2 = Set{1, 2, 3};
    static_assert(not_equal(1, 2));
@@ -6967,7 +6967,7 @@ concept VariantClassArgument =
    [[maybe_unused]] constexpr auto as_vector_element =
        vector(Variant<int, long>{1}, Variant<int, long>{2L});
    [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
-   [[maybe_unused]] constexpr auto as_map_key = MapEntry{as_int, 1};
+   [[maybe_unused]] constexpr auto as_map_key = map_entry(as_int, 1);
 
    return 0;
  }

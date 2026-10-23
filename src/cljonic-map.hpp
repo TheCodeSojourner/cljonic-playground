@@ -65,8 +65,8 @@ namespace cljonic {
    const auto runtime_amount = 40;
    const auto runtime_factory = hash_map(Key{4}, Value{runtime_amount});
 
-   // Runtime CTAD deduces Map<Key, Value, 1> from the MapEntry argument.
-   auto runtime = Map{AccountEntry{Key{3}, Value{30}}};
+   // Runtime CTAD deduces Map<Key, Value, 1> from the map_entry value.
+   auto runtime = Map{map_entry(Key{3}, Value{30})};
    const auto present = runtime(Key{3});
    const auto missing = runtime(Key{4}, Value{77});
 
@@ -74,15 +74,15 @@ namespace cljonic {
    // Construct another Map from the transformed entries.
    const auto copied_view =
        runtime | std::views::transform([](const AccountEntry &entry) noexcept {
-         return AccountEntry{entry.key, Value{entry.value.amount * 2}};
+         return map_entry(entry.key, Value{entry.value.amount * 2});
        });
    const auto from_pipeline = AccountMap{copied_view};
 
    // A named map type and its named entry type make the intended value model
    // explicit. A later duplicate key replaces the earlier value (i.e., the
    // right-most value associated with a duplicate key).
-   constexpr auto literal = AccountMap{AccountEntry{Key{1}, Value{10}},
-                                       AccountEntry{Key{1}, Value{20}}};
+   constexpr auto literal =
+       AccountMap{map_entry(Key{1}, Value{10}), map_entry(Key{1}, Value{20})};
 
    // A Map is callable for present-key lookup and missing-key fallback.
    static_assert(literal(Key{1}).amount == 20);
@@ -95,7 +95,7 @@ namespace cljonic {
    // storage, retaining only the bounded prefix that fits the capacity.
    // ---------------------------------------------------------------------------
    static constexpr AccountEntry source_entries[] = {
-       AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};
+       map_entry(Key{10}, Value{100}), map_entry(Key{20}, Value{200})};
    constexpr auto source_span = std::span{source_entries};
    constexpr auto from_span = AccountMap{source_span};
    static_assert(from_span(Key{10}).amount == 100);
@@ -106,8 +106,8 @@ namespace cljonic {
    static_assert(from_span_ctad.view().size() == 2);
 
    // Constructing a Map from a runtime C++ array/span
-   AccountEntry runtime_buffer[] = {AccountEntry{Key{100}, Value{1000}},
-                                    AccountEntry{Key{200}, Value{2000}}};
+   AccountEntry runtime_buffer[] = {map_entry(Key{100}, Value{1000}),
+                                    map_entry(Key{200}, Value{2000})};
    const auto runtime_from_span =
        Map<Key, Value, 4>{std::span<const AccountEntry>{runtime_buffer, 2}};
 
