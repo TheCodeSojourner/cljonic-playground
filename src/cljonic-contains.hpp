@@ -42,7 +42,7 @@ concept ContainsAdmissible =
    constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = hash_set(5);
-   constexpr auto st_const = String{"abc"};
+   constexpr auto st_const = string("abc");
    static_assert(contains(v_const, 0));
    static_assert(!contains(v_const, 9));
    static_assert(contains(m_const, 1));

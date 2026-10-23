@@ -49,7 +49,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
 
    constexpr auto v_const = conj(vector<int, 4>(10, 20), 30);
    static_assert(v_const(2) == 30);
-   constexpr auto text_const = conj(String<4>{"Hi"}, '!');
+   constexpr auto text_const = conj(string<4>("Hi"), '!');
    static_assert(text_const(2) == '!');
    constexpr auto m_const = conj(hash_map<int, int, 4>(), map_entry(1, 100));
    static_assert(m_const(1) == 100);
@@ -59,7 +59,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(v_same.count() == 3);
    constexpr auto v_many = conj(vector<int, 4>(10), 20, 30);
    static_assert(v_many(2) == 30);
-   constexpr auto text_many = conj(String<4>{"H"}, 'i', '!');
+   constexpr auto text_many = conj(string<4>("H"), 'i', '!');
    static_assert(text_many(2) == '!');
 
    // Runtime demonstration.

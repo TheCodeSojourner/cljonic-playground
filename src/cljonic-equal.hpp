@@ -268,8 +268,8 @@ namespace cljonic {
    constexpr auto m2 = hash_map(2, 20, 1, 10);
    constexpr auto s1 = hash_set(3, 1, 2);
    constexpr auto s2 = hash_set(1, 2, 3);
-   constexpr auto str1 = String<8>{"abc"};
-   constexpr auto str2 = String<16>{"abc"};
+   constexpr auto str1 = string<8>("abc");
+   constexpr auto str2 = string<16>("abc");
    static_assert(equal(1, 1));
    static_assert(!equal(1, 2));
    static_assert(equal(1));        // single value

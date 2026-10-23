@@ -19,7 +19,7 @@ namespace cljonic {
  int main() {
    constexpr auto empty_values = vector<int, 2>();
    constexpr auto values = vector(1, 2);
-   constexpr auto text = String{"Hi"};
+   constexpr auto text = string("Hi");
    constexpr auto empty_range = Range{2, 2};
    constexpr auto unbounded_repeat = Repeat{7};
    static_assert(is_empty(empty_values));
@@ -35,7 +35,7 @@ namespace cljonic {
    const auto runtime_range = Range{0, value};
    const auto original_range = runtime_range;
    const auto runtime_repeat = Repeat{value};
-   const auto runtime_text = String{"Hi"};
+   const auto runtime_text = string("Hi");
 
    const auto results_match =
        is_empty(empty_values) && !is_empty(runtime_values) &&

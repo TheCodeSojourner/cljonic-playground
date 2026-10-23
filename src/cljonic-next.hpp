@@ -51,7 +51,7 @@ concept NextSequenceableCollection =
    constexpr auto q_tail = next(q);
    static_assert(q_tail(0) == 20 && q_tail(1) == 30);
 
-   constexpr auto text = String{"ABC"};
+   constexpr auto text = string("ABC");
    constexpr auto text_tail = next(text);
    static_assert(text_tail(0) == 'B' && text_tail(1) == 'C');
    static_assert(count(next(cljonic::vector<int, 3>())) == 0);
@@ -66,7 +66,7 @@ concept NextSequenceableCollection =
    const auto runtime_map_tail = next(runtime_map);
    const auto runtime_set = hash_set<int, 4>(80, 90);
    const auto runtime_set_tail = next(runtime_set);
-   const auto runtime_text = String<4>{"DE"};
+   const auto runtime_text = string<4>("DE");
    const auto runtime_text_tail = next(runtime_text);
 
    return (count(runtime_tail) == 1 && runtime_tail(0) == 50 &&

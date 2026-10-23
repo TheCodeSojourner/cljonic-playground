@@ -138,8 +138,8 @@
  * - \ref Range "range", \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove",
  * \ref Repeat "repeat", \ref Repeatedly "repeatedly", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse"
  * - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort",
- * \ref Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref Core_Sub "Sub", \ref
- * Core_Subs "Subs"
+ * \ref Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref StringFactory
+ * "string", \ref Core_Sub "Sub", \ref Core_Subs "Subs"
  * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
  * - \ref Core_Unless "Unless", \ref Core_Uppercase "Uppercase"
  * - \ref cljonic::vector "vector"
@@ -1227,7 +1227,7 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
    static_assert(!can_conj(q_full, 2));
    constexpr auto s_const = hash_set<int, 4>();
    static_assert(can_conj(s_const, 1));
-   constexpr auto text_const = String<4>{"Hi"};
+   constexpr auto text_const = string<4>("Hi");
    static_assert(can_conj(text_const, '!'));
    constexpr auto m_const = hash_map(1, 100);
    static_assert(can_conj(m_const, map_entry(1, 999)));
@@ -1330,6 +1330,9 @@ template <typename C, typename V1, typename V2, typename... Rest>
 #include <ranges>
 #include <span>
 #include <string_view>
+#include <tuple>
+#include <type_traits>
+#include <utility>
 
 // Begin cljonic-core-collection-maximum-element-count.hpp
 #pragma once
@@ -1357,6 +1360,12 @@ namespace cljonic {
  * A String is a bounded, ordered collection of ASCII bytes with automatic null termination management. It provides
  * callable lookup with optional fallback values.
  *
+ * The \c string factory is the idiomatic way to create String values at runtime or during constant evaluation. Use \c
+ * string("Hi") to deduce the capacity from a string literal, \c string<Capacity>(...) to provide an explicit capacity
+ * (admitting a string literal, a \c std::string_view, or a non-cljonic char range or view), or \c string<Capacity>()
+ * for an empty String. \c String<Capacity> remains the value's type. Direct construction from a span deducing its
+ * capacity remains supported.
+ *
  * NUL and characters whose unsigned byte value exceeds `0x7F` are rejected at compile time and replaced with `.` at
  * runtime. Construction with content longer than the available capacity is rejected at compile time.
  *
@@ -1369,17 +1378,17 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // CTAD infers String<2> from the string literal: capacity counts content
-   // characters, excluding the automatic null terminator. The inferred capacity
-   // is observed through the callable lookup form.
-   [[maybe_unused]] constexpr auto inferred = String{"Hi"};
+   // The factory infers String<2> from the string literal: capacity counts
+   // content characters, excluding the automatic null terminator. The inferred
+   // capacity is observed through the callable lookup form.
+   [[maybe_unused]] constexpr auto inferred = string("Hi");
    static_assert(
        std::same_as<std::remove_cvref_t<decltype(inferred)>, String<2>>);
    static_assert(inferred(1) == 'i');
 
    // Explicit capacity permits a partially populated String and an empty String.
-   constexpr auto literal = String<10>{"Hello"};
-   [[maybe_unused]] constexpr auto empty = String<8>{};
+   constexpr auto literal = string<10>("Hello");
+   [[maybe_unused]] constexpr auto empty = string<8>();
 
    // String values can be used as a callable function, returning a default-
    // value for invalid indexes or a supplied fallback when provided.
@@ -1391,7 +1400,7 @@ namespace cljonic {
 
    // Runtime construction supports the same callable lookup and fallback
    // behavior.
-   auto runtime = String{"Hi"};
+   auto runtime = string("Hi");
    const auto first = runtime(0);
    const auto missing = runtime(9, '!');
 
@@ -1403,11 +1412,11 @@ namespace cljonic {
    // an explicit capacity.
    // -------------------------------------------------------------------------
    static constexpr auto static_source = std::string_view{"from view"};
-   constexpr auto from_static_view = String<16>{static_source};
+   constexpr auto from_static_view = string<16>(static_source);
    static_assert(from_static_view.view() == static_source);
 
    const auto runtime_source = std::string_view{"runtime view"};
-   const auto from_runtime_view = String<16>{runtime_source};
+   const auto from_runtime_view = string<16>(runtime_source);
    const auto runtime_view_copy = from_runtime_view.view();
 
    // A standard view pipeline can use an existing String as its source and
@@ -1416,11 +1425,11 @@ namespace cljonic {
        runtime | std::views::transform([](char byte) noexcept {
          return byte == 'i' ? 'I' : byte;
        });
-   const auto from_pipeline = String<8>{uppercase_view};
+   const auto from_pipeline = string<8>(uppercase_view);
 
    static constexpr char char_source[] = {'s', 'p', 'a', 'n'};
    static constexpr auto span_source = std::span{char_source};
-   constexpr auto from_char_span = String{span_source};
+   constexpr auto from_char_span = string<4>(span_source);
    static_assert(from_char_span.view() == std::string_view{"span"});
 
    static_assert(literal.view() == std::string_view{"Hello"});
@@ -1682,6 +1691,181 @@ template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
 String(std::span<SourceElement, Extent>) -> String<Extent>;
 
+namespace concepts_detail {
+
+template <typename Source>
+concept StringFactoryTextSource =
+    std::same_as<std::remove_cvref_t<Source>, std::string_view> ||
+    (std::ranges::input_range<Source> && !is_cljonic_collection_v<std::remove_cvref_t<Source>> &&
+     !is_cljonic_producer_v<std::remove_cvref_t<Source>> &&
+     std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<Source>>, char>);
+
+template <typename... Args>
+concept StringFactoryArguments = sizeof...(Args) == 1 && (StringFactoryTextSource<Args> && ...);
+
+template <std::size_t Capacity, typename... Args>
+concept StringFactoryCapacityArguments = Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+                                         sizeof...(Args) <= 1U && (StringFactoryTextSource<Args> && ...);
+
+template <typename Source, typename... Args>
+constexpr auto string_factory_reject_text_source() noexcept -> void {
+    if constexpr (is_cljonic_collection_v<Source> || is_cljonic_producer_v<Source>) {
+        static_assert(dependent_false<Args...>,
+                      "cljonic::string: a cljonic collection or producer is not a text source. A String is built "
+                      "from a string literal, or from a non-cljonic C++ range or view with an explicit capacity.");
+    } else if constexpr (std::same_as<Source, std::string_view>) {
+        static_assert(dependent_false<Args...>,
+                      "cljonic::string: a string_view's size is not part of its type; provide an explicit "
+                      "capacity: string<Capacity>(view).");
+    } else {
+        static_assert(dependent_false<Args...>,
+                      "cljonic::string: the argument must be a string literal, or with an explicit capacity a "
+                      "string_view or non-cljonic char range or view.");
+    }
+}
+
+template <std::size_t Capacity, typename... Args>
+constexpr auto string_factory_reject_capacity_call() noexcept -> void {
+    if constexpr (Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE) {
+        static_assert(dependent_false<Args...>,
+                      "cljonic::string: capacity exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+    } else {
+        static_assert(dependent_false<Args...>,
+                      "cljonic::string: the argument must be a string literal, or with an explicit capacity a "
+                      "string_view or non-cljonic char range or view.");
+    }
+}
+
+template <typename... Args>
+constexpr auto string_factory_reject_deduced_call() noexcept -> void {
+    using Source = std::remove_cvref_t<std::tuple_element_t<0, std::tuple<Args...>>>;
+    if constexpr (sizeof...(Args) > 1U) {
+        static_assert(dependent_false<Args...>,
+                      "cljonic::string: the string factory takes a single text source; individual characters are "
+                      "not admitted.");
+    } else {
+        string_factory_reject_text_source<Source, Args...>();
+    }
+}
+
+template <typename... Args>
+constexpr auto string_factory_reject_empty_call() noexcept -> void {
+    static_assert(dependent_false<Args...>,
+                  "cljonic::string: an empty String requires an explicit capacity; write string<Capacity>().");
+}
+
+template <typename Array>
+inline constexpr bool string_factory_literal_exceeds_maximum_v =
+    std::is_array_v<Array> && (std::extent_v<Array> > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE + 1U);
+
+template <typename Source>
+inline constexpr bool string_factory_literal_v =
+    std::is_array_v<std::remove_cvref_t<Source>> &&
+    std::same_as<std::remove_cv_t<std::remove_extent_t<std::remove_cvref_t<Source>>>, char>;
+
+template <typename... Args>
+concept StringFactoryDeducedArguments = sizeof...(Args) == 1 && (string_factory_literal_v<Args> && ...) &&
+                                        (!string_factory_literal_exceeds_maximum_v<std::remove_cvref_t<Args>> && ...);
+
+} // namespace concepts_detail
+
+template <typename Literal>
+    requires(concepts_detail::string_factory_literal_v<Literal> &&
+             !concepts_detail::string_factory_literal_exceeds_maximum_v<std::remove_cvref_t<Literal>>)
+[[nodiscard]] constexpr auto string(Literal&& literal) noexcept
+    -> String<std::extent_v<std::remove_cvref_t<Literal>> - 1U> {
+    return String<std::extent_v<std::remove_cvref_t<Literal>> - 1U>{std::forward<Literal>(literal)};
+}
+
+/** Creates an empty bounded String from an explicit capacity. */
+template <std::size_t Capacity>
+    requires(Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE)
+[[nodiscard]] constexpr auto string() noexcept -> String<Capacity> {
+    return String<Capacity>{};
+}
+
+/** \anchor StringFactory
+ * Creates a bounded \ref String "String" from one text source, or an empty String from an explicit capacity.
+ *
+ * \c string("Hi") deduces the capacity from the string literal's content length, excluding the automatic null
+ * terminator. \c string<Capacity>(...) names the capacity: it admits a string literal, a \c std::string_view, or a
+ * non-cljonic char range or view, copying the bounded prefix for dynamic extents and rejecting oversized static
+ * extents at compile time; \c string<Capacity>() creates an empty String, including zero capacity. An untyped empty
+ * call and a variadic individual-character form are rejected at compile time.
+ *
+ \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ int main() {
+   // The factory deduces the capacity from the literal's content length.
+   constexpr auto deduced = string("Hi");
+   static_assert(std::same_as<decltype(deduced), const String<2>>);
+   static_assert(deduced(1) == 'i');
+
+   // Explicit capacity admits a partially populated String, an empty String,
+   // and text import from a string_view.
+   constexpr auto reserved = string<8>("Hello");
+   constexpr auto empty = string<8>();
+   static constexpr auto view_source = std::string_view{"from view"};
+   constexpr auto imported = string<16>(view_source);
+
+   // Runtime construction supports the same observable results.
+   const auto runtime = string("Hi");
+   const auto runtime_import = string<16>(std::string_view{"runtime"});
+
+   return (deduced(0) == 'H' && reserved.count() == 5U && empty.count() == 0U &&
+           imported.view() == "from view" && runtime(1) == 'i' &&
+           runtime_import.view() == "runtime")
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <std::size_t Capacity, typename Source>
+    requires(concepts_detail::StringFactoryCapacityArguments<Capacity, Source>)
+[[nodiscard]] constexpr auto string(Source&& source) noexcept -> String<Capacity> {
+    return String<Capacity>{std::forward<Source>(source)};
+}
+
+template <std::size_t Capacity, typename... Args>
+    requires(!concepts_detail::StringFactoryCapacityArguments<Capacity, Args...>)
+constexpr auto string([[maybe_unused]] Args&&... args) noexcept -> void {
+    if constexpr (Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE || sizeof...(Args) == 0U) {
+        concepts_detail::string_factory_reject_capacity_call<Capacity, Args...>();
+    } else {
+        using Source = std::remove_cvref_t<std::tuple_element_t<0, std::tuple<Args...>>>;
+        if constexpr (sizeof...(Args) > 1U) {
+            static_assert(concepts_detail::dependent_false<Args...>,
+                          "cljonic::string: the string factory takes a single text source; individual characters are "
+                          "not admitted.");
+        } else {
+            concepts_detail::string_factory_reject_text_source<Source, Args...>();
+        }
+    }
+}
+
+template <typename... Args>
+    requires(!concepts_detail::StringFactoryDeducedArguments<Args...>)
+constexpr auto string([[maybe_unused]] Args&&... args) noexcept -> void {
+    if constexpr (sizeof...(Args) == 0U) {
+        concepts_detail::string_factory_reject_empty_call<Args...>();
+    } else if constexpr (sizeof...(Args) > 1U) {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::string: the string factory takes a single text source; individual characters are "
+                      "not admitted.");
+    } else {
+        using Source = std::remove_cvref_t<std::tuple_element_t<0, std::tuple<Args...>>>;
+        if constexpr (concepts_detail::string_factory_literal_exceeds_maximum_v<Source>) {
+            static_assert(concepts_detail::dependent_false<Args...>,
+                          "cljonic::string: literal content length exceeds CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+        } else {
+            concepts_detail::string_factory_reject_text_source<Source, Args...>();
+        }
+    }
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -1850,7 +2034,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
 
    constexpr auto v_const = conj(vector<int, 4>(10, 20), 30);
    static_assert(v_const(2) == 30);
-   constexpr auto text_const = conj(String<4>{"Hi"}, '!');
+   constexpr auto text_const = conj(string<4>("Hi"), '!');
    static_assert(text_const(2) == '!');
    constexpr auto m_const = conj(hash_map<int, int, 4>(), map_entry(1, 100));
    static_assert(m_const(1) == 100);
@@ -1860,7 +2044,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
    static_assert(v_same.count() == 3);
    constexpr auto v_many = conj(vector<int, 4>(10), 20, 30);
    static_assert(v_many(2) == 30);
-   constexpr auto text_many = conj(String<4>{"H"}, 'i', '!');
+   constexpr auto text_many = conj(string<4>("H"), 'i', '!');
    static_assert(text_many(2) == '!');
 
    // Runtime demonstration.
@@ -2021,7 +2205,7 @@ concept ContainsAdmissible =
    constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = hash_set(5);
-   constexpr auto st_const = String{"abc"};
+   constexpr auto st_const = string("abc");
    static_assert(contains(v_const, 0));
    static_assert(!contains(v_const, 9));
    static_assert(contains(m_const, 1));
@@ -3423,8 +3607,8 @@ namespace cljonic {
    constexpr auto m2 = hash_map(2, 20, 1, 10);
    constexpr auto s1 = hash_set(3, 1, 2);
    constexpr auto s2 = hash_set(1, 2, 3);
-   constexpr auto str1 = String<8>{"abc"};
-   constexpr auto str2 = String<16>{"abc"};
+   constexpr auto str1 = string<8>("abc");
+   constexpr auto str2 = string<16>("abc");
    static_assert(equal(1, 1));
    static_assert(!equal(1, 2));
    static_assert(equal(1));        // single value
@@ -4347,7 +4531,7 @@ namespace cljonic {
    constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = hash_set(7);
    constexpr auto q_const = queue(5, 6);
-   constexpr auto text_const = String{"AB"};
+   constexpr auto text_const = string("AB");
    constexpr auto e_const = map_entry(1, 100);
    static_assert(first(v_const) == 10);
    static_assert(first(m_const) == map_entry(1, 100));
@@ -4361,7 +4545,7 @@ namespace cljonic {
    auto m_runtime = hash_map(2, 200);
    auto s_runtime = hash_set(8);
    auto q_runtime = queue(9, 10);
-   auto text_runtime = String{"CD"};
+   auto text_runtime = string("CD");
    auto e_runtime = map_entry(3, 300);
 
    return (first(v_runtime) == 100 && first(m_runtime) == map_entry(2, 200) &&
@@ -4535,7 +4719,7 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
    constexpr auto v_const = vector(10, 20);
    constexpr auto m_const = hash_map(1, 100);
    constexpr auto s_const = hash_set(5);
-   constexpr auto text_const = String{"ab"};
+   constexpr auto text_const = string("ab");
    static_assert(get(v_const, 0) == 10);
    static_assert(get(v_const, 9, -1) == -1);
    static_assert(get(m_const, 1) == 100);
@@ -4675,7 +4859,7 @@ namespace cljonic {
  int main() {
    constexpr auto empty_values = vector<int, 2>();
    constexpr auto values = vector(1, 2);
-   constexpr auto text = String{"Hi"};
+   constexpr auto text = string("Hi");
    constexpr auto empty_range = Range{2, 2};
    constexpr auto unbounded_repeat = Repeat{7};
    static_assert(is_empty(empty_values));
@@ -4691,7 +4875,7 @@ namespace cljonic {
    const auto runtime_range = Range{0, value};
    const auto original_range = runtime_range;
    const auto runtime_repeat = Repeat{value};
-   const auto runtime_text = String{"Hi"};
+   const auto runtime_text = string("Hi");
 
    const auto results_match =
        is_empty(empty_values) && !is_empty(runtime_values) &&
@@ -5009,7 +5193,7 @@ concept NextSequenceableCollection =
    constexpr auto q_tail = next(q);
    static_assert(q_tail(0) == 20 && q_tail(1) == 30);
 
-   constexpr auto text = String{"ABC"};
+   constexpr auto text = string("ABC");
    constexpr auto text_tail = next(text);
    static_assert(text_tail(0) == 'B' && text_tail(1) == 'C');
    static_assert(count(next(cljonic::vector<int, 3>())) == 0);
@@ -5024,7 +5208,7 @@ concept NextSequenceableCollection =
    const auto runtime_map_tail = next(runtime_map);
    const auto runtime_set = hash_set<int, 4>(80, 90);
    const auto runtime_set_tail = next(runtime_set);
-   const auto runtime_text = String<4>{"DE"};
+   const auto runtime_text = string<4>("DE");
    const auto runtime_text_tail = next(runtime_text);
 
    return (count(runtime_tail) == 1 && runtime_tail(0) == 50 &&
