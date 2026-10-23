@@ -116,23 +116,6 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | prefer_explicit_deprecation_windows(x)
   | stable_handle_model(x)
 
-λ S4_collection_factory_direction(x). approved_future_factory_names(x) ≡ {}
-  | all_approved_factory_names_are_active(x) ∧ ¬∃ deferred_factory_name(x)
-    ∧ distinguish_from(active_vector_factory_under(REQ-FN-029A) ∧ active_hash_map_factory_under(REQ-FN-029D)
-      ∧ active_map_entry_factory_under(REQ-FN-029E) ∧ active_hash_set_factory_under(REQ-FN-029F)
-      ∧ active_queue_factory_under(REQ-FN-029G) ∧ active_string_factory_under(REQ-FN-029H))
-  | trace_to(REQ-FN-029B ∧ REQ-FN-029C)
-  | future_creation_guidance(x) → prefer(lowercase_factory_at_runtime_and_constant_evaluation)
-    ∧ use(Clojure_names_where_applicable) ∧ ¬claim(exact_Clojure_API_equivalence)
-    ∧ preserve(public_types ∧ existing_supported_constructors)
-  | future_factory_contract(x) → follow(vector_construction_principles_where_meaningful)
-    ∧ consider(inferred_types ∧ explicit_types ∧ explicit_capacity ∧ typed_empty_construction)
-    ∧ preserve(safe_conversion ∧ non_throwing_non_allocating_value_construction)
-    ∧ ¬require(identical_overloads_across_collection_types)
-  | String(x) → preserve(existing_text_import ∧ byte_validity_contracts)
-  | each_future_factory(x) → require(individual_contract_approval_before_behavioral_specification_and_implementation)
-    ∧ ¬classify_as(current_implemented_surface)
-
 λ stable_handle_model(x). profile_change(x) → preserve(public_api_names)
   ∧ preserve(argument_shapes)
   ∧ preserve(result_contracts)
