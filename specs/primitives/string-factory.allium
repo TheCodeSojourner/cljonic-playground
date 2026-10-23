@@ -1,0 +1,122 @@
+-- allium: 3
+-- REQ-FN-029H: `string` is the idiomatic String factory. Its capacity
+-- inference follows the approved vector construction principles where
+-- meaningful for String's fixed char element type: capacity inference from a
+-- string literal's content length, explicit capacity, and an explicit-capacity
+-- empty form. String preserves its own text-import and byte-validity
+-- contracts, and there is no variadic individual-character form.
+
+entity StringFactory {
+    supports_deduced_literal_factory: Boolean
+    deduced_capacity_equals_literal_content_length: Boolean
+    supports_explicit_capacity_factory: Boolean
+    explicit_capacity_determines_result_capacity: Boolean
+    explicit_capacity_factory_supports_empty_arguments: Boolean
+    explicit_capacity_empty_factory_supports_zero_capacity: Boolean
+    explicit_capacity_bounds_imported_content: Boolean
+    explicit_capacity_is_bounded_by_configured_maximum: Boolean
+    untyped_empty_call_is_compile_time_rejected: Boolean
+    oversized_literal_is_compile_time_rejected: Boolean
+    oversized_static_extent_source_is_compile_time_rejected: Boolean
+    dynamic_extent_source_copies_bounded_prefix: Boolean
+    string_view_source_is_explicit_capacity_only: Boolean
+    byte_validity_follows_existing_string_contracts: Boolean
+    every_byte_constructs_safely_without_throwing: Boolean
+    no_variadic_individual_character_form: Boolean
+    preserves_public_string_type_and_existing_constructors: Boolean
+    returns_independently_owning_string: Boolean
+    constexpr_noexcept_nonallocating: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    referential_transparency: Boolean
+
+    invariant SupportsDeducedLiteralFactory {
+        this.supports_deduced_literal_factory = true
+    }
+
+    invariant DeducedCapacityEqualsLiteralContentLength {
+        this.deduced_capacity_equals_literal_content_length = true
+    }
+
+    invariant SupportsExplicitCapacityFactory {
+        this.supports_explicit_capacity_factory = true
+    }
+
+    invariant ExplicitCapacityDeterminesResultCapacity {
+        this.explicit_capacity_determines_result_capacity = true
+    }
+
+    invariant ExplicitCapacityFactorySupportsEmptyArguments {
+        this.explicit_capacity_factory_supports_empty_arguments = true
+    }
+
+    invariant ExplicitCapacityEmptyFactorySupportsZeroCapacity {
+        this.explicit_capacity_empty_factory_supports_zero_capacity = true
+    }
+
+    invariant ExplicitCapacityBoundsImportedContent {
+        this.explicit_capacity_bounds_imported_content = true
+    }
+
+    invariant ExplicitCapacityIsBoundedByConfiguredMaximum {
+        this.explicit_capacity_is_bounded_by_configured_maximum = true
+    }
+
+    invariant UntypedEmptyCallIsCompileTimeRejected {
+        this.untyped_empty_call_is_compile_time_rejected = true
+    }
+
+    invariant OversizedLiteralIsCompileTimeRejected {
+        this.oversized_literal_is_compile_time_rejected = true
+    }
+
+    invariant OversizedStaticExtentSourceIsCompileTimeRejected {
+        this.oversized_static_extent_source_is_compile_time_rejected = true
+    }
+
+    invariant DynamicExtentSourceCopiesBoundedPrefix {
+        this.dynamic_extent_source_copies_bounded_prefix = true
+    }
+
+    invariant StringViewSourceIsExplicitCapacityOnly {
+        this.string_view_source_is_explicit_capacity_only = true
+    }
+
+    invariant ByteValidityFollowsExistingStringContracts {
+        this.byte_validity_follows_existing_string_contracts = true
+    }
+
+    invariant EveryByteConstructsSafelyWithoutThrowing {
+        this.every_byte_constructs_safely_without_throwing = true
+    }
+
+    invariant NoVariadicIndividualCharacterForm {
+        this.no_variadic_individual_character_form = true
+    }
+
+    invariant PreservesPublicStringTypeAndExistingConstructors {
+        this.preserves_public_string_type_and_existing_constructors = true
+    }
+
+    invariant ReturnsIndependentlyOwningString {
+        this.returns_independently_owning_string = true
+    }
+
+    invariant ConstexprNoexceptNonallocating {
+        this.constexpr_noexcept_nonallocating = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+actor StringFactoryOperator { identified_by: StringFactory }
