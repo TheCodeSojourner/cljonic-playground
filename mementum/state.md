@@ -1,45 +1,42 @@
 ## Current Session State
 
-- last_session_id: b5969208-540b-46e3-a8f1-99882f2e114a
-- current_timestamp: 2026-10-23T09:32:00-06:00
-- recover: 1
+- last_session_id: 02abaed6-ec8d-4b5d-a6f6-f6b07bfa25f3
+- current_timestamp: 2026-10-23T11:41:00-06:00
+- recover: 0
 - session_complete: true
 
 Task:
-1. Human invoked `/gybis-full-converge-auto` (whole-repository convergence, autonomous, no questions, no commits during convergence).
-2. Ran the full layer-check sequence (`/gybis-req-check`, `/gybis-vocab-check`, `/gybis-arch-check`, `/gybis-spec-check`) — all clean; then the adjacent-weed sequence (req→vocab, vocab→arch, arch→specs, specs→impl+tests) — no actionable divergences.
-3. One repair applied: `requirements/requirements-module-3.md` Governed REQs footer was missing `REQ-FN-002A2` (the binding `next` clause decided 2026-10-21); added it — identity-preserving footer fix, upstream-mechanically-stale class.
-4. Evidence reconciliation: audited all 1224 spec-to-code obligation snapshot IDs against tests (0 missing); investigated two flagged apparent gaps — `fits_into` (covered by `specs/producers/materialization.allium` + into tests, not a standalone API) and `REQ-COLL-008` max-count (covered by range/materialization saturation obligations + `max_count_probe`/`config_probe` no-heap probes); both recorded as no_change_needed.
-5. Integration gates rerun: `make upsert-gate-fast`, `make no-heap`, `make docs-examples` (33 compiled, 2 deferred skipped), `make test` (254/254) — all passing.
+1. Human asked for the `cljonic-map-entry.hpp` Doxygen example to lead with the idiomatic `map_entry` factory instead of `MapEntry{...}` brace construction, then extended the directive to all `src/*` Doxygen examples and descriptions.
+2. Replaced all `MapEntry{...}` brace constructions in Doxygen examples across 13 files (`can-conj`, `conj`, `contains`, `count`, `dissoc`, `empty`, `equal`, `first`, `get`, `next`, `not-empty`, `not-equal`, `variant`) with `map_entry(...)`; zero remain outside the MapEntry anchor itself.
+3. Updated prose that described entry creation/association to reference `\ref MapEntryFactory "map_entry"` (`conj`, `first`, `next`); reflowed lines to the project column width.
+4. Converted the `cljonic-map.hpp` example's `AccountEntry{...}` constructions to `map_entry(...)` (lambda transform, duplicate-key literal, span source arrays).
+5. Human then directed all map *creation* in examples to use the factory form: `Map{map_entry(...)}` → `hash_map(k, v, ...)` across 12 files (e.g. `hash_map(1, 100, 2, 200)`, runtime `hash_map<int, int, 4>(3, 300, 4, 400)` preserving explicit capacity).
+6. Two intentional exceptions retained in `cljonic-map.hpp`: line 69 (`Map{map_entry(Key{3}, Value{30})}` — demonstrates Map CTAD from an entry) and line 85 (named-type pack-literal construction demonstrating duplicate-key replacement), since those examples' subject is direct Map construction.
+7. Human clarified that `hash_map(map_entry(2, 200), map_entry(3, 300))` deducing `Map<MapEntry<int,int>, MapEntry<int,int>, 1>` is intended behavior (entries as both key and value are valid); stored as memory `hash-map-deduces-argument-types-literally` (commit `325b3da`).
+8. Human committed the src/single-header/doc changes themselves (`6c1990a` memory-form examples, `e0f32e8` regenerated docs).
 
 Questions:
 1. None blocking.
 
 Decisions:
-1. The three CamelCase tokens in REQ-PLAT-039/041 (`EntryCount`, `NameCapacity`, `EnumTypeName`) are template-parameter/placeholder identifiers, not vocabulary domain terms — no vocab weed repair.
-2. Spec-file header comments naming `-- REQ-*` designators are provenance notes, not plan-derived obligations; obligation coverage is measured against the allium plan snapshot only (this miscount nearly produced a false coverage finding).
-3. Rendered `docs/` HTML remains deferred to the human's final `make git`, per default policy.
-4. No commits were made during convergence (standing user constraint); the human committed the requirements footer repair themselves as `4ba3237` before fini.
+1. `map_entry` replaces `MapEntry{...}` in all example construction; `hash_map(k, v, ...)` replaces `Map{...}`/`AccountMap{...}` for map creation. Type positions (`using value_type = MapEntry<...>`, deduction guides, `first(const MapEntry<...>&)`, named aliases) and diagnostic strings naming the required type ("the exact MapEntry type", "A Map takes a MapEntry") keep the type name — `map_entry` is a function, not a type.
+2. Doxygen prose now references `\ref MapEntryFactory "map_entry"` where it describes creating/associating an entry value; `ef MapEntry` is kept where the text names the type (core cheatsheet "Collection Types" list, concepts component-analysis comment).
+3. `hash_map`'s argument-position deduction (key from arg 1, value from arg 2, capacity `sizeof...(Args)/2`) is deliberate; no diagnostic hardening will be proposed for MapEntry arguments.
+4. Diagnostic messages and their asserting scripts were left unchanged (they state type requirements and are gated).
 
 Validation:
-1. `make requirements-structure` (330 clauses, 330 unique), `make vocabulary-structure` (191 terms) — ok.
-2. `allium check specs` (43 files, zero diagnostics) and `allium analyse specs` (zero findings) — ok.
-3. `make traceability-spec-to-code` ok; snapshot refreshed with zero drift.
-4. All 16 `make *-compile-fail` targets passed; `make diagnostic-coverage`, `make diagnostic-message-labels`, `make audit-scripts` — ok.
-5. `make format` idempotent, `git diff --check` clean, `make core-cheatsheet-format` ok.
-6. `make no-heap` (modular + single-header probe binaries execute), `make docs-examples` (33 compiled), `make test` (254/254), `make upsert-gate-fast` — ok.
-7. Three representative extracted examples (`contains`, `map_entry`, `into`) independently compiled, linked, and executed with exit 0.
+1. `make docs-examples` (33 compiled, 2 deferred skipped), `make cljonic` (single header synced), `make test` (254/254), `make no-heap`, `make format`, `make diagnostic-message-labels`, and all affected compile-fail targets (`map-entry-factory`, `conj`, `can-conj`) — all ok.
 
 Memory/synthesis:
-1. No new memories stored this session; no topic reached the ≥3-memory synthesis threshold. The footer-audit finding is recorded here in state.md; a candidate memory ("mechanically audit Governed REQs footers against λ clauses after each requirements edit") can be stored on next request.
+1. Stored `🎯 hash-map-deduces-argument-types-literally` (linked to `factory-consistency-for-user-createable-values`), committed `325b3da`.
+2. The example-style conversion (map creation via `hash_map`, entry values via `map_entry`) is a natural extension of `docs-user-facing-example-style` and `factory-consistency-for-user-createable-values`; no synthesis threshold reached.
 
 Open questions:
-1. `hash_set`, `queue`, and `string` factories remain deferred under `REQ-FN-029B`/`029C` and still need individual contracts.
-2. The `Map` vocabulary and Doxygen prose still show `MapEntry{...}` in examples; not changed, since entry construction remains supported.
+1. None new; prior deferred-factory (`hash_set`, `queue`, `string`) and `MapEntry{...}`-prose-in-Map-vocabulary questions remain open from the previous session.
 
 Next:
 1. If requested, promote the next deferred factory in the required layer order.
-2. The requirements footer repair was committed by the human as `4ba3237`; this session's commit adds only the mementum state update.
+2. Consider aligning the `Map` vocabulary page's remaining `MapEntry{...}` prose examples with the factory idiom (flagged last session; untouched this session).
 
 ## Previous Session State
 
