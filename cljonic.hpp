@@ -3575,8 +3575,7 @@ namespace cljonic {
  * is not a C++ aggregate.
  *
  * Use the lowercase \ref MapEntryFactory "map_entry" factory as the idiomatic creation surface at runtime or during
- * constant evaluation; \c MapEntry{key, value} remains supported. A MapEntry is a fixed pair, so the factory has no
- * capacity parameter.
+ * constant evaluation. A MapEntry is a fixed pair, so the factory has no capacity parameter.
  *
  * Keys must support reliable, non-throwing equality comparison and non-throwing storage operations. Values must have a
  * default value and be copyable, assignable, and destructible without throwing, so the entry remains safe to copy and
@@ -3592,24 +3591,26 @@ namespace cljonic {
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto e_const = MapEntry{1, 100};
-   static_assert(e_const == MapEntry{1, 100});
-
-   // The lowercase factory is the idiomatic creation surface.
-   constexpr auto e_factory = map_entry(1, 100);
-   static_assert(e_factory == MapEntry{1, 100});
+   constexpr auto m_const = hash_map(1, 100, 2, 200);
+   static_assert(first(m_const) == map_entry(1, 100) ||
+                 first(m_const) == map_entry(2, 200));
 
    // Explicit key and value types are available when deduction is not wanted.
    constexpr auto e_explicit = map_entry<long, long>(1, 100);
 
-   // Runtime demonstration.
-   auto e_runtime = MapEntry{2, 200};
-   const auto equal_runtime = e_runtime == MapEntry{2, 200};
-   const auto factory_runtime = map_entry(2, 200);
+   // Runtime demonstration: a Map is created with hash_map and its entries,
+   // each a MapEntry value, can be traversed, compared, and added.
+   const auto m_runtime = hash_map<int, int, 4>(1, 100, 2, 200);
 
-   return (equal_runtime && factory_runtime == e_runtime && e_explicit.key == 1L)
-              ? 0
-              : 1;
+   auto value_sum = 0;
+   for (const auto &entry : m_runtime) {
+     value_sum += entry.value;
+   }
+
+   const auto m_fuller = conj(m_runtime, map_entry(3, 300));
+
+   return (value_sum == 300 && m_fuller(3) == 300 && e_explicit.key == 1) ? 0
+                                                                          : 1;
  }
  ~~~~~
  */
