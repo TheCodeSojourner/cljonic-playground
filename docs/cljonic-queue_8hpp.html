@@ -103,7 +103,10 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#concepts">Concepts</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">cljonic-queue.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -123,6 +126,9 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 Classes</h2></td></tr>
 <tr class="memitem:cljonic_3A_3AQueue_3C_20T_2C_20CapacityValue_20_3E" id="r_cljonic_3A_3AQueue_3C_20T_2C_20CapacityValue_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_queue.html">cljonic::Queue&lt; T, CapacityValue &gt;</a></td></tr>
 <tr class="memitem:cljonic_3A_3AQueue_3C_20T_2C_20CapacityValue_20_3E_3A_3Aconst_5Fiterator" id="r_cljonic_3A_3AQueue_3C_20T_2C_20CapacityValue_20_3E_3A_3Aconst_5Fiterator"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_queue_1_1const__iterator.html">cljonic::Queue&lt; T, CapacityValue &gt;::const_iterator</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ADeducedQueueElementType" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ADeducedQueueElementType"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1_deduced_queue_element_type.html">cljonic::concepts_detail::DeducedQueueElementType</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aqueue_5Ffactory_5Felement_5Ftype_3C_20RequestedElementType_2C_20Args_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aqueue_5Ffactory_5Felement_5Ftype_3C_20RequestedElementType_2C_20Args_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1queue__factory__element__type.html">cljonic::concepts_detail::queue_factory_element_type&lt; RequestedElementType, Args &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aqueue_5Ffactory_5Felement_5Ftype_3C_20DeducedQueueElementType_2C_20First_2C_20Rest_2E_2E_2E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aqueue_5Ffactory_5Felement_5Ftype_3C_20DeducedQueueElementType_2C_20First_2C_20Rest_2E_2E_2E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1queue__factory__element__type_3_01_deduced_queue_element_tya8c165f244576e2f44b2c88eb98e986c.html">cljonic::concepts_detail::queue_factory_element_type&lt; DeducedQueueElementType, First, Rest... &gt;</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acollection_5Ftraits_3C_20Queue_3C_20T_2C_20CapacityValue_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acollection_5Ftraits_3C_20Queue_3C_20T_2C_20CapacityValue_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1collection__traits_3_01_queue_3_01_t_00_01_capacity_value_01_4_01_4.html">cljonic::concepts_detail::collection_traits&lt; Queue&lt; T, CapacityValue &gt; &gt;</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Ffloating_5Fpoint_3C_20Queue_3C_20T_2C_20CapacityValue_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Ffloating_5Fpoint_3C_20Queue_3C_20T_2C_20CapacityValue_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1contains__floating__point_3_01_queue_3_01_t_00_01_capacity_value_01_4_01_4.html">cljonic::concepts_detail::contains_floating_point&lt; Queue&lt; T, CapacityValue &gt; &gt;</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Fcallable_3C_20Queue_3C_20T_2C_20CapacityValue_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Fcallable_3C_20Queue_3C_20T_2C_20CapacityValue_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1contains__callable_3_01_queue_3_01_t_00_01_capacity_value_01_4_01_4.html">cljonic::concepts_detail::contains_callable&lt; Queue&lt; T, CapacityValue &gt; &gt;</a></td></tr>
@@ -133,6 +139,17 @@ Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail" id="r_cljonic_3A_3Aconcepts_5Fdetail"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html">cljonic::concepts_detail</a></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3AQueueFactoryHasElementType" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3AQueueFactoryHasElementType"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_queue_factory_has_element_type.html">cljonic::concepts_detail::QueueFactoryHasElementType</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3AQueueFactoryArguments" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3AQueueFactoryArguments"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_queue_factory_arguments.html">cljonic::concepts_detail::QueueFactoryArguments</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3AQueueFactoryCapacityArguments" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3AQueueFactoryCapacityArguments"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_queue_factory_capacity_arguments.html">cljonic::concepts_detail::QueueFactoryCapacityArguments</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a3baef0270ed18e426beb5d6c3ad8f70b" id="r_a3baef0270ed18e426beb5d6c3ad8f70b"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType, typename... Args&gt; </td></tr>
+<tr class="memitem:a3baef0270ed18e426beb5d6c3ad8f70b template"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a3baef0270ed18e426beb5d6c3ad8f70b">cljonic::concepts_detail::queue_factory_element_t</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1queue__factory__element__type.html">queue_factory_element_type</a>&lt;RequestedElementType, Args...&gt;<a class="el" href="structcljonic_1_1concepts__detail_1_1equal__value__type__of.html">::type</a></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a1ccca56ddfbbc85bcfba4064a08761d3" id="r_a1ccca56ddfbbc85bcfba4064a08761d3"><td class="memTemplParams" colspan="2">template&lt;typename First, typename... Rest&gt; </td></tr>
@@ -142,6 +159,22 @@ Functions</h2></td></tr>
 <tr class="memitem:a55bddea4174ca0026b4178b2623c67ef" id="r_a55bddea4174ca0026b4178b2623c67ef"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; <br />
 requires (Extent != std::dynamic_extent)</td></tr>
 <tr class="memitem:a55bddea4174ca0026b4178b2623c67ef template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a55bddea4174ca0026b4178b2623c67ef">cljonic::Queue</a> (std::span&lt; SourceElement, Extent &gt;) -&gt; Queue&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td></tr>
+<tr class="memitem:a2693300957a43d0bb2d4c29634a838f7" id="r_a2693300957a43d0bb2d4c29634a838f7"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedQueueElementType, typename... Args&gt; <br />
+requires concepts_detail::QueueFactoryArguments&lt;RequestedElementType, Args...&gt;</td></tr>
+<tr class="memitem:a2693300957a43d0bb2d4c29634a838f7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a2693300957a43d0bb2d4c29634a838f7">cljonic::queue</a> (Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a3baef0270ed18e426beb5d6c3ad8f70b">concepts_detail::queue_factory_element_t</a>&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; <a class="el" href="classcljonic_1_1_queue.html">Queue</a>&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a3baef0270ed18e426beb5d6c3ad8f70b">concepts_detail::queue_factory_element_t</a>&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</td></tr>
+<tr class="memitem:a02b70381545ad30428de54384a3e858f" id="r_a02b70381545ad30428de54384a3e858f"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedQueueElementType, typename... Args&gt; <br />
+requires (!concepts_detail::QueueFactoryArguments&lt;RequestedElementType, Args...&gt;)</td></tr>
+<tr class="memitem:a02b70381545ad30428de54384a3e858f template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a02b70381545ad30428de54384a3e858f">cljonic::queue</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:a2c49d5a9e0e33cb1f4af58d7e1ab333d" id="r_a2c49d5a9e0e33cb1f4af58d7e1ab333d"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires concepts_detail::QueueFactoryCapacityArguments&lt;ElementType, Capacity, Args...&gt;</td></tr>
+<tr class="memitem:a2c49d5a9e0e33cb1f4af58d7e1ab333d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a2c49d5a9e0e33cb1f4af58d7e1ab333d">cljonic::queue</a> (Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; ElementType, Args &gt; &amp;&amp;...)) -&gt; <a class="el" href="classcljonic_1_1_queue.html">Queue</a>&lt; ElementType, Capacity &gt;</td></tr>
+<tr class="memitem:af88263423eed519bd60971a8942d8b79" id="r_af88263423eed519bd60971a8942d8b79"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (!concepts_detail::QueueFactoryCapacityArguments&lt;ElementType, Capacity, Args...&gt;)</td></tr>
+<tr class="memitem:af88263423eed519bd60971a8942d8b79 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af88263423eed519bd60971a8942d8b79">cljonic::queue</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a404e64bf977f53e18a3e39726e8a7e7a" id="r_a404e64bf977f53e18a3e39726e8a7e7a"><td class="memItemLeft">concept&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a404e64bf977f53e18a3e39726e8a7e7a">cljonic::concepts_detail::DeducedQueueElementType</a></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
