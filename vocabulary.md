@@ -632,9 +632,17 @@ producer building blocks used across all higher-order algorithms.
 ### HashMapFactory
 - **Definition:** The lowercase `hash_map` free-function family that is the idiomatic way to create a `Map` at runtime or compile time from alternating key and value arguments. `hash_map(k1, v1, ...)` deduces the key and value types from the unqualified first key and first value and the capacity from the pair count; `hash_map<K, V>(...)` names the key and value types; `hash_map<K, V, Capacity>(...)` names the capacity, which bounds the pair count and permits an empty or spare-capacity result. An empty call requires explicit key type, value type, and capacity, and an odd argument count is rejected at compile time. Every key and value constructs its declared type safely without throwing, pairs are associated in argument order so a later duplicate key replaces the earlier value, and the factory never allocates.
 - **Deprecated Synonyms:** map maker, make_map
-- **Related:** Map, MapEntry, Assoc, SourceConstruction, NothrowElementConstruction, CollectionMaximumElementCount, VectorFactory
+- **Related:** Map, MapEntry, Assoc, SourceConstruction, NothrowElementConstruction, CollectionMaximumElementCount, VectorFactory, HashSetFactory
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `hash_map(1, 10, 2, 20)` creates a `Map<int, int, 2>`; `hash_map(1, 10, 1, 20)` maps `1` to `20`; `hash_map<int, int, 4>()` creates an empty `Map<int, int, 4>`.
+
+
+### HashSetFactory
+- **Definition:** The lowercase `hash_set` free-function family that is the idiomatic way to create a `Set` at runtime or compile time from individual element arguments. `hash_set(first, rest...)` deduces the element type from the unqualified first argument and the capacity from the argument count; `hash_set<T>(...)` names the element type; `hash_set<T, Capacity>(...)` names the capacity, which bounds the argument count and permits an empty or spare-capacity result. An untyped empty call is rejected at compile time because the element type cannot be deduced. Every argument constructs the element type safely without throwing, runtime duplicate elements deduplicate following Set construction semantics while the deduced capacity equals the argument count, constant-evaluated duplicate construction remains rejected by the Set compile-time rule the factory inherits, and the factory never allocates. It constructs individual elements and is not a range materializer; direct construction from external C++ ranges and views stays with the `Set` type.
+- **Deprecated Synonyms:** set maker, make_set
+- **Related:** Set, Conj, Contains, SourceConstruction, NothrowElementConstruction, NothrowStableEqualityComparable, CollectionMaximumElementCount, VectorFactory, HashMapFactory
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `hash_set(1, 2, 3)` creates a `Set<int, 3>`; `hash_set(1, 2, 2)` creates a `Set<int, 3>` whose logical count is 2 because runtime duplicates deduplicate; `hash_set<int, 4>()` creates an empty `Set<int, 4>`.
 
 
 ### MapEntryFactory
@@ -646,11 +654,11 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Set
-- **Definition:** The cljonic fixed-capacity unordered collection type storing unique elements using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates.
+- **Definition:** The cljonic fixed-capacity unordered collection type storing unique elements using flat bounded array-backed storage and bounded linear scans with immutable copy-on-modify updates. Use the lowercase `hash_set(first, rest...)`, `hash_set<T>(...)`, or `hash_set<T, Capacity>(...)` factory, which takes individual elements, as the idiomatic way to create sets at runtime or compile time. The public `Set<T, Capacity>` type and its existing constructors remain supported, including direct construction from external C++ ranges and views.
 - **Deprecated Synonyms:** bounded set, fixed-capacity set, unique element collection
-- **Related:** StableEquality, Contains, LinearScan, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor
+- **Related:** StableEquality, Contains, LinearScan, SwapAndRemove, CopyOnModifyCollection, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor, HashSetFactory
 - **Usage:** Architecture, specification, implementation, tests, and documentation
-- **Examples:** `Set<int, 4>{1, 2, 3}` creates a bounded set supporting `conj`, `disj`, `contains`, `get`, and callable lookup `s(v)`.
+- **Examples:** `Set<int, 4>{1, 2, 3}` creates a bounded set supporting `conj`, `disj`, `contains`, `get`, and callable lookup `s(v)`; `hash_set(1, 2, 3)` creates the same value through the factory idiom.
 
 
 ### Queue
