@@ -23,8 +23,15 @@ for my $file (@files) {
 
     $content =~ s{(^[ \t]*~~~~~\{\.cpp\}[ \t]*\n)(.*?)(^[ \t]*~~~~~[ \t]*$)}
                { format_block($1, $2, $3, $clang_format) }gmse;
-    $content =~ s{(^[ \t]*/\*\*.*?^[ \t]*\*/[ \t]*$)}
-                  { format_doxygen_block($1, $column_limit, $file) }gmse;
+    # A '/** ... */' block terminates either on a standalone '*/' line or on a
+    # continuation line ending in '*/'. Only standalone-terminated blocks are
+    # reflowed; an inline-terminated block (its last line carries trailing
+    # code) is preserved verbatim, so treating it as a reflow target would
+    # rewrite unrelated prose and, worse, let an unterminated earlier comment
+    # swallow following code. The broader terminator match below exists to END
+    # a scan at the true block boundary.
+    $content =~ s{(^[ \t]*/\*\*.*?^[ \t]*(?:\*[^\n]*\*/|\*/)[ \t]*$)}
+               { my $block = $1; $block =~ /\n[ \t]*\*\/[ \t]*\z/ || $block !~ /\n/ ? format_doxygen_block($block, $column_limit, $file) : $block }gmse;
 
     next if $content eq $original;
 
@@ -48,6 +55,16 @@ sub format_doxygen_block {
         my ($indent) = $paragraph[0] =~ /^([ \t]*)\*/;
         $indent //= '';
         my $prefix = $indent . '* ';
+        my $closing = '';
+        if ($paragraph[-1] =~ /^(.*\S)[ \t]*\*\/([ \t]*)$/) {
+            # The block ends on this line: keep the terminating */ outside the
+            # reflowed text so an inline '/** ... */' block survives reflow.
+            my ($tail, $spacing) = ($1, $2);
+            $tail =~ s/[ \t]+\z//;
+            $closing = ' */' . $spacing;
+            pop @paragraph;
+            push @paragraph, $tail;
+        }
         my $text = join ' ', map {
             my (undef, $content) = /^([ \t]*)\*\s?(.*)$/;
             $content //= $_;
@@ -56,7 +73,13 @@ sub format_doxygen_block {
         } @paragraph;
         local $Text::Wrap::columns = $limit - length($prefix);
         my $wrapped = wrap('', '', $text);
-        push @formatted, map { $prefix . $_ } split /\n/, $wrapped;
+        if ($closing ne '') {
+            my @wrapped_lines = split /\n/, $wrapped;
+            $wrapped_lines[-1] .= $closing;
+            push @formatted, map { $prefix . $_ } @wrapped_lines;
+        } else {
+            push @formatted, map { $prefix . $_ } split /\n/, $wrapped;
+        }
         @paragraph = ();
     };
 
