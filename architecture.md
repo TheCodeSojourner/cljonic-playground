@@ -68,6 +68,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ direct_external_cpp_range_or_view_import(x) → retain(SourceConstruction(x))
   | trace_to(REQ-FN-029F)
 
+λ S5_queue_creation_policy(x). user_facing_Queue_creation(x) → prefer(lowercase_queue_factory(x))
+  | runtime_creation(x) ∧ constant_evaluation_creation(x) → same_factory_surface(x)
+  | preserve(public_Queue_type ∧ existing_Queue_constructors)
+    ∧ direct_external_cpp_range_or_view_import(x) → retain(SourceConstruction(x))
+  | trace_to(REQ-FN-029G)
+
 λ S5_change_policy(x). public_change(x) → preserve(S5_identity(x))
 
 λ S5_authorized_effect_policy(x). public_operation(x) → require(DeterministicBehavior(x) ∧ ReferentialTransparency(x))
@@ -104,11 +110,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | stable_handle_model(x)
 
 λ S4_collection_factory_direction(x). approved_future_factory_names(x) ≡ {
-  Queue: queue, String: string
+  String: string
   }
   | trace_to(REQ-FN-029B ∧ REQ-FN-029C) ∧ deferred_non_binding_direction(x)
     ∧ distinguish_from(active_vector_factory_under(REQ-FN-029A) ∧ active_hash_map_factory_under(REQ-FN-029D)
-      ∧ active_map_entry_factory_under(REQ-FN-029E) ∧ active_hash_set_factory_under(REQ-FN-029F))
+      ∧ active_map_entry_factory_under(REQ-FN-029E) ∧ active_hash_set_factory_under(REQ-FN-029F)
+      ∧ active_queue_factory_under(REQ-FN-029G))
   | future_creation_guidance(x) → prefer(lowercase_factory_at_runtime_and_constant_evaluation)
     ∧ use(Clojure_names_where_applicable) ∧ ¬claim(exact_Clojure_API_equivalence)
     ∧ preserve(public_types ∧ existing_supported_constructors)
@@ -470,6 +477,25 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | external_cpp_range_or_view_import(x) → use(Set_source_constructor(x)) ∧ ¬factory_source_import(x)
   | constexpr ∧ noexcept ∧ non_allocating ∧ independently_owning_result
   | trace_to(REQ-FN-029F) ∧ realize(S5_set_creation_policy)
+
+λ S2_queue_factory_contract(x). queue(args...) → construct(owning_Queue_from_individual_arguments_in_Fifo_order(x))
+  | queue(first, rest...) → element_type(unqualified_type(first)) ∧ capacity(argument_count)
+  | queue<T>(args...) → element_type(T) ∧ capacity(argument_count) ∧ require(argument_count ≥ 1)
+  | queue<T>() → return(empty_Queue<T, 0>) ∧ realize(typed_empty_construction)
+  | queue<T, Capacity>(args...) → return(Queue<T, Capacity>)
+    ∧ require(argument_count ≤ Capacity ≤ CollectionMaximumElementCount)
+    ∧ empty_argument_pack(x) → return(empty_Queue<T, Capacity>)
+  | require(Queue_element_requirements(element_type(x))
+    ∧ ∀ argument: NothrowElementConstruction(element_type(x), argument)
+    ∧ argument_count ≤ CollectionMaximumElementCount)
+    ∧ reuse(S3_conversion_admission)
+  | argument_order(x) → first_argument_is_queue_front(x) ∧ Fifo_construction_folds_over_conj(x)
+  | untyped_empty_call(x) ∨ invalid_element_or_argument(x) ∨ invalid_capacity(x)
+    → compile_time_rejection(x) ∧ targeted_operation_diagnostic(x)
+  | cljonic_collection_or_producer_argument(x) → one_element(x) ∧ ¬materialize_argument_elements(x)
+  | external_cpp_range_or_view_import(x) → use(Queue_source_constructor(x)) ∧ ¬factory_source_import(x)
+  | constexpr ∧ noexcept ∧ non_allocating ∧ independently_owning_result
+  | trace_to(REQ-FN-029G) ∧ realize(S5_queue_creation_policy)
 
 λ S2_map_entry_factory_contract(x). map_entry(key, value) → construct(owning_MapEntry_from_one_key_and_one_value(x))
   | map_entry(key, value) → key_type(unqualified_type(key)) ∧ value_type(unqualified_type(value))
@@ -1275,6 +1301,6 @@ concept SequenceableProducer =
   | module6_numeric_authority(x) ≡ requirements/requirements-module-6.md → govern(checked_arithmetic ∧ callables)
   | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ set_algebra ∧ regex ∧ Atom ∧ formatting ∧ KeywordEnumNameMapping)
 
-λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ vector_factory ∧ hash_map_factory ∧ map_entry_factory ∧ set_factory ∧ into ∧ fits_into
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ vector_factory ∧ hash_map_factory ∧ map_entry_factory ∧ set_factory ∧ queue_factory ∧ into ∧ fits_into
   | approved_but_unimplemented(algorithms ∨ regexes) → remain_outside(active_surface(x))
   | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
