@@ -618,6 +618,22 @@ requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp
 <tr class="memitem:a814695bb71acee0980bac4a01c9e1e2d" id="r_a814695bb71acee0980bac4a01c9e1e2d"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; <br />
 requires (Extent != std::dynamic_extent)</td></tr>
 <tr class="memitem:a814695bb71acee0980bac4a01c9e1e2d template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a814695bb71acee0980bac4a01c9e1e2d">String</a> (std::span&lt; SourceElement, Extent &gt;) -&gt; String&lt; Extent &gt;</td></tr>
+<tr class="memitem:aac92eb77175a67beb451582c5786027e" id="r_aac92eb77175a67beb451582c5786027e"><td class="memTemplParams" colspan="2">template&lt;typename Literal&gt; <br />
+requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#ad040d18e48767d08f266494d07163d36">concepts_detail::string_factory_literal_v</a>&lt;Literal&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#afff1155dcd436302983eda6334ecbcca">concepts_detail::string_factory_literal_exceeds_maximum_v</a><br class="typebreak" />
+&lt;std::remove_cvref_t&lt;Literal&gt;&gt;)</td></tr>
+<tr class="memitem:aac92eb77175a67beb451582c5786027e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aac92eb77175a67beb451582c5786027e">string</a> (Literal &amp;&amp;literal) noexcept -&gt; <a class="el" href="classcljonic_1_1_string.html">String</a>&lt; std::extent_v&lt; std::remove_cvref_t&lt; Literal &gt; &gt; - 1U &gt;</td></tr>
+<tr class="memitem:a72f67fd142faa6b22a068acf46609065" id="r_a72f67fd142faa6b22a068acf46609065"><td class="memTemplParams" colspan="2">template&lt;std::size_t Capacity&gt; <br />
+requires (Capacity &lt;= <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>)</td></tr>
+<tr class="memitem:a72f67fd142faa6b22a068acf46609065 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a72f67fd142faa6b22a068acf46609065">string</a> () noexcept -&gt; <a class="el" href="classcljonic_1_1_string.html">String</a>&lt; Capacity &gt;</td></tr>
+<tr class="memitem:a7e46b0f3405c40a7b4d96a2977cd219e" id="r_a7e46b0f3405c40a7b4d96a2977cd219e"><td class="memTemplParams" colspan="2">template&lt;std::size_t Capacity, typename Source&gt; <br />
+requires (concepts_detail::StringFactoryCapacityArguments&lt;Capacity, Source&gt;)</td></tr>
+<tr class="memitem:a7e46b0f3405c40a7b4d96a2977cd219e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7e46b0f3405c40a7b4d96a2977cd219e">string</a> (Source &amp;&amp;source) noexcept -&gt; <a class="el" href="classcljonic_1_1_string.html">String</a>&lt; Capacity &gt;</td></tr>
+<tr class="memitem:a1b2ca526a08c06c5fa553bf9cf45a6d0" id="r_a1b2ca526a08c06c5fa553bf9cf45a6d0"><td class="memTemplParams" colspan="2">template&lt;std::size_t Capacity, typename... Args&gt; <br />
+requires (!concepts_detail::StringFactoryCapacityArguments&lt;Capacity, Args...&gt;)</td></tr>
+<tr class="memitem:a1b2ca526a08c06c5fa553bf9cf45a6d0 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1b2ca526a08c06c5fa553bf9cf45a6d0">string</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:a82fda2a23a4131e9521b2d756f0d0dd5" id="r_a82fda2a23a4131e9521b2d756f0d0dd5"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; <br />
+requires (!concepts_detail::StringFactoryDeducedArguments&lt;Args...&gt;)</td></tr>
+<tr class="memitem:a82fda2a23a4131e9521b2d756f0d0dd5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a82fda2a23a4131e9521b2d756f0d0dd5">string</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
 <tr class="memitem:a49e0b3c65245c90961f7e6e62c84841a" id="r_a49e0b3c65245c90961f7e6e62c84841a"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a49e0b3c65245c90961f7e6e62c84841a template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a49e0b3c65245c90961f7e6e62c84841a">Variant</a> (const T &amp;) -&gt; Variant&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_variant_domain_violation.html">concepts_detail::VariantDomainViolation</a> &gt;</td></tr>
 <tr class="memitem:a11e270768e9485445f2885cdecb1c4eb" id="r_a11e270768e9485445f2885cdecb1c4eb"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedVectorElementType, typename... Args&gt; <br />
@@ -1398,7 +1414,7 @@ requires concepts::ConjableCollection&lt;C&gt;</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(q_full, 2));</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 4&gt;</a>();</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(s_const, 1));</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a>{<span class="stringliteral">&quot;Hi&quot;</span>};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;4&gt;</a>(<span class="stringliteral">&quot;Hi&quot;</span>);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(text_const, <span class="charliteral">&#39;!&#39;</span>));</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 100);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(m_const, <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 999)));</div>
@@ -1409,9 +1425,9 @@ requires concepts::ConjableCollection&lt;C&gt;</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> q_ok ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00105">cljonic-string.hpp:105</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a0276d2cc4a963af9ddbc2ad7aa6ac4f0"><div class="ttname"><a href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">cljonic::map_entry</a></div><div class="ttdeci">constexpr auto map_entry(Args &amp;&amp;... args) noexcept -&gt; MapEntry&lt; concepts_detail::map_entry_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::map_entry_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00167">cljonic-map-entry.hpp:167</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a2693300957a43d0bb2d4c29634a838f7"><div class="ttname"><a href="#a2693300957a43d0bb2d4c29634a838f7">cljonic::queue</a></div><div class="ttdeci">constexpr auto queue(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::queue_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Queue&lt; concepts_detail::queue_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00330">cljonic-queue.hpp:330</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_aac92eb77175a67beb451582c5786027e"><div class="ttname"><a href="#aac92eb77175a67beb451582c5786027e">cljonic::string</a></div><div class="ttdeci">constexpr auto string(Literal &amp;&amp;literal) noexcept -&gt; String&lt; std::extent_v&lt; std::remove_cvref_t&lt; Literal &gt; &gt; - 1U &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00434">cljonic-string.hpp:434</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_ab920b6f72a40bc9c9d4b1c69662e149e"><div class="ttname"><a href="#ab920b6f72a40bc9c9d4b1c69662e149e">cljonic::hash_set</a></div><div class="ttdeci">constexpr auto hash_set(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Set&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00430">cljonic-set.hpp:430</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_aff01cd8591c08e661bde74c6276e9c40"><div class="ttname"><a href="#aff01cd8591c08e661bde74c6276e9c40">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00084">cljonic-can-conj.hpp:84</a></div></div>
 </div><!-- fragment --> 
@@ -1934,7 +1950,7 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 4&gt;</a>(10, 20), 30);</div>
 <div class="line">  <span class="keyword">static_assert</span>(v_const(2) == 30);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a>{<span class="stringliteral">&quot;Hi&quot;</span>}, <span class="charliteral">&#39;!&#39;</span>);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;4&gt;</a>(<span class="stringliteral">&quot;Hi&quot;</span>), <span class="charliteral">&#39;!&#39;</span>);</div>
 <div class="line">  <span class="keyword">static_assert</span>(text_const(2) == <span class="charliteral">&#39;!&#39;</span>);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map&lt;int, int, 4&gt;</a>(), <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 100));</div>
 <div class="line">  <span class="keyword">static_assert</span>(m_const(1) == 100);</div>
@@ -1944,7 +1960,7 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line">  <span class="keyword">static_assert</span>(v_same.count() == 3);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_many = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 4&gt;</a>(10), 20, 30);</div>
 <div class="line">  <span class="keyword">static_assert</span>(v_many(2) == 30);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_many = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a>{<span class="stringliteral">&quot;H&quot;</span>}, <span class="charliteral">&#39;i&#39;</span>, <span class="charliteral">&#39;!&#39;</span>);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_many = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;4&gt;</a>(<span class="stringliteral">&quot;H&quot;</span>), <span class="charliteral">&#39;i&#39;</span>, <span class="charliteral">&#39;!&#39;</span>);</div>
 <div class="line">  <span class="keyword">static_assert</span>(text_many(2) == <span class="charliteral">&#39;!&#39;</span>);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
@@ -2200,7 +2216,7 @@ requires concepts_detail::ContainsAdmissible&lt;C, K&gt;</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20, 30);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 100);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(5);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> st_const = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;abc&quot;</span>};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> st_const = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;abc&quot;</span>);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_const, 0));</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_const, 9));</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(m_const, 1));</div>
@@ -3120,8 +3136,8 @@ requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m2 = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(2, 20, 1, 10);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1 = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(3, 1, 2);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2 = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(1, 2, 3);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> str1 = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;8&gt;</a>{<span class="stringliteral">&quot;abc&quot;</span>};</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> str2 = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;16&gt;</a>{<span class="stringliteral">&quot;abc&quot;</span>};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> str1 = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;8&gt;</a>(<span class="stringliteral">&quot;abc&quot;</span>);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> str2 = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;16&gt;</a>(<span class="stringliteral">&quot;abc&quot;</span>);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1, 1));</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1, 2));</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1));        <span class="comment">// single value</span></div>
@@ -3388,7 +3404,7 @@ template&lt;typename KeyType, typename ValueType&gt; </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 100);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(7);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_function" href="#a2693300957a43d0bb2d4c29634a838f7">queue</a>(5, 6);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;AB&quot;</span>};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;AB&quot;</span>);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> e_const = <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 100);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(v_const) == 10);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(m_const) == <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 100));</div>
@@ -3402,7 +3418,7 @@ template&lt;typename KeyType, typename ValueType&gt; </div>
 <div class="line">  <span class="keyword">auto</span> m_runtime = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(2, 200);</div>
 <div class="line">  <span class="keyword">auto</span> s_runtime = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(8);</div>
 <div class="line">  <span class="keyword">auto</span> q_runtime = <a class="code hl_function" href="#a2693300957a43d0bb2d4c29634a838f7">queue</a>(9, 10);</div>
-<div class="line">  <span class="keyword">auto</span> text_runtime = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;CD&quot;</span>};</div>
+<div class="line">  <span class="keyword">auto</span> text_runtime = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;CD&quot;</span>);</div>
 <div class="line">  <span class="keyword">auto</span> e_runtime = <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(3, 300);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(v_runtime) == 100 &amp;&amp; <a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(m_runtime) == <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(2, 200) &amp;&amp;</div>
@@ -3633,7 +3649,7 @@ requires concepts_detail::GetKeyAdmissible&lt;C, K&gt; &amp;&amp; concepts_detai
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 100);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(5);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;ab&quot;</span>};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;ab&quot;</span>);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a1303d4cdb00acfa70d9ffcc65d7670c5">get</a>(v_const, 0) == 10);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a1303d4cdb00acfa70d9ffcc65d7670c5">get</a>(v_const, 9, -1) == -1);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a1303d4cdb00acfa70d9ffcc65d7670c5">get</a>(m_const, 1) == 100);</div>
@@ -4498,7 +4514,7 @@ requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProd
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> empty_values = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 2&gt;</a>();</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> values = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;Hi&quot;</span>};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;Hi&quot;</span>);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> empty_range = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{2, 2};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded_repeat = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat</a>{7};</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(empty_values));</div>
@@ -4514,7 +4530,7 @@ requires concepts::SequenceableCollection&lt;C&gt; || concepts::SequenceableProd
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_range = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, value};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> original_range = runtime_range;</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_repeat = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat</a>{value};</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_text = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;Hi&quot;</span>};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_text = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;Hi&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> results_match =</div>
 <div class="line">      <a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(empty_values) &amp;&amp; !<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(runtime_values) &amp;&amp;</div>
@@ -4923,7 +4939,7 @@ template&lt;concepts_detail::NextSequenceableCollection C&gt; </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(q);</div>
 <div class="line">  <span class="keyword">static_assert</span>(q_tail(0) == 20 &amp;&amp; q_tail(1) == 30);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;ABC&quot;</span>};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;ABC&quot;</span>);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(text);</div>
 <div class="line">  <span class="keyword">static_assert</span>(text_tail(0) == <span class="charliteral">&#39;B&#39;</span> &amp;&amp; text_tail(1) == <span class="charliteral">&#39;C&#39;</span>);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(<a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">cljonic::vector&lt;int, 3&gt;</a>())) == 0);</div>
@@ -4938,7 +4954,7 @@ template&lt;concepts_detail::NextSequenceableCollection C&gt; </div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_map_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(runtime_map);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_set = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 4&gt;</a>(80, 90);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_set_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(runtime_set);</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_text = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a>{<span class="stringliteral">&quot;DE&quot;</span>};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_text = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;4&gt;</a>(<span class="stringliteral">&quot;DE&quot;</span>);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_text_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(runtime_text);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(runtime_tail) == 1 &amp;&amp; runtime_tail(0) == 50 &amp;&amp;</div>
@@ -6343,6 +6359,187 @@ requires (Extent != std::dynamic_extent)</div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a72f67fd142faa6b22a068acf46609065" name="a72f67fd142faa6b22a068acf46609065"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72f67fd142faa6b22a068acf46609065">&#9670;&#160;</a></span>string() <span class="overload">[1/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t Capacity&gt; <br />
+requires (Capacity &lt;= <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::string </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_string.html">String</a>&lt; Capacity &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Creates an empty bounded <a class="el" href="classcljonic_1_1_string.html">String</a> from an explicit capacity. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00442">442</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a82fda2a23a4131e9521b2d756f0d0dd5" name="a82fda2a23a4131e9521b2d756f0d0dd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82fda2a23a4131e9521b2d756f0d0dd5">&#9670;&#160;</a></span>string() <span class="overload">[2/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Args&gt; <br />
+requires (!concepts_detail::StringFactoryDeducedArguments&lt;Args...&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::string </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00510">510</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1b2ca526a08c06c5fa553bf9cf45a6d0" name="a1b2ca526a08c06c5fa553bf9cf45a6d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b2ca526a08c06c5fa553bf9cf45a6d0">&#9670;&#160;</a></span>string() <span class="overload">[3/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t Capacity, typename... Args&gt; <br />
+requires (!concepts_detail::StringFactoryCapacityArguments&lt;Capacity, Args...&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::string </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00493">493</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aac92eb77175a67beb451582c5786027e" name="aac92eb77175a67beb451582c5786027e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac92eb77175a67beb451582c5786027e">&#9670;&#160;</a></span>string() <span class="overload">[4/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Literal&gt; <br />
+requires (<a class="el" href="namespacecljonic_1_1concepts__detail.html#ad040d18e48767d08f266494d07163d36">concepts_detail::string_factory_literal_v</a>&lt;Literal&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#afff1155dcd436302983eda6334ecbcca">concepts_detail::string_factory_literal_exceeds_maximum_v</a><br class="typebreak" />
+&lt;std::remove_cvref_t&lt;Literal&gt;&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::string </td>
+          <td>(</td>
+          <td class="paramtype">Literal &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>literal</em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_string.html">String</a>&lt; std::extent_v&lt; std::remove_cvref_t&lt; Literal &gt; &gt; - 1U &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00434">434</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7e46b0f3405c40a7b4d96a2977cd219e" name="a7e46b0f3405c40a7b4d96a2977cd219e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e46b0f3405c40a7b4d96a2977cd219e">&#9670;&#160;</a></span>string() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t Capacity, typename Source&gt; <br />
+requires (concepts_detail::StringFactoryCapacityArguments&lt;Capacity, Source&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::string </td>
+          <td>(</td>
+          <td class="paramtype">Source &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_string.html">String</a>&lt; Capacity &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p><a class="anchor" id="StringFactory"></a> Creates a bounded <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> from one text source, or an empty <a class="el" href="classcljonic_1_1_string.html">String</a> from an explicit capacity.</p>
+<p><code>string</code>("Hi") deduces the capacity from the string literal's content length, excluding the automatic null terminator. <code>string&lt;Capacity&gt;(...)</code> names the capacity: it admits a string literal, a <code>std::string_view</code>, or a non-cljonic char range or view, copying the bounded prefix for dynamic extents and rejecting oversized static extents at compile time; <code><a class="el" href="#a72f67fd142faa6b22a068acf46609065">string&lt;Capacity&gt;()</a></code> creates an empty <a class="el" href="classcljonic_1_1_string.html">String</a>, including zero capacity. An untyped empty call and a variadic individual-character form are rejected at compile time.</p>
+<p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
+<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="comment">// The factory deduces the capacity from the literal&#39;s content length.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> deduced = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;Hi&quot;</span>);</div>
+<div class="line">  <span class="keyword">static_assert</span>(std::same_as&lt;<span class="keyword">decltype</span>(deduced), <span class="keyword">const</span> <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;2&gt;</a>&gt;);</div>
+<div class="line">  <span class="keyword">static_assert</span>(deduced(1) == <span class="charliteral">&#39;i&#39;</span>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Explicit capacity admits a partially populated String, an empty String,</span></div>
+<div class="line">  <span class="comment">// and text import from a string_view.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> reserved = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;8&gt;</a>(<span class="stringliteral">&quot;Hello&quot;</span>);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="#a96b19d0a5b0898ddc04d1470d18cdb68">empty</a> = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;8&gt;</a>();</div>
+<div class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> view_source = std::string_view{<span class="stringliteral">&quot;from view&quot;</span>};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> imported = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;16&gt;</a>(view_source);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Runtime construction supports the same observable results.</span></div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;Hi&quot;</span>);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_import = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;16&gt;</a>(std::string_view{<span class="stringliteral">&quot;runtime&quot;</span>});</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> (deduced(0) == <span class="charliteral">&#39;H&#39;</span> &amp;&amp; reserved.count() == 5U &amp;&amp; <a class="code hl_function" href="#a96b19d0a5b0898ddc04d1470d18cdb68">empty</a>.count() == 0U &amp;&amp;</div>
+<div class="line">          imported.view() == <span class="stringliteral">&quot;from view&quot;</span> &amp;&amp; runtime(1) == <span class="charliteral">&#39;i&#39;</span> &amp;&amp;</div>
+<div class="line">          runtime_import.view() == <span class="stringliteral">&quot;runtime&quot;</span>)</div>
+<div class="line">             ? 0</div>
+<div class="line">             : 1;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00114">cljonic-string.hpp:114</a></div></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00487">487</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>

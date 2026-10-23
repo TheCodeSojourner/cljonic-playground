@@ -277,6 +277,10 @@ Concepts</h2></td></tr>
 <tr class="memitem:RangeClassArgument" id="r_RangeClassArgument"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_range_class_argument.html">RangeClassArgument</a></td></tr>
 <tr class="memitem:RepeatClassArgument" id="r_RepeatClassArgument"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_repeat_class_argument.html">RepeatClassArgument</a></td></tr>
 <tr class="memitem:RepeatedlyClassArgument" id="r_RepeatedlyClassArgument"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_repeatedly_class_argument.html">RepeatedlyClassArgument</a></td></tr>
+<tr class="memitem:StringFactoryArguments" id="r_StringFactoryArguments"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_string_factory_arguments.html">StringFactoryArguments</a></td></tr>
+<tr class="memitem:StringFactoryCapacityArguments" id="r_StringFactoryCapacityArguments"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_string_factory_capacity_arguments.html">StringFactoryCapacityArguments</a></td></tr>
+<tr class="memitem:StringFactoryDeducedArguments" id="r_StringFactoryDeducedArguments"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_string_factory_deduced_arguments.html">StringFactoryDeducedArguments</a></td></tr>
+<tr class="memitem:StringFactoryTextSource" id="r_StringFactoryTextSource"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_string_factory_text_source.html">StringFactoryTextSource</a></td></tr>
 <tr class="memitem:ValidCycleSource" id="r_ValidCycleSource"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_valid_cycle_source.html">ValidCycleSource</a></td></tr>
 <tr class="memitem:ValidRepeatedlyStep" id="r_ValidRepeatedlyStep"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_valid_repeatedly_step.html">ValidRepeatedlyStep</a></td></tr>
 <tr class="memitem:VariantClassArgument" id="r_VariantClassArgument"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_variant_class_argument.html">VariantClassArgument</a></td></tr>
@@ -388,6 +392,14 @@ Functions</h2></td></tr>
 <tr class="memitem:a4aee245a87d94393c24a90b3ea8c3e45 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4aee245a87d94393c24a90b3ea8c3e45">build_hash_map_factory_result</a> (<a class="el" href="classcljonic_1_1_map.html">Map</a>&lt; KeyType, <a class="el" href="#ab9fb80516a7a093c3cebc31ef2cb7bb3">ValueType</a>, Capacity &gt; result) noexcept -&gt; <a class="el" href="classcljonic_1_1_map.html">Map</a>&lt; KeyType, <a class="el" href="#ab9fb80516a7a093c3cebc31ef2cb7bb3">ValueType</a>, Capacity &gt;</td></tr>
 <tr class="memitem:a25e3773a553af3e6f8902a528e0923da" id="r_a25e3773a553af3e6f8902a528e0923da"><td class="memTemplParams" colspan="2">template&lt;typename KeyType, typename <a class="el" href="#ab9fb80516a7a093c3cebc31ef2cb7bb3">ValueType</a>, std::size_t Capacity, typename KeyArgument, typename ValueArgument, typename... Rest&gt; </td></tr>
 <tr class="memitem:a25e3773a553af3e6f8902a528e0923da template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a25e3773a553af3e6f8902a528e0923da">build_hash_map_factory_result</a> (<a class="el" href="classcljonic_1_1_map.html">Map</a>&lt; KeyType, <a class="el" href="#ab9fb80516a7a093c3cebc31ef2cb7bb3">ValueType</a>, Capacity &gt; result, KeyArgument &amp;&amp;key, ValueArgument &amp;&amp;value, Rest &amp;&amp;... rest) noexcept -&gt; <a class="el" href="classcljonic_1_1_map.html">Map</a>&lt; KeyType, <a class="el" href="#ab9fb80516a7a093c3cebc31ef2cb7bb3">ValueType</a>, Capacity &gt;</td></tr>
+<tr class="memitem:aaad150c956c029caafe2db7c1a8d32ab" id="r_aaad150c956c029caafe2db7c1a8d32ab"><td class="memTemplParams" colspan="2">template&lt;typename Source, typename... Args&gt; </td></tr>
+<tr class="memitem:aaad150c956c029caafe2db7c1a8d32ab template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aaad150c956c029caafe2db7c1a8d32ab">string_factory_reject_text_source</a> () noexcept -&gt; void</td></tr>
+<tr class="memitem:a758899eb67880957d0a63f8e7aeadd4e" id="r_a758899eb67880957d0a63f8e7aeadd4e"><td class="memTemplParams" colspan="2">template&lt;std::size_t Capacity, typename... Args&gt; </td></tr>
+<tr class="memitem:a758899eb67880957d0a63f8e7aeadd4e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a758899eb67880957d0a63f8e7aeadd4e">string_factory_reject_capacity_call</a> () noexcept -&gt; void</td></tr>
+<tr class="memitem:ac54c8021ed24727d70949f0dbffae7ca" id="r_ac54c8021ed24727d70949f0dbffae7ca"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:ac54c8021ed24727d70949f0dbffae7ca template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac54c8021ed24727d70949f0dbffae7ca">string_factory_reject_deduced_call</a> () noexcept -&gt; void</td></tr>
+<tr class="memitem:a08f1734ff4a595de13b69800a9f28122" id="r_a08f1734ff4a595de13b69800a9f28122"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a08f1734ff4a595de13b69800a9f28122 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a08f1734ff4a595de13b69800a9f28122">string_factory_reject_empty_call</a> () noexcept -&gt; void</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -442,6 +454,10 @@ Variables</h2></td></tr>
 <tr class="memitem:ab9fb80516a7a093c3cebc31ef2cb7bb3" id="r_ab9fb80516a7a093c3cebc31ef2cb7bb3"><td class="memItemLeft">concept&#160;</td><td class="memItemRight"><a class="el" href="#ab9fb80516a7a093c3cebc31ef2cb7bb3">ValueType</a></td></tr>
 <tr class="memitem:a404e64bf977f53e18a3e39726e8a7e7a" id="r_a404e64bf977f53e18a3e39726e8a7e7a"><td class="memItemLeft">concept&#160;</td><td class="memItemRight"><a class="el" href="#a404e64bf977f53e18a3e39726e8a7e7a">DeducedQueueElementType</a></td></tr>
 <tr class="memitem:afb3e26178fd89606bb39cf5b6be2948d" id="r_afb3e26178fd89606bb39cf5b6be2948d"><td class="memItemLeft">concept&#160;</td><td class="memItemRight"><a class="el" href="#afb3e26178fd89606bb39cf5b6be2948d">DeducedHashSetElementType</a></td></tr>
+<tr class="memitem:afff1155dcd436302983eda6334ecbcca" id="r_afff1155dcd436302983eda6334ecbcca"><td class="memTemplParams" colspan="2">template&lt;typename Array&gt; </td></tr>
+<tr class="memitem:afff1155dcd436302983eda6334ecbcca template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="#afff1155dcd436302983eda6334ecbcca">string_factory_literal_exceeds_maximum_v</a></td></tr>
+<tr class="memitem:ad040d18e48767d08f266494d07163d36" id="r_ad040d18e48767d08f266494d07163d36"><td class="memTemplParams" colspan="2">template&lt;typename Source&gt; </td></tr>
+<tr class="memitem:ad040d18e48767d08f266494d07163d36 template"><td class="memItemLeft">constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="#ad040d18e48767d08f266494d07163d36">string_factory_literal_v</a></td></tr>
 <tr class="memitem:ad58b0c594269eed9336e2c6938d40d25" id="r_ad58b0c594269eed9336e2c6938d40d25"><td class="memItemLeft">concept&#160;</td><td class="memItemRight"><a class="el" href="#ad58b0c594269eed9336e2c6938d40d25">DeducedVectorElementType</a></td></tr>
 </table>
 <a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
@@ -1385,6 +1401,122 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
+<a id="a758899eb67880957d0a63f8e7aeadd4e" name="a758899eb67880957d0a63f8e7aeadd4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a758899eb67880957d0a63f8e7aeadd4e">&#9670;&#160;</a></span>string_factory_reject_capacity_call()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t Capacity, typename... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::string_factory_reject_capacity_call </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00387">387</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac54c8021ed24727d70949f0dbffae7ca" name="ac54c8021ed24727d70949f0dbffae7ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac54c8021ed24727d70949f0dbffae7ca">&#9670;&#160;</a></span>string_factory_reject_deduced_call()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::string_factory_reject_deduced_call </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00399">399</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a08f1734ff4a595de13b69800a9f28122" name="a08f1734ff4a595de13b69800a9f28122"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08f1734ff4a595de13b69800a9f28122">&#9670;&#160;</a></span>string_factory_reject_empty_call()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::string_factory_reject_empty_call </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00411">411</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aaad150c956c029caafe2db7c1a8d32ab" name="aaad150c956c029caafe2db7c1a8d32ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaad150c956c029caafe2db7c1a8d32ab">&#9670;&#160;</a></span>string_factory_reject_text_source()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Source, typename... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::string_factory_reject_text_source </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00370">370</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a4ca1374dc952d90d209ac69dbee803c6" name="a4ca1374dc952d90d209ac69dbee803c6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4ca1374dc952d90d209ac69dbee803c6">&#9670;&#160;</a></span>try_normalize_index()</h2>
 
@@ -2137,6 +2269,64 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00198">198</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afff1155dcd436302983eda6334ecbcca" name="afff1155dcd436302983eda6334ecbcca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afff1155dcd436302983eda6334ecbcca">&#9670;&#160;</a></span>string_factory_literal_exceeds_maximum_v</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Array&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cljonic::concepts_detail::string_factory_literal_exceeds_maximum_v</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">                                                           =</div>
+<div class="line">std::is_array_v&lt;Array&gt; &amp;&amp; (std::extent_v&lt;Array&gt; &gt; <a class="code hl_variable" href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a> + 1U)</div>
+<div class="ttc" id="anamespacecljonic_html_a41fa65c16edb0a95aa942c48307777d6"><div class="ttname"><a href="namespacecljonic.html#a41fa65c16edb0a95aa942c48307777d6">cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a></div><div class="ttdeci">constexpr std::size_t CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</div><div class="ttdef"><b>Definition</b> <a href="cljonic-core-collection-maximum-element-count_8hpp_source.html#l00016">cljonic-core-collection-maximum-element-count.hpp:16</a></div></div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00417">417</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad040d18e48767d08f266494d07163d36" name="ad040d18e48767d08f266494d07163d36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad040d18e48767d08f266494d07163d36">&#9670;&#160;</a></span>string_factory_literal_v</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Source&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cljonic::concepts_detail::string_factory_literal_v</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">                                           =</div>
+<div class="line">std::is_array_v&lt;std::remove_cvref_t&lt;Source&gt;&gt; &amp;&amp;</div>
+<div class="line">std::same_as&lt;std::remove_cv_t&lt;std::remove_extent_t&lt;std::remove_cvref_t&lt;Source&gt;&gt;&gt;, <span class="keywordtype">char</span>&gt;</div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="cljonic-string_8hpp_source.html#l00421">421</a> of file <a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>.</p>
 
 </div>
 </div>
