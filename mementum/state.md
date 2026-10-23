@@ -1,5 +1,47 @@
 ## Current Session State
 
+- last_session_id: ccf16ca0-dd5c-4f58-8e6b-6d0da841152e
+- current_timestamp: 2026-10-23T14:12:00-06:00
+- recover: 0
+- session_complete: true
+
+Task:
+1. Human invoked `/cljonic-api-complete queue` to promote the deferred `queue` factory (REQ-FN-029B naming) to the active API.
+2. Human approved the contract decision: the typed empty form mirrors `vector` — `queue<T>()` returns an empty `Queue<T, 0>` (the zero-capacity dead-end concern was accepted in favor of vector-principle consistency per REQ-FN-029C).
+3. Completed the layer chain: requirements (`REQ-FN-029G` under a new `## Queue Factory` heading; 029B narrowed to `String → string` only; index deferred-marker and Governed REQs footers updated to 029G), vocabulary (`QueueFactory` term + Queue term cross-link), architecture (`S5_queue_creation_policy`, `S2_queue_factory_contract`, S4 direction narrowed to String, active_surface gains `queue_factory`), spec `specs/primitives/queue-factory.allium` (28 obligations), spec tests `tests/cljonic-queue-factory-spec-tests.cpp` with 28 TRACE_IDs, compile-fail script `scripts/check-queue-factory-compile-failures.py` + Makefile `queue-factory-compile-fail` target wired into upsert-gate / upsert-gate-strict / git chains, no-heap factory coverage in `tests/no_heap/cljonic-queue-probes.cpp`, implementation in `src/cljonic-queue.hpp` (QueueFactory anchor with Doxygen example), cheatsheet entry in `src/cljonic-core.hpp`, regenerated single header.
+4. Diagnostic messages mirror the vector factory: untyped empty names `queue<T>()`; element admission names `NothrowCollectionElement`; capacity/argument-count bounds are targeted.
+5. Human invoked `/cljonic-api-converge queue`: all six targeted passes (req-check, spec-check, req-weed, vocab-weed, arch-weed, spec-weed) came back converged with zero divergences and zero writes.
+6. Human-directed example-idiom conversion: all `Queue{...}`/`Queue<T,N>{...}` constructions in src/* Doxygen examples became `queue(...)`/`queue<T, Capacity>(...)` — 21 sites across 10 files, plus 6 `Map<int, int, 4>{}` → `hash_map<int, int, 4>()` sites in assoc/can-assoc/conj. Two local variables named `queue` (peek/next/pop) were renamed to `q` because they would shadow the new factory. Range/view source imports keep direct construction (the factory is not a range materializer). The Queue class-doc CTAD line was converted at the human's direction with the comment reworded to factory inference ("The factory infers Queue<int, 3> from the argument count") — CTAD demonstration is no longer a valid reason for direct construction.
+7. Human then narrowed the example-style rule and had the memory updated accordingly (see Memory/synthesis 2).
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. `queue` follows the `vector` factory shape (NothrowCollectionElement admission, typed empty zero-capacity), not the `hash_set` shape (which requires explicit capacity for empties) — per REQ-FN-029C's "vector construction principles" and human approval.
+2. Factory-first example rule narrowed (2026-10-23): direct construction in Doxygen examples is allowed only where the factory cannot express the call (range/view source import) or for a named-type contract demonstration; CTAD/deduction-guide demonstration no longer qualifies — inference is taught via factory calls with an inference comment.
+3. The Queue class-doc example keeps direct construction only for span/view import lines.
+
+Validation:
+1. `make requirements-structure` 332 clauses; `make vocabulary-structure` 193 terms; `allium check specs` + `allium analyse specs` clean; `make trace-id-check SPEC=specs/primitives/queue-factory.allium` 28/28.
+2. `make test` 258/258; `make no-heap` ok; `make queue-factory-compile-fail` ok (modular + single header); hash-set/vector-factory/source-construction compile-fail gates re-run ok; `make lint LINT_FILE=src/cljonic-queue.hpp` and `src/cljonic-core.hpp` ok; `make complexity-cli` ok; header-guards, diagnostic-coverage, diagnostic-message-labels, audit-scripts ok.
+3. `make docs-examples` compiled=35 (was 34; +1 queue factory example); every changed example freshly extracted, compiled, linked, and executed exit 0; `make cljonic` regenerated after each example edit.
+4. `make traceability-spec-to-code-update-snapshot` then `make traceability-spec-to-code` ok.
+5. Converge: all six passes green, zero divergences, zero writes.
+
+Memory/synthesis:
+1. Stored `💡 typed-empty-factory-form-follows-collection-principles` (commit `ef5dc21`): the empty-call form is a per-type contract decision derived from the collection's own constructor principles and approved per contract; surface the divergence from the nearest precedent as the open question in the approval ask.
+2. Updated `🔄 docs-user-facing-example-style` (commit `bc8766b`): the CTAD carve-out is removed — direct construction in examples only where the factory cannot express the call (range/view source import) or for a named-type contract demonstration; the human decided `Queue{1, 2, 3}` CTAD demos must become `queue(1, 2, 3)` with an inference comment.
+
+Open questions:
+1. `String → string` (REQ-FN-029C) is the last deferred factory.
+2. HTML docs (`make docs`) deferred per default; source example evidence is current.
+
+Next:
+1. Human review + commits of the working tree (queue promotion + example conversions are uncommitted); then optionally `/cljonic-api-complete string`.
+
+## Previous Session State
+
 - last_session_id: 55edf2eb-b05c-43fd-83f2-350edf3b91e8
 - current_timestamp: 2026-10-23T12:48:59-06:00
 - recover: 1
