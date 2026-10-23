@@ -1,5 +1,51 @@
 ## Current Session State
 
+- last_session_id: 55edf2eb-b05c-43fd-83f2-350edf3b91e8
+- current_timestamp: 2026-10-23T12:48:59-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human invoked `/cljonic-api-complete hash_set`; approved the `REQ-FN-029F` contract (deduced `hash_set(e, ...)`, `hash_set<T>(...)`, `hash_set<T, Capacity>(...)` incl. empty/zero capacity; runtime dedup with deduced capacity equal to argument count; constant-evaluated duplicates rejected by the inherited Set rule; no separate factory diagnostic for duplicates).
+2. Completed the full layer chain: requirements (`029F`, deferred section narrowed to `queue`/`string`, index footer), vocabulary (`HashSetFactory` term, `Set`/`HashMapFactory` cross-links), architecture (`S5_set_creation_policy`, `S2_set_factory_contract`, S4/scope/boundary), spec `specs/primitives/hash-set-factory.allium` (28 obligations), spec tests + TRACE_IDs, compile-fail script + Makefile target wired into three gate chains, no-heap coverage in the Set family probe, implementation in `cljonic-set.hpp`, core cheatsheet entry, regenerated single header.
+3. Human then invoked `/cljonic-api-converge hash_set`: all six gybis passes (req-check, spec-check, req-weed, vocab-weed, arch-weed, spec-weed) came back PASS/converged with zero divergences and no writes.
+4. Human-directed prose/idiom cleanups across `src/*`: removed the redundant qualifier "lowercase" (8 instances); removed integer-literal suffixes from examples except where load-bearing (`Variant<int,long>{1L}`); converted all example Set creation to `hash_set(...)` (16 lines / 10 files); changed the `Set` source-construction diagnostic advice from `write Set{...}` to `write hash_set(...)` after verifying both forms produce the same one-element `Set`.
+5. Fixed a latent tooling bug in `scripts/format-doc-samples.pl`: the doxygen block regex could not terminate on an inline-terminated `/** ... */`, so it swallowed following code and reflowed `*this = conj(...)` into `* this = ...`. Now terminates on `\*[^\n]*\*/` while still skipping reflow for mid-line-terminated blocks; verified every other header stays byte-identical.
+6. Human committed all work (`0c10397` gate/tests/probes, `599ee66` implementation+examples, `22be8a9` docs).
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. `hash_set` mirrors `vector`/`hash_map` shape (bounded collection => capacity dimension), unlike fixed-shape `map_entry`.
+2. Example creation uses the factory for all four user-createable values; direct construction remains only when it is the subject (range/view import, deduction-guide/CTAD demo, named-type contract demo). Recorded in memory `docs-user-facing-example-style`.
+3. Integer suffixes stay only where semantically required; `lowercase` is not used as a prose qualifier.
+4. Enclosure advice in diagnostics names the factory; Map is exempt because its elements are `MapEntry`.
+5. `format-doc-samples.pl` now treats a continuation line ending in `*/` as a block terminator but still declines to reflow mid-line-terminated blocks, preserving unrelated files byte-for-byte.
+
+Validation:
+1. `make test` 256/256; `make no-heap` ok (modular + single header); `make hash-set-factory-compile-fail` ok; `make source-construction-compile-fail` ok; `make diagnostic-message-labels` / `diagnostic-coverage` ok; `make lint LINT_FILE=src/cljonic-set.hpp` ok; `make complexity-cli` ok.
+2. `make requirements-structure` 331 clauses; `make vocabulary-structure` 192 terms; `make audit-scripts` ok.
+3. `allium check specs` 44/44 clean; `allium analyse specs` zero issues; `make trace-id-check` 28/28; `make traceability-spec-to-code` ok after snapshot refresh.
+4. `make docs-examples` 34 compiled (2 deferred); every freshly extracted example links and runs exit 0; formatting idempotent on second pass.
+
+Memory/synthesis:
+1. Updated `💡 docs-user-facing-example-style` (factory-first creation, no literal suffixes, no "lowercase" qualifier).
+2. Updated `mementum/knowledge/doxygen-doc-tooling.md` with the inline-terminated doc-block formatter pitfall.
+3. Updated `mementum/knowledge/rejection-diagnostics.md` with the "advice names the factory" rule.
+4. Commits: `981aacb`, `f9bb12c`, `14458eb`.
+
+Open questions:
+1. Deferred factories `queue` and `string` still need individual contracts (`REQ-FN-029B`/`029C`).
+2. `Queue`/`String` diagnostics cannot yet point at a factory because none exists.
+3. The `Set` class-doc example still shows `AccountSet{...}` named-type construction and span/CTAD forms by design; revisit only if the human wants those converted too.
+
+Next:
+1. If requested, promote the next deferred factory (`queue` or `string`) in the required layer order.
+2. Consider aligning vocabulary prose examples that still show brace construction.
+
+## Previous Session State
+
 - last_session_id: 02abaed6-ec8d-4b5d-a6f6-f6b07bfa25f3
 - current_timestamp: 2026-10-23T11:41:00-06:00
 - recover: 0
@@ -20,7 +66,8 @@ Questions:
 
 Decisions:
 1. `map_entry` replaces `MapEntry{...}` in all example construction; `hash_map(k, v, ...)` replaces `Map{...}`/`AccountMap{...}` for map creation. Type positions (`using value_type = MapEntry<...>`, deduction guides, `first(const MapEntry<...>&)`, named aliases) and diagnostic strings naming the required type ("the exact MapEntry type", "A Map takes a MapEntry") keep the type name — `map_entry` is a function, not a type.
-2. Doxygen prose now references `\ref MapEntryFactory "map_entry"` where it describes creating/associating an entry value; `ef MapEntry` is kept where the text names the type (core cheatsheet "Collection Types" list, concepts component-analysis comment).
+2. Doxygen prose now references `\ref MapEntryFactory "map_entry"` where it describes creating/associating an entry value; `
+ef MapEntry` is kept where the text names the type (core cheatsheet "Collection Types" list, concepts component-analysis comment).
 3. `hash_map`'s argument-position deduction (key from arg 1, value from arg 2, capacity `sizeof...(Args)/2`) is deliberate; no diagnostic hardening will be proposed for MapEntry arguments.
 4. Diagnostic messages and their asserting scripts were left unchanged (they state type requirements and are gated).
 
