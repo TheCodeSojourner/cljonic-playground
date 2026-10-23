@@ -169,10 +169,9 @@ This module specifies specialized domain conveniences built on top of lower modu
 
 ## Collection Factory Family (Deferred, Non-Binding)
 
-The following clauses record approved future API direction, not currently available overloads. `vector` remains active under `REQ-FN-029A`, `hash_map` under `REQ-FN-029D`, `map_entry` under `REQ-FN-029E`, `hash_set` under `REQ-FN-029F`, and `queue` under `REQ-FN-029G`; the remaining factories require individually approved behavioral specifications before implementation.
+The following clauses record approved future API direction, not currently available overloads. `vector` remains active under `REQ-FN-029A`, `hash_map` under `REQ-FN-029D`, `map_entry` under `REQ-FN-029E`, `hash_set` under `REQ-FN-029F`, and `queue` under `REQ-FN-029G`; the remaining factory naming and contract direction require individually approved behavioral specifications before implementation.
 
 λ REQ-FN-029B(x).
-  ∀ planned collection factory naming beyond the active `vector`, `hash_map`, `map_entry`, `hash_set`, and `queue` factories: `String` → `string`
   ∧ preferred: lowercase factories are the idiomatic creation surface at runtime and compile time, using Clojure names where applicable rather than claiming exact Clojure equivalence
   ∧ ∀ factory introduction: preserves the public type and its existing supported constructors
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
@@ -180,9 +179,21 @@ The following clauses record approved future API direction, not currently availa
 λ REQ-FN-029C(x).
   ∀ planned collection factory contract: follows the `vector` construction principles where meaningful — inferred types, explicit types, explicit capacity, typed empty construction, safe conversions, and non-throwing, non-allocating value construction
   ∧ ∀ factory: preserves its collection's semantics rather than requiring identical overloads across types
-  ∧ ∀ `string`: preserves the existing text-import and byte-validity contracts
   ∧ ∀ planned factory: concrete overloads and boundaries require individual contract approval before behavioral specification and implementation
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
+
+## String Factory
+
+λ REQ-FN-029H(x).
+  ∀ user-facing String creation guidance: prefers the lowercase `string` factory at runtime and compile time ∧ the public `String<Capacity>` type and its existing constructors remain supported, including direct construction from external non-cljonic C++ ranges and views
+  ∧ ∀ `string("Hi")` without explicit capacity: returns `String<2>`, deducing capacity from the string literal's content length, excluding the automatic null terminator
+  ∧ ∀ `string<Capacity>("Hi")` with an explicit capacity: returns `String<Capacity>` ∧ content longer than the capacity is rejected at compile time
+  ∧ ∀ explicit-capacity `string<Capacity>()`: returns an empty `String<Capacity>`, including when `Capacity` is zero
+  ∧ ∀ untyped zero-argument `string()`: rejected at compile time because no capacity can be deduced and String has no element-type parameter to supply
+  ∧ ∀ `string<Capacity>(string_view_or_char_range)`: explicit-capacity text import from `std::string_view` and non-cljonic char range/view sources, following the String source-construction contracts — a dynamic-extent source copies the bounded prefix that fits the capacity, a static-extent source larger than the capacity is rejected at compile time, and invalid bytes keep the existing runtime replacement and constant-evaluation rejection behavior
+  ∧ ¬∃ variadic individual-character form: String preserves its own text-import construction semantics rather than mirroring the element-wise factory overloads of other collections
+  ∧ ∀ `string`: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ byte-validity follows the existing String contracts (`REQ-DIAG-010`, character validity)
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-23}
 
 ## Map Factory
 
@@ -305,4 +316,4 @@ The following clauses record approved future API direction, not currently availa
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Relational algebra functions (`index`, `project`, `rename`, `join`), string/regex functions, `fits_print`/`print_to`, `Atom<T>`, and the test suite (`REQ-TEST-*`).
-- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`029G`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
+- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`029H`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
