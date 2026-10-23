@@ -48,6 +48,14 @@ Operating model for the scripts and gates that guard cljonic's public docs.
   - After editing any `/** */` block, run `make format` **twice** and diff:
     reflow defects are only visible once the formatter has run, and idempotency
     is the check.
+  - The block-matching regex must terminate on a *continuation* line that ends
+    with `*/`, not only on a standalone `*/` line. An inline-terminated block
+    (`/** ... */` whose last line carries trailing code) otherwise leaves the
+    match unterminated, so the regex swallows every following line up to the
+    next standalone `*/` and reflows code as prose. Observed 2026-10-23: the
+    reflow rewrote a `*this = conj(...)` code line to `* this = ...`. Fixed by
+    matching `\*[^\n]*\*/` as an alternative terminator while still skipping
+    reflow for blocks that end mid-line.
 - `scripts/check-core-cheatsheet-format.py` (`make core-cheatsheet-format`)
   guards the `Core_Cheatsheet` block in `src/cljonic-core.hpp`. Its Markdown is
   intentionally multiline — tables need header/separator/every row on their own
