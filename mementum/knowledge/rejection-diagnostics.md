@@ -181,6 +181,12 @@ producer-diagnostic slice.)
 - GCC can hard-error on a `requires { expr; }` simple-requirement against a
   constrained template selected via brace-init, instead of yielding `false` —
   assert traits/concepts directly instead of wrapping in `requires`.
+- Advice inside a message must name the idiomatic creation surface. Where the
+  rejected case has a sibling that expresses the intent, point at the factory
+  (`write vector(...)`, `write hash_set(...)`), never at brace construction:
+  examples now standardise on factories, so a diagnostic recommending `Set{...}`
+  contradicts the documented idiom. A Map is the exception — its elements are
+  `MapEntry`, so there is no "keep it as one element" advice to give.
 
 ## Traceability
 
