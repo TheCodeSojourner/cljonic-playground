@@ -23,7 +23,7 @@ TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail ctad-compile-fail vector-factory-compile-fail hash-map-factory-compile-fail map-entry-factory-compile-fail hash-set-factory-compile-fail queue-factory-compile-fail header-guards diagnostic-coverage diagnostic-message-labels requirements-structure vocabulary-structure audit-scripts trace-id-check _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
+.PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail ctad-compile-fail vector-factory-compile-fail hash-map-factory-compile-fail map-entry-factory-compile-fail hash-set-factory-compile-fail queue-factory-compile-fail string-factory-compile-fail header-guards diagnostic-coverage diagnostic-message-labels requirements-structure vocabulary-structure audit-scripts trace-id-check _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
 	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
@@ -65,6 +65,7 @@ help:
 	@printf '%-12s %s\n' 'hash-map-factory-compile-fail' 'Verify hash_map factory admission, capacity bounds, and targeted rejection diagnostics'
 	@printf '%-12s %s\n' 'hash-set-factory-compile-fail' 'Verify hash_set factory admission, capacity bounds, and targeted rejection diagnostics'
 	@printf '%-12s %s\n' 'queue-factory-compile-fail' 'Verify queue factory admission, capacity bounds, and targeted rejection diagnostics'
+	@printf '%-12s %s\n' 'string-factory-compile-fail' 'Verify string factory admission, capacity bounds, and targeted rejection diagnostics'
 	@printf '%-12s %s\n' 'map-entry-factory-compile-fail' 'Verify map_entry factory arity, element admission, and targeted rejection diagnostics'
 	@printf '%-12s %s\n' 'ctad-compile-fail' 'Verify out-of-domain Range deduction fails with one labeled REQ-DIAG-012 message'
 	@printf '%-12s %s\n' 'test' 'Incremental parallel rebuild and modular/generated parallel test run'
@@ -208,6 +209,9 @@ hash-set-factory-compile-fail: cljonic scripts/check-hash-set-factory-compile-fa
 
 queue-factory-compile-fail: cljonic scripts/check-queue-factory-compile-failures.py
 	@python3 scripts/check-queue-factory-compile-failures.py
+
+string-factory-compile-fail: cljonic scripts/check-string-factory-compile-failures.py
+	@python3 scripts/check-string-factory-compile-failures.py
 
 ctad-compile-fail: cljonic scripts/check-ctad-diagnostics.py
 	@python3 scripts/check-ctad-diagnostics.py
@@ -432,6 +436,7 @@ upsert-gate:
 	@$(MAKE) --no-print-directory -s hash-map-factory-compile-fail
 	@$(MAKE) --no-print-directory -s hash-set-factory-compile-fail
 	@$(MAKE) --no-print-directory -s queue-factory-compile-fail
+	@$(MAKE) --no-print-directory -s string-factory-compile-fail
 	@$(MAKE) --no-print-directory -s ctad-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s diagnostic-coverage
@@ -480,6 +485,7 @@ validate:
 	@$(MAKE) --no-print-directory -s hash-map-factory-compile-fail
 	@$(MAKE) --no-print-directory -s hash-set-factory-compile-fail
 	@$(MAKE) --no-print-directory -s queue-factory-compile-fail
+	@$(MAKE) --no-print-directory -s string-factory-compile-fail
 	@$(MAKE) --no-print-directory -s ctad-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s diagnostic-coverage
@@ -513,6 +519,7 @@ git:
 	@$(MAKE) --no-print-directory -s hash-map-factory-compile-fail
 	@$(MAKE) --no-print-directory -s hash-set-factory-compile-fail
 	@$(MAKE) --no-print-directory -s queue-factory-compile-fail
+	@$(MAKE) --no-print-directory -s string-factory-compile-fail
 	@$(MAKE) --no-print-directory -s ctad-compile-fail
 	@$(MAKE) --no-print-directory -s header-guards
 	@$(MAKE) --no-print-directory -s diagnostic-coverage
