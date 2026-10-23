@@ -64,7 +64,7 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
    static_assert(can_conj(Queue<int, 2>{}, 1, 2));
    constexpr auto q_full = Queue{1};
    static_assert(!can_conj(q_full, 2));
-   constexpr auto s_const = Set<int, 4>{};
+   constexpr auto s_const = hash_set<int, 4>();
    static_assert(can_conj(s_const, 1));
    constexpr auto text_const = String<4>{"Hi"};
    static_assert(can_conj(text_const, '!'));

@@ -16,10 +16,10 @@ namespace cljonic {
  * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. Other
  * operations use the library's free-function API.
  *
- * The lowercase \c vector factory is the idiomatic way to create Vector values, at runtime or during constant
- * evaluation. Use \c vector(args...) to infer the element type and capacity, \c vector<T>(args...) to select an
- * element type, or \c vector<T, Capacity>(args...) to provide an explicit capacity, including for an empty vector. \c
- * Vector<T, Capacity> remains the value's type.
+ * The \c vector factory is the idiomatic way to create Vector values, at runtime or during constant evaluation. Use \c
+ * vector(args...) to infer the element type and capacity, \c vector<T>(args...) to select an element type, or \c
+ * vector<T, Capacity>(args...) to provide an explicit capacity, including for an empty vector. \c Vector<T, Capacity>
+ * remains the value's type.
  *
  * Direct construction is useful when importing a C++ range or view: its elements are copied into the Vector. A cljonic
  * value is not copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one
@@ -45,7 +45,7 @@ namespace cljonic {
  };
 
  int main() {
-   // The lowercase factory is the idiomatic way to create vectors.
+   // The factory is the idiomatic way to create vectors.
    constexpr auto ints_empty = vector<int>();
    constexpr auto ints_at_capacity = vector(1, 2, 3);
 

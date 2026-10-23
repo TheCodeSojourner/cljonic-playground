@@ -114,7 +114,7 @@
  * \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize", \ref Core_Frequencies "Frequencies", \ref
  * Core_FrequenciesBy "FrequenciesBy"
  * - \ref Core_GE "GE", \ref Get "get", \ref Core_GT "GT"
- * - \ref HashMapFactory "hash_map"
+ * - \ref HashMapFactory "hash_map", \ref HashSetFactory "hash_set"
  * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_If "If", \ref Core_Inc "Inc",
  * \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose
  * "Interpose", \ref Into "into", \ref IsEmpty "is_empty", \ref Core_IsAlpha "IsAlpha", \ref Core_IsAlphanumeric
@@ -1224,7 +1224,7 @@ constexpr auto can_conj_values_in_order(C& collection, const V& value, const Res
    static_assert(can_conj(Queue<int, 2>{}, 1, 2));
    constexpr auto q_full = Queue{1};
    static_assert(!can_conj(q_full, 2));
-   constexpr auto s_const = Set<int, 4>{};
+   constexpr auto s_const = hash_set<int, 4>();
    static_assert(can_conj(s_const, 1));
    constexpr auto text_const = String<4>{"Hi"};
    static_assert(can_conj(text_const, '!'));
@@ -1843,7 +1843,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
  int main() {
    // Compile-time demonstration.
    constexpr auto q_const = conj(Queue<int, 4>{}, 10);
-   constexpr auto s_const = conj(Set<int, 4>{}, 20);
+   constexpr auto s_const = conj(hash_set<int, 4>(), 20);
    static_assert(peek(q_const) == 10);
    static_assert(contains(s_const, 20));
 
@@ -1856,7 +1856,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
 
    // Zero-value and variadic arities.
    constexpr auto v_same = conj(v_const);
-   static_assert(v_same.count() == 3U);
+   static_assert(v_same.count() == 3);
    constexpr auto v_many = conj(vector<int, 4>(10), 20, 30);
    static_assert(v_many(2) == 30);
    constexpr auto text_many = conj(String<4>{"H"}, 'i', '!');
@@ -2019,21 +2019,21 @@ concept ContainsAdmissible =
    // Compile-time demonstration.
    constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = hash_map(1, 100);
-   constexpr auto s_const = Set{5};
+   constexpr auto s_const = hash_set(5);
    constexpr auto st_const = String{"abc"};
-   static_assert(contains(v_const, 0U));
-   static_assert(!contains(v_const, 9U));
+   static_assert(contains(v_const, 0));
+   static_assert(!contains(v_const, 9));
    static_assert(contains(m_const, 1));
    static_assert(!contains(m_const, 2));
    static_assert(contains(s_const, 5));
    static_assert(!contains(s_const, 8));
-   static_assert(contains(st_const, 1U));
+   static_assert(contains(st_const, 1));
 
    // Runtime demonstration.
    auto v_runtime = vector(10, 20);
-   const auto in_range = contains(v_runtime, 0U);
+   const auto in_range = contains(v_runtime, 0);
 
-   return (in_range && !contains(v_runtime, 9U)) ? 0 : 1;
+   return (in_range && !contains(v_runtime, 9)) ? 0 : 1;
  }
  ~~~~~
  */
@@ -2158,10 +2158,10 @@ namespace cljonic {
  * A Vector is a bounded, ordered collection that provides callable lookup with optional fallback values. Other
  * operations use the library's free-function API.
  *
- * The lowercase \c vector factory is the idiomatic way to create Vector values, at runtime or during constant
- * evaluation. Use \c vector(args...) to infer the element type and capacity, \c vector<T>(args...) to select an
- * element type, or \c vector<T, Capacity>(args...) to provide an explicit capacity, including for an empty vector. \c
- * Vector<T, Capacity> remains the value's type.
+ * The \c vector factory is the idiomatic way to create Vector values, at runtime or during constant evaluation. Use \c
+ * vector(args...) to infer the element type and capacity, \c vector<T>(args...) to select an element type, or \c
+ * vector<T, Capacity>(args...) to provide an explicit capacity, including for an empty vector. \c Vector<T, Capacity>
+ * remains the value's type.
  *
  * Direct construction is useful when importing a C++ range or view: its elements are copied into the Vector. A cljonic
  * value is not copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one
@@ -2187,7 +2187,7 @@ namespace cljonic {
  };
 
  int main() {
-   // The lowercase factory is the idiomatic way to create vectors.
+   // The factory is the idiomatic way to create vectors.
    constexpr auto ints_empty = vector<int>();
    constexpr auto ints_at_capacity = vector(1, 2, 3);
 
@@ -2912,10 +2912,10 @@ concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto s0_const = Set{42, 7, 8};
+   constexpr auto s0_const = hash_set(42, 7, 8);
    constexpr auto s1_const = disj(s0_const, 42);
    constexpr auto s2_const = disj(s1_const, 7, 8, 7);
-   constexpr auto s3_const = disj(Set{1, 3}, 1, 3, 1);
+   constexpr auto s3_const = disj(hash_set(1, 3), 1, 3, 1);
    constexpr auto s4_const = disj(s2_const);
    static_assert(!contains(s1_const, 42));
    static_assert(is_empty(s2_const));
@@ -2923,7 +2923,7 @@ concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value
    static_assert(equal(s4_const, s2_const));
 
    // Runtime demonstration.
-   auto s0_runtime = Set{99};
+   auto s0_runtime = hash_set(99);
    auto s1_runtime = disj(s0_runtime, 99);
 
    return (!contains(s1_runtime, 99) && is_empty(s1_runtime)) ? 0 : 1;
@@ -3420,8 +3420,8 @@ namespace cljonic {
    constexpr auto rep = Repeat{3, 1};
    constexpr auto m1 = hash_map(1, 10, 2, 20);
    constexpr auto m2 = hash_map(2, 20, 1, 10);
-   constexpr auto s1 = Set{3, 1, 2};
-   constexpr auto s2 = Set{1, 2, 3};
+   constexpr auto s1 = hash_set(3, 1, 2);
+   constexpr auto s2 = hash_set(1, 2, 3);
    constexpr auto str1 = String<8>{"abc"};
    constexpr auto str2 = String<16>{"abc"};
    static_assert(equal(1, 1));
@@ -3573,8 +3573,8 @@ namespace cljonic {
  * A MapEntry is a value-semantic pair representing a single key-value association. Its fields are public, but MapEntry
  * is not a C++ aggregate.
  *
- * Use the lowercase \ref MapEntryFactory "map_entry" factory as the idiomatic creation surface at runtime or during
- * constant evaluation. A MapEntry is a fixed pair, so the factory has no capacity parameter.
+ * Use the \ref MapEntryFactory "map_entry" factory as the idiomatic creation surface at runtime or during constant
+ * evaluation. A MapEntry is a fixed pair, so the factory has no capacity parameter.
  *
  * Keys must support reliable, non-throwing equality comparison and non-throwing storage operations. Values must have a
  * default value and be copyable, assignable, and destructible without throwing, so the entry remains safe to copy and
@@ -3778,11 +3778,11 @@ namespace cljonic {
  * A Map is a bounded, associative collection that maps unique keys to values and provides callable lookup with
  * optional fallback values. Other operations use the library's free-function API.
  *
- * The lowercase \c hash_map factory is the idiomatic way to create Map values, at runtime or during constant
- * evaluation. It accepts alternating keys and values, and a later duplicate key replaces the earlier value. Use \c
- * hash_map(k, v, ...) to infer the key type, value type, and capacity, \c hash_map<K, V>(k, v, ...) to select the key
- * and value types, or \c hash_map<K, V, Capacity>(k, v, ...) to provide an explicit capacity, including for an empty
- * map. \c Map<K, V, Capacity> remains the value's type.
+ * The \c hash_map factory is the idiomatic way to create Map values, at runtime or during constant evaluation. It
+ * accepts alternating keys and values, and a later duplicate key replaces the earlier value. Use \c hash_map(k, v,
+ * ...) to infer the key type, value type, and capacity, \c hash_map<K, V>(k, v, ...) to select the key and value
+ * types, or \c hash_map<K, V, Capacity>(k, v, ...) to provide an explicit capacity, including for an empty map. \c
+ * Map<K, V, Capacity> remains the value's type.
  *
  * Direct construction is useful when importing a C++ range or view: its entries are copied into the Map. A cljonic
  * collection or producer is not a constructor source.
@@ -3811,7 +3811,7 @@ namespace cljonic {
  using AccountMap = Map<Key, Value, 2>;
 
  int main() {
-   // The lowercase factory is the idiomatic way to create maps. It accepts
+   // The factory is the idiomatic way to create maps. It accepts
    // alternating keys and values.
    constexpr auto factory_map = hash_map(Key{1}, Value{10}, Key{2}, Value{20});
    static_assert(factory_map(Key{2}).amount == 20);
@@ -4344,7 +4344,7 @@ namespace cljonic {
    // Compile-time demonstration.
    constexpr auto v_const = vector(10, 20, 30);
    constexpr auto m_const = hash_map(1, 100);
-   constexpr auto s_const = Set{7};
+   constexpr auto s_const = hash_set(7);
    constexpr auto q_const = Queue{5, 6};
    constexpr auto text_const = String{"AB"};
    constexpr auto e_const = map_entry(1, 100);
@@ -4358,7 +4358,7 @@ namespace cljonic {
    // Runtime demonstration.
    auto v_runtime = vector(100, 200);
    auto m_runtime = hash_map(2, 200);
-   auto s_runtime = Set{8};
+   auto s_runtime = hash_set(8);
    auto q_runtime = Queue{9, 10};
    auto text_runtime = String{"CD"};
    auto e_runtime = map_entry(3, 300);
@@ -4533,7 +4533,7 @@ constexpr auto diagnose_get_fallback() noexcept -> void {
    // Compile-time demonstration.
    constexpr auto v_const = vector(10, 20);
    constexpr auto m_const = hash_map(1, 100);
-   constexpr auto s_const = Set{5};
+   constexpr auto s_const = hash_set(5);
    constexpr auto text_const = String{"ab"};
    static_assert(get(v_const, 0) == 10);
    static_assert(get(v_const, 9, -1) == -1);
@@ -5000,7 +5000,7 @@ concept NextSequenceableCollection =
    static_assert(map_tail(0) == map_entry(2, 200) ||
                  map_tail(0) == map_entry(1, 100));
 
-   constexpr auto set = Set{10, 20, 30};
+   constexpr auto set = hash_set(10, 20, 30);
    constexpr auto set_tail = next(set);
    static_assert(count(set_tail) == 2);
 
@@ -5021,7 +5021,7 @@ concept NextSequenceableCollection =
    const auto runtime_queue_tail = next(runtime_queue);
    const auto runtime_map = hash_map<int, int, 4>(3, 300, 4, 400);
    const auto runtime_map_tail = next(runtime_map);
-   const auto runtime_set = Set<int, 4>{80, 90};
+   const auto runtime_set = hash_set<int, 4>(80, 90);
    const auto runtime_set_tail = next(runtime_set);
    const auto runtime_text = String<4>{"DE"};
    const auto runtime_text_tail = next(runtime_text);
@@ -5146,8 +5146,8 @@ namespace cljonic {
    constexpr auto q = Queue{1, 2, 3};
    constexpr auto m1 = hash_map(1, 10);
    constexpr auto m2 = hash_map(2, 20);
-   constexpr auto s1 = Set{3, 1, 2};
-   constexpr auto s2 = Set{1, 2, 3};
+   constexpr auto s1 = hash_set(3, 1, 2);
+   constexpr auto s2 = hash_set(1, 2, 3);
    static_assert(not_equal(1, 2));
    static_assert(!not_equal(1, 1));
    static_assert(!not_equal(1));                      // single value
@@ -5735,7 +5735,7 @@ concept RangeClassArgument =
 
    // A billion elements exceeds the system's allowed maximum, so only that
    // maximum number of elements is available.
-   [[maybe_unused]] constexpr auto huge = Range{1000000000L};
+   [[maybe_unused]] constexpr auto huge = Range{1000000000};
 
    // -----------------------------------------------------------------------
    // C++ interoperability: a Range supports const traversal.
@@ -6536,16 +6536,31 @@ struct contains_standard_range<Repeatedly<T, Step>> : std::bool_constant<contain
 namespace cljonic {
 
 /** \anchor Set
- * A Set is a bounded, unordered collection that provides callable lookup with optional fallback values. Other
+ * A Set is a bounded, unordered collection that provides callable lookup with
+ optional fallback values. Other
  * operations use the library's free-function API.
  *
- * Direct construction can import a C++ range or view: its elements are copied into the Set. A cljonic value is not
- * copied as a range/view source. With an explicit element type, a cljonic argument is accepted as one element only
- * when its type exactly matches the declared element type. Without explicit template arguments, a sole cljonic
- * argument determines the element type and yields a one-element collection. Elements may themselves be cljonic
+ * The \c hash_set factory is the idiomatic way to create Set values,
+ at runtime or during constant
+ * evaluation. It accepts individual elements, and runtime duplicates
+ deduplicate. Use \c hash_set(e, ...) to infer the
+ * element type and capacity, \c hash_set<T>(e, ...) to select the element type,
+ or \c hash_set<T, Capacity>(e, ...) to
+ * provide an explicit capacity, including for an empty set. \c Set<T, Capacity>
+ remains the value's type.
+ *
+ * Direct construction can import a C++ range or view: its elements are copied
+ into the Set. A cljonic value is not
+ * copied as a range/view source. With an explicit element type, a cljonic
+ argument is accepted as one element only
+ * when its type exactly matches the declared element type. Without explicit
+ template arguments, a sole cljonic
+ * argument determines the element type and yields a one-element collection.
+ Elements may themselves be cljonic
  * collections or producers, including nested cljonic composites.
  *
- * Construction with more values than the available capacity is rejected at compile time. Elements and fallbacks follow
+ * Construction with more values than the available capacity is rejected at
+ compile time. Elements and fallbacks follow
  * the \ref implicit-conversions "safe implicit conversion rules".
  *
  \b Examples
@@ -6557,6 +6572,10 @@ namespace cljonic {
  using AccountSet = Set<AccountId, 4>;
 
  int main() {
+   // The factory is the idiomatic way to create sets.
+   constexpr auto factory_set = hash_set(1, 2, 3);
+   static_assert(factory_set.count() == 3);
+
    // A named set type makes the element and capacity contract explicit. A
    // duplicate value is a no-op. Constant-evaluated duplicate construction is
    // rejected at compile time.
@@ -6565,9 +6584,9 @@ namespace cljonic {
    static_assert(literal(99) == 0);
    static_assert(literal(99, -1) == -1);
 
-   // Runtime CTAD deduces Set<int, 3> from the argument count and keeps one
-   // copy when duplicate values are present.
-   auto runtime = Set{10, 20, 20};
+   // Runtime duplicates deduplicate; the deduced capacity still equals the
+   // argument count.
+   auto runtime = hash_set(10, 20, 20);
    const auto present = runtime(10);
    const auto missing = runtime(30, -1);
 
@@ -6638,7 +6657,8 @@ class Set {
         static_assert(sizeof...(Args) <= CapacityValue, "cljonic::Set: initializer count exceeds Set CapacityValue");
         static_assert((concepts::NothrowElementConstruction<T, Args> && ...),
                       "cljonic::Set: constructor requires all arguments to construct "
-                      "T without throwing and convert safely without losing values or changing their meaning");
+                      "T without throwing and convert safely without losing values or "
+                      "changing their meaning");
 
         const auto duplicate = append_constructed(std::forward<Args>(args)...);
 
@@ -6658,7 +6678,8 @@ class Set {
     explicit constexpr Set(SourceRange&& source) noexcept(
         (concepts::NothrowRangeConstruction<value_type, SourceRange>)) {
         static_assert(concepts::NothrowRangeConstruction<value_type, SourceRange>,
-                      "cljonic::Set: range/view constructor requires each source element to construct "
+                      "cljonic::Set: range/view constructor requires each source "
+                      "element to construct "
                       "T safely and requires non-throwing traversal");
         static_assert(concepts_detail::static_extent_fits_v<SourceRange, CapacityValue>,
                       "cljonic::Set: static-extent range source exceeds Set CapacityValue");
@@ -6683,7 +6704,7 @@ class Set {
         static_assert(concepts_detail::dependent_false<SourceValue>,
                       "cljonic::Set: you cannot construct a Set from a cljonic collection or producer. A Set is built "
                       "from its individual elements, or from a non-cljonic C++ range or view. To keep it as a single "
-                      "element, write Set{...}.");
+                      "element, write hash_set(...).");
     }
 
     [[nodiscard]] static constexpr auto capacity() noexcept -> std::size_t {
@@ -6732,13 +6753,13 @@ class Set {
     }
 
     /** Returns true when the element is already present or the set has room for
-     * one more. */
+   * one more. */
     [[nodiscard]] constexpr auto can_conj(const T& element) const noexcept -> bool {
         return contains(element) || (logical_size_ < CapacityValue);
     }
 
     /** Adds an element to a copy of the set. If the element is already present or
-     * capacity is full, returns an unchanged copy. */
+   * capacity is full, returns an unchanged copy. */
     [[nodiscard]] constexpr auto conj(const T& element) const noexcept -> Set {
         Set result = *this;
         if (!result.contains(element) && result.logical_size_ < CapacityValue) {
@@ -6749,7 +6770,7 @@ class Set {
     }
 
     /** Removes an element via swap-and-remove if present; always returns a valid
-     * copy. */
+   * copy. */
     [[nodiscard]] constexpr auto disj(const T& element) const noexcept -> Set {
         Set result = *this;
         const auto idx = result.find_index(element);
@@ -6825,13 +6846,220 @@ class Set {
 template <typename First, typename... Rest>
 Set(First, Rest...) -> Set<First, 1 + sizeof...(Rest)>;
 
-// EnclosureConstruction (REQ-FN-027A): a sole Set argument wraps as one element.
+// EnclosureConstruction (REQ-FN-027A): a sole Set argument wraps as one
+// element.
 template <typename ElementType, std::size_t CapacityValue>
 Set(Set<ElementType, CapacityValue>) -> Set<Set<ElementType, CapacityValue>, 1>;
 
 template <typename SourceElement, std::size_t Extent>
     requires(Extent != std::dynamic_extent)
 Set(std::span<SourceElement, Extent>) -> Set<std::remove_cv_t<SourceElement>, Extent>;
+
+namespace concepts_detail {
+
+struct DeducedHashSetElementType {};
+
+template <typename RequestedElementType, typename... Args>
+struct hash_set_factory_element_type {
+    using type = RequestedElementType;
+};
+
+template <typename First, typename... Rest>
+struct hash_set_factory_element_type<DeducedHashSetElementType, First, Rest...> {
+    using type = std::remove_cvref_t<First>;
+};
+
+template <typename RequestedElementType, typename... Args>
+using hash_set_factory_element_t = hash_set_factory_element_type<RequestedElementType, Args...>::type;
+
+template <typename RequestedElementType, typename... Args>
+concept HashSetFactoryHasElementType =
+    sizeof...(Args) > 0U || !std::same_as<RequestedElementType, DeducedHashSetElementType>;
+
+template <typename RequestedElementType, typename... Args>
+concept HashSetFactoryArguments =
+    HashSetFactoryHasElementType<RequestedElementType, Args...> &&
+    concepts::NothrowStableEqualityComparable<hash_set_factory_element_t<RequestedElementType, Args...>> &&
+    !is_std_variant_v<hash_set_factory_element_t<RequestedElementType, Args...>> &&
+    sizeof...(Args) <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+    (concepts::NothrowElementConstruction<hash_set_factory_element_t<RequestedElementType, Args...>, Args> && ...);
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+concept HashSetFactoryCapacityArguments =
+    concepts::NothrowStableEqualityComparable<ElementType> && !is_std_variant_v<ElementType> &&
+    Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE && sizeof...(Args) <= Capacity &&
+    (concepts::NothrowElementConstruction<ElementType, Args> && ...);
+
+} // namespace concepts_detail
+
+/** \anchor HashSetFactory
+ * Creates a bounded \ref Set "Set" from individual element arguments.
+ *
+ * Deduced calls use the first argument's unqualified type and have capacity
+ equal to their argument count, with
+ * runtime duplicates deduplicating per \ref Set "Set" construction semantics.
+ Explicit element type uses \c
+ * hash_set<T>(...); explicit capacity uses \c hash_set<T, Capacity>(...),
+ including for an empty set. An untyped empty
+ * call is rejected at compile time.
+ *
+ \b Examples
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ using AccountId = int;
+ using AccountSet = Set<AccountId, 4>;
+
+ int main() {
+   // The factory is the idiomatic way to create sets. Deduced
+   // calls infer the element type from the first argument and the capacity
+   // from the argument count.
+   constexpr auto factory_set = hash_set(1, 2, 3);
+   static_assert(factory_set.capacity() == 3);
+   static_assert(factory_set(2) == 2);
+   static_assert(factory_set(99) == 0);
+   static_assert(factory_set(99, -1) == -1);
+
+   // Explicit element type and explicit capacity create a set with room for
+   // later conj operations, including an empty zero-capacity set.
+   constexpr auto reserved = hash_set<int, 4>();
+   constexpr auto zero = hash_set<int, 0>();
+
+   // Runtime duplicates deduplicate; the deduced capacity still equals the
+   // argument count.
+   const auto runtime_duplicate = hash_set(10, 20, 20);
+   if (runtime_duplicate.capacity() != 3 || runtime_duplicate.count() != 2) {
+     return 1;
+   }
+
+   // The factory also works with runtime values.
+   const auto runtime_value = 40;
+   const auto runtime_set = hash_set(runtime_value, 50);
+
+   // A named set type keeps the element and capacity contract explicit.
+   constexpr auto typed = hash_set<AccountSet::value_type, 4>(1, 2, 3);
+
+   return (typed(1) == 1 && reserved.count() == 0 && zero.count() == 0 &&
+           runtime_set(50) == 50 && runtime_set(99, -1) == -1)
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args>
+    requires(concepts_detail::HashSetFactoryArguments<RequestedElementType, Args...> && sizeof...(Args) > 0U)
+[[nodiscard]] constexpr auto hash_set(Args&&... args) noexcept(
+    (concepts::NothrowElementConstruction<concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>,
+                                          Args> &&
+     ...)) -> Set<concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>, sizeof...(Args)> {
+    using ElementType = concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>;
+    return Set<ElementType, sizeof...(Args)>{std::forward<Args>(args)...};
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args>
+    requires(sizeof...(Args) == 0U && std::same_as<RequestedElementType, concepts_detail::DeducedHashSetElementType>)
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                  "cljonic::hash_set: empty calls require explicit element and "
+                  "capacity types.");
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args>
+    requires(sizeof...(Args) == 0U && !std::same_as<RequestedElementType, concepts_detail::DeducedHashSetElementType>)
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                  "cljonic::hash_set: empty calls require explicit element and "
+                  "capacity types.");
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args>
+    requires(
+        sizeof...(Args) > 0U &&
+        (!concepts::NothrowStableEqualityComparable<
+             concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>> ||
+         concepts_detail::is_std_variant_v<concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>>))
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                  "cljonic::hash_set: the element type must satisfy Set element "
+                  "requirements.");
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args>
+    requires(sizeof...(Args) > 0U &&
+             concepts::NothrowStableEqualityComparable<
+                 concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>> &&
+             !concepts_detail::is_std_variant_v<
+                 concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>> &&
+             sizeof...(Args) > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE)
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                  "cljonic::hash_set: argument count exceeds "
+                  "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args>
+    requires(sizeof...(Args) > 0U &&
+             concepts::NothrowStableEqualityComparable<
+                 concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>> &&
+             !concepts_detail::is_std_variant_v<
+                 concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>> &&
+             sizeof...(Args) <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE &&
+             !(concepts::NothrowElementConstruction<
+                   concepts_detail::hash_set_factory_element_t<RequestedElementType, Args...>, Args> &&
+               ...))
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                  "cljonic::hash_set: every argument must safely construct the "
+                  "element type without throwing.");
+}
+
+/** Creates a bounded Set with an explicit capacity, including for an empty
+ * argument pack. */
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires concepts_detail::HashSetFactoryCapacityArguments<ElementType, Capacity, Args...>
+[[nodiscard]] constexpr auto
+hash_set(Args&&... args) noexcept((concepts::NothrowElementConstruction<ElementType, Args> && ...))
+    -> Set<ElementType, Capacity> {
+    return Set<ElementType, Capacity>{std::forward<Args>(args)...};
+}
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires(!concepts::NothrowStableEqualityComparable<ElementType> || concepts_detail::is_std_variant_v<ElementType>)
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                  "cljonic::hash_set: the element type must satisfy Set element "
+                  "requirements.");
+}
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires(concepts::NothrowStableEqualityComparable<ElementType> &&
+             !concepts_detail::is_std_variant_v<ElementType> &&
+             Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE)
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<ElementType, Args...>, "cljonic::hash_set: capacity exceeds "
+                                                                          "CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT.");
+}
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires(concepts::NothrowStableEqualityComparable<ElementType> &&
+             !concepts_detail::is_std_variant_v<ElementType> &&
+             Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE && sizeof...(Args) > Capacity)
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                  "cljonic::hash_set: arguments must fit within the selected capacity.");
+}
+
+template <typename ElementType, std::size_t Capacity, typename... Args>
+    requires(concepts::NothrowStableEqualityComparable<ElementType> &&
+             !concepts_detail::is_std_variant_v<ElementType> &&
+             Capacity <= CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE && sizeof...(Args) <= Capacity &&
+             sizeof...(Args) > 0U && !(concepts::NothrowElementConstruction<ElementType, Args> && ...))
+constexpr auto hash_set([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<ElementType, Args...>,
+                  "cljonic::hash_set: every argument must safely construct the "
+                  "element type without throwing.");
+}
 
 } // namespace cljonic
 
@@ -6966,7 +7194,8 @@ concept VariantClassArgument =
        Variant<Variant<int, long>, char>{as_int};
    [[maybe_unused]] constexpr auto as_vector_element =
        vector(Variant<int, long>{1}, Variant<int, long>{2L});
-   [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
+   [[maybe_unused]] constexpr auto as_set_element =
+       hash_set(Variant<int, long>{1});
    [[maybe_unused]] constexpr auto as_map_key = map_entry(as_int, 1);
 
    return 0;

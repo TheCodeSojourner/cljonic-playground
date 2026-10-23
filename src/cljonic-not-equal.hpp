@@ -24,8 +24,8 @@ namespace cljonic {
    constexpr auto q = Queue{1, 2, 3};
    constexpr auto m1 = hash_map(1, 10);
    constexpr auto m2 = hash_map(2, 20);
-   constexpr auto s1 = Set{3, 1, 2};
-   constexpr auto s2 = Set{1, 2, 3};
+   constexpr auto s1 = hash_set(3, 1, 2);
+   constexpr auto s2 = hash_set(1, 2, 3);
    static_assert(not_equal(1, 2));
    static_assert(!not_equal(1, 1));
    static_assert(!not_equal(1));                      // single value

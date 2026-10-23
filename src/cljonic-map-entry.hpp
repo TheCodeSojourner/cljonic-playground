@@ -11,8 +11,8 @@ namespace cljonic {
  * A MapEntry is a value-semantic pair representing a single key-value association. Its fields are public, but MapEntry
  * is not a C++ aggregate.
  *
- * Use the lowercase \ref MapEntryFactory "map_entry" factory as the idiomatic creation surface at runtime or during
- * constant evaluation. A MapEntry is a fixed pair, so the factory has no capacity parameter.
+ * Use the \ref MapEntryFactory "map_entry" factory as the idiomatic creation surface at runtime or during constant
+ * evaluation. A MapEntry is a fixed pair, so the factory has no capacity parameter.
  *
  * Keys must support reliable, non-throwing equality comparison and non-throwing storage operations. Values must have a
  * default value and be copyable, assignable, and destructible without throwing, so the entry remains safe to copy and

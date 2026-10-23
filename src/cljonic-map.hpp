@@ -18,11 +18,11 @@ namespace cljonic {
  * A Map is a bounded, associative collection that maps unique keys to values and provides callable lookup with
  * optional fallback values. Other operations use the library's free-function API.
  *
- * The lowercase \c hash_map factory is the idiomatic way to create Map values, at runtime or during constant
- * evaluation. It accepts alternating keys and values, and a later duplicate key replaces the earlier value. Use \c
- * hash_map(k, v, ...) to infer the key type, value type, and capacity, \c hash_map<K, V>(k, v, ...) to select the key
- * and value types, or \c hash_map<K, V, Capacity>(k, v, ...) to provide an explicit capacity, including for an empty
- * map. \c Map<K, V, Capacity> remains the value's type.
+ * The \c hash_map factory is the idiomatic way to create Map values, at runtime or during constant evaluation. It
+ * accepts alternating keys and values, and a later duplicate key replaces the earlier value. Use \c hash_map(k, v,
+ * ...) to infer the key type, value type, and capacity, \c hash_map<K, V>(k, v, ...) to select the key and value
+ * types, or \c hash_map<K, V, Capacity>(k, v, ...) to provide an explicit capacity, including for an empty map. \c
+ * Map<K, V, Capacity> remains the value's type.
  *
  * Direct construction is useful when importing a C++ range or view: its entries are copied into the Map. A cljonic
  * collection or producer is not a constructor source.
@@ -51,7 +51,7 @@ namespace cljonic {
  using AccountMap = Map<Key, Value, 2>;
 
  int main() {
-   // The lowercase factory is the idiomatic way to create maps. It accepts
+   // The factory is the idiomatic way to create maps. It accepts
    // alternating keys and values.
    constexpr auto factory_map = hash_map(Key{1}, Value{10}, Key{2}, Value{20});
    static_assert(factory_map(Key{2}).amount == 20);

@@ -21,13 +21,13 @@ namespace cljonic {
    // Compile-time demonstration.
    constexpr auto v_const = vector(1, 2, 3);
    constexpr auto s_const = seq(v_const);
-   static_assert(count(s_const) == 3U);
+   static_assert(count(s_const) == 3);
 
    // Runtime demonstration.
    auto v_runtime = vector(10, 20);
    auto s_runtime = seq(v_runtime);
 
-   return (count(s_runtime) == 2U) ? 0 : 1;
+   return (count(s_runtime) == 2) ? 0 : 1;
  }
  ~~~~~
  */

@@ -110,7 +110,8 @@ concept VariantClassArgument =
        Variant<Variant<int, long>, char>{as_int};
    [[maybe_unused]] constexpr auto as_vector_element =
        vector(Variant<int, long>{1}, Variant<int, long>{2L});
-   [[maybe_unused]] constexpr auto as_set_element = Set{Variant<int, long>{1}};
+   [[maybe_unused]] constexpr auto as_set_element =
+       hash_set(Variant<int, long>{1});
    [[maybe_unused]] constexpr auto as_map_key = map_entry(as_int, 1);
 
    return 0;

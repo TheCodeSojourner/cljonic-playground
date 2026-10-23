@@ -103,7 +103,7 @@
  * \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize", \ref Core_Frequencies "Frequencies", \ref
  * Core_FrequenciesBy "FrequenciesBy"
  * - \ref Core_GE "GE", \ref Get "get", \ref Core_GT "GT"
- * - \ref HashMapFactory "hash_map"
+ * - \ref HashMapFactory "hash_map", \ref HashSetFactory "hash_set"
  * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_If "If", \ref Core_Inc "Inc",
  * \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose
  * "Interpose", \ref Into "into", \ref IsEmpty "is_empty", \ref Core_IsAlpha "IsAlpha", \ref Core_IsAlphanumeric

@@ -61,7 +61,7 @@ concept RangeClassArgument =
 
    // A billion elements exceeds the system's allowed maximum, so only that
    // maximum number of elements is available.
-   [[maybe_unused]] constexpr auto huge = Range{1000000000L};
+   [[maybe_unused]] constexpr auto huge = Range{1000000000};
 
    // -----------------------------------------------------------------------
    // C++ interoperability: a Range supports const traversal.

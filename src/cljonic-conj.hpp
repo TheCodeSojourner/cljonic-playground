@@ -43,7 +43,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
  int main() {
    // Compile-time demonstration.
    constexpr auto q_const = conj(Queue<int, 4>{}, 10);
-   constexpr auto s_const = conj(Set<int, 4>{}, 20);
+   constexpr auto s_const = conj(hash_set<int, 4>(), 20);
    static_assert(peek(q_const) == 10);
    static_assert(contains(s_const, 20));
 
@@ -56,7 +56,7 @@ concept ConjValueAdmissible = concepts::ConjableCollection<C> && requires(const 
 
    // Zero-value and variadic arities.
    constexpr auto v_same = conj(v_const);
-   static_assert(v_same.count() == 3U);
+   static_assert(v_same.count() == 3);
    constexpr auto v_many = conj(vector<int, 4>(10), 20, 30);
    static_assert(v_many(2) == 30);
    constexpr auto text_many = conj(String<4>{"H"}, 'i', '!');

@@ -43,7 +43,7 @@ concept NextSequenceableCollection =
    static_assert(map_tail(0) == map_entry(2, 200) ||
                  map_tail(0) == map_entry(1, 100));
 
-   constexpr auto set = Set{10, 20, 30};
+   constexpr auto set = hash_set(10, 20, 30);
    constexpr auto set_tail = next(set);
    static_assert(count(set_tail) == 2);
 
@@ -64,7 +64,7 @@ concept NextSequenceableCollection =
    const auto runtime_queue_tail = next(runtime_queue);
    const auto runtime_map = hash_map<int, int, 4>(3, 300, 4, 400);
    const auto runtime_map_tail = next(runtime_map);
-   const auto runtime_set = Set<int, 4>{80, 90};
+   const auto runtime_set = hash_set<int, 4>(80, 90);
    const auto runtime_set_tail = next(runtime_set);
    const auto runtime_text = String<4>{"DE"};
    const auto runtime_text_tail = next(runtime_text);

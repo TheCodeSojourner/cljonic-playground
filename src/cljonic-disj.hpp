@@ -29,10 +29,10 @@ concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value
 
  int main() {
    // Compile-time demonstration.
-   constexpr auto s0_const = Set{42, 7, 8};
+   constexpr auto s0_const = hash_set(42, 7, 8);
    constexpr auto s1_const = disj(s0_const, 42);
    constexpr auto s2_const = disj(s1_const, 7, 8, 7);
-   constexpr auto s3_const = disj(Set{1, 3}, 1, 3, 1);
+   constexpr auto s3_const = disj(hash_set(1, 3), 1, 3, 1);
    constexpr auto s4_const = disj(s2_const);
    static_assert(!contains(s1_const, 42));
    static_assert(is_empty(s2_const));
@@ -40,7 +40,7 @@ concept DisjAdmissible = concepts::CljonicSet<C> && requires { typename C::value
    static_assert(equal(s4_const, s2_const));
 
    // Runtime demonstration.
-   auto s0_runtime = Set{99};
+   auto s0_runtime = hash_set(99);
    auto s1_runtime = disj(s0_runtime, 99);
 
    return (!contains(s1_runtime, 99) && is_empty(s1_runtime)) ? 0 : 1;
