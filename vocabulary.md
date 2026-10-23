@@ -662,11 +662,19 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Queue
-- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, peek/pop observation, and const logical traversal with immutable copy-on-modify updates. Queue interoperability is provided by `begin()`/`end()` in FIFO order; Queue does not provide a contiguous `view` because circular storage may wrap.
+- **Definition:** The cljonic fixed-capacity FIFO sequential collection type supporting insertion at the rear, removal at the front, peek/pop observation, and const logical traversal with immutable copy-on-modify updates. Queue interoperability is provided by `begin()`/`end()` in FIFO order; Queue does not provide a contiguous `view` because circular storage may wrap. Use the lowercase `queue(e1, ...)`, `queue<T>(...)`, or `queue<T, Capacity>(...)` factory, which takes individual elements, as the idiomatic way to create queues at runtime or compile time. The public `Queue<T, Capacity>` type and its existing constructors remain supported, including direct construction from external C++ ranges and views.
 - **Deprecated Synonyms:** bounded queue, fixed-capacity queue, FIFO queue
-- **Related:** Sequence, CopyOnModifyCollection, Traversal, ConstRangeTraversal, LogicalTraversalOrder, ContiguousStorage, ReadOnlyInteropAccessor
+- **Related:** Sequence, CopyOnModifyCollection, Traversal, ConstRangeTraversal, LogicalTraversalOrder, ContiguousStorage, ReadOnlyInteropAccessor, QueueFactory
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `Queue<int, 4>{}` creates a bounded FIFO queue supporting `conj` (enqueue at rear), `peek` (front observation), and `pop` (removal from front); `can_conj(q, x)` reports whether another value fits, and `conj()` on a full queue returns an unchanged copy. `Queue{10, 20, 30}` deduces `Queue<int, 3>` and folds `conj` over each argument in argument order, establishing FIFO order matching argument order. `begin()`/`end()` preserve that order after physical storage wraps.
+
+
+### QueueFactory
+- **Definition:** The lowercase `queue` free-function family that is the idiomatic way to create a `Queue` at runtime or compile time from individual element arguments. `queue(first, rest...)` deduces the element type from the unqualified first argument and the capacity from the argument count; `queue<T>(...)` names the element type; `queue<T, Capacity>(...)` names the capacity, which bounds the argument count and permits an empty or spare-capacity result. `queue<T>()` returns an empty `Queue<T, 0>`, following the vector typed empty construction principle. An untyped empty call is rejected at compile time because the element type cannot be deduced. Every argument constructs the element type safely without throwing, arguments are associated in argument order so the first argument becomes the queue front, a sole cljonic collection or producer argument is accepted as one element rather than materialized, and the factory never allocates. It constructs individual elements and is not a range materializer; direct construction from external C++ ranges and views stays with the `Queue` type.
+- **Deprecated Synonyms:** queue maker, make_queue
+- **Related:** Queue, Conj, Peek, Pop, SourceConstruction, NothrowElementConstruction, CollectionMaximumElementCount, VectorFactory, HashMapFactory, HashSetFactory
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `queue(10, 20, 30)` creates a `Queue<int, 3>` whose front is `10`; `queue<int>()` creates an empty `Queue<int, 0>`; `queue<int, 4>(10, 20)` creates a `Queue<int, 4>` with room for later `conj` operations.
 
 
 ### String
