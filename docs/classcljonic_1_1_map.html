@@ -208,8 +208,8 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_amount = 40;</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_factory = <a class="code hl_function" href="namespacecljonic.html#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(Key{4}, Value{runtime_amount});</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// Runtime CTAD deduces Map&lt;Key, Value, 1&gt; from the MapEntry argument.</span></div>
-<div class="line">  <span class="keyword">auto</span> runtime = <a class="code hl_function" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>{AccountEntry{Key{3}, Value{30}}};</div>
+<div class="line">  <span class="comment">// Runtime CTAD deduces Map&lt;Key, Value, 1&gt; from the map_entry value.</span></div>
+<div class="line">  <span class="keyword">auto</span> runtime = <a class="code hl_function" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map</a>{<a class="code hl_function" href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(Key{3}, Value{30})};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> present = runtime(Key{3});</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> missing = runtime(Key{4}, Value{77});</div>
 <div class="line"> </div>
@@ -217,15 +217,15 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">  <span class="comment">// Construct another Map from the transformed entries.</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> copied_view =</div>
 <div class="line">      runtime | std::views::transform([](<span class="keyword">const</span> AccountEntry &amp;entry) <span class="keyword">noexcept</span> {</div>
-<div class="line">        <span class="keywordflow">return</span> AccountEntry{entry.key, Value{entry.value.amount * 2}};</div>
+<div class="line">        <span class="keywordflow">return</span> <a class="code hl_function" href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(entry.key, Value{entry.value.amount * 2});</div>
 <div class="line">      });</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> from_pipeline = AccountMap{copied_view};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// A named map type and its named entry type make the intended value model</span></div>
 <div class="line">  <span class="comment">// explicit. A later duplicate key replaces the earlier value (i.e., the</span></div>
 <div class="line">  <span class="comment">// right-most value associated with a duplicate key).</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> literal = AccountMap{AccountEntry{Key{1}, Value{10}},</div>
-<div class="line">                                      AccountEntry{Key{1}, Value{20}}};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> literal =</div>
+<div class="line">      AccountMap{<a class="code hl_function" href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(Key{1}, Value{10}), <a class="code hl_function" href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(Key{1}, Value{20})};</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// A Map is callable for present-key lookup and missing-key fallback.</span></div>
 <div class="line">  <span class="keyword">static_assert</span>(literal(Key{1}).amount == 20);</div>
@@ -238,7 +238,7 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">  <span class="comment">// storage, retaining only the bounded prefix that fits the capacity.</span></div>
 <div class="line">  <span class="comment">// ---------------------------------------------------------------------------</span></div>
 <div class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> AccountEntry source_entries[] = {</div>
-<div class="line">      AccountEntry{Key{10}, Value{100}}, AccountEntry{Key{20}, Value{200}}};</div>
+<div class="line">      <a class="code hl_function" href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(Key{10}, Value{100}), <a class="code hl_function" href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(Key{20}, Value{200})};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> source_span = std::span{source_entries};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> from_span = AccountMap{source_span};</div>
 <div class="line">  <span class="keyword">static_assert</span>(from_span(Key{10}).amount == 100);</div>
@@ -249,8 +249,8 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line">  <span class="keyword">static_assert</span>(from_span_ctad.view().size() == 2);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Constructing a Map from a runtime C++ array/span</span></div>
-<div class="line">  AccountEntry runtime_buffer[] = {AccountEntry{Key{100}, Value{1000}},</div>
-<div class="line">                                   AccountEntry{Key{200}, Value{2000}}};</div>
+<div class="line">  AccountEntry runtime_buffer[] = {<a class="code hl_function" href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(Key{100}, Value{1000}),</div>
+<div class="line">                                   <a class="code hl_function" href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(Key{200}, Value{2000})};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_from_span =</div>
 <div class="line">      <a class="code hl_function" href="#aaa75ad4584c6df3dabfcc0640df894b7">Map&lt;Key, Value, 4&gt;</a>{std::span&lt;const AccountEntry&gt;{runtime_buffer, 2}};</div>
 <div class="line"> </div>
@@ -276,8 +276,9 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="ttc" id="aclasscljonic_1_1_map_html_aaa75ad4584c6df3dabfcc0640df894b7"><div class="ttname"><a href="#aaa75ad4584c6df3dabfcc0640df894b7">cljonic::Map::Map</a></div><div class="ttdeci">constexpr Map(SourceRange &amp;&amp;source) noexcept((concepts::NothrowRangeConstruction&lt; value_type, SourceRange &gt;))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00170">cljonic-map.hpp:170</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_map_html_afc4b7c32a76b2eba3c76fd6ca345c48e"><div class="ttname"><a href="#afc4b7c32a76b2eba3c76fd6ca345c48e">cljonic::Map::operator==</a></div><div class="ttdeci">constexpr auto operator==(const Map &amp;other) const noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00208">cljonic-map.hpp:208</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a0276d2cc4a963af9ddbc2ad7aa6ac4f0"><div class="ttname"><a href="namespacecljonic.html#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">cljonic::map_entry</a></div><div class="ttdeci">constexpr auto map_entry(Args &amp;&amp;... args) noexcept -&gt; MapEntry&lt; concepts_detail::map_entry_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::map_entry_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00167">cljonic-map-entry.hpp:167</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a2aa4197e029c665443f7f5d0ebcf61d8"><div class="ttname"><a href="namespacecljonic.html#a2aa4197e029c665443f7f5d0ebcf61d8">cljonic::hash_map</a></div><div class="ttdeci">constexpr auto hash_map(Args &amp;&amp;... args) noexcept -&gt; Map&lt; concepts_detail::hash_map_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::hash_map_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, sizeof...(Args)/2U &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00438">cljonic-map.hpp:438</a></div></div>
-<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00054">cljonic-map-entry.hpp:54</a></div></div>
+<div class="ttc" id="astructcljonic_1_1_map_entry_html"><div class="ttname"><a href="structcljonic_1_1_map_entry.html">cljonic::MapEntry</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00055">cljonic-map-entry.hpp:55</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00137">137</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
