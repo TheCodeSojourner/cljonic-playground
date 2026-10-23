@@ -678,11 +678,19 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### String
-- **Definition:** The cljonic fixed-capacity array-backed collection type with ordered ASCII byte storage (range `0x01`–`0x7F`) and an uncounted null terminator immediately following its content.
+- **Definition:** The cljonic fixed-capacity array-backed collection type with ordered ASCII byte storage (range `0x01`–`0x7F`) and an uncounted null terminator immediately following its content. Use the lowercase `string("Hi")`, `string<Capacity>(...)`, or `string<Capacity>()` factory, which takes text sources, as the idiomatic way to create strings at runtime or compile time. The public `String<Capacity>` type and its existing constructors remain supported, including direct construction from external C++ ranges and views.
 - **Deprecated Synonyms:** bounded string, fixed-capacity string, cljonic string
-- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, Indexed, CallableLookup, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor, Regex
+- **Related:** CopyOnModifyCollection, Capacity, Sequence, BoundedStorage, Indexed, CallableLookup, LogicalTraversalOrder, ConstRangeTraversal, ReadOnlyInteropAccessor, Regex, StringFactory
 - **Usage:** Architecture, specification, implementation, tests, and documentation
 - **Examples:** `String<32>{"hello"}` or capacity-inferred `String{"hello"}` stores valid ASCII bytes with a terminating null outside the counted content length. A fixed-extent `std::span<const char, N>` can use `String{span}` to deduce `String<N>`, while a dynamic-extent span uses an explicit destination capacity and bounded-prefix construction. `s(2)` and `get(s, 2)` return the byte at content index two; invalid indices return `char{}` or a supplied fallback, while `contains(s, index)` distinguishes valid content indices from the terminator and out-of-range indices.
+
+
+### StringFactory
+- **Definition:** The lowercase `string` free-function family that is the idiomatic way to create a `String` at runtime or compile time from text sources. `string("Hi")` deduces the capacity from the string literal's content length, excluding the automatic null terminator; `string<Capacity>(...)` names the capacity, bounds the imported content, and permits an empty result, including zero capacity. An untyped empty call is rejected at compile time because no capacity can be deduced and String has no element-type parameter to supply. Explicit-capacity calls import `std::string_view` and non-cljonic char range/view sources following the String source-construction contracts, with bounded-prefix copying for dynamic extents and compile-time rejection for oversized static extents; byte validity follows the existing String contracts with runtime replacement and constant-evaluation rejection of invalid bytes. There is no variadic individual-character form: String preserves its own text-import construction semantics. The factory never allocates, and direct construction from external C++ ranges and views stays with the `String` type.
+- **Deprecated Synonyms:** string maker, make_string
+- **Related:** String, Capacity, SourceConstruction, NothrowElementConstruction, CollectionMaximumElementCount, VectorFactory, HashMapFactory, HashSetFactory, QueueFactory
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `string("Hi")` creates a `String<2>`; `string<8>()` creates an empty `String<8>`; `string<16>(std::string_view{"from view"})` creates a `String<16>` importing the view's bytes.
 
 
 ### Regex
