@@ -1,4 +1,4 @@
-## Current Session State
+## Previous Session State
 
 - last_session_id: ccf16ca0-dd5c-4f58-8e6b-6d0da841152e
 - current_timestamp: 2026-10-23T14:12:00-06:00
@@ -40,7 +40,59 @@ Open questions:
 Next:
 1. Human review + commits of the working tree (queue promotion + example conversions are uncommitted); then optionally `/cljonic-api-complete string`.
 
-## Previous Session State
+## Current Session State
+
+- last_session_id: 667d4a3f-d70e-4032-939d-b575436dc259
+- current_timestamp: 2026-10-23T15:53:00-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human invoked `/cljonic-api-complete string`, the last deferred factory. Approved contract (REQ-FN-029H): `string("Hi")` deduces capacity from the literal content length → `String<2>`; `string<Capacity>("Hi")` → `String<Capacity>` with compile-time rejection when content exceeds capacity; `string<Capacity>()` → empty, including zero; untyped `string()` rejected; `string<Capacity>(string_view_or_char_range)` imports text sources under the existing String source-construction contracts; no variadic individual-character form.
+2. Completed the layer chain: requirements (`REQ-FN-029H` under a new `## String Factory` heading; `029B` narrowed to naming direction only, `029C` to contract direction; index deferred_marker and Governed REQs footer updated to `029H`), vocabulary (`StringFactory` term + `String` cross-link), architecture (`S5_string_creation_policy`, `S2_string_factory_contract`, `S4_collection_factory_direction` now records an empty deferred set, `current_scope`/`current_implementation_boundary` gain `string_factory`), spec `specs/primitives/string-factory.allium` (23 obligations), spec tests `tests/cljonic-string-factory-spec-tests.cpp` with 23 TRACE_IDs, compile-fail script `scripts/check-string-factory-compile-failures.py` + Makefile `string-factory-compile-fail` target wired into upsert-gate / upsert-gate-strict / validate / git chains, no-heap factory coverage in `tests/no_heap/cljonic-string-probes.cpp`, implementation in `src/cljonic-string.hpp` (StringFactory anchor with Doxygen example), cheatsheet entry in `src/cljonic-core.hpp`, regenerated single header.
+3. Native-idiom decision inside the contract: String has a fixed `char` element type, so capacity — not element type — is the only template parameter; the deduced form therefore deduces from the literal rather than from a first element.
+4. Doxygen examples converted to the factory: class doc `String{"Hi"}` → `string("Hi")`, `String<10>{"Hello"}` → `string<10>("Hello")`, `String<8>{}` → `string<8>()`, and the string_view/range/pipeline imports became `string<Capacity>(source)` since the capacity overload does express them. Class doc prose now introduces the `string` factory first.
+5. Human invoked `/cljonic-api-converge string` (targeted): req-check PASS, spec-check PASS (zero repairs), req-weed / vocab-weed / spec-weed converged; arch-weed found one divergence (`S4_collection_factory_direction` claimed `¬∃ deferred_factory_direction` while 029B/029C stay binding direction for future factories) — human chose to narrow it to `¬∃ deferred_factory_name` and restore `trace_to(REQ-FN-029B ∧ REQ-FN-029C)`.
+6. Post-converge evidence repair: the string no-heap probe gained a runtime-derived (`volatile`) source so constant folding cannot mask runtime text import; static `capacity()` access became type-qualified and array sources became `std::array`/named spans for clang-tidy.
+7. Human noticed the Core cheatsheet lacked `string`: it had been appended to the **H** line (`hash_map`, `hash_set`, `string`) instead of the S bucket. Moved to its alphabetical slot (`SplitWith` → `string` → `Sub`/`Subs`) in `src/cljonic-core.hpp` and regenerated `cljonic.hpp`.
+8. Human-directed repo-wide idiom sweep: 13 direct `String` constructions in source doc examples across 8 headers converted to the factory (`String<4>{"Hi"}` → `string<4>("Hi")`, `String{"abc"}` → `string("abc")`, etc.). Kept capacity when already explicit, so every example's type is unchanged. Deliberately left: `String<0>::character_is_valid(...)` / `String<1>::...` (static member calls, not constructions), `same_as<..., String<2>>` assertions (type-only contracts), and `return String<Capacity>{...}` implementation bodies.
+9. Human declined deleting the `StringFactory` Doxygen block as redundant: the class doc omits the two rejection contracts (untyped empty, no variadic character form), the block is the `\ref StringFactory` anchor used by the cheatsheet, and it is one of the compiled `docs-examples` units. Matches map/set/queue factory-doc precedent (`VectorFactory` is the outlier).
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. `string` capacity is the only template parameter; there is no element-type parameter and no variadic individual-character form (String's own constructors never took individual chars), per the human-approved contract.
+2. The capacity overload admits string_view, char arrays, and non-cljonic char ranges/views; oversized static extents and over-capacity literals stay compile-time rejections inherited from the String constructors.
+3. Deduced-literal overload deduces capacity from a *type* parameter (`Literal`), not a `std::size_t N` non-type parameter: with `N`, `string<2>("a")` silently bound the deduced overload and returned `String<1>`, ignoring the explicit capacity. Type-based deduction makes explicit `<Capacity>` unrepresentable for that overload, so the capacity overload always wins.
+4. Kept the separate `StringFactory` Doxygen block after a redundancy challenge (human decision, 2026-10-23): the class doc omits the two rejection contracts (untyped empty, no variadic character form), the block is the `\ref StringFactory` anchor used by the Core cheatsheet, it is one of the compiled `docs-examples` units, and it matches the map/set/queue factory-doc precedent (`VectorFactory` is the outlier, with a `cljonic::vector` cheatsheet reference instead).
+
+Validation:
+1. `make requirements-structure` 333 clauses; `make vocabulary-structure` 194 terms; `allium check specs` + `allium analyse specs` clean.
+2. `make trace-id-check SPEC=specs/primitives/string-factory.allium TESTS="tests/cljonic-string-factory-spec-tests.cpp"` 23/23 (also with EXACT=1).
+3. `make test` 130 cases / 2722 assertions; `make no-heap` ok; `make string-factory-compile-fail` ok (modular + single header; 8 failure cases, 8 pass cases, 8 diagnostic cases); `make lint` ok (full repo); `make complexity-cli` ok; header-guards, diagnostic-coverage, diagnostic-message-labels, audit-scripts ok.
+4. `make docs-examples` compiled=36 (was 35); both string examples freshly extracted, compiled, linked, and executed exit 0; `make cljonic` regenerated.
+5. `make traceability-spec-to-code-update-snapshot` then `make traceability-spec-to-code` ok.
+6. `make coverage-cli COVERAGE_FILE=cljonic-string.hpp` 100.0% (note: `COVERAGE_FILE` is relative to `src/`; passing `src/...` yields a `src/src/...` path and a false failure).
+7. `/cljonic-api-converge string` (targeted): req-check PASS; spec-check PASS (zero repairs); req-weed, vocab-weed, arch-weed, spec-weed all converged. Arch-weed found one divergence — `S4_collection_factory_direction` claimed `¬∃ deferred_factory_direction` while 029B/029C remain binding direction for future factories — human chose to narrow it to `¬∃ deferred_factory_name` and restore `trace_to(REQ-FN-029B ∧ REQ-FN-029C)` (2-line write, architecture only).
+8. Post-converge evidence repair: the string no-heap probe now carries a runtime-derived (`volatile`) source so constant folding cannot mask runtime text import; also switched static `capacity()` access to type-qualified calls and array sources to `std::array`/named spans to satisfy clang-tidy. Re-ran: `make no-heap` ok, `make lint` ok (full), `make docs-examples` compiled=36 with both string examples re-extracted, linked, exit 0, `make cljonic_tests` 130/2722, `make complexity-cli` ok, `string-factory-compile-fail` ok.
+9. Cheatsheet fix: `string` moved from the H bucket to its alphabetical slot in `src/cljonic-core.hpp`; `make core-cheatsheet-format` ok, `make cljonic` regenerated, `cljonic.hpp` carries the same placement, full `make lint` ok, `make docs-examples` compiled=36, tests 130/2722, `make audit-scripts` ok.
+10. Idiom sweep (13 sites / 8 headers): `make cljonic` regenerated; `make docs-examples` compiled=36; all 8 affected examples re-linked and **executed exit 0**; `make lint` ok (full); `make no-heap` ok; tests 130/2722; core-cheatsheet-format, header-guards, diagnostic-message-labels, string-factory-compile-fail, traceability-spec-to-code all ok. Doc-sample formatting run twice per header with a no-op second pass.
+
+Memory/synthesis:
+1. Stored 🎯 `explicit-template-argument-binds-deduced-non-type-parameter`: a deduced factory form must not deduce from a non-type parameter of the same kind as the explicit form (`string<2>("a")` bound `template <std::size_t N>` and ignored the capacity); deduce from a type parameter instead, and type-assert explicit-capacity results in tests.
+2. Stored 💡 `compile-fail-gate-pass-cases-must-respect-configured-maximum`: pass cases in a compile-fail gate must fit the maximum the gate defines, and failure cases must stay within it too when they target a non-capacity rule.
+3. Refreshed 🌀 `mementum/knowledge/collection-api-surface-discipline.md` (stale-knowledge synthesis): it still named `hash_set`, `queue`, `string` as the "still-deferred family". Now lists all six factories as active, records that String's capacity is its only template parameter (deduced form deduces capacity from the literal, not from a first element), and states that every approved factory name is active while `REQ-FN-029B`/`029C` stay forward-binding direction.
+4. Memory files from (1) and (2) were committed by the human (`c666426`); the string factory landed as `5b88e31`, docs as `6768252`.
+
+Open questions:
+1. All collection factories are now active; `REQ-FN-029B`/`029C` remain as forward-binding naming/contract direction for future factories, and `S4_collection_factory_direction` now traces to them.
+2. HTML docs (`make docs`) deferred per default; source example evidence is current.
+3. `src/cljonic-string.hpp` class doc still shows an inferred `String<2>` type next to `string("Hi")`; accurate but now the only header pairing a `String<...>` type with an inferred call. Left as-is pending a human call.
+
+Next:
+1. Optionally reword the `String` class-doc inference line (open question 3) if it reads inconsistently now that every other header's examples use the factory.
+2. Await the next API slice; no deferred factory work remains.
 
 - last_session_id: 55edf2eb-b05c-43fd-83f2-350edf3b91e8
 - current_timestamp: 2026-10-23T12:48:59-06:00
