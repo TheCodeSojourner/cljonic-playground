@@ -169,10 +169,10 @@ This module specifies specialized domain conveniences built on top of lower modu
 
 ## Collection Factory Family (Deferred, Non-Binding)
 
-The following clauses record approved future API direction, not currently available overloads. `vector` remains active under `REQ-FN-029A`, `hash_map` under `REQ-FN-029D`, and `map_entry` under `REQ-FN-029E`; the other factories require individually approved behavioral specifications before implementation.
+The following clauses record approved future API direction, not currently available overloads. `vector` remains active under `REQ-FN-029A`, `hash_map` under `REQ-FN-029D`, `map_entry` under `REQ-FN-029E`, and `hash_set` under `REQ-FN-029F`; the remaining factories require individually approved behavioral specifications before implementation.
 
 λ REQ-FN-029B(x).
-  ∀ planned collection factory naming beyond the active `vector`, `hash_map`, and `map_entry` factories: `Set` → `hash_set`, `Queue` → `queue`, and `String` → `string`
+  ∀ planned collection factory naming beyond the active `vector`, `hash_map`, `map_entry`, and `hash_set` factories: `Queue` → `queue` and `String` → `string`
   ∧ preferred: lowercase factories are the idiomatic creation surface at runtime and compile time, using Clojure names where applicable rather than claiming exact Clojure equivalence
   ∧ ∀ factory introduction: preserves the public type and its existing supported constructors
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
@@ -209,6 +209,21 @@ The following clauses record approved future API direction, not currently availa
   ∧ ∀ `map_entry`: constructs a fixed key/value pair ∧ ¬∃ spare-capacity option ∧ ¬∃ capacity parameter
   ∧ ∀ `map_entry`: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ value-semantic ∧ behaves identically to the equivalent `MapEntry` constructor
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
+
+## Set Factory
+
+λ REQ-FN-029F(x).
+  ∀ user-facing Set creation guidance: prefers the lowercase `hash_set` factory at runtime and compile time ∧ the public `Set<T, Capacity>` type and its existing constructors remain supported, including direct construction from external non-cljonic C++ ranges and views
+  ∧ ∀ `hash_set(e1, rest...)` without an explicit element type: returns an owning `Set<T, argument_count>` where `T` is the unqualified type of the first argument ∧ `argument_count` is at least one
+  ∧ ∀ `hash_set<T>(e1, rest...)` with an explicit element type: returns an owning `Set<T, argument_count>` ∧ `argument_count` is at least one
+  ∧ ∀ `hash_set<T, Capacity>(args...)`: returns an owning `Set<T, Capacity>` ∧ `0 ≤ argument_count ≤ Capacity` ∧ `Capacity` does not exceed `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` ∧ an empty call returns an empty Set, including when `Capacity` is zero
+  ∧ ∀ untyped zero-argument `hash_set()`: rejected because the element type cannot be deduced
+  ∧ ∀ `Capacity < argument_count`, `Capacity > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`, or `argument_count > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`: rejected at compile time
+  ∧ ∀ `T`: satisfies the Set element requirements (`NothrowStableEqualityComparable`, ¬∃ `std::variant` element) ∧ ∀ argument: satisfies `NothrowElementConstruction` for the declared element type under `REQ-CONV-001`
+  ∧ ∀ duplicate elements: deduplicate at runtime following Set construction semantics ∧ deduced capacity equals `argument_count` even when deduplication reduces the logical size, mirroring the `hash_map` pair-count rule
+  ∧ ∀ constant-evaluated duplicate construction: rejected by the Set compile-time duplicate rule that the factory inherits by forwarding to Set construction
+  ∧ ∀ `hash_set`: `constexpr` ∧ `noexcept` ∧ non-allocating
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-23}
 
 ## User Struct & Scoped Keyword Enum Invariants
 
@@ -274,4 +289,4 @@ The following clauses record approved future API direction, not currently availa
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Relational algebra functions (`index`, `project`, `rename`, `join`), string/regex functions, `fits_print`/`print_to`, `Atom<T>`, and the test suite (`REQ-TEST-*`).
-- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`029E`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
+- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`029F`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.

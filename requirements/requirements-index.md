@@ -15,7 +15,7 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 ## Conventions
 
 - **granularity**: `library_contract` — cljonic-grade clause density permitted; compound operator contracts MAY be marked `compound_by_design: true` in clause footers.
-- **deferred_marker**: section headings containing `(Deferred` or a blockquote opener asserting non-binding status; scope ends at the next heading of equal or higher level. Module 3 defers `REQ-SEQ-001`–`014` (incl. `002A`–`002B`) and `REQ-FN-002A`–`002B`; Module 5 defers `REQ-FN-032`–`033`; Module 7 records the future collection factory family in deferred `REQ-FN-029B`–`029C`, separately from active `vector` (`REQ-FN-029A`), `hash_map` (`REQ-FN-029D`), and `map_entry` (`REQ-FN-029E`).
+- **deferred_marker**: section headings containing `(Deferred` or a blockquote opener asserting non-binding status; scope ends at the next heading of equal or higher level. Module 3 defers `REQ-SEQ-001`–`014` (incl. `002A`–`002B`) and `REQ-FN-002A`–`002B`; Module 5 defers `REQ-FN-032`–`033`; Module 7 records the remaining collection factory family in deferred `REQ-FN-029B`–`029C`, separately from active `vector` (`REQ-FN-029A`), `hash_map` (`REQ-FN-029D`), `map_entry` (`REQ-FN-029E`), and `hash_set` (`REQ-FN-029F`).
 - **numbering**: designators are allocated topically, not monotonically across modules. Number gaps (for example `REQ-COLL-003`, `REQ-PLAT-011`) and cross-module restarts (for example `REQ-FN-002*` in Modules 3, 6, and 7) are intentional; do not renumber to satisfy a generic monotonicity heuristic.
 
 ## Module Implementation Order & Summary
