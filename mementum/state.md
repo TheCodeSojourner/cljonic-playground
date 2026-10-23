@@ -1,6 +1,47 @@
+## Current Session State
+
+- last_session_id: 33d1407c-4901-473f-b274-127de449b3ee
+- current_timestamp: 2026-10-23T16:33:00-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human invoked `/gybis-init`; oriented on mementum/state.md (string-factory session, committed as `111d3f5`).
+2. Human asked to explain open question 1 (String class doc pairing `String<2>` with the inferred `string("Hi")` call) and then directed removing the `static_assert(std::same_as<..., String<2>>)` from the class-doc example entirely. Comment reworded to "infers the capacity from the string literal"; `[[maybe_unused]]` dropped (variable now used by the remaining `inferred(1) == 'i'` assertion). `<type_traits>` include kept (still used by source-admission machinery). This resolves the last session's open question 3.
+3. Human asked to explain open question "REQ-FN-029B/029C remain forward-binding direction", then confirmed no future factories are planned and approved retiring the forward-binding direction as a req-weed + arch-weed style change.
+4. Retirement executed: removed `## Collection Factory Family (Deferred, Non-Binding)` (prose + `REQ-FN-029B` naming direction + `REQ-FN-029C` contract direction) from requirements-module-7.md; Governed REQs footer now lists `REQ-FN-028`, `REQ-FN-029A`, `REQ-FN-029D`–`029H`; requirements-index.md deferred_marker convention records the dated retirement breadcrumb (2026-10-23, all six factories active); architecture.md `S4_collection_factory_direction` removed entirely (its six active-factory distinctions were redundant with per-factory S5/S2 rules).
+5. Stored 🎯 memory `retire-forward-binding-direction-at-rollout-completion` (uncommitted, awaiting human commit): forward-binding direction clauses are retirement candidates when their planned rollout completes; the convergence-pass cost (rules with no instances every pass must reconcile) is the signal; per-factory contracts are decided case-by-case, not derived from the direction.
+6. Human invoked `/cljonic-full-converge-auto` (whole-repository convergence): all four layer checks passed (req-check, vocab-check, arch-check, spec-check), all four adjacent weeds converged (req-weed, vocab-weed, arch-weed, spec-weed) with zero writes, evidence reconciliation satisfied (string factory table complete; both string doc examples freshly extracted, linked, executed exit 0), integration gate `make upsert-gate-fast` ok.
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. Inferred-call doc examples must not name the deduced result type via static_assert (human decision, 2026-10-23): the inference comment teaches the rule; a type assertion in an example pairs a spelled-out `String<N>` with a factory call, which contradicts the factory-first style the repo otherwise follows. `cljonic-string.hpp` was the only such header.
+2. Retire rather than keep forward-binding direction (human decision, 2026-10-23): with all six collection factories active and no future factories planned, 029B/029C constrained a future that does not exist. If a factory is ever proposed again, elicit/distill its contract fresh; the queue (typed empty) and string (capacity-only parameter) sessions proved contracts are decided case-by-case. Deletion is safe — git preserves the text, and the requirements index keeps a dated breadcrumb.
+3. Full-converge-auto found two mechanical footer defects introduced by the retirement edit and repaired them under standing preapproval (identity-preserving, non-normative): deduplicated `REQ-FN-030`–`031` and added the missing `REQ-FN-029` parent clause to the module 7 Governed REQs footer.
+
+Validation:
+1. `make requirements-structure` 331 clauses (was 333; exactly the two retired), unique; `make vocabulary-structure` 194 terms; `allium check specs` + `allium analyse specs` clean (46 files, 0/0); six factory trace-id-checks ok; `make traceability-spec-to-code-update-snapshot` + `make traceability-spec-to-code` ok.
+2. String example edit: `make cljonic` regenerated; `make docs-examples` compiled=36; `make lint LINT_FILE=src/cljonic-string.hpp` ok; `make test` 260/260 (5,444 assertions).
+3. Spec-weed coverage: 1,909 plan obligations; 1,899 TRACE_IDs cover every active-spec obligation; the only 10 uncovered belong to deferred `specs/capabilities/variant-api.allium` (`-- lifecycle: deferred`) — correctly excluded; zero orphan test IDs; `make test` PASS.
+4. No-heap: `make no-heap`, `no-heap-src`, `no-heap-symbols` ok; string probe covers deduced/explicit/empty/zero/view-import forms with a volatile runtime source.
+5. Integration: `make upsert-gate-fast` ok (complexity, diagnostic-coverage, diagnostic-message-labels, traceability, no-heap all ok).
+
+Memory/synthesis:
+1. Created 🎯 `retire-forward-binding-direction-at-rollout-completion` (uncommitted): decide retire-vs-record when a planned rollout completes; a direction rule with zero instances that every convergence pass must still reconcile is dead weight; preserve the audit trail via git history plus a dated index breadcrumb rather than a live requirement.
+2. Vocab-weed synthesis (no writes): 32 canonical terms absent from architecture.md are all semantically covered there under arch notation (e.g. SequentialEquality ≡ `sequential_family` + observed-count/order rules; PartialResult ≡ `BoundedPrefixResult`; CopyableElement ≡ the `S3_collection_storage_admission` conjunction; RegexGroup/Match/Matcher and KeywordEnumNameEntry/Context are approved-but-unimplemented and outside the active surface) — do not treat term-name absence as drift without checking semantics.
+
+Open questions:
+1. None. The working tree is converged and awaiting human review + commits.
+
+Next:
+1. Human review + commits of the working tree. Suggested split: (1) string example cleanup + generated outputs (`cljonic.hpp`, `docs/`), (2) REQ-FN-029B/029C retirement + `S4_collection_factory_direction` removal, (3) memory commit `🎯 retire-forward-binding-direction-at-rollout-completion`.
+2. No deferred factory work remains; remaining deferred headers (`first`, `next`, `rest`, `seq`, `not_empty`) and the deferred `variant-api`/`collection-shaping` specs await future slices.
+
 ## Previous Session State
 
-- last_session_id: ccf16ca0-dd5c-4f58-8e6b-6d0da841152e
+- last_session_id: 667d4a3f-d70e-4032-939d-b575436dc259- last_session_id: ccf16ca0-dd5c-4f58-8e6b-6d0da841152e
 - current_timestamp: 2026-10-23T14:12:00-06:00
 - recover: 0
 - session_complete: true
@@ -40,7 +81,7 @@ Open questions:
 Next:
 1. Human review + commits of the working tree (queue promotion + example conversions are uncommitted); then optionally `/cljonic-api-complete string`.
 
-## Current Session State
+## Previous Session State
 
 - last_session_id: 667d4a3f-d70e-4032-939d-b575436dc259
 - current_timestamp: 2026-10-23T15:53:00-06:00
