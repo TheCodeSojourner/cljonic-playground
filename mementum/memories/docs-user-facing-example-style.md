@@ -2,12 +2,17 @@
 type: Insight
 symbol: 💡
 title: docs-user-facing-example-style
+related:
+  - /mementum/memories/factory-consistency-for-user-createable-values.md
+  - /mementum/memories/doxygen-prose-must-be-user-facing.md
 ---
 User-facing cljonic doc examples should be contract-first and avoid implementation-detail terminology.
 
 - Keep prose concise and non-speculative.
 - Prefer named examples with `const auto name = Type{...};` for readability.
-- Prefer the lowercase `vector(...)` factory for idiomatic Vector creation, including when an explicit element type or capacity is needed. For other cljonic collection types, prefer CTAD where deduction expresses the intended type and capacity; use explicit template arguments when deduction is unavailable or when demonstrating a specific type or capacity.
+- Create every user-createable value through its lowercase factory: `vector`, `hash_map`, `map_entry`, `hash_set`. Direct type construction (`Set{...}`, `Map{...}`, `MapEntry{...}`) remains only where direct construction *is* the subject: range/view source import, a deduction-guide/CTAD demonstration, or a named-type contract demonstration. This supersedes the earlier "prefer CTAD for non-Vector types" rule.
+- Omit integer-literal suffixes (`3U`, `2L`) in example code; plain literals suffice. Keep a suffix only when it is semantically load-bearing, e.g. `Variant<int, long>{1L}` selecting the `long` alternative.
+- Do not qualify a factory as "lowercase" in prose — the identifier already shows its spelling.
 - Examples are illustrative, not exhaustive: a few representative cases that convey the basics are enough — do not enumerate every type, overload, or arity. Include a particularly unfamiliar case (e.g. a `cljonic::Variant` operand) when it aids understanding.
 - In construction-only samples, avoid surfacing methods that are intended to be documented via standalone functions.
 - For intentionally unused sample variables, prefer `[[maybe_unused]]` over `(void)var;`.
