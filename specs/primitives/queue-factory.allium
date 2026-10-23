@@ -1,0 +1,147 @@
+-- allium: 3
+-- REQ-FN-029G: `queue` is the idiomatic Queue factory. Its type and
+-- capacity inference follow the approved vector construction principles:
+-- first-argument element type inference, explicit element type, explicit
+-- capacity with an empty pack, and a typed empty zero-capacity form.
+-- Arguments are associated in argument order so the first argument becomes
+-- the queue front.
+
+entity QueueFactory {
+    supports_deduced_element_factory: Boolean
+    deduced_element_type_is_unqualified_first_argument: Boolean
+    supports_explicit_element_type_factory: Boolean
+    supports_explicit_capacity_factory: Boolean
+    deduced_capacity_equals_argument_count: Boolean
+    explicit_capacity_determines_result_capacity: Boolean
+    explicit_capacity_factory_supports_empty_arguments: Boolean
+    explicit_capacity_empty_factory_supports_zero_capacity: Boolean
+    explicit_capacity_is_at_least_argument_count: Boolean
+    explicit_capacity_is_bounded_by_configured_maximum: Boolean
+    nonempty_variadic_forms_require_at_least_one_argument: Boolean
+    typed_empty_factory_returns_zero_capacity_queue: Boolean
+    empty_factory_without_explicit_element_type_is_compile_time_rejected: Boolean
+    untyped_empty_call_is_compile_time_rejected: Boolean
+    argument_count_is_bounded_by_configured_maximum: Boolean
+    oversized_argument_count_is_compile_time_rejected: Boolean
+    element_type_satisfies_nothrow_collection_element: Boolean
+    every_argument_constructs_safely_without_throwing: Boolean
+    arguments_are_associated_in_fifo_argument_order: Boolean
+    first_argument_becomes_the_queue_front: Boolean
+    sole_cljonic_collection_or_producer_argument_is_one_element: Boolean
+    preserves_public_queue_type_and_existing_constructors: Boolean
+    returns_independently_owning_queue: Boolean
+    constexpr_noexcept_nonallocating: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    referential_transparency: Boolean
+
+    invariant SupportsDeducedElementFactory {
+        this.supports_deduced_element_factory = true
+    }
+
+    invariant DeducedElementTypeIsUnqualifiedFirstArgument {
+        this.deduced_element_type_is_unqualified_first_argument = true
+    }
+
+    invariant SupportsExplicitElementTypeFactory {
+        this.supports_explicit_element_type_factory = true
+    }
+
+    invariant SupportsExplicitCapacityFactory {
+        this.supports_explicit_capacity_factory = true
+    }
+
+    invariant DeducedCapacityEqualsArgumentCount {
+        this.deduced_capacity_equals_argument_count = true
+    }
+
+    invariant ExplicitCapacityDeterminesResultCapacity {
+        this.explicit_capacity_determines_result_capacity = true
+    }
+
+    invariant ExplicitCapacityFactorySupportsEmptyArguments {
+        this.explicit_capacity_factory_supports_empty_arguments = true
+    }
+
+    invariant ExplicitCapacityEmptyFactorySupportsZeroCapacity {
+        this.explicit_capacity_empty_factory_supports_zero_capacity = true
+    }
+
+    invariant ExplicitCapacityIsAtLeastArgumentCount {
+        this.explicit_capacity_is_at_least_argument_count = true
+    }
+
+    invariant ExplicitCapacityIsBoundedByConfiguredMaximum {
+        this.explicit_capacity_is_bounded_by_configured_maximum = true
+    }
+
+    invariant NonemptyVariadicFormsRequireAtLeastOneArgument {
+        this.nonempty_variadic_forms_require_at_least_one_argument = true
+    }
+
+    invariant TypedEmptyFactoryReturnsZeroCapacityQueue {
+        this.typed_empty_factory_returns_zero_capacity_queue = true
+    }
+
+    invariant EmptyFactoryWithoutExplicitElementTypeIsCompileTimeRejected {
+        this.empty_factory_without_explicit_element_type_is_compile_time_rejected = true
+    }
+
+    invariant UntypedEmptyCallIsCompileTimeRejected {
+        this.untyped_empty_call_is_compile_time_rejected = true
+    }
+
+    invariant ArgumentCountIsBoundedByConfiguredMaximum {
+        this.argument_count_is_bounded_by_configured_maximum = true
+    }
+
+    invariant OversizedArgumentCountIsCompileTimeRejected {
+        this.oversized_argument_count_is_compile_time_rejected = true
+    }
+
+    invariant ElementTypeSatisfiesNothrowCollectionElement {
+        this.element_type_satisfies_nothrow_collection_element = true
+    }
+
+    invariant EveryArgumentConstructsSafelyWithoutThrowing {
+        this.every_argument_constructs_safely_without_throwing = true
+    }
+
+    invariant ArgumentsAreAssociatedInFifoArgumentOrder {
+        this.arguments_are_associated_in_fifo_argument_order = true
+    }
+
+    invariant FirstArgumentBecomesTheQueueFront {
+        this.first_argument_becomes_the_queue_front = true
+    }
+
+    invariant SoleCljonicCollectionOrProducerArgumentIsOneElement {
+        this.sole_cljonic_collection_or_producer_argument_is_one_element = true
+    }
+
+    invariant PreservesPublicQueueTypeAndExistingConstructors {
+        this.preserves_public_queue_type_and_existing_constructors = true
+    }
+
+    invariant ReturnsIndependentlyOwningQueue {
+        this.returns_independently_owning_queue = true
+    }
+
+    invariant ConstexprNoexceptNonallocating {
+        this.constexpr_noexcept_nonallocating = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+actor QueueFactoryOperator { identified_by: QueueFactory }
