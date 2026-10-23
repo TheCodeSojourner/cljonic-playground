@@ -167,21 +167,6 @@ This module specifies specialized domain conveniences built on top of lower modu
   ∧ ∀ untyped zero-argument `vector()`: rejected because the element type cannot be deduced
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
 
-## Collection Factory Family (Deferred, Non-Binding)
-
-The following clauses record approved future API direction, not currently available overloads. `vector` remains active under `REQ-FN-029A`, `hash_map` under `REQ-FN-029D`, `map_entry` under `REQ-FN-029E`, `hash_set` under `REQ-FN-029F`, and `queue` under `REQ-FN-029G`; the remaining factory naming and contract direction require individually approved behavioral specifications before implementation.
-
-λ REQ-FN-029B(x).
-  ∧ preferred: lowercase factories are the idiomatic creation surface at runtime and compile time, using Clojure names where applicable rather than claiming exact Clojure equivalence
-  ∧ ∀ factory introduction: preserves the public type and its existing supported constructors
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
-
-λ REQ-FN-029C(x).
-  ∀ planned collection factory contract: follows the `vector` construction principles where meaningful — inferred types, explicit types, explicit capacity, typed empty construction, safe conversions, and non-throwing, non-allocating value construction
-  ∧ ∀ factory: preserves its collection's semantics rather than requiring identical overloads across types
-  ∧ ∀ planned factory: concrete overloads and boundaries require individual contract approval before behavioral specification and implementation
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-22}
-
 ## String Factory
 
 λ REQ-FN-029H(x).
@@ -316,4 +301,4 @@ The following clauses record approved future API direction, not currently availa
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: Relational algebra functions (`index`, `project`, `rename`, `join`), string/regex functions, `fits_print`/`print_to`, `Atom<T>`, and the test suite (`REQ-TEST-*`).
-- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`–`029H`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
+- **Governed REQs**: `REQ-FN-002I`–`002K`, `REQ-FN-002O`, `REQ-FN-015`–`024`, `REQ-FN-028`, `REQ-FN-029`, `REQ-FN-029A`, `REQ-FN-029D`–`029H`, `REQ-FN-030`–`031`, `REQ-PLAT-024`–`035`, `REQ-PLAT-038`–`042`, `REQ-VAL-022`, `REQ-TEST-001`–`005`.
