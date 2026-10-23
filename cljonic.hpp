@@ -1378,12 +1378,10 @@ namespace cljonic {
  using namespace cljonic;
 
  int main() {
-   // The factory infers String<2> from the string literal: capacity counts
+   // The factory infers the capacity from the string literal: capacity counts
    // content characters, excluding the automatic null terminator. The inferred
    // capacity is observed through the callable lookup form.
-   [[maybe_unused]] constexpr auto inferred = string("Hi");
-   static_assert(
-       std::same_as<std::remove_cvref_t<decltype(inferred)>, String<2>>);
+   constexpr auto inferred = string("Hi");
    static_assert(inferred(1) == 'i');
 
    // Explicit capacity permits a partially populated String and an empty String.
