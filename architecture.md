@@ -5,6 +5,7 @@
 λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
   ∧ direct_construction(x) ∧ member_observation(x)
   ∧ vector_factory(x) ∧ hash_map_factory(x) ∧ map_entry_factory(x) ∧ set_factory(x)
+  ∧ queue_factory(x) ∧ string_factory(x)
   ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ preflight(fits_into))(x)
   | collection_callable_lookup(x) → Vector ∨ Map ∨ Set ∨ String
   | module3(x) → concrete_array_backed_bounded_types(x)
@@ -74,6 +75,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ direct_external_cpp_range_or_view_import(x) → retain(SourceConstruction(x))
   | trace_to(REQ-FN-029G)
 
+λ S5_string_creation_policy(x). user_facing_String_creation(x) → prefer(lowercase_string_factory(x))
+  | runtime_creation(x) ∧ constant_evaluation_creation(x) → same_factory_surface(x)
+  | preserve(public_String_type ∧ existing_String_constructors)
+    ∧ direct_external_cpp_range_or_view_import(x) → retain(SourceConstruction(x))
+  | trace_to(REQ-FN-029H)
+
 λ S5_change_policy(x). public_change(x) → preserve(S5_identity(x))
 
 λ S5_authorized_effect_policy(x). public_operation(x) → require(DeterministicBehavior(x) ∧ ReferentialTransparency(x))
@@ -109,13 +116,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | prefer_explicit_deprecation_windows(x)
   | stable_handle_model(x)
 
-λ S4_collection_factory_direction(x). approved_future_factory_names(x) ≡ {
-  String: string
-  }
-  | trace_to(REQ-FN-029B ∧ REQ-FN-029C) ∧ deferred_non_binding_direction(x)
+λ S4_collection_factory_direction(x). approved_future_factory_names(x) ≡ {}
+  | all_approved_factory_names_are_active(x) ∧ ¬∃ deferred_factory_name(x)
     ∧ distinguish_from(active_vector_factory_under(REQ-FN-029A) ∧ active_hash_map_factory_under(REQ-FN-029D)
       ∧ active_map_entry_factory_under(REQ-FN-029E) ∧ active_hash_set_factory_under(REQ-FN-029F)
-      ∧ active_queue_factory_under(REQ-FN-029G))
+      ∧ active_queue_factory_under(REQ-FN-029G) ∧ active_string_factory_under(REQ-FN-029H))
+  | trace_to(REQ-FN-029B ∧ REQ-FN-029C)
   | future_creation_guidance(x) → prefer(lowercase_factory_at_runtime_and_constant_evaluation)
     ∧ use(Clojure_names_where_applicable) ∧ ¬claim(exact_Clojure_API_equivalence)
     ∧ preserve(public_types ∧ existing_supported_constructors)
@@ -496,6 +502,21 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | external_cpp_range_or_view_import(x) → use(Queue_source_constructor(x)) ∧ ¬factory_source_import(x)
   | constexpr ∧ noexcept ∧ non_allocating ∧ independently_owning_result
   | trace_to(REQ-FN-029G) ∧ realize(S5_queue_creation_policy)
+
+λ S2_string_factory_contract(x). string(text_source) → construct(owning_String_from_text_source(x))
+  | string(literal) → capacity(content_length(literal)) ∧ return(String<content_length>)
+  | string<Capacity>(args...) → return(String<Capacity>)
+    ∧ require(content_length(args) ≤ Capacity ≤ CollectionMaximumElementCount)
+    ∧ empty_argument_pack(x) → return(empty_String<Capacity>)
+  | string<Capacity>(string_view_or_char_range_source) → use(String_source_construction(x))
+    ∧ dynamic_extent(x) → copy_bounded_prefix(x)
+    ∧ static_extent(x) > Capacity → compile_time_rejection(x)
+  | require(byte_validity(String_contracts(x)) ∧ ∀ byte: NothrowElementConstruction(char, byte))
+  | untyped_empty_call(x) → compile_time_rejection(x) ∧ targeted_operation_diagnostic(x)
+  | variadic_individual_character_form(x) ∨ spare_capacity_form_beyond_import(x) → ¬admit(x)
+  | string_view_or_char_range_import(x) → use(String_source_construction(x)) ∧ ¬factory_materialization_beyond_text_sources(x)
+  | constexpr ∧ noexcept ∧ non_allocating ∧ independently_owning_result
+  | trace_to(REQ-FN-029H) ∧ realize(S5_string_creation_policy)
 
 λ S2_map_entry_factory_contract(x). map_entry(key, value) → construct(owning_MapEntry_from_one_key_and_one_value(x))
   | map_entry(key, value) → key_type(unqualified_type(key)) ∧ value_type(unqualified_type(value))
@@ -1301,6 +1322,6 @@ concept SequenceableProducer =
   | module6_numeric_authority(x) ≡ requirements/requirements-module-6.md → govern(checked_arithmetic ∧ callables)
   | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ set_algebra ∧ regex ∧ Atom ∧ formatting ∧ KeywordEnumNameMapping)
 
-λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ vector_factory ∧ hash_map_factory ∧ map_entry_factory ∧ set_factory ∧ queue_factory ∧ into ∧ fits_into
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ vector_factory ∧ hash_map_factory ∧ map_entry_factory ∧ set_factory ∧ queue_factory ∧ string_factory ∧ into ∧ fits_into
   | approved_but_unimplemented(algorithms ∨ regexes) → remain_outside(active_surface(x))
   | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
