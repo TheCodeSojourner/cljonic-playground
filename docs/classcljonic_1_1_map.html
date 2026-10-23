@@ -173,7 +173,8 @@ Static Public Member Functions</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts::NothrowStableEqualityComparable KeyType, concepts::NothrowCollectionElement ValueType, std::size_t CapacityValue&gt;<br />
 requires (!<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;KeyType&gt;)<br />
 class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="anchor" id="Map"></a> A <a class="el" href="classcljonic_1_1_map.html">Map</a> is a bounded, associative collection that maps unique keys to values and provides callable lookup with optional fallback values. Other operations use the library's free-function API.</p>
-<p>The lowercase <code>hash_map</code> factory is the idiomatic way to create <a class="el" href="classcljonic_1_1_map.html">Map</a> values, at runtime or during constant evaluation. It accepts alternating keys and values, and a later duplicate key replaces the earlier value. Use <code>hash_map(k, v, ...)</code> to infer the key type, value type, and capacity, <code>hash_map&lt;K, V&gt;(k, v, ...)</code> to select the key and value types, or <code>hash_map&lt;K, V, Capacity&gt;(k, v, ...)</code> to provide an explicit capacity, including for an empty map. <code>Map&lt;K, V, Capacity&gt;</code> remains the value's type.</p>
+<p>The <code>hash_map</code> factory is the idiomatic way to create <a class="el" href="classcljonic_1_1_map.html">Map</a> values, at runtime or during constant evaluation. It accepts alternating keys and values, and a later duplicate key replaces the earlier value. Use <code>hash_map(k, v,
+   ...)</code> to infer the key type, value type, and capacity, <code>hash_map&lt;K, V&gt;(k, v, ...)</code> to select the key and value types, or <code>hash_map&lt;K, V, Capacity&gt;(k, v, ...)</code> to provide an explicit capacity, including for an empty map. <code>Map&lt;K, V, Capacity&gt;</code> remains the value's type.</p>
 <p>Direct construction is useful when importing a C++ range or view: its entries are copied into the <a class="el" href="classcljonic_1_1_map.html">Map</a>. A cljonic collection or producer is not a constructor source.</p>
 <p>Construction with more entries than the available capacity is rejected at compile time. Construction from entries requires the exact declared entry type. Keys, mapped values, and fallbacks follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
@@ -194,7 +195,7 @@ class cljonic::Map&lt; KeyType, ValueType, CapacityValue &gt;</div><p><a class="
 <div class="line"><span class="keyword">using </span>AccountMap = <a class="code hl_class" href="classcljonic_1_1_map.html">Map&lt;Key, Value, 2&gt;</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">  <span class="comment">// The lowercase factory is the idiomatic way to create maps. It accepts</span></div>
+<div class="line">  <span class="comment">// The factory is the idiomatic way to create maps. It accepts</span></div>
 <div class="line">  <span class="comment">// alternating keys and values.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> factory_map = <a class="code hl_function" href="namespacecljonic.html#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(Key{1}, Value{10}, Key{2}, Value{20});</div>
 <div class="line">  <span class="keyword">static_assert</span>(factory_map(Key{2}).amount == 20);</div>

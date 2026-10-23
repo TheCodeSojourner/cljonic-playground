@@ -556,6 +556,51 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt; || !concepts_detail:
 <tr class="memitem:a6b6fab7c532f3e4641563b70404cbb3e" id="r_a6b6fab7c532f3e4641563b70404cbb3e"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; <br />
 requires (Extent != std::dynamic_extent)</td></tr>
 <tr class="memitem:a6b6fab7c532f3e4641563b70404cbb3e template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a6b6fab7c532f3e4641563b70404cbb3e">Set</a> (std::span&lt; SourceElement, Extent &gt;) -&gt; Set&lt; std::remove_cv_t&lt; SourceElement &gt;, Extent &gt;</td></tr>
+<tr class="memitem:ab920b6f72a40bc9c9d4b1c69662e149e" id="r_ab920b6f72a40bc9c9d4b1c69662e149e"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (concepts_detail::HashSetFactoryArguments&lt;RequestedElementType, Args...&gt; &amp;&amp; sizeof...(Args) &gt; 0U)</td></tr>
+<tr class="memitem:ab920b6f72a40bc9c9d4b1c69662e149e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a> (Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a>&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; <a class="el" href="classcljonic_1_1_set.html">Set</a>&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a>&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</td></tr>
+<tr class="memitem:a3760ed22bec8caedc4d35a28f38bec5b" id="r_a3760ed22bec8caedc4d35a28f38bec5b"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (sizeof...(Args) == 0U &amp;&amp; std::same_as&lt;RequestedElementType, <a class="el" href="structcljonic_1_1concepts__detail_1_1_deduced_hash_set_element_type.html">concepts_detail::DeducedHashSetElementType</a>&gt;)</td></tr>
+<tr class="memitem:a3760ed22bec8caedc4d35a28f38bec5b template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a3760ed22bec8caedc4d35a28f38bec5b">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:a241512240e86336b4122a59025de0045" id="r_a241512240e86336b4122a59025de0045"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (sizeof...(Args) == 0U &amp;&amp; !std::same_as&lt;RequestedElementType, <a class="el" href="structcljonic_1_1concepts__detail_1_1_deduced_hash_set_element_type.html">concepts_detail::DeducedHashSetElementType</a>&gt;)</td></tr>
+<tr class="memitem:a241512240e86336b4122a59025de0045 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a241512240e86336b4122a59025de0045">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:ac1551ed5476bbbfcae82f776422ad2c3" id="r_ac1551ed5476bbbfcae82f776422ad2c3"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires ( sizeof...(Args) &gt; 0U &amp;&amp; (!concepts::NothrowStableEqualityComparable&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;<a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt;))</td></tr>
+<tr class="memitem:ac1551ed5476bbbfcae82f776422ad2c3 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac1551ed5476bbbfcae82f776422ad2c3">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:a42e8fba5542f8d88b596c4e9a877564e" id="r_a42e8fba5542f8d88b596c4e9a877564e"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (sizeof...(Args) &gt; 0U &amp;&amp; concepts::NothrowStableEqualityComparable&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; &amp;&amp; sizeof...(Args) &gt; <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>)</td></tr>
+<tr class="memitem:a42e8fba5542f8d88b596c4e9a877564e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a42e8fba5542f8d88b596c4e9a877564e">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:af5b490bd238cbf940949ef45d109c688" id="r_af5b490bd238cbf940949ef45d109c688"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (sizeof...(Args) &gt; 0U &amp;&amp; concepts::NothrowStableEqualityComparable&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; &amp;&amp; sizeof...(Args) &lt;= <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a> &amp;&amp;<br class="typebreak" />
+ !(concepts::NothrowElementConstruction&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a>&lt;RequestedElementType, Args...&gt;,<br class="typebreak" />
+ Args&gt; &amp;&amp; ...))</td></tr>
+<tr class="memitem:af5b490bd238cbf940949ef45d109c688 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af5b490bd238cbf940949ef45d109c688">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:a1392da04ab8a1d01813e0e1646f9f755" id="r_a1392da04ab8a1d01813e0e1646f9f755"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires concepts_detail::HashSetFactoryCapacityArguments&lt;ElementType, Capacity, Args...&gt;</td></tr>
+<tr class="memitem:a1392da04ab8a1d01813e0e1646f9f755 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a1392da04ab8a1d01813e0e1646f9f755">hash_set</a> (Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; ElementType, Args &gt; &amp;&amp;...)) -&gt; <a class="el" href="classcljonic_1_1_set.html">Set</a>&lt; ElementType, Capacity &gt;</td></tr>
+<tr class="memitem:afc6fbd5d2f06475d7f374327f2cc33cb" id="r_afc6fbd5d2f06475d7f374327f2cc33cb"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (!concepts::NothrowStableEqualityComparable&lt;ElementType&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;ElementType&gt;)</td></tr>
+<tr class="memitem:afc6fbd5d2f06475d7f374327f2cc33cb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#afc6fbd5d2f06475d7f374327f2cc33cb">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:aba8f9ef382011ba9a5c0ac2c6eb58c03" id="r_aba8f9ef382011ba9a5c0ac2c6eb58c03"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;ElementType&gt; &amp;&amp; Capacity &gt;<br class="typebreak" />
+ <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>)</td></tr>
+<tr class="memitem:aba8f9ef382011ba9a5c0ac2c6eb58c03 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aba8f9ef382011ba9a5c0ac2c6eb58c03">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:a38cd28088c9b6fe079863ae78770955e" id="r_a38cd28088c9b6fe079863ae78770955e"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;ElementType&gt; &amp;&amp; Capacity <br class="typebreak" />
+&lt;= <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a> &amp;&amp; sizeof...(Args) &gt; Capacity)</td></tr>
+<tr class="memitem:a38cd28088c9b6fe079863ae78770955e template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a38cd28088c9b6fe079863ae78770955e">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:acb8eb4bd2faa425580f263604f699bc5" id="r_acb8eb4bd2faa425580f263604f699bc5"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;ElementType&gt; &amp;&amp; Capacity <br class="typebreak" />
+&lt;= <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a> &amp;&amp; sizeof...(Args) &lt;= Capacity &amp;&amp; sizeof...(Args) &gt; 0U &amp;&amp;<br class="typebreak" />
+ !(concepts::NothrowElementConstruction&lt;ElementType, Args&gt; &amp;&amp; ...))</td></tr>
+<tr class="memitem:acb8eb4bd2faa425580f263604f699bc5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#acb8eb4bd2faa425580f263604f699bc5">hash_set</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
 <tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21" id="r_ac8f7c83a056ffb2ba64e432680d09b21"><td class="memTemplParams" colspan="2">template&lt;std::size_t N&gt; </td></tr>
 <tr class="memitem:ac8f7c83a056ffb2ba64e432680d09b21 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ac8f7c83a056ffb2ba64e432680d09b21">String</a> (const char(&amp;)[N]) -&gt; String&lt; N - 1U &gt;</td></tr>
 <tr class="memitem:a814695bb71acee0980bac4a01c9e1e2d" id="r_a814695bb71acee0980bac4a01c9e1e2d"><td class="memTemplParams" colspan="2">template&lt;typename SourceElement, std::size_t Extent&gt; <br />
@@ -1339,7 +1384,7 @@ requires concepts::ConjableCollection&lt;C&gt;</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 2&gt;</a>{}, 1, 2));</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_full = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{1};</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(q_full, 2));</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 4&gt;</a>();</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(s_const, 1));</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a>{<span class="stringliteral">&quot;Hi&quot;</span>};</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#aff01cd8591c08e661bde74c6276e9c40">can_conj</a>(text_const, <span class="charliteral">&#39;!&#39;</span>));</div>
@@ -1353,10 +1398,10 @@ requires concepts::ConjableCollection&lt;C&gt;</div>
 <div class="line">  <span class="keywordflow">return</span> q_ok ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_queue_html"><div class="ttname"><a href="classcljonic_1_1_queue.html">cljonic::Queue</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00091">cljonic-queue.hpp:91</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00103">cljonic-set.hpp:103</a></div></div>
 <div class="ttc" id="aclasscljonic_1_1_string_html"><div class="ttname"><a href="classcljonic_1_1_string.html">cljonic::String</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00105">cljonic-string.hpp:105</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a0276d2cc4a963af9ddbc2ad7aa6ac4f0"><div class="ttname"><a href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">cljonic::map_entry</a></div><div class="ttdeci">constexpr auto map_entry(Args &amp;&amp;... args) noexcept -&gt; MapEntry&lt; concepts_detail::map_entry_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::map_entry_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00167">cljonic-map-entry.hpp:167</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a2aa4197e029c665443f7f5d0ebcf61d8"><div class="ttname"><a href="#a2aa4197e029c665443f7f5d0ebcf61d8">cljonic::hash_map</a></div><div class="ttdeci">constexpr auto hash_map(Args &amp;&amp;... args) noexcept -&gt; Map&lt; concepts_detail::hash_map_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::hash_map_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, sizeof...(Args)/2U &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map_8hpp_source.html#l00438">cljonic-map.hpp:438</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_ab920b6f72a40bc9c9d4b1c69662e149e"><div class="ttname"><a href="#ab920b6f72a40bc9c9d4b1c69662e149e">cljonic::hash_set</a></div><div class="ttdeci">constexpr auto hash_set(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Set&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00430">cljonic-set.hpp:430</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_aff01cd8591c08e661bde74c6276e9c40"><div class="ttname"><a href="#aff01cd8591c08e661bde74c6276e9c40">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00084">cljonic-can-conj.hpp:84</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00084">84</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
@@ -1872,7 +1917,7 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_queue.html">Queue&lt;int, 4&gt;</a>{}, 10);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{}, 20);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 4&gt;</a>(), 20);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a2ac63cbc0316ee0778d32a1adfc9b6c0">peek</a>(q_const) == 10);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s_const, 20));</div>
 <div class="line"> </div>
@@ -1885,7 +1930,7 @@ requires concepts_detail::ConjValueAdmissible&lt;C, T&gt;</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Zero-value and variadic arities.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_same = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(v_const);</div>
-<div class="line">  <span class="keyword">static_assert</span>(v_same.count() == 3U);</div>
+<div class="line">  <span class="keyword">static_assert</span>(v_same.count() == 3);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_many = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 4&gt;</a>(10), 20, 30);</div>
 <div class="line">  <span class="keyword">static_assert</span>(v_many(2) == 30);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_many = <a class="code hl_function" href="#ac6a4465d9a31351eb793d28aae002543">conj</a>(<a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a>{<span class="stringliteral">&quot;H&quot;</span>}, <span class="charliteral">&#39;i&#39;</span>, <span class="charliteral">&#39;!&#39;</span>);</div>
@@ -2143,21 +2188,21 @@ requires concepts_detail::ContainsAdmissible&lt;C, K&gt;</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20, 30);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 100);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{5};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(5);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> st_const = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;abc&quot;</span>};</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_const, 0U));</div>
-<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_const, 9U));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_const, 0));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_const, 9));</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(m_const, 1));</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(m_const, 2));</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s_const, 5));</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s_const, 8));</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(st_const, 1U));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(st_const, 1));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> v_runtime = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20);</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> in_range = <a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_runtime, 0U);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> in_range = <a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_runtime, 0);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (in_range &amp;&amp; !<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_runtime, 9U)) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (in_range &amp;&amp; !<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(v_runtime, 9)) ? 0 : 1;</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-contains_8hpp_source.html#l00064">64</a> of file <a class="el" href="cljonic-contains_8hpp_source.html">cljonic-contains.hpp</a>.</p>
@@ -2409,10 +2454,10 @@ requires concepts_detail::DisjAdmissible&lt;C, Values...&gt;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s0_const = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{42, 7, 8};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s0_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(42, 7, 8);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1_const = <a class="code hl_function" href="#a523eadba6652db67d95d3e910ec80008">disj</a>(s0_const, 42);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2_const = <a class="code hl_function" href="#a523eadba6652db67d95d3e910ec80008">disj</a>(s1_const, 7, 8, 7);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s3_const = <a class="code hl_function" href="#a523eadba6652db67d95d3e910ec80008">disj</a>(<a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{1, 3}, 1, 3, 1);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s3_const = <a class="code hl_function" href="#a523eadba6652db67d95d3e910ec80008">disj</a>(<a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(1, 3), 1, 3, 1);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s4_const = <a class="code hl_function" href="#a523eadba6652db67d95d3e910ec80008">disj</a>(s2_const);</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s1_const, 42));</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(s2_const));</div>
@@ -2420,7 +2465,7 @@ requires concepts_detail::DisjAdmissible&lt;C, Values...&gt;</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(s4_const, s2_const));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> s0_runtime = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{99};</div>
+<div class="line">  <span class="keyword">auto</span> s0_runtime = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(99);</div>
 <div class="line">  <span class="keyword">auto</span> s1_runtime = <a class="code hl_function" href="#a523eadba6652db67d95d3e910ec80008">disj</a>(s0_runtime, 99);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (!<a class="code hl_function" href="#a5b8275162678a23d519d3711df6d9a2b">contains</a>(s1_runtime, 99) &amp;&amp; <a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(s1_runtime)) ? 0 : 1;</div>
@@ -3062,8 +3107,8 @@ requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> rep = <a class="code hl_class" href="classcljonic_1_1_repeat.html">Repeat</a>{3, 1};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m1 = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 10, 2, 20);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m2 = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(2, 20, 1, 10);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1 = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{3, 1, 2};</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2 = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{1, 2, 3};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1 = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(3, 1, 2);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2 = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(1, 2, 3);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> str1 = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;8&gt;</a>{<span class="stringliteral">&quot;abc&quot;</span>};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> str2 = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;16&gt;</a>{<span class="stringliteral">&quot;abc&quot;</span>};</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(1, 1));</div>
@@ -3093,7 +3138,7 @@ requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <div class="line">  <span class="keyword">auto</span> runtime_r = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{1, 4, 1};</div>
 <div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(runtime_v, runtime_r) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_variant_html"><div class="ttname"><a href="classcljonic_1_1_variant.html">cljonic::Variant</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-variant_8hpp_source.html#l00122">cljonic-variant.hpp:122</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_variant_html"><div class="ttname"><a href="classcljonic_1_1_variant.html">cljonic::Variant</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-variant_8hpp_source.html#l00123">cljonic-variant.hpp:123</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00304">304</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
@@ -3330,7 +3375,7 @@ template&lt;typename KeyType, typename ValueType&gt; </div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20, 30);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 100);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{7};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(7);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q_const = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{5, 6};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;AB&quot;</span>};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> e_const = <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 100);</div>
@@ -3344,7 +3389,7 @@ template&lt;typename KeyType, typename ValueType&gt; </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> v_runtime = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(100, 200);</div>
 <div class="line">  <span class="keyword">auto</span> m_runtime = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(2, 200);</div>
-<div class="line">  <span class="keyword">auto</span> s_runtime = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{8};</div>
+<div class="line">  <span class="keyword">auto</span> s_runtime = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(8);</div>
 <div class="line">  <span class="keyword">auto</span> q_runtime = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{9, 10};</div>
 <div class="line">  <span class="keyword">auto</span> text_runtime = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;CD&quot;</span>};</div>
 <div class="line">  <span class="keyword">auto</span> e_runtime = <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(3, 300);</div>
@@ -3576,7 +3621,7 @@ requires concepts_detail::GetKeyAdmissible&lt;C, K&gt; &amp;&amp; concepts_detai
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m_const = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 100);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{5};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(5);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text_const = <a class="code hl_class" href="classcljonic_1_1_string.html">String</a>{<span class="stringliteral">&quot;ab&quot;</span>};</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a1303d4cdb00acfa70d9ffcc65d7670c5">get</a>(v_const, 0) == 10);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a1303d4cdb00acfa70d9ffcc65d7670c5">get</a>(v_const, 9, -1) == -1);</div>
@@ -3918,6 +3963,392 @@ requires (sizeof...(Args) == 0U || sizeof...(Args) % 2U != 0U)</div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="cljonic-map_8hpp_source.html#l00451">451</a> of file <a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>.</p>
+
+</div>
+</div>
+<a id="acb8eb4bd2faa425580f263604f699bc5" name="acb8eb4bd2faa425580f263604f699bc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb8eb4bd2faa425580f263604f699bc5">&#9670;&#160;</a></span>hash_set() <span class="overload">[1/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;ElementType&gt; &amp;&amp; Capacity <br class="typebreak" />
+&lt;= <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a> &amp;&amp; sizeof...(Args) &lt;= Capacity &amp;&amp; sizeof...(Args) &gt; 0U &amp;&amp;<br class="typebreak" />
+ !(concepts::NothrowElementConstruction&lt;ElementType, Args&gt; &amp;&amp; ...))</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00536">536</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a38cd28088c9b6fe079863ae78770955e" name="a38cd28088c9b6fe079863ae78770955e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38cd28088c9b6fe079863ae78770955e">&#9670;&#160;</a></span>hash_set() <span class="overload">[2/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;ElementType&gt; &amp;&amp; Capacity <br class="typebreak" />
+&lt;= <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a> &amp;&amp; sizeof...(Args) &gt; Capacity)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00526">526</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aba8f9ef382011ba9a5c0ac2c6eb58c03" name="aba8f9ef382011ba9a5c0ac2c6eb58c03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba8f9ef382011ba9a5c0ac2c6eb58c03">&#9670;&#160;</a></span>hash_set() <span class="overload">[3/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;ElementType&gt; &amp;&amp; Capacity &gt;<br class="typebreak" />
+ <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00517">517</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afc6fbd5d2f06475d7f374327f2cc33cb" name="afc6fbd5d2f06475d7f374327f2cc33cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc6fbd5d2f06475d7f374327f2cc33cb">&#9670;&#160;</a></span>hash_set() <span class="overload">[4/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires (!concepts::NothrowStableEqualityComparable&lt;ElementType&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;ElementType&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00507">507</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af5b490bd238cbf940949ef45d109c688" name="af5b490bd238cbf940949ef45d109c688"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5b490bd238cbf940949ef45d109c688">&#9670;&#160;</a></span>hash_set() <span class="overload">[5/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (sizeof...(Args) &gt; 0U &amp;&amp; concepts::NothrowStableEqualityComparable&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; &amp;&amp; sizeof...(Args) &lt;= <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a> &amp;&amp;<br class="typebreak" />
+ !(concepts::NothrowElementConstruction&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a>&lt;RequestedElementType, Args...&gt;,<br class="typebreak" />
+ Args&gt; &amp;&amp; ...))</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00489">489</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a42e8fba5542f8d88b596c4e9a877564e" name="a42e8fba5542f8d88b596c4e9a877564e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42e8fba5542f8d88b596c4e9a877564e">&#9670;&#160;</a></span>hash_set() <span class="overload">[6/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (sizeof...(Args) &gt; 0U &amp;&amp; concepts::NothrowStableEqualityComparable&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; &amp;&amp; sizeof...(Args) &gt; <a class="el" href="#a41fa65c16edb0a95aa942c48307777d6">CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</a>)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00473">473</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac1551ed5476bbbfcae82f776422ad2c3" name="ac1551ed5476bbbfcae82f776422ad2c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1551ed5476bbbfcae82f776422ad2c3">&#9670;&#160;</a></span>hash_set() <span class="overload">[7/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires ( sizeof...(Args) &gt; 0U &amp;&amp; (!concepts::NothrowStableEqualityComparable&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt; || <a class="el" href="namespacecljonic_1_1concepts__detail.html#a765be20452e6c299fabd87a0818a78a9">concepts_detail::is_std_variant_v</a>&lt;<a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a><br class="typebreak" />
+&lt;RequestedElementType, Args...&gt;&gt;))</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00460">460</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a241512240e86336b4122a59025de0045" name="a241512240e86336b4122a59025de0045"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a241512240e86336b4122a59025de0045">&#9670;&#160;</a></span>hash_set() <span class="overload">[8/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (sizeof...(Args) == 0U &amp;&amp; !std::same_as&lt;RequestedElementType, <a class="el" href="structcljonic_1_1concepts__detail_1_1_deduced_hash_set_element_type.html">concepts_detail::DeducedHashSetElementType</a>&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00448">448</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3760ed22bec8caedc4d35a28f38bec5b" name="a3760ed22bec8caedc4d35a28f38bec5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3760ed22bec8caedc4d35a28f38bec5b">&#9670;&#160;</a></span>hash_set() <span class="overload">[9/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (sizeof...(Args) == 0U &amp;&amp; std::same_as&lt;RequestedElementType, <a class="el" href="structcljonic_1_1concepts__detail_1_1_deduced_hash_set_element_type.html">concepts_detail::DeducedHashSetElementType</a>&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00440">440</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab920b6f72a40bc9c9d4b1c69662e149e" name="ab920b6f72a40bc9c9d4b1c69662e149e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab920b6f72a40bc9c9d4b1c69662e149e">&#9670;&#160;</a></span>hash_set() <span class="overload">[10/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename RequestedElementType = concepts_detail::DeducedHashSetElementType, typename... Args&gt; <br />
+requires (concepts_detail::HashSetFactoryArguments&lt;RequestedElementType, Args...&gt; &amp;&amp; sizeof...(Args) &gt; 0U)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_set.html">Set</a>&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a604fe498ab6373001c2261cee678026e">concepts_detail::hash_set_factory_element_t</a>&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p><a class="anchor" id="HashSetFactory"></a> Creates a bounded <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> from individual element arguments.</p>
+<p>Deduced calls use the first argument's unqualified type and have capacity equal to their argument count, with runtime duplicates deduplicating per <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a> construction semantics. Explicit element type uses <code>hash_set&lt;T&gt;(...)</code>; explicit capacity uses <code>hash_set&lt;T, Capacity&gt;(...)</code>, including for an empty set. An untyped empty call is rejected at compile time.</p>
+<p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
+<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">using </span>AccountId = int;</div>
+<div class="line"><span class="keyword">using </span>AccountSet = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;AccountId, 4&gt;</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  <span class="comment">// The factory is the idiomatic way to create sets. Deduced</span></div>
+<div class="line">  <span class="comment">// calls infer the element type from the first argument and the capacity</span></div>
+<div class="line">  <span class="comment">// from the argument count.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> factory_set = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(1, 2, 3);</div>
+<div class="line">  <span class="keyword">static_assert</span>(factory_set.capacity() == 3);</div>
+<div class="line">  <span class="keyword">static_assert</span>(factory_set(2) == 2);</div>
+<div class="line">  <span class="keyword">static_assert</span>(factory_set(99) == 0);</div>
+<div class="line">  <span class="keyword">static_assert</span>(factory_set(99, -1) == -1);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Explicit element type and explicit capacity create a set with room for</span></div>
+<div class="line">  <span class="comment">// later conj operations, including an empty zero-capacity set.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> reserved = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 4&gt;</a>();</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> zero = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 0&gt;</a>();</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Runtime duplicates deduplicate; the deduced capacity still equals the</span></div>
+<div class="line">  <span class="comment">// argument count.</span></div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_duplicate = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(10, 20, 20);</div>
+<div class="line">  <span class="keywordflow">if</span> (runtime_duplicate.capacity() != 3 || runtime_duplicate.count() != 2) {</div>
+<div class="line">    <span class="keywordflow">return</span> 1;</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// The factory also works with runtime values.</span></div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_value = 40;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_set = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(runtime_value, 50);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// A named set type keeps the element and capacity contract explicit.</span></div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> typed = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;AccountSet::value_type, 4&gt;</a>(1, 2, 3);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> (typed(1) == 1 &amp;&amp; reserved.count() == 0 &amp;&amp; zero.count() == 0 &amp;&amp;</div>
+<div class="line">          runtime_set(50) == 50 &amp;&amp; runtime_set(99, -1) == -1)</div>
+<div class="line">             ? 0</div>
+<div class="line">             : 1;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00122">cljonic-set.hpp:122</a></div></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00430">430</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1392da04ab8a1d01813e0e1646f9f755" name="a1392da04ab8a1d01813e0e1646f9f755"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1392da04ab8a1d01813e0e1646f9f755">&#9670;&#160;</a></span>hash_set() <span class="overload">[11/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ElementType, std::size_t Capacity, typename... Args&gt; <br />
+requires concepts_detail::HashSetFactoryCapacityArguments&lt;ElementType, Capacity, Args...&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::hash_set </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_set.html">Set</a>&lt; ElementType, Capacity &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Creates a bounded <a class="el" href="classcljonic_1_1_set.html">Set</a> with an explicit capacity, including for an empty argument pack. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00500">500</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4473,7 +4904,7 @@ template&lt;concepts_detail::NextSequenceableCollection C&gt; </div>
 <div class="line">  <span class="keyword">static_assert</span>(map_tail(0) == <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(2, 200) ||</div>
 <div class="line">                map_tail(0) == <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 100));</div>
 <div class="line"> </div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> set = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{10, 20, 30};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> set = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(10, 20, 30);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> set_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(set);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(set_tail) == 2);</div>
 <div class="line"> </div>
@@ -4494,7 +4925,7 @@ template&lt;concepts_detail::NextSequenceableCollection C&gt; </div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_queue_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(runtime_queue);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_map = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map&lt;int, int, 4&gt;</a>(3, 300, 4, 400);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_map_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(runtime_map);</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_set = <a class="code hl_class" href="classcljonic_1_1_set.html">Set&lt;int, 4&gt;</a>{80, 90};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_set = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 4&gt;</a>(80, 90);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_set_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(runtime_set);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_text = <a class="code hl_class" href="classcljonic_1_1_string.html">String&lt;4&gt;</a>{<span class="stringliteral">&quot;DE&quot;</span>};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_text_tail = <a class="code hl_function" href="#ac8c72b21ce8dac37c813310d6bbc6993">next</a>(runtime_text);</div>
@@ -4848,8 +5279,8 @@ requires concepts_detail::EqualPairAdmissible&lt;T, T&gt;</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> q = <a class="code hl_class" href="classcljonic_1_1_queue.html">Queue</a>{1, 2, 3};</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m1 = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(1, 10);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> m2 = <a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map</a>(2, 20);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1 = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{3, 1, 2};</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2 = <a class="code hl_class" href="classcljonic_1_1_set.html">Set</a>{1, 2, 3};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s1 = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(3, 1, 2);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s2 = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(1, 2, 3);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(1, 2));</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(1, 1));</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#a52f3ba9511cd0e5899669f9450adbdfb">not_equal</a>(1));                      <span class="comment">// single value</span></div>
@@ -5636,13 +6067,13 @@ template&lt;typename C&gt; </div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2, 3);</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#af23ad4b89cbea89172bb757a5fbd5b26">seq</a>(v_const);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(s_const) == 3U);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(s_const) == 3);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">auto</span> v_runtime = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20);</div>
 <div class="line">  <span class="keyword">auto</span> s_runtime = <a class="code hl_function" href="#af23ad4b89cbea89172bb757a5fbd5b26">seq</a>(v_runtime);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(s_runtime) == 2U) ? 0 : 1;</div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(s_runtime) == 2) ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html_af23ad4b89cbea89172bb757a5fbd5b26"><div class="ttname"><a href="#af23ad4b89cbea89172bb757a5fbd5b26">cljonic::seq</a></div><div class="ttdeci">constexpr auto seq(const C &amp;collection) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-seq_8hpp_source.html#l00035">cljonic-seq.hpp:35</a></div></div>
 </div><!-- fragment --> 
