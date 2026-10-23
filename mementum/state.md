@@ -1,9 +1,47 @@
 ## Current Session State
 
-- last_session_id: 6a3c9a1a-95a9-4bea-8239-b6884508d8cb
-- current_timestamp: 2026-10-22T16:03:00-06:00
+- last_session_id: b5969208-540b-46e3-a8f1-99882f2e114a
+- current_timestamp: 2026-10-23T09:32:00-06:00
 - recover: 1
 - session_complete: true
+
+Task:
+1. Human invoked `/gybis-full-converge-auto` (whole-repository convergence, autonomous, no questions, no commits during convergence).
+2. Ran the full layer-check sequence (`/gybis-req-check`, `/gybis-vocab-check`, `/gybis-arch-check`, `/gybis-spec-check`) — all clean; then the adjacent-weed sequence (req→vocab, vocab→arch, arch→specs, specs→impl+tests) — no actionable divergences.
+3. One repair applied: `requirements/requirements-module-3.md` Governed REQs footer was missing `REQ-FN-002A2` (the binding `next` clause decided 2026-10-21); added it — identity-preserving footer fix, upstream-mechanically-stale class.
+4. Evidence reconciliation: audited all 1224 spec-to-code obligation snapshot IDs against tests (0 missing); investigated two flagged apparent gaps — `fits_into` (covered by `specs/producers/materialization.allium` + into tests, not a standalone API) and `REQ-COLL-008` max-count (covered by range/materialization saturation obligations + `max_count_probe`/`config_probe` no-heap probes); both recorded as no_change_needed.
+5. Integration gates rerun: `make upsert-gate-fast`, `make no-heap`, `make docs-examples` (33 compiled, 2 deferred skipped), `make test` (254/254) — all passing.
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. The three CamelCase tokens in REQ-PLAT-039/041 (`EntryCount`, `NameCapacity`, `EnumTypeName`) are template-parameter/placeholder identifiers, not vocabulary domain terms — no vocab weed repair.
+2. Spec-file header comments naming `-- REQ-*` designators are provenance notes, not plan-derived obligations; obligation coverage is measured against the allium plan snapshot only (this miscount nearly produced a false coverage finding).
+3. Rendered `docs/` HTML remains deferred to the human's final `make git`, per default policy.
+4. No commits were made during convergence (standing user constraint); the human committed the requirements footer repair themselves as `4ba3237` before fini.
+
+Validation:
+1. `make requirements-structure` (330 clauses, 330 unique), `make vocabulary-structure` (191 terms) — ok.
+2. `allium check specs` (43 files, zero diagnostics) and `allium analyse specs` (zero findings) — ok.
+3. `make traceability-spec-to-code` ok; snapshot refreshed with zero drift.
+4. All 16 `make *-compile-fail` targets passed; `make diagnostic-coverage`, `make diagnostic-message-labels`, `make audit-scripts` — ok.
+5. `make format` idempotent, `git diff --check` clean, `make core-cheatsheet-format` ok.
+6. `make no-heap` (modular + single-header probe binaries execute), `make docs-examples` (33 compiled), `make test` (254/254), `make upsert-gate-fast` — ok.
+7. Three representative extracted examples (`contains`, `map_entry`, `into`) independently compiled, linked, and executed with exit 0.
+
+Memory/synthesis:
+1. No new memories stored this session; no topic reached the ≥3-memory synthesis threshold. The footer-audit finding is recorded here in state.md; a candidate memory ("mechanically audit Governed REQs footers against λ clauses after each requirements edit") can be stored on next request.
+
+Open questions:
+1. `hash_set`, `queue`, and `string` factories remain deferred under `REQ-FN-029B`/`029C` and still need individual contracts.
+2. The `Map` vocabulary and Doxygen prose still show `MapEntry{...}` in examples; not changed, since entry construction remains supported.
+
+Next:
+1. If requested, promote the next deferred factory in the required layer order.
+2. The requirements footer repair was committed by the human as `4ba3237`; this session's commit adds only the mementum state update.
+
+## Previous Session State
 
 Task:
 1. Human argued that `map_entry` should exist for consistency with `hash_map`, `hash_set`, etc., wherever users would otherwise write `MapEntry{key, value}`. Approved the full chain with a two-argument-only contract.
