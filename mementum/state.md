@@ -1,5 +1,39 @@
 ## Current Session State
 
+- last_session_id: 04539134-ae9c-4caa-a929-6e76c8e838c6
+- current_timestamp: 2026-10-23T19:06:00-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human invoked `/gybis-init`; oriented on mementum/state.md (string/029B-029C retirement session, committed as `baa69e1`). Working tree was clean; no open questions inherited.
+2. Human invoked `/cljonic-api-complete first`: verified the `first` free function already complete and converged across all layers with zero writes (REQ clauses 449-457 module-3, vocab `First`, arch `S2_first_function_contract`, specs/primitives/first.allium 20 obligations, 21 TRACE_IDs, no-heap probe, Doxygen example compiled+linked+run exit 0, make test 260/260, traceability ok).
+3. Human invoked `/cljonic-api-complete next`: verified the `next` free function already complete and converged with zero writes (REQ-FN-002A2, vocab `Next`, arch rule at line 804, next.allium 17 obligations, 18 TRACE_IDs exact trace ok, cljonic-core-next-probes covers all five families incl. empty/one-element boundaries, example exit 0, make test 260/260, no-heap ok).
+4. Human invoked `/cljonic-api-complete not_empty`: verified the `not_empty` free function already complete and converged with zero writes (REQ-BOUNDS-010D/REQ-FN-026 requirements-backed per module-3:291,681, vocab `NotEmpty` at 818, arch `S2_not_empty_function_contract`, not-empty.allium 16 obligations / 16 traces EXACT=1 ok, no-heap probe covers five families + zero-capacity/full/default-element boundaries with volatile-derived inputs, Doxygen example compiled+linked+run exit 0, make test 260/260, no-heap ok). not_empty marked completed alongside first and next.
+5. Human invoked `/cljonic-api-complete rest`: mapped the gap (cljonic-rest.hpp is queue-only and pop()-derived, contradicting REQ-SEQ-002A; no spec/tests/probe/vocab term; listed in DEFERRED_NON_PUBLIC_HEADERS). Surfaced contract decisions (result type, rest-vs-next distinction, rewrite scope) via ask_user; human interrupted and halted the promotion.
+5. Human decision (2026-10-23): stop the rest promotion; do not proceed to rest/seq before further direction. first and next are marked completed (verification passes recorded here; they were already active in the governed layers, no deferred markers to remove).
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. first and next are considered completed; no further promotion work needed for them (human decision, 2026-10-23). not_empty verified complete by the same pass (2026-10-23).
+2. rest promotion halted at contract-decision stage; the existing queue-only pop()-derived cljonic-rest.hpp remains untouched, and rest/seq remain in DEFERRED_NON_PUBLIC_HEADERS pending future direction.
+
+Validation:
+1. first: requirements-structure ok (331 clauses), vocabulary-structure ok (194 terms), allium check specs clean, trace-id-check first.allium EXACT=1 ok (20/20), make no-heap ok, make docs-examples ok (compiled=36), extracted first example executed exit 0, make test 260/260, traceability-spec-to-code ok.
+2. next: trace-id-check next.allium EXACT=1 ok (17/17), no-heap ok, docs-examples ok, next example executed exit 0, make test 260/260.
+2b. not_empty: not-empty.allium check clean, trace-id-check EXACT=1 ok (16/16), no-heap ok, docs-examples ok, not-empty example executed exit 0, make test 260/260.
+3. No repository files were modified this session (working tree clean; all checks reuse-run on unchanged inputs).
+
+Open questions:
+1. None blocking. Awaiting human direction on the deferred rest/seq promotion (contract decisions captured in the rest mapping: result type = Vector<value_type, capacity> per REQ-SEQ-010/002B reading; rest-vs-next distinction; five-collection rewrite scope).
+
+Next:
+1. Human direction on rest/seq.
+
+## Current Session State
+
 - last_session_id: 33d1407c-4901-473f-b274-127de449b3ee
 - current_timestamp: 2026-10-23T16:33:00-06:00
 - recover: 1
