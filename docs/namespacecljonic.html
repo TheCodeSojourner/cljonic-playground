@@ -1428,7 +1428,7 @@ requires concepts::ConjableCollection&lt;C&gt;</div>
 <div class="ttc" id="anamespacecljonic_html_a0276d2cc4a963af9ddbc2ad7aa6ac4f0"><div class="ttname"><a href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">cljonic::map_entry</a></div><div class="ttdeci">constexpr auto map_entry(Args &amp;&amp;... args) noexcept -&gt; MapEntry&lt; concepts_detail::map_entry_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::map_entry_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00167">cljonic-map-entry.hpp:167</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a2693300957a43d0bb2d4c29634a838f7"><div class="ttname"><a href="#a2693300957a43d0bb2d4c29634a838f7">cljonic::queue</a></div><div class="ttdeci">constexpr auto queue(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::queue_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Queue&lt; concepts_detail::queue_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00330">cljonic-queue.hpp:330</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_aac92eb77175a67beb451582c5786027e"><div class="ttname"><a href="#aac92eb77175a67beb451582c5786027e">cljonic::string</a></div><div class="ttdeci">constexpr auto string(Literal &amp;&amp;literal) noexcept -&gt; String&lt; std::extent_v&lt; std::remove_cvref_t&lt; Literal &gt; &gt; - 1U &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00432">cljonic-string.hpp:432</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ab920b6f72a40bc9c9d4b1c69662e149e"><div class="ttname"><a href="#ab920b6f72a40bc9c9d4b1c69662e149e">cljonic::hash_set</a></div><div class="ttdeci">constexpr auto hash_set(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Set&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00430">cljonic-set.hpp:430</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_ab920b6f72a40bc9c9d4b1c69662e149e"><div class="ttname"><a href="#ab920b6f72a40bc9c9d4b1c69662e149e">cljonic::hash_set</a></div><div class="ttdeci">constexpr auto hash_set(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Set&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00424">cljonic-set.hpp:424</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_aff01cd8591c08e661bde74c6276e9c40"><div class="ttname"><a href="#aff01cd8591c08e661bde74c6276e9c40">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00084">cljonic-can-conj.hpp:84</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00084">84</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
@@ -4021,7 +4021,7 @@ requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00536">536</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00530">530</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4052,7 +4052,7 @@ requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00526">526</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00520">520</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4083,7 +4083,7 @@ requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00517">517</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00511">511</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4113,7 +4113,7 @@ requires (!concepts::NothrowStableEqualityComparable&lt;ElementType&gt; || <a cl
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00507">507</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00501">501</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4147,7 +4147,7 @@ requires (sizeof...(Args) &gt; 0U &amp;&amp; concepts::NothrowStableEqualityComp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00489">489</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00483">483</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4179,7 +4179,7 @@ requires (sizeof...(Args) &gt; 0U &amp;&amp; concepts::NothrowStableEqualityComp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00473">473</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00467">467</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4211,7 +4211,7 @@ requires ( sizeof...(Args) &gt; 0U &amp;&amp; (!concepts::NothrowStableEqualityC
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00460">460</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00454">454</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4241,7 +4241,7 @@ requires (sizeof...(Args) == 0U &amp;&amp; !std::same_as&lt;RequestedElementType
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00448">448</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00442">442</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4271,7 +4271,7 @@ requires (sizeof...(Args) == 0U &amp;&amp; std::same_as&lt;RequestedElementType,
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00440">440</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00434">434</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4313,7 +4313,6 @@ requires (concepts_detail::HashSetFactoryArguments&lt;RequestedElementType, Args
 <div class="line">  <span class="comment">// calls infer the element type from the first argument and the capacity</span></div>
 <div class="line">  <span class="comment">// from the argument count.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> factory_set = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(1, 2, 3);</div>
-<div class="line">  <span class="keyword">static_assert</span>(factory_set.capacity() == 3);</div>
 <div class="line">  <span class="keyword">static_assert</span>(factory_set(2) == 2);</div>
 <div class="line">  <span class="keyword">static_assert</span>(factory_set(99) == 0);</div>
 <div class="line">  <span class="keyword">static_assert</span>(factory_set(99, -1) == -1);</div>
@@ -4326,9 +4325,6 @@ requires (concepts_detail::HashSetFactoryArguments&lt;RequestedElementType, Args
 <div class="line">  <span class="comment">// Runtime duplicates deduplicate; the deduced capacity still equals the</span></div>
 <div class="line">  <span class="comment">// argument count.</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_duplicate = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(10, 20, 20);</div>
-<div class="line">  <span class="keywordflow">if</span> (runtime_duplicate.capacity() != 3 || runtime_duplicate.count() != 2) {</div>
-<div class="line">    <span class="keywordflow">return</span> 1;</div>
-<div class="line">  }</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// The factory also works with runtime values.</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_value = 40;</div>
@@ -4337,14 +4333,13 @@ requires (concepts_detail::HashSetFactoryArguments&lt;RequestedElementType, Args
 <div class="line">  <span class="comment">// A named set type keeps the element and capacity contract explicit.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> typed = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;AccountSet::value_type, 4&gt;</a>(1, 2, 3);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (typed(1) == 1 &amp;&amp; reserved.count() == 0 &amp;&amp; zero.count() == 0 &amp;&amp;</div>
-<div class="line">          runtime_set(50) == 50 &amp;&amp; runtime_set(99, -1) == -1)</div>
+<div class="line">  <span class="keywordflow">return</span> (typed(1) == 1 &amp;&amp; runtime_set(50) == 50 &amp;&amp; runtime_set(99, -1) == -1)</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00122">cljonic-set.hpp:122</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00121">cljonic-set.hpp:121</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00430">430</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00424">424</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4375,7 +4370,7 @@ requires concepts_detail::HashSetFactoryCapacityArguments&lt;ElementType, Capaci
 </div><div class="memdoc">
 <p>Creates a bounded <a class="el" href="classcljonic_1_1_set.html">Set</a> with an explicit capacity, including for an empty argument pack. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00500">500</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00494">494</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
