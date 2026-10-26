@@ -154,51 +154,59 @@ Producer Types</h2>
 </ul>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
 Core Functions</h2>
-<p>Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only when their requirements are approved.</p>
+<p>Implemented free functions link to their documentation. Remaining names are deferred functions that the requirements govern but whose specification, tests, and implementation have not yet been propagated.</p>
 <ul>
-<li>Abs, Add, <a class="el" href="namespacecljonic.html#Assoc" title="Assoc">assoc</a></li>
-<li><a class="el" href="namespacecljonic.html#CanAssoc" title="CanAssoc">can_assoc</a>, <a class="el" href="namespacecljonic.html#CanConj" title="CanConj">can_conj</a>, Char, <a class="el" href="namespacecljonic.html#CharacterIsValid" title="CharacterIsValid">character_is_valid</a>, Combinations, Compare, <a class="el" href="namespacecljonic.html#Conj" title="Conj">conj</a>, <a class="el" href="namespacecljonic.html#Contains" title="Contains">contains</a>, <a class="el" href="namespacecljonic.html#Count" title="Count">count</a>, CString, <a class="el" href="classcljonic_1_1_cycle.html#Cycle" title="Cycle">cycle</a></li>
-<li>Dec, Dedupe, DedupeBy, DefaultElement, DefaultElement_M, Different, <a class="el" href="namespacecljonic.html#Disj" title="Disj">disj</a>, <a class="el" href="namespacecljonic.html#Dissoc" title="Dissoc">dissoc</a>, Distinct, DistinctBy, Div, DoSeq, DoTimes, Drop, DropLast, DropWhile</li>
-<li><a class="el" href="namespacecljonic.html#Empty" title="Empty">empty</a>, Empty_M, EQ, <a class="el" href="namespacecljonic.html#Equal" title="Equal">equal</a>, EqualBy, Every</li>
-<li>Factorial, Filter, <a class="el" href="namespacecljonic.html#First" title="First">first</a>, <a class="el" href="namespacecljonic.html#FitsInto" title="FitsInto">fits_into</a>, Flatten, FlattenSize, Frequencies, FrequenciesBy</li>
-<li>GE, <a class="el" href="namespacecljonic.html#Get" title="Get">get</a>, GT</li>
-<li><a class="el" href="namespacecljonic.html#HashMapFactory" title="HashMapFactory">hash_map</a>, <a class="el" href="namespacecljonic.html#HashSetFactory" title="HashSetFactory">hash_set</a></li>
-<li>Identical, Identity, If, Inc, IndexOf, IndexOfBy, Interleave, Interpose, <a class="el" href="namespacecljonic.html#Into" title="Into">into</a>, <a class="el" href="namespacecljonic.html#IsEmpty" title="IsEmpty">is_empty</a>, IsAlpha, IsAlphanumeric, IsBlank, IsControl, IsDigit, IsDistinct, IsDistinctBy, IsEven, IsFull, IsGraphical, IsHexDigit, IsLowercase, IsNatural, IsNegative, IsOdd, IsPositive, IsPrintable, IsPunctuation, IsSpace, IsUppercase, IsZero, <a class="el" href="classcljonic_1_1_iterate.html#Iterate" title="Iterate">iterate</a></li>
-<li>Juxt</li>
-<li>Last, LastIndexOf, LastIndexOfBy, LE, Lowercase, LT</li>
-<li>Map, <a class="el" href="namespacecljonic.html#MapEntryFactory" title="MapEntryFactory">map_entry</a>, Max, MaxBy, Min, MinBy, Mod, Mul</li>
-<li>NE, <a class="el" href="namespacecljonic.html#Next" title="Next">next</a>, <a class="el" href="namespacecljonic.html#NotEmpty" title="NotEmpty">not_empty</a>, <a class="el" href="namespacecljonic.html#NotEqual" title="NotEqual">not_equal</a>, NotAny, NotEvery, Nth, Nth_M</li>
-<li>Ord</li>
-<li>Partial, Partition, PartitionAll, PartitionBy, <a class="el" href="namespacecljonic.html#Peek" title="Peek">peek</a>, Permutations, <a class="el" href="namespacecljonic.html#Pop" title="Pop">pop</a>, <a class="el" href="namespacecljonic.html#QueueFactory" title="QueueFactory">queue</a></li>
-<li><a class="el" href="classcljonic_1_1_range.html#Range" title="Range">range</a>, Reduce, Reductions, Remove, <a class="el" href="classcljonic_1_1_repeat.html#Repeat" title="Repeat">repeat</a>, <a class="el" href="classcljonic_1_1_repeatedly.html#Repeatedly" title="Repeatedly">repeatedly</a>, Replace, Reverse</li>
-<li>Second, Size, Some, Sort, SortBy, SplitAt, SplitWith, <a class="el" href="namespacecljonic.html#StringFactory" title="StringFactory">string</a>, Sub, Subs</li>
-<li>Take, TakeLast, TakeNth, TakeWhile</li>
-<li>Unless, Uppercase</li>
-<li><a class="el" href="namespacecljonic.html#a11e270768e9485445f2885cdecb1c4eb" title="cljonic::vector">vector</a></li>
-<li>When, WhenNot</li>
+<li>add, apply, <a class="el" href="namespacecljonic.html#Assoc" title="Assoc">assoc</a>, assoc_in</li>
+<li>bit_and, bit_and_not, bit_clear, bit_flip, bit_not, bit_or, bit_set, bit_shift_left, bit_shift_right, bit_test, bit_xor, butlast</li>
+<li>can_add, <a class="el" href="namespacecljonic.html#CanAssoc" title="CanAssoc">can_assoc</a>, <a class="el" href="namespacecljonic.html#CanConj" title="CanConj">can_conj</a>, can_multiply, can_subtract, <a class="el" href="namespacecljonic.html#CharacterIsValid" title="CharacterIsValid">character_is_valid</a>, comp, compare, complement, <a class="el" href="namespacecljonic.html#Conj" title="Conj">conj</a>, constantly, <a class="el" href="namespacecljonic.html#Contains" title="Contains">contains</a>, <a class="el" href="namespacecljonic.html#Count" title="Count">count</a>, <a class="el" href="classcljonic_1_1_cycle.html#Cycle" title="Cycle">cycle</a></li>
+<li>dec, dedupe, deref, <a class="el" href="namespacecljonic.html#Disj" title="Disj">disj</a>, <a class="el" href="namespacecljonic.html#Dissoc" title="Dissoc">dissoc</a>, distinct, div, double, drop, drop_last, drop_while</li>
+<li>emplace, <a class="el" href="namespacecljonic.html#Empty" title="Empty">empty</a>, <a class="el" href="namespacecljonic.html#Equal" title="Equal">equal</a>, every_pred</li>
+<li>ffirst, find, <a class="el" href="namespacecljonic.html#First" title="First">first</a>, <a class="el" href="namespacecljonic.html#FitsInto" title="FitsInto">fits_into</a>, fits_print, flatten, float, fnext, fnil, frequencies</li>
+<li><a class="el" href="namespacecljonic.html#Get" title="Get">get</a>, get_if, get_in, group_by</li>
+<li>has_some, <a class="el" href="namespacecljonic.html#HashMapFactory" title="HashMapFactory">hash_map</a>, <a class="el" href="namespacecljonic.html#HashSetFactory" title="HashSetFactory">hash_set</a>, holds</li>
+<li>identity, inc, index, int, interleave, interpose, <a class="el" href="namespacecljonic.html#Into" title="Into">into</a>, <a class="el" href="namespacecljonic.html#IsEmpty" title="IsEmpty">is_empty</a>, is_even, is_every, is_negative, is_odd, is_positive, is_zero, <a class="el" href="classcljonic_1_1_iterate.html#Iterate" title="Iterate">iterate</a></li>
+<li>juxt</li>
+<li>keep, keep_indexed, keys</li>
+<li>make_keyword_enum_name_map, map, <a class="el" href="namespacecljonic.html#MapEntryFactory" title="MapEntryFactory">map_entry</a>, map_indexed, mapcat, mapv, max, max_key, merge, merge_with, min, min_key, mod, mult</li>
+<li>negate, <a class="el" href="namespacecljonic.html#Next" title="Next">next</a>, nfirst, nnext, not_any, <a class="el" href="namespacecljonic.html#NotEmpty" title="NotEmpty">not_empty</a>, <a class="el" href="namespacecljonic.html#NotEqual" title="NotEqual">not_equal</a>, not_every, nth, nthnext, nthrest</li>
+<li>partial, partition, partition_all, partition_by, partitionv, partitionv_all, <a class="el" href="namespacecljonic.html#Peek" title="Peek">peek</a>, <a class="el" href="namespacecljonic.html#Pop" title="Pop">pop</a>, pr_str, print_to, prn_str</li>
+<li><a class="el" href="namespacecljonic.html#QueueFactory" title="QueueFactory">queue</a>, quot</li>
+<li><a class="el" href="classcljonic_1_1_range.html#Range" title="Range">range</a>, reduce_kv, reductions, rem, remove, <a class="el" href="classcljonic_1_1_repeat.html#Repeat" title="Repeat">repeat</a>, <a class="el" href="classcljonic_1_1_repeatedly.html#Repeatedly" title="Repeatedly">repeatedly</a>, replace, replicate, reset, reset_vals, rest, rseq</li>
+<li>second, select_keys, seq, some, some_fn, sort, sort_by, split_at, split_with, str, <a class="el" href="namespacecljonic.html#StringFactory" title="StringFactory">string</a>, sub, subvec, swap, swap_vals</li>
+<li>take, take_last, take_nth, take_while, to_byte, to_char, to_double, to_float, to_int, to_long, to_num, to_short, tree_seq</li>
+<li>unsigned_bit_shift_right, update, update_in, update_keys, update_vals</li>
+<li>vals, vec, variant_alternative, variant_size, <a class="el" href="namespacecljonic.html#a11e270768e9485445f2885cdecb1c4eb" title="cljonic::vector">vector</a>, visit</li>
+<li>zipmap</li>
 </ul>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
 Set Functions</h2>
+<p>All entries below are deferred functions that the requirements govern but whose specification, tests, and implementation have not yet been propagated.</p>
 <ul>
-<li>Conj, ConjBy</li>
-<li>Difference, DifferenceBy, Disj, DisjBy</li>
-<li>IndexOf, IndexOfBy, Intersection, IntersectionBy</li>
-<li>ToSet, ToSetBy</li>
-<li>Union, UnionBy</li>
+<li>difference</li>
+<li>fits_join, fits_set_algebra</li>
+<li>index, intersection, is_subset, is_superset</li>
+<li>join</li>
+<li>map_invert</li>
+<li>project</li>
+<li>rename, rename_keys</li>
+<li>select</li>
+<li>union</li>
 </ul>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
 String Functions</h2>
+<p>All entries below are deferred functions that the requirements govern but whose specification, tests, and implementation have not yet been propagated.</p>
 <ul>
-<li>Capitalize, Compare, Concat</li>
-<li>EndsWith</li>
-<li>FloatToString, Format</li>
-<li>Includes, IndexOf, Interpose, IntToString, IntToStringHex, IsBlank</li>
-<li>LastIndexOf, Lowercase</li>
-<li>Partition, PartitionAll, PartitionBy</li>
-<li>Replace, ReplaceFirst</li>
-<li>Split, SplitCount, SplitLine, StartsWith, StrLen, StrOfChar, StrToFloat, StrToIntDecimal, StrToIntHex, Subs</li>
-<li>Trim, TrimLeft, TrimNewLine, TrimRight</li>
-<li>Uppercase </li>
+<li>capitalize</li>
+<li>ends_with, escape</li>
+<li>has_re_find, has_re_matches</li>
+<li>includes, index_of, is_blank</li>
+<li>join</li>
+<li>last_index_of, lower_case</li>
+<li>parse_bool, parse_float, parse_int</li>
+<li>re_find, re_groups, re_matcher, re_matches, re_pattern, re_quote_replacement, re_seq, replace, replace_first, reverse</li>
+<li>split, split_lines, starts_with</li>
+<li>trim, trim_newline, triml, trimr</li>
+<li>upper_case </li>
 </ul>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
