@@ -1,5 +1,40 @@
 ## Current Session State
 
+- last_session_id: 5cc51d07-6d47-4491-9f4c-1f00b3e5bc62
+- current_timestamp: 2026-10-26T16:25:00-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human invoked `/gybis-init`; oriented on mementum/state.md (api-complete verification session, committed as `a3b5fb5`). Working tree was clean; open question inherited: human direction on the deferred rest/seq promotion.
+2. Human asked to upsert the `Core Functions`, `Set Functions`, and `String Functions` mainpage sections in `src/cljonic-core.hpp` to reflect the requirements (prototype-era names diverged). Inventory was derived from requirements modules 3-7 plus vocabulary.md function terms. Removed all prototype-only names (e.g. Abs, Add, Char, CString, Div, DoSeq, EQ/GT/LT/GE/LE/NE, Factorial, IsAlpha family, Ord, Subs, Concat, Format, StrToFloat, StrToIntHex, FloatToString, IntToStringHex, StrLen, StrOfChar, Subs, SplitCount, String Compare, Set ConjBy/DisjBy/ToSetBy/IndexOfBy families, and similar). Kept/renamed requirements-backed names: implemented functions keep their \ref links (assoc, can_assoc, can_conj, character_is_valid, conj, contains, count, cycle, disj, dissoc, empty, equal, first, fits_into, get, hash_map, hash_set, into, is_empty, iterate, map_entry, next, not_empty, not_equal, peek, pop, queue, range, repeat, repeatedly, string, vector); deferred requirements-backed functions are listed as plain names without links, interleaved alphabetically per human choice via ask_user.
+3. Deferred entries per human choices (ask_user): plain unlinked names; scope = all requirements-backed functions (module 5 higher-order sequence family, module 6 numeric/callable family, module 7 core conveniences, set algebra/relational/set-convenience families in Set Functions, string conveniences + parsing + regex in String Functions); regex/parsing placed in String Functions per human choice.
+4. Human asked whether `cljonic::Variant` functions are in the requirements: yes — REQ-CAP-012 (module 2) with deferred spec `specs/capabilities/variant-api.allium` (Slice B). Added the missing variant free functions to the Core deferred list: emplace, get_if, holds, index, variant_alternative, variant_size, visit (get, swap, equal already covered by existing entries).
+5. Human relayed a coworker suggestion to move `Variant` into a new `Variant Type` section just below `Producer Types`. Agreed and implemented: `ClosedNominalCollectionDomain`/`CollectionKind` admit only vector/map/set/queue/string, and the `Variant` vocabulary term calls it the nominal composite value type, so the old Collection Types placement contradicted the type model. Variant removed from Collection Types; new `## Variant Type` section inserted below Producer Types, above Core Functions.
+6. `make cljonic` regenerated the amalgamated header after each edit.
+
+Questions:
+1. None blocking.
+
+Decisions:
+1. Cheatsheet function lists now mirror the requirements inventory exactly; implemented functions link, deferred requirements-backed functions appear as plain names with an explicit intro sentence. Doxygen docs/ HTML regeneration deferred until final git (standing convention).
+2. Variant free functions (REQ-CAP-012) belong in the Core Functions deferred list; the Variant type itself is not a collection and got its own `Variant Type` section below Producer Types (coworker suggestion, human endorsed).
+
+Validation:
+1. `make core-cheatsheet-format` ok after every edit; `make cljonic` ok (header regenerated twice: post-upsert, post-variant-move).
+2. `make lint LINT_FILE=src/cljonic-core.hpp` ok; temp-output doxygen runs produced zero warnings (all retained \ref anchors resolve); committed docs/ tree left untouched (regeneration deferred).
+3. `make docs-examples` FAILS on `build/docs-examples/cljonic-set-example-1.cpp` (`factory_set` set but not used, -Werror) — verified pre-existing on the clean stashed tree, unrelated to this change (src/cljonic-set.hpp is the known context).
+4. No commits made this session; working tree carries the two modified files (src/cljonic-core.hpp, cljonic.hpp) awaiting human approval.
+
+Open questions:
+1. Awaiting human approval/commit of the cheatsheet upsert (src/cljonic-core.hpp + cljonic.hpp uncommitted).
+2. Prior proposal still open: update the `api-promotion-cheatsheet-index-gap` memory to record that the cheatsheet diverged from requirements (not only from promotions) — human approval not yet given.
+
+Next:
+1. Human review/commit of the mainpage cheatsheet upsert.
+
+## Current Session State
+
 - last_session_id: 04539134-ae9c-4caa-a929-6e76c8e838c6
 - current_timestamp: 2026-10-23T19:06:00-06:00
 - recover: 1
