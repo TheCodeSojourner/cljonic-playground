@@ -7,5 +7,5 @@ var searchData=
   ['collection_20types_4',['Collection Types',['../index.html#autotoc_md2',1,'']]],
   ['conversions_5',['Safe implicit conversions',['../implicit-conversions.html',1,'']]],
   ['convert_20automatically_6',['When numbers convert automatically',['../implicit-conversions.html#conversion-automatic',1,'']]],
-  ['core_20functions_7',['Core Functions',['../index.html#autotoc_md4',1,'']]]
+  ['core_20functions_7',['Core Functions',['../index.html#autotoc_md5',1,'']]]
 ];
