@@ -85,82 +85,73 @@
  *
  * ## Core Functions
  *
- * Implemented free functions link to their documentation. Remaining entries are planned and will be introduced only
- * when their requirements are approved.
+ * Implemented free functions link to their documentation. Remaining names are deferred functions that the requirements
+ * govern but whose specification, tests, and implementation have not yet been propagated.
  *
- * - \ref Core_Abs "Abs", \ref Core_Add "Add", \ref Assoc "assoc"
- * - \ref CanAssoc "can_assoc", \ref CanConj "can_conj", \ref Core_Char "Char",
- * \ref CharacterIsValid "character_is_valid", \ref Core_Combinations "Combinations", \ref Core_Compare "Compare", \ref
- * Conj "conj", \ref Contains "contains", \ref Count "count", \ref Core_CString "CString", \ref Cycle "cycle"
- * - \ref Core_Dec "Dec", \ref Core_Dedupe "Dedupe", \ref Core_DedupeBy "DedupeBy",
- * \ref Core_DefaultElement "DefaultElement", \ref Core_DefaultElement_M "DefaultElement_M", \ref Core_Different
- * "Different", \ref Disj "disj", \ref Dissoc "dissoc", \ref Core_Distinct "Distinct", \ref Core_DistinctBy
- * "DistinctBy", \ref Core_Div "Div", \ref Core_DoSeq "DoSeq", \ref Core_DoTimes "DoTimes", \ref Core_Drop "Drop", \ref
- * Core_DropLast "DropLast", \ref Core_DropWhile "DropWhile"
- * - \ref Empty "empty", \ref Core_Empty_M "Empty_M", \ref Core_EQ "EQ", \ref Equal "equal",
- * \ref Core_EqualBy "EqualBy", \ref Core_Every "Every"
- * - \ref Core_Factorial "Factorial", \ref Core_Filter "Filter", \ref First "first", \ref FitsInto "fits_into",
- * \ref Core_Flatten "Flatten", \ref Core_FlattenSize "FlattenSize", \ref Core_Frequencies "Frequencies", \ref
- * Core_FrequenciesBy "FrequenciesBy"
- * - \ref Core_GE "GE", \ref Get "get", \ref Core_GT "GT"
- * - \ref HashMapFactory "hash_map", \ref HashSetFactory "hash_set"
- * - \ref Core_Identical "Identical", \ref Core_Identity "Identity", \ref Core_If "If", \ref Core_Inc "Inc",
- * \ref Core_IndexOf "IndexOf", \ref Core_IndexOfBy "IndexOfBy", \ref Core_Interleave "Interleave", \ref Core_Interpose
- * "Interpose", \ref Into "into", \ref IsEmpty "is_empty", \ref Core_IsAlpha "IsAlpha", \ref Core_IsAlphanumeric
- * "IsAlphanumeric", \ref Core_IsBlank "IsBlank", \ref Core_IsControl "IsControl", \ref Core_IsDigit "IsDigit", \ref
- * Core_IsDistinct "IsDistinct", \ref Core_IsDistinctBy "IsDistinctBy", \ref Core_IsEven "IsEven", \ref Core_IsFull
- * "IsFull", \ref Core_IsGraphical "IsGraphical", \ref Core_IsHexDigit "IsHexDigit", \ref Core_IsLowercase
- * "IsLowercase", \ref Core_IsNatural "IsNatural", \ref Core_IsNegative "IsNegative", \ref Core_IsOdd "IsOdd", \ref
- * Core_IsPositive "IsPositive", \ref Core_IsPrintable "IsPrintable", \ref Core_IsPunctuation "IsPunctuation", \ref
- * Core_IsSpace "IsSpace", \ref Core_IsUppercase "IsUppercase", \ref Core_IsZero "IsZero", \ref Iterate "iterate"
- * - \ref Core_Juxt "Juxt"
- * - \ref Core_Last "Last", \ref Core_LastIndexOf "LastIndexOf", \ref Core_LastIndexOfBy "LastIndexOfBy",
- * \ref Core_LE "LE", \ref Core_Lowercase "Lowercase", \ref Core_LT "LT"
- * - \ref Core_Map "Map", \ref MapEntryFactory "map_entry", \ref Core_Max "Max", \ref Core_MaxBy "MaxBy",
- * \ref Core_Min "Min", \ref Core_MinBy "MinBy", \ref Core_Mod "Mod", \ref Core_Mul "Mul"
- * - \ref Core_NE "NE", \ref Next "next", \ref NotEmpty "not_empty", \ref NotEqual "not_equal",
- * \ref Core_NotAny "NotAny", \ref Core_NotEvery "NotEvery", \ref Core_Nth "Nth", \ref Core_Nth_M "Nth_M"
- * - \ref Core_Ord "Ord"
- * - \ref Core_Partial "Partial", \ref Core_Partition "Partition", \ref Core_PartitionAll "PartitionAll",
- * \ref Core_PartitionBy "PartitionBy", \ref Peek "peek", \ref Core_Permutations "Permutations", \ref Pop "pop", \ref
- * QueueFactory "queue"
- * - \ref Range "range", \ref Core_Reduce "Reduce", \ref Core_Reductions "Reductions", \ref Core_Remove "Remove",
- * \ref Repeat "repeat", \ref Repeatedly "repeatedly", \ref Core_Replace "Replace", \ref Core_Reverse "Reverse"
- * - \ref Core_Second "Second", \ref Core_Size "Size", \ref Core_Some "Some", \ref Core_Sort "Sort",
- * \ref Core_SortBy "SortBy", \ref Core_SplitAt "SplitAt", \ref Core_SplitWith "SplitWith", \ref StringFactory
- * "string", \ref Core_Sub "Sub", \ref Core_Subs "Subs"
- * - \ref Core_Take "Take", \ref Core_TakeLast "TakeLast", \ref Core_TakeNth "TakeNth", \ref Core_TakeWhile "TakeWhile"
- * - \ref Core_Unless "Unless", \ref Core_Uppercase "Uppercase"
- * - \ref cljonic::vector "vector"
- * - \ref Core_When "When", \ref Core_WhenNot "WhenNot"
+ * - add, apply, \ref Assoc "assoc", assoc_in
+ * - bit_and, bit_and_not, bit_clear, bit_flip, bit_not, bit_or, bit_set, bit_shift_left, bit_shift_right, bit_test,
+ *   bit_xor, butlast
+ * - can_add, \ref CanAssoc "can_assoc", \ref CanConj "can_conj", can_multiply, can_subtract,
+ *   \ref CharacterIsValid "character_is_valid", comp, compare, complement, \ref Conj "conj", constantly,
+ *   \ref Contains "contains", \ref Count "count", \ref Cycle "cycle"
+ * - dec, dedupe, deref, \ref Disj "disj", \ref Dissoc "dissoc", distinct, div, double, drop, drop_last, drop_while
+ * - emplace, \ref Empty "empty", \ref Equal "equal", every_pred
+ * - ffirst, find, \ref First "first", \ref FitsInto "fits_into", fits_print, flatten, float, fnext, fnil, frequencies
+ * - \ref Get "get", get_if, get_in, group_by
+ * - has_some, \ref HashMapFactory "hash_map", \ref HashSetFactory "hash_set", holds
+ * - identity, inc, index, int, interleave, interpose, \ref Into "into", \ref IsEmpty "is_empty", is_even, is_every,
+ *   is_negative, is_odd, is_positive, is_zero, \ref Iterate "iterate"
+ * - juxt
+ * - keep, keep_indexed, keys
+ * - make_keyword_enum_name_map, map, \ref MapEntryFactory "map_entry", map_indexed, mapcat, mapv, max, max_key,
+ *   merge, merge_with, min, min_key, mod, mult
+ * - negate, \ref Next "next", nfirst, nnext, not_any, \ref NotEmpty "not_empty", \ref NotEqual "not_equal",
+ *   not_every, nth, nthnext, nthrest
+ * - partial, partition, partition_all, partition_by, partitionv, partitionv_all, \ref Peek "peek", \ref Pop "pop",
+ *   pr_str, print_to, prn_str
+ * - \ref QueueFactory "queue", quot
+ * - \ref Range "range", reduce_kv, reductions, rem, remove, \ref Repeat "repeat", \ref Repeatedly "repeatedly",
+ *   replace, replicate, reset, reset_vals, rest, rseq
+ * - second, select_keys, seq, some, some_fn, sort, sort_by, split_at, split_with, str, \ref StringFactory "string",
+ *   sub, subvec, swap, swap_vals
+ * - take, take_last, take_nth, take_while, to_byte, to_char, to_double, to_float, to_int, to_long, to_num, to_short,
+ *   tree_seq
+ * - unsigned_bit_shift_right, update, update_in, update_keys, update_vals
+ * - vals, vec, variant_alternative, variant_size, \ref cljonic::vector "vector", visit
+ * - zipmap
  *
  * ## Set Functions
  *
- * - \ref Set_Conj "Conj", \ref Set_ConjBy "ConjBy"
- * - \ref Set_Difference "Difference", \ref Set_DifferenceBy "DifferenceBy", \ref Set_Disj "Disj",
- * \ref Set_DisjBy "DisjBy"
- * - \ref Set_IndexOf "IndexOf", \ref Set_IndexOfBy "IndexOfBy", \ref Set_Intersection "Intersection",
- * \ref Set_IntersectionBy "IntersectionBy"
- * - \ref Set_ToSet "ToSet", \ref Set_ToSetBy "ToSetBy"
- * - \ref Set_Union "Union", \ref Set_UnionBy "UnionBy"
+ * All entries below are deferred functions that the requirements govern but whose specification, tests, and
+ * implementation have not yet been propagated.
+ *
+ * - difference
+ * - fits_join, fits_set_algebra
+ * - index, intersection, is_subset, is_superset
+ * - join
+ * - map_invert
+ * - project
+ * - rename, rename_keys
+ * - select
+ * - union
  *
  * ## String Functions
  *
- * - \ref String_Capitalize "Capitalize", \ref String_Compare "Compare", \ref String_Concat "Concat"
- * - \ref String_EndsWith "EndsWith"
- * - \ref String_FloatToString "FloatToString", \ref String_Format "Format"
- * - \ref String_Includes "Includes", \ref String_IndexOf "IndexOf", \ref String_Interpose "Interpose",
- * \ref String_IntToString "IntToString", \ref String_IntToStringHex "IntToStringHex", \ref String_IsBlank "IsBlank"
- * - \ref String_LastIndexOf "LastIndexOf", \ref String_Lowercase "Lowercase"
- * - \ref String_Partition "Partition", \ref String_PartitionAll "PartitionAll", \ref String_PartitionBy "PartitionBy"
- * - \ref String_Replace "Replace", \ref String_ReplaceFirst "ReplaceFirst"
- * - \ref String_Split "Split", \ref String_SplitCount "SplitCount", \ref String_SplitLine "SplitLine",
- * \ref String_StartsWith "StartsWith", \ref String_StrLen "StrLen", \ref String_StrOfChar "StrOfChar", \ref
- * String_StrToFloat "StrToFloat", \ref String_StrToIntDecimal "StrToIntDecimal", \ref String_StrToIntHex
- * "StrToIntHex", \ref String_Subs "Subs"
- * - \ref String_Trim "Trim", \ref String_TrimLeft "TrimLeft", \ref String_TrimNewLine "TrimNewLine",
- * \ref String_TrimRight "TrimRight"
- * - \ref String_Uppercase "Uppercase"
+ * All entries below are deferred functions that the requirements govern but whose specification, tests, and
+ * implementation have not yet been propagated.
+ *
+ * - capitalize
+ * - ends_with, escape
+ * - has_re_find, has_re_matches
+ * - includes, index_of, is_blank
+ * - join
+ * - last_index_of, lower_case
+ * - parse_bool, parse_float, parse_int
+ * - re_find, re_groups, re_matcher, re_matches, re_pattern, re_quote_replacement, re_seq, replace, replace_first,
+ *   reverse
+ * - split, split_lines, starts_with
+ * - trim, trim_newline, triml, trimr
+ * - upper_case
  */
 
 /** \anchor Namespace_Core
