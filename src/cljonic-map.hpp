@@ -59,6 +59,8 @@ namespace cljonic {
    // Explicit key, value, and capacity types create an empty Map with room
    // for later associations.
    constexpr auto reserved = hash_map<Key, Value, 4>();
+
+   // Missing `reserved(Key{1})` returns the fallback value
    static_assert(reserved(Key{1}).amount == 0);
 
    // The factory also works with runtime values.
@@ -66,7 +68,7 @@ namespace cljonic {
    const auto runtime_factory = hash_map(Key{4}, Value{runtime_amount});
 
    // Runtime CTAD deduces Map<Key, Value, 1> from the map_entry value.
-   auto runtime = Map{map_entry(Key{3}, Value{30})};
+   auto runtime = hash_map(Key{3}, Value{30});
    const auto present = runtime(Key{3});
    const auto missing = runtime(Key{4}, Value{77});
 
