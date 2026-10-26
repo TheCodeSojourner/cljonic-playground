@@ -94,6 +94,10 @@
  * - \ref Repeat "Repeat"
  * - \ref Repeatedly "Repeatedly"
  *
+ * ## Variant Type
+ *
+ * - \ref Variant "Variant"
+ *
  * ## Core Functions
  *
  * Implemented free functions link to their documentation. Remaining names are deferred functions that the requirements
