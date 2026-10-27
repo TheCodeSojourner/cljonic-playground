@@ -17,8 +17,11 @@ entity Repeatedly {
     accepts_named_function_lambda_and_function_object: Boolean
     step_is_copy_constructible: Boolean
     step_may_be_move_constructed_from_rvalue: Boolean
-    step_const_invocation_produces_element_of_t: Boolean
+    step_invocation_produces_element_of_t: Boolean
     step_invocation_is_non_throwing: Boolean
+    traversal_uses_copy_of_stored_step: Boolean
+    value_held_step_state_restarts_each_traversal: Boolean
+    reference_or_static_step_state_is_shared: Boolean
     does_not_own_result_storage: Boolean
     does_not_borrow_step_callback: Boolean
     step_may_maintain_state_or_side_effects: Boolean
@@ -89,12 +92,24 @@ entity Repeatedly {
         this.step_may_be_move_constructed_from_rvalue = true
     }
 
-    invariant StepConstInvocationProducesElementOfT {
-        this.step_const_invocation_produces_element_of_t = true
+    invariant StepInvocationProducesElementOfT {
+        this.step_invocation_produces_element_of_t = true
     }
 
     invariant StepInvocationIsNonThrowing {
         this.step_invocation_is_non_throwing = true
+    }
+
+    invariant TraversalUsesCopyOfStoredStep {
+        this.traversal_uses_copy_of_stored_step = true
+    }
+
+    invariant ValueHeldStepStateRestartsEachTraversal {
+        this.value_held_step_state_restarts_each_traversal = true
+    }
+
+    invariant ReferenceOrStaticStepStateIsShared {
+        this.reference_or_static_step_state_is_shared = true
     }
 
     invariant DoesNotOwnResultStorage {
