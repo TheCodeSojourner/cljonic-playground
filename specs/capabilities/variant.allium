@@ -1,6 +1,6 @@
 -- allium: 3
 
--- cljonic::Variant composite value type (REQ-CAP-011, REQ-CAP-012).
+-- cljonic::Variant composite value type (REQ-CAP-011, REQ-CAP-012, REQ-CAP-012A).
 -- The nominal cljonic composite that replaces std::variant as the supported
 -- composite in the cljonic value domain. It holds exactly one alternative at a
 -- time, admits only nothrow-storable alternatives, has no valueless state, and
@@ -49,6 +49,34 @@ entity CljonicVariant {
 
     invariant NestableCompositeComponent {
         this.nestable_composite_component = true
+    }
+}
+
+entity VariantFactory {
+    alternative_types_are_explicit: Boolean
+    supports_default_construction: Boolean
+    supports_exact_alternative_construction: Boolean
+    preserves_variant_construction_semantics: Boolean
+    constexpr_noexcept_nonallocating: Boolean
+
+    invariant AlternativeTypesAreExplicit {
+        this.alternative_types_are_explicit = true
+    }
+
+    invariant SupportsDefaultConstruction {
+        this.supports_default_construction = true
+    }
+
+    invariant SupportsExactAlternativeConstruction {
+        this.supports_exact_alternative_construction = true
+    }
+
+    invariant PreservesVariantConstructionSemantics {
+        this.preserves_variant_construction_semantics = true
+    }
+
+    invariant ConstexprNoexceptNonallocating {
+        this.constexpr_noexcept_nonallocating = true
     }
 }
 
@@ -137,6 +165,7 @@ entity StandardVariantRejection {
 }
 
 actor CljonicVariantOperator { identified_by: CljonicVariant }
+actor VariantFactoryOperator { identified_by: VariantFactory }
 actor VariantStorageAdmissionOperator { identified_by: VariantStorageAdmission }
 actor VariantEqualityAdmissionOperator { identified_by: VariantEqualityAdmission }
 actor VariantFreeFunctionApiOperator { identified_by: VariantFreeFunctionApi }
