@@ -1,38 +1,37 @@
 ## Current Session State
 
-- last_session_id: de5a6257-b3b7-4a3a-9a20-04546d64498e
-- current_timestamp: 2026-10-27T12:03:39-06:00
+- last_session_id: 58b80c63-7c29-4977-8df2-376f47d4ff53
+- current_timestamp: 2026-10-27T12:30:20-06:00
 - recover: 1
 - session_complete: true
 
 Task:
-1. Human invoked `/gybis-init`; oriented from the prior completed Repeatedly session and confirmed a clean worktree.
-2. Human invoked `/gybis-memory-store` to replace the slow strict-gate workflow: AI convergence loops must use only `make upsert-gate-fast` as the aggregate gate. The human runs final `make git` before human-guided commits.
-3. Updated the existing gate-decision memory in place and reconciled conflicting quality-loop, build-target, synthesis, and closeout guidance. Product code and build targets are unchanged.
-4. Committed the memory preference as `8e51a73` (`update: use fast gate in convergence loops`).
-5. Human approved propagation into `cljonic-*` skills only. Updated `.agents/skills/cljonic-api-complete/SKILL.md`, `.agents/skills/cljonic-api-converge/SKILL.md`, and `.agents/skills/cljonic-full-converge-auto/SKILL.md`: fast-only aggregate convergence gate, no ordinary/strict aggregate escalation (including invoked skills), focused checks retained, final `make git` and commits human-owned.
-6. Human invoked `/gybis-fini`; this closeout commits only session memory. Closeout inspection confirmed the skill edits were already committed separately as `7a35d41` (`update: standardize convergence aggregate gate on make upsert-gate-fast across skills`); the worktree is clean.
+1. Human invoked `/gybis-init`, then `/cljonic-full-converge-auto`. Layer checks and most adjacent comparisons had been performed in the previous context; architecture-only propagation added identity-preserving references for producer-step concepts, checked normalization, and predicate prefixes.
+2. Human asked whether the process was slow. Acknowledged that manual cross-layer entity matching was the main source of delay, then ran only the required aggregate `make upsert-gate-fast` and focused Repeatedly tests in modular and single-header binaries.
+3. `/gybis-fini` was invoked to record session state. The repository was clean at closeout; HEAD is `f7c923c` (`docs: align architecture with checked normalization, predicate naming, and producer step concepts`).
 
 Questions:
-1. None blocking.
+1. None.
 
 Decisions:
-1. Do not run `make upsert-gate-strict` in convergence loops or automatically escalate to strict/full validation at session end.
-2. Final comprehensive validation remains the human's `make git`; do not duplicate it in AI convergence loops.
-3. Skill propagation was left for human-guided commit and is now committed separately as `7a35d41`. No additional synthesis is needed: the durable memory and workflow knowledge already encode the decision.
+1. Use `make upsert-gate-fast` as the only convergence aggregate gate. Do not automatically escalate to the strict/full gate.
+2. Do not claim whole-repository convergence while evidence reconciliation and unresolved divergences remain.
+3. Do not renumber the malformed Module 3 designators without an approved identity-preserving policy.
 
 Validation:
-1. Memory preference commit passed diff whitespace checks and left a clean worktree before skill propagation.
-2. Skill propagation passed `git diff --check`; exactly the three approved skills changed, frontmatter stayed unchanged, and changed directives were reviewed for consistency.
-3. No product build/test gates or `make git` were run for these memory/skill-documentation changes.
+1. `make upsert-gate-fast` passed (exit 0): requirements and vocabulary structure, self-tests, lint, complexity, diagnostics, spec-to-code traceability, no-heap source/symbol scans, and modular/single-header no-heap executions all passed.
+2. `build/cljonic_tests '[repeatedly]'` passed: 124 assertions in 2 cases. `build/cljonic_single_header_tests '[repeatedly]'` passed: 124 assertions in 2 cases.
+3. Final `git diff --check` passed. Only `architecture.md` was changed in the convergence work; that change is at HEAD `f7c923c`. No tests outside the focused Repeatedly selector or full test suite were run in this closeout.
 
 Open questions:
-1. None blocking. Prior convergence follow-up remains outside this memory-only change: adjacent weed reports and Module 3 designators `REQ-COLL-020AA`, `REQ-FN-002A1`, `REQ-FN-002A2`.
+1. Whole-repository convergence remains incomplete: specifications-to-implementation/test evidence reconciliation was not completed.
+2. Reconcile the spec inventory discrepancy (46 specs reported by Allium versus 51 files reported by an earlier file scan) before relying on counts.
+3. Three malformed Module 3 designators remain unresolved: `REQ-COLL-020AA`, `REQ-FN-002A1`, and `REQ-FN-002A2`.
 
 Next:
-1. No skill changes remain to commit; propagation is recorded in `7a35d41`.
-2. Apply the fast-gate preference in future convergence work.
-3. If separately authorized, resume the prior outstanding weed/designator follow-up; do not infer repo-wide convergence from this policy propagation.
+1. Resume `/gybis-spec-weed`: reconcile the spec inventory, finish requirement/spec obligation mapping to implementation and ordinary/no-heap/example evidence, and record unresolved coverage gaps.
+2. Do not change the three designators unless the owning policy provides an authorized identity-preserving repair.
+3. After any further edits, run `make upsert-gate-fast`; do not run `make upsert-gate`, `make upsert-gate-strict`, or `make git` as part of the convergence loop.
 
 ## Previous Session State
 
