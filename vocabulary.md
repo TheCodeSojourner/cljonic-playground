@@ -1451,6 +1451,14 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `cljonic::Variant<int, long>` is storable and comparable; `cljonic::Variant<int, double>` is storable but not comparable; `cljonic::Variant<int, long>{5}` (int alternative) is not equal to `cljonic::Variant<int, long>{5L}` (long alternative); the requirements-backed `index`, `holds<int>`, `get<int>`, `get_if<int>`, and `emplace<long>(...)` operations query and rebind the active alternative without throwing or allocating; `std::variant<int, long>` is rejected at compile time as a cljonic value.
 
 
+### VariantFactory
+- **Definition:** The lowercase `variant` free function family for constructing `cljonic::Variant` values while keeping the alternative types explicit. `variant<Alternatives...>()` default-constructs the Variant, and `variant<Alternatives...>(value)` applies the same exact-alternative selection rule as direct Variant construction; it does not infer or expand the alternative list.
+- **Deprecated Synonyms:** `make_variant`
+- **Related:** Variant, NothrowVariantAlternative
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `variant<int, long>(1L)` creates a `Variant<int, long>` holding `long`; `variant<int, long>()` creates one holding the default value of its first alternative.
+
+
 ### ComparableVariantAlternative
 - **Definition:** The C++ concept identifier admitting a `Variant` alternative for value equality when it satisfies both `NothrowStableEqualityComparable` and `NothrowEqualityComparable`, ensuring alternative-strict Variant equality is non-throwing.
 - **Deprecated Synonyms:** comparable variant alternative, equality-admissible Variant alternative
