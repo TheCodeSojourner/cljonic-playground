@@ -172,8 +172,9 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∧ ∀ counted_form: places the count before the step, mirroring Clojure's `(repeatedly n f)` form
   ∧ ∀ factory: accepts named functions, lambdas, and function objects ∧ stores `std::decay_t<Step>` — named functions are accepted and stored as copyable function pointers ∧ lambdas and function objects are stored as their decayed value types
   ∧ ∀ `Step`: copy constructible ∧ the step MAY be moved from an rvalue during construction when supported
-  ∧ ∀ `T`: satisfies `NothrowCollectionElement` ∧ a const `Step` object invocable without throwing with zero arguments and an exact result of type `T`
-  ∧ ∀ `repeatedly` step: MAY maintain state or produce side effects ∧ remains non-allocating ∧ ¬∃ throw when invoked
+  ∧ ∀ `T`: satisfies `NothrowCollectionElement` ∧ a `Step` object invocable without throwing with zero arguments and an exact result of type `T`
+  ∧ ∀ `Repeatedly` traversal: invokes a copy of the producer's stored step callback ∧ mutable state held by the stored callback value starts from its stored state for each traversal
+  ∧ ∀ `repeatedly` step: MAY maintain state or produce side effects ∧ state reached through references or static storage remains shared across traversals ∧ remains non-allocating ∧ ¬∃ throw when invoked
   ∧ ∀ producer: owns a copy of the decayed `step` callback ∧ its validity does not depend on the lifetime of the construction argument
   ∧ ∀ callback: ¬∃ evaluation during construction ∧ ∀ zero_count: ¬∃ callback evaluation during traversal
   ∧ ∀ `Repeatedly`: exposes `count()` and `is_finite()` as specified by `REQ-VAL-016` and `REQ-VAL-017A` ∧ ¬∃ (exposure of `contains` ∨ positional retrieval ∨ key-based lookup ∨ `get` ∨ callable lookup) ∧ usable in constant evaluation when `Step` and the supplied arguments support constant evaluation ∧ remains usable at runtime ∧ materializes at most the explicit destination's remaining capacity in uncounted form ∧ reports `false` from `fits_into` in uncounted form
