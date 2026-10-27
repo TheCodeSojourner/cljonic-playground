@@ -84,6 +84,9 @@ concept VariantClassArgument =
  * equality: as an `equal` or `not_equal` operand, as a map key or set element, and as a stored member of a collection
  * or producer whose own equality is used. When it is not, all of those equality positions reject it.
  *
+ * Use the lowercase \c variant factory to construct a Variant with its alternative types named explicitly. The factory
+ * supports default construction and construction from one exact alternative type.
+ *
  * \b Examples
  *
  ~~~~~{.cpp}
@@ -91,15 +94,20 @@ concept VariantClassArgument =
  using namespace cljonic;
 
  int main() {
+   // Like other C++ types, a Variant type can be named with an ordinary alias.
+   using MyVariant = cljonic::Variant<int, long>;
+
    // Default construction holds the first alternative at its default value; the
    // first alternative here is int, whose default value is 0.
-   [[maybe_unused]] constexpr auto defaulted = Variant<int, long>{};
+   [[maybe_unused]] constexpr MyVariant defaulted{};
+   [[maybe_unused]] constexpr auto defaulted_by_factory = variant<int, long>();
 
    // A converting construction selects the alternative matching the argument's
    // decayed type; an argument matching no alternative is rejected at compile
    // time.
-   [[maybe_unused]] constexpr auto as_int = Variant<int, long>{1};
-   [[maybe_unused]] constexpr auto as_long = Variant<int, long>{1L};
+   [[maybe_unused]] constexpr MyVariant as_int{1};
+   [[maybe_unused]] constexpr MyVariant as_long{1L};
+   [[maybe_unused]] constexpr auto as_long_by_factory = variant<int, long>(1L);
 
    // Copy construction preserves the active alternative and its value.
    [[maybe_unused]] constexpr auto copied = as_int;
@@ -109,9 +117,8 @@ concept VariantClassArgument =
    [[maybe_unused]] constexpr auto nested =
        Variant<Variant<int, long>, char>{as_int};
    [[maybe_unused]] constexpr auto as_vector_element =
-       vector(Variant<int, long>{1}, Variant<int, long>{2L});
-   [[maybe_unused]] constexpr auto as_set_element =
-       hash_set(Variant<int, long>{1});
+       vector(MyVariant{1}, MyVariant{2L});
+   [[maybe_unused]] constexpr auto as_set_element = hash_set(MyVariant{1});
    [[maybe_unused]] constexpr auto as_map_key = map_entry(as_int, 1);
 
    return 0;
@@ -179,6 +186,21 @@ class Variant {
   private:
     std::variant<Alternatives...> storage_{};
 };
+
+/** \anchor VariantFactory
+ * Constructs a \ref Variant with its alternative types specified explicitly. The value form uses the same
+ * exact-alternative selection rule as direct construction; it does not infer or expand the alternative list.
+ */
+template <typename... Alternatives>
+[[nodiscard]] constexpr auto variant() noexcept -> Variant<Alternatives...> {
+    return {};
+}
+
+template <typename... Alternatives, typename T>
+    requires(variant_detail::matching_alternative_count_v<std::remove_cvref_t<T>, Alternatives...> == 1)
+[[nodiscard]] constexpr auto variant(const T& value) noexcept -> Variant<Alternatives...> {
+    return Variant<Alternatives...>{value};
+}
 
 /** Diagnostic specialization (REQ-DIAG-012): selected by the redirecting
  *  deduction guide below. A `Variant`'s alternatives are never deducible from

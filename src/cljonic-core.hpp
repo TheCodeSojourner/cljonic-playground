@@ -121,7 +121,7 @@
  * - take, take_last, take_nth, take_while, to_byte, to_char, to_double, to_float, to_int, to_long, to_num, to_short,
  *   tree_seq
  * - unsigned_bit_shift_right, update, update_in, update_keys, update_vals
- * - vals, vec, variant_alternative, variant_size, \ref cljonic::vector "vector", visit
+ * - vals, vec, \ref VariantFactory "variant", variant_alternative, variant_size, \ref cljonic::vector "vector", visit
  * - zipmap
  *
  * ## Set Functions
