@@ -634,6 +634,11 @@ requires (!concepts_detail::StringFactoryCapacityArguments&lt;Capacity, Args...&
 <tr class="memitem:a82fda2a23a4131e9521b2d756f0d0dd5" id="r_a82fda2a23a4131e9521b2d756f0d0dd5"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; <br />
 requires (!concepts_detail::StringFactoryDeducedArguments&lt;Args...&gt;)</td></tr>
 <tr class="memitem:a82fda2a23a4131e9521b2d756f0d0dd5 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a82fda2a23a4131e9521b2d756f0d0dd5">string</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+<tr class="memitem:a55942096f8c8e04c16c34ed97b7745bf" id="r_a55942096f8c8e04c16c34ed97b7745bf"><td class="memTemplParams" colspan="2">template&lt;typename... Alternatives&gt; </td></tr>
+<tr class="memitem:a55942096f8c8e04c16c34ed97b7745bf template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a55942096f8c8e04c16c34ed97b7745bf">variant</a> () noexcept -&gt; <a class="el" href="classcljonic_1_1_variant.html">Variant</a>&lt; Alternatives... &gt;</td></tr>
+<tr class="memitem:a115770ade413ec20a37fb7ac76b021bb" id="r_a115770ade413ec20a37fb7ac76b021bb"><td class="memTemplParams" colspan="2">template&lt;typename... Alternatives, typename T&gt; <br />
+requires (<a class="el" href="namespacecljonic_1_1variant__detail.html#a9ccabbeeac6762046412faebbf635d67">variant_detail::matching_alternative_count_v</a>&lt;std::remove_cvref_t&lt;T&gt;, Alternatives...&gt; == 1)</td></tr>
+<tr class="memitem:a115770ade413ec20a37fb7ac76b021bb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a115770ade413ec20a37fb7ac76b021bb">variant</a> (const T &amp;value) noexcept -&gt; <a class="el" href="classcljonic_1_1_variant.html">Variant</a>&lt; Alternatives... &gt;</td></tr>
 <tr class="memitem:a49e0b3c65245c90961f7e6e62c84841a" id="r_a49e0b3c65245c90961f7e6e62c84841a"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a49e0b3c65245c90961f7e6e62c84841a template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a49e0b3c65245c90961f7e6e62c84841a">Variant</a> (const T &amp;) -&gt; Variant&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_variant_domain_violation.html">concepts_detail::VariantDomainViolation</a> &gt;</td></tr>
 <tr class="memitem:a11e270768e9485445f2885cdecb1c4eb" id="r_a11e270768e9485445f2885cdecb1c4eb"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedVectorElementType, typename... Args&gt; <br />
@@ -3165,7 +3170,7 @@ requires concepts_detail::EqualScalarPairAdmissible&lt;Lhs, Rhs&gt;</div>
 <div class="line">  <span class="keyword">auto</span> runtime_r = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{1, 4, 1};</div>
 <div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(runtime_v, runtime_r) ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_variant_html"><div class="ttname"><a href="classcljonic_1_1_variant.html">cljonic::Variant</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-variant_8hpp_source.html#l00123">cljonic-variant.hpp:123</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_variant_html"><div class="ttname"><a href="classcljonic_1_1_variant.html">cljonic::Variant</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-variant_8hpp_source.html#l00130">cljonic-variant.hpp:130</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-equal_8hpp_source.html#l00304">304</a> of file <a class="el" href="cljonic-equal_8hpp_source.html">cljonic-equal.hpp</a>.</p>
 
@@ -6559,6 +6564,66 @@ template&lt;typename T&gt; </div>
       </table>
 </div><div class="memdoc">
 <p>Redirecting deduction guide (REQ-DIAG-012). No admitted <span class="tt"><a class="el" href="classcljonic_1_1_variant.html">Variant</a></span> deduction exists, so this guide can never affect a supported construction. </p>
+
+</div>
+</div>
+<a id="a55942096f8c8e04c16c34ed97b7745bf" name="a55942096f8c8e04c16c34ed97b7745bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55942096f8c8e04c16c34ed97b7745bf">&#9670;&#160;</a></span>variant() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Alternatives&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::variant </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_variant.html">Variant</a>&lt; Alternatives... &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p><a class="anchor" id="VariantFactory"></a>Constructs a <a class="el" href="classcljonic_1_1_variant.html#Variant" title="Variant">Variant</a> with its alternative types specified explicitly. The value form uses the same exact-alternative selection rule as direct construction; it does not infer or expand the alternative list. </p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-variant_8hpp_source.html#l00195">195</a> of file <a class="el" href="cljonic-variant_8hpp_source.html">cljonic-variant.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a115770ade413ec20a37fb7ac76b021bb" name="a115770ade413ec20a37fb7ac76b021bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a115770ade413ec20a37fb7ac76b021bb">&#9670;&#160;</a></span>variant() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Alternatives, typename T&gt; <br />
+requires (<a class="el" href="namespacecljonic_1_1variant__detail.html#a9ccabbeeac6762046412faebbf635d67">variant_detail::matching_alternative_count_v</a>&lt;std::remove_cvref_t&lt;T&gt;, Alternatives...&gt; == 1)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::variant </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td> -&gt; <a class="el" href="classcljonic_1_1_variant.html">Variant</a>&lt; Alternatives... &gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-variant_8hpp_source.html#l00201">201</a> of file <a class="el" href="cljonic-variant_8hpp_source.html">cljonic-variant.hpp</a>.</p>
 
 </div>
 </div>
