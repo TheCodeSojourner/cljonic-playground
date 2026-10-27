@@ -1,5 +1,39 @@
 ## Current Session State
 
+- last_session_id: 97fd521c-75dd-4640-94e5-b4f66d77fe3b
+- current_timestamp: 2026-10-27T11:12:25-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Human invoked `/cljonic-api-complete repeatedly` to allow a non-const callback and clarified the desired traversal semantics: each traversal copies the producer's stored callback; value-held mutable state restarts from that stored copy, while reference-captured or static state remains shared. Construction does not invoke the callback.
+2. Updated requirements, vocabulary, architecture, active Allium spec, concepts, iterator implementation, tests, no-heap probe, traceability snapshot, Doxygen example, and generated `cljonic.hpp`. Iterator `begin()` copies the stored callable only for non-empty traversals; `end()` and empty traversals do not copy or invoke it. `RepeatedlyStep` permits non-const invocation.
+3. Human invoked `/cljonic-full-converge-auto` and later reported a `make docs-examples` failure from unused values in Set Doxygen examples. Fixed those examples in `src/cljonic-set.hpp`, refreshed `cljonic.hpp`, and regenerated `docs/`.
+4. A validation execution mistakenly restored the generated `docs/` directory, discarding its earlier working-tree changes. The human authorized regeneration; `make docs` succeeded and generated 574 files. Current generated docs match the source, but exact recovery of prior hand-edited generated output is not guaranteed.
+
+Questions:
+1. None.
+
+Decisions:
+1. Value-held mutable callback state is per traversal; explicit external/reference/static state may persist across traversals.
+2. Do not claim repo-wide convergence: three malformed Module 3 designators and incomplete adjacent weed reports remain. The `gybis-fini` closeout commits only this session memory.
+
+Validation:
+1. Requirements structure (331 clauses), vocabulary structure (194 terms), Allium check/analyse, and traceability passed. Focused Repeatedly tests passed (124 assertions / 2 cases; 43 obligations / 43 traces).
+2. `make producer-compile-fail`, `make no-heap`, `make docs-examples` (36 compiled, 2 deferred skips), `make docs`, `make lint LINT_FILE=src/cljonic-set.hpp`, and `make no-heap-src` passed.
+3. `make test` passed (260/260). `make upsert-gate-strict` passed all targets, including sanitizer, 100% line coverage, traceability, and no-heap.
+4. Latest inspected worktree before this memory update had only `mementum/state.md` modified, no staged or untracked entries, and no merge conflicts. HEAD was `3116eea8876fe67cea52f89497ddad1bd63755a7` (`Update docs`); product changes appear committed since the prior closeout.
+
+Open questions:
+1. None blocking. Whether to address malformed Module 3 designators is outside the completed Repeatedly slice.
+
+Next:
+1. If resuming convergence, complete the outstanding adjacent weed reports and assess malformed Module 3 designators (`REQ-COLL-020AA`, `REQ-FN-002A1`, `REQ-FN-002A2`) within approved scope.
+2. Review the regenerated `docs/` diff if exact preservation of previous generated output matters; regeneration succeeded, but previous hand-edited generated output may not be recoverable.
+3. Do not claim repo-wide zero divergences based solely on the passing strict gate; the formal broad spec-weed fixed-point result was not recorded.
+
+## Previous Session State
+
 - last_session_id: 5cc51d07-6d47-4491-9f4c-1f00b3e5bc62
 - current_timestamp: 2026-10-26T16:25:00-06:00
 - recover: 1
