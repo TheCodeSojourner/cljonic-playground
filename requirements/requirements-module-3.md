@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their current primitive member and free-function operations, and callable lookup forms. `first` and `next` are active traversal operations; sequence conversion and `rest` remain approved future work. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
+This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their current primitive member and free-function operations, and callable lookup forms. `first`, `next`, and `rest` are active traversal operations; sequence conversion remains approved future work. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
 
 ## Collection Family Requirements
 
@@ -18,7 +18,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-COLL-002(x).
   ∀ context: the library provides a bounded vector with indexed lookup, indexed replacement, append, count, and stack-style pop/peek behavior where applicable
-  ∧ ∀ (sequence conversion ∧ `rest`): deferred future capabilities
+  ∧ ∀ sequence conversion (`seq`): deferred future capability
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-002A(x).
@@ -283,7 +283,8 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-COLL-020S(x).
   ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, `Associative`, and `Conjable`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, and `next` over their supported collection inputs
-  ∧ ∀ (`Seqable` ∧ `seq` ∧ `rest`): remain `deferred` until the sequence requirements are implemented for the applicable collection inputs
+  ∧ ∀ `rest`: lifecycle classification is `requirements-backed` over its supported collection inputs under `REQ-SEQ-001`–`009` and `REQ-SEQ-012`
+  ∧ ∀ (`Seqable` ∧ `seq`): remain `deferred` until the sequence requirements are implemented for the applicable collection inputs
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-COLL-020T(x).
@@ -359,9 +360,9 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ Vector stack operations: return by value ∧ non-allocating ∧ preserve Vector type, capacity, and logical order of retained elements
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-21}
 
-## Deferred Sequence Conversion and Rest Mechanics
+## Active Rest Remainder Operation
 
-> **Deferred future work — non-binding.** The sequence conversion and remainder contracts below are approved future-work behavior, not current collection APIs. `first` and `next` are supported under `REQ-FN-002A1` and `REQ-FN-002A2`; `seq` and `rest` remain outside the current API, and the clauses below are scoped to those remaining operations. These contracts MUST remain deferred until a later increment separately propagates their implementation and tests for every collection family. Their presence here records the intended future behavior without making it implementation-ready now.
+`first`, `next`, and `rest` are current collection APIs. The clauses in this section define the active `rest` contract. Sequence conversion (`seq`) remains deferred in the following section.
 
 λ REQ-SEQ-001(x).
   ∀ context: the library defines sequence as a traversal behavior over immutable values in the cljonic collection family, not as a separate owning collection type
@@ -378,39 +379,48 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-002B(x).
-  ∀ `rest`: preserve the source collection ∧ preserve the relative logical order of all retained elements ∧ apply the same element representation and capacity policy as `seq`
+  ∀ `rest`: return an owning `Vector` with the source collection's element type and static capacity ∧ preserve the source collection ∧ preserve the relative logical order of all retained elements
   ∧ ∀ maps: retained elements are value-semantic `MapEntry` values ∧ ∀ (sets ∧ maps): implementation traversal order MAY be repeatable but remains semantically unordered ∧ ∀ queues: retained elements remain in FIFO order
+  ∧ `constexpr` ∧ `noexcept` ∧ non-allocating ∧ non-mutating ∧ ¬∃ RTTI
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-003(x).
-  ∀ collection that can be traversed as a sequence: exposes a sequence conversion operation ∧ the remaining common traversal operation (`rest`) directly
+  ∀ supported collection that can be traversed as a sequence: exposes `rest` directly as a generic free function
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-004(x).
-  ∀ context: `seq`, `rest`, and `count` are available as generic free functions where the required traversal capability exists
-  ∧ ∀ (direct collection calls ∧ calls on sequence values) where both apply: behaviorally equivalent
+  ∀ supported collection: `rest(collection)` is available as a generic free function where the required traversal capability exists
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-005(x).
-  ∀ (`seq` ∧ `rest`) traversal: ¬∃ mutation of the source collection
+  ∀ `rest` traversal: ¬∃ mutation of the source collection
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-006(x).
-  ∀ (`seq` ∧ `rest`) traversal: bounded ∨ otherwise guaranteed not to allocate dynamically on supported embedded paths
+  ∀ `rest` traversal: bounded ∧ ¬∃ dynamic allocation
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-007(x).
-  ∀ remaining sequence_API (`seq` ∧ `rest`): supports vector, map, set, queue, and string input from the cljonic collection family
+  ∀ `rest`: supports vector, map, set, queue, and string input from the cljonic collection family
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-008(x).
-  ∀ remaining sequence_API (`seq` ∧ `rest`): ¬∃ requirement of support for arbitrary external arrays, ranges, iterables, or user-defined container types
-  ∧ ∀ supported_sequence_input: belongs to the cljonic collection family ∨ is explicitly added by an approved requirement
+  ∀ `rest`: ¬∃ requirement of support for arbitrary external arrays, ranges, iterables, or user-defined container types
+  ∧ ∀ supported_rest_input: belongs to the cljonic collection family
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-009(x).
-  ∀ sequenceable_collection_type: empty-sequence behavior of `seq` and `rest` is consistent
+  ∀ empty collection: `rest(collection)` returns an empty owning `Vector` with the collection's element type and capacity
   {source: stakeholder_decided, decided_by: original_spec_author}
+
+λ REQ-SEQ-012(x).
+  ∀ `rest` of a map: each retained element is an independent value-semantic `MapEntry` containing exactly one key and its associated value
+  ∧ ∀ map traversal order: semantically unordered
+  {source: stakeholder_decided, decided_by: original_spec_author}
+
+## Deferred Sequence Conversion
+
+> **Deferred future work — non-binding.** Sequence conversion (`seq`) remains outside the current API. The clauses below record intended future behavior and MUST remain deferred until a later increment separately propagates its implementation and tests for every collection family.
 
 λ REQ-SEQ-010(x).
   ∀ `seq` application: returns an immutable, value-semantic bounded vector containing the sequence elements of its input
@@ -418,10 +428,6 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-SEQ-011(x).
   ∀ vector returned by `seq`: independently valid ∧ uses bounded automatic or static storage ∧ ¬∃ (dynamic_allocation ∨ retained dependency on the source collection)
-  {source: stakeholder_decided, decided_by: original_spec_author}
-
-λ REQ-SEQ-012(x).
-  ∀ element produced by sequencing a map: value-semantic map-entry value containing exactly one key and its associated value ∧ independently valid ∧ ¬∃ retained dependency on the source map
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-013(x).
@@ -686,4 +692,4 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 - **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `empty`, `is_empty`, `not_empty`, `first`, `next`, `rest`, `seq`).
 - **Governed REQs**: `REQ-COLL-001`, `REQ-COLL-001A`, `REQ-COLL-002`, `REQ-COLL-002A`, `REQ-COLL-004`, `REQ-COLL-004A`–`004C`, `REQ-COLL-005`, `REQ-COLL-005A`–`005B`, `REQ-COLL-006`–`007`, `REQ-COLL-007A`, `REQ-COLL-008`–`010`, `REQ-COLL-010A`–`010B`, `REQ-COLL-011`–`012`, `REQ-COLL-012A`, `REQ-COLL-013`, `REQ-COLL-013A`–`013B`, `REQ-COLL-014`–`018`, `REQ-COLL-018A`, `REQ-COLL-019`, `REQ-COLL-019A`–`019B`, `REQ-COLL-020`, `REQ-COLL-020A`–`020AA`, `REQ-COLL-021`–`022`, `REQ-SEQ-001`–`002`, `REQ-SEQ-002A`–`002B`, `REQ-SEQ-003`–`014`, `REQ-FN-001`–`002`, `REQ-FN-002A`, `REQ-FN-002A1`, `REQ-FN-002A2`, `REQ-FN-002B`–`002H`, `REQ-FN-002M`, `REQ-FN-002P`–`002Y`, `REQ-FN-003`–`008`, `REQ-FN-008A`, `REQ-FN-026`.
-- **Deferred REQs**: `REQ-SEQ-001`–`014`, `REQ-SEQ-002A`–`002B`, `REQ-FN-002A`–`002B`.
+- **Deferred REQs**: `REQ-SEQ-010`–`011`, `REQ-SEQ-013`–`014`, `REQ-FN-002A`–`002B`.
