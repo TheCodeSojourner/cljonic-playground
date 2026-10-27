@@ -5,7 +5,7 @@
 λ current_scope(x). implemented_value_domain(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly
   ∧ direct_construction(x) ∧ member_observation(x)
   ∧ vector_factory(x) ∧ hash_map_factory(x) ∧ map_entry_factory(x) ∧ set_factory(x)
-  ∧ queue_factory(x) ∧ string_factory(x)
+  ∧ queue_factory(x) ∧ string_factory(x) ∧ variant_factory(x)
   ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ preflight(fits_into))(x)
   | collection_callable_lookup(x) → Vector ∨ Map ∨ Set ∨ String
   | module3(x) → concrete_array_backed_bounded_types(x)
@@ -80,6 +80,11 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | preserve(public_String_type ∧ existing_String_constructors)
     ∧ direct_external_cpp_range_or_view_import(x) → retain(SourceConstruction(x))
   | trace_to(REQ-FN-029H)
+
+λ S5_variant_creation_policy(x). user_facing_Variant_creation(x) → prefer(lowercase_variant_factory(x))
+  | runtime_creation(x) ∧ constant_evaluation_creation(x) → same_factory_surface(x)
+  | preserve(public_Variant_type ∧ existing_Variant_constructors)
+  | trace_to(REQ-CAP-012A)
 
 λ S5_change_policy(x). public_change(x) → preserve(S5_identity(x))
 
@@ -452,6 +457,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | duplicate_key(x) → later_value_replaces_earlier(x)
   | constexpr ∧ noexcept ∧ non_allocating ∧ independently_owning_result
   | trace_to(REQ-FN-029D) ∧ realize(S5_map_creation_policy)
+
+λ S2_variant_factory_contract(x). variant<Alternatives...>() → construct(default_Variant_with_first_alternative_active(x))
+  | variant<Alternatives...>(value) → construct(Variant_by_existing_exact_alternative_rule(x))
+  | preserve(explicit_alternative_types ∧ existing_Variant_construction_semantics)
+  | constexpr ∧ noexcept ∧ non_allocating
+  | trace_to(REQ-CAP-012A) ∧ realize(S5_variant_creation_policy)
 
 λ S2_set_factory_contract(x). hash_set(args...) → construct(owning_Set_from_individual_arguments_in_order(x))
   | hash_set(first, rest...) → element_type(unqualified_type(first)) ∧ capacity(argument_count)
@@ -1319,6 +1330,6 @@ concept SequenceableProducer =
   | module6_numeric_authority(x) ≡ requirements/requirements-module-6.md → govern(checked_arithmetic ∧ callables)
   | module7_extended_domain_authority(x) ≡ requirements/requirements-module-7.md → govern(relations ∧ set_algebra ∧ regex ∧ Atom ∧ formatting ∧ KeywordEnumNameMapping)
 
-λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ vector_factory ∧ hash_map_factory ∧ map_entry_factory ∧ set_factory ∧ queue_factory ∧ string_factory ∧ into ∧ fits_into
+λ current_implementation_boundary(x). active_surface(x) ≡ Vector ∧ MapEntry ∧ Map ∧ Set ∧ Queue ∧ String ∧ Variant ∧ Range ∧ Repeat ∧ Cycle ∧ Iterate ∧ Repeatedly ∧ primitive_free_functions ∧ vector_factory ∧ hash_map_factory ∧ map_entry_factory ∧ set_factory ∧ queue_factory ∧ string_factory ∧ variant_factory ∧ into ∧ fits_into
   | approved_but_unimplemented(algorithms ∨ regexes) → remain_outside(active_surface(x))
   | approved_but_unimplemented(x) → require(specification_and_implementation_propagated(x)) before(active_surface_inclusion(x))
