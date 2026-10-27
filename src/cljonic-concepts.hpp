@@ -441,10 +441,10 @@ concept IterateStep = NothrowCollectionElement<T> && std::copy_constructible<Ste
                           { std::invoke(step, value) } noexcept -> std::same_as<T>;
                       };
 
-/** Requires a nothrow-storable element and a copyable, non-throwing const zero-argument callback producing T. */
+/** Requires a nothrow-storable element and a copyable, non-throwing zero-argument callback producing T. */
 template <typename T, typename Step>
 concept RepeatedlyStep = NothrowCollectionElement<T> && std::copy_constructible<Step> &&
-                         std::is_nothrow_copy_constructible_v<Step> && requires(const Step& step) {
+                         std::is_nothrow_copy_constructible_v<Step> && requires(Step& step) {
                              { std::invoke(step) } noexcept -> std::same_as<T>;
                          };
 
@@ -616,9 +616,9 @@ struct RejectedProducerFactory {};
 template <typename Step>
 concept ValidRepeatedlyStep =
     std::copy_constructible<std::decay_t<Step>> && std::is_nothrow_copy_constructible_v<std::decay_t<Step>> &&
-    requires(const std::decay_t<Step>& step) {
+    requires(std::decay_t<Step>& step) {
         { std::invoke(step) } noexcept;
-        requires concepts::NothrowCollectionElement<std::invoke_result_t<const std::decay_t<Step>&>>;
+        requires concepts::NothrowCollectionElement<std::invoke_result_t<std::decay_t<Step>&>>;
     };
 
 /** Guarded `cycle` admission: a cljonic source whose element type is
