@@ -29,4 +29,4 @@ at gates. Verified by promoting `empty` on 2026-10-17.
    set, add the architecture contract rule, restate the term as active; refresh
    the obligation snapshot and regenerate `cljonic.hpp` and `docs/`.
 
-Remaining deferred headers: `first`, `next`, `rest`, `seq`, `not_empty`.
+Remaining deferred headers: `first`, `next`, `seq`, `not_empty`.
