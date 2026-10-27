@@ -14,7 +14,7 @@
   | cpp_interoperability(x) → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
     | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
   | module4_active_slice(x) → Range(x) ∧ Repeat(x) ∧ Cycle(x) ∧ Iterate(x) ∧ Repeatedly(x) ∧ into(x) ∧ fits_into(x)
-  | deferred_sequence_conversion_and_rest_contracts(x) → remain_outside(current_collection_api(x))
+  | deferred_sequence_conversion(x) → remain_outside(current_collection_api(x))
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
   | future_expansion(transformations ∨ numeric_algorithms ∨ callable_adapters ∨ set_algebra
       ∨ relational_models ∨ regexes ∨ formatting ∨ KeywordEnumNameMapping ∨ Atom)
@@ -806,17 +806,17 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating ∧ preserve(Vector_type ∧ capacity)
   | classify_as(RequirementsBacked) ∧ trace_to(REQ-COLL-022)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ rest
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ contains ∧ count ∧ fits_into ∧ into
+  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ rest ∧ contains ∧ count ∧ fits_into ∧ into
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | bounded_insertion_capacity_inspection(x) ≡ full ∨ equivalent_capacity_inspection
   | requirements_backed_operations(x) → classify_as(RequirementsBacked)
   | bounded_insertion_capacity_inspection(x) → classify_as(RequirementsBacked)
   | is_empty(value) → admit(SequenceableCollection ∨ SequenceableProducer) ∧ return(count(value) == 0)
     ∧ non_throwing ∧ non_allocating ∧ provide(targeted_rejection_diagnostic(¬(SequenceableCollection ∨ SequenceableProducer)))
-  | deferred_sequence_operations(x) ≡ rest ∧ seq
+  | deferred_sequence_operations(x) ≡ seq
     ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | next(collection) → require(SequenceableCollection(collection) ∧ ConstRangeTraversal(collection)
     ∧ collection ∈ {Vector, Map, Set, Queue, String})
@@ -825,6 +825,13 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ preserve(input(collection) ∧ logical_traversal_order(collection) ∧ no_heap ∧ noexcept ∧ constexpr)
     ∧ map_entry_representation(Map) ∧ semantically_unordered(Map ∨ Set) ∧ preserve_FIFO_order(Queue)
     ∧ unsupported_input(next) → reject_at_compile_time_with(targeted_diagnostic_naming(next ∧ supported_domains) ∧ REQ-DIAG-009)
+  | rest(collection) → require(SequenceableCollection(collection) ∧ ConstRangeTraversal(collection)
+    ∧ collection ∈ {Vector, Map, Set, Queue, String})
+    ∧ return(owning_Vector<value_type(collection), capacity(collection)> of logical_tail(collection))
+    ∧ empty_input(collection) → return(empty_Vector<value_type(collection), capacity(collection)>)
+    ∧ preserve(input(collection) ∧ logical_traversal_order(collection) ∧ no_heap ∧ noexcept ∧ constexpr)
+    ∧ map_entry_representation(Map) ∧ semantically_unordered(Map ∨ Set) ∧ preserve_FIFO_order(Queue)
+    ∧ unsupported_input(rest) → reject_at_compile_time_with(targeted_diagnostic_naming(rest ∧ supported_domains) ∧ REQ-DIAG-009)
   | deferred_collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
     ∧ take_nth ∧ nth ∧ nthnext ∧ nthrest ∧ butlast ∧ map_indexed ∧ rseq ∧ second ∧ ffirst ∧ fnext
     ∧ nfirst ∧ nnext ∧ some ∧ is_every ∧ not_any ∧ not_every ∧ distinct ∧ dedupe ∧ frequencies
