@@ -115,7 +115,7 @@
  *   pr_str, print_to, prn_str
  * - \ref QueueFactory "queue", quot
  * - \ref Range "range", reduce_kv, reductions, rem, remove, \ref Repeat "repeat", \ref Repeatedly "repeatedly",
- *   replace, replicate, reset, reset_vals, rest, rseq
+ * replace, replicate, reset, reset_vals, \ref Rest "rest", rseq
  * - second, select_keys, seq, some, some_fn, sort, sort_by, split_at, split_with, str, \ref StringFactory "string",
  *   sub, subvec, swap, swap_vals
  * - take, take_last, take_nth, take_while, to_byte, to_char, to_double, to_float, to_int, to_long, to_num, to_short,
@@ -194,6 +194,7 @@
 #include <cljonic-range.hpp>
 #include <cljonic-repeat.hpp>
 #include <cljonic-repeatedly.hpp>
+#include <cljonic-rest.hpp>
 #include <cljonic-set.hpp>
 #include <cljonic-string.hpp>
 #include <cljonic-variant.hpp>
