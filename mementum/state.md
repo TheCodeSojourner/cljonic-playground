@@ -1,5 +1,36 @@
 ## Current Session State
 
+- last_session_id: 12dee854-9b78-4c34-bdec-971763c328db
+- current_timestamp: 2026-10-27T15:46:40-06:00
+- session_complete: true
+
+Task:
+1. Human invoked `/cljonic-api-complete rest`, followed by targeted `/cljonic-api-converge rest`. Promoted `rest` as a public collection-only operation; `seq` and the broader shaping family remain deferred.
+2. The API implementation and evidence were propagated across requirements, vocabulary, architecture, the active Allium specification, tests, no-heap probes, documentation example, umbrella/diagnostic/example registries, traceability, and generated `cljonic.hpp`. The implementation returns `next(collection)` and preserves the specified logical-tail semantics for Vector, Map, Set, Queue, and String.
+3. Completed the interactive vocabulary cleanup: standardized the Rest entry on `LogicalTraversalOrder`, made its distinction from `Pop` explicit for Vector and Queue, and removed the duplicate deprecated synonym `sequence remainder` from Rest.
+
+Questions:
+1. None.
+
+Decisions:
+1. `rest` returns an owning `Vector<value_type, source_capacity>` containing every logical element after the first; empty and zero-capacity inputs return an empty Vector. Its behavior matches the active `next` tail contract, while `pop` remains collection-specific.
+2. Keep `sequence remainder` as a deprecated synonym only for Next; Rest has no deprecated synonyms. Keep `seq` deferred.
+3. Do not generate Doxygen HTML, stage product changes, run `make git`, or commit product changes as part of this task.
+
+Validation:
+1. Requirements structure passed (332 unique clauses); vocabulary structure passed (196 terms). Allium check/analysis passed with no diagnostics; exact trace coverage passed (18/18); compile-fail checks passed.
+2. Modular and single-header `[rest]` tests passed (104 assertions each); `make no-heap` passed, including modular and single-header runtime probes and allocator symbol scans.
+3. `make docs-examples` passed (37 compiled; only deferred `seq` skipped). The extracted Rest example linked and ran successfully, including with RTTI/exceptions disabled.
+4. After the vocabulary edit, `make vocabulary-structure`, final `make upsert-gate-fast`, and `git diff --check` passed. No docs HTML was generated. No product files are currently modified or staged; only `mementum/state.md` is modified.
+
+Open questions:
+1. None for `rest`; `seq` remains deferred.
+
+Next:
+1. Await human review. Human owns final `make git` and any product commits.
+
+## Previous Session State
+
 - last_session_id: a42b610a-d30f-4eaa-bbb2-17b306ed0b1f
 - current_timestamp: 2026-10-27T13:19:38-06:00
 - recover: 1
