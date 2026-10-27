@@ -9,7 +9,7 @@ namespace {
            disj_probe() && dissoc_probe() && fits_into_probe() && get_probe() && into_probe() && iterate_probe() &&
            empty_probe() && is_empty_probe() && first_probe() && map_entry_probe() && map_probe() && equal_probe() &&
            not_equal_probe() && not_empty_probe() && next_probe() && peek_probe() && pop_probe() && queue_probe() &&
-           range_probe() && repeat_probe() && repeatedly_probe() && same_type_argument_probe() &&
+           range_probe() && repeat_probe() && repeatedly_probe() && rest_probe() && same_type_argument_probe() &&
            producer_storage_probe() && set_probe() && string_probe() && variant_probe();
 }
 } // namespace

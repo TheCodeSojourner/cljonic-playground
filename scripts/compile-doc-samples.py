@@ -21,15 +21,14 @@ USING_INDENTED_RE = re.compile(r"(?m)^[ \t]+using namespace cljonic;")
 
 # Doc examples are compiled against the public single-header API (cljonic.hpp),
 # which is generated from the cljonic-core.hpp umbrella. The remaining
-# sequence-shaping free functions below are intentionally NOT part of that
-# umbrella: `seq` and `rest` were deferred with the sequence-conversion work.
+# sequence-conversion free function is intentionally NOT part of that
+# umbrella: `seq` remains deferred.
 # Their doc examples therefore cannot be compiled against a public API they do
 # not yet belong to. This exclusion is explicit (and reported) rather than
 # silent; drop a header from this set only when it is promoted into
 # cljonic-core.hpp.
 DEFERRED_NON_PUBLIC_HEADERS = frozenset(
     {
-        "cljonic-rest.hpp",
         "cljonic-seq.hpp",
     }
 )
