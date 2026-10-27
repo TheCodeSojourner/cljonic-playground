@@ -622,10 +622,10 @@ concept IterateStep = NothrowCollectionElement<T> && std::copy_constructible<Ste
                           { std::invoke(step, value) } noexcept -> std::same_as<T>;
                       };
 
-/** Requires a nothrow-storable element and a copyable, non-throwing const zero-argument callback producing T. */
+/** Requires a nothrow-storable element and a copyable, non-throwing zero-argument callback producing T. */
 template <typename T, typename Step>
 concept RepeatedlyStep = NothrowCollectionElement<T> && std::copy_constructible<Step> &&
-                         std::is_nothrow_copy_constructible_v<Step> && requires(const Step& step) {
+                         std::is_nothrow_copy_constructible_v<Step> && requires(Step& step) {
                              { std::invoke(step) } noexcept -> std::same_as<T>;
                          };
 
@@ -797,9 +797,9 @@ struct RejectedProducerFactory {};
 template <typename Step>
 concept ValidRepeatedlyStep =
     std::copy_constructible<std::decay_t<Step>> && std::is_nothrow_copy_constructible_v<std::decay_t<Step>> &&
-    requires(const std::decay_t<Step>& step) {
+    requires(std::decay_t<Step>& step) {
         { std::invoke(step) } noexcept;
-        requires concepts::NothrowCollectionElement<std::invoke_result_t<const std::decay_t<Step>&>>;
+        requires concepts::NothrowCollectionElement<std::invoke_result_t<std::decay_t<Step>&>>;
     };
 
 /** Guarded `cycle` admission: a cljonic source whose element type is
@@ -6573,6 +6573,7 @@ struct contains_standard_range<Repeat<T>> : std::bool_constant<contains_standard
 #include <concepts>
 #include <cstddef>
 #include <functional>
+#include <optional>
 #include <type_traits>
 #include <utility>
 
@@ -6601,8 +6602,11 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
  * zero-argument step callable and produces a fresh element by invoking the step for every observed element.
  * `repeatedly(step)` is unbounded, while `repeatedly(count, step)` yields exactly \p count elements.
  *
- * The step may be a lambda, a named function, or a function object. It may maintain state or produce side effects, but
- * it must not throw or allocate when invoked. Callback types and produced element types remain exact.
+ * The step may be a lambda, a named function, or a function object, including a callable with a non-const call
+ * operator. It may maintain state or produce side effects, but it must not throw or allocate when invoked. Each
+ * traversal invokes a copy of the stored step: mutable state held by value starts from the stored state each time,
+ * while state reached through references or static storage remains shared across traversals. Callback types and
+ * produced element types remain exact.
  *
  * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
  * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
@@ -6623,29 +6627,56 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
    constexpr auto constexpr_sum = [] {
      constexpr auto values = repeatedly(3, five);
      auto sum = 0;
+
+     // -----------------------------------------------------------------------
+     // C++ interoperability: Repeatedly supports const traversal.
+     // -----------------------------------------------------------------------
      for (const auto value : values) {
        sum += value;
      }
      return sum;
    }();
 
-   // Runtime construction also accepts an inline lambda step callback.
-   auto runtime_values = repeatedly(2, []() noexcept { return 7; });
+   // Mutable value-captured state starts from the stored value on each
+   // traversal.
+   const auto runtime_values = repeatedly(2, [value = 0]() mutable noexcept {
+     value += 3;
+     return value;
+   });
+
+   auto first_runtime_sum = 0;
+   for (const auto value : runtime_values) {
+     first_runtime_sum += value;
+   }
+   auto second_runtime_sum = 0;
+   for (const auto value : runtime_values) {
+     second_runtime_sum += value;
+   }
+
+   // Static state is shared and continues across traversals.
+   const auto shared_values = repeatedly(2, []() noexcept {
+     static int shared_value = 0;
+     return ++shared_value;
+   });
+   auto first_shared_sum = 0;
+   for (const auto value : shared_values) {
+     first_shared_sum += value;
+   }
+   auto second_shared_sum = 0;
+   for (const auto value : shared_values) {
+     second_shared_sum += value;
+   }
 
    // An uncounted Repeatedly is an unbounded producer whose observation is
    // bounded by CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or a destination
    // capacity.
    [[maybe_unused]] constexpr auto unbounded = repeatedly(five);
 
-   // -----------------------------------------------------------------------
-   // C++ interoperability: Repeatedly supports const traversal.
-   // -----------------------------------------------------------------------
-   auto runtime_sum = 0;
-   for (const auto value : runtime_values) {
-     runtime_sum += value;
-   }
-
-   return constexpr_sum == 15 && runtime_sum == 14 ? 0 : 1;
+   return constexpr_sum == 15 && first_runtime_sum == 9 &&
+                  second_runtime_sum == 9 && first_shared_sum == 3 &&
+                  second_shared_sum == 7
+              ? 0
+              : 1;
  }
  ~~~~~
  */
@@ -6662,11 +6693,35 @@ class Repeatedly {
 
         constexpr const_iterator() noexcept = default;
 
-        constexpr const_iterator(const Step* step, std::size_t remaining) noexcept
-            : step_(step), remaining_(remaining) {
+        constexpr explicit const_iterator(std::size_t remaining) noexcept : remaining_(remaining) {
+        }
+
+        constexpr const_iterator(const Step& step, std::size_t remaining) noexcept
+            : step_{step}, remaining_(remaining) {
             if (remaining_ > 0U) {
                 current_ = std::invoke(*step_);
             }
+        }
+
+        constexpr const_iterator(const const_iterator&) noexcept = default;
+
+        constexpr auto operator=(const const_iterator& other) noexcept -> const_iterator& {
+            if (this != &other) {
+                step_.reset();
+                if (other.step_.has_value()) {
+                    step_.emplace(*other.step_);
+                }
+                remaining_ = other.remaining_;
+                current_ = other.current_;
+            }
+            return *this;
+        }
+
+        constexpr const_iterator(const_iterator&& other) noexcept : const_iterator(other) {
+        }
+
+        constexpr auto operator=(const_iterator&& other) noexcept -> const_iterator& {
+            return *this = other;
         }
 
         [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
@@ -6693,7 +6748,7 @@ class Repeatedly {
         }
 
       private:
-        const Step* step_{nullptr};
+        std::optional<Step> step_{};
         std::size_t remaining_{0U};
         T current_{};
     };
@@ -6731,11 +6786,12 @@ class Repeatedly {
     }
 
     [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
-        return const_iterator{&step_, count()};
+        const auto traversal_count = count();
+        return traversal_count == 0U ? const_iterator{0U} : const_iterator{step_, traversal_count};
     }
 
     [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
-        return const_iterator{&step_, 0U};
+        return const_iterator{0U};
     }
 
   private:
@@ -6770,14 +6826,13 @@ template <typename Step, typename Count>
 Repeatedly(const Step&, Count)
     -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
 
-template <typename Step, typename T = std::invoke_result_t<const std::decay_t<Step>&>>
+template <typename Step, typename T = std::invoke_result_t<std::decay_t<Step>&>>
     requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
 [[nodiscard]] constexpr auto repeatedly(Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
     return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step)};
 }
 
-template <concepts_detail::ProducerCount Count, typename Step,
-          typename T = std::invoke_result_t<const std::decay_t<Step>&>>
+template <concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t<std::decay_t<Step>&>>
     requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
 [[nodiscard]] constexpr auto repeatedly(Count count, Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
     return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step), count};
@@ -6890,6 +6945,7 @@ namespace cljonic {
  int main() {
    // The factory is the idiomatic way to create sets.
    constexpr auto factory_set = hash_set(1, 2, 3);
+   static_assert(factory_set(2) == 2);
 
    // A named set type makes the element and capacity contract explicit. A
    // duplicate value is a no-op. Constant-evaluated duplicate construction is
@@ -7239,6 +7295,8 @@ concept HashSetFactoryCapacityArguments =
    // later conj operations, including an empty zero-capacity set.
    constexpr auto reserved = hash_set<int, 4>();
    constexpr auto zero = hash_set<int, 0>();
+   static_assert(is_empty(reserved));
+   static_assert(is_empty(zero));
 
    // Runtime duplicates deduplicate; the deduced capacity still equals the
    // argument count.
@@ -7251,7 +7309,9 @@ concept HashSetFactoryCapacityArguments =
    // A named set type keeps the element and capacity contract explicit.
    constexpr auto typed = hash_set<AccountSet::value_type, 4>(1, 2, 3);
 
-   return (typed(1) == 1 && runtime_set(50) == 50 && runtime_set(99, -1) == -1)
+   return (typed(1) == 1 && runtime_duplicate(20) == 20 &&
+           runtime_duplicate(30, -1) == -1 && runtime_set(50) == 50 &&
+           runtime_set(99, -1) == -1)
               ? 0
               : 1;
  }
