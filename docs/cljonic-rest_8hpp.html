@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="headertitle"><div class="title">cljonic-rest.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>&gt;</code><br />
 </div>
 <p><a href="cljonic-rest_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -116,8 +116,11 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:abf6c2fa3e470e828b91b5bb6a12afba7" id="r_abf6c2fa3e470e828b91b5bb6a12afba7"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
-<tr class="memitem:abf6c2fa3e470e828b91b5bb6a12afba7 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#abf6c2fa3e470e828b91b5bb6a12afba7">cljonic::rest</a> (const C &amp;collection) noexcept -&gt; decltype(collection.pop())</td></tr>
+<tr class="memitem:a3c46c302667fe04e6f0259fb6cfe8f6c" id="r_a3c46c302667fe04e6f0259fb6cfe8f6c"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::NextSequenceableCollection C&gt; </td></tr>
+<tr class="memitem:a3c46c302667fe04e6f0259fb6cfe8f6c template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a3c46c302667fe04e6f0259fb6cfe8f6c">cljonic::rest</a> (const C &amp;collection) noexcept -&gt; <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; typename C::value_type, C::capacity()&gt;</td></tr>
+<tr class="memitem:ae88ef4859eacf3a08cbc05645d5c65ec" id="r_ae88ef4859eacf3a08cbc05645d5c65ec"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts_detail::NextSequenceableCollection&lt;C&gt;)</td></tr>
+<tr class="memitem:ae88ef4859eacf3a08cbc05645d5c65ec template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ae88ef4859eacf3a08cbc05645d5c65ec">cljonic::rest</a> (const C &amp;value) noexcept -&gt; void</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
