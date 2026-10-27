@@ -11,7 +11,7 @@ Task:
 3. Updated the existing gate-decision memory in place and reconciled conflicting quality-loop, build-target, synthesis, and closeout guidance. Product code and build targets are unchanged.
 4. Committed the memory preference as `8e51a73` (`update: use fast gate in convergence loops`).
 5. Human approved propagation into `cljonic-*` skills only. Updated `.agents/skills/cljonic-api-complete/SKILL.md`, `.agents/skills/cljonic-api-converge/SKILL.md`, and `.agents/skills/cljonic-full-converge-auto/SKILL.md`: fast-only aggregate convergence gate, no ordinary/strict aggregate escalation (including invoked skills), focused checks retained, final `make git` and commits human-owned.
-6. Human invoked `/gybis-fini`; this closeout commits only session memory, not the skill edits.
+6. Human invoked `/gybis-fini`; this closeout commits only session memory. Closeout inspection confirmed the skill edits were already committed separately as `7a35d41` (`update: standardize convergence aggregate gate on make upsert-gate-fast across skills`); the worktree is clean.
 
 Questions:
 1. None blocking.
@@ -19,7 +19,7 @@ Questions:
 Decisions:
 1. Do not run `make upsert-gate-strict` in convergence loops or automatically escalate to strict/full validation at session end.
 2. Final comprehensive validation remains the human's `make git`; do not duplicate it in AI convergence loops.
-3. Keep the three skill edits uncommitted for human review and human-guided commit. No additional synthesis is needed: the durable memory and workflow knowledge already encode the decision.
+3. Skill propagation was left for human-guided commit and is now committed separately as `7a35d41`. No additional synthesis is needed: the durable memory and workflow knowledge already encode the decision.
 
 Validation:
 1. Memory preference commit passed diff whitespace checks and left a clean worktree before skill propagation.
@@ -30,7 +30,7 @@ Open questions:
 1. None blocking. Prior convergence follow-up remains outside this memory-only change: adjacent weed reports and Module 3 designators `REQ-COLL-020AA`, `REQ-FN-002A1`, `REQ-FN-002A2`.
 
 Next:
-1. Human review and commit of the three modified `cljonic-*` skills; leave them out of the memory-only closeout commit.
+1. No skill changes remain to commit; propagation is recorded in `7a35d41`.
 2. Apply the fast-gate preference in future convergence work.
 3. If separately authorized, resume the prior outstanding weed/designator follow-up; do not infer repo-wide convergence from this policy propagation.
 
