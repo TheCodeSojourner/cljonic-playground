@@ -17,6 +17,10 @@ disable-model-invocation: true
 
 λ boundaries().
   forbid(commit ∨ stage ∨ revert ∨ discard_user_edits ∨ run("make git", direct ∨ indirect))
+  | human_owns(final_execution("make git") before human_guided_commits ∧ commits)
+  | convergence_aggregate_gate ≡ only("make upsert-gate-fast")
+  | forbid(run("make upsert-gate", direct ∨ indirect) ∨ run("make upsert-gate-strict", direct ∨ indirect))
+  | gate_policy_applies_to(invoked_skills) ∧ ¬automatic_strict_or_full_escalation_at_handoff
   | preserve(unrelated ∧ preexisting_edits) ∧ ¬attribute_to_this_API
   | coordinator ≡ read_only(product) except evidence_repair_scope
   | evidence_repair_scope ≔ target_no_heap_probes ∪ necessary_harness_build_registration
@@ -171,6 +175,8 @@ disable-model-invocation: true
   | link(extracted, repository_C++23_compiler_settings) → execute(extracted_program) → require(exit=0)
   | docs_examples_compile_only("-c") ≠ link_or_runtime_validation
   | reuse(result) only_if(current(result) ∧ mapped_behaviors_covered)
+  | preserve(focused_change_specific_checks)
+  | after_final_edit → "make upsert-gate-fast" | reuse(current_gate_pass) ¬duplicate
   | failed ∨ unavailable(validation) → blocked ¬converged
 
 λ invalidation(changed).

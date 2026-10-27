@@ -21,7 +21,10 @@ disable-model-invocation: true
   forbid(commit ∨ stage ∨ revert ∨ discard_user_edits ∨ edit_vendored_gybis)
   | forbid(run("make git", direct ∨ indirect) ∨ unsolicited_gybis_invocation)
   | preserve(preexisting ∧ unrelated_changes ∧ explicit_deferrals)
-  | human_owns(final_repository_gate ∧ commits)
+  | human_owns(final_execution("make git") before human_guided_commits ∧ commits)
+  | convergence_aggregate_gate ≡ only("make upsert-gate-fast")
+  | forbid(run("make upsert-gate", direct ∨ indirect) ∨ run("make upsert-gate-strict", direct ∨ indirect))
+  | gate_policy_applies_to(invoked_skills) ∧ ¬automatic_strict_or_full_escalation_at_handoff
   | unmet(active_contract) → ¬claim(complete)
 
 λ startup().
@@ -75,7 +78,7 @@ disable-model-invocation: true
     ∧ example_evidence() even_if(no_implementation_edit)
   | integration: generated_outputs() → synchronize(spec_obligations ∧ test_TRACE_IDs)
     → refresh_snapshot_if_needed("make traceability-spec-to-code-update-snapshot")
-    → authoritative_trace → relevant_focused_gates
+    → authoritative_trace → relevant_focused_gates → "make upsert-gate-fast"
   | ¬substitute(example_assertions, behavioral_tests ∨ resource_probes)
   | each_layer: validate → report → continue | ¬approval_pause_at_layer_boundary
   | failed(check) → repair_same_slice → rerun(check) before widen
@@ -152,7 +155,9 @@ disable-model-invocation: true
   | changed(input) → invalidate(only_dependent_checks ∧ affected_contract_mappings)
   | passing ∧ current(check) → reuse ¬rerun
   | narrow(checker, target_filter, compile, resource_gate)
-  | ¬full_suite_or_broad_audits_per_layer ∧ ¬final_catch_all_gate
+  | ¬full_suite_or_broad_audits_per_layer ∧ ¬expensive_final_catch_all_gate
+  | preserve(focused_change_specific_checks) ∧ reuse(current_evidence)
+  | after_final_edit → "make upsert-gate-fast" | ¬duplicate_current_gate_pass
   | strict_trace only_after(sync(spec ∧ TRACE_IDs ∧ snapshot))
   | upstream_contract_edit → reopen(affected_probe_example_rows) even_if(unchanged_code)
 

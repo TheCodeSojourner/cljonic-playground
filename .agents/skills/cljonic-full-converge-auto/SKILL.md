@@ -30,7 +30,10 @@ disable-model-invocation: true
   | preserve(preexisting ∧ unrelated_edits) ∧ ¬attribute_to_this_run
   | ambiguous_preexisting_generated_edits → record(UNRESOLVED, output_path) ∧ skip_overwrite ∧ continue
   | durable_artifacts ≔ requirements/ ∪ vocabulary.md ∪ architecture.md ∪ specs/
-  | human_owns(final_make_git ∧ commits)
+  | human_owns(final_execution("make git") before human_guided_commits ∧ commits)
+  | convergence_aggregate_gate ≡ only("make upsert-gate-fast")
+  | forbid(run("make upsert-gate", direct ∨ indirect) ∨ run("make upsert-gate-strict", direct ∨ indirect))
+  | gate_policy_applies_to(invoked_skills) ∧ ¬automatic_strict_or_full_escalation_at_handoff
 
 λ startup().
   inspect("git status --short") → record(preexisting_baseline)
@@ -180,11 +183,10 @@ disable-model-invocation: true
   | no_generated_current_claim unless(regenerated_from_final_sources)
 
 λ integration().
-  after_final_edit → one_change_sized_integration_gate
-  | code ∨ executable_header ∨ test ∨ probe_changed → "make test" ∧ "make upsert-gate-strict"
-  | only(docs ∨ req ∨ vocab ∨ arch)_changed → "make upsert-gate-fast"
-  | spec_only_change → owning_validation(spec) ∧ "make upsert-gate-fast"
-  | ¬duplicate_suite unless(later_edit_invalidates) | reuse(explicit_current_equivalent_gate_evidence)
+  after_final_edit → "make upsert-gate-fast" regardless(change_type)
+  | preserve(focused_change_specific_checks ∧ owning_validation)
+  | ¬automatic_full_test_suite ∧ ¬recreate_strict_gate_by_chaining_checks
+  | reuse(current_focused_check_or_fast_gate_evidence) ¬duplicate unless(later_edit_invalidates)
   | ¬run("make git")
 
 λ invalidation(changed).
