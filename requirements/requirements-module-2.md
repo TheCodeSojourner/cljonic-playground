@@ -143,6 +143,13 @@ This module establishes the C++20 concept capability framework, result status ou
   ∧ ∀ class_template_argument_deduction: a single-alternative deduction guide is provided, consistent with the library's constructor-pack preference
   {source: stakeholder_decided, decided_by: original_spec_author}
 
+λ REQ-CAP-012A(x).
+  ∀ `variant<Alternatives...>()`: returns a `Variant<Alternatives...>` default-constructed with its first alternative active
+  ∧ ∀ `variant<Alternatives...>(value)`: returns a `Variant<Alternatives...>` constructed from `value` under the exact-alternative admission rule: the decayed argument type matches exactly one declared alternative
+  ∧ ∀ variant factory: `Alternatives...` remain explicit ∧ no alternative-type deduction ∧ existing `Variant` construction semantics are preserved ∧ `constexpr` ∧ `noexcept` ∧ non-allocating
+  ∧ ∀ factory alternative pack: satisfies `Variant`'s existing non-empty and storage-admission constraints
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-27}
+
 λ REQ-CAP-013(x).
   ∀ context: `Conjable` means a capability for non-mutating insertion of one value into a collection, producing a new collection value
   ∧ ∀ Conjable_collection: defines its value type and capacity policy ∧ provides `conj` and a non-throwing, non-allocating `can_conj` preflight that agrees with `conj` for immutable inputs ∧ preserves its source collection
