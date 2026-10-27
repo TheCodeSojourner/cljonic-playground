@@ -121,6 +121,7 @@ TEST_CASE("Repeatedly owns a copyable zero-argument step and exposes counted unc
 
     TRACE_ID("entity-fields.Repeatedly");
     TRACE_ID("invariant.Repeatedly.HeaderOnlyDistribution");
+    TRACE_ID("invariant.Repeatedly.DefaultFormIsValid");
     TRACE_ID("invariant.Repeatedly.NoHeapAllocation");
     TRACE_ID("invariant.Repeatedly.NoRtti");
     TRACE_ID("invariant.Repeatedly.NoExceptions");
@@ -131,11 +132,15 @@ TEST_CASE("Repeatedly owns a copyable zero-argument step and exposes counted unc
     TRACE_ID("invariant.Repeatedly.AcceptsNamedFunctionLambdaAndFunctionObject");
     TRACE_ID("invariant.Repeatedly.StepIsCopyConstructible");
     TRACE_ID("invariant.Repeatedly.StepMayBeMoveConstructedFromRvalue");
-    TRACE_ID("invariant.Repeatedly.StepConstInvocationProducesElementOfT");
+    TRACE_ID("invariant.Repeatedly.StepInvocationProducesElementOfT");
     TRACE_ID("invariant.Repeatedly.StepInvocationIsNonThrowing");
+    TRACE_ID("invariant.Repeatedly.TraversalUsesCopyOfStoredStep");
+    TRACE_ID("invariant.Repeatedly.ValueHeldStepStateRestartsEachTraversal");
+    TRACE_ID("invariant.Repeatedly.ReferenceOrStaticStepStateIsShared");
     TRACE_ID("invariant.Repeatedly.DoesNotOwnResultStorage");
     TRACE_ID("invariant.Repeatedly.DoesNotBorrowStepCallback");
     TRACE_ID("invariant.Repeatedly.StepMayMaintainStateOrSideEffects");
+    TRACE_ID("invariant.Repeatedly.SatisfiesNothrowCollectionElement");
     TRACE_ID("invariant.Repeatedly.UncountedFormIsUnbounded");
     TRACE_ID("invariant.Repeatedly.CountedFormIsFinite");
     TRACE_ID("invariant.Repeatedly.ZeroCountProducesEmptyResult");
@@ -204,7 +209,7 @@ TEST_CASE("Repeatedly owns a copyable zero-argument step and exposes counted unc
     STATIC_REQUIRE_FALSE(GetDomainAdmissible<decltype(uncounted)>);
     STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<MoveOnlyStep>);
     STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<ThrowingStep>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<NonConstStep>);
+    STATIC_REQUIRE(cljonic::concepts_detail::ValidRepeatedlyStep<NonConstStep>);
     STATIC_REQUIRE_FALSE(cljonic::concepts_detail::ValidRepeatedlyStep<ThrowingElementStep>);
 
     constexpr auto copied_counted = counted;
@@ -243,4 +248,34 @@ TEST_CASE("Repeatedly owns a copyable zero-argument step and exposes counted unc
     CHECK(runtime_unbounded_result(1U) == 9);
     CHECK(runtime_unbounded_result(2U) == 9);
     CHECK_FALSE(fits_into(Vector<int, 3>{}, runtime_uncounted));
+
+    auto mutable_step = [value = 0]() mutable noexcept { return ++value; };
+    const auto mutable_producer = repeatedly(3U, mutable_step);
+    const auto mutable_first = into(Vector<int, 3>{}, mutable_producer);
+    const auto mutable_second = into(Vector<int, 3>{}, mutable_producer);
+    CHECK(mutable_first(0U) == 1);
+    CHECK(mutable_first(1U) == 2);
+    CHECK(mutable_first(2U) == 3);
+    CHECK(mutable_second(0U) == 1);
+    CHECK(mutable_second(1U) == 2);
+    CHECK(mutable_second(2U) == 3);
+
+    auto mutable_empty_calls = 0;
+    auto mutable_empty_step = [value = 0, &mutable_empty_calls]() mutable noexcept {
+        ++mutable_empty_calls;
+        return ++value;
+    };
+    const auto mutable_empty = repeatedly(0U, mutable_empty_step);
+    CHECK(into(Vector<int, 2>{}, mutable_empty).count() == 0U);
+    CHECK(mutable_empty_calls == 0);
+
+    auto shared_value = 0;
+    const auto shared_step = [&shared_value]() noexcept { return ++shared_value; };
+    const auto shared_producer = repeatedly(2U, shared_step);
+    const auto shared_first = into(Vector<int, 2>{}, shared_producer);
+    const auto shared_second = into(Vector<int, 2>{}, shared_producer);
+    CHECK(shared_first(0U) == 1);
+    CHECK(shared_first(1U) == 2);
+    CHECK(shared_second(0U) == 3);
+    CHECK(shared_second(1U) == 4);
 }
