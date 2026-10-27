@@ -1,7 +1,45 @@
 ## Current Session State
 
+- last_session_id: a42b610a-d30f-4eaa-bbb2-17b306ed0b1f
+- current_timestamp: 2026-10-27T13:02:21-06:00
+- recover: 1
+- session_complete: true
+
+Task:
+1. Initialized with `/gybis-init`, then assessed and implemented the human-approved lowercase `variant` factory for `cljonic::Variant`.
+2. Added `variant<Alternatives...>()` and `variant<Alternatives...>(value)`, `REQ-CAP-012A`, architecture policies, active Allium obligations, vocabulary, the public API index, focused tests, no-heap probe coverage, traceability snapshot, and regenerated `cljonic.hpp`.
+3. Added the human-requested Doxygen example alias, `using MyVariant = cljonic::Variant<int, long>;`, and used it for direct construction and collection examples.
+4. Closeout inspection found only `mementum/state.md` modified, no staged changes, and no conflicts. Product and documentation changes are no longer uncommitted; inspected HEAD is `2fe7848` (`Update docs`).
+
+Questions:
+1. None blocking the completed factory and documentation slice.
+
+Decisions:
+1. Variant factory alternatives remain explicit: no inference or expansion of the alternative list. The value form preserves exact-alternative admission; the default form activates the first alternative.
+2. Existing Variant constructors remain supported, including ordinary C++ construction through a named type alias.
+3. The broader Variant free-function API remains deferred; adding the construction factory does not activate index/access/rebinding/visit APIs.
+4. Use only `make upsert-gate-fast` as the convergence aggregate gate. Leave final comprehensive `make git` validation to the human; do not automatically escalate to strict/full gates at closeout.
+
+Validation:
+1. Modular and generated single-header builds passed. Both focused `[variant]` test runs passed: 76 assertions in 6 cases each.
+2. Traceability snapshot update and `make upsert-gate-fast` passed, including requirements/vocabulary structure, lint, complexity, diagnostics, active obligation coverage, and modular/single-header no-heap checks.
+3. After the alias example update, `make docs-examples` passed: 36 examples compiled, 2 deferred skips. The public single header was regenerated.
+4. Closeout `git diff --check` passed. No full-suite, sanitizer, or coverage rerun is claimed for this session.
+
+Open questions:
+1. Inherited whole-repository convergence work remains incomplete: reconcile the reported spec inventory counts and finish specification-to-implementation/test evidence mapping.
+2. Three malformed Module 3 designators remain unresolved: `REQ-COLL-020AA`, `REQ-FN-002A1`, and `REQ-FN-002A2`. Do not change their identities without an authorized policy.
+3. The broader deferred Variant API still needs an explicit implementation decision; its single-alternative deduction requirement differs from the active no-deduction construction policy and must not be silently activated.
+
+Next:
+1. Await human direction; the requested Variant factory and alias example are complete.
+2. If resuming repository convergence, reconcile the spec inventory and complete requirement/spec evidence mapping; do not infer whole-repository convergence from the passing factory checks.
+3. Follow the [build target strategy](knowledge/make-target-strategy.md) for subsequent validation.
+
+## Previous Session State
+
 - last_session_id: 58b80c63-7c29-4977-8df2-376f47d4ff53
-- current_timestamp: 2026-10-27T12:30:20-06:00
+- current_timestamp: 2026-10-27T12:55:40-06:00
 - recover: 1
 - session_complete: true
 
@@ -9,6 +47,8 @@ Task:
 1. Human invoked `/gybis-init`, then `/cljonic-full-converge-auto`. Layer checks and most adjacent comparisons had been performed in the previous context; architecture-only propagation added identity-preserving references for producer-step concepts, checked normalization, and predicate prefixes.
 2. Human asked whether the process was slow. Acknowledged that manual cross-layer entity matching was the main source of delay, then ran only the required aggregate `make upsert-gate-fast` and focused Repeatedly tests in modular and single-header binaries.
 3. `/gybis-fini` was invoked to record session state. The repository was clean at closeout; HEAD is `f7c923c` (`docs: align architecture with checked normalization, predicate naming, and producer step concepts`).
+4. Human requested and approved a lowercase `variant` factory for `cljonic::Variant`. Added `variant<Alternatives...>()` and `variant<Alternatives...>(value)` without activating the broader deferred Variant free-function API.
+5. Added a Doxygen example showing an ordinary C++ alias, `using MyVariant = cljonic::Variant<int, long>;`, and used it for Variant construction and collection examples.
 
 Questions:
 1. None.
@@ -17,14 +57,17 @@ Decisions:
 1. Use `make upsert-gate-fast` as the only convergence aggregate gate. Do not automatically escalate to the strict/full gate.
 2. Do not claim whole-repository convergence while evidence reconciliation and unresolved divergences remain.
 3. Do not renumber the malformed Module 3 designators without an approved identity-preserving policy.
+4. Keep Variant alternatives explicit; the value factory preserves exact-alternative admission and default construction activates the first alternative.
 
 Validation:
 1. `make upsert-gate-fast` passed (exit 0): requirements and vocabulary structure, self-tests, lint, complexity, diagnostics, spec-to-code traceability, no-heap source/symbol scans, and modular/single-header no-heap executions all passed.
 2. `build/cljonic_tests '[repeatedly]'` passed: 124 assertions in 2 cases. `build/cljonic_single_header_tests '[repeatedly]'` passed: 124 assertions in 2 cases.
 3. Final `git diff --check` passed. Only `architecture.md` was changed in the convergence work; that change is at HEAD `f7c923c`. No tests outside the focused Repeatedly selector or full test suite were run in this closeout.
+4. Variant factory verification passed: modular and single-header focused Variant tests (76 assertions / 6 cases each), `make upsert-gate-fast`, `make docs-examples` (36 compiled, 2 deferred skips), and `git diff --check`.
+5. After the alias example update, `make docs-examples` passed (36 compiled, 2 deferred skips) and `git diff --check` passed.
 
 Open questions:
-1. Whole-repository convergence remains incomplete: specifications-to-implementation/test evidence reconciliation was not completed.
+1. Whole-repository convergence remains incomplete: specifications-to-implementation/test evidence reconciliation was not completed. The broader Variant free-function API remains deferred; only its separately specified construction factory is active.
 2. Reconcile the spec inventory discrepancy (46 specs reported by Allium versus 51 files reported by an earlier file scan) before relying on counts.
 3. Three malformed Module 3 designators remain unresolved: `REQ-COLL-020AA`, `REQ-FN-002A1`, and `REQ-FN-002A2`.
 
