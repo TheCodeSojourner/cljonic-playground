@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="textblock"><code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
+<code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
@@ -144,10 +145,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a09c518db52e13e7d9a954924c6d58902 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a09c518db52e13e7d9a954924c6d58902">cljonic::Repeatedly</a> (const Step &amp;) -&gt; Repeatedly&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a>, <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a> &gt;</td></tr>
 <tr class="memitem:a682b02f8859c8dfe601c763868eeaf57" id="r_a682b02f8859c8dfe601c763868eeaf57"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename Count&gt; </td></tr>
 <tr class="memitem:a682b02f8859c8dfe601c763868eeaf57 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a682b02f8859c8dfe601c763868eeaf57">cljonic::Repeatedly</a> (const Step &amp;, Count) -&gt; Repeatedly&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a>, <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a> &gt;</td></tr>
-<tr class="memitem:ada46d509c8f0d0124e524878e323c208" id="r_ada46d509c8f0d0124e524878e323c208"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
+<tr class="memitem:ada46d509c8f0d0124e524878e323c208" id="r_ada46d509c8f0d0124e524878e323c208"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T = std::invoke_result_t&lt;std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
 requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</td></tr>
 <tr class="memitem:ada46d509c8f0d0124e524878e323c208 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ada46d509c8f0d0124e524878e323c208">cljonic::repeatedly</a> (Step &amp;&amp;step) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a>&lt; T, std::decay_t&lt; Step &gt; &gt;</td></tr>
-<tr class="memitem:a8e618f85c3de84635b70f83a88f78df3" id="r_a8e618f85c3de84635b70f83a88f78df3"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
+<tr class="memitem:a8e618f85c3de84635b70f83a88f78df3" id="r_a8e618f85c3de84635b70f83a88f78df3"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t&lt;std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
 requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</td></tr>
 <tr class="memitem:a8e618f85c3de84635b70f83a88f78df3 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a8e618f85c3de84635b70f83a88f78df3">cljonic::repeatedly</a> (Count count, Step &amp;&amp;step) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a>&lt; T, std::decay_t&lt; Step &gt; &gt;</td></tr>
 <tr class="memitem:aa6fbe811d718b447de3e57f7e46b6eba" id="r_aa6fbe811d718b447de3e57f7e46b6eba"><td class="memTemplParams" colspan="2">template&lt;typename Step&gt; <br />

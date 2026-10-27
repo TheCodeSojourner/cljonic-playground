@@ -545,10 +545,10 @@ requires (!concepts::NothrowCollectionElement&lt;std::remove_cvref_t&lt;T&gt;&gt
 <tr class="memitem:a09c518db52e13e7d9a954924c6d58902 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a09c518db52e13e7d9a954924c6d58902">Repeatedly</a> (const Step &amp;) -&gt; Repeatedly&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a>, <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a> &gt;</td></tr>
 <tr class="memitem:a682b02f8859c8dfe601c763868eeaf57" id="r_a682b02f8859c8dfe601c763868eeaf57"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename Count&gt; </td></tr>
 <tr class="memitem:a682b02f8859c8dfe601c763868eeaf57 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a682b02f8859c8dfe601c763868eeaf57">Repeatedly</a> (const Step &amp;, Count) -&gt; Repeatedly&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a>, <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html">concepts_detail::RepeatedlyDomainViolation</a> &gt;</td></tr>
-<tr class="memitem:ada46d509c8f0d0124e524878e323c208" id="r_ada46d509c8f0d0124e524878e323c208"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
+<tr class="memitem:ada46d509c8f0d0124e524878e323c208" id="r_ada46d509c8f0d0124e524878e323c208"><td class="memTemplParams" colspan="2">template&lt;typename Step, typename T = std::invoke_result_t&lt;std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
 requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</td></tr>
 <tr class="memitem:ada46d509c8f0d0124e524878e323c208 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ada46d509c8f0d0124e524878e323c208">repeatedly</a> (Step &amp;&amp;step) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a>&lt; T, std::decay_t&lt; Step &gt; &gt;</td></tr>
-<tr class="memitem:a8e618f85c3de84635b70f83a88f78df3" id="r_a8e618f85c3de84635b70f83a88f78df3"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
+<tr class="memitem:a8e618f85c3de84635b70f83a88f78df3" id="r_a8e618f85c3de84635b70f83a88f78df3"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t&lt;std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
 requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</td></tr>
 <tr class="memitem:a8e618f85c3de84635b70f83a88f78df3 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a8e618f85c3de84635b70f83a88f78df3">repeatedly</a> (Count count, Step &amp;&amp;step) noexcept -&gt; <a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a>&lt; T, std::decay_t&lt; Step &gt; &gt;</td></tr>
 <tr class="memitem:aa6fbe811d718b447de3e57f7e46b6eba" id="r_aa6fbe811d718b447de3e57f7e46b6eba"><td class="memTemplParams" colspan="2">template&lt;typename Step&gt; <br />
@@ -1428,7 +1428,7 @@ requires concepts::ConjableCollection&lt;C&gt;</div>
 <div class="ttc" id="anamespacecljonic_html_a0276d2cc4a963af9ddbc2ad7aa6ac4f0"><div class="ttname"><a href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">cljonic::map_entry</a></div><div class="ttdeci">constexpr auto map_entry(Args &amp;&amp;... args) noexcept -&gt; MapEntry&lt; concepts_detail::map_entry_factory_key_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt;, concepts_detail::map_entry_factory_value_type_t&lt; RequestedKeyType, RequestedValueType, Args... &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-map-entry_8hpp_source.html#l00167">cljonic-map-entry.hpp:167</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a2693300957a43d0bb2d4c29634a838f7"><div class="ttname"><a href="#a2693300957a43d0bb2d4c29634a838f7">cljonic::queue</a></div><div class="ttdeci">constexpr auto queue(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::queue_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Queue&lt; concepts_detail::queue_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-queue_8hpp_source.html#l00330">cljonic-queue.hpp:330</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_aac92eb77175a67beb451582c5786027e"><div class="ttname"><a href="#aac92eb77175a67beb451582c5786027e">cljonic::string</a></div><div class="ttdeci">constexpr auto string(Literal &amp;&amp;literal) noexcept -&gt; String&lt; std::extent_v&lt; std::remove_cvref_t&lt; Literal &gt; &gt; - 1U &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-string_8hpp_source.html#l00432">cljonic-string.hpp:432</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_ab920b6f72a40bc9c9d4b1c69662e149e"><div class="ttname"><a href="#ab920b6f72a40bc9c9d4b1c69662e149e">cljonic::hash_set</a></div><div class="ttdeci">constexpr auto hash_set(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Set&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00424">cljonic-set.hpp:424</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_ab920b6f72a40bc9c9d4b1c69662e149e"><div class="ttname"><a href="#ab920b6f72a40bc9c9d4b1c69662e149e">cljonic::hash_set</a></div><div class="ttdeci">constexpr auto hash_set(Args &amp;&amp;... args) noexcept((concepts::NothrowElementConstruction&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, Args &gt; &amp;&amp;...)) -&gt; Set&lt; concepts_detail::hash_set_factory_element_t&lt; RequestedElementType, Args... &gt;, sizeof...(Args)&gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00429">cljonic-set.hpp:429</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_aff01cd8591c08e661bde74c6276e9c40"><div class="ttname"><a href="#aff01cd8591c08e661bde74c6276e9c40">cljonic::can_conj</a></div><div class="ttdeci">constexpr auto can_conj(const C &amp;collection) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-can-conj_8hpp_source.html#l00084">cljonic-can-conj.hpp:84</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-can-conj_8hpp_source.html#l00084">84</a> of file <a class="el" href="cljonic-can-conj_8hpp_source.html">cljonic-can-conj.hpp</a>.</p>
@@ -4021,7 +4021,7 @@ requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00530">530</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00535">535</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4052,7 +4052,7 @@ requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00520">520</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00525">525</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4083,7 +4083,7 @@ requires (concepts::NothrowStableEqualityComparable&lt;ElementType&gt; &amp;&amp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00511">511</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00516">516</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4113,7 +4113,7 @@ requires (!concepts::NothrowStableEqualityComparable&lt;ElementType&gt; || <a cl
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00501">501</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00506">506</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4147,7 +4147,7 @@ requires (sizeof...(Args) &gt; 0U &amp;&amp; concepts::NothrowStableEqualityComp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00483">483</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00488">488</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4179,7 +4179,7 @@ requires (sizeof...(Args) &gt; 0U &amp;&amp; concepts::NothrowStableEqualityComp
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00467">467</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00472">472</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4211,7 +4211,7 @@ requires ( sizeof...(Args) &gt; 0U &amp;&amp; (!concepts::NothrowStableEqualityC
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00454">454</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00459">459</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4241,7 +4241,7 @@ requires (sizeof...(Args) == 0U &amp;&amp; !std::same_as&lt;RequestedElementType
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00442">442</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00447">447</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4271,7 +4271,7 @@ requires (sizeof...(Args) == 0U &amp;&amp; std::same_as&lt;RequestedElementType,
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00434">434</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00439">439</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4321,6 +4321,8 @@ requires (concepts_detail::HashSetFactoryArguments&lt;RequestedElementType, Args
 <div class="line">  <span class="comment">// later conj operations, including an empty zero-capacity set.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> reserved = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 4&gt;</a>();</div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> zero = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 0&gt;</a>();</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(reserved));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#acc881adb41275d2d6cb0aed6b943ad5b">is_empty</a>(zero));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime duplicates deduplicate; the deduced capacity still equals the</span></div>
 <div class="line">  <span class="comment">// argument count.</span></div>
@@ -4333,13 +4335,15 @@ requires (concepts_detail::HashSetFactoryArguments&lt;RequestedElementType, Args
 <div class="line">  <span class="comment">// A named set type keeps the element and capacity contract explicit.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> typed = <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;AccountSet::value_type, 4&gt;</a>(1, 2, 3);</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (typed(1) == 1 &amp;&amp; runtime_set(50) == 50 &amp;&amp; runtime_set(99, -1) == -1)</div>
+<div class="line">  <span class="keywordflow">return</span> (typed(1) == 1 &amp;&amp; runtime_duplicate(20) == 20 &amp;&amp;</div>
+<div class="line">          runtime_duplicate(30, -1) == -1 &amp;&amp; runtime_set(50) == 50 &amp;&amp;</div>
+<div class="line">          runtime_set(99, -1) == -1)</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00121">cljonic-set.hpp:121</a></div></div>
+<div class="ttc" id="aclasscljonic_1_1_set_html"><div class="ttname"><a href="classcljonic_1_1_set.html">cljonic::Set</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-set_8hpp_source.html#l00122">cljonic-set.hpp:122</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00424">424</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00429">429</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -4370,7 +4374,7 @@ requires concepts_detail::HashSetFactoryCapacityArguments&lt;ElementType, Capaci
 </div><div class="memdoc">
 <p>Creates a bounded <a class="el" href="classcljonic_1_1_set.html">Set</a> with an explicit capacity, including for an empty argument pack. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00494">494</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-set_8hpp_source.html#l00499">499</a> of file <a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>.</p>
 
 </div>
 </div>
@@ -6062,7 +6066,7 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt; || !concepts_detail:
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00234">234</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00289">289</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -6072,7 +6076,7 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt; || !concepts_detail:
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
+template&lt;concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t&lt;std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
 requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 <table class="mlabels">
   <tr>
@@ -6096,7 +6100,7 @@ requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00214">214</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00269">269</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -6126,7 +6130,7 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00223">223</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00278">278</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -6136,7 +6140,7 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt;)</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Step, typename T = std::invoke_result_t&lt;const std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
+template&lt;typename Step, typename T = std::invoke_result_t&lt;std::decay_t&lt;Step&gt;&amp;&gt;&gt; <br />
 requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 <table class="mlabels">
   <tr>
@@ -6156,7 +6160,7 @@ requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00207">207</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00263">263</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
