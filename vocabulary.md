@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-10-22
+last_updated: 2026-10-27
 status: draft
 ---
 
@@ -14,9 +14,9 @@ and `Repeatedly`
 producers,
 the active unbounded `cycle(source)` producer, their direct construction,
 member-observation, callable collection forms, current primitive free-function
-operations, including `first` and `next`, and explicit producer materialization
-through `into`, preflighted by `fits_into`. Sequence conversion and `rest` remain
-deferred future work for every collection;
+operations, including `first`, `next`, and `rest`, and explicit producer
+materialization through `into`, preflighted by `fits_into`. Sequence conversion
+(`seq`) remains deferred future work for every collection;
 const range traversal and read-only C++ interoperability are active
 infrastructure. Module 3 establishes the concrete, array-backed, bounded
 collection types, their contiguous storage strategies, linear scan lookup
@@ -67,7 +67,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** ordered sequence, sequential value
 - **Related:** Collection, Sequenceable, Traversal, LogicalTraversalOrder, Producer
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `first` and `next` are part of the current traversal API; `seq` and `rest` remain future semantic traversal operations. Current collections expose const range traversal in addition to these free functions.
+- **Examples:** `first`, `next`, and `rest` are part of the current traversal API; `seq` remains future semantic traversal work. Current collections expose const range traversal in addition to these free functions.
 
 
 ### Sequenceable
@@ -75,7 +75,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence capability
 - **Related:** Sequence, Seqable, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `next(collection)` returns a bounded `Vector` of the remaining traversal elements; `seq` conversion remains deferred. Current collections also provide `count()` and `is_empty(collection)`.
+- **Examples:** `next(collection)` and `rest(collection)` return bounded `Vector` values of the remaining traversal elements; `seq` conversion remains deferred. Current collections also provide `count()` and `is_empty(collection)`.
 
 
 ### Indexed
@@ -123,7 +123,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence traversal, iteration
 - **Related:** Sequence, ProducerIteration, BoundedInspection, LogicalTraversalOrder
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `first` and `next` are active traversal operations; `rest` remains deferred.
+- **Examples:** `first`, `next`, and `rest` are active traversal operations; `seq` conversion remains deferred.
 
 
 ### ConstRangeTraversal
@@ -828,6 +828,13 @@ producer building blocks used across all higher-order algorithms.
 - **Related:** First, Seq, Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, Vector, MapEntry, Queue
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
 - **Examples:** `next(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 4>` containing `20, 30`; `next(Queue<int, 4>{10, 20})` returns a `Vector<int, 4>` containing `20`.
+
+### Rest
+- **Definition:** The free function that returns every logical element after the first from a `Vector`, `Map`, `Set`, `Queue`, or `String` as an owning `Vector` with the same static capacity as the source. It preserves the input and the `LogicalTraversalOrder` of retained elements; map elements remain value-semantic `MapEntry` values, map and set traversal order remains semantically unordered, and Queue results retain FIFO order. An empty input returns an empty Vector. The operation is `constexpr`, non-allocating, non-throwing, and part of the current public API. It follows `LogicalTraversalOrder`, rather than the removal behavior of `Pop` (which removes the last element from a Vector and the front element from a Queue).
+- **Deprecated Synonyms:** None
+- **Related:** Next, First, Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, Vector, MapEntry, Queue, Pop
+- **Usage:** Requirements, architecture, specification, tests, implementation, and documentation
+- **Examples:** `rest(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 4>` containing `20, 30`; `rest(Queue<int, 4>{10, 20})` returns a `Vector<int, 4>` containing `20`.
 
 
 ### Peek
