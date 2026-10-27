@@ -16,7 +16,7 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 
 - **granularity**: `library_contract` — cljonic-grade clause density permitted; compound operator contracts MAY be marked `compound_by_design: true` in clause footers.
 - **deferred_marker**: section headings containing `(Deferred` or a blockquote opener asserting non-binding status; scope ends at the next heading of equal or higher level. Module 3 defers `REQ-SEQ-001`–`014` (incl. `002A`–`002B`) and `REQ-FN-002A`–`002B`; Module 5 defers `REQ-FN-032`–`033`. The former Module 7 collection-factory direction (`REQ-FN-029B`/`029C`) was retired on 2026-10-23 after all six factories became active.
-- **numbering**: designators are allocated topically, not monotonically across modules. Number gaps (for example `REQ-COLL-003`, `REQ-PLAT-011`) and cross-module restarts (for example `REQ-FN-002*` in Modules 3, 6, and 7) are intentional; do not renumber to satisfy a generic monotonicity heuristic.
+- **numbering**: designators are allocated topically, not monotonically across modules. Number gaps (for example `REQ-COLL-003`, `REQ-PLAT-011`) and cross-module restarts (for example `REQ-FN-002*` in Modules 3, 6, and 7) are intentional; do not renumber to satisfy a generic monotonicity heuristic. A designator is a stable identifier within its owning module: suffix shape is an opaque disambiguator, not an ordering or hierarchy signal. Approved forms such as `REQ-COLL-020AA`, `REQ-FN-002A1`, and `REQ-FN-002A2` are canonical and MUST NOT be renamed for stylistic consistency; future designators are allocated by topic and human approval, without requiring suffixes to follow one uniform pattern.
 
 ## Module Implementation Order & Summary
 
