@@ -196,6 +196,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | admitted_finite_producer_count(count) → normalize(count ≤ 0 ? 0 : count) before(unsigned_conversion)
     ∧ preserve_exact_positive_count ∧ ¬wrap ∧ ¬truncate
   | MapEntry → constrained_key_value_construction ∧ preserve(default_construction ∧ value_semantics)
+  | CheckedNormalization(argument, destination) → check_representability_before_conversion(argument, destination)
+    ∧ (unrepresentable(argument, destination) → use(documented_failure_outcome(argument, destination)))
   | checked_exception → Vector_String_index_normalization ∨ character_is_valid
   | semantic_exception → String_text_import ∨ exact_Variant_alternative ∨ exact_MapEntry
     ∨ exact_producer_source_callback ∨ existing_equality_domain
@@ -346,6 +348,10 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     → require(ProbeFirstAccess(x))
   | caller_accepts_documented_default_returning_access(x) → ¬require(prior_probe(x))
   | semantic_predicate_names(x) → enforce(StatePredicate ∧ VerbPredicate)
+  | state_or_adjectival_predicate(x) → use(IsPredicatePrefix)
+  | readable_verb_predicate(x) → retain(direct_verb_form(x))
+  | established_capability_or_preflight_prefix(x)
+    → retain(CanPredicatePrefix ∨ HasPredicatePrefix ∨ ValidPredicatePrefix)
   | api_surface_status(x) → enforce(LifecycleClassification)
 
 λ S2_api_lifecycle_gate(x). public_function(x) → classify_as(RequirementsBacked ∨ CandidateStatus ∨ DeferredStatus ∨ ExcludedStatus)
@@ -969,6 +975,12 @@ concept ComparableVariantAlternative =
 λ CapabilityConcept_level(x). require(admitted_collection(x)) → expose(semantic_capability(x)) to(participate_in(operation(x)))
   | capability(x) → layered_on(CollectionConcept_admission(x))
   | value_capabilities(x) → separate_from(structural_capabilities(x))
+
+λ producer_step_concepts(x). IterateStep(step) → require(copy_constructible(step) ∧ non_allocating(step)
+  ∧ accepts(element_type(x)) ∧ returns_exact(element_type(x)) ∧ nothrow_invocation(step))
+  | RepeatedlyStep(step) → require(copy_constructible(step) ∧ nullary(step)
+    ∧ returns_exact(element_type(x)) ∧ nothrow_invocation(step))
+    ∧ permit(non_const_call_operator(step))
 
 ```cpp
 // Value capabilities (apply to element and key types)
