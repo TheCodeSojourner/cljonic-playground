@@ -9,7 +9,7 @@ gybis-fini: Quality gates must precede git commit
 
 **Correct sequence:**
 1. Make changes (modifications to files)
-2. **Run quality gates** (`make upsert-gate-strict`) — VALIDATION BARRIER
+2. **Run appropriate quality checks before committing** — VALIDATION BARRIER. Human decision, 2026-10-27: convergence loops use only `make upsert-gate-fast`; the human runs final `make git` before human-guided commits. Do not automatically run `make upsert-gate-strict` at closeout. Memory/documentation-only changes do not require product build/test gates.
 3. **Only if gates pass** → `git add && git commit`
 
 **Why this matters:**

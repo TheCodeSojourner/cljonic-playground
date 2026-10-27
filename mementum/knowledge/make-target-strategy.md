@@ -9,9 +9,9 @@ related: [mementum/knowledge/ai-upsert-quality-loop.md, mementum/state.md]
 depends-on: []
 ---
 
-**Decision:** Minimize doc generation by using granular make targets for intermediate checks, `make upsert-gate-strict` after a coherent implementation or policy slice, and `make git` only for final comprehensive validation.
+**Decision (2026-10-27):** AI convergence loops use only `make upsert-gate-fast` as their aggregate gate. Do not run `make upsert-gate-strict` in those loops or as an automatic session-end escalation. The human runs `make git` for final comprehensive validation before human-guided commits.
 
-**Why:** `make git` invokes Doxygen (expensive operation) as its final step. Running it multiple times during a session unnecessarily regenerates HTML docs.
+**Why:** The strict gate is too slow for convergence and duplicates the human's final `make git`. Full validation also regenerates documentation.
 
 **Available Granular Targets (no doc generation):**
 - `make test` — Build + test cycle
@@ -28,8 +28,8 @@ depends-on: []
 **Coherent-Slice Gate (without docs):**
 - `make upsert-gate-fast` — lint, complexity, active strict traceability, and no-heap verification
 
-**Pre-Final Gate (without docs):**
-- `make upsert-gate-strict` — fast gate plus range compile-fail, sanitizers, and focused coverage
+**Strict Gate Reference (not an AI convergence/checkpoint step):**
+- `make upsert-gate-strict` — expensive validation reserved for explicit requests outside convergence loops
 
 **Comprehensive Gate (with docs):**
 - `make git` — format, lint, complexity-cli, sanitizer-cli, coverage-cli, traceability-spec-to-code, no-heap, **docs**
@@ -37,8 +37,8 @@ depends-on: []
 **Workflow:**
 1. During development/iteration → use focused targets above
 2. After a coherent implementation or policy slice → run `make upsert-gate-fast`
-3. Before final milestone validation → run `make upsert-gate-strict`
-4. At milestone, handoff, or release validation → run `make git` once
+3. Before final milestone validation → do not automatically escalate to strict/full gates
+4. Before human-guided commits → the human runs `make git`
 5. To explicitly regenerate docs → `make docs`
 
 **Session lesson (2026-08-11):** Ran `make git` twice unnecessarily during BuildProfile/vocabulary cleanup. Should have used intermediate targets and final `make git` only.

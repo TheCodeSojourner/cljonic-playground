@@ -21,8 +21,8 @@ This synthesis distills the current durable operating model across mementum memo
 - Re-run checks until architecture findings are fully closed.
 
 3. Verification and quality discipline
-- Canonical inner loop is make upsert-gate; default full validation without docs is make upsert-gate-strict.
-- Use make git only when docs generation is explicitly required in the final gate.
+- AI convergence loops use only `make upsert-gate-fast` as the aggregate gate (human decision, 2026-10-27).
+- Do not automatically run `make upsert-gate-strict`; the human runs final `make git` before human-guided commits.
 - Strict mode includes no-heap verification and spec-to-code traceability gates.
 - Verification output should maximize durable signal and suppress low-value noise.
 

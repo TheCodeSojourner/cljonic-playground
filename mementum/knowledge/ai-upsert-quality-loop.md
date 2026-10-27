@@ -9,12 +9,11 @@ depends-on: []
 ---
 
 The canonical AI upsert workflow for this repo is:
-- Inner loop: `make upsert-gate`
-- Default full validation (no docs): `make upsert-gate-strict`
-- Full validation with docs: `make git`
+- AI convergence loop: only `make upsert-gate-fast` as the aggregate gate.
+- Final comprehensive validation: the human runs `make git` before human-guided commits.
+- Do not automatically run `make upsert-gate-strict` or `make git` during convergence or at routine session-end checkpoints (human decision, 2026-10-27).
 
-Strict checkpoint workflow:
-- Use `make upsert-gate-strict` as the default session-end verification step after iterative upserts.
+Strict gate reference (not an instruction to run it):
 - `upsert-gate-strict` runs `upsert-gate` first, then `no-heap`.
 - `upsert-gate-strict` also enforces strict spec-to-code traceability via `traceability-spec-to-code`.
 - Documentation example compilation against generated `cljonic.hpp` is enforced in `make git` through `make docs-examples`, not in `make test`.
@@ -23,9 +22,9 @@ Strict checkpoint workflow:
 - The no-heap harness target is excluded from default test runs (`make all` and `make test`) and only runs through strict policy targets.
 
 Loop contract:
-- Run it after each source or test change.
-- It fails fast in this order: `lint` -> `complexity-cli` -> `sanitizer-cli` -> `coverage-cli COVERAGE_FILE=$(UPSERT_COVERAGE_FILE)`.
-- Keep `UPSERT_COVERAGE_FILE` aligned with the header under active development so coverage feedback stays narrow and deterministic.
+- Use `make upsert-gate-fast` for convergence-loop aggregate validation.
+- Do not substitute `make upsert-gate` or strict/full gates for the fast gate.
+- When coverage is explicitly requested outside the loop, keep `UPSERT_COVERAGE_FILE` aligned with the header under active development so feedback stays narrow and deterministic.
 - Keep `COMPLEXITY_PATH` at `src` for mandatory loop enforcement; narrow it only for local diagnosis when investigating a specific file.
 
 Quality gate intent:
@@ -35,9 +34,8 @@ Quality gate intent:
 - `coverage-cli` emits `coverage:lines=<pct>` on stdout and fails below threshold. `COVERAGE_FILE` narrows measurement to a single production header.
 
 Operational guidance:
-- Prefer `make upsert-gate` over manually chaining `lint`, `complexity-cli`, `sanitizer-cli`, and `coverage-cli`.
-- Prefer `make upsert-gate-strict` over `make git` for routine full checks when docs regeneration is not required.
-- Escalate to `make git` only when the session explicitly requires docs generation as part of the final gate.
+- Prefer `make upsert-gate-fast` over manually recreating an aggregate gate.
+- Leave final `make git` execution to the human; do not duplicate its expensive validation with `make upsert-gate-strict`.
 - Use `make docs-examples` directly when iterating on Doxygen sample code or public include behavior without paying full `make git` cost.
 - If a gate fails, repair that failure before rerunning later gates.
 - Full-set or dependency-aware spec checks still belong at checkpoint moments outside the tight inner loop.

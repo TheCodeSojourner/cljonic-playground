@@ -1,5 +1,27 @@
 ## Current Session State
 
+- last_session_id: de5a6257-b3b7-4a3a-9a20-04546d64498e
+- current_timestamp: 2026-10-27T11:56:59-06:00
+- recover: 1
+- session_complete: false
+
+Task:
+1. Human invoked `/gybis-init`; oriented from the prior completed Repeatedly session and confirmed a clean worktree.
+2. Human invoked `/gybis-memory-store` to replace the slow strict-gate workflow: AI convergence loops must use only `make upsert-gate-fast` as the aggregate gate. The human runs final `make git` before human-guided commits.
+3. Updated the existing gate-decision memory in place and reconciled conflicting quality-loop, build-target, synthesis, and closeout guidance. Product code and build targets are unchanged.
+
+Decisions:
+1. Do not run `make upsert-gate-strict` in convergence loops or automatically escalate to strict/full validation at session end.
+2. Final comprehensive validation remains the human's `make git`; do not duplicate it in AI convergence loops.
+
+Open questions:
+1. None blocking. Prior convergence follow-up remains outside this memory-only change: adjacent weed reports and Module 3 designators `REQ-COLL-020AA`, `REQ-FN-002A1`, `REQ-FN-002A2`.
+
+Next:
+1. Apply the fast-gate preference in future convergence work.
+
+## Previous Session State
+
 - last_session_id: 97fd521c-75dd-4640-94e5-b4f66d77fe3b
 - current_timestamp: 2026-10-27T11:12:25-06:00
 - recover: 1
