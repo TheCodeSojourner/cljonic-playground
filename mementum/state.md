@@ -1,39 +1,33 @@
 ## Current Session State
 
 - last_session_id: a42b610a-d30f-4eaa-bbb2-17b306ed0b1f
-- current_timestamp: 2026-10-27T13:02:21-06:00
+- current_timestamp: 2026-10-27T13:19:38-06:00
 - recover: 1
 - session_complete: true
 
 Task:
-1. Initialized with `/gybis-init`, then assessed and implemented the human-approved lowercase `variant` factory for `cljonic::Variant`.
-2. Added `variant<Alternatives...>()` and `variant<Alternatives...>(value)`, `REQ-CAP-012A`, architecture policies, active Allium obligations, vocabulary, the public API index, focused tests, no-heap probe coverage, traceability snapshot, and regenerated `cljonic.hpp`.
-3. Added the human-requested Doxygen example alias, `using MyVariant = cljonic::Variant<int, long>;`, and used it for direct construction and collection examples.
-4. Closeout inspection found only `mementum/state.md` modified, no staged changes, and no conflicts. Product and documentation changes are no longer uncommitted; inspected HEAD is `2fe7848` (`Update docs`).
+1. Invoked `/gybis-fini` after investigating the naming policy uncertainty for `REQ-COLL-020AA`, `REQ-FN-002A1`, and `REQ-FN-002A2`.
+2. Read requirements history and index: clauses had human/stakeholder approval metadata; the index already specified topical allocation, intentional gaps, cross-module restarts, and no renumbering merely for monotonicity, but did not clarify suffix interpretation.
+3. User approved codifying the stable-ID rule. `requirements/requirements-index.md` now states that approved identifiers are canonical within their owning module, suffixes are opaque disambiguators rather than ordering/hierarchy signals, and IDs are not renamed for style. No requirement IDs or trace references were changed.
+4. Corrected the stale inventory concern: the current tree contains 46 `.allium` files; the old 51-file scan's basis could not be established, so this is not a confirmed discrepancy.
+5. Before closeout, only `mementum/state.md` was dirty; no staged changes or merge/rebase/cherry-pick conflict was present. Branch `main` was ahead of `origin/main` by one commit.
 
 Questions:
-1. None blocking the completed factory and documentation slice.
+1. None.
 
 Decisions:
-1. Variant factory alternatives remain explicit: no inference or expansion of the alternative list. The value form preserves exact-alternative admission; the default form activates the first alternative.
-2. Existing Variant constructors remain supported, including ordinary C++ construction through a named type alias.
-3. The broader Variant free-function API remains deferred; adding the construction factory does not activate index/access/rebinding/visit APIs.
-4. Use only `make upsert-gate-fast` as the convergence aggregate gate. Leave final comprehensive `make git` validation to the human; do not automatically escalate to strict/full gates at closeout.
+1. Requirement IDs are stable/opaque identifiers within their owning modules; do not renumber the approved suffix forms for stylistic consistency.
+2. Repo-wide convergence and evidence mapping remain distinct, incomplete work; this policy clarification does not claim their completion.
 
 Validation:
-1. Modular and generated single-header builds passed. Both focused `[variant]` test runs passed: 76 assertions in 6 cases each.
-2. Traceability snapshot update and `make upsert-gate-fast` passed, including requirements/vocabulary structure, lint, complexity, diagnostics, active obligation coverage, and modular/single-header no-heap checks.
-3. After the alias example update, `make docs-examples` passed: 36 examples compiled, 2 deferred skips. The public single header was regenerated.
-4. Closeout `git diff --check` passed. No full-suite, sanitizer, or coverage rerun is claimed for this session.
+1. `git diff --check` passed after the requirements-index clarification. No behavioral code changed and no tests were run for this documentation/policy-only change.
 
 Open questions:
-1. Inherited whole-repository convergence work remains incomplete: reconcile the reported spec inventory counts and finish specification-to-implementation/test evidence mapping.
-2. Three malformed Module 3 designators remain unresolved: `REQ-COLL-020AA`, `REQ-FN-002A1`, and `REQ-FN-002A2`. Do not change their identities without an authorized policy.
-3. The broader deferred Variant API still needs an explicit implementation decision; its single-alternative deduction requirement differs from the active no-deduction construction policy and must not be silently activated.
+1. Whole-repository specification-to-implementation/test evidence mapping remains incomplete.
 
 Next:
-1. Await human direction; the requested Variant factory and alias example are complete.
-2. If resuming repository convergence, reconcile the spec inventory and complete requirement/spec evidence mapping; do not infer whole-repository convergence from the passing factory checks.
+1. Await human direction; the requested naming-policy uncertainty is resolved and recorded.
+2. If resuming repository convergence, finish specification-to-implementation/test evidence mapping without treating the resolved designator policy as evidence of broader convergence.
 3. Follow the [build target strategy](knowledge/make-target-strategy.md) for subsequent validation.
 
 ## Previous Session State
