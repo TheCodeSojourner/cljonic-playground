@@ -18,6 +18,7 @@ entity Cycle {
     source_satisfies_nothrow_const_input_range: Boolean
     stores_independent_owned_source_copy: Boolean
     producer_source_copy_is_parameters_and_state: Boolean
+    stores_starting_position_offset: Boolean
     is_unbounded: Boolean
     exposes_count_and_is_finite: Boolean
     count_is_observable_traversal_cap: Boolean
@@ -26,10 +27,17 @@ entity Cycle {
     finite_source_restarts_after_complete_pass: Boolean
     unbounded_source_preserves_observable_prefix: Boolean
     empty_source_produces_empty_observation: Boolean
+    next_preserves_cycle_type_and_observation_policy: Boolean
+    finite_nonempty_next_advances_starting_offset_modulo_observed_source_count: Boolean
+    empty_finite_next_preserves_empty_observation: Boolean
+    unbounded_next_advances_owned_source_and_resets_starting_offset: Boolean
+    next_source_must_support_next_or_be_collection: Boolean
+    next_does_not_invoke_callbacks_or_materialize: Boolean
     materializes_at_most_destination_capacity: Boolean
     does_not_fit_into_destination: Boolean
     operator_equals_uses_producer_parameter_equality: Boolean
     equality_compares_owned_source_and_form: Boolean
+    equality_compares_starting_position_offset: Boolean
     satisfies_nothrow_stable_equality_comparable: Boolean
     does_not_satisfy_indexed_producer: Boolean
     satisfies_sequenceable_producer: Boolean
@@ -104,6 +112,10 @@ entity Cycle {
         this.producer_source_copy_is_parameters_and_state = true
     }
 
+    invariant StoresStartingPositionOffset {
+        this.stores_starting_position_offset = true
+    }
+
     invariant IsUnbounded {
         this.is_unbounded = true
     }
@@ -136,6 +148,30 @@ entity Cycle {
         this.empty_source_produces_empty_observation = true
     }
 
+    invariant NextPreservesCycleTypeAndObservationPolicy {
+        this.next_preserves_cycle_type_and_observation_policy = true
+    }
+
+    invariant FiniteNonemptyNextAdvancesStartingOffsetModuloObservedSourceCount {
+        this.finite_nonempty_next_advances_starting_offset_modulo_observed_source_count = true
+    }
+
+    invariant EmptyFiniteNextPreservesEmptyObservation {
+        this.empty_finite_next_preserves_empty_observation = true
+    }
+
+    invariant UnboundedNextAdvancesOwnedSourceAndResetsStartingOffset {
+        this.unbounded_next_advances_owned_source_and_resets_starting_offset = true
+    }
+
+    invariant NextSourceMustSupportNextOrBeCollection {
+        this.next_source_must_support_next_or_be_collection = true
+    }
+
+    invariant NextDoesNotInvokeCallbacksOrMaterialize {
+        this.next_does_not_invoke_callbacks_or_materialize = true
+    }
+
     invariant MaterializesAtMostDestinationCapacity {
         this.materializes_at_most_destination_capacity = true
     }
@@ -150,6 +186,10 @@ entity Cycle {
 
     invariant EqualityComparesOwnedSourceAndForm {
         this.equality_compares_owned_source_and_form = true
+    }
+
+    invariant EqualityComparesStartingPositionOffset {
+        this.equality_compares_starting_position_offset = true
     }
 
     invariant SatisfiesNothrowStableEqualityComparable {

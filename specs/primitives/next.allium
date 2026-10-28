@@ -5,12 +5,17 @@
 -- not materialize producer results.
 -- REQ-FN-002A5 and REQ-FN-013F: next(producer) also supports Range while
 -- preserving its endpoint and step, including overflow-safe empty-tail cases.
+-- REQ-FN-002A6 and REQ-FN-013G: next(producer) supports Cycle. Finite-source
+-- cycles advance their starting offset; unbounded-source cycles tail their
+-- owned source and reset the offset. Source must itself support next unless
+-- it is a collection.
 
 entity Next {
     supports_next_free_function: Boolean
     supports_sequenceable_collection_domain: Boolean
     supports_producer_tail_domain: Boolean
     producer_tail_domain_includes_range: Boolean
+    producer_tail_domain_includes_cycle: Boolean
     returns_same_producer_kind_as_source: Boolean
     returns_elements_after_first_of_producer_result: Boolean
     unbounded_producer_tail_remains_unbounded: Boolean
@@ -23,6 +28,9 @@ entity Next {
     empty_nonzero_step_range_tail_preserves_parameters: Boolean
     singleton_nonzero_step_range_tail_is_empty_at_endpoint_without_step_addition: Boolean
     multi_element_nonzero_step_range_tail_advances_start_by_step: Boolean
+    finite_cycle_tail_advances_starting_offset_modulo_observed_source_count: Boolean
+    empty_finite_cycle_tail_preserves_empty_observation: Boolean
+    unbounded_cycle_tail_advances_source_and_resets_starting_offset: Boolean
     returns_same_collection_kind_as_source: Boolean
     returns_elements_after_first: Boolean
     result_capacity_is_source_capacity_minus_one_saturating_at_zero: Boolean
@@ -102,6 +110,10 @@ entity Next {
         this.producer_tail_domain_includes_range = true
     }
 
+    invariant ProducerTailDomainIncludesCycle {
+        this.producer_tail_domain_includes_cycle = true
+    }
+
     invariant ReturnsSameProducerKindAsSource {
         this.returns_same_producer_kind_as_source = true
     }
@@ -148,6 +160,18 @@ entity Next {
 
     invariant MultiElementNonzeroStepRangeTailAdvancesStartByStep {
         this.multi_element_nonzero_step_range_tail_advances_start_by_step = true
+    }
+
+    invariant FiniteCycleTailAdvancesStartingOffsetModuloObservedSourceCount {
+        this.finite_cycle_tail_advances_starting_offset_modulo_observed_source_count = true
+    }
+
+    invariant EmptyFiniteCycleTailPreservesEmptyObservation {
+        this.empty_finite_cycle_tail_preserves_empty_observation = true
+    }
+
+    invariant UnboundedCycleTailAdvancesSourceAndResetsStartingOffset {
+        this.unbounded_cycle_tail_advances_source_and_resets_starting_offset = true
     }
 
     invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
