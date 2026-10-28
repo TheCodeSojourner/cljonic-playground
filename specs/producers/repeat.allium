@@ -2,6 +2,9 @@
 -- REQ-FN-013B: repeat(count, value), Repeat<T>{count, value}, and
 -- Repeat{count, value} use count-first ordering; repeat(value) is unchanged.
 -- Count admission remains governed by REQ-CONV-002E.
+-- REQ-FN-013E: next of a finite counted Repeat returns a finite Repeat of the
+-- same value with count max(count - 1, 0); next of an unbounded Repeat returns
+-- an unbounded Repeat of the same value with its observation policy unchanged.
 -- Counted results use the normalized count: nonpositive counts produce a finite
 -- empty result, while positive counts retain their exact value.
 
@@ -39,6 +42,10 @@ entity Repeat {
     satisfies_nothrow_collection_element: Boolean
     does_not_expose_callable_operator: Boolean
     get_contains_and_lookup_are_excluded: Boolean
+    next_returns_finite_tail_with_count_minus_one_saturating_at_zero: Boolean
+    next_returns_unbounded_tail_with_unchanged_observation_policy: Boolean
+    next_tail_preserves_input_and_repeated_value: Boolean
+    next_tail_coherent_with_count_is_finite_is_empty_into_and_fits_into: Boolean
 
     invariant HeaderOnlyDistribution {
         this.supports_header_only_distribution = true
@@ -166,6 +173,22 @@ entity Repeat {
 
     invariant GetContainsAndLookupAreExcluded {
         this.get_contains_and_lookup_are_excluded = true
+    }
+
+    invariant NextReturnsFiniteTailWithCountMinusOneSaturatingAtZero {
+        this.next_returns_finite_tail_with_count_minus_one_saturating_at_zero = true
+    }
+
+    invariant NextReturnsUnboundedTailWithUnchangedObservationPolicy {
+        this.next_returns_unbounded_tail_with_unchanged_observation_policy = true
+    }
+
+    invariant NextTailPreservesInputAndRepeatedValue {
+        this.next_tail_preserves_input_and_repeated_value = true
+    }
+
+    invariant NextTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto {
+        this.next_tail_coherent_with_count_is_finite_is_empty_into_and_fits_into = true
     }
 
     invariant SatisfiesNothrowCollectionElement {

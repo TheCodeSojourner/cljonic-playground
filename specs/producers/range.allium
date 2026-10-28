@@ -41,6 +41,11 @@ entity Range {
     -- Producer observation uses free-function operations such as count and materialization; Range::contains remains a member predicate, not a free-function overload.
     free_function_observation_is_canonical_access_path: Boolean
     start_end_step_member_accessors_are_noncanonical: Boolean
+    next_preserves_endpoint_and_step: Boolean
+    zero_step_next_remains_unbounded_with_same_observation_cap: Boolean
+    empty_nonzero_step_next_preserves_parameters: Boolean
+    singleton_nonzero_step_next_is_empty_at_endpoint_without_step_addition: Boolean
+    multi_element_nonzero_step_next_advances_start_by_step: Boolean
 
     invariant HeaderOnlyDistribution {
         this.supports_header_only_distribution = true
@@ -192,6 +197,26 @@ entity Range {
 
     invariant StartEndStepMemberAccessorsAreNoncanonical {
         this.start_end_step_member_accessors_are_noncanonical = true
+    }
+
+    invariant NextPreservesEndpointAndStep {
+        this.next_preserves_endpoint_and_step = true
+    }
+
+    invariant ZeroStepNextRemainsUnboundedWithSameObservationCap {
+        this.zero_step_next_remains_unbounded_with_same_observation_cap = true
+    }
+
+    invariant EmptyNonzeroStepNextPreservesParameters {
+        this.empty_nonzero_step_next_preserves_parameters = true
+    }
+
+    invariant SingletonNonzeroStepNextIsEmptyAtEndpointWithoutStepAddition {
+        this.singleton_nonzero_step_next_is_empty_at_endpoint_without_step_addition = true
+    }
+
+    invariant MultiElementNonzeroStepNextAdvancesStartByStep {
+        this.multi_element_nonzero_step_next_advances_start_by_step = true
     }
 
     invariant SatisfiesNothrowCollectionElement {

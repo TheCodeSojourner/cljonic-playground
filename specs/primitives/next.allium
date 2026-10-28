@@ -1,8 +1,28 @@
 -- allium: 3
+-- REQ-FN-002A4: next(producer) is extended to Repeat in the current slice.
+-- REQ-FN-013E: a finite counted Repeat tail has count max(count - 1, 0); an
+-- unbounded Repeat tail remains unbounded. Results invoke no callbacks and do
+-- not materialize producer results.
+-- REQ-FN-002A5 and REQ-FN-013F: next(producer) also supports Range while
+-- preserving its endpoint and step, including overflow-safe empty-tail cases.
 
 entity Next {
     supports_next_free_function: Boolean
     supports_sequenceable_collection_domain: Boolean
+    supports_producer_tail_domain: Boolean
+    producer_tail_domain_includes_range: Boolean
+    returns_same_producer_kind_as_source: Boolean
+    returns_elements_after_first_of_producer_result: Boolean
+    unbounded_producer_tail_remains_unbounded: Boolean
+    repeated_next_never_exhausts_unbounded_producer: Boolean
+    producer_tail_result_is_self_contained_and_owning: Boolean
+    producer_tail_does_not_materialize_or_invoke_callbacks: Boolean
+    producer_tail_coherent_with_count_is_finite_is_empty_into_and_fits_into: Boolean
+    range_tail_preserves_endpoint_and_step: Boolean
+    zero_step_range_tail_remains_unbounded_with_same_observation_cap: Boolean
+    empty_nonzero_step_range_tail_preserves_parameters: Boolean
+    singleton_nonzero_step_range_tail_is_empty_at_endpoint_without_step_addition: Boolean
+    multi_element_nonzero_step_range_tail_advances_start_by_step: Boolean
     returns_same_collection_kind_as_source: Boolean
     returns_elements_after_first: Boolean
     result_capacity_is_source_capacity_minus_one_saturating_at_zero: Boolean
@@ -72,6 +92,62 @@ entity Next {
 
     invariant ConstexprCapable {
         this.constexpr_capable = true
+    }
+
+    invariant SupportsProducerTailDomain {
+        this.supports_producer_tail_domain = true
+    }
+
+    invariant ProducerTailDomainIncludesRange {
+        this.producer_tail_domain_includes_range = true
+    }
+
+    invariant ReturnsSameProducerKindAsSource {
+        this.returns_same_producer_kind_as_source = true
+    }
+
+    invariant ReturnsElementsAfterFirstOfProducerResult {
+        this.returns_elements_after_first_of_producer_result = true
+    }
+
+    invariant UnboundedProducerTailRemainsUnbounded {
+        this.unbounded_producer_tail_remains_unbounded = true
+    }
+
+    invariant RepeatedNextNeverExhaustsUnboundedProducer {
+        this.repeated_next_never_exhausts_unbounded_producer = true
+    }
+
+    invariant ProducerTailResultIsSelfContainedAndOwning {
+        this.producer_tail_result_is_self_contained_and_owning = true
+    }
+
+    invariant ProducerTailDoesNotMaterializeOrInvokeCallbacks {
+        this.producer_tail_does_not_materialize_or_invoke_callbacks = true
+    }
+
+    invariant ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto {
+        this.producer_tail_coherent_with_count_is_finite_is_empty_into_and_fits_into = true
+    }
+
+    invariant RangeTailPreservesEndpointAndStep {
+        this.range_tail_preserves_endpoint_and_step = true
+    }
+
+    invariant ZeroStepRangeTailRemainsUnboundedWithSameObservationCap {
+        this.zero_step_range_tail_remains_unbounded_with_same_observation_cap = true
+    }
+
+    invariant EmptyNonzeroStepRangeTailPreservesParameters {
+        this.empty_nonzero_step_range_tail_preserves_parameters = true
+    }
+
+    invariant SingletonNonzeroStepRangeTailIsEmptyAtEndpointWithoutStepAddition {
+        this.singleton_nonzero_step_range_tail_is_empty_at_endpoint_without_step_addition = true
+    }
+
+    invariant MultiElementNonzeroStepRangeTailAdvancesStartByStep {
+        this.multi_element_nonzero_step_range_tail_advances_start_by_step = true
     }
 
     invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
