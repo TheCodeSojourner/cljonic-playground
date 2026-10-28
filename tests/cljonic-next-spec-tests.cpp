@@ -2,6 +2,7 @@
 
 #include <array>
 #include <concepts>
+#include <limits>
 #include <type_traits>
 
 #include "cljonic-test-api.hpp"
@@ -19,6 +20,7 @@ TEST_CASE("Next returns the logical tail as the same collection kind with reduce
     using cljonic::MapEntry;
     using cljonic::next;
     using cljonic::Queue;
+    using cljonic::Repeat;
     using cljonic::Set;
     using cljonic::String;
     using cljonic::Vector;
@@ -152,17 +154,19 @@ TEST_CASE("Next returns the logical tail as the same collection kind with reduce
     STATIC_REQUIRE(noexcept(next(set)));
     STATIC_REQUIRE(noexcept(next(queue)));
     STATIC_REQUIRE(noexcept(next(text)));
+    STATIC_REQUIRE(noexcept(next(cljonic::Range<int>{0, 5})));
 
     TRACE_ID("invariant.Next.RejectsUnsupportedDomainWithTargetedDiagnostic");
     TRACE_ID("invariant.Next.DiagnosticNamesSupportedDomains");
     STATIC_REQUIRE_FALSE(HasAdmittedNext<int>);
     STATIC_REQUIRE_FALSE(HasAdmittedNext<cljonic::MapEntry<int, int>>);
-    STATIC_REQUIRE_FALSE(HasAdmittedNext<cljonic::Range<int>>);
+    STATIC_REQUIRE(HasAdmittedNext<cljonic::Range<int>>);
     STATIC_REQUIRE(HasAdmittedNext<Vector<int, 4>>);
     STATIC_REQUIRE(HasAdmittedNext<Map<int, int, 4>>);
     STATIC_REQUIRE(HasAdmittedNext<Set<int, 4>>);
     STATIC_REQUIRE(HasAdmittedNext<Queue<int, 4>>);
     STATIC_REQUIRE(HasAdmittedNext<String<4>>);
+    STATIC_REQUIRE(HasAdmittedNext<Repeat<int>>);
 
     volatile int first_raw = 40;
     volatile int second_raw = 50;
@@ -211,4 +215,165 @@ TEST_CASE("Next returns the logical tail as the same collection kind with reduce
     REQUIRE(runtime_text_tail(0) == second_char);
     REQUIRE(runtime_text_tail(1) == third_char);
     REQUIRE(count(runtime_text) == 3U);
+}
+
+TEST_CASE("Next returns the logical tail of Repeat producers", "[next]") {
+    using cljonic::count;
+    using cljonic::fits_into;
+    using cljonic::into;
+    using cljonic::is_empty;
+    using cljonic::next;
+    using cljonic::Repeat;
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.Next");
+    TRACE_ID("invariant.Next.SupportsProducerTailDomain");
+    TRACE_ID("invariant.Next.ProducerTailDomainIncludesRange");
+    TRACE_ID("invariant.Next.ReturnsSameProducerKindAsSource");
+    TRACE_ID("invariant.Next.ReturnsElementsAfterFirstOfProducerResult");
+    TRACE_ID("invariant.Next.UnboundedProducerTailRemainsUnbounded");
+    TRACE_ID("invariant.Next.RepeatedNextNeverExhaustsUnboundedProducer");
+    TRACE_ID("invariant.Next.ProducerTailResultIsSelfContainedAndOwning");
+    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeOrInvokeCallbacks");
+    TRACE_ID("invariant.Next.ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto");
+
+    TRACE_ID("entity-fields.Repeat");
+    TRACE_ID("invariant.Repeat.NextReturnsFiniteTailWithCountMinusOneSaturatingAtZero");
+    TRACE_ID("invariant.Repeat.NextReturnsUnboundedTailWithUnchangedObservationPolicy");
+    TRACE_ID("invariant.Repeat.NextTailPreservesInputAndRepeatedValue");
+    TRACE_ID("invariant.Repeat.NextTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto");
+
+    constexpr auto finite = Repeat{3, 7};
+    constexpr auto finite_tail = next(finite);
+    STATIC_REQUIRE((std::same_as<decltype(finite_tail), const Repeat<int>>));
+    STATIC_REQUIRE(count(finite_tail) == 2U);
+    STATIC_REQUIRE(fits_into(Vector<int, 2>{}, finite_tail));
+    constexpr auto finite_tail_values = into(Vector<int, 2>{}, finite_tail);
+    STATIC_REQUIRE(finite_tail_values(0) == 7);
+    STATIC_REQUIRE(finite_tail_values(1) == 7);
+    STATIC_REQUIRE(count(finite) == 3U);
+    STATIC_REQUIRE(fits_into(Vector<int, 3>{}, finite));
+    constexpr auto finite_values = into(Vector<int, 3>{}, finite);
+    STATIC_REQUIRE(finite_values(0) == 7);
+    STATIC_REQUIRE(finite_values(1) == 7);
+    STATIC_REQUIRE(finite_values(2) == 7);
+    STATIC_REQUIRE(noexcept(next(finite)));
+
+    constexpr auto singleton = Repeat{1, 7};
+    constexpr auto singleton_tail = next(singleton);
+    STATIC_REQUIRE(count(singleton_tail) == 0U);
+    STATIC_REQUIRE(fits_into(Vector<int, 0>{}, singleton_tail));
+    STATIC_REQUIRE(is_empty(singleton_tail));
+    STATIC_REQUIRE(singleton_tail == Repeat{0, 7});
+
+    constexpr auto empty = Repeat{0, 7};
+    constexpr auto empty_tail = next(empty);
+    STATIC_REQUIRE(count(empty_tail) == 0U);
+    STATIC_REQUIRE(fits_into(Vector<int, 0>{}, empty_tail));
+    STATIC_REQUIRE(empty_tail == empty);
+
+    constexpr auto unbounded = Repeat{7};
+    constexpr auto unbounded_tail = next(unbounded);
+    STATIC_REQUIRE(count(unbounded_tail) == count(unbounded));
+    STATIC_REQUIRE_FALSE(fits_into(Vector<int, 2>{}, unbounded_tail));
+    constexpr auto unbounded_tail_values = into(Vector<int, 2>{}, unbounded_tail);
+    STATIC_REQUIRE(unbounded_tail_values(0) == 7);
+    STATIC_REQUIRE(unbounded_tail_values(1) == 7);
+    constexpr auto repeated_tail = next(unbounded_tail);
+    STATIC_REQUIRE(count(repeated_tail) == count(unbounded));
+    STATIC_REQUIRE_FALSE(fits_into(Vector<int, 2>{}, repeated_tail));
+    constexpr auto repeated_tail_values = into(Vector<int, 2>{}, repeated_tail);
+    STATIC_REQUIRE(repeated_tail_values(0) == 7);
+    STATIC_REQUIRE(repeated_tail_values(1) == 7);
+
+    constexpr auto materialized_tail = into(Vector<int, 2>{}, finite_tail);
+    STATIC_REQUIRE(count(materialized_tail) == 2U);
+    STATIC_REQUIRE(materialized_tail(0) == 7);
+    STATIC_REQUIRE(materialized_tail(1) == 7);
+    STATIC_REQUIRE(fits_into(Vector<int, 2>{}, finite_tail));
+    STATIC_REQUIRE_FALSE(fits_into(Vector<int, 2>{}, unbounded_tail));
+    constexpr auto bounded_unbounded_tail = into(Vector<int, 2>{}, unbounded_tail);
+    STATIC_REQUIRE(count(bounded_unbounded_tail) == 2U);
+    STATIC_REQUIRE(bounded_unbounded_tail(0) == 7);
+    STATIC_REQUIRE(bounded_unbounded_tail(1) == 7);
+}
+
+TEST_CASE("Next returns the logical tail of Range producers", "[next]") {
+    using cljonic::count;
+    using cljonic::fits_into;
+    using cljonic::into;
+    using cljonic::is_empty;
+    using cljonic::next;
+    using cljonic::Range;
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.Next");
+    TRACE_ID("invariant.Next.SupportsProducerTailDomain");
+    TRACE_ID("invariant.Next.ProducerTailDomainIncludesRange");
+    TRACE_ID("invariant.Next.UnboundedProducerTailRemainsUnbounded");
+    TRACE_ID("invariant.Next.RepeatedNextNeverExhaustsUnboundedProducer");
+    TRACE_ID("invariant.Next.ReturnsSameProducerKindAsSource");
+    TRACE_ID("invariant.Next.ProducerTailResultIsSelfContainedAndOwning");
+    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeOrInvokeCallbacks");
+    TRACE_ID("invariant.Next.ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto");
+    TRACE_ID("invariant.Next.RangeTailPreservesEndpointAndStep");
+    TRACE_ID("invariant.Next.ZeroStepRangeTailRemainsUnboundedWithSameObservationCap");
+    TRACE_ID("invariant.Next.EmptyNonzeroStepRangeTailPreservesParameters");
+    TRACE_ID("invariant.Next.SingletonNonzeroStepRangeTailIsEmptyAtEndpointWithoutStepAddition");
+    TRACE_ID("invariant.Next.MultiElementNonzeroStepRangeTailAdvancesStartByStep");
+
+    TRACE_ID("entity-fields.Range");
+    TRACE_ID("invariant.Range.NextPreservesEndpointAndStep");
+    TRACE_ID("invariant.Range.ZeroStepNextRemainsUnboundedWithSameObservationCap");
+    TRACE_ID("invariant.Range.EmptyNonzeroStepNextPreservesParameters");
+    TRACE_ID("invariant.Range.SingletonNonzeroStepNextIsEmptyAtEndpointWithoutStepAddition");
+    TRACE_ID("invariant.Range.MultiElementNonzeroStepNextAdvancesStartByStep");
+
+    constexpr auto ascending = Range{1, 8, 2};
+    constexpr auto ascending_tail = next(ascending);
+    STATIC_REQUIRE((std::same_as<decltype(ascending_tail), const Range<int>>));
+    STATIC_REQUIRE(ascending_tail == Range{3, 8, 2});
+    STATIC_REQUIRE(count(ascending_tail) == 3U);
+    constexpr auto ascending_values = into(Vector<int, 3>{}, ascending_tail);
+    STATIC_REQUIRE(ascending_values(0) == 3);
+    STATIC_REQUIRE(ascending_values(1) == 5);
+    STATIC_REQUIRE(ascending_values(2) == 7);
+    STATIC_REQUIRE(ascending == Range{1, 8, 2});
+    STATIC_REQUIRE(noexcept(next(ascending)));
+
+    constexpr auto descending = Range{5, -6, -2};
+    constexpr auto descending_tail = next(descending);
+    STATIC_REQUIRE(descending_tail == Range{3, -6, -2});
+    STATIC_REQUIRE(count(descending_tail) == 5U);
+    constexpr auto descending_values = into(Vector<int, 2>{}, descending_tail);
+    STATIC_REQUIRE(descending_values(0) == 3);
+    STATIC_REQUIRE(descending_values(1) == 1);
+    STATIC_REQUIRE(descending == Range{5, -6, -2});
+
+    constexpr auto empty_away = Range{5, 0, 1};
+    constexpr auto empty_away_tail = next(empty_away);
+    STATIC_REQUIRE(empty_away_tail == empty_away);
+    STATIC_REQUIRE(is_empty(empty_away_tail));
+    constexpr auto empty_equal = Range{5, 5, -1};
+    STATIC_REQUIRE(next(empty_equal) == empty_equal);
+
+    constexpr auto singleton_overflow = Range{std::numeric_limits<int>::max() - 1, std::numeric_limits<int>::max(), 2};
+    constexpr auto singleton_tail = next(singleton_overflow);
+    STATIC_REQUIRE(singleton_tail == Range{std::numeric_limits<int>::max(), std::numeric_limits<int>::max(), 2});
+    STATIC_REQUIRE(is_empty(singleton_tail));
+    STATIC_REQUIRE(count(singleton_tail) == 0U);
+    STATIC_REQUIRE(singleton_overflow ==
+                   Range{std::numeric_limits<int>::max() - 1, std::numeric_limits<int>::max(), 2});
+
+    constexpr auto zero_step = Range{4, 9, 0};
+    constexpr auto zero_step_tail = next(zero_step);
+    STATIC_REQUIRE(zero_step_tail == zero_step);
+    STATIC_REQUIRE(count(zero_step_tail) == count(zero_step));
+    STATIC_REQUIRE_FALSE(fits_into(Vector<int, 2>{}, zero_step_tail));
+    constexpr auto repeated_zero_step_tail = next(zero_step_tail);
+    STATIC_REQUIRE(repeated_zero_step_tail == zero_step);
+    STATIC_REQUIRE(count(repeated_zero_step_tail) == count(zero_step));
+    constexpr auto zero_step_values = into(Vector<int, 2>{}, zero_step_tail);
+    STATIC_REQUIRE(zero_step_values(0) == 4);
+    STATIC_REQUIRE(zero_step_values(1) == 4);
 }
