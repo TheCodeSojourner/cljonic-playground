@@ -39,18 +39,18 @@ namespace cljonic::no_heap::probes {
 
     return vector_tail.count() == 2U && vector_tail(0U) == second && vector_tail(1U) == third && vector.count() == 3U &&
            vector(0U) == first && equal(vector, vector_before) && queue_tail.count() == 2U &&
-           queue_tail(0U) == second && queue_tail(1U) == third && queue.count() == 3U && queue.begin()[0] == first &&
-           equal(queue, queue_before) && map_tail.count() == 1U && map_tail(0U) == map.begin()[1] &&
-           map.count() == 2U && map.begin()[0] == MapEntry{first, second} && equal(map, map_before) &&
-           set_tail.count() == 2U && set_tail(0U) == set.begin()[1] && set_tail(1U) == set.begin()[2] &&
-           set.count() == 3U && set.begin()[0] == first && equal(set, set_before) && text_tail.count() == 2U &&
-           text_tail(0U) == second_char && text_tail(1U) == third_char && text.count() == 3U &&
-           text(0U) == first_char && equal(text, text_before) && next(Vector<int, 3>{first}).count() == 0U &&
-           next(Map<int, int, 2>{MapEntry{first, second}}).count() == 0U && next(Set<int, 3>{first}).count() == 0U &&
-           next(Queue<int, 3>{first}).count() == 0U && next(String<3>{std::array{first_char}}).count() == 0U &&
-           next(Vector<int, 0>{}).count() == 0U && next(Vector<int, 4>{}).count() == 0U &&
-           next(Map<int, int, 4>{}).count() == 0U && next(Set<int, 4>{}).count() == 0U &&
-           next(Queue<int, 4>{}).count() == 0U && next(String<4>{}).count() == 0U;
+           queue_tail.begin()[0U] == second && queue_tail.begin()[1U] == third && queue.count() == 3U &&
+           queue.begin()[0] == first && equal(queue, queue_before) && map_tail.count() == 1U &&
+           map_tail.begin()[0U] == map.begin()[1] && map.count() == 2U && map.begin()[0] == MapEntry{first, second} &&
+           equal(map, map_before) && set_tail.count() == 2U && set_tail.begin()[0U] == set.begin()[1] &&
+           set_tail.begin()[1U] == set.begin()[2] && set.count() == 3U && set.begin()[0] == first &&
+           equal(set, set_before) && text_tail.count() == 2U && text_tail(0U) == second_char &&
+           text_tail(1U) == third_char && text.count() == 3U && text(0U) == first_char && equal(text, text_before) &&
+           next(Vector<int, 3>{first}).count() == 0U && next(Map<int, int, 2>{MapEntry{first, second}}).count() == 0U &&
+           next(Set<int, 3>{first}).count() == 0U && next(Queue<int, 3>{first}).count() == 0U &&
+           next(String<3>{std::array{first_char}}).count() == 0U && next(Vector<int, 0>{}).count() == 0U &&
+           next(Vector<int, 4>{}).count() == 0U && next(Map<int, int, 4>{}).count() == 0U &&
+           next(Set<int, 4>{}).count() == 0U && next(Queue<int, 4>{}).count() == 0U && next(String<4>{}).count() == 0U;
 }
 
 } // namespace cljonic::no_heap::probes

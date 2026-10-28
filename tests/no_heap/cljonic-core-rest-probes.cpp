@@ -41,20 +41,20 @@ namespace cljonic::no_heap::probes {
     const auto zero_capacity_vector = Vector<int, 0>{};
 
     return vector_rest.count() == 2U && vector_rest(0U) == second && vector_rest(1U) == third && vector.count() == 3U &&
-           vector(0U) == first && vector_rest.capacity() == vector.capacity() && queue_rest.count() == 2U &&
-           queue_rest(0U) == second && queue_rest(1U) == third && queue.count() == 3U && queue.begin()[0] == first &&
-           queue_rest.capacity() == queue.capacity() && map_rest.count() == 2U && map_rest(0U) == map.begin()[1] &&
-           map_rest(1U) == map.begin()[2] && map.count() == 3U && map.begin()[0] == MapEntry{first, second} &&
-           map_rest.capacity() == map.capacity() && set_rest.count() == 2U && set_rest(0U) == set.begin()[1] &&
-           set_rest(1U) == set.begin()[2] && set.count() == 3U && set.begin()[0] == first &&
-           set_rest.capacity() == set.capacity() && text_rest.count() == 2U && text_rest(0U) == second_char &&
-           text_rest(1U) == third_char && text.count() == 3U && text(0U) == first_char &&
-           text_rest.capacity() == text.capacity() && rest(Vector<int, 4>{first}).count() == 0U &&
-           rest(Map<int, int, 4>{MapEntry{first, second}}).count() == 0U && rest(Set<int, 4>{first}).count() == 0U &&
-           rest(Queue<int, 4>{first}).count() == 0U && rest(String<4>{std::array{first_char}}).count() == 0U &&
-           rest(empty_vector).count() == 0U && rest(empty_map).count() == 0U && rest(empty_set).count() == 0U &&
-           rest(empty_queue).count() == 0U && rest(empty_text).count() == 0U &&
-           rest(zero_capacity_vector).count() == 0U;
+           vector(0U) == first && vector_rest.capacity() + 1U == vector.capacity() && queue_rest.count() == 2U &&
+           queue_rest.begin()[0U] == second && queue_rest.begin()[1U] == third && queue.count() == 3U &&
+           queue.begin()[0] == first && queue_rest.capacity() + 1U == queue.capacity() && map_rest.count() == 2U &&
+           map_rest.begin()[0U] == map.begin()[1] && map_rest.begin()[1U] == map.begin()[2] && map.count() == 3U &&
+           map.begin()[0] == MapEntry{first, second} && map_rest.capacity() + 1U == map.capacity() &&
+           set_rest.count() == 2U && set_rest.begin()[0U] == set.begin()[1] && set_rest.begin()[1U] == set.begin()[2] &&
+           set.count() == 3U && set.begin()[0] == first && set_rest.capacity() + 1U == set.capacity() &&
+           text_rest.count() == 2U && text_rest(0U) == second_char && text_rest(1U) == third_char &&
+           text.count() == 3U && text(0U) == first_char && text_rest.capacity() + 1U == text.capacity() &&
+           rest(Vector<int, 4>{first}).count() == 0U && rest(Map<int, int, 4>{MapEntry{first, second}}).count() == 0U &&
+           rest(Set<int, 4>{first}).count() == 0U && rest(Queue<int, 4>{first}).count() == 0U &&
+           rest(String<4>{std::array{first_char}}).count() == 0U && rest(empty_vector).count() == 0U &&
+           rest(empty_map).count() == 0U && rest(empty_set).count() == 0U && rest(empty_queue).count() == 0U &&
+           rest(empty_text).count() == 0U && rest(zero_capacity_vector).count() == 0U;
 }
 
 } // namespace cljonic::no_heap::probes

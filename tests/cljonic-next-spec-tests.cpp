@@ -13,7 +13,7 @@ template <typename T>
 concept HasAdmittedNext = requires(const T& value) { requires(!std::same_as<decltype(cljonic::next(value)), void>); };
 } // namespace
 
-TEST_CASE("Next returns the logical tail as a bounded Vector", "[next]") {
+TEST_CASE("Next returns the logical tail as the same collection kind with reduced capacity", "[next]") {
     using cljonic::count;
     using cljonic::Map;
     using cljonic::MapEntry;
@@ -32,11 +32,11 @@ TEST_CASE("Next returns the logical tail as a bounded Vector", "[next]") {
     STATIC_REQUIRE(cljonic::concepts::SequenceableCollection<Queue<int, 4>>);
     STATIC_REQUIRE(cljonic::concepts::SequenceableCollection<String<4>>);
 
-    TRACE_ID("invariant.Next.ReturnsBoundedVector");
-    TRACE_ID("invariant.Next.ResultCapacityMatchesSource");
+    TRACE_ID("invariant.Next.ReturnsSameCollectionKindAsSource");
+    TRACE_ID("invariant.Next.ResultCapacityIsSourceCapacityMinusOneSaturatingAtZero");
     constexpr auto vector = Vector<int, 4>{10, 20, 30};
     constexpr auto vector_tail = next(vector);
-    STATIC_REQUIRE((std::same_as<decltype(vector_tail), const Vector<int, 4>>));
+    STATIC_REQUIRE((std::same_as<decltype(vector_tail), const Vector<int, 3>>));
 
     TRACE_ID("invariant.Next.ReturnsElementsAfterFirst");
     STATIC_REQUIRE(count(vector_tail) == 2U);
@@ -44,33 +44,33 @@ TEST_CASE("Next returns the logical tail as a bounded Vector", "[next]") {
     STATIC_REQUIRE(vector_tail(1) == 30);
     constexpr auto full_vector = Vector<int, 3>{10, 20, 30};
     constexpr auto full_vector_tail = next(full_vector);
-    STATIC_REQUIRE((std::same_as<decltype(full_vector_tail), const Vector<int, 3>>));
+    STATIC_REQUIRE((std::same_as<decltype(full_vector_tail), const Vector<int, 2>>));
     STATIC_REQUIRE(count(full_vector_tail) == 2U);
     STATIC_REQUIRE(full_vector_tail(0) == 20);
     STATIC_REQUIRE(full_vector_tail(1) == 30);
 
     constexpr auto queue = Queue<int, 4>{10, 20, 30};
     constexpr auto queue_tail = next(queue);
-    STATIC_REQUIRE((std::same_as<decltype(queue_tail), const Vector<int, 4>>));
+    STATIC_REQUIRE((std::same_as<decltype(queue_tail), const Queue<int, 3>>));
     STATIC_REQUIRE(count(queue_tail) == 2U);
-    STATIC_REQUIRE(queue_tail(0) == 20);
-    STATIC_REQUIRE(queue_tail(1) == 30);
+    STATIC_REQUIRE(queue_tail.begin()[0] == 20);
+    STATIC_REQUIRE(queue_tail.begin()[1] == 30);
     constexpr auto full_queue = Queue<int, 3>{10, 20, 30};
     constexpr auto full_queue_tail = next(full_queue);
-    STATIC_REQUIRE((std::same_as<decltype(full_queue_tail), const Vector<int, 3>>));
+    STATIC_REQUIRE((std::same_as<decltype(full_queue_tail), const Queue<int, 2>>));
     STATIC_REQUIRE(count(full_queue_tail) == 2U);
-    STATIC_REQUIRE(full_queue_tail(0) == 20);
-    STATIC_REQUIRE(full_queue_tail(1) == 30);
+    STATIC_REQUIRE(full_queue_tail.begin()[0] == 20);
+    STATIC_REQUIRE(full_queue_tail.begin()[1] == 30);
 
     constexpr auto text = String<4>{"ABC"};
     constexpr auto text_tail = next(text);
-    STATIC_REQUIRE((std::same_as<decltype(text_tail), const Vector<char, 4>>));
+    STATIC_REQUIRE((std::same_as<decltype(text_tail), const String<3>>));
     STATIC_REQUIRE(count(text_tail) == 2U);
     STATIC_REQUIRE(text_tail(0) == 'B');
     STATIC_REQUIRE(text_tail(1) == 'C');
     constexpr auto full_text = String<3>{"ABC"};
     constexpr auto full_text_tail = next(full_text);
-    STATIC_REQUIRE((std::same_as<decltype(full_text_tail), const Vector<char, 3>>));
+    STATIC_REQUIRE((std::same_as<decltype(full_text_tail), const String<2>>));
     STATIC_REQUIRE(count(full_text_tail) == 2U);
     STATIC_REQUIRE(full_text_tail(0) == 'B');
     STATIC_REQUIRE(full_text_tail(1) == 'C');
@@ -78,36 +78,36 @@ TEST_CASE("Next returns the logical tail as a bounded Vector", "[next]") {
     TRACE_ID("invariant.Next.MapEntriesRemainValueSemantic");
     constexpr auto map = Map<int, int, 4>{MapEntry{1, 100}, MapEntry{2, 200}, MapEntry{3, 300}};
     constexpr auto map_tail = next(map);
-    STATIC_REQUIRE((std::same_as<decltype(map_tail), const Vector<MapEntry<int, int>, 4>>));
+    STATIC_REQUIRE((std::same_as<decltype(map_tail), const Map<int, int, 3>>));
     STATIC_REQUIRE(count(map_tail) == 2U);
-    STATIC_REQUIRE(map_tail(0) == map.begin()[1]);
-    STATIC_REQUIRE(map_tail(1) == map.begin()[2]);
+    STATIC_REQUIRE(map_tail.begin()[0] == map.begin()[1]);
+    STATIC_REQUIRE(map_tail.begin()[1] == map.begin()[2]);
     constexpr auto full_map = Map<int, int, 3>{MapEntry{1, 100}, MapEntry{2, 200}, MapEntry{3, 300}};
     constexpr auto full_map_tail = next(full_map);
-    STATIC_REQUIRE((std::same_as<decltype(full_map_tail), const Vector<MapEntry<int, int>, 3>>));
+    STATIC_REQUIRE((std::same_as<decltype(full_map_tail), const Map<int, int, 2>>));
     STATIC_REQUIRE(count(full_map_tail) == 2U);
-    STATIC_REQUIRE(full_map_tail(0) == full_map.begin()[1]);
-    STATIC_REQUIRE(full_map_tail(1) == full_map.begin()[2]);
+    STATIC_REQUIRE(full_map_tail.begin()[0] == full_map.begin()[1]);
+    STATIC_REQUIRE(full_map_tail.begin()[1] == full_map.begin()[2]);
 
     TRACE_ID("invariant.Next.MapSetOrderIsNotSemanticallySignificant");
     constexpr auto set = Set<int, 4>{10, 20, 30};
     constexpr auto set_tail = next(set);
-    STATIC_REQUIRE((std::same_as<decltype(set_tail), const Vector<int, 4>>));
+    STATIC_REQUIRE((std::same_as<decltype(set_tail), const Set<int, 3>>));
     STATIC_REQUIRE(count(set_tail) == 2U);
-    STATIC_REQUIRE(set_tail(0) == set.begin()[1]);
-    STATIC_REQUIRE(set_tail(1) == set.begin()[2]);
+    STATIC_REQUIRE(set_tail.begin()[0] == set.begin()[1]);
+    STATIC_REQUIRE(set_tail.begin()[1] == set.begin()[2]);
     constexpr auto full_set = Set<int, 3>{10, 20, 30};
     constexpr auto full_set_tail = next(full_set);
-    STATIC_REQUIRE((std::same_as<decltype(full_set_tail), const Vector<int, 3>>));
+    STATIC_REQUIRE((std::same_as<decltype(full_set_tail), const Set<int, 2>>));
     STATIC_REQUIRE(count(full_set_tail) == 2U);
-    STATIC_REQUIRE(full_set_tail(0) == full_set.begin()[1]);
-    STATIC_REQUIRE(full_set_tail(1) == full_set.begin()[2]);
+    STATIC_REQUIRE(full_set_tail.begin()[0] == full_set.begin()[1]);
+    STATIC_REQUIRE(full_set_tail.begin()[1] == full_set.begin()[2]);
 
     TRACE_ID("invariant.Next.QueuePreservesFifoOrder");
-    STATIC_REQUIRE(queue_tail(0) == 20);
-    STATIC_REQUIRE(queue_tail(1) == 30);
+    STATIC_REQUIRE(queue_tail.begin()[0] == 20);
+    STATIC_REQUIRE(queue_tail.begin()[1] == 30);
 
-    TRACE_ID("invariant.Next.EmptyReturnsEmptyVector");
+    TRACE_ID("invariant.Next.EmptyOrSingletonReturnsEmptyResult");
     STATIC_REQUIRE(count(next(Vector<int, 4>{})) == 0U);
     STATIC_REQUIRE(count(next(Map<int, int, 4>{})) == 0U);
     STATIC_REQUIRE(count(next(Set<int, 4>{})) == 0U);
@@ -120,6 +120,16 @@ TEST_CASE("Next returns the logical tail as a bounded Vector", "[next]") {
     STATIC_REQUIRE(count(next(String<4>{"A"})) == 0U);
     STATIC_REQUIRE((std::same_as<decltype(next(Vector<int, 0>{})), Vector<int, 0>>));
     STATIC_REQUIRE(count(next(Vector<int, 0>{})) == 0U);
+    STATIC_REQUIRE((std::same_as<decltype(next(Queue<int, 0>{})), Queue<int, 0>>));
+    STATIC_REQUIRE(count(next(Queue<int, 0>{})) == 0U);
+    STATIC_REQUIRE((std::same_as<decltype(next(Set<int, 0>{})), Set<int, 0>>));
+    STATIC_REQUIRE(count(next(Set<int, 0>{})) == 0U);
+    STATIC_REQUIRE((std::same_as<decltype(next(Map<int, int, 0>{})), Map<int, int, 0>>));
+    STATIC_REQUIRE(count(next(Map<int, int, 0>{})) == 0U);
+    STATIC_REQUIRE((std::same_as<decltype(next(String<0>{})), String<0>>));
+    STATIC_REQUIRE(count(next(String<0>{})) == 0U);
+    STATIC_REQUIRE((std::same_as<decltype(next(Queue<int, 1>{10})), Queue<int, 0>>));
+    STATIC_REQUIRE(count(next(Queue<int, 1>{10})) == 0U);
 
     TRACE_ID("invariant.Next.PreservesInput");
     STATIC_REQUIRE(count(vector) == 3U);
@@ -171,21 +181,21 @@ TEST_CASE("Next returns the logical tail as a bounded Vector", "[next]") {
     const auto runtime_queue = Queue<int, 4>{first, second, third};
     const auto runtime_queue_tail = next(runtime_queue);
     REQUIRE(count(runtime_queue_tail) == 2U);
-    REQUIRE(runtime_queue_tail(0) == second);
-    REQUIRE(runtime_queue_tail(1) == third);
+    REQUIRE(runtime_queue_tail.begin()[0] == second);
+    REQUIRE(runtime_queue_tail.begin()[1] == third);
     REQUIRE(count(runtime_queue) == 3U);
 
     const auto runtime_map = Map<int, int, 4>{MapEntry{first, second}, MapEntry{second, third}};
     const auto runtime_map_tail = next(runtime_map);
     REQUIRE(count(runtime_map_tail) == 1U);
-    REQUIRE(runtime_map_tail(0) == runtime_map.begin()[1]);
+    REQUIRE(runtime_map_tail.begin()[0] == runtime_map.begin()[1]);
     REQUIRE(count(runtime_map) == 2U);
 
     const auto runtime_set = Set<int, 4>{first, second, third};
     const auto runtime_set_tail = next(runtime_set);
     REQUIRE(count(runtime_set_tail) == 2U);
-    REQUIRE(runtime_set_tail(0) == runtime_set.begin()[1]);
-    REQUIRE(runtime_set_tail(1) == runtime_set.begin()[2]);
+    REQUIRE(runtime_set_tail.begin()[0] == runtime_set.begin()[1]);
+    REQUIRE(runtime_set_tail.begin()[1] == runtime_set.begin()[2]);
     REQUIRE(count(runtime_set) == 3U);
 
     volatile char first_char_raw = 'a';
