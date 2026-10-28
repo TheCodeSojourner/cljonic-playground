@@ -19,6 +19,6 @@ var searchData=
   ['repeatedlydomainviolation_16',['RepeatedlyDomainViolation',['../structcljonic_1_1concepts__detail_1_1_repeatedly_domain_violation.html',1,'cljonic::concepts_detail']]],
   ['repeatedlystep_17',['RepeatedlyStep',['../conceptcljonic_1_1concepts_1_1_repeatedly_step.html',1,'cljonic::concepts']]],
   ['repeatelementdomainviolation_18',['RepeatElementDomainViolation',['../structcljonic_1_1concepts__detail_1_1_repeat_element_domain_violation.html',1,'cljonic::concepts_detail']]],
-  ['rest_19',['rest',['../namespacecljonic.html#a3c46c302667fe04e6f0259fb6cfe8f6c',1,'cljonic::rest(const C &amp;collection) noexcept -&gt; Vector&lt; typename C::value_type, C::capacity()&gt;'],['../namespacecljonic.html#ae88ef4859eacf3a08cbc05645d5c65ec',1,'cljonic::rest(const C &amp;value) noexcept -&gt; void']]],
+  ['rest_19',['rest',['../namespacecljonic.html#a3a2a69fa116188ac2198f958a5779156',1,'cljonic::rest(const C &amp;collection) noexcept -&gt; decltype(next(collection))'],['../namespacecljonic.html#ae88ef4859eacf3a08cbc05645d5c65ec',1,'cljonic::rest(const C &amp;value) noexcept -&gt; void']]],
   ['rules_20',['Check the operation&apos;s own rules',['../implicit-conversions.html#conversion-operation',1,'']]]
 ];

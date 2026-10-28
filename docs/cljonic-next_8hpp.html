@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#concepts">Concepts</a> &#124;
 <a href="#func-members">Functions</a>  </div>
@@ -108,10 +109,23 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="cljonic-map_8hpp_source.html">cljonic-map.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="cljonic-queue_8hpp_source.html">cljonic-queue.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="cljonic-set_8hpp_source.html">cljonic-set.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="cljonic-string_8hpp_source.html">cljonic-string.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-vector_8hpp_source.html">cljonic-vector.hpp</a>&gt;</code><br />
+<code>#include &lt;cstddef&gt;</code><br />
 </div>
 <p><a href="cljonic-next_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20Vector_3C_20T_2C_20N_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20Vector_3C_20T_2C_20N_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1_next_result_3_01_vector_3_01_t_00_01_n_01_4_01_4.html">cljonic::concepts_detail::NextResult&lt; Vector&lt; T, N &gt; &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20Map_3C_20K_2C_20V_2C_20N_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20Map_3C_20K_2C_20V_2C_20N_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1_next_result_3_01_map_3_01_k_00_01_v_00_01_n_01_4_01_4.html">cljonic::concepts_detail::NextResult&lt; Map&lt; K, V, N &gt; &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20Set_3C_20T_2C_20N_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20Set_3C_20T_2C_20N_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1_next_result_3_01_set_3_01_t_00_01_n_01_4_01_4.html">cljonic::concepts_detail::NextResult&lt; Set&lt; T, N &gt; &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20Queue_3C_20T_2C_20N_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20Queue_3C_20T_2C_20N_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1_next_result_3_01_queue_3_01_t_00_01_n_01_4_01_4.html">cljonic::concepts_detail::NextResult&lt; Queue&lt; T, N &gt; &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20String_3C_20N_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ANextResult_3C_20String_3C_20N_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1_next_result_3_01_string_3_01_n_01_4_01_4.html">cljonic::concepts_detail::NextResult&lt; String&lt; N &gt; &gt;</a></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:cljonic" id="r_cljonic"><td class="memItemLeft">namespace &#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html">cljonic</a></td></tr>
@@ -123,8 +137,9 @@ Concepts</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac8c72b21ce8dac37c813310d6bbc6993" id="r_ac8c72b21ce8dac37c813310d6bbc6993"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::NextSequenceableCollection C&gt; </td></tr>
-<tr class="memitem:ac8c72b21ce8dac37c813310d6bbc6993 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#ac8c72b21ce8dac37c813310d6bbc6993">cljonic::next</a> (const C &amp;collection) noexcept -&gt; <a class="el" href="classcljonic_1_1_vector.html">Vector</a>&lt; typename C::value_type, C::capacity()&gt;</td></tr>
+<tr class="memitem:a9b46baa4743b2009e85962f2d207bceb" id="r_a9b46baa4743b2009e85962f2d207bceb"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a9b46baa4743b2009e85962f2d207bceb">cljonic::concepts_detail::next_tail_capacity</a> (const std::size_t capacity) noexcept -&gt; std::size_t</td></tr>
+<tr class="memitem:accdefad78fa9bf05274fc5d2bbf48983" id="r_accdefad78fa9bf05274fc5d2bbf48983"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::NextSequenceableCollection C&gt; </td></tr>
+<tr class="memitem:accdefad78fa9bf05274fc5d2bbf48983 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#accdefad78fa9bf05274fc5d2bbf48983">cljonic::next</a> (const C &amp;collection) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_next_result.html">concepts_detail::NextResult</a>&lt; C &gt;::type</td></tr>
 <tr class="memitem:a221397423203c591ff029097b077a943" id="r_a221397423203c591ff029097b077a943"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
 requires (!concepts_detail::NextSequenceableCollection&lt;C&gt;)</td></tr>
 <tr class="memitem:a221397423203c591ff029097b077a943 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a221397423203c591ff029097b077a943">cljonic::next</a> (const C &amp;value) noexcept -&gt; void</td></tr>
