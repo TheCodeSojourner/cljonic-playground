@@ -24,9 +24,10 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 λ REQ-VAL-016(x).
   ∀ public free function `count(value)`: admits values satisfying `SequenceableCollection` or `SequenceableProducer` ∧ returns the non-throwing, non-allocating count observation defined for that value
   ∧ ∀ materialized collection: `count` returns the exact logical element count
-  ∧ ∀ Module 4 producer: exposes a non-throwing, non-allocating count observation for its bounded traversal — finite forms return their exact runtime result count ∧ unbounded forms return `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`
+  ∧ ∀ Module 4 producer: exposes a non-throwing, non-allocating count observation for its bounded traversal — finite forms return their exact runtime result count except that finite `Range` returns `min(complete cardinality, CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT)` ∧ unbounded forms return `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`
+  ∧ ∀ finite `Range`: count saturation does not change its finite complete-result status ∧ a Cycle over that source uses the saturated observed count for tail-position wraparound
   ∧ ∀ unbounded_count: a configured observable traversal cap ∧ ¬∃ claim that the producer has a finite complete result
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-VAL-017(x).
   ∀ compile_time cardinality composition: uses saturating arithmetic ∧ every composed producer cardinality is at most `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT`
@@ -200,7 +201,20 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∧ ∀ `next` of a `Cycle` with an empty finite source: preserve the empty observation
   ∧ ∀ `next` of a `Cycle` with an unbounded source: return the same `Cycle` type over `next(source)` with its starting position reset, preserving the Cycle observation cap and unbounded status
   ∧ ∀ result: independently owning ∧ self-contained ∧ preserves the input ∧ preserves logical generation order ∧ works coherently with `count`, `is_finite`, `is_empty`, `into`, and `fits_into`
-  ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ ¬∃ RTTI ∧ ¬∃ callback invocation ∧ ¬∃ implicit materialization
+  ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ ¬∃ RTTI ∧ ¬∃ implicit materialization
+  ∧ ∀ callback invocation when the Cycle source is unbounded: follows `next(source)` semantics
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
+
+λ REQ-FN-013H(x).
+  ∀ `next` of an `Iterate` with a nonzero observation cap: invoke its step exactly once and use the step result as the returned `Iterate`'s initial value ∧ preserve the observation cap
+  ∧ ∀ `next` of an `Iterate` with a zero observation cap: return an equivalent `Iterate` without invoking the step
+  ∧ ∀ `next` of a finite `Repeatedly` with positive count: invoke one copy of its stored step exactly once ∧ discard the produced value ∧ store the advanced step copy in the returned `Repeatedly` ∧ decrement its count by one
+  ∧ ∀ `next` of an empty finite `Repeatedly`: return an equivalent empty finite `Repeatedly` without invoking its step
+  ∧ ∀ `next` of an unbounded `Repeatedly` with a nonzero observation cap: invoke one copy of its stored step exactly once ∧ discard the produced value ∧ store the advanced step copy in the returned `Repeatedly` ∧ preserve the observation cap
+  ∧ ∀ `next` of an unbounded `Repeatedly` with a zero observation cap: return an equivalent `Repeatedly` without invoking its step
+  ∧ ∀ step state held by value: advancement is stored only in the returned `Repeatedly` ∧ the source remains unchanged
+  ∧ ∀ step effects through references or static storage: effects occur when `next` is called and remain shared
+  ∧ ∀ result: same producer type ∧ independently owning ∧ preserves input producer value ∧ `constexpr` when arguments support it ∧ `noexcept` ∧ non-allocating ∧ ¬∃ RTTI ∧ ¬∃ materialization of the remaining sequence
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-FN-014(x).
@@ -317,4 +331,4 @@ The following range and interoperability requirements are binding contracts: eve
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly` producer templates, `into`, `fits_into`, and internal collection traversal support.
-- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-VAL-017A`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`, `REQ-FN-009A`–`009B`, `REQ-FN-010`–`013`, `REQ-FN-013A`–`013F`, `REQ-FN-014`, `REQ-FN-014A`–`014C`, `REQ-FN-027`, `REQ-FN-027A`, `REQ-PLAT-017`, `REQ-PLAT-017A`, `REQ-PLAT-018`–`022`, `REQ-PLAT-022A`, `REQ-PLAT-023`.
+- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-VAL-017A`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`, `REQ-FN-009A`–`009B`, `REQ-FN-010`–`013`, `REQ-FN-013A`–`013H`, `REQ-FN-014`, `REQ-FN-014A`–`014C`, `REQ-FN-027`, `REQ-FN-027A`, `REQ-PLAT-017`, `REQ-PLAT-017A`, `REQ-PLAT-018`–`022`, `REQ-PLAT-022A`, `REQ-PLAT-023`.
