@@ -1,5 +1,39 @@
 ## Current Session State
 
+- last_session_id: 48de26f6-b107-48a1-97f3-d92ad7fccb6b
+- current_timestamp: 2026-10-28T11:58:00-06:00
+- session_complete: true
+
+Task:
+1. Completed the approved Repeat slice of Phase B for `next`: `next(Repeat)` returns the same owning `Repeat<T>`, finite counts decrement with saturation at zero, and unbounded Repeat stays unbounded with its observation cap unchanged. The tail construction does not materialize results or invoke callbacks.
+2. Propagated the approved behavior through requirements (`REQ-FN-002A4`, `REQ-FN-013E`), vocabulary, architecture, Allium (`next.allium`, `repeat.allium`), modular implementation, generated `cljonic.hpp`, compile-time/runtime tests, diagnostic compile-fail checks, no-heap probe, and traceability snapshot.
+3. Follow-up idiom correction: producer behavioral tests and Doxygen examples use free functions and observable behavior instead of direct producer members such as `is_finite()`, `count()`, and `begin()`. Updated the existing `producer-docs-use-free-function-api` memory to cover tests as well.
+
+Questions:
+1. None for Repeat. Range remains the next producer candidate; callback producers and Cycle remain deferred pending their stated design decisions.
+
+Decisions:
+1. The producer domain for this slice is Repeat only; collection `next` behavior remains unchanged.
+2. The public free function `next(producer)` is extended with a Repeat overload. No producer member API or new adapter type was introduced; private Repeat state is accessed through an internal friend helper so even empty finite Repeat values preserve their repeated-value parameter.
+3. Finite tail count is `max(count - 1, 0)`. Unbounded tail preserves unbounded status and the ordinary observation cap, so repeated `next` does not exhaust it.
+4. No product files were staged or committed. The requested free-function idiom was recorded in the existing mementum pattern; `next-producers.md` remains untouched.
+5. Producer-facing examples and behavioral tests prefer free-function APIs (`count`, `is_empty`, `fits_into`, `into`) over direct member calls; direct members are reserved for tests/examples specifically about that member.
+
+Validation:
+1. Requirements structure passed (333 unique clauses); vocabulary structure passed (197 terms); Allium checks for both edited specs and full `allium analyse specs` passed with no diagnostics/findings.
+2. `make test` passed (268/268 modular and single-header tests). `make primitive-compile-fail`, `make docs-examples` (38 compiled, `seq` skipped), `make traceability-spec-to-code`, and `make no-heap` passed.
+3. `make upsert-gate-fast` and `make upsert-gate-strict` passed, including sanitizer and coverage (100% lines). `git diff --check` passed.
+4. CMake Tools could not configure/discover targets in this workspace; Make-based repository gates were used.
+5. After replacing producer member calls in the new Next examples/tests, `make docs-examples` (38), `make test` (268/268), `make no-heap`, and `git diff --check` passed.
+
+Open questions:
+1. Whether to proceed next with Range remains for human direction.
+
+Next:
+1. Await human review/approval before the Range slice. Human owns final staging and commits.
+
+## Current Session State
+
 - last_session_id: 73bae1ac-555b-4c43-b171-4f8f6318f19b
 - current_timestamp: 2026-10-28T11:30:00-06:00
 - session_complete: true
