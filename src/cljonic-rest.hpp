@@ -5,14 +5,17 @@
 namespace cljonic {
 
 /** \anchor Rest
- * The \b rest free function returns the logical remainder of a \ref Vector "Vector", \ref Map "Map", \ref Set "Set",
- * \ref Queue "Queue", or \ref String "String" as exactly the result of \ref Next "next": the same collection kind with
- * one less capacity (zero stays zero). It contains every logical element after the first and preserves the input. An
- * empty or singleton input returns an empty value of the result type.
+ * The \b rest free function is an alias for \ref Next "next" over the same supported input domain. It returns exactly
+ * the result of `next(value)`, preserving its result type, logical tail, input, producer observation policy, and
+ * callback timing and effects.
  *
- * Map elements remain value-semantic \ref MapEntryFactory "map_entry" values. Map and Set traversal order is not
- * semantically significant, while Queue retains FIFO order. Unlike \ref Pop "pop", `rest` follows logical traversal
- * order rather than the collection-specific removal end.
+ * For collections, the result has the same collection kind with one less capacity (zero stays zero), and contains
+ * every logical element after the first. Map elements remain value-semantic \ref MapEntryFactory "map_entry" values.
+ * Map and Set traversal order is not semantically significant, while Queue retains FIFO order. Unlike \ref Pop "pop",
+ * `rest` follows logical traversal order rather than the collection-specific removal end.
+ *
+ * For producers, `rest` preserves all of `next`'s producer-specific tail behavior, including the eager callback timing
+ * of \ref Iterate "Iterate" and \ref Repeatedly "Repeatedly".
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -32,6 +35,23 @@ namespace cljonic {
                  first(rest(queue_remainder)) == 6);
    static_assert(count(rest(vector<int, 0>())) == 0);
 
+   constexpr auto repeated_remainder = rest(repeat(3, 7));
+   static_assert(count(repeated_remainder) == 2);
+   constexpr auto range_remainder = rest(Range{0, 3});
+   constexpr auto range_values = into(Vector<int, 2>{}, range_remainder);
+   static_assert(range_values(0) == 1 && range_values(1) == 2);
+   constexpr auto cycle_remainder = rest(cycle(vector(10, 20, 30)));
+   constexpr auto cycle_values = into(Vector<int, 3>{}, cycle_remainder);
+   static_assert(cycle_values(0) == 20 && cycle_values(1) == 30 &&
+                 cycle_values(2) == 10);
+   constexpr auto iterate_remainder =
+       rest(iterate([](int value) noexcept { return value + 1; }, 1));
+   constexpr auto iterate_values = into(Vector<int, 1>{}, iterate_remainder);
+   static_assert(iterate_values(0) == 2);
+   constexpr auto repeatedly_remainder =
+       rest(repeatedly(3, []() noexcept { return 7; }));
+   static_assert(count(repeatedly_remainder) == 2);
+
    // Runtime demonstration.
    const auto runtime_values = vector<int, 4>(40, 50, 60);
    const auto runtime_remainder = rest(runtime_values);
@@ -47,16 +67,17 @@ namespace cljonic {
  }
  ~~~~~
  */
-template <concepts_detail::NextSequenceableCollection C>
-[[nodiscard]] constexpr auto rest(const C& collection) noexcept -> decltype(next(collection)) {
-    return next(collection);
+template <concepts_detail::NextSequenceable C>
+[[nodiscard]] constexpr auto rest(const C& value) noexcept -> decltype(next(value)) {
+    return next(value);
 }
 
 template <typename C>
-    requires(!concepts_detail::NextSequenceableCollection<C>)
+    requires(!concepts_detail::NextSequenceable<C>)
 constexpr auto rest([[maybe_unused]] const C& value) noexcept -> void {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::rest: expected a Vector, Map, Set, Queue, or String value.");
+                  "cljonic::rest: expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or "
+                  "supported Cycle value.");
 }
 
 } // namespace cljonic

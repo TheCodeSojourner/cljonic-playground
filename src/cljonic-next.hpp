@@ -49,6 +49,9 @@ template <typename P>
 concept NextSequenceableProducer =
     concepts::SequenceableProducer<P> && concepts::NothrowConstInputRange<P> && NextProducerDomain<P>::value;
 
+template <typename T>
+concept NextSequenceable = NextSequenceableCollection<T> || NextSequenceableProducer<T>;
+
 constexpr auto next_tail_capacity(const std::size_t capacity) noexcept -> std::size_t {
     return capacity == 0U ? 0U : capacity - 1U;
 }
