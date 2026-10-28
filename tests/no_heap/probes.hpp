@@ -22,6 +22,7 @@ namespace cljonic::no_heap::probes {
 [[nodiscard]] auto equal_probe() noexcept -> bool;
 [[nodiscard]] auto fits_into_probe() noexcept -> bool;
 [[nodiscard]] auto first_probe() noexcept -> bool;
+[[nodiscard]] auto has_next_probe() noexcept -> bool;
 [[nodiscard]] auto get_probe() noexcept -> bool;
 [[nodiscard]] auto into_probe() noexcept -> bool;
 [[nodiscard]] auto iterate_probe() noexcept -> bool;

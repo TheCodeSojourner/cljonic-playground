@@ -134,6 +134,36 @@ PRIMITIVES = {
             "zero-capacity-vector": "(void)cljonic::rest(cljonic::Vector<int, 0>{});",
         },
     },
+    "has_next": {
+        "diagnostic_anchor": "cljonic::has_next:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::has_next(42);",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-map-entry": (
+                "(void)cljonic::has_next(cljonic::MapEntry<int, int>{1, 2});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-producer": (
+                "(void)cljonic::has_next(cljonic::Range<int>{0, 5});",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+            "unsupported-external-range": (
+                "int values[]{1, 2}; (void)cljonic::has_next(values);",
+                "expected a Vector, Map, Set, Queue, or String value",
+            ),
+        },
+        "pass_cases": {
+            "vector": "(void)cljonic::has_next(cljonic::Vector<int, 4>{1, 2});",
+            "map": "(void)cljonic::has_next(cljonic::Map<int, int, 4>{cljonic::MapEntry{1, 2}});",
+            "set": "(void)cljonic::has_next(cljonic::Set<int, 4>{1, 2});",
+            "queue": "(void)cljonic::has_next(cljonic::Queue<int, 4>{1, 2});",
+            "string": "(void)cljonic::has_next(cljonic::String<4>{\"AB\"});",
+            "empty-vector": "(void)cljonic::has_next(cljonic::Vector<int, 4>{});",
+            "zero-capacity-vector": "(void)cljonic::has_next(cljonic::Vector<int, 0>{});",
+        },
+    },
     "is_empty": {
         "diagnostic_anchor": "cljonic::is_empty:",
         "diagnostic_cases": {
