@@ -1,6 +1,6 @@
 ---
 created: 2026-08-05
-last_updated: 2026-10-27
+last_updated: 2026-10-28
 status: draft
 ---
 
@@ -75,7 +75,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence capability
 - **Related:** Sequence, Seqable, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `next(collection)` and `rest(collection)` return bounded `Vector` values of the remaining traversal elements; `has_next(collection)` checks whether that tail is nonempty without constructing it; `seq` conversion remains deferred. Current collections also provide `count()` and `is_empty(collection)`.
+- **Examples:** `next(collection)` and `rest(collection)` return bounded `Vector` values of the remaining traversal elements; `rest(producer)` returns the same producer-tail value as `next(producer)`; `has_next(collection)` checks whether that tail is nonempty without constructing it; `seq` conversion remains deferred. Current collections also provide `count()` and `is_empty(collection)`.
 
 
 ### Indexed
@@ -838,11 +838,11 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `next(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 3>` containing `20, 30`; `next(Queue<int, 4>{10, 20})` returns a `Queue<int, 3>` containing `20`; `next(Vector<int, 0>{})` returns an empty `Vector<int, 0>`; `next(repeat(3, 7))` returns a finite `Repeat` of two sevens; `next(repeat(7))` returns an unbounded `Repeat` of seven; `next(Range{0, 3})` returns the range starting at `1`; `next(Range{0, 1})` returns an empty range at endpoint `1`; `next(Range{0, 5, 0})` remains unbounded and unchanged; `next(cycle(vector(1, 2, 3)))` remains a Cycle whose next traversal starts at `2`.
 
 ### Rest
-- **Definition:** The free function that returns every logical element after the first from a `Vector`, `Map`, `Set`, `Queue`, or `String` exactly as `Next` does: an owning value of the same collection kind as the source, with a static capacity one smaller (zero stays zero). It preserves the input and the `LogicalTraversalOrder` of retained elements; map elements remain value-semantic `MapEntry` values, map and set traversal order remains semantically unordered, and Queue results retain FIFO order. An empty input returns an empty value of the result type. The operation is `constexpr`, non-allocating, non-throwing, and part of the current public API. It follows `LogicalTraversalOrder`, rather than the removal behavior of `Pop` (which removes the last element from a Vector and the front element from a Queue).
+- **Definition:** The generic free-function alias for `Next`: for every input admitted by `next`, `rest(input)` returns exactly `next(input)`, preserving the same result type, logical tail, source value, producer observation policy, and callback timing and effects. For collections, the result has the same collection kind and a static capacity one smaller (zero stays zero); retained elements follow `LogicalTraversalOrder`, Map entries remain value-semantic, Map and Set order remains semantically unordered, and Queue order remains FIFO. For producers (`Repeat`, `Range`, `Cycle`, `Iterate`, and `Repeatedly`), the result inherits the producer-tail behavior of `Next`. Unsupported inputs are exactly those not admitted by `Next`. The operation is `constexpr`, non-allocating, non-throwing, and part of the current public API. For collections it follows `LogicalTraversalOrder`, rather than the removal behavior of `Pop`.
 - **Deprecated Synonyms:** None
-- **Related:** Next, First, Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, Vector, MapEntry, Queue, Pop
+- **Related:** Next, First, Sequence, SequenceableCollection, SequenceableProducer, Traversal, LogicalTraversalOrder, Vector, MapEntry, Queue, Repeat, Range, Cycle, Iterate, Repeatedly, Pop
 - **Usage:** Requirements, architecture, specification, tests, implementation, and documentation
-- **Examples:** `rest(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 3>` containing `20, 30`; `rest(Queue<int, 4>{10, 20})` returns a `Queue<int, 3>` containing `20`.
+- **Examples:** `rest(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 3>` containing `20, 30`; `rest(Queue<int, 4>{10, 20})` returns a `Queue<int, 3>` containing `20`; `rest(repeat(3, 7))` returns a finite `Repeat` of two sevens; `rest(Range{0, 3})` returns the range starting at `1`; `rest(cycle(vector(10, 20, 30)))` remains a Cycle starting at `20`; callback-backed producer tails have the same eager callback behavior as `next`.
 
 
 ### Peek
