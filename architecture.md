@@ -806,10 +806,10 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating ∧ preserve(Vector_type ∧ capacity)
   | classify_as(RequirementsBacked) ∧ trace_to(REQ-COLL-022)
 
-λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ rest
+λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ has_next ∧ rest
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ rest ∧ contains ∧ count ∧ fits_into ∧ into
+  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ has_next ∧ rest ∧ contains ∧ count ∧ fits_into ∧ into
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | bounded_insertion_capacity_inspection(x) ≡ full ∨ equivalent_capacity_inspection
   | requirements_backed_operations(x) → classify_as(RequirementsBacked)
@@ -825,6 +825,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ preserve(input(collection) ∧ logical_traversal_order(collection) ∧ no_heap ∧ noexcept ∧ constexpr)
     ∧ map_entry_representation(Map) ∧ semantically_unordered(Map ∨ Set) ∧ preserve_FIFO_order(Queue)
     ∧ unsupported_input(next) → reject_at_compile_time_with(targeted_diagnostic_naming(next ∧ supported_domains) ∧ REQ-DIAG-009)
+  | has_next(collection) → require(SequenceableCollection(collection) ∧ ConstRangeTraversal(collection)
+    ∧ collection ∈ {Vector, Map, Set, Queue, String})
+    ∧ return(count(collection) > 1)
+    ∧ equivalent_to(nonempty(logical_tail(collection))) ∧ ¬construct(next_result(collection))
+    ∧ preserve(input(collection) ∧ no_heap ∧ noexcept ∧ constexpr)
+    ∧ unsupported_input(has_next) → reject_at_compile_time_with(targeted_diagnostic_naming(has_next ∧ supported_domains) ∧ REQ-DIAG-009)
   | rest(collection) → require(SequenceableCollection(collection) ∧ ConstRangeTraversal(collection)
     ∧ collection ∈ {Vector, Map, Set, Queue, String})
     ∧ return(owning_Vector<value_type(collection), capacity(collection)> of logical_tail(collection))
