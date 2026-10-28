@@ -737,7 +737,7 @@ invariant.Map.SwapAndRemove
 invariant.Map.UpdateReturnsNewValue
 invariant.Next.ConstexprCapable
 invariant.Next.DiagnosticNamesSupportedDomains
-invariant.Next.EmptyReturnsEmptyVector
+invariant.Next.EmptyOrSingletonReturnsEmptyResult
 invariant.Next.MapEntriesRemainValueSemantic
 invariant.Next.MapSetOrderIsNotSemanticallySignificant
 invariant.Next.NextFreeFunctionSupported
@@ -747,9 +747,9 @@ invariant.Next.NoRtti
 invariant.Next.PreservesInput
 invariant.Next.QueuePreservesFifoOrder
 invariant.Next.RejectsUnsupportedDomainWithTargetedDiagnostic
-invariant.Next.ResultCapacityMatchesSource
-invariant.Next.ReturnsBoundedVector
+invariant.Next.ResultCapacityIsSourceCapacityMinusOneSaturatingAtZero
 invariant.Next.ReturnsElementsAfterFirst
+invariant.Next.ReturnsSameCollectionKindAsSource
 invariant.Next.SupportsSequenceableCollectionDomain
 invariant.NotEmpty.IsNoexcept
 invariant.NotEmpty.LeavesInputUnchanged
@@ -1045,7 +1045,7 @@ invariant.Repeat.ZeroCountProducesEmptyResult
 invariant.Rest.ConstexprCapable
 invariant.Rest.DiagnosticNamesSupportedDomains
 invariant.Rest.DoesNotDeriveSemanticsFromPop
-invariant.Rest.EmptyReturnsEmptyVector
+invariant.Rest.EmptyOrSingletonReturnsEmptyResult
 invariant.Rest.MapEntriesRemainValueSemantic
 invariant.Rest.MapSetOrderIsNotSemanticallySignificant
 invariant.Rest.NoExceptions
@@ -1055,9 +1055,9 @@ invariant.Rest.PreservesInput
 invariant.Rest.QueuePreservesFifoOrder
 invariant.Rest.RejectsUnsupportedDomainWithTargetedDiagnostic
 invariant.Rest.RestFreeFunctionSupported
-invariant.Rest.ResultCapacityMatchesSource
-invariant.Rest.ReturnsBoundedOwningVector
+invariant.Rest.ResultCapacityIsSourceCapacityMinusOneSaturatingAtZero
 invariant.Rest.ReturnsEveryLogicalElementAfterFirst
+invariant.Rest.ReturnsNextResultForSameCollection
 invariant.Rest.SupportsSequenceableCollectionDomain
 invariant.RuntimeInitializationPolicy.BoundedAutomaticOrStaticStorageRemainsPermitted
 invariant.RuntimeInitializationPolicy.EverySupportedPublicPathExcludesHiddenGlobalRuntimeInitialization
