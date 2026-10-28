@@ -109,19 +109,15 @@ PRIMITIVES = {
         "diagnostic_cases": {
             "unsupported-scalar": (
                 "(void)cljonic::rest(42);",
-                "expected a Vector, Map, Set, Queue, or String value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or supported Cycle value",
             ),
             "unsupported-map-entry": (
                 "(void)cljonic::rest(cljonic::MapEntry<int, int>{1, 2});",
-                "expected a Vector, Map, Set, Queue, or String value",
-            ),
-            "unsupported-producer": (
-                "(void)cljonic::rest(cljonic::Range<int>{0, 5});",
-                "expected a Vector, Map, Set, Queue, or String value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or supported Cycle value",
             ),
             "unsupported-external-range": (
                 "int values[]{1, 2}; (void)cljonic::rest(values);",
-                "expected a Vector, Map, Set, Queue, or String value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or supported Cycle value",
             ),
         },
         "pass_cases": {
@@ -132,6 +128,11 @@ PRIMITIVES = {
             "string": "(void)cljonic::rest(cljonic::String<4>{\"AB\"});",
             "empty-vector": "(void)cljonic::rest(cljonic::Vector<int, 4>{});",
             "zero-capacity-vector": "(void)cljonic::rest(cljonic::Vector<int, 0>{});",
+            "range": "(void)cljonic::rest(cljonic::Range<int>{0, 5});",
+            "repeat": "(void)cljonic::rest(cljonic::repeat(3, 7));",
+            "cycle": "(void)cljonic::rest(cljonic::cycle(cljonic::Vector<int, 3>{1, 2, 3}));",
+            "iterate": "(void)cljonic::rest(cljonic::iterate([](int value) noexcept { return value + 1; }, 0));",
+            "repeatedly": "(void)cljonic::rest(cljonic::repeatedly(3, []() noexcept { return 7; }));",
         },
     },
     "has_next": {

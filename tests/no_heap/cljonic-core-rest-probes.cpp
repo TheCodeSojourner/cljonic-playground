@@ -40,6 +40,12 @@ namespace cljonic::no_heap::probes {
     const auto empty_text = String<4>{};
     const auto zero_capacity_vector = Vector<int, 0>{};
 
+    const auto repeat_rest = rest(repeat(3, second));
+    const auto range_rest = rest(Range<int>{first, third, 1});
+    const auto cycle_rest = rest(cycle(vector));
+    const auto iterate_rest = rest(iterate([](int value) noexcept { return value + 1; }, first));
+    const auto repeatedly_rest = rest(repeatedly(3, []() noexcept { return 7; }));
+
     return vector_rest.count() == 2U && vector_rest(0U) == second && vector_rest(1U) == third && vector.count() == 3U &&
            vector(0U) == first && vector_rest.capacity() + 1U == vector.capacity() && queue_rest.count() == 2U &&
            queue_rest.begin()[0U] == second && queue_rest.begin()[1U] == third && queue.count() == 3U &&
@@ -54,7 +60,9 @@ namespace cljonic::no_heap::probes {
            rest(Set<int, 4>{first}).count() == 0U && rest(Queue<int, 4>{first}).count() == 0U &&
            rest(String<4>{std::array{first_char}}).count() == 0U && rest(empty_vector).count() == 0U &&
            rest(empty_map).count() == 0U && rest(empty_set).count() == 0U && rest(empty_queue).count() == 0U &&
-           rest(empty_text).count() == 0U && rest(zero_capacity_vector).count() == 0U;
+           rest(empty_text).count() == 0U && rest(zero_capacity_vector).count() == 0U && repeat_rest.count() == 2U &&
+           range_rest.count() == 21U && cycle_rest.count() == cycle(vector).count() && iterate_rest.count() > 0U &&
+           repeatedly_rest.count() == 2U;
 }
 
 } // namespace cljonic::no_heap::probes

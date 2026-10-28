@@ -18,6 +18,8 @@ TEST_CASE("Rest returns the logical tail as the same collection kind with reduce
     using cljonic::Map;
     using cljonic::MapEntry;
     using cljonic::Queue;
+    using cljonic::Range;
+    using cljonic::Repeat;
     using cljonic::rest;
     using cljonic::Set;
     using cljonic::String;
@@ -158,7 +160,11 @@ TEST_CASE("Rest returns the logical tail as the same collection kind with reduce
     TRACE_ID("invariant.Rest.DiagnosticNamesSupportedDomains");
     STATIC_REQUIRE_FALSE(HasAdmittedRest<int>);
     STATIC_REQUIRE_FALSE(HasAdmittedRest<MapEntry<int, int>>);
-    STATIC_REQUIRE_FALSE(HasAdmittedRest<cljonic::Range<int>>);
+    STATIC_REQUIRE(HasAdmittedRest<Range<int>>);
+    STATIC_REQUIRE(HasAdmittedRest<Repeat<int>>);
+    STATIC_REQUIRE(HasAdmittedRest<cljonic::Cycle<Vector<int, 3>>>);
+    STATIC_REQUIRE(HasAdmittedRest<decltype(cljonic::iterate([](int value) noexcept { return value + 1; }, 0))>);
+    STATIC_REQUIRE(HasAdmittedRest<decltype(cljonic::repeatedly(3, []() noexcept { return 7; }))>);
     STATIC_REQUIRE(HasAdmittedRest<Vector<int, 4>>);
     STATIC_REQUIRE(HasAdmittedRest<Map<int, int, 4>>);
     STATIC_REQUIRE(HasAdmittedRest<Set<int, 4>>);
@@ -215,4 +221,88 @@ TEST_CASE("Rest returns the logical tail as the same collection kind with reduce
     REQUIRE(runtime_text_rest(1) == third_char);
     REQUIRE(count(runtime_text) == 3U);
     REQUIRE(runtime_text(0) == first_char);
+}
+
+TEST_CASE("Rest forwards to Next for every supported producer", "[rest]") {
+    using cljonic::count;
+    using cljonic::cycle;
+    using cljonic::into;
+    using cljonic::iterate;
+    using cljonic::next;
+    using cljonic::Range;
+    using cljonic::repeat;
+    using cljonic::repeatedly;
+    using cljonic::rest;
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.Rest");
+    TRACE_ID("invariant.Rest.SupportsSequenceableProducerDomain");
+    TRACE_ID("invariant.Rest.ReturnsNextResultForSameProducer");
+    TRACE_ID("invariant.Rest.ProducerTailBehaviorMatchesNext");
+    TRACE_ID("invariant.Rest.ProducerCallbackTimingAndEffectsMatchNext");
+    TRACE_ID("invariant.Rest.PreservesInput");
+    TRACE_ID("invariant.Rest.NoHeapAllocation");
+    TRACE_ID("invariant.Rest.NoRtti");
+    TRACE_ID("invariant.Rest.NoExceptions");
+    TRACE_ID("invariant.Rest.ConstexprCapable");
+
+    constexpr auto finite_repeat = repeat(3, 7);
+    constexpr auto finite_repeat_tail = rest(finite_repeat);
+    STATIC_REQUIRE((
+        std::same_as<std::remove_cv_t<decltype(finite_repeat_tail)>, std::remove_cv_t<decltype(next(finite_repeat))>>));
+    STATIC_REQUIRE(count(finite_repeat_tail) == 2U);
+    constexpr auto finite_repeat_values = into(Vector<int, 2>{}, finite_repeat_tail);
+    STATIC_REQUIRE(finite_repeat_values(0) == 7);
+    STATIC_REQUIRE(finite_repeat_values(1) == 7);
+    STATIC_REQUIRE(count(finite_repeat) == 3U);
+
+    constexpr auto unbounded_repeat_tail = rest(repeat(7));
+    STATIC_REQUIRE(count(unbounded_repeat_tail) == count(repeat(7)));
+
+    constexpr auto range_source = Range{0, 3};
+    constexpr auto range_tail = rest(range_source);
+    STATIC_REQUIRE(
+        (std::same_as<std::remove_cv_t<decltype(range_tail)>, std::remove_cv_t<decltype(next(range_source))>>));
+    STATIC_REQUIRE((into(Vector<int, 2>{}, range_tail) == Vector<int, 2>{1, 2}));
+
+    constexpr auto cycle_source = cycle(Vector<int, 3>{10, 20, 30});
+    constexpr auto cycle_tail = rest(cycle_source);
+    STATIC_REQUIRE(
+        (std::same_as<std::remove_cv_t<decltype(cycle_tail)>, std::remove_cv_t<decltype(next(cycle_source))>>));
+    STATIC_REQUIRE((into(Vector<int, 5>{}, cycle_tail) == Vector<int, 5>{20, 30, 10, 20, 30}));
+    STATIC_REQUIRE(count(cycle_source) == count(cycle_tail));
+
+    constexpr auto increment = [](int value) noexcept { return value + 1; };
+    constexpr auto iterate_source = iterate(increment, 0);
+    constexpr auto iterate_tail = rest(iterate_source);
+    STATIC_REQUIRE(
+        (std::same_as<std::remove_cv_t<decltype(iterate_tail)>, std::remove_cv_t<decltype(next(iterate_source))>>));
+    STATIC_REQUIRE((into(Vector<int, 1>{}, iterate_tail) == Vector<int, 1>{1}));
+
+    constexpr auto repeatedly_tail = rest(repeatedly(3, []() noexcept { return 7; }));
+    STATIC_REQUIRE(count(repeatedly_tail) == 2U);
+    STATIC_REQUIRE((into(Vector<int, 2>{}, repeatedly_tail) == Vector<int, 2>{7, 7}));
+
+    auto iterate_calls = 0;
+    const auto runtime_iterate = iterate(
+        [&iterate_calls](int value) noexcept {
+            ++iterate_calls;
+            return value + 1;
+        },
+        5);
+    const auto runtime_iterate_tail = rest(runtime_iterate);
+    REQUIRE(iterate_calls == 1);
+    REQUIRE((into(Vector<int, 1>{}, runtime_iterate_tail) == Vector<int, 1>{6}));
+    REQUIRE(iterate_calls == 2);
+
+    auto repeatedly_calls = 0;
+    const auto runtime_repeatedly = repeatedly(3, [&repeatedly_calls]() noexcept { return ++repeatedly_calls; });
+    const auto runtime_repeatedly_tail = rest(runtime_repeatedly);
+    REQUIRE(repeatedly_calls == 1);
+    REQUIRE(count(runtime_repeatedly_tail) == 2U);
+    REQUIRE((into(Vector<int, 2>{}, runtime_repeatedly_tail) == Vector<int, 2>{2, 3}));
+    REQUIRE(repeatedly_calls == 3);
+    REQUIRE(count(runtime_repeatedly) == 3U);
+    REQUIRE(noexcept(rest(runtime_iterate)));
+    REQUIRE(noexcept(rest(runtime_repeatedly)));
 }
