@@ -1,0 +1,71 @@
+-- allium: 3
+
+entity HasNext {
+    supports_has_next_free_function: Boolean
+    supports_next_collection_domain: Boolean
+    returns_boolean_preflight: Boolean
+    returns_true_when_logical_tail_nonempty: Boolean
+    returns_false_for_empty_or_singleton_collection: Boolean
+    observes_count_without_constructing_next_result: Boolean
+    preserves_input: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    constexpr_capable: Boolean
+    rejects_unsupported_domain_with_targeted_diagnostic: Boolean
+    diagnostic_names_supported_domains: Boolean
+
+    invariant HasNextFreeFunctionSupported {
+        this.supports_has_next_free_function = true
+    }
+
+    invariant SupportsNextCollectionDomain {
+        this.supports_next_collection_domain = true
+    }
+
+    invariant ReturnsBooleanPreflight {
+        this.returns_boolean_preflight = true
+    }
+
+    invariant ReturnsTrueWhenLogicalTailNonempty {
+        this.returns_true_when_logical_tail_nonempty = true
+    }
+
+    invariant ReturnsFalseForEmptyOrSingletonCollection {
+        this.returns_false_for_empty_or_singleton_collection = true
+    }
+
+    invariant ObservesCountWithoutConstructingNextResult {
+        this.observes_count_without_constructing_next_result = true
+    }
+
+    invariant PreservesInput {
+        this.preserves_input = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant ConstexprCapable {
+        this.constexpr_capable = true
+    }
+
+    invariant RejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.rejects_unsupported_domain_with_targeted_diagnostic = true
+    }
+
+    invariant DiagnosticNamesSupportedDomains {
+        this.diagnostic_names_supported_domains = true
+    }
+}
+
+actor HasNextOperator { identified_by: HasNext }
