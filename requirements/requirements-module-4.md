@@ -181,6 +181,20 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   rationale: mirrors Clojure's `(repeatedly n f)` argument order for the counted form
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
+λ REQ-FN-013E(x).
+  ∀ `next` of a finite counted `Repeat`: return a finite `Repeat` with the same repeated value and count `max(count - 1, 0)` — `next(repeat(3, 7))` yields a finite `Repeat` of two sevens ∧ `next(repeat(1, 7))` and `next(repeat(0, 7))` each yield an empty finite `Repeat` of sevens
+  ∧ ∀ `next` of an unbounded `repeat(value)`: return an unbounded `Repeat<T>` of the same value with its observation policy unchanged
+  ∧ ∀ result: independently owning ∧ self-contained ∧ preserves the input ∧ works coherently with `count`, `is_finite`, `is_empty`, `into`, and `fits_into` under their existing producer contracts
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
+
+λ REQ-FN-013F(x).
+  ∀ `next` of a `Range` with zero step: return a logically unbounded `Range` with the same start, end, and zero step, preserving the configured observation cap ∧ repeated `next` does not exhaust the logically unbounded result
+  ∧ ∀ nonzero-step `Range` with an empty logical result: return an empty `Range` with the original start, end, and step unchanged
+  ∧ ∀ nonzero-step `Range` with exactly one logical element: return an empty `Range` with start and end both equal to the original exclusive end and with the original step, without computing `start + step`
+  ∧ ∀ nonzero-step `Range` with more than one logical element: return a `Range` whose start is the original start plus the original step and whose end and step are unchanged
+  ∧ ∀ result: preserve the source element type and logical generation order ∧ preserve the input ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ ¬∃ RTTI
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
+
 λ REQ-FN-014(x).
   ∀ callback supplied to `iterate`: pure ∧ non-allocating
   ∧ ∀ callback supplied to `repeatedly`: MAY maintain state or produce side effects, mirroring Clojure's `repeatedly` ∧ remains non-allocating ∧ ¬∃ throw when invoked
@@ -295,4 +309,4 @@ The following range and interoperability requirements are binding contracts: eve
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly` producer templates, `into`, `fits_into`, and internal collection traversal support.
-- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-VAL-017A`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`, `REQ-FN-009A`–`009B`, `REQ-FN-010`–`013`, `REQ-FN-013A`–`013D`, `REQ-FN-014`, `REQ-FN-014A`–`014C`, `REQ-FN-027`, `REQ-FN-027A`, `REQ-PLAT-017`, `REQ-PLAT-017A`, `REQ-PLAT-018`–`022`, `REQ-PLAT-022A`, `REQ-PLAT-023`.
+- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-VAL-017A`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`, `REQ-FN-009A`–`009B`, `REQ-FN-010`–`013`, `REQ-FN-013A`–`013F`, `REQ-FN-014`, `REQ-FN-014A`–`014C`, `REQ-FN-027`, `REQ-FN-027A`, `REQ-PLAT-017`, `REQ-PLAT-017A`, `REQ-PLAT-018`–`022`, `REQ-PLAT-022A`, `REQ-PLAT-023`.
