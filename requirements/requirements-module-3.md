@@ -507,6 +507,16 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ unsupported_input: fails compilation with one targeted diagnostic naming `next`
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
+λ REQ-FN-002A6(x).
+  ∀ `next(producer)`: extend the producer domain in `REQ-FN-002A4` to include `Cycle` values whose source is a supported collection or a producer type with an admitted `next`
+  ∧ ∀ supported `Cycle`: return an independently owning `Cycle` value of the same type, preserving its unbounded observation policy and containing every logical element after the first under the original Cycle's generation order
+  ∧ ∀ `Cycle` with a finite, nonempty source: advance its starting position by one modulo the source's observed count without materializing the source or invoking callbacks
+  ∧ ∀ `Cycle` with an empty finite source: preserve its empty observation
+  ∧ ∀ `Cycle` with an unbounded source: replace its owned source with `next(source)` and reset its starting position, preserving the configured observation cap
+  ∧ ∀ result: preserve the input ∧ preserve logical generation order ∧ ¬∃ implicit materialization ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ ¬∃ RTTI ∧ ¬∃ callback invocation
+  ∧ ∀ unsupported_input: fails compilation with one targeted diagnostic naming `next`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
+
 ### Map and Entry Sequence Access (Deferred, Non-binding)
 
 > **Deferred future work — non-binding.** `REQ-FN-002A`–`002B` record future map/entry behavior for `last`, `key`, and `val`; they do not establish current API support.
@@ -721,5 +731,5 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `empty`, `is_empty`, `not_empty`, `first`, `next`, `has_next`, `rest`, `seq`).
-- **Governed REQs**: `REQ-COLL-001`, `REQ-COLL-001A`, `REQ-COLL-002`, `REQ-COLL-002A`, `REQ-COLL-004`, `REQ-COLL-004A`–`004C`, `REQ-COLL-005`, `REQ-COLL-005A`–`005B`, `REQ-COLL-006`–`007`, `REQ-COLL-007A`, `REQ-COLL-008`–`010`, `REQ-COLL-010A`–`010B`, `REQ-COLL-011`–`012`, `REQ-COLL-012A`, `REQ-COLL-013`, `REQ-COLL-013A`–`013B`, `REQ-COLL-014`–`018`, `REQ-COLL-018A`, `REQ-COLL-019`, `REQ-COLL-019A`–`019B`, `REQ-COLL-020`, `REQ-COLL-020A`–`020AA`, `REQ-COLL-021`–`022`, `REQ-SEQ-001`–`002`, `REQ-SEQ-002A`–`002B`, `REQ-SEQ-003`–`014`, `REQ-FN-001`–`002`, `REQ-FN-002A`, `REQ-FN-002A1`, `REQ-FN-002A2`, `REQ-FN-002A3`, `REQ-FN-002A4`, `REQ-FN-002A5`, `REQ-FN-002B`–`002H`, `REQ-FN-002M`, `REQ-FN-002P`–`002Y`, `REQ-FN-003`–`008`, `REQ-FN-008A`, `REQ-FN-026`.
+- **Governed REQs**: `REQ-COLL-001`, `REQ-COLL-001A`, `REQ-COLL-002`, `REQ-COLL-002A`, `REQ-COLL-004`, `REQ-COLL-004A`–`004C`, `REQ-COLL-005`, `REQ-COLL-005A`–`005B`, `REQ-COLL-006`–`007`, `REQ-COLL-007A`, `REQ-COLL-008`–`010`, `REQ-COLL-010A`–`010B`, `REQ-COLL-011`–`012`, `REQ-COLL-012A`, `REQ-COLL-013`, `REQ-COLL-013A`–`013B`, `REQ-COLL-014`–`018`, `REQ-COLL-018A`, `REQ-COLL-019`, `REQ-COLL-019A`–`019B`, `REQ-COLL-020`, `REQ-COLL-020A`–`020AA`, `REQ-COLL-021`–`022`, `REQ-SEQ-001`–`002`, `REQ-SEQ-002A`–`002B`, `REQ-SEQ-003`–`014`, `REQ-FN-001`–`002`, `REQ-FN-002A`, `REQ-FN-002A1`, `REQ-FN-002A2`, `REQ-FN-002A3`, `REQ-FN-002A4`, `REQ-FN-002A5`–`002A6`, `REQ-FN-002B`–`002H`, `REQ-FN-002M`, `REQ-FN-002P`–`002Y`, `REQ-FN-003`–`008`, `REQ-FN-008A`, `REQ-FN-026`.
 - **Deferred REQs**: `REQ-SEQ-010`–`011`, `REQ-SEQ-013`–`014`, `REQ-FN-002A`–`002B`.

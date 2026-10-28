@@ -195,6 +195,14 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∧ ∀ result: preserve the source element type and logical generation order ∧ preserve the input ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ ¬∃ RTTI
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
+λ REQ-FN-013G(x).
+  ∀ `next` of a `Cycle` with a finite, nonempty source: return the same `Cycle` type with its starting position advanced by one modulo the source's observed count, so the resulting cyclic sequence begins with the original second element
+  ∧ ∀ `next` of a `Cycle` with an empty finite source: preserve the empty observation
+  ∧ ∀ `next` of a `Cycle` with an unbounded source: return the same `Cycle` type over `next(source)` with its starting position reset, preserving the Cycle observation cap and unbounded status
+  ∧ ∀ result: independently owning ∧ self-contained ∧ preserves the input ∧ preserves logical generation order ∧ works coherently with `count`, `is_finite`, `is_empty`, `into`, and `fits_into`
+  ∧ ∀ operation: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ ¬∃ RTTI ∧ ¬∃ callback invocation ∧ ¬∃ implicit materialization
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
+
 λ REQ-FN-014(x).
   ∀ callback supplied to `iterate`: pure ∧ non-allocating
   ∧ ∀ callback supplied to `repeatedly`: MAY maintain state or produce side effects, mirroring Clojure's `repeatedly` ∧ remains non-allocating ∧ ¬∃ throw when invoked
