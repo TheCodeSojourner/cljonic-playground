@@ -4778,6 +4778,252 @@ constexpr auto get([[maybe_unused]] const C& collection, [[maybe_unused]] const 
 // Begin cljonic-next.hpp
 #pragma once
 
+// Begin cljonic-iterate.hpp
+#pragma once
+
+#include <concepts>
+#include <cstddef>
+#include <functional>
+#include <type_traits>
+#include <utility>
+
+
+namespace cljonic {
+
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
+ *  specialization during an out-of-domain class template argument deduction. */
+struct IterateDomainViolation {};
+struct IterateNextAccess;
+
+/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
+ *  step, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. */
+template <typename T, typename Step>
+concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
+                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
+                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
+
+} // namespace concepts_detail
+
+/** \anchor Iterate
+ * An Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy
+ * of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted
+ * value. For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`.
+ *
+ * The initial and produced values may themselves be cljonic collections or producers, including nested cljonic
+ * composites. The step may be a lambda, a named function, or a function object.
+ *
+ * Calling \ref Next "next" invokes the step once and uses its result as the returned Iterate's initial value. The
+ * observation cap is preserved; a zero observation cap does not invoke the step.
+ *
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE and supports const C++ range traversal
+ * in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a
+ * source.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ constexpr auto add_two(int value) noexcept -> int { return value + 2; }
+
+ int main() {
+   // A named function can be used as the constexpr step callback.
+   constexpr auto constexpr_sum = [] {
+     constexpr auto values = iterate(add_two, 1);
+     auto sum = 0;
+     auto observed = 0;
+     for (const auto value : values) {
+       sum += value;
+       if (++observed == 4) {
+         break;
+       }
+     }
+     return sum;
+   }();
+
+   // Runtime construction also accepts an inline lambda step callback.
+   auto runtime_values =
+       iterate([](int value) noexcept { return value * 2; }, 2);
+
+   // -----------------------------------------------------------------------
+   // C++ interoperability: Iterate supports const traversal.
+   // -----------------------------------------------------------------------
+   auto runtime_sum = 0;
+   auto runtime_observed = 0;
+   for (const auto value : runtime_values) {
+     // A bounded observation makes the unbounded producer safe to inspect.
+     runtime_sum += value;
+     if (++runtime_observed == 4) {
+       break;
+     }
+   }
+
+   return constexpr_sum == 16 && runtime_sum == 30 ? 0 : 1;
+ }
+ ~~~~~
+ */
+template <typename T, typename Step>
+    requires concepts_detail::IterateClassArgument<T, Step>
+class Iterate {
+  public:
+    using value_type = T;
+
+    class const_iterator {
+      public:
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+
+        constexpr const_iterator() noexcept = default;
+
+        constexpr const_iterator(const T& current, const Step* step, std::size_t remaining) noexcept
+            : current_(current), step_(step), remaining_(remaining) {
+        }
+
+        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
+            return current_;
+        }
+
+        constexpr auto operator++() noexcept -> const_iterator& {
+            if (remaining_ > 1U) {
+                const T next = std::invoke(*step_, current_);
+                current_ = next;
+            }
+            --remaining_;
+            return *this;
+        }
+
+        constexpr auto operator++(int) noexcept -> const_iterator {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+
+        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
+            -> bool {
+            return lhs.remaining_ == rhs.remaining_;
+        }
+
+      private:
+        T current_{};
+        const Step* step_{nullptr};
+        std::size_t remaining_{0U};
+    };
+
+    // The default form requires a default-constructed step. Constraining the
+    // constructor keeps a non-default-constructible Step from satisfying
+    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
+    constexpr Iterate() noexcept
+        requires std::default_initializable<Step>
+        : initial_{}, step_{} {
+    }
+
+    constexpr Iterate(const T& initial, const Step& step) noexcept : initial_(initial), step_(step) {
+    }
+
+    template <typename Initial, typename OtherStep>
+        requires(!concepts::SafeImplicitConversion<T, Initial> || !std::same_as<std::remove_cvref_t<OtherStep>, Step>)
+    Iterate(Initial initial, OtherStep step) = delete;
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
+    }
+
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return false;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+        return const_iterator{initial_, &step_, count()};
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+        return const_iterator{};
+    }
+
+  private:
+    friend struct concepts_detail::IterateNextAccess;
+
+    T initial_;
+    Step step_;
+};
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guide below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Iterate([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Iterate: the initial value and step cannot be used to build an Iterate. The initial "
+                      "value must be storable without throwing, and the step must be a pure, non-allocating, "
+                      "non-throwing callable that accepts the initial value and returns the element type.");
+    }
+};
+
+/** Redirecting deduction guide (REQ-DIAG-012): viable only for a rejected
+ *  deduction, so an admitted deduction is never affected. */
+template <typename T, typename Step>
+    requires(!(concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>))
+Iterate(const T&, const Step&)
+    -> Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation>;
+
+template <typename Step, typename T>
+    requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
+             concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>
+[[nodiscard]] constexpr auto iterate(Step&& step, T&& initial) noexcept
+    -> Iterate<std::remove_cvref_t<T>, std::decay_t<Step>> {
+    return Iterate<std::remove_cvref_t<T>, std::decay_t<Step>>{std::forward<T>(initial), std::forward<Step>(step)};
+}
+
+// Diagnostic fallback (REQ-DIAG-009): the (step, initial) arguments are outside
+// the closed producer domain. This overload explains the rejection; it never
+// returns a value and is never a supported call target.
+template <typename Step, typename T>
+    requires(!(concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
+               concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>))
+constexpr auto iterate([[maybe_unused]] Step&& step, [[maybe_unused]] T&& initial) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(
+        concepts_detail::dependent_false<Step, T>,
+        "cljonic::iterate: the (step, initial) arguments cannot be used to build an Iterate. The initial value must be "
+        "safe to store without throwing, and the step must be a callable that takes one value of that type and returns "
+        "the same type without throwing. Note the argument order is iterate(step, initial).");
+    return {};
+}
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct producer_traits<Iterate<T, Step>> {
+    static constexpr bool is_cljonic_producer = true;
+    static constexpr producer_kind kind = producer_kind::iterate;
+};
+
+// The stored step is a callable component, so Iterate never admits producer
+// parameter equality and is never usable as a map key or set
+// element (REQ-CAP-010, REQ-FN-014B).
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_callable<Iterate<T, Step>> : std::true_type {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_floating_point<Iterate<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::IterateStep<T, Step>
+struct contains_standard_range<Iterate<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-iterate.hpp
 // Begin cljonic-queue.hpp
 #pragma once
 
@@ -5805,6 +6051,340 @@ struct contains_standard_range<Repeat<T>> : std::bool_constant<contains_standard
 
 } // namespace cljonic::concepts_detail
 // End cljonic-repeat.hpp
+// Begin cljonic-repeatedly.hpp
+#pragma once
+
+#include <concepts>
+#include <cstddef>
+#include <functional>
+#include <optional>
+#include <type_traits>
+#include <utility>
+
+
+namespace cljonic {
+
+namespace concepts_detail {
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeatedly` diagnostic
+ *  specialization. A `Repeatedly`'s element type is never deducible from its
+ *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
+struct RepeatedlyDomainViolation {};
+struct RepeatedlyNextAccess;
+
+/** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
+ *  zero-argument step, or the internal diagnostic tag pair used only to redirect
+ *  a rejected deduction. */
+template <typename T, typename Step>
+concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && concepts::RepeatedlyStep<T, Step>) ||
+                                  (std::same_as<std::remove_cvref_t<T>, RepeatedlyDomainViolation> &&
+                                   std::same_as<std::remove_cvref_t<Step>, RepeatedlyDomainViolation>);
+
+} // namespace concepts_detail
+
+/** \anchor Repeatedly
+ * A Repeatedly producer is created with `repeatedly(step)` or `repeatedly(count, step)`. It stores a copy of the
+ * zero-argument step callable and produces a fresh element by invoking the step for every observed element.
+ * `repeatedly(step)` is unbounded, while `repeatedly(count, step)` yields exactly \p count elements.
+ *
+ * The step may be a lambda, a named function, or a function object, including a callable with a non-const call
+ * operator. It may maintain state or produce side effects, but it must not throw or allocate when invoked. Each
+ * traversal invokes a copy of the stored step: mutable state held by value starts from the stored state each time,
+ * while state reached through references or static storage remains shared across traversals. Callback types and
+ * produced element types remain exact.
+ *
+ * Calling \ref Next "next" on a nonempty Repeatedly eagerly invokes a copy of the stored step once and discards that
+ * produced value. The returned Repeatedly owns the advanced copy of the step, so value-held mutable state advances in
+ * the tail without changing the source; effects through references or static storage are shared. A finite tail has one
+ * fewer element, while an unbounded tail retains its observation cap. An empty Repeatedly does not invoke its step.
+ *
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
+ * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
+ * cljonic operations that accept a source.
+ *
+ * Finite counts follow the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed or
+ * unsigned integer types whose nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero or
+ * negative counts produce an empty finite Repeatedly without invoking the callback.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ constexpr auto five() noexcept -> int { return 5; }
+
+ int main() {
+   // A named function can be used as the constexpr step callback.
+   constexpr auto constexpr_sum = [] {
+     constexpr auto values = repeatedly(3, five);
+     auto sum = 0;
+
+     // -----------------------------------------------------------------------
+     // C++ interoperability: Repeatedly supports const traversal.
+     // -----------------------------------------------------------------------
+     for (const auto value : values) {
+       sum += value;
+     }
+     return sum;
+   }();
+
+   // Mutable value-captured state starts from the stored value on each
+   // traversal.
+   const auto runtime_values = repeatedly(2, [value = 0]() mutable noexcept {
+     value += 3;
+     return value;
+   });
+
+   auto first_runtime_sum = 0;
+   for (const auto value : runtime_values) {
+     first_runtime_sum += value;
+   }
+   auto second_runtime_sum = 0;
+   for (const auto value : runtime_values) {
+     second_runtime_sum += value;
+   }
+
+   // Static state is shared and continues across traversals.
+   const auto shared_values = repeatedly(2, []() noexcept {
+     static int shared_value = 0;
+     return ++shared_value;
+   });
+   auto first_shared_sum = 0;
+   for (const auto value : shared_values) {
+     first_shared_sum += value;
+   }
+   auto second_shared_sum = 0;
+   for (const auto value : shared_values) {
+     second_shared_sum += value;
+   }
+
+   // An uncounted Repeatedly is an unbounded producer whose observation is
+   // bounded by CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or a destination
+   // capacity.
+   [[maybe_unused]] constexpr auto unbounded = repeatedly(five);
+
+   return constexpr_sum == 15 && first_runtime_sum == 9 &&
+                  second_runtime_sum == 9 && first_shared_sum == 3 &&
+                  second_shared_sum == 7
+              ? 0
+              : 1;
+ }
+ ~~~~~
+ */
+template <typename T, typename Step>
+    requires concepts_detail::RepeatedlyClassArgument<T, Step>
+class Repeatedly {
+  public:
+    using value_type = T;
+
+    class const_iterator {
+      public:
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+
+        constexpr const_iterator() noexcept = default;
+
+        constexpr explicit const_iterator(std::size_t remaining) noexcept : remaining_(remaining) {
+        }
+
+        constexpr const_iterator(const Step& step, std::size_t remaining) noexcept
+            : step_{step}, remaining_(remaining) {
+            if (remaining_ > 0U) {
+                current_ = std::invoke(*step_);
+            }
+        }
+
+        constexpr const_iterator(const const_iterator&) noexcept = default;
+
+        constexpr auto operator=(const const_iterator& other) noexcept -> const_iterator& {
+            if (this != &other) {
+                step_.reset();
+                if (other.step_.has_value()) {
+                    step_.emplace(*other.step_);
+                }
+                remaining_ = other.remaining_;
+                current_ = other.current_;
+            }
+            return *this;
+        }
+
+        constexpr const_iterator(const_iterator&& other) noexcept : const_iterator(other) {
+        }
+
+        constexpr auto operator=(const_iterator&& other) noexcept -> const_iterator& {
+            return *this = other;
+        }
+
+        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
+            return current_;
+        }
+
+        constexpr auto operator++() noexcept -> const_iterator& {
+            if (remaining_ > 1U) {
+                current_ = std::invoke(*step_);
+            }
+            --remaining_;
+            return *this;
+        }
+
+        constexpr auto operator++(int) noexcept -> const_iterator {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+
+        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
+            -> bool {
+            return lhs.remaining_ == rhs.remaining_;
+        }
+
+      private:
+        std::optional<Step> step_{};
+        std::size_t remaining_{0U};
+        T current_{};
+    };
+
+    // The default form requires a default-constructed step. Constraining the
+    // constructor keeps a non-default-constructible Step from satisfying
+    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
+    constexpr Repeatedly() noexcept
+        requires std::default_initializable<Step>
+        : step_{}, count_{0U}, is_finite_{true} {
+    }
+
+    constexpr explicit Repeatedly(const Step& step) noexcept : step_(step), count_(0U), is_finite_(false) {
+    }
+
+    template <concepts_detail::ProducerCount Count>
+    constexpr Repeatedly(const Step& step, Count count) noexcept
+        : step_(step), count_(concepts_detail::normalize_producer_count(count)), is_finite_(true) {
+    }
+
+    template <typename OtherStep>
+        requires(!std::same_as<std::remove_cvref_t<OtherStep>, Step>)
+    explicit Repeatedly(OtherStep step) = delete;
+
+    template <typename OtherStep, typename Count>
+        requires(!std::same_as<std::remove_cvref_t<OtherStep>, Step> || !concepts_detail::ProducerCount<Count>)
+    Repeatedly(OtherStep step, Count count) = delete;
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
+    }
+
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return is_finite_;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+        const auto traversal_count = count();
+        return traversal_count == 0U ? const_iterator{0U} : const_iterator{step_, traversal_count};
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+        return const_iterator{0U};
+    }
+
+  private:
+    friend struct concepts_detail::RepeatedlyNextAccess;
+
+    Step step_;
+    std::size_t count_;
+    bool is_finite_;
+};
+
+/** Diagnostic specialization (REQ-DIAG-012): selected by the redirecting
+ *  deduction guides below. A `Repeatedly`'s element type is produced by its
+ *  step, so it is never deducible from a constructor argument; every deduced
+ *  `Repeatedly` reaches this specialization instead of a failed-deduction
+ *  candidate list. */
+template <>
+class Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Repeatedly([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Repeatedly: the element type cannot be deduced from a step alone. Use the repeatedly() "
+                      "free function, as in cljonic::repeatedly(step) or cljonic::repeatedly(count, step).");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012). No admitted `Repeatedly`
+ *  deduction exists, so these guides can never affect a supported construction. */
+template <typename Step>
+Repeatedly(const Step&)
+    -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
+
+template <typename Step, typename Count>
+Repeatedly(const Step&, Count)
+    -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
+
+template <typename Step, typename T = std::invoke_result_t<std::decay_t<Step>&>>
+    requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
+[[nodiscard]] constexpr auto repeatedly(Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
+    return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step)};
+}
+
+template <concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t<std::decay_t<Step>&>>
+    requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
+[[nodiscard]] constexpr auto repeatedly(Count count, Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
+    return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step), count};
+}
+
+// Diagnostic fallback (REQ-DIAG-009): the step argument is outside the closed
+// producer domain. This overload explains the rejection; it never returns a
+// value and is never a supported call target.
+template <typename Step>
+    requires(!concepts_detail::ValidRepeatedlyStep<Step>)
+constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Step>,
+                  "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
+                  "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
+                  "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeat(count, value).");
+    return {};
+}
+
+template <typename Count, typename Step>
+    requires(!concepts_detail::ValidRepeatedlyStep<Step> || !concepts_detail::ProducerCount<Count>)
+constexpr auto repeatedly([[maybe_unused]] Count count, [[maybe_unused]] Step&& step) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<Step>,
+                  "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
+                  "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
+                  "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
+                  "cljonic::repeat(count, value). The count must be a non-boolean, non-character integer "
+                  "type whose nonnegative range fits std::size_t.");
+    return {};
+}
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct producer_traits<Repeatedly<T, Step>> {
+    static constexpr bool is_cljonic_producer = true;
+    static constexpr producer_kind kind = producer_kind::repeatedly;
+};
+
+// The stored step is a callable component, so Repeatedly never admits producer
+// parameter equality and is never usable as a map key or set
+// element (REQ-CAP-010, REQ-FN-014B).
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct contains_callable<Repeatedly<T, Step>> : std::true_type {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct contains_floating_point<Repeatedly<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <concepts::NothrowCollectionElement T, typename Step>
+    requires concepts::RepeatedlyStep<T, Step>
+struct contains_standard_range<Repeatedly<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-repeatedly.hpp
 // Begin cljonic-set.hpp
 #pragma once
 
@@ -6366,6 +6946,7 @@ struct contains_standard_range<Set<T, CapacityValue>> : std::bool_constant<conta
 // End cljonic-set.hpp
 
 #include <cstddef>
+#include <functional>
 #include <type_traits>
 
 namespace cljonic {
@@ -6386,6 +6967,12 @@ struct NextProducerDomain<Range<T>> : std::true_type {};
 
 template <typename T>
 struct NextProducerDomain<Repeat<T>> : std::true_type {};
+
+template <typename T, typename Step>
+struct NextProducerDomain<Iterate<T, Step>> : std::true_type {};
+
+template <typename T, typename Step>
+struct NextProducerDomain<Repeatedly<T, Step>> : std::true_type {};
 
 template <typename Source>
 struct NextProducerDomain<Cycle<Source>>
@@ -6447,6 +7034,57 @@ struct CycleNextAccess {
     [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P;
 };
 
+struct IterateNextAccess {
+    template <concepts::CljonicIterate P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
+        if (producer.count() == 0U) {
+            return producer;
+        }
+        return P{std::invoke(producer.step_, producer.initial_), producer.step_};
+    }
+};
+
+struct RepeatedlyNextAccess {
+    template <concepts::CljonicRepeatedly P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
+        if (producer.count() == 0U) {
+            return producer;
+        }
+
+        auto step = producer.step_;
+        [[maybe_unused]] const auto discarded = std::invoke(step);
+        if (producer.is_finite_) {
+            return P{step, producer.count_ - 1U};
+        }
+        return P{step};
+    }
+};
+
+template <concepts::CljonicRange P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return RangeNextAccess::tail(producer);
+}
+
+template <concepts::CljonicRepeat P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return RepeatNextAccess::tail(producer);
+}
+
+template <concepts::CljonicIterate P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return IterateNextAccess::tail(producer);
+}
+
+template <concepts::CljonicRepeatedly P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return RepeatedlyNextAccess::tail(producer);
+}
+
+template <concepts::CljonicCycle P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return CycleNextAccess::tail(producer);
+}
+
 template <typename C>
 struct NextResult;
 
@@ -6498,8 +7136,17 @@ struct NextResult<String<N>> {
  *
  * For a \ref Cycle "Cycle" with a finite source, the starting position advances by one modulo the source's observed
  * count; an empty finite source remains empty. For a Cycle with an unbounded source, `next` tails its owned source and
- * resets the starting position, preserving the observation cap. Constructing a producer tail does not materialize
- * results or invoke callbacks.
+ * resets the starting position, preserving the observation cap and following the source's callback behavior.
+ *
+ * For an \ref Iterate "Iterate", `next` invokes the step once and uses its result as the returned producer's initial
+ * value while preserving the observation cap. A zero observation cap does not invoke the step.
+ *
+ * For a \ref Repeatedly "Repeatedly", `next` invokes a copy of the step once, discards that produced value, and stores
+ * the advanced step copy in the tail. A finite Repeatedly tail has one fewer element; an unbounded Repeatedly keeps
+ * its observation cap. An empty Repeatedly does not invoke its step. Value-held mutable state advances in the returned
+ * Repeatedly only, while effects through referenced or static state occur when `next` is called and remain shared.
+ *
+ * Calling `next` does not materialize the remaining producer sequence into a collection.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -6585,6 +7232,10 @@ struct NextResult<String<N>> {
    const auto runtime_cycle_tail_values =
        into(Vector<int, 5>{}, runtime_cycle_tail);
    const auto runtime_unbounded_cycle_tail = next(cycle(Range{4, 9, 0}));
+   auto callback_calls = 0;
+   const auto callback_producer =
+       repeatedly(2, [&callback_calls]() noexcept { return ++callback_calls; });
+   const auto callback_tail = next(callback_producer);
 
    return (count(runtime_tail) == 1 && runtime_tail(0) == 50 &&
            count(runtime_values) == 2 && runtime_values(0) == 40 &&
@@ -6617,7 +7268,8 @@ struct NextResult<String<N>> {
            runtime_cycle_tail_values(4) == 3 &&
            !fits_into(Vector<int, 2>{}, runtime_cycle_tail) &&
            count(runtime_unbounded_cycle_tail) == count(cycle(Range{4, 9, 0})) &&
-           !fits_into(Vector<int, 2>{}, runtime_unbounded_cycle_tail))
+           !fits_into(Vector<int, 2>{}, runtime_unbounded_cycle_tail) &&
+           callback_calls == 1 && count(callback_tail) == 1)
               ? 0
               : 1;
  }
@@ -6640,13 +7292,7 @@ template <concepts_detail::NextSequenceableCollection C>
 
 template <concepts_detail::NextSequenceableProducer P>
 [[nodiscard]] constexpr auto next(const P& producer) noexcept -> P {
-    if constexpr (concepts::CljonicRange<P>) {
-        return concepts_detail::RangeNextAccess::tail(producer);
-    } else if constexpr (concepts::CljonicRepeat<P>) {
-        return concepts_detail::RepeatNextAccess::tail(producer);
-    } else {
-        return concepts_detail::CycleNextAccess::tail(producer);
-    }
+    return concepts_detail::next_producer_tail(producer);
 }
 
 template <concepts::CljonicCycle P>
@@ -6666,7 +7312,8 @@ template <typename C>
 constexpr auto next([[maybe_unused]] const C& value) noexcept -> void {
     static_assert(
         concepts_detail::dependent_false<C>,
-        "cljonic::next: expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value.");
+        "cljonic::next: expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or supported "
+        "Cycle value.");
 }
 
 } // namespace cljonic
@@ -6864,246 +7511,6 @@ constexpr auto is_empty([[maybe_unused]] const C& collection) noexcept -> void {
 
 } // namespace cljonic
 // End cljonic-is-empty.hpp
-// Begin cljonic-iterate.hpp
-#pragma once
-
-#include <concepts>
-#include <cstddef>
-#include <functional>
-#include <type_traits>
-#include <utility>
-
-
-namespace cljonic {
-
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
- *  specialization during an out-of-domain class template argument deduction. */
-struct IterateDomainViolation {};
-
-/** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
- *  step, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. */
-template <typename T, typename Step>
-concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>) ||
-                               (std::same_as<std::remove_cvref_t<T>, IterateDomainViolation> &&
-                                std::same_as<std::remove_cvref_t<Step>, IterateDomainViolation>);
-
-} // namespace concepts_detail
-
-/** \anchor Iterate
- * An Iterate producer is unbounded and created with `iterate(step, initial)`. It stores the initial value and a copy
- * of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted
- * value. For an initial value x and step function f, the observed sequence is `x, (f x), (f (f x)), ...`.
- *
- * The initial and produced values may themselves be cljonic collections or producers, including nested cljonic
- * composites. The step may be a lambda, a named function, or a function object.
- *
- * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE and supports const C++ range traversal
- * in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a
- * source.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- constexpr auto add_two(int value) noexcept -> int { return value + 2; }
-
- int main() {
-   // A named function can be used as the constexpr step callback.
-   constexpr auto constexpr_sum = [] {
-     constexpr auto values = iterate(add_two, 1);
-     auto sum = 0;
-     auto observed = 0;
-     for (const auto value : values) {
-       sum += value;
-       if (++observed == 4) {
-         break;
-       }
-     }
-     return sum;
-   }();
-
-   // Runtime construction also accepts an inline lambda step callback.
-   auto runtime_values =
-       iterate([](int value) noexcept { return value * 2; }, 2);
-
-   // -----------------------------------------------------------------------
-   // C++ interoperability: Iterate supports const traversal.
-   // -----------------------------------------------------------------------
-   auto runtime_sum = 0;
-   auto runtime_observed = 0;
-   for (const auto value : runtime_values) {
-     // A bounded observation makes the unbounded producer safe to inspect.
-     runtime_sum += value;
-     if (++runtime_observed == 4) {
-       break;
-     }
-   }
-
-   return constexpr_sum == 16 && runtime_sum == 30 ? 0 : 1;
- }
- ~~~~~
- */
-template <typename T, typename Step>
-    requires concepts_detail::IterateClassArgument<T, Step>
-class Iterate {
-  public:
-    using value_type = T;
-
-    class const_iterator {
-      public:
-        using value_type = T;
-        using difference_type = std::ptrdiff_t;
-
-        constexpr const_iterator() noexcept = default;
-
-        constexpr const_iterator(const T& current, const Step* step, std::size_t remaining) noexcept
-            : current_(current), step_(step), remaining_(remaining) {
-        }
-
-        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
-            return current_;
-        }
-
-        constexpr auto operator++() noexcept -> const_iterator& {
-            if (remaining_ > 1U) {
-                const T next = std::invoke(*step_, current_);
-                current_ = next;
-            }
-            --remaining_;
-            return *this;
-        }
-
-        constexpr auto operator++(int) noexcept -> const_iterator {
-            auto previous = *this;
-            ++(*this);
-            return previous;
-        }
-
-        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
-            -> bool {
-            return lhs.remaining_ == rhs.remaining_;
-        }
-
-      private:
-        T current_{};
-        const Step* step_{nullptr};
-        std::size_t remaining_{0U};
-    };
-
-    // The default form requires a default-constructed step. Constraining the
-    // constructor keeps a non-default-constructible Step from satisfying
-    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
-    constexpr Iterate() noexcept
-        requires std::default_initializable<Step>
-        : initial_{}, step_{} {
-    }
-
-    constexpr Iterate(const T& initial, const Step& step) noexcept : initial_(initial), step_(step) {
-    }
-
-    template <typename Initial, typename OtherStep>
-        requires(!concepts::SafeImplicitConversion<T, Initial> || !std::same_as<std::remove_cvref_t<OtherStep>, Step>)
-    Iterate(Initial initial, OtherStep step) = delete;
-
-    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
-        return CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
-    }
-
-    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
-        return false;
-    }
-
-    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
-        return const_iterator{initial_, &step_, count()};
-    }
-
-    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
-        return const_iterator{};
-    }
-
-  private:
-    T initial_;
-    Step step_;
-};
-
-/** Diagnostic specialization (REQ-DIAG-012): reached only through the
- *  redirecting deduction guide below. Constructing it is always a compile-time
- *  error whose single message names the class template, the rejected argument
- *  type, and the violated domain rule. */
-template <>
-class Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation> {
-  public:
-    template <typename... Args>
-    constexpr explicit Iterate([[maybe_unused]] Args&&... args) noexcept {
-        static_assert(concepts_detail::dependent_false<Args...>,
-                      "cljonic::Iterate: the initial value and step cannot be used to build an Iterate. The initial "
-                      "value must be storable without throwing, and the step must be a pure, non-allocating, "
-                      "non-throwing callable that accepts the initial value and returns the element type.");
-    }
-};
-
-/** Redirecting deduction guide (REQ-DIAG-012): viable only for a rejected
- *  deduction, so an admitted deduction is never affected. */
-template <typename T, typename Step>
-    requires(!(concepts::NothrowCollectionElement<T> && concepts::IterateStep<T, Step>))
-Iterate(const T&, const Step&)
-    -> Iterate<concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation>;
-
-template <typename Step, typename T>
-    requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
-             concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>
-[[nodiscard]] constexpr auto iterate(Step&& step, T&& initial) noexcept
-    -> Iterate<std::remove_cvref_t<T>, std::decay_t<Step>> {
-    return Iterate<std::remove_cvref_t<T>, std::decay_t<Step>>{std::forward<T>(initial), std::forward<Step>(step)};
-}
-
-// Diagnostic fallback (REQ-DIAG-009): the (step, initial) arguments are outside
-// the closed producer domain. This overload explains the rejection; it never
-// returns a value and is never a supported call target.
-template <typename Step, typename T>
-    requires(!(concepts::NothrowCollectionElement<std::remove_cvref_t<T>> &&
-               concepts::IterateStep<std::remove_cvref_t<T>, std::decay_t<Step>>))
-constexpr auto iterate([[maybe_unused]] Step&& step, [[maybe_unused]] T&& initial) noexcept
-    -> concepts_detail::RejectedProducerFactory {
-    static_assert(
-        concepts_detail::dependent_false<Step, T>,
-        "cljonic::iterate: the (step, initial) arguments cannot be used to build an Iterate. The initial value must be "
-        "safe to store without throwing, and the step must be a callable that takes one value of that type and returns "
-        "the same type without throwing. Note the argument order is iterate(step, initial).");
-    return {};
-}
-
-} // namespace cljonic
-
-namespace cljonic::concepts_detail {
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
-struct producer_traits<Iterate<T, Step>> {
-    static constexpr bool is_cljonic_producer = true;
-    static constexpr producer_kind kind = producer_kind::iterate;
-};
-
-// The stored step is a callable component, so Iterate never admits producer
-// parameter equality and is never usable as a map key or set
-// element (REQ-CAP-010, REQ-FN-014B).
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
-struct contains_callable<Iterate<T, Step>> : std::true_type {};
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
-struct contains_floating_point<Iterate<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::IterateStep<T, Step>
-struct contains_standard_range<Iterate<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
-
-} // namespace cljonic::concepts_detail
-// End cljonic-iterate.hpp
 // Begin cljonic-not-empty.hpp
 #pragma once
 
@@ -7403,332 +7810,6 @@ constexpr auto pop([[maybe_unused]] const C& collection) noexcept -> void {
 
 } // namespace cljonic
 // End cljonic-pop.hpp
-// Begin cljonic-repeatedly.hpp
-#pragma once
-
-#include <concepts>
-#include <cstddef>
-#include <functional>
-#include <optional>
-#include <type_traits>
-#include <utility>
-
-
-namespace cljonic {
-
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Repeatedly` diagnostic
- *  specialization. A `Repeatedly`'s element type is never deducible from its
- *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
-struct RepeatedlyDomainViolation {};
-
-/** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
- *  zero-argument step, or the internal diagnostic tag pair used only to redirect
- *  a rejected deduction. */
-template <typename T, typename Step>
-concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && concepts::RepeatedlyStep<T, Step>) ||
-                                  (std::same_as<std::remove_cvref_t<T>, RepeatedlyDomainViolation> &&
-                                   std::same_as<std::remove_cvref_t<Step>, RepeatedlyDomainViolation>);
-
-} // namespace concepts_detail
-
-/** \anchor Repeatedly
- * A Repeatedly producer is created with `repeatedly(step)` or `repeatedly(count, step)`. It stores a copy of the
- * zero-argument step callable and produces a fresh element by invoking the step for every observed element.
- * `repeatedly(step)` is unbounded, while `repeatedly(count, step)` yields exactly \p count elements.
- *
- * The step may be a lambda, a named function, or a function object, including a callable with a non-const call
- * operator. It may maintain state or produce side effects, but it must not throw or allocate when invoked. Each
- * traversal invokes a copy of the stored step: mutable state held by value starts from the stored state each time,
- * while state reached through references or static storage remains shared across traversals. Callback types and
- * produced element types remain exact.
- *
- * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
- * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
- * cljonic operations that accept a source.
- *
- * Finite counts follow the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed or
- * unsigned integer types whose nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero or
- * negative counts produce an empty finite Repeatedly without invoking the callback.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- constexpr auto five() noexcept -> int { return 5; }
-
- int main() {
-   // A named function can be used as the constexpr step callback.
-   constexpr auto constexpr_sum = [] {
-     constexpr auto values = repeatedly(3, five);
-     auto sum = 0;
-
-     // -----------------------------------------------------------------------
-     // C++ interoperability: Repeatedly supports const traversal.
-     // -----------------------------------------------------------------------
-     for (const auto value : values) {
-       sum += value;
-     }
-     return sum;
-   }();
-
-   // Mutable value-captured state starts from the stored value on each
-   // traversal.
-   const auto runtime_values = repeatedly(2, [value = 0]() mutable noexcept {
-     value += 3;
-     return value;
-   });
-
-   auto first_runtime_sum = 0;
-   for (const auto value : runtime_values) {
-     first_runtime_sum += value;
-   }
-   auto second_runtime_sum = 0;
-   for (const auto value : runtime_values) {
-     second_runtime_sum += value;
-   }
-
-   // Static state is shared and continues across traversals.
-   const auto shared_values = repeatedly(2, []() noexcept {
-     static int shared_value = 0;
-     return ++shared_value;
-   });
-   auto first_shared_sum = 0;
-   for (const auto value : shared_values) {
-     first_shared_sum += value;
-   }
-   auto second_shared_sum = 0;
-   for (const auto value : shared_values) {
-     second_shared_sum += value;
-   }
-
-   // An uncounted Repeatedly is an unbounded producer whose observation is
-   // bounded by CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or a destination
-   // capacity.
-   [[maybe_unused]] constexpr auto unbounded = repeatedly(five);
-
-   return constexpr_sum == 15 && first_runtime_sum == 9 &&
-                  second_runtime_sum == 9 && first_shared_sum == 3 &&
-                  second_shared_sum == 7
-              ? 0
-              : 1;
- }
- ~~~~~
- */
-template <typename T, typename Step>
-    requires concepts_detail::RepeatedlyClassArgument<T, Step>
-class Repeatedly {
-  public:
-    using value_type = T;
-
-    class const_iterator {
-      public:
-        using value_type = T;
-        using difference_type = std::ptrdiff_t;
-
-        constexpr const_iterator() noexcept = default;
-
-        constexpr explicit const_iterator(std::size_t remaining) noexcept : remaining_(remaining) {
-        }
-
-        constexpr const_iterator(const Step& step, std::size_t remaining) noexcept
-            : step_{step}, remaining_(remaining) {
-            if (remaining_ > 0U) {
-                current_ = std::invoke(*step_);
-            }
-        }
-
-        constexpr const_iterator(const const_iterator&) noexcept = default;
-
-        constexpr auto operator=(const const_iterator& other) noexcept -> const_iterator& {
-            if (this != &other) {
-                step_.reset();
-                if (other.step_.has_value()) {
-                    step_.emplace(*other.step_);
-                }
-                remaining_ = other.remaining_;
-                current_ = other.current_;
-            }
-            return *this;
-        }
-
-        constexpr const_iterator(const_iterator&& other) noexcept : const_iterator(other) {
-        }
-
-        constexpr auto operator=(const_iterator&& other) noexcept -> const_iterator& {
-            return *this = other;
-        }
-
-        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
-            return current_;
-        }
-
-        constexpr auto operator++() noexcept -> const_iterator& {
-            if (remaining_ > 1U) {
-                current_ = std::invoke(*step_);
-            }
-            --remaining_;
-            return *this;
-        }
-
-        constexpr auto operator++(int) noexcept -> const_iterator {
-            auto previous = *this;
-            ++(*this);
-            return previous;
-        }
-
-        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
-            -> bool {
-            return lhs.remaining_ == rhs.remaining_;
-        }
-
-      private:
-        std::optional<Step> step_{};
-        std::size_t remaining_{0U};
-        T current_{};
-    };
-
-    // The default form requires a default-constructed step. Constraining the
-    // constructor keeps a non-default-constructible Step from satisfying
-    // NothrowCollectionElement in unevaluated contexts (REQ-VAL-017D).
-    constexpr Repeatedly() noexcept
-        requires std::default_initializable<Step>
-        : step_{}, count_{0U}, is_finite_{true} {
-    }
-
-    constexpr explicit Repeatedly(const Step& step) noexcept : step_(step), count_(0U), is_finite_(false) {
-    }
-
-    template <concepts_detail::ProducerCount Count>
-    constexpr Repeatedly(const Step& step, Count count) noexcept
-        : step_(step), count_(concepts_detail::normalize_producer_count(count)), is_finite_(true) {
-    }
-
-    template <typename OtherStep>
-        requires(!std::same_as<std::remove_cvref_t<OtherStep>, Step>)
-    explicit Repeatedly(OtherStep step) = delete;
-
-    template <typename OtherStep, typename Count>
-        requires(!std::same_as<std::remove_cvref_t<OtherStep>, Step> || !concepts_detail::ProducerCount<Count>)
-    Repeatedly(OtherStep step, Count count) = delete;
-
-    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
-        return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
-    }
-
-    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
-        return is_finite_;
-    }
-
-    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
-        const auto traversal_count = count();
-        return traversal_count == 0U ? const_iterator{0U} : const_iterator{step_, traversal_count};
-    }
-
-    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
-        return const_iterator{0U};
-    }
-
-  private:
-    Step step_;
-    std::size_t count_;
-    bool is_finite_;
-};
-
-/** Diagnostic specialization (REQ-DIAG-012): selected by the redirecting
- *  deduction guides below. A `Repeatedly`'s element type is produced by its
- *  step, so it is never deducible from a constructor argument; every deduced
- *  `Repeatedly` reaches this specialization instead of a failed-deduction
- *  candidate list. */
-template <>
-class Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation> {
-  public:
-    template <typename... Args>
-    constexpr explicit Repeatedly([[maybe_unused]] Args&&... args) noexcept {
-        static_assert(concepts_detail::dependent_false<Args...>,
-                      "cljonic::Repeatedly: the element type cannot be deduced from a step alone. Use the repeatedly() "
-                      "free function, as in cljonic::repeatedly(step) or cljonic::repeatedly(count, step).");
-    }
-};
-
-/** Redirecting deduction guides (REQ-DIAG-012). No admitted `Repeatedly`
- *  deduction exists, so these guides can never affect a supported construction. */
-template <typename Step>
-Repeatedly(const Step&)
-    -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
-
-template <typename Step, typename Count>
-Repeatedly(const Step&, Count)
-    -> Repeatedly<concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation>;
-
-template <typename Step, typename T = std::invoke_result_t<std::decay_t<Step>&>>
-    requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
-[[nodiscard]] constexpr auto repeatedly(Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
-    return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step)};
-}
-
-template <concepts_detail::ProducerCount Count, typename Step, typename T = std::invoke_result_t<std::decay_t<Step>&>>
-    requires concepts::RepeatedlyStep<T, std::decay_t<Step>>
-[[nodiscard]] constexpr auto repeatedly(Count count, Step&& step) noexcept -> Repeatedly<T, std::decay_t<Step>> {
-    return Repeatedly<T, std::decay_t<Step>>{std::forward<Step>(step), count};
-}
-
-// Diagnostic fallback (REQ-DIAG-009): the step argument is outside the closed
-// producer domain. This overload explains the rejection; it never returns a
-// value and is never a supported call target.
-template <typename Step>
-    requires(!concepts_detail::ValidRepeatedlyStep<Step>)
-constexpr auto repeatedly([[maybe_unused]] Step&& step) noexcept -> concepts_detail::RejectedProducerFactory {
-    static_assert(concepts_detail::dependent_false<Step>,
-                  "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
-                  "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
-                  "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
-                  "cljonic::repeat(count, value).");
-    return {};
-}
-
-template <typename Count, typename Step>
-    requires(!concepts_detail::ValidRepeatedlyStep<Step> || !concepts_detail::ProducerCount<Count>)
-constexpr auto repeatedly([[maybe_unused]] Count count, [[maybe_unused]] Step&& step) noexcept
-    -> concepts_detail::RejectedProducerFactory {
-    static_assert(concepts_detail::dependent_false<Step>,
-                  "cljonic::repeatedly: this step cannot be used to build a Repeatedly. The step must be a callable -- "
-                  "a function, a lambda, or a function object -- that takes no arguments, can be copied, and returns a "
-                  "value that can be stored without throwing. To repeat one value, use cljonic::repeat(value) or "
-                  "cljonic::repeat(count, value). The count must be a non-boolean, non-character integer "
-                  "type whose nonnegative range fits std::size_t.");
-    return {};
-}
-
-} // namespace cljonic
-
-namespace cljonic::concepts_detail {
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::RepeatedlyStep<T, Step>
-struct producer_traits<Repeatedly<T, Step>> {
-    static constexpr bool is_cljonic_producer = true;
-    static constexpr producer_kind kind = producer_kind::repeatedly;
-};
-
-// The stored step is a callable component, so Repeatedly never admits producer
-// parameter equality and is never usable as a map key or set
-// element (REQ-CAP-010, REQ-FN-014B).
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::RepeatedlyStep<T, Step>
-struct contains_callable<Repeatedly<T, Step>> : std::true_type {};
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::RepeatedlyStep<T, Step>
-struct contains_floating_point<Repeatedly<T, Step>> : std::bool_constant<contains_floating_point_v<T>> {};
-
-template <concepts::NothrowCollectionElement T, typename Step>
-    requires concepts::RepeatedlyStep<T, Step>
-struct contains_standard_range<Repeatedly<T, Step>> : std::bool_constant<contains_standard_range_v<T>> {};
-
-} // namespace cljonic::concepts_detail
-// End cljonic-repeatedly.hpp
 // Begin cljonic-rest.hpp
 #pragma once
 

@@ -16,6 +16,7 @@ namespace concepts_detail {
 /** Internal tag (REQ-DIAG-012): selects the `Iterate` diagnostic
  *  specialization during an out-of-domain class template argument deduction. */
 struct IterateDomainViolation {};
+struct IterateNextAccess;
 
 /** The `Iterate` class-template gate (REQ-DIAG-012): a valid initial value and
  *  step, or the internal diagnostic tag used only to redirect a rejected
@@ -34,6 +35,9 @@ concept IterateClassArgument = (concepts::NothrowCollectionElement<T> && concept
  *
  * The initial and produced values may themselves be cljonic collections or producers, including nested cljonic
  * composites. The step may be a lambda, a named function, or a function object.
+ *
+ * Calling \ref Next "next" invokes the step once and uses its result as the returned Iterate's initial value. The
+ * observation cap is preserved; a zero observation cap does not invoke the step.
  *
  * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE and supports const C++ range traversal
  * in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a
@@ -160,6 +164,8 @@ class Iterate {
     }
 
   private:
+    friend struct concepts_detail::IterateNextAccess;
+
     T initial_;
     Step step_;
 };

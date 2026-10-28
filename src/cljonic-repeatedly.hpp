@@ -18,6 +18,7 @@ namespace concepts_detail {
  *  specialization. A `Repeatedly`'s element type is never deducible from its
  *  step argument, so any deduced `Repeatedly` is a rejected deduction. */
 struct RepeatedlyDomainViolation {};
+struct RepeatedlyNextAccess;
 
 /** The `Repeatedly` class-template gate (REQ-DIAG-012): a valid element type and
  *  zero-argument step, or the internal diagnostic tag pair used only to redirect
@@ -39,6 +40,11 @@ concept RepeatedlyClassArgument = (concepts::NothrowCollectionElement<T> && conc
  * traversal invokes a copy of the stored step: mutable state held by value starts from the stored state each time,
  * while state reached through references or static storage remains shared across traversals. Callback types and
  * produced element types remain exact.
+ *
+ * Calling \ref Next "next" on a nonempty Repeatedly eagerly invokes a copy of the stored step once and discards that
+ * produced value. The returned Repeatedly owns the advanced copy of the step, so value-held mutable state advances in
+ * the tail without changing the source; effects through references or static storage are shared. A finite tail has one
+ * fewer element, while an unbounded tail retains its observation cap. An empty Repeatedly does not invoke its step.
  *
  * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
  * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
@@ -227,6 +233,8 @@ class Repeatedly {
     }
 
   private:
+    friend struct concepts_detail::RepeatedlyNextAccess;
+
     Step step_;
     std::size_t count_;
     bool is_finite_;

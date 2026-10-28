@@ -2,15 +2,18 @@
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-cycle.hpp>
+#include <cljonic-iterate.hpp>
 #include <cljonic-map.hpp>
 #include <cljonic-queue.hpp>
 #include <cljonic-range.hpp>
 #include <cljonic-repeat.hpp>
+#include <cljonic-repeatedly.hpp>
 #include <cljonic-set.hpp>
 #include <cljonic-string.hpp>
 #include <cljonic-vector.hpp>
 
 #include <cstddef>
+#include <functional>
 #include <type_traits>
 
 namespace cljonic {
@@ -31,6 +34,12 @@ struct NextProducerDomain<Range<T>> : std::true_type {};
 
 template <typename T>
 struct NextProducerDomain<Repeat<T>> : std::true_type {};
+
+template <typename T, typename Step>
+struct NextProducerDomain<Iterate<T, Step>> : std::true_type {};
+
+template <typename T, typename Step>
+struct NextProducerDomain<Repeatedly<T, Step>> : std::true_type {};
 
 template <typename Source>
 struct NextProducerDomain<Cycle<Source>>
@@ -92,6 +101,57 @@ struct CycleNextAccess {
     [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P;
 };
 
+struct IterateNextAccess {
+    template <concepts::CljonicIterate P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
+        if (producer.count() == 0U) {
+            return producer;
+        }
+        return P{std::invoke(producer.step_, producer.initial_), producer.step_};
+    }
+};
+
+struct RepeatedlyNextAccess {
+    template <concepts::CljonicRepeatedly P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
+        if (producer.count() == 0U) {
+            return producer;
+        }
+
+        auto step = producer.step_;
+        [[maybe_unused]] const auto discarded = std::invoke(step);
+        if (producer.is_finite_) {
+            return P{step, producer.count_ - 1U};
+        }
+        return P{step};
+    }
+};
+
+template <concepts::CljonicRange P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return RangeNextAccess::tail(producer);
+}
+
+template <concepts::CljonicRepeat P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return RepeatNextAccess::tail(producer);
+}
+
+template <concepts::CljonicIterate P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return IterateNextAccess::tail(producer);
+}
+
+template <concepts::CljonicRepeatedly P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return RepeatedlyNextAccess::tail(producer);
+}
+
+template <concepts::CljonicCycle P>
+[[nodiscard]] constexpr auto next_producer_tail(const P& producer) noexcept -> P {
+    return CycleNextAccess::tail(producer);
+}
+
 template <typename C>
 struct NextResult;
 
@@ -143,8 +203,17 @@ struct NextResult<String<N>> {
  *
  * For a \ref Cycle "Cycle" with a finite source, the starting position advances by one modulo the source's observed
  * count; an empty finite source remains empty. For a Cycle with an unbounded source, `next` tails its owned source and
- * resets the starting position, preserving the observation cap. Constructing a producer tail does not materialize
- * results or invoke callbacks.
+ * resets the starting position, preserving the observation cap and following the source's callback behavior.
+ *
+ * For an \ref Iterate "Iterate", `next` invokes the step once and uses its result as the returned producer's initial
+ * value while preserving the observation cap. A zero observation cap does not invoke the step.
+ *
+ * For a \ref Repeatedly "Repeatedly", `next` invokes a copy of the step once, discards that produced value, and stores
+ * the advanced step copy in the tail. A finite Repeatedly tail has one fewer element; an unbounded Repeatedly keeps
+ * its observation cap. An empty Repeatedly does not invoke its step. Value-held mutable state advances in the returned
+ * Repeatedly only, while effects through referenced or static state occur when `next` is called and remain shared.
+ *
+ * Calling `next` does not materialize the remaining producer sequence into a collection.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -230,6 +299,10 @@ struct NextResult<String<N>> {
    const auto runtime_cycle_tail_values =
        into(Vector<int, 5>{}, runtime_cycle_tail);
    const auto runtime_unbounded_cycle_tail = next(cycle(Range{4, 9, 0}));
+   auto callback_calls = 0;
+   const auto callback_producer =
+       repeatedly(2, [&callback_calls]() noexcept { return ++callback_calls; });
+   const auto callback_tail = next(callback_producer);
 
    return (count(runtime_tail) == 1 && runtime_tail(0) == 50 &&
            count(runtime_values) == 2 && runtime_values(0) == 40 &&
@@ -262,7 +335,8 @@ struct NextResult<String<N>> {
            runtime_cycle_tail_values(4) == 3 &&
            !fits_into(Vector<int, 2>{}, runtime_cycle_tail) &&
            count(runtime_unbounded_cycle_tail) == count(cycle(Range{4, 9, 0})) &&
-           !fits_into(Vector<int, 2>{}, runtime_unbounded_cycle_tail))
+           !fits_into(Vector<int, 2>{}, runtime_unbounded_cycle_tail) &&
+           callback_calls == 1 && count(callback_tail) == 1)
               ? 0
               : 1;
  }
@@ -285,13 +359,7 @@ template <concepts_detail::NextSequenceableCollection C>
 
 template <concepts_detail::NextSequenceableProducer P>
 [[nodiscard]] constexpr auto next(const P& producer) noexcept -> P {
-    if constexpr (concepts::CljonicRange<P>) {
-        return concepts_detail::RangeNextAccess::tail(producer);
-    } else if constexpr (concepts::CljonicRepeat<P>) {
-        return concepts_detail::RepeatNextAccess::tail(producer);
-    } else {
-        return concepts_detail::CycleNextAccess::tail(producer);
-    }
+    return concepts_detail::next_producer_tail(producer);
 }
 
 template <concepts::CljonicCycle P>
@@ -311,7 +379,8 @@ template <typename C>
 constexpr auto next([[maybe_unused]] const C& value) noexcept -> void {
     static_assert(
         concepts_detail::dependent_false<C>,
-        "cljonic::next: expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value.");
+        "cljonic::next: expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or supported "
+        "Cycle value.");
 }
 
 } // namespace cljonic
