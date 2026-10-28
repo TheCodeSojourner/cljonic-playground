@@ -564,11 +564,11 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt;)</td></tr>
 <tr class="memitem:ab8e1cff5a31812908da8c0ed6b078bdc" id="r_ab8e1cff5a31812908da8c0ed6b078bdc"><td class="memTemplParams" colspan="2">template&lt;typename Count, typename Step&gt; <br />
 requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt; || !concepts_detail::ProducerCount&lt;Count&gt;)</td></tr>
 <tr class="memitem:ab8e1cff5a31812908da8c0ed6b078bdc template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ab8e1cff5a31812908da8c0ed6b078bdc">repeatedly</a> (Count count, Step &amp;&amp;step) noexcept -&gt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_rejected_producer_factory.html">concepts_detail::RejectedProducerFactory</a></td></tr>
-<tr class="memitem:a3a2a69fa116188ac2198f958a5779156" id="r_a3a2a69fa116188ac2198f958a5779156"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::NextSequenceableCollection C&gt; </td></tr>
-<tr class="memitem:a3a2a69fa116188ac2198f958a5779156 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a3a2a69fa116188ac2198f958a5779156">rest</a> (const C &amp;collection) noexcept -&gt; decltype(<a class="el" href="#accdefad78fa9bf05274fc5d2bbf48983">next</a>(collection))</td></tr>
-<tr class="memitem:ae88ef4859eacf3a08cbc05645d5c65ec" id="r_ae88ef4859eacf3a08cbc05645d5c65ec"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
-requires (!concepts_detail::NextSequenceableCollection&lt;C&gt;)</td></tr>
-<tr class="memitem:ae88ef4859eacf3a08cbc05645d5c65ec template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ae88ef4859eacf3a08cbc05645d5c65ec">rest</a> (const C &amp;value) noexcept -&gt; void</td></tr>
+<tr class="memitem:aec2b327c6d67186b55b47bf034c28b28" id="r_aec2b327c6d67186b55b47bf034c28b28"><td class="memTemplParams" colspan="2">template&lt;concepts_detail::NextSequenceable C&gt; </td></tr>
+<tr class="memitem:aec2b327c6d67186b55b47bf034c28b28 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a> (const C &amp;value) noexcept -&gt; decltype(<a class="el" href="#accdefad78fa9bf05274fc5d2bbf48983">next</a>(value))</td></tr>
+<tr class="memitem:a612e6f96a040d30c630324e930f9bfa1" id="r_a612e6f96a040d30c630324e930f9bfa1"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts_detail::NextSequenceable&lt;C&gt;)</td></tr>
+<tr class="memitem:a612e6f96a040d30c630324e930f9bfa1 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a612e6f96a040d30c630324e930f9bfa1">rest</a> (const C &amp;value) noexcept -&gt; void</td></tr>
 <tr class="memitem:af23ad4b89cbea89172bb757a5fbd5b26" id="r_af23ad4b89cbea89172bb757a5fbd5b26"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
 <tr class="memitem:af23ad4b89cbea89172bb757a5fbd5b26 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af23ad4b89cbea89172bb757a5fbd5b26">seq</a> (const C &amp;collection) noexcept -&gt; C</td></tr>
 <tr class="memitem:af20d169ef36288b54ca608a14eb6b557" id="r_af20d169ef36288b54ca608a14eb6b557"><td class="memTemplParams" colspan="2">template&lt;typename First, typename... Rest&gt; </td></tr>
@@ -5145,11 +5145,11 @@ template&lt;concepts_detail::NextSequenceableCollection C&gt; </div>
 <div class="line">}</div>
 <div class="ttc" id="aclasscljonic_1_1_vector_html"><div class="ttname"><a href="classcljonic_1_1_vector.html">cljonic::Vector</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-vector_8hpp_source.html#l00148">cljonic-vector.hpp:148</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a63b0a319ce6349c3b49b17b3ab5db240"><div class="ttname"><a href="#a63b0a319ce6349c3b49b17b3ab5db240">cljonic::cycle</a></div><div class="ttdeci">constexpr auto cycle(const Source &amp;source) noexcept -&gt; Cycle&lt; Source &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-cycle_8hpp_source.html#l00243">cljonic-cycle.hpp:243</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_accdefad78fa9bf05274fc5d2bbf48983"><div class="ttname"><a href="#accdefad78fa9bf05274fc5d2bbf48983">cljonic::next</a></div><div class="ttdeci">constexpr auto next(const C &amp;collection) noexcept -&gt; concepts_detail::NextResult&lt; C &gt;::type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-next_8hpp_source.html#l00346">cljonic-next.hpp:346</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_accdefad78fa9bf05274fc5d2bbf48983"><div class="ttname"><a href="#accdefad78fa9bf05274fc5d2bbf48983">cljonic::next</a></div><div class="ttdeci">constexpr auto next(const C &amp;collection) noexcept -&gt; concepts_detail::NextResult&lt; C &gt;::type</div><div class="ttdef"><b>Definition</b> <a href="cljonic-next_8hpp_source.html#l00349">cljonic-next.hpp:349</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_ada46d509c8f0d0124e524878e323c208"><div class="ttname"><a href="#ada46d509c8f0d0124e524878e323c208">cljonic::repeatedly</a></div><div class="ttdeci">constexpr auto repeatedly(Step &amp;&amp;step) noexcept -&gt; Repeatedly&lt; T, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeatedly_8hpp_source.html#l00271">cljonic-repeatedly.hpp:271</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_af31c4c3eb2e82ffcc9d64da7ea5ca8bc"><div class="ttname"><a href="#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">cljonic::repeat</a></div><div class="ttdeci">constexpr auto repeat(T &amp;&amp;value) noexcept -&gt; Repeat&lt; std::remove_cvref_t&lt; T &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00223">cljonic-repeat.hpp:223</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00346">346</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00349">349</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
 
 </div>
 </div>
@@ -5179,7 +5179,7 @@ requires (!concepts_detail::NextSequenceableCollection&lt;C&gt; &amp;&amp; !conc
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00379">379</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00382">382</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
 
 </div>
 </div>
@@ -5208,7 +5208,7 @@ template&lt;concepts_detail::NextSequenceableProducer P&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00361">361</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-next_8hpp_source.html#l00364">364</a> of file <a class="el" href="cljonic-next_8hpp_source.html">cljonic-next.hpp</a>.</p>
 
 </div>
 </div>
@@ -6367,13 +6367,13 @@ requires concepts::RepeatedlyStep&lt;T, std::decay_t&lt;Step&gt;&gt;</div>
 
 </div>
 </div>
-<a id="a3a2a69fa116188ac2198f958a5779156" name="a3a2a69fa116188ac2198f958a5779156"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a2a69fa116188ac2198f958a5779156">&#9670;&#160;</a></span>rest() <span class="overload">[1/2]</span></h2>
+<a id="aec2b327c6d67186b55b47bf034c28b28" name="aec2b327c6d67186b55b47bf034c28b28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec2b327c6d67186b55b47bf034c28b28">&#9670;&#160;</a></span>rest() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts_detail::NextSequenceableCollection C&gt; </div>
+template&lt;concepts_detail::NextSequenceable C&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -6381,8 +6381,8 @@ template&lt;concepts_detail::NextSequenceableCollection C&gt; </div>
         <tr>
           <td class="memname">auto cljonic::rest </td>
           <td>(</td>
-          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
-          <td> -&gt; decltype(<a class="el" href="#accdefad78fa9bf05274fc5d2bbf48983">next</a>(collection))</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td> -&gt; decltype(<a class="el" href="#accdefad78fa9bf05274fc5d2bbf48983">next</a>(value))</td>
         </tr>
       </table>
   </td>
@@ -6391,51 +6391,70 @@ template&lt;concepts_detail::NextSequenceableCollection C&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="Rest"></a> The <b>rest</b> free function returns the logical remainder of a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>, <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>, <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a>, or <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a> as exactly the result of <a class="el" href="#Next" title="Next">next</a>: the same collection kind with one less capacity (zero stays zero). It contains every logical element after the first and preserves the input. An empty or singleton input returns an empty value of the result type.</p>
-<p><a class="el" href="classcljonic_1_1_map.html">Map</a> elements remain value-semantic <a class="el" href="#MapEntryFactory" title="MapEntryFactory">map_entry</a> values. <a class="el" href="classcljonic_1_1_map.html">Map</a> and <a class="el" href="classcljonic_1_1_set.html">Set</a> traversal order is not semantically significant, while <a class="el" href="classcljonic_1_1_queue.html">Queue</a> retains FIFO order. Unlike <a class="el" href="#Pop" title="Pop">pop</a>, <span class="tt"><a class="el" href="#a3a2a69fa116188ac2198f958a5779156">rest</a></span> follows logical traversal order rather than the collection-specific removal end.</p>
+<p><a class="anchor" id="Rest"></a> The <b>rest</b> free function is an alias for <a class="el" href="#Next" title="Next">next</a> over the same supported input domain. It returns exactly the result of <span class="tt">next(value)</span>, preserving its result type, logical tail, input, producer observation policy, and callback timing and effects.</p>
+<p>For collections, the result has the same collection kind with one less capacity (zero stays zero), and contains every logical element after the first. <a class="el" href="classcljonic_1_1_map.html">Map</a> elements remain value-semantic <a class="el" href="#MapEntryFactory" title="MapEntryFactory">map_entry</a> values. <a class="el" href="classcljonic_1_1_map.html">Map</a> and <a class="el" href="classcljonic_1_1_set.html">Set</a> traversal order is not semantically significant, while <a class="el" href="classcljonic_1_1_queue.html">Queue</a> retains FIFO order. Unlike <a class="el" href="#Pop" title="Pop">pop</a>, <span class="tt"><a class="el" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a></span> follows logical traversal order rather than the collection-specific removal end.</p>
+<p>For producers, <span class="tt"><a class="el" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a></span> preserves all of <span class="tt"><a class="el" href="#accdefad78fa9bf05274fc5d2bbf48983">next</a></span>'s producer-specific tail behavior, including the eager callback timing of <a class="el" href="classcljonic_1_1_iterate.html#Iterate" title="Iterate">Iterate</a> and <a class="el" href="classcljonic_1_1_repeatedly.html#Repeatedly" title="Repeatedly">Repeatedly</a>.</p>
 <p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> values = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20, 30);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> remainder = <a class="code hl_function" href="#a3a2a69fa116188ac2198f958a5779156">rest</a>(values);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> remainder = <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(values);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(remainder) == 2);</div>
 <div class="line">  <span class="keyword">static_assert</span>(remainder(0) == 20 &amp;&amp; remainder(1) == 30);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queue_values = <a class="code hl_function" href="#a2693300957a43d0bb2d4c29634a838f7">queue</a>(4, 5, 6);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queue_remainder = <a class="code hl_function" href="#a3a2a69fa116188ac2198f958a5779156">rest</a>(queue_values);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queue_remainder = <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(queue_values);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(queue_remainder) == 5 &amp;&amp;</div>
-<div class="line">                <a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(<a class="code hl_function" href="#a3a2a69fa116188ac2198f958a5779156">rest</a>(queue_remainder)) == 6);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(<a class="code hl_function" href="#a3a2a69fa116188ac2198f958a5779156">rest</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 0&gt;</a>())) == 0);</div>
+<div class="line">                <a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(<a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(queue_remainder)) == 6);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(<a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 0&gt;</a>())) == 0);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> repeated_remainder = <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(<a class="code hl_function" href="#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">repeat</a>(3, 7));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(repeated_remainder) == 2);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> range_remainder = <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(<a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, 3});</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> range_values = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 2&gt;</a>{}, range_remainder);</div>
+<div class="line">  <span class="keyword">static_assert</span>(range_values(0) == 1 &amp;&amp; range_values(1) == 2);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> cycle_remainder = <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(<a class="code hl_function" href="#a63b0a319ce6349c3b49b17b3ab5db240">cycle</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20, 30)));</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> cycle_values = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 3&gt;</a>{}, cycle_remainder);</div>
+<div class="line">  <span class="keyword">static_assert</span>(cycle_values(0) == 20 &amp;&amp; cycle_values(1) == 30 &amp;&amp;</div>
+<div class="line">                cycle_values(2) == 10);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> iterate_remainder =</div>
+<div class="line">      <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(<a class="code hl_function" href="#a63314a7947b7251553be23329779260a">iterate</a>([](<span class="keywordtype">int</span> value) <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> value + 1; }, 1));</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> iterate_values = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_class" href="classcljonic_1_1_vector.html">Vector&lt;int, 1&gt;</a>{}, iterate_remainder);</div>
+<div class="line">  <span class="keyword">static_assert</span>(iterate_values(0) == 2);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> repeatedly_remainder =</div>
+<div class="line">      <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(<a class="code hl_function" href="#ada46d509c8f0d0124e524878e323c208">repeatedly</a>(3, []() <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> 7; }));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(repeatedly_remainder) == 2);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_values = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 4&gt;</a>(40, 50, 60);</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_remainder = <a class="code hl_function" href="#a3a2a69fa116188ac2198f958a5779156">rest</a>(runtime_values);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_remainder = <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(runtime_values);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_queue = <a class="code hl_function" href="#a2693300957a43d0bb2d4c29634a838f7">queue&lt;int, 4&gt;</a>(40, 50, 60);</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_queue_remainder = <a class="code hl_function" href="#a3a2a69fa116188ac2198f958a5779156">rest</a>(runtime_queue);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_queue_remainder = <a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(runtime_queue);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(runtime_remainder) == 2 &amp;&amp; runtime_remainder(0) == 50 &amp;&amp;</div>
 <div class="line">          runtime_remainder(1) == 60 &amp;&amp; <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(runtime_values) == 3 &amp;&amp;</div>
 <div class="line">          runtime_values(0) == 40 &amp;&amp; <a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(runtime_queue_remainder) == 50 &amp;&amp;</div>
-<div class="line">          <a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(<a class="code hl_function" href="#a3a2a69fa116188ac2198f958a5779156">rest</a>(runtime_queue_remainder)) == 60)</div>
+<div class="line">          <a class="code hl_function" href="#af6ac025d9f9bb2d29bcf7442c05b17e0">first</a>(<a class="code hl_function" href="#aec2b327c6d67186b55b47bf034c28b28">rest</a>(runtime_queue_remainder)) == 60)</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a3a2a69fa116188ac2198f958a5779156"><div class="ttname"><a href="#a3a2a69fa116188ac2198f958a5779156">cljonic::rest</a></div><div class="ttdeci">constexpr auto rest(const C &amp;collection) noexcept -&gt; decltype(next(collection))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-rest_8hpp_source.html#l00051">cljonic-rest.hpp:51</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a63314a7947b7251553be23329779260a"><div class="ttname"><a href="#a63314a7947b7251553be23329779260a">cljonic::iterate</a></div><div class="ttdeci">constexpr auto iterate(Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; Iterate&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-iterate_8hpp_source.html#l00199">cljonic-iterate.hpp:199</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_aec2b327c6d67186b55b47bf034c28b28"><div class="ttname"><a href="#aec2b327c6d67186b55b47bf034c28b28">cljonic::rest</a></div><div class="ttdeci">constexpr auto rest(const C &amp;value) noexcept -&gt; decltype(next(value))</div><div class="ttdef"><b>Definition</b> <a href="cljonic-rest_8hpp_source.html#l00071">cljonic-rest.hpp:71</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-rest_8hpp_source.html#l00051">51</a> of file <a class="el" href="cljonic-rest_8hpp_source.html">cljonic-rest.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-rest_8hpp_source.html#l00071">71</a> of file <a class="el" href="cljonic-rest_8hpp_source.html">cljonic-rest.hpp</a>.</p>
 
 </div>
 </div>
-<a id="ae88ef4859eacf3a08cbc05645d5c65ec" name="ae88ef4859eacf3a08cbc05645d5c65ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae88ef4859eacf3a08cbc05645d5c65ec">&#9670;&#160;</a></span>rest() <span class="overload">[2/2]</span></h2>
+<a id="a612e6f96a040d30c630324e930f9bfa1" name="a612e6f96a040d30c630324e930f9bfa1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a612e6f96a040d30c630324e930f9bfa1">&#9670;&#160;</a></span>rest() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename C&gt; <br />
-requires (!concepts_detail::NextSequenceableCollection&lt;C&gt;)</div>
+requires (!concepts_detail::NextSequenceable&lt;C&gt;)</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -6454,7 +6473,7 @@ requires (!concepts_detail::NextSequenceableCollection&lt;C&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-rest_8hpp_source.html#l00057">57</a> of file <a class="el" href="cljonic-rest_8hpp_source.html">cljonic-rest.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-rest_8hpp_source.html#l00077">77</a> of file <a class="el" href="cljonic-rest_8hpp_source.html">cljonic-rest.hpp</a>.</p>
 
 </div>
 </div>

@@ -22,6 +22,6 @@ var searchData=
   ['repeatedlystep_19',['RepeatedlyStep',['../conceptcljonic_1_1concepts_1_1_repeatedly_step.html',1,'cljonic::concepts']]],
   ['repeatelementdomainviolation_20',['RepeatElementDomainViolation',['../structcljonic_1_1concepts__detail_1_1_repeat_element_domain_violation.html',1,'cljonic::concepts_detail']]],
   ['repeatnextaccess_21',['RepeatNextAccess',['../structcljonic_1_1concepts__detail_1_1_repeat_next_access.html',1,'cljonic::concepts_detail']]],
-  ['rest_22',['rest',['../namespacecljonic.html#a3a2a69fa116188ac2198f958a5779156',1,'cljonic::rest(const C &amp;collection) noexcept -&gt; decltype(next(collection))'],['../namespacecljonic.html#ae88ef4859eacf3a08cbc05645d5c65ec',1,'cljonic::rest(const C &amp;value) noexcept -&gt; void']]],
+  ['rest_22',['rest',['../namespacecljonic.html#aec2b327c6d67186b55b47bf034c28b28',1,'cljonic::rest(const C &amp;value) noexcept -&gt; decltype(next(value))'],['../namespacecljonic.html#a612e6f96a040d30c630324e930f9bfa1',1,'cljonic::rest(const C &amp;value) noexcept -&gt; void']]],
   ['rules_23',['Check the operation&apos;s own rules',['../implicit-conversions.html#conversion-operation',1,'']]]
 ];
