@@ -40,6 +40,14 @@ entity Repeatedly {
     uncounted_form_does_not_fit_into_destination: Boolean
     callback_invoked_once_per_produced_element: Boolean
     construction_does_not_invoke_step: Boolean
+    next_invokes_step_once_when_count_is_positive: Boolean
+    next_discards_one_generated_element: Boolean
+    next_tail_stores_advanced_step_copy: Boolean
+    next_finite_tail_decrements_count: Boolean
+    next_unbounded_tail_preserves_observation_cap: Boolean
+    next_zero_count_does_not_invoke_step: Boolean
+    next_advances_value_held_state_only_in_tail: Boolean
+    next_preserves_shared_reference_or_static_effects: Boolean
     callable_step_excludes_parameter_equality: Boolean
     native_and_parameter_equality_rejected_for_callable_parameters: Boolean
     does_not_satisfy_indexed_producer: Boolean
@@ -182,6 +190,38 @@ entity Repeatedly {
 
     invariant ConstructionDoesNotInvokeStep {
         this.construction_does_not_invoke_step = true
+    }
+
+    invariant NextInvokesStepOnceWhenCountIsPositive {
+        this.next_invokes_step_once_when_count_is_positive = true
+    }
+
+    invariant NextDiscardsOneGeneratedElement {
+        this.next_discards_one_generated_element = true
+    }
+
+    invariant NextTailStoresAdvancedStepCopy {
+        this.next_tail_stores_advanced_step_copy = true
+    }
+
+    invariant NextFiniteTailDecrementsCount {
+        this.next_finite_tail_decrements_count = true
+    }
+
+    invariant NextUnboundedTailPreservesObservationCap {
+        this.next_unbounded_tail_preserves_observation_cap = true
+    }
+
+    invariant NextZeroCountDoesNotInvokeStep {
+        this.next_zero_count_does_not_invoke_step = true
+    }
+
+    invariant NextAdvancesValueHeldStateOnlyInTail {
+        this.next_advances_value_held_state_only_in_tail = true
+    }
+
+    invariant NextPreservesSharedReferenceOrStaticEffects {
+        this.next_preserves_shared_reference_or_static_effects = true
     }
 
     invariant CallableStepExcludesParameterEquality {

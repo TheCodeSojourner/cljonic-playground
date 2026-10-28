@@ -9,6 +9,10 @@
 -- cycles advance their starting offset; unbounded-source cycles tail their
 -- owned source and reset the offset. Source must itself support next unless
 -- it is a collection.
+-- REQ-FN-002A7 and REQ-FN-013H: next(producer) supports Iterate and Repeatedly.
+-- Callback-backed producers eagerly advance once when nonempty; Iterate uses
+-- the advanced value as its new initial value, while Repeatedly discards one
+-- generated value and retains the advanced callback state in the tail.
 
 entity Next {
     supports_next_free_function: Boolean
@@ -16,12 +20,20 @@ entity Next {
     supports_producer_tail_domain: Boolean
     producer_tail_domain_includes_range: Boolean
     producer_tail_domain_includes_cycle: Boolean
+    producer_tail_domain_includes_iterate: Boolean
+    producer_tail_domain_includes_repeatedly: Boolean
     returns_same_producer_kind_as_source: Boolean
     returns_elements_after_first_of_producer_result: Boolean
     unbounded_producer_tail_remains_unbounded: Boolean
     repeated_next_never_exhausts_unbounded_producer: Boolean
     producer_tail_result_is_self_contained_and_owning: Boolean
-    producer_tail_does_not_materialize_or_invoke_callbacks: Boolean
+    producer_tail_does_not_materialize_producer_results: Boolean
+    callback_producer_tail_invokes_one_callback_when_nonempty: Boolean
+    iterate_tail_uses_advanced_value_as_initial: Boolean
+    repeatedly_tail_discards_one_value_and_preserves_advanced_step_state: Boolean
+    finite_repeatedly_tail_decrements_count: Boolean
+    unbounded_callback_producer_tail_preserves_observation_cap: Boolean
+    empty_callback_producer_tail_does_not_invoke_callback: Boolean
     producer_tail_coherent_with_count_is_finite_is_empty_into_and_fits_into: Boolean
     range_tail_preserves_endpoint_and_step: Boolean
     zero_step_range_tail_remains_unbounded_with_same_observation_cap: Boolean
@@ -114,6 +126,14 @@ entity Next {
         this.producer_tail_domain_includes_cycle = true
     }
 
+    invariant ProducerTailDomainIncludesIterate {
+        this.producer_tail_domain_includes_iterate = true
+    }
+
+    invariant ProducerTailDomainIncludesRepeatedly {
+        this.producer_tail_domain_includes_repeatedly = true
+    }
+
     invariant ReturnsSameProducerKindAsSource {
         this.returns_same_producer_kind_as_source = true
     }
@@ -134,8 +154,32 @@ entity Next {
         this.producer_tail_result_is_self_contained_and_owning = true
     }
 
-    invariant ProducerTailDoesNotMaterializeOrInvokeCallbacks {
-        this.producer_tail_does_not_materialize_or_invoke_callbacks = true
+    invariant ProducerTailDoesNotMaterializeProducerResults {
+        this.producer_tail_does_not_materialize_producer_results = true
+    }
+
+    invariant CallbackProducerTailInvokesOneCallbackWhenNonempty {
+        this.callback_producer_tail_invokes_one_callback_when_nonempty = true
+    }
+
+    invariant IterateTailUsesAdvancedValueAsInitial {
+        this.iterate_tail_uses_advanced_value_as_initial = true
+    }
+
+    invariant RepeatedlyTailDiscardsOneValueAndPreservesAdvancedStepState {
+        this.repeatedly_tail_discards_one_value_and_preserves_advanced_step_state = true
+    }
+
+    invariant FiniteRepeatedlyTailDecrementsCount {
+        this.finite_repeatedly_tail_decrements_count = true
+    }
+
+    invariant UnboundedCallbackProducerTailPreservesObservationCap {
+        this.unbounded_callback_producer_tail_preserves_observation_cap = true
+    }
+
+    invariant EmptyCallbackProducerTailDoesNotInvokeCallback {
+        this.empty_callback_producer_tail_does_not_invoke_callback = true
     }
 
     invariant ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto {

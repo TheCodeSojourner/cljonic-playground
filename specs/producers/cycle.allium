@@ -32,7 +32,8 @@ entity Cycle {
     empty_finite_next_preserves_empty_observation: Boolean
     unbounded_next_advances_owned_source_and_resets_starting_offset: Boolean
     next_source_must_support_next_or_be_collection: Boolean
-    next_does_not_invoke_callbacks_or_materialize: Boolean
+    next_does_not_materialize_results: Boolean
+    next_callback_invocation_follows_owned_source_next: Boolean
     materializes_at_most_destination_capacity: Boolean
     does_not_fit_into_destination: Boolean
     operator_equals_uses_producer_parameter_equality: Boolean
@@ -168,8 +169,12 @@ entity Cycle {
         this.next_source_must_support_next_or_be_collection = true
     }
 
-    invariant NextDoesNotInvokeCallbacksOrMaterialize {
-        this.next_does_not_invoke_callbacks_or_materialize = true
+    invariant NextDoesNotMaterializeResults {
+        this.next_does_not_materialize_results = true
+    }
+
+    invariant NextCallbackInvocationFollowsOwnedSourceNext {
+        this.next_callback_invocation_follows_owned_source_next = true
     }
 
     invariant MaterializesAtMostDestinationCapacity {
