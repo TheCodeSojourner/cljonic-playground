@@ -1,5 +1,33 @@
 ## Current Session State
 
+- last_session_id: 73bae1ac-555b-4c43-b171-4f8f6318f19b
+- current_timestamp: 2026-10-28T11:30:00-06:00
+- session_complete: true
+
+Task:
+1. Phase A of the `next`/`rest` redesign: for Vector, Map, Set, Queue, and String, `next(c)` and `rest(c)` now return the same collection kind with capacity `C::capacity() == 0 ? 0 : C::capacity() - 1` (an empty or singleton input returns an empty value of the result type). The change is propagated through requirements (REQ-FN-002A2, REQ-SEQ-002B, REQ-SEQ-009), vocabulary, architecture (`gybis-arch-check` PASS), Allium specs (renamed invariants), tests, no-heap probes, source, Doxygen, traceability snapshot, and generated `cljonic.hpp`. The user committed the work (5d0fa15, 89a66b5, 1ddc22b).
+2. Doxygen example cleanup: `using namespace cljonic;` idiom (no `cljonic::vector`), no `.begin()` in examples (use `first`/`rest`/`next`/`contains`), demonstrative map/set tail checks via `contains`, and no `volatile` in examples.
+
+Questions:
+1. Producer-tail design (Phases B and C) is open. Repeat and Range are clean candidates; Iterate and Repeatedly need a callback-timing decision; Cycle needs a start-offset field.
+
+Decisions:
+1. Same collection kind with capacity minus one, saturating at zero. No Queue special case (Queue<T,0> is legal).
+2. Producer support is deferred; `has_next` is unchanged; `seq` stays deferred.
+3. `next-producers.md` is an untracked restart prompt: do not edit, stage, or commit it without explicit instruction.
+4. Process: use `/gybis-*` skills (e.g. `gybis-arch-check`) rather than searching for scripts. Doxygen examples must be idiomatic (`using namespace cljonic;`, free functions, no `volatile`). Tests and probes may still use `.begin()[i]` and `volatile`.
+
+Validation:
+1. `make test` (266/266), `make primitive-compile-fail`, `make no-heap`, `make docs-examples` (38 compiled), `make traceability-spec-to-code`, and `make upsert-gate-fast` passed; `allium check/analyse` clean; requirements (332) and vocabulary (197) structure passed.
+
+Open questions:
+1. See Questions.
+
+Next:
+1. Await human direction on Phase B (Repeat, then Range) via a new requirements pass.
+
+## Previous Session State
+
 - last_session_id: dfed050a-8880-482f-b296-9a5bc60f9b3e
 - current_timestamp: 2026-10-28T07:58:47-06:00
 - session_complete: true
