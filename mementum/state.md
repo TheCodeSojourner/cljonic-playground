@@ -1,5 +1,41 @@
 ## Current Session State
 
+- last_session_id: 2f9a0326-a920-463f-ac90-320bb0d15cb7
+- current_timestamp: 2026-10-28T15:00:04-06:00
+- session_complete: true
+- recover: Await human direction on the next API slice; next(producer) is complete and the product worktree is clean.
+
+Task:
+1. Completed next(producer) for all five current producer kinds: Repeat, Range, Cycle, Iterate, and Repeatedly. Updated requirements, vocabulary, architecture, Allium specifications, modular source, generated header, documentation, diagnostic/no-heap probes, tests, and traceability.
+2. Defined and implemented the explicitly approved eager callback contract. Nonempty Iterate invokes its step once and uses the result as the tail's initial value, preserving its observation cap. Nonempty Repeatedly invokes a copy of its stored step once, discards the result, and retains the advanced copy; finite count decrements, unbounded observation cap is preserved. Empty/zero-observation callback producers do not invoke callbacks.
+3. Reviewed all seven requirements modules for integrity through a read-only background agent and reviewed architecture coherence directly. Repaired finite Range count wording, Cycle source-finiteness/callback wording, and the requirements validator's omission of approved opaque suffixes. The validator now reports 344 unique clauses, rather than 336.
+4. Resolved the user's 99.0% line coverage failure by adding runtime Range and Cycle tail assertions alongside compile-time tests. A clean coverage run now reports 100.0%.
+
+Questions:
+1. None blocking the completed producer-tail slice.
+
+Decisions:
+1. Use make upsert-gate-fast as the convergence aggregate; do not automatically run upsert-gate-strict. The user explicitly objected to strict execution and requested stopping it earlier.
+2. Finite-source Cycle tails advance an offset modulo the source's observed count without invoking callbacks; unbounded-source Cycle tails delegate to next(source). Repeatedly state held by value advances only in the returned tail; reference/static effects happen immediately and remain shared.
+3. Producer Doxygen descriptions use separate paragraphs. The vague sentence about an overload being available only for supported Cycle sources was removed.
+4. Requirements review scope was all modules for integrity, not exhaustive requirement-by-requirement proof against every downstream implementation/test. State this limitation explicitly; do not call it exhaustive verification.
+5. rest and has_next remain collection-only; any producer alignment is separate future contract work. first does not admit producers; observe producer values using into.
+6. constexpr assertions alone do not ensure gcov runtime coverage. Runtime tests use volatile-derived inputs and cover Cycle offsets/wraparound/empty sources and Range nonempty/empty/singleton-overflow/zero-step paths. After incremental GCC profile checksum warnings, use the existing clean coverage-cli target rather than trusting stale profiles.
+
+Validation:
+1. make test passed 274/274; primitive-compile-fail passed; docs-examples compiled 38 examples with one deferred seq skip.
+2. Allium check and analyse passed. Specification-to-code traceability and no-heap checks passed.
+3. After the final runtime test additions, make coverage-cli passed with coverage:lines=100.0%; make upsert-gate-fast and git diff --check passed.
+4. Requirements validator regression self-tests passed; all 344 designators are unique (336 binding, 8 explicitly deferred). Vocabulary structure passed with 197 terms.
+5. make git was not rerun by the assistant after repairing coverage. No claim is made that every step of that aggregate has subsequently passed.
+6. At finalization the product worktree and index are clean. Human commits are present, including fb5813b (Update docs), a52cebb (implementation: support next tail access for callback producers), and 0540c86 (tests: verify next tail access for callback producers). Earlier statements that product changes were uncommitted are superseded by this observed clean state.
+
+Next:
+1. Await human direction on the next API slice; no known unfinished next(producer) implementation work remains.
+2. If the user wants exhaustive downstream requirements conformance, define that scope separately rather than presenting the completed integrity review as such.
+
+## Previous Session State
+
 - last_session_id: 48de26f6-b107-48a1-97f3-d92ad7fccb6b
 - current_timestamp: 2026-10-28T12:36:00-06:00
 - session_complete: true
