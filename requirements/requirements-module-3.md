@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their current primitive member and free-function operations, and callable lookup forms. `first`, `next`, and `rest` are active traversal operations; sequence conversion remains approved future work. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
+This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their current primitive member and free-function operations, and callable lookup forms. `first`, `next`, `rest`, and the `has_next` tail preflight are active traversal operations; sequence conversion remains approved future work. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
 
 ## Collection Family Requirements
 
@@ -282,7 +282,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-15}
 
 λ REQ-COLL-020S(x).
-  ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, `Associative`, and `Conjable`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, and `next` over their supported collection inputs
+  ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, `Associative`, and `Conjable`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, and `has_next` over their supported collection inputs
   ∧ ∀ `rest`: lifecycle classification is `requirements-backed` over its supported collection inputs under `REQ-SEQ-001`–`009` and `REQ-SEQ-012`
   ∧ ∀ (`Seqable` ∧ `seq`): remain `deferred` until the sequence requirements are implemented for the applicable collection inputs
   {source: stakeholder_decided, decided_by: original_spec_author}
@@ -476,6 +476,17 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   ∧ ∀ `next`: preserve the input ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating
   ∧ ∀ unsupported_input: fails compilation with one targeted diagnostic naming `next`
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-21}
+
+### Sequence Tail Preflight (Binding)
+
+λ REQ-FN-002A3(x).
+  ∀ `has_next(collection)`: require(`Vector` ∨ `Map` ∨ `Set` ∨ `Queue` ∨ `String`)
+  ∧ ∀ supported_collection: return true iff its logical element count is greater than one, meaning its logical tail contains at least one element
+  ∧ ∀ empty_or_singleton_collection: return false
+  ∧ ∀ `has_next`: observe the count without constructing the `next` result ∧ preserve the input ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ ¬∃ RTTI
+  ∧ ∀ (`Map` ∧ `Set`): result does not depend on which element appears first in the unspecified traversal order
+  ∧ ∀ unsupported_input: fails compilation with one targeted diagnostic naming `has_next`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-27}
 
 ### Map and Entry Sequence Access (Deferred, Non-binding)
 
@@ -690,6 +701,6 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 ## Traceability and Related Requirements
 
-- **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `empty`, `is_empty`, `not_empty`, `first`, `next`, `rest`, `seq`).
-- **Governed REQs**: `REQ-COLL-001`, `REQ-COLL-001A`, `REQ-COLL-002`, `REQ-COLL-002A`, `REQ-COLL-004`, `REQ-COLL-004A`–`004C`, `REQ-COLL-005`, `REQ-COLL-005A`–`005B`, `REQ-COLL-006`–`007`, `REQ-COLL-007A`, `REQ-COLL-008`–`010`, `REQ-COLL-010A`–`010B`, `REQ-COLL-011`–`012`, `REQ-COLL-012A`, `REQ-COLL-013`, `REQ-COLL-013A`–`013B`, `REQ-COLL-014`–`018`, `REQ-COLL-018A`, `REQ-COLL-019`, `REQ-COLL-019A`–`019B`, `REQ-COLL-020`, `REQ-COLL-020A`–`020AA`, `REQ-COLL-021`–`022`, `REQ-SEQ-001`–`002`, `REQ-SEQ-002A`–`002B`, `REQ-SEQ-003`–`014`, `REQ-FN-001`–`002`, `REQ-FN-002A`, `REQ-FN-002A1`, `REQ-FN-002A2`, `REQ-FN-002B`–`002H`, `REQ-FN-002M`, `REQ-FN-002P`–`002Y`, `REQ-FN-003`–`008`, `REQ-FN-008A`, `REQ-FN-026`.
+- **Downstream Artifact**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String` class templates and core collection free functions (`character_is_valid`, `count`, `get`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `empty`, `is_empty`, `not_empty`, `first`, `next`, `has_next`, `rest`, `seq`).
+- **Governed REQs**: `REQ-COLL-001`, `REQ-COLL-001A`, `REQ-COLL-002`, `REQ-COLL-002A`, `REQ-COLL-004`, `REQ-COLL-004A`–`004C`, `REQ-COLL-005`, `REQ-COLL-005A`–`005B`, `REQ-COLL-006`–`007`, `REQ-COLL-007A`, `REQ-COLL-008`–`010`, `REQ-COLL-010A`–`010B`, `REQ-COLL-011`–`012`, `REQ-COLL-012A`, `REQ-COLL-013`, `REQ-COLL-013A`–`013B`, `REQ-COLL-014`–`018`, `REQ-COLL-018A`, `REQ-COLL-019`, `REQ-COLL-019A`–`019B`, `REQ-COLL-020`, `REQ-COLL-020A`–`020AA`, `REQ-COLL-021`–`022`, `REQ-SEQ-001`–`002`, `REQ-SEQ-002A`–`002B`, `REQ-SEQ-003`–`014`, `REQ-FN-001`–`002`, `REQ-FN-002A`, `REQ-FN-002A1`, `REQ-FN-002A2`, `REQ-FN-002A3`, `REQ-FN-002B`–`002H`, `REQ-FN-002M`, `REQ-FN-002P`–`002Y`, `REQ-FN-003`–`008`, `REQ-FN-008A`, `REQ-FN-026`.
 - **Deferred REQs**: `REQ-SEQ-010`–`011`, `REQ-SEQ-013`–`014`, `REQ-FN-002A`–`002B`.
