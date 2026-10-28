@@ -1,9 +1,17 @@
 -- allium: 3
+-- REQ-SEQ-002B and REQ-SEQ-007: Rest forwards to Next over Next's collection
+-- and producer domains.
+-- REQ-SEQ-002B and REQ-FN-002A4–002A7: producer result types, observation
+-- policies, and callback timing/effects match Next exactly.
 
 entity Rest {
     supports_rest_free_function: Boolean
     supports_sequenceable_collection_domain: Boolean
+    supports_sequenceable_producer_domain: Boolean
     returns_next_result_for_same_collection: Boolean
+    returns_next_result_for_same_producer: Boolean
+    producer_tail_behavior_matches_next: Boolean
+    producer_callback_timing_and_effects_match_next: Boolean
     returns_every_logical_element_after_first: Boolean
     does_not_derive_semantics_from_pop: Boolean
     result_capacity_is_source_capacity_minus_one_saturating_at_zero: Boolean
@@ -27,8 +35,24 @@ entity Rest {
         this.supports_sequenceable_collection_domain = true
     }
 
+    invariant SupportsSequenceableProducerDomain {
+        this.supports_sequenceable_producer_domain = true
+    }
+
     invariant ReturnsNextResultForSameCollection {
         this.returns_next_result_for_same_collection = true
+    }
+
+    invariant ReturnsNextResultForSameProducer {
+        this.returns_next_result_for_same_producer = true
+    }
+
+    invariant ProducerTailBehaviorMatchesNext {
+        this.producer_tail_behavior_matches_next = true
+    }
+
+    invariant ProducerCallbackTimingAndEffectsMatchNext {
+        this.producer_callback_timing_and_effects_match_next = true
     }
 
     invariant ReturnsEveryLogicalElementAfterFirst {
