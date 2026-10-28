@@ -167,6 +167,7 @@ TEST_CASE("Next returns the logical tail as the same collection kind with reduce
     STATIC_REQUIRE(HasAdmittedNext<Queue<int, 4>>);
     STATIC_REQUIRE(HasAdmittedNext<String<4>>);
     STATIC_REQUIRE(HasAdmittedNext<Repeat<int>>);
+    STATIC_REQUIRE(HasAdmittedNext<cljonic::Cycle<Vector<int, 3>>>);
 
     volatile int first_raw = 40;
     volatile int second_raw = 50;
@@ -376,4 +377,93 @@ TEST_CASE("Next returns the logical tail of Range producers", "[next]") {
     constexpr auto zero_step_values = into(Vector<int, 2>{}, zero_step_tail);
     STATIC_REQUIRE(zero_step_values(0) == 4);
     STATIC_REQUIRE(zero_step_values(1) == 4);
+}
+
+TEST_CASE("Next returns the logical tail of Cycle producers", "[next]") {
+    using cljonic::count;
+    using cljonic::cycle;
+    using cljonic::into;
+    using cljonic::is_empty;
+    using cljonic::iterate;
+    using cljonic::next;
+    using cljonic::Range;
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.Next");
+    TRACE_ID("invariant.Next.SupportsProducerTailDomain");
+    TRACE_ID("invariant.Next.ProducerTailDomainIncludesCycle");
+    TRACE_ID("invariant.Next.ReturnsSameProducerKindAsSource");
+    TRACE_ID("invariant.Next.UnboundedProducerTailRemainsUnbounded");
+    TRACE_ID("invariant.Next.RepeatedNextNeverExhaustsUnboundedProducer");
+    TRACE_ID("invariant.Next.ProducerTailResultIsSelfContainedAndOwning");
+    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeOrInvokeCallbacks");
+    TRACE_ID("invariant.Next.ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto");
+    TRACE_ID("invariant.Next.FiniteCycleTailAdvancesStartingOffsetModuloObservedSourceCount");
+    TRACE_ID("invariant.Next.EmptyFiniteCycleTailPreservesEmptyObservation");
+    TRACE_ID("invariant.Next.UnboundedCycleTailAdvancesSourceAndResetsStartingOffset");
+
+    TRACE_ID("entity-fields.Cycle");
+    TRACE_ID("invariant.Cycle.NextPreservesCycleTypeAndObservationPolicy");
+    TRACE_ID("invariant.Cycle.FiniteNonemptyNextAdvancesStartingOffsetModuloObservedSourceCount");
+    TRACE_ID("invariant.Cycle.EmptyFiniteNextPreservesEmptyObservation");
+    TRACE_ID("invariant.Cycle.UnboundedNextAdvancesOwnedSourceAndResetsStartingOffset");
+    TRACE_ID("invariant.Cycle.NextSourceMustSupportNextOrBeCollection");
+    TRACE_ID("invariant.Cycle.NextDoesNotInvokeCallbacksOrMaterialize");
+    TRACE_ID("invariant.Next.NoHeapAllocation");
+    TRACE_ID("invariant.Next.NoRtti");
+    TRACE_ID("invariant.Next.NoExceptions");
+    TRACE_ID("invariant.Next.ConstexprCapable");
+
+    constexpr auto finite_cycle = cycle(Vector<int, 3>{1, 2, 3});
+    constexpr auto finite_cycle_tail = next(finite_cycle);
+    STATIC_REQUIRE((std::same_as<decltype(finite_cycle_tail), const decltype(finite_cycle)>));
+    STATIC_REQUIRE(count(finite_cycle_tail) == count(finite_cycle));
+    STATIC_REQUIRE(finite_cycle != finite_cycle_tail);
+    STATIC_REQUIRE(noexcept(next(finite_cycle)));
+    constexpr auto finite_cycle_tail_values = into(Vector<int, 5>{}, finite_cycle_tail);
+    STATIC_REQUIRE(finite_cycle_tail_values(0) == 2);
+    STATIC_REQUIRE(finite_cycle_tail_values(1) == 3);
+    STATIC_REQUIRE(finite_cycle_tail_values(2) == 1);
+    STATIC_REQUIRE(finite_cycle_tail_values(3) == 2);
+    STATIC_REQUIRE(finite_cycle_tail_values(4) == 3);
+
+    constexpr auto second_tail = next(finite_cycle_tail);
+    constexpr auto second_tail_values = into(Vector<int, 5>{}, second_tail);
+    STATIC_REQUIRE(second_tail_values(0) == 3);
+    STATIC_REQUIRE(second_tail_values(1) == 1);
+    STATIC_REQUIRE(second_tail_values(2) == 2);
+    constexpr auto wrapped_tail = next(second_tail);
+    STATIC_REQUIRE(wrapped_tail == finite_cycle);
+
+    constexpr auto finite_range_cycle = cycle(Range{1, 4});
+    constexpr auto finite_range_cycle_tail = next(finite_range_cycle);
+    constexpr auto finite_range_cycle_values = into(Vector<int, 4>{}, finite_range_cycle_tail);
+    STATIC_REQUIRE(finite_range_cycle_values(0) == 2);
+    STATIC_REQUIRE(finite_range_cycle_values(1) == 3);
+    STATIC_REQUIRE(finite_range_cycle_values(2) == 1);
+    STATIC_REQUIRE(finite_range_cycle_values(3) == 2);
+
+    constexpr auto empty_cycle = cycle(Vector<int, 0>{});
+    constexpr auto empty_cycle_tail = next(empty_cycle);
+    STATIC_REQUIRE(empty_cycle_tail == empty_cycle);
+    STATIC_REQUIRE(is_empty(into(Vector<int, 2>{}, empty_cycle_tail)));
+
+    constexpr auto unbounded_cycle = cycle(cycle(Vector<int, 3>{4, 5, 6}));
+    constexpr auto unbounded_cycle_tail = next(unbounded_cycle);
+    STATIC_REQUIRE(count(unbounded_cycle_tail) == count(unbounded_cycle));
+    STATIC_REQUIRE(unbounded_cycle_tail != unbounded_cycle);
+    constexpr auto unbounded_cycle_values = into(Vector<int, 5>{}, unbounded_cycle_tail);
+    STATIC_REQUIRE(unbounded_cycle_values(0) == 5);
+    STATIC_REQUIRE(unbounded_cycle_values(1) == 6);
+    STATIC_REQUIRE(unbounded_cycle_values(2) == 4);
+    STATIC_REQUIRE(unbounded_cycle_values(3) == 5);
+    STATIC_REQUIRE(unbounded_cycle_values(4) == 6);
+    constexpr auto repeated_unbounded_cycle_tail = next(unbounded_cycle_tail);
+    STATIC_REQUIRE(count(repeated_unbounded_cycle_tail) == count(unbounded_cycle));
+    constexpr auto repeated_unbounded_values = into(Vector<int, 5>{}, repeated_unbounded_cycle_tail);
+    STATIC_REQUIRE(repeated_unbounded_values(0) == 6);
+    STATIC_REQUIRE(repeated_unbounded_values(1) == 4);
+
+    constexpr auto unsupported_cycle = cycle(iterate([](int value) noexcept { return value + 1; }, 0));
+    STATIC_REQUIRE_FALSE(HasAdmittedNext<std::remove_cvref_t<decltype(unsupported_cycle)>>);
 }

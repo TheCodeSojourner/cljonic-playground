@@ -55,6 +55,12 @@ namespace cljonic::no_heap::probes {
     const auto unbounded_range_tail = next(unbounded_range);
     const auto repeated_unbounded_range_tail = next(unbounded_range_tail);
     const auto unbounded_range_tail_values = into(Vector<int, 2>{}, unbounded_range_tail);
+    const auto finite_cycle = cycle(Vector<int, 3>{first, second, third});
+    const auto finite_cycle_tail = next(finite_cycle);
+    const auto finite_cycle_tail_values = into(Vector<int, 5>{}, finite_cycle_tail);
+    const auto unbounded_cycle = cycle(cycle(Vector<int, 3>{first, second, third}));
+    const auto unbounded_cycle_tail = next(unbounded_cycle);
+    const auto unbounded_cycle_tail_values = into(Vector<int, 5>{}, unbounded_cycle_tail);
 
     return vector_tail.count() == 2U && vector_tail(0U) == second && vector_tail(1U) == third && vector.count() == 3U &&
            vector(0U) == first && equal(vector, vector_before) && queue_tail.count() == 2U &&
@@ -79,7 +85,11 @@ namespace cljonic::no_heap::probes {
            unbounded_range_tail == unbounded_range && repeated_unbounded_range_tail == unbounded_range &&
            count(unbounded_range_tail) == count(unbounded_range) &&
            !fits_into(Vector<int, 2>{}, unbounded_range_tail) && unbounded_range_tail_values(0U) == second &&
-           unbounded_range_tail_values(1U) == second && next(Vector<int, 3>{first}).count() == 0U &&
+           unbounded_range_tail_values(1U) == second && count(finite_cycle_tail) == count(finite_cycle) &&
+           finite_cycle_tail_values(0U) == second && finite_cycle_tail_values(1U) == third &&
+           finite_cycle_tail_values(2U) == first && count(unbounded_cycle_tail) == count(unbounded_cycle) &&
+           unbounded_cycle_tail_values(0U) == second && unbounded_cycle_tail_values(1U) == third &&
+           unbounded_cycle_tail_values(2U) == first && next(Vector<int, 3>{first}).count() == 0U &&
            next(Map<int, int, 2>{MapEntry{first, second}}).count() == 0U && next(Set<int, 3>{first}).count() == 0U &&
            next(Queue<int, 3>{first}).count() == 0U && next(String<3>{std::array{first_char}}).count() == 0U &&
            next(Vector<int, 0>{}).count() == 0U && next(Vector<int, 4>{}).count() == 0U &&

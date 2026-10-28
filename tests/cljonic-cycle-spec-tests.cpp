@@ -48,6 +48,8 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     TRACE_ID("invariant.Cycle.DoesNotFitIntoDestination");
     TRACE_ID("invariant.Cycle.OperatorEqualsUsesProducerParameterEquality");
     TRACE_ID("invariant.Cycle.EqualityComparesOwnedSourceAndForm");
+    TRACE_ID("invariant.Cycle.StoresStartingPositionOffset");
+    TRACE_ID("invariant.Cycle.EqualityComparesStartingPositionOffset");
     TRACE_ID("invariant.Cycle.SatisfiesNothrowStableEqualityComparable");
     TRACE_ID("entity-fields.ProducerParameterEquality");
     TRACE_ID("invariant.ProducerParameterEquality.ComparesBoundedStoredParametersOnly");
@@ -58,6 +60,12 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     TRACE_ID("invariant.Cycle.DoesNotSatisfyIndexedProducer");
     TRACE_ID("invariant.Cycle.SatisfiesSequenceableProducer");
     TRACE_ID("invariant.Cycle.DoesNotExposeCallableOperator");
+    TRACE_ID("invariant.Cycle.NextPreservesCycleTypeAndObservationPolicy");
+    TRACE_ID("invariant.Cycle.FiniteNonemptyNextAdvancesStartingOffsetModuloObservedSourceCount");
+    TRACE_ID("invariant.Cycle.EmptyFiniteNextPreservesEmptyObservation");
+    TRACE_ID("invariant.Cycle.UnboundedNextAdvancesOwnedSourceAndResetsStartingOffset");
+    TRACE_ID("invariant.Cycle.NextSourceMustSupportNextOrBeCollection");
+    TRACE_ID("invariant.Cycle.NextDoesNotInvokeCallbacksOrMaterialize");
 
     constexpr auto unbounded_cycle = cycle(Vector<int, 3>{1, 2, 3});
     STATIC_REQUIRE(unbounded_cycle.count() == cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
@@ -105,6 +113,7 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     constexpr auto cycle_c = cycle(Vector<int, 3>{1, 2, 4});
     STATIC_REQUIRE(cycle_a == cycle_b);
     STATIC_REQUIRE(!(cycle_a == cycle_c));
+    STATIC_REQUIRE(cljonic::next(cycle_a) != cycle_a);
     STATIC_REQUIRE(StableEqualityComparable<std::remove_cvref_t<decltype(cycle_a)>>);
     STATIC_REQUIRE(NothrowStableEqualityComparable<std::remove_cvref_t<decltype(cycle_a)>>);
 

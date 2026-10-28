@@ -299,19 +299,19 @@ PRIMITIVES = {
         "diagnostic_cases": {
             "unsupported-scalar": (
                 "(void)cljonic::next(42);",
-                "expected a Vector, Map, Set, Queue, String, Range, or Repeat value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value",
             ),
             "unsupported-cycle-producer": (
-                "(void)cljonic::next(cljonic::cycle(cljonic::Vector<int, 2>{1, 2}));",
-                "expected a Vector, Map, Set, Queue, String, Range, or Repeat value",
+                "(void)cljonic::next(cljonic::cycle(cljonic::iterate([](int value) noexcept { return value + 1; }, 0)));",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value",
             ),
             "unsupported-map-entry": (
                 "(void)cljonic::next(cljonic::MapEntry<int, int>{1, 100});",
-                "expected a Vector, Map, Set, Queue, String, Range, or Repeat value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value",
             ),
             "unsupported-external-range": (
                 "int values[]{1, 2}; (void)cljonic::next(values);",
-                "expected a Vector, Map, Set, Queue, String, Range, or Repeat value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value",
             ),
         },
         "pass_cases": {
@@ -324,6 +324,10 @@ PRIMITIVES = {
             "unbounded-repeat": "(void)cljonic::next(cljonic::Repeat{7});",
             "finite-range": "(void)cljonic::next(cljonic::Range<int>{0, 5});",
             "unbounded-range": "(void)cljonic::next(cljonic::Range<int>{0, 5, 0});",
+            "finite-cycle": "(void)cljonic::next(cljonic::cycle(cljonic::Vector<int, 3>{1, 2, 3}));",
+            "unbounded-cycle": (
+                "(void)cljonic::next(cljonic::cycle(cljonic::Range<int>{0, 0, 0}));"
+            ),
             "empty": "(void)cljonic::next(cljonic::Vector<int, 4>{});",
             "zero-capacity": "(void)cljonic::next(cljonic::Vector<int, 0>{});",
         },
