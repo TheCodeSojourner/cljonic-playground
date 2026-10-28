@@ -14,7 +14,7 @@ and `Repeatedly`
 producers,
 the active unbounded `cycle(source)` producer, their direct construction,
 member-observation, callable collection forms, current primitive free-function
-operations, including `first`, `next`, and `rest`, and explicit producer
+operations, including `first`, `next`, `has_next`, and `rest`, and explicit producer
 materialization through `into`, preflighted by `fits_into`. Sequence conversion
 (`seq`) remains deferred future work for every collection;
 const range traversal and read-only C++ interoperability are active
@@ -75,7 +75,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence capability
 - **Related:** Sequence, Seqable, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `next(collection)` and `rest(collection)` return bounded `Vector` values of the remaining traversal elements; `seq` conversion remains deferred. Current collections also provide `count()` and `is_empty(collection)`.
+- **Examples:** `next(collection)` and `rest(collection)` return bounded `Vector` values of the remaining traversal elements; `has_next(collection)` checks whether that tail is nonempty without constructing it; `seq` conversion remains deferred. Current collections also provide `count()` and `is_empty(collection)`.
 
 
 ### Indexed
@@ -476,7 +476,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** predicate naming policy, semantic predicate naming
 - **Related:** CapabilityPredicate, StatePredicate, VerbPredicate, IsPredicatePrefix, CanPredicatePrefix, HasPredicatePrefix, ValidPredicatePrefix
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `is_empty`, `contains`, and `fits_into` use names that identify their semantic questions.
+- **Examples:** `is_empty`, `contains`, `fits_into`, and `has_next` use names that identify their semantic questions.
 
 
 ### CapabilityPredicate
@@ -484,7 +484,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** capability check, operation precondition predicate
 - **Related:** PreflightPredicate, SemanticPredicateName, FullState
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `can_add`, `can_assoc`, and `fits_into` are capability predicates when their contracts govern corresponding operations.
+- **Examples:** `can_add`, `can_assoc`, `fits_into`, and `has_next` are capability predicates when their contracts govern corresponding operations.
 
 
 ### IsPredicatePrefix
@@ -503,12 +503,20 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `can_add` and `can_assoc` express operation-specific completion capability.
 
 
+### HasNext
+- **Definition:** The collection-only preflight predicate for `next(collection)`. It returns true exactly when a supported `Vector`, `Map`, `Set`, `Queue`, or `String` contains more than one logical element, so its logical tail is nonempty; it returns false for empty and singleton collections. It observes the count without constructing the `next` result and does not indicate whether an input type is supported. Unsupported values are rejected at compile time. The operation preserves its input, is `constexpr`, non-allocating, non-throwing, and part of the current public API.
+- **Deprecated Synonyms:** None
+- **Related:** Next, Rest, Count, SequenceableCollection, LogicalTraversalOrder, PreflightPredicate, HasPredicatePrefix, StatePredicate, RejectionDiagnostic
+- **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
+- **Examples:** `has_next(vector(1, 2))` is true; `has_next(queue(1))` and `has_next(vector<int, 0>())` are false.
+
+
 ### HasPredicatePrefix
 - **Definition:** The canonical `has_` prefix for a presence or possession predicate, including key or member presence where that domain applies.
 - **Deprecated Synonyms:** `has_` predicate, presence predicate prefix
 - **Related:** CapabilityPredicate, Associative
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** A `has_` predicate may report key presence without performing a default-returning lookup.
+- **Examples:** `has_next` reports whether a collection has a logical element after its first without constructing the tail; a `has_` lookup predicate may report key presence without performing a default-returning lookup.
 
 
 ### ValidPredicatePrefix
@@ -971,7 +979,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** preflight check, capability precheck
 - **Related:** CompleteResult, BoundedPrefixResult, ProbeFirstAccess
 - **Usage:** Requirements, specification, implementation, tests, and documentation
-- **Examples:** `fits_into`, `can_add`, and operation-specific `has_` checks are preflight predicates when they govern completion semantics.
+- **Examples:** `fits_into`, `can_add`, and `has_next` are preflight predicates when they govern completion semantics.
 
 
 ### LifecycleClassification
