@@ -5201,6 +5201,592 @@ struct contains_standard_range<Queue<T, CapacityValue>> : std::bool_constant<con
 
 } // namespace cljonic::concepts_detail
 // End cljonic-queue.hpp
+// Begin cljonic-range.hpp
+#pragma once
+
+#include <concepts>
+#include <cstddef>
+#include <type_traits>
+
+
+namespace cljonic {
+
+namespace concepts_detail {
+
+struct RangeNextAccess;
+
+/** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. It is never a
+ *  supported element type and is never produced by an admitted call. */
+struct RangeElementDomainViolation {};
+
+/** The `Range` class-template gate (REQ-DIAG-012): a valid `Range` element
+ *  domain, or the internal diagnostic tag used only to redirect a rejected
+ *  deduction. Keeping the valid domain first preserves soft, SFINAE-friendly
+ *  type-level rejection for an out-of-domain element type. */
+template <typename T>
+concept RangeClassArgument =
+    concepts::RangeElement<T> || std::same_as<std::remove_cvref_t<T>, RangeElementDomainViolation>;
+
+} // namespace concepts_detail
+
+/** \anchor Range
+ * A Range is a producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by a fixed
+ * \p step, defaulting to start `0` and step `1`.
+ *
+ * A zero step repeats \p start indefinitely, taking precedence over otherwise-empty-range cases, including equal start
+ * and end. A nonzero step that moves away from \p end produces an empty range.
+ *
+ * Observation is bounded by its finite span or by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a zero-step
+ * range, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
+ * directly to cljonic operations that accept a source.
+ *
+ * Explicitly typed parameters follow the \ref implicit-conversions "safe implicit conversion rules".
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+ int main() {
+   // Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero
+   // arguments.
+   [[maybe_unused]] constexpr auto empty = Range<int>{};
+
+   // Single argument is the exclusive end; start defaults to 0, step to 1.
+   [[maybe_unused]] constexpr auto to_five = Range{5};
+
+   // Explicit start and end; step still defaults to 1.
+   [[maybe_unused]] constexpr auto two_to_five = Range{2, 5};
+
+   // Explicit start, end, and step.
+   [[maybe_unused]] constexpr auto evens = Range{0, 10, 2};
+
+   // A zero step repeats start indefinitely rather than being empty.
+   [[maybe_unused]] constexpr auto repeating = Range{0, 5, 0};
+
+   // A billion elements exceeds the system's allowed maximum, so only that
+   // maximum number of elements is available.
+   [[maybe_unused]] constexpr auto huge = Range{1000000000};
+
+   // -----------------------------------------------------------------------
+   // C++ interoperability: a Range supports const traversal.
+   // -----------------------------------------------------------------------
+   constexpr auto odds = Range{1, 12, 2};
+   auto runtime_odds = Range{-1, -11, -2};
+
+   // Use C++ interoperability to sum the values in a constexpr range
+   constexpr auto odds_sum = [odds] {
+     auto sum = 0;
+     for (const auto value : odds) {
+       sum += value;
+     }
+     return sum;
+   }();
+   static_assert(odds_sum == 36);
+
+   // Use C++ interoperability to sum the values in a runtime range
+   auto runtime_odds_sum = 0;
+   for (const auto value : runtime_odds) {
+     runtime_odds_sum += value;
+   }
+
+   return runtime_odds_sum == -25 ? 0 : 1;
+ }
+ ~~~~~
+ */
+template <concepts_detail::RangeClassArgument T>
+class Range {
+    friend struct concepts_detail::RangeNextAccess;
+
+  public:
+    using value_type = T;
+
+    /** A bounded, generating const iterator used for free-function observation;
+     *  it does not expose start/end/step parameters. */
+    class const_iterator {
+      public:
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+
+        constexpr const_iterator() noexcept = default;
+
+        constexpr const_iterator(T current, std::size_t remaining, T step) noexcept
+            : current_(current), remaining_(remaining), step_(step) {
+        }
+
+        [[nodiscard]] constexpr auto operator*() const noexcept -> T {
+            return current_;
+        }
+
+        constexpr auto operator++() noexcept -> const_iterator& {
+            if (remaining_ > 1U) {
+                current_ = static_cast<T>(current_ + step_);
+            }
+            --remaining_;
+            return *this;
+        }
+
+        constexpr auto operator++(int) noexcept -> const_iterator {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+
+        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
+            -> bool {
+            return lhs.remaining_ == rhs.remaining_;
+        }
+
+      private:
+        T current_{};
+        std::size_t remaining_{0U};
+        T step_{};
+    };
+
+    constexpr Range() noexcept : start_(T{0}), end_(T{0}), step_(T{1}) {
+    }
+
+    constexpr explicit Range(T end) noexcept : start_(T{0}), end_(end), step_(T{1}) {
+    }
+
+    constexpr Range(T start, T end) noexcept : start_(start), end_(end), step_(T{1}) {
+    }
+
+    constexpr Range(T start, T end, T step) noexcept : start_(start), end_(end), step_(step) {
+    }
+
+    template <typename End>
+        requires(!concepts::SafeImplicitConversion<T, End>)
+    explicit Range(End end) = delete;
+
+    template <typename Start, typename End>
+        requires(!concepts::SafeImplicitConversion<T, Start> || !concepts::SafeImplicitConversion<T, End>)
+    Range(Start start, End end) = delete;
+
+    template <typename Start, typename End, typename Step>
+        requires(!concepts::SafeImplicitConversion<T, Start> || !concepts::SafeImplicitConversion<T, End> ||
+                 !concepts::SafeImplicitConversion<T, Step>)
+    Range(Start start, End end, Step step) = delete;
+
+    /** Conservative observation count: the synthesis cap for a zero step, otherwise
+     *  the exact finite cardinality saturated at the synthesis cap. */
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return step_ == T{0} ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE : saturate(nonzero_step_extent());
+    }
+
+    /** Reports whether this Range has a finite complete result. */
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return step_ != T{0};
+    }
+
+    /** Index-in-range predicate over the available bounded prefix; O(1), no traversal. */
+    [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
+        return index < count();
+    }
+
+    template <typename Index>
+        requires(!concepts::SafeImplicitConversion<std::size_t, Index>)
+    auto contains(Index index) const -> bool = delete;
+
+    /** Bounded generating iteration up to the effective size returned by count(). */
+    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+        return const_iterator{start_, count(), step_};
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+        return const_iterator{T{}, 0U, T{}};
+    }
+
+    /** Producer parameter equality (REQ-FN-014B): compares only the stored
+     *  start/end/step parameters, never the produced sequence.
+     *
+     *  It is the only producer parameter-equality surface; the `equal` free function
+     *  instead compares bounded logical observations of the produced sequences. Two
+     *  Range values with different parameters compare unequal even when their
+     *  produced or observed sequences coincide (for example two zero-step ranges
+     *  with different endpoints both produce an infinite repetition of their
+     *  respective start values). O(1), no traversal, no allocation. */
+    [[nodiscard]] friend constexpr auto operator==(const Range& lhs, const Range& rhs) noexcept -> bool {
+        return lhs.start_ == rhs.start_ && lhs.end_ == rhs.end_ && lhs.step_ == rhs.step_;
+    }
+
+  private:
+    using ExtentType = std::make_unsigned_t<T>;
+
+    /** Caps an internal extent at the public observation maximum. */
+    [[nodiscard]] static constexpr auto saturate(ExtentType raw_count) noexcept -> std::size_t {
+        return raw_count > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
+                   ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
+                   : static_cast<std::size_t>(raw_count);
+    }
+
+    /** Converts a signed step to an unsigned magnitude without signed overflow. */
+    [[nodiscard]] static constexpr auto magnitude(T value) noexcept -> ExtentType {
+        const auto unsigned_value = static_cast<ExtentType>(value);
+        return value < T{0} ? ExtentType{0} - unsigned_value : unsigned_value;
+    }
+
+    /** Computes how many stepped positions fit inside an unsigned span. */
+    [[nodiscard]] constexpr auto extent_from_span(ExtentType span) const noexcept -> ExtentType {
+        const auto step = magnitude(step_);
+        return (span / step) + (span % step == ExtentType{0} ? ExtentType{0} : ExtentType{1});
+    }
+
+    /** Chooses the finite extent calculation after zero-step handling. */
+    [[nodiscard]] constexpr auto nonzero_step_extent() const noexcept -> ExtentType {
+        return step_ > T{0} ? ascending_extent() : descending_extent();
+    }
+
+    /** Computes the finite extent for a range moving upward. */
+    [[nodiscard]] constexpr auto ascending_extent() const noexcept -> ExtentType {
+        if (start_ >= end_) {
+            return ExtentType{0};
+        }
+        return extent_from_span(static_cast<ExtentType>(end_) - static_cast<ExtentType>(start_));
+    }
+
+    /** Computes the finite extent for a range moving downward. */
+    [[nodiscard]] constexpr auto descending_extent() const noexcept -> ExtentType {
+        if (end_ >= start_) {
+            return ExtentType{0};
+        }
+        return extent_from_span(static_cast<ExtentType>(start_) - static_cast<ExtentType>(end_));
+    }
+
+    T start_;
+    T end_;
+    T step_;
+};
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guides below, which select it for exactly the
+ *  out-of-domain class template argument deduction. Constructing it is always a
+ *  compile-time error whose single message names the class template, the
+ *  rejected argument type, and the violated domain rule. It is never a
+ *  supported construction target and exposes no usable state. */
+template <>
+class Range<concepts_detail::RangeElementDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Range([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Range: the element type must be a signed integral type. Every start, end, and step "
+                      "argument must be a signed integral value, because Range describes a signed arithmetic "
+                      "sequence whose span arithmetic requires a signed element type.");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012), one per supported arity. Each is
+ *  viable only for a rejected deduction, so an admitted deduction is never
+ *  affected. */
+template <typename T>
+    requires(!concepts::RangeElement<std::remove_cvref_t<T>>)
+Range(T) -> Range<concepts_detail::RangeElementDomainViolation>;
+
+template <typename Start, typename End>
+    requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>>))
+Range(Start, End) -> Range<concepts_detail::RangeElementDomainViolation>;
+
+template <typename Start, typename End, typename Step>
+    requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>> &&
+               concepts::RangeElement<std::remove_cvref_t<Step>>))
+Range(Start, End, Step) -> Range<concepts_detail::RangeElementDomainViolation>;
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <typename T>
+struct producer_traits<Range<T>> {
+    static constexpr bool is_cljonic_producer = true;
+    static constexpr producer_kind kind = producer_kind::range;
+};
+
+template <typename T>
+struct contains_floating_point<Range<T>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <typename T>
+struct contains_callable<Range<T>> : std::bool_constant<contains_callable_v<T>> {};
+
+template <typename T>
+struct contains_standard_range<Range<T>> : std::bool_constant<contains_standard_range_v<T>> {};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-range.hpp
+// Begin cljonic-repeat.hpp
+#pragma once
+
+#include <cstddef>
+#include <type_traits>
+#include <utility>
+
+
+namespace cljonic {
+
+namespace concepts_detail {
+
+struct RepeatNextAccess;
+
+/** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
+ *  during an out-of-domain class template argument deduction. */
+struct RepeatElementDomainViolation {};
+
+/** The `Repeat` class-template gate (REQ-DIAG-012): a storable element, or the
+ *  internal diagnostic tag used only to redirect a rejected deduction. */
+template <typename T>
+concept RepeatClassArgument =
+    concepts::NothrowCollectionElement<T> || std::same_as<std::remove_cvref_t<T>, RepeatElementDomainViolation>;
+
+} // namespace concepts_detail
+
+/** \anchor Repeat
+ * A Repeat is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or
+ * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(count, value)` yields
+ * exactly \p count values.
+ *
+ * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
+ * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
+ * cljonic operations that accept a source.
+ *
+ * Values and finite counts follow the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed
+ * or unsigned integer types whose nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero
+ * or negative counts produce an empty finite Repeat.
+ *
+ ~~~~~{.cpp}
+ #include "cljonic.hpp"
+ using namespace cljonic;
+
+ struct Pixel {
+   int x{};
+   int y{};
+
+   friend constexpr auto operator==(const Pixel &, const Pixel &) noexcept
+       -> bool = default;
+ };
+
+ int main() {
+   // A finite Repeat yields the value exactly the requested number of times.
+   constexpr auto finite = Repeat{3, 7};
+   constexpr auto pixels = Repeat{2, Pixel{4, 9}};
+
+   // An uncounted Repeat is an unbounded producer.
+   [[maybe_unused]] constexpr auto unbounded = Repeat{7};
+
+   // -----------------------------------------------------------------------
+   // C++ interoperability: Repeat supports const traversal.
+   // -----------------------------------------------------------------------
+   auto runtime_finite = Repeat{2, -1};
+
+   constexpr auto finite_sum = [finite] {
+     auto sum = 0;
+     for (const auto value : finite) {
+       sum += value;
+     }
+     return sum;
+   }();
+   static_assert(finite_sum == 21);
+
+   constexpr auto pixel_sum = [pixels] {
+     auto sum = 0;
+     for (const auto pixel : pixels) {
+       sum += pixel.x + pixel.y;
+     }
+     return sum;
+   }();
+   static_assert(pixel_sum == 26);
+
+   auto runtime_sum = 0;
+   for (const auto value : runtime_finite) {
+     runtime_sum += value;
+   }
+
+   return runtime_sum == -2 ? 0 : 1;
+ }
+ ~~~~~
+ */
+template <concepts_detail::RepeatClassArgument T>
+class Repeat {
+    friend struct concepts_detail::RepeatNextAccess;
+
+  public:
+    using value_type = T;
+
+    class const_iterator {
+      public:
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+
+        constexpr const_iterator() noexcept = default;
+
+        constexpr const_iterator(const T* value, std::size_t remaining) noexcept
+            : value_(value), remaining_(remaining) {
+        }
+
+        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
+            return *value_;
+        }
+
+        constexpr auto operator++() noexcept -> const_iterator& {
+            --remaining_;
+            return *this;
+        }
+
+        constexpr auto operator++(int) noexcept -> const_iterator {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+
+        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
+            -> bool {
+            return lhs.remaining_ == rhs.remaining_;
+        }
+
+      private:
+        const T* value_{nullptr};
+        std::size_t remaining_{0U};
+    };
+
+    constexpr Repeat() noexcept : value_{}, count_{0U}, is_finite_{true} {
+    }
+
+    constexpr explicit Repeat(const T& value) noexcept : value_(value), count_(0U), is_finite_(false) {
+    }
+
+    template <concepts_detail::ProducerCount Count>
+    constexpr Repeat(Count count, const T& value) noexcept
+        : value_(value), count_(concepts_detail::normalize_producer_count(count)), is_finite_(true) {
+    }
+
+    template <typename Value>
+        requires(!concepts::SafeImplicitConversion<T, Value>)
+    explicit Repeat(Value value) = delete;
+
+    template <typename Value, typename Count>
+        requires(!concepts::SafeImplicitConversion<T, Value> || !concepts_detail::ProducerCount<Count>)
+    Repeat(Count count, Value value) = delete;
+
+    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
+        return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
+    }
+
+    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
+        return is_finite_;
+    }
+
+    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+        return const_iterator{&value_, count()};
+    }
+
+    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+        return const_iterator{&value_, 0U};
+    }
+
+    /** Producer parameter equality (REQ-FN-014B): compares only the stored
+     *  value, count, and finite-form parameters, never the produced sequence.
+     *
+     *  It is the only producer parameter-equality surface; the `equal` free
+     *  function instead compares bounded logical observations of the produced
+     *  sequences. The unbounded `repeat(value)` form is distinct from the
+     *  finite `repeat(count, value)` forms even when their produced prefixes
+     *  coincide, and a counted form with count zero is distinct from the
+     *  unbounded form. O(1), no traversal, no allocation. */
+    [[nodiscard]] friend constexpr auto operator==(const Repeat& lhs, const Repeat& rhs) noexcept -> bool
+        requires concepts::StableEqualityComparable<T>
+    {
+        return lhs.value_ == rhs.value_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_;
+    }
+
+  private:
+    T value_;
+    std::size_t count_;
+    bool is_finite_;
+};
+
+/** Diagnostic specialization (REQ-DIAG-012): reached only through the
+ *  redirecting deduction guides below. Constructing it is always a compile-time
+ *  error whose single message names the class template, the rejected argument
+ *  type, and the violated domain rule. */
+template <>
+class Repeat<concepts_detail::RepeatElementDomainViolation> {
+  public:
+    template <typename... Args>
+    constexpr explicit Repeat([[maybe_unused]] Args&&... args) noexcept {
+        static_assert(concepts_detail::dependent_false<Args...>,
+                      "cljonic::Repeat: the repeated value must be storable without throwing. The value must be "
+                      "copyable and safe to create, store, and destroy without throwing, and a finite count must be "
+                      "a non-boolean, non-character integer type whose nonnegative range fits std::size_t. "
+                      "Use Repeat{value} or Repeat{count, value}.");
+    }
+};
+
+/** Redirecting deduction guides (REQ-DIAG-012), one per supported arity. Each is
+ *  viable only for a rejected deduction, so an admitted deduction is never
+ *  affected. The one-argument guide takes `const T&` to mirror the constructor's
+ *  deduction, so an array argument is rejected as the array it is. */
+template <typename T>
+    requires(!concepts::NothrowCollectionElement<T>)
+Repeat(const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
+
+template <typename T, typename Count>
+    requires(!concepts::NothrowCollectionElement<T> || !concepts_detail::ProducerCount<Count>)
+Repeat(Count, const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
+
+template <typename T>
+    requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
+[[nodiscard]] constexpr auto repeat(T&& value) noexcept -> Repeat<std::remove_cvref_t<T>> {
+    return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value)};
+}
+
+template <typename T, concepts_detail::ProducerCount Count>
+    requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
+[[nodiscard]] constexpr auto repeat(Count count, T&& value) noexcept -> Repeat<std::remove_cvref_t<T>> {
+    return Repeat<std::remove_cvref_t<T>>{count, std::forward<T>(value)};
+}
+
+// Diagnostic fallback (REQ-DIAG-009): the value argument is outside the closed
+// producer domain. This overload explains the rejection; it never returns a
+// value and is never a supported call target.
+template <typename T>
+    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
+constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
+                  "safe to create, store, and destroy without throwing.");
+    return {};
+}
+
+template <typename T, typename Count>
+    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>> || !concepts_detail::ProducerCount<Count>)
+constexpr auto repeat([[maybe_unused]] Count count, [[maybe_unused]] T&& value) noexcept
+    -> concepts_detail::RejectedProducerFactory {
+    static_assert(concepts_detail::dependent_false<T>,
+                  "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
+                  "safe to create, store, and destroy without throwing. The count must be a non-boolean, "
+                  "non-character integer type whose nonnegative range fits std::size_t. Use repeat(count, value).");
+    return {};
+}
+
+} // namespace cljonic
+
+namespace cljonic::concepts_detail {
+
+template <concepts::NothrowCollectionElement T>
+struct producer_traits<Repeat<T>> {
+    static constexpr bool is_cljonic_producer = true;
+    static constexpr producer_kind kind = producer_kind::repeat;
+};
+
+template <concepts::NothrowCollectionElement T>
+struct contains_floating_point<Repeat<T>> : std::bool_constant<contains_floating_point_v<T>> {};
+
+template <concepts::NothrowCollectionElement T>
+struct contains_callable<Repeat<T>> : std::bool_constant<contains_callable_v<T>> {};
+
+template <concepts::NothrowCollectionElement T>
+struct contains_standard_range<Repeat<T>> : std::bool_constant<contains_standard_range_v<T>> {};
+
+} // namespace cljonic::concepts_detail
+// End cljonic-repeat.hpp
 // Begin cljonic-set.hpp
 #pragma once
 
@@ -5773,9 +6359,46 @@ concept NextSequenceableCollection =
     (concepts::CljonicVector<C> || concepts::CljonicMap<C> || concepts::CljonicSet<C> || concepts::CljonicQueue<C> ||
      concepts::CljonicString<C>);
 
+template <typename P>
+concept NextSequenceableProducer = concepts::SequenceableProducer<P> && concepts::NothrowConstInputRange<P> &&
+                                   (concepts::CljonicRange<P> || concepts::CljonicRepeat<P>);
+
 constexpr auto next_tail_capacity(const std::size_t capacity) noexcept -> std::size_t {
     return capacity == 0U ? 0U : capacity - 1U;
 }
+
+struct RepeatNextAccess {
+    template <concepts::CljonicRepeat P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
+        if (producer.is_finite_) {
+            const auto remaining_count = producer.count_ == 0U ? 0U : producer.count_ - 1U;
+            return P{remaining_count, producer.value_};
+        }
+        return P{producer.value_};
+    }
+};
+
+struct RangeNextAccess {
+    template <concepts::CljonicRange P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
+        if (producer.step_ == 0) {
+            return producer;
+        }
+
+        const auto extent = producer.nonzero_step_extent();
+        if (extent == 0U) {
+            return producer;
+        }
+        if (extent == 1U) {
+            return P{producer.end_, producer.end_, producer.step_};
+        }
+        return P{
+            static_cast<decltype(producer.start_)>(producer.start_ + producer.step_),
+            producer.end_,
+            producer.step_,
+        };
+    }
+};
 
 template <typename C>
 struct NextResult;
@@ -5809,7 +6432,8 @@ struct NextResult<String<N>> {
 
 /** \anchor Next
  * The \b next free function returns the logical tail of a \ref Vector "Vector", \ref Map "Map", \ref Set "Set", \ref
- * Queue "Queue", or \ref String "String" as a value of the same collection kind. The input remains unchanged.
+ * Queue "Queue", or \ref String "String" as a value of the same collection kind, or of a supported producer as an
+ * owning value of the same producer kind. The input remains unchanged.
  *
  * The result has a static capacity of one less than the source (zero when the source capacity is zero) and contains
  * every logical element after the first in the source's traversal order. An empty or singleton input returns an empty
@@ -5817,6 +6441,13 @@ struct NextResult<String<N>> {
  *
  * A map's elements remain value-semantic \ref MapEntryFactory "map_entry" values. Map and Set traversal order is not
  * semantically significant, while Queue retains FIFO order.
+ *
+ * For a finite counted \ref Repeat "Repeat", the result is finite with the same repeated value and one fewer count,
+ * saturating at zero. For an unbounded Repeat, the result remains unbounded with its observation policy unchanged. For
+ * a \ref Range "Range", the result preserves its endpoint and step. A zero-step Range remains unbounded, an empty
+ * finite Range is unchanged, and a singleton finite Range becomes empty at its endpoint without adding the step.
+ * Otherwise, the start advances by one step. Constructing a producer tail does not materialize results or invoke
+ * callbacks.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -5852,6 +6483,25 @@ struct NextResult<String<N>> {
    static_assert(count(next(vector<int, 3>())) == 0);
    static_assert(count(next(vector(10))) == 0);
 
+   constexpr auto repeated_tail = next(repeat(3, 7));
+   constexpr auto repeated_tail_values = into(Vector<int, 2>{}, repeated_tail);
+   static_assert(count(repeated_tail) == 2);
+   static_assert(repeated_tail_values(0) == 7 && repeated_tail_values(1) == 7);
+   constexpr auto unbounded_tail = next(repeat(7));
+   static_assert(!fits_into(Vector<int, 2>{}, unbounded_tail));
+   static_assert(count(unbounded_tail) == count(repeat(7)));
+   constexpr auto unbounded_tail_values = into(Vector<int, 2>{}, unbounded_tail);
+   static_assert(unbounded_tail_values(0) == 7 && unbounded_tail_values(1) == 7);
+
+   constexpr auto range_tail = next(Range{1, 8, 2});
+   constexpr auto range_tail_values = into(Vector<int, 3>{}, range_tail);
+   static_assert(count(range_tail) == 3);
+   static_assert(range_tail_values(0) == 3 && range_tail_values(1) == 5 &&
+                 range_tail_values(2) == 7);
+   constexpr auto unbounded_range_tail = next(Range{4, 9, 0});
+   static_assert(!fits_into(Vector<int, 2>{}, unbounded_range_tail));
+   static_assert(count(unbounded_range_tail) == count(Range{4, 9, 0}));
+
    // Runtime demonstration.
    const auto runtime_values = vector<int, 4>(40, 50);
    const auto runtime_tail = next(runtime_values);
@@ -5863,6 +6513,16 @@ struct NextResult<String<N>> {
    const auto runtime_set_tail = next(runtime_set);
    const auto runtime_text = string<4>("DE");
    const auto runtime_text_tail = next(runtime_text);
+   const auto runtime_repeat_tail = next(repeat(3, 7));
+   const auto runtime_repeat_tail_values =
+       into(Vector<int, 2>{}, runtime_repeat_tail);
+   const auto runtime_unbounded_repeat_tail = next(repeat(7));
+   const auto runtime_unbounded_repeat_tail_values =
+       into(Vector<int, 2>{}, runtime_unbounded_repeat_tail);
+   const auto runtime_range_tail = next(Range{5, -6, -2});
+   const auto runtime_range_tail_values =
+       into(Vector<int, 2>{}, runtime_range_tail);
+   const auto runtime_unbounded_range_tail = next(Range{4, 9, 0});
 
    return (count(runtime_tail) == 1 && runtime_tail(0) == 50 &&
            count(runtime_values) == 2 && runtime_values(0) == 40 &&
@@ -5876,7 +6536,18 @@ struct NextResult<String<N>> {
            count(runtime_set) == 2 && contains(runtime_set, 80) &&
            contains(runtime_set, 90) && runtime_text_tail(0) == 'E' &&
            count(runtime_text) == 2 && runtime_text(0) == 'D' &&
-           runtime_text(1) == 'E')
+           runtime_text(1) == 'E' && count(runtime_repeat_tail) == 2 &&
+           runtime_repeat_tail_values(0) == 7 &&
+           runtime_repeat_tail_values(1) == 7 &&
+           fits_into(Vector<int, 2>{}, runtime_repeat_tail) &&
+           count(runtime_unbounded_repeat_tail) == count(repeat(7)) &&
+           !fits_into(Vector<int, 2>{}, runtime_unbounded_repeat_tail) &&
+           runtime_unbounded_repeat_tail_values(0) == 7 &&
+           runtime_unbounded_repeat_tail_values(1) == 7 &&
+           count(runtime_range_tail) == 5 && runtime_range_tail_values(0) == 3 &&
+           runtime_range_tail_values(1) == 1 &&
+           count(runtime_unbounded_range_tail) == count(Range{4, 9, 0}) &&
+           !fits_into(Vector<int, 2>{}, runtime_unbounded_range_tail))
               ? 0
               : 1;
  }
@@ -5897,11 +6568,20 @@ template <concepts_detail::NextSequenceableCollection C>
     return result;
 }
 
+template <concepts_detail::NextSequenceableProducer P>
+[[nodiscard]] constexpr auto next(const P& producer) noexcept -> P {
+    if constexpr (concepts::CljonicRange<P>) {
+        return concepts_detail::RangeNextAccess::tail(producer);
+    } else {
+        return concepts_detail::RepeatNextAccess::tail(producer);
+    }
+}
+
 template <typename C>
-    requires(!concepts_detail::NextSequenceableCollection<C>)
+    requires(!concepts_detail::NextSequenceableCollection<C> && !concepts_detail::NextSequenceableProducer<C>)
 constexpr auto next([[maybe_unused]] const C& value) noexcept -> void {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::next: expected a Vector, Map, Set, Queue, or String value.");
+                  "cljonic::next: expected a Vector, Map, Set, Queue, String, Range, or Repeat value.");
 }
 
 } // namespace cljonic
@@ -6638,584 +7318,6 @@ constexpr auto pop([[maybe_unused]] const C& collection) noexcept -> void {
 
 } // namespace cljonic
 // End cljonic-pop.hpp
-// Begin cljonic-range.hpp
-#pragma once
-
-#include <concepts>
-#include <cstddef>
-#include <type_traits>
-
-
-namespace cljonic {
-
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
- *  during an out-of-domain class template argument deduction. It is never a
- *  supported element type and is never produced by an admitted call. */
-struct RangeElementDomainViolation {};
-
-/** The `Range` class-template gate (REQ-DIAG-012): a valid `Range` element
- *  domain, or the internal diagnostic tag used only to redirect a rejected
- *  deduction. Keeping the valid domain first preserves soft, SFINAE-friendly
- *  type-level rejection for an out-of-domain element type. */
-template <typename T>
-concept RangeClassArgument =
-    concepts::RangeElement<T> || std::same_as<std::remove_cvref_t<T>, RangeElementDomainViolation>;
-
-} // namespace concepts_detail
-
-/** \anchor Range
- * A Range is a producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by a fixed
- * \p step, defaulting to start `0` and step `1`.
- *
- * A zero step repeats \p start indefinitely, taking precedence over otherwise-empty-range cases, including equal start
- * and end. A nonzero step that moves away from \p end produces an empty range.
- *
- * Observation is bounded by its finite span or by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE for a zero-step
- * range, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed
- * directly to cljonic operations that accept a source.
- *
- * Explicitly typed parameters follow the \ref implicit-conversions "safe implicit conversion rules".
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
- int main() {
-   // Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero
-   // arguments.
-   [[maybe_unused]] constexpr auto empty = Range<int>{};
-
-   // Single argument is the exclusive end; start defaults to 0, step to 1.
-   [[maybe_unused]] constexpr auto to_five = Range{5};
-
-   // Explicit start and end; step still defaults to 1.
-   [[maybe_unused]] constexpr auto two_to_five = Range{2, 5};
-
-   // Explicit start, end, and step.
-   [[maybe_unused]] constexpr auto evens = Range{0, 10, 2};
-
-   // A zero step repeats start indefinitely rather than being empty.
-   [[maybe_unused]] constexpr auto repeating = Range{0, 5, 0};
-
-   // A billion elements exceeds the system's allowed maximum, so only that
-   // maximum number of elements is available.
-   [[maybe_unused]] constexpr auto huge = Range{1000000000};
-
-   // -----------------------------------------------------------------------
-   // C++ interoperability: a Range supports const traversal.
-   // -----------------------------------------------------------------------
-   constexpr auto odds = Range{1, 12, 2};
-   auto runtime_odds = Range{-1, -11, -2};
-
-   // Use C++ interoperability to sum the values in a constexpr range
-   constexpr auto odds_sum = [odds] {
-     auto sum = 0;
-     for (const auto value : odds) {
-       sum += value;
-     }
-     return sum;
-   }();
-   static_assert(odds_sum == 36);
-
-   // Use C++ interoperability to sum the values in a runtime range
-   auto runtime_odds_sum = 0;
-   for (const auto value : runtime_odds) {
-     runtime_odds_sum += value;
-   }
-
-   return runtime_odds_sum == -25 ? 0 : 1;
- }
- ~~~~~
- */
-template <concepts_detail::RangeClassArgument T>
-class Range {
-  public:
-    using value_type = T;
-
-    /** A bounded, generating const iterator used for free-function observation;
-     *  it does not expose start/end/step parameters. */
-    class const_iterator {
-      public:
-        using value_type = T;
-        using difference_type = std::ptrdiff_t;
-
-        constexpr const_iterator() noexcept = default;
-
-        constexpr const_iterator(T current, std::size_t remaining, T step) noexcept
-            : current_(current), remaining_(remaining), step_(step) {
-        }
-
-        [[nodiscard]] constexpr auto operator*() const noexcept -> T {
-            return current_;
-        }
-
-        constexpr auto operator++() noexcept -> const_iterator& {
-            if (remaining_ > 1U) {
-                current_ = static_cast<T>(current_ + step_);
-            }
-            --remaining_;
-            return *this;
-        }
-
-        constexpr auto operator++(int) noexcept -> const_iterator {
-            auto previous = *this;
-            ++(*this);
-            return previous;
-        }
-
-        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
-            -> bool {
-            return lhs.remaining_ == rhs.remaining_;
-        }
-
-      private:
-        T current_{};
-        std::size_t remaining_{0U};
-        T step_{};
-    };
-
-    constexpr Range() noexcept : start_(T{0}), end_(T{0}), step_(T{1}) {
-    }
-
-    constexpr explicit Range(T end) noexcept : start_(T{0}), end_(end), step_(T{1}) {
-    }
-
-    constexpr Range(T start, T end) noexcept : start_(start), end_(end), step_(T{1}) {
-    }
-
-    constexpr Range(T start, T end, T step) noexcept : start_(start), end_(end), step_(step) {
-    }
-
-    template <typename End>
-        requires(!concepts::SafeImplicitConversion<T, End>)
-    explicit Range(End end) = delete;
-
-    template <typename Start, typename End>
-        requires(!concepts::SafeImplicitConversion<T, Start> || !concepts::SafeImplicitConversion<T, End>)
-    Range(Start start, End end) = delete;
-
-    template <typename Start, typename End, typename Step>
-        requires(!concepts::SafeImplicitConversion<T, Start> || !concepts::SafeImplicitConversion<T, End> ||
-                 !concepts::SafeImplicitConversion<T, Step>)
-    Range(Start start, End end, Step step) = delete;
-
-    /** Conservative observation count: the synthesis cap for a zero step, otherwise
-     *  the exact finite cardinality saturated at the synthesis cap. */
-    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
-        return step_ == T{0} ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE : saturate(nonzero_step_extent());
-    }
-
-    /** Reports whether this Range has a finite complete result. */
-    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
-        return step_ != T{0};
-    }
-
-    /** Index-in-range predicate over the available bounded prefix; O(1), no traversal. */
-    [[nodiscard]] constexpr auto contains(std::size_t index) const noexcept -> bool {
-        return index < count();
-    }
-
-    template <typename Index>
-        requires(!concepts::SafeImplicitConversion<std::size_t, Index>)
-    auto contains(Index index) const -> bool = delete;
-
-    /** Bounded generating iteration up to the effective size returned by count(). */
-    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
-        return const_iterator{start_, count(), step_};
-    }
-
-    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
-        return const_iterator{T{}, 0U, T{}};
-    }
-
-    /** Producer parameter equality (REQ-FN-014B): compares only the stored
-     *  start/end/step parameters, never the produced sequence.
-     *
-     *  It is the only producer parameter-equality surface; the `equal` free function
-     *  instead compares bounded logical observations of the produced sequences. Two
-     *  Range values with different parameters compare unequal even when their
-     *  produced or observed sequences coincide (for example two zero-step ranges
-     *  with different endpoints both produce an infinite repetition of their
-     *  respective start values). O(1), no traversal, no allocation. */
-    [[nodiscard]] friend constexpr auto operator==(const Range& lhs, const Range& rhs) noexcept -> bool {
-        return lhs.start_ == rhs.start_ && lhs.end_ == rhs.end_ && lhs.step_ == rhs.step_;
-    }
-
-  private:
-    using ExtentType = std::make_unsigned_t<T>;
-
-    /** Caps an internal extent at the public observation maximum. */
-    [[nodiscard]] static constexpr auto saturate(ExtentType raw_count) noexcept -> std::size_t {
-        return raw_count > CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
-                   ? CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE
-                   : static_cast<std::size_t>(raw_count);
-    }
-
-    /** Converts a signed step to an unsigned magnitude without signed overflow. */
-    [[nodiscard]] static constexpr auto magnitude(T value) noexcept -> ExtentType {
-        const auto unsigned_value = static_cast<ExtentType>(value);
-        return value < T{0} ? ExtentType{0} - unsigned_value : unsigned_value;
-    }
-
-    /** Computes how many stepped positions fit inside an unsigned span. */
-    [[nodiscard]] constexpr auto extent_from_span(ExtentType span) const noexcept -> ExtentType {
-        const auto step = magnitude(step_);
-        return (span / step) + (span % step == ExtentType{0} ? ExtentType{0} : ExtentType{1});
-    }
-
-    /** Chooses the finite extent calculation after zero-step handling. */
-    [[nodiscard]] constexpr auto nonzero_step_extent() const noexcept -> ExtentType {
-        return step_ > T{0} ? ascending_extent() : descending_extent();
-    }
-
-    /** Computes the finite extent for a range moving upward. */
-    [[nodiscard]] constexpr auto ascending_extent() const noexcept -> ExtentType {
-        if (start_ >= end_) {
-            return ExtentType{0};
-        }
-        return extent_from_span(static_cast<ExtentType>(end_) - static_cast<ExtentType>(start_));
-    }
-
-    /** Computes the finite extent for a range moving downward. */
-    [[nodiscard]] constexpr auto descending_extent() const noexcept -> ExtentType {
-        if (end_ >= start_) {
-            return ExtentType{0};
-        }
-        return extent_from_span(static_cast<ExtentType>(start_) - static_cast<ExtentType>(end_));
-    }
-
-    T start_;
-    T end_;
-    T step_;
-};
-
-/** Diagnostic specialization (REQ-DIAG-012): reached only through the
- *  redirecting deduction guides below, which select it for exactly the
- *  out-of-domain class template argument deduction. Constructing it is always a
- *  compile-time error whose single message names the class template, the
- *  rejected argument type, and the violated domain rule. It is never a
- *  supported construction target and exposes no usable state. */
-template <>
-class Range<concepts_detail::RangeElementDomainViolation> {
-  public:
-    template <typename... Args>
-    constexpr explicit Range([[maybe_unused]] Args&&... args) noexcept {
-        static_assert(concepts_detail::dependent_false<Args...>,
-                      "cljonic::Range: the element type must be a signed integral type. Every start, end, and step "
-                      "argument must be a signed integral value, because Range describes a signed arithmetic "
-                      "sequence whose span arithmetic requires a signed element type.");
-    }
-};
-
-/** Redirecting deduction guides (REQ-DIAG-012), one per supported arity. Each is
- *  viable only for a rejected deduction, so an admitted deduction is never
- *  affected. */
-template <typename T>
-    requires(!concepts::RangeElement<std::remove_cvref_t<T>>)
-Range(T) -> Range<concepts_detail::RangeElementDomainViolation>;
-
-template <typename Start, typename End>
-    requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>>))
-Range(Start, End) -> Range<concepts_detail::RangeElementDomainViolation>;
-
-template <typename Start, typename End, typename Step>
-    requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>> &&
-               concepts::RangeElement<std::remove_cvref_t<Step>>))
-Range(Start, End, Step) -> Range<concepts_detail::RangeElementDomainViolation>;
-
-} // namespace cljonic
-
-namespace cljonic::concepts_detail {
-
-template <typename T>
-struct producer_traits<Range<T>> {
-    static constexpr bool is_cljonic_producer = true;
-    static constexpr producer_kind kind = producer_kind::range;
-};
-
-template <typename T>
-struct contains_floating_point<Range<T>> : std::bool_constant<contains_floating_point_v<T>> {};
-
-template <typename T>
-struct contains_callable<Range<T>> : std::bool_constant<contains_callable_v<T>> {};
-
-template <typename T>
-struct contains_standard_range<Range<T>> : std::bool_constant<contains_standard_range_v<T>> {};
-
-} // namespace cljonic::concepts_detail
-// End cljonic-range.hpp
-// Begin cljonic-repeat.hpp
-#pragma once
-
-#include <cstddef>
-#include <type_traits>
-#include <utility>
-
-
-namespace cljonic {
-
-namespace concepts_detail {
-
-/** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
- *  during an out-of-domain class template argument deduction. */
-struct RepeatElementDomainViolation {};
-
-/** The `Repeat` class-template gate (REQ-DIAG-012): a storable element, or the
- *  internal diagnostic tag used only to redirect a rejected deduction. */
-template <typename T>
-concept RepeatClassArgument =
-    concepts::NothrowCollectionElement<T> || std::same_as<std::remove_cvref_t<T>, RepeatElementDomainViolation>;
-
-} // namespace concepts_detail
-
-/** \anchor Repeat
- * A Repeat is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or
- * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(count, value)` yields
- * exactly \p count values.
- *
- * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
- * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
- * cljonic operations that accept a source.
- *
- * Values and finite counts follow the \ref implicit-conversions "safe implicit conversion rules". Counts accept signed
- * or unsigned integer types whose nonnegative ranges fit \c std::size_t, excluding Boolean and character types. Zero
- * or negative counts produce an empty finite Repeat.
- *
- ~~~~~{.cpp}
- #include "cljonic.hpp"
- using namespace cljonic;
-
- struct Pixel {
-   int x{};
-   int y{};
-
-   friend constexpr auto operator==(const Pixel &, const Pixel &) noexcept
-       -> bool = default;
- };
-
- int main() {
-   // A finite Repeat yields the value exactly the requested number of times.
-   constexpr auto finite = Repeat{3, 7};
-   constexpr auto pixels = Repeat{2, Pixel{4, 9}};
-
-   // An uncounted Repeat is an unbounded producer.
-   [[maybe_unused]] constexpr auto unbounded = Repeat{7};
-
-   // -----------------------------------------------------------------------
-   // C++ interoperability: Repeat supports const traversal.
-   // -----------------------------------------------------------------------
-   auto runtime_finite = Repeat{2, -1};
-
-   constexpr auto finite_sum = [finite] {
-     auto sum = 0;
-     for (const auto value : finite) {
-       sum += value;
-     }
-     return sum;
-   }();
-   static_assert(finite_sum == 21);
-
-   constexpr auto pixel_sum = [pixels] {
-     auto sum = 0;
-     for (const auto pixel : pixels) {
-       sum += pixel.x + pixel.y;
-     }
-     return sum;
-   }();
-   static_assert(pixel_sum == 26);
-
-   auto runtime_sum = 0;
-   for (const auto value : runtime_finite) {
-     runtime_sum += value;
-   }
-
-   return runtime_sum == -2 ? 0 : 1;
- }
- ~~~~~
- */
-template <concepts_detail::RepeatClassArgument T>
-class Repeat {
-  public:
-    using value_type = T;
-
-    class const_iterator {
-      public:
-        using value_type = T;
-        using difference_type = std::ptrdiff_t;
-
-        constexpr const_iterator() noexcept = default;
-
-        constexpr const_iterator(const T* value, std::size_t remaining) noexcept
-            : value_(value), remaining_(remaining) {
-        }
-
-        [[nodiscard]] constexpr auto operator*() const noexcept -> const T& {
-            return *value_;
-        }
-
-        constexpr auto operator++() noexcept -> const_iterator& {
-            --remaining_;
-            return *this;
-        }
-
-        constexpr auto operator++(int) noexcept -> const_iterator {
-            auto previous = *this;
-            ++(*this);
-            return previous;
-        }
-
-        [[nodiscard]] friend constexpr auto operator==(const const_iterator& lhs, const const_iterator& rhs) noexcept
-            -> bool {
-            return lhs.remaining_ == rhs.remaining_;
-        }
-
-      private:
-        const T* value_{nullptr};
-        std::size_t remaining_{0U};
-    };
-
-    constexpr Repeat() noexcept : value_{}, count_{0U}, is_finite_{true} {
-    }
-
-    constexpr explicit Repeat(const T& value) noexcept : value_(value), count_(0U), is_finite_(false) {
-    }
-
-    template <concepts_detail::ProducerCount Count>
-    constexpr Repeat(Count count, const T& value) noexcept
-        : value_(value), count_(concepts_detail::normalize_producer_count(count)), is_finite_(true) {
-    }
-
-    template <typename Value>
-        requires(!concepts::SafeImplicitConversion<T, Value>)
-    explicit Repeat(Value value) = delete;
-
-    template <typename Value, typename Count>
-        requires(!concepts::SafeImplicitConversion<T, Value> || !concepts_detail::ProducerCount<Count>)
-    Repeat(Count count, Value value) = delete;
-
-    [[nodiscard]] constexpr auto count() const noexcept -> std::size_t {
-        return is_finite_ ? count_ : CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE;
-    }
-
-    [[nodiscard]] constexpr auto is_finite() const noexcept -> bool {
-        return is_finite_;
-    }
-
-    [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
-        return const_iterator{&value_, count()};
-    }
-
-    [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
-        return const_iterator{&value_, 0U};
-    }
-
-    /** Producer parameter equality (REQ-FN-014B): compares only the stored
-     *  value, count, and finite-form parameters, never the produced sequence.
-     *
-     *  It is the only producer parameter-equality surface; the `equal` free
-     *  function instead compares bounded logical observations of the produced
-     *  sequences. The unbounded `repeat(value)` form is distinct from the
-     *  finite `repeat(count, value)` forms even when their produced prefixes
-     *  coincide, and a counted form with count zero is distinct from the
-     *  unbounded form. O(1), no traversal, no allocation. */
-    [[nodiscard]] friend constexpr auto operator==(const Repeat& lhs, const Repeat& rhs) noexcept -> bool
-        requires concepts::StableEqualityComparable<T>
-    {
-        return lhs.value_ == rhs.value_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_;
-    }
-
-  private:
-    T value_;
-    std::size_t count_;
-    bool is_finite_;
-};
-
-/** Diagnostic specialization (REQ-DIAG-012): reached only through the
- *  redirecting deduction guides below. Constructing it is always a compile-time
- *  error whose single message names the class template, the rejected argument
- *  type, and the violated domain rule. */
-template <>
-class Repeat<concepts_detail::RepeatElementDomainViolation> {
-  public:
-    template <typename... Args>
-    constexpr explicit Repeat([[maybe_unused]] Args&&... args) noexcept {
-        static_assert(concepts_detail::dependent_false<Args...>,
-                      "cljonic::Repeat: the repeated value must be storable without throwing. The value must be "
-                      "copyable and safe to create, store, and destroy without throwing, and a finite count must be "
-                      "a non-boolean, non-character integer type whose nonnegative range fits std::size_t. "
-                      "Use Repeat{value} or Repeat{count, value}.");
-    }
-};
-
-/** Redirecting deduction guides (REQ-DIAG-012), one per supported arity. Each is
- *  viable only for a rejected deduction, so an admitted deduction is never
- *  affected. The one-argument guide takes `const T&` to mirror the constructor's
- *  deduction, so an array argument is rejected as the array it is. */
-template <typename T>
-    requires(!concepts::NothrowCollectionElement<T>)
-Repeat(const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
-
-template <typename T, typename Count>
-    requires(!concepts::NothrowCollectionElement<T> || !concepts_detail::ProducerCount<Count>)
-Repeat(Count, const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
-
-template <typename T>
-    requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
-[[nodiscard]] constexpr auto repeat(T&& value) noexcept -> Repeat<std::remove_cvref_t<T>> {
-    return Repeat<std::remove_cvref_t<T>>{std::forward<T>(value)};
-}
-
-template <typename T, concepts_detail::ProducerCount Count>
-    requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
-[[nodiscard]] constexpr auto repeat(Count count, T&& value) noexcept -> Repeat<std::remove_cvref_t<T>> {
-    return Repeat<std::remove_cvref_t<T>>{count, std::forward<T>(value)};
-}
-
-// Diagnostic fallback (REQ-DIAG-009): the value argument is outside the closed
-// producer domain. This overload explains the rejection; it never returns a
-// value and is never a supported call target.
-template <typename T>
-    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>>)
-constexpr auto repeat([[maybe_unused]] T&& value) noexcept -> concepts_detail::RejectedProducerFactory {
-    static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
-                  "safe to create, store, and destroy without throwing.");
-    return {};
-}
-
-template <typename T, typename Count>
-    requires(!concepts::NothrowCollectionElement<std::remove_cvref_t<T>> || !concepts_detail::ProducerCount<Count>)
-constexpr auto repeat([[maybe_unused]] Count count, [[maybe_unused]] T&& value) noexcept
-    -> concepts_detail::RejectedProducerFactory {
-    static_assert(concepts_detail::dependent_false<T>,
-                  "cljonic::repeat: this value cannot be repeated. The repeated value must be copyable and must be "
-                  "safe to create, store, and destroy without throwing. The count must be a non-boolean, "
-                  "non-character integer type whose nonnegative range fits std::size_t. Use repeat(count, value).");
-    return {};
-}
-
-} // namespace cljonic
-
-namespace cljonic::concepts_detail {
-
-template <concepts::NothrowCollectionElement T>
-struct producer_traits<Repeat<T>> {
-    static constexpr bool is_cljonic_producer = true;
-    static constexpr producer_kind kind = producer_kind::repeat;
-};
-
-template <concepts::NothrowCollectionElement T>
-struct contains_floating_point<Repeat<T>> : std::bool_constant<contains_floating_point_v<T>> {};
-
-template <concepts::NothrowCollectionElement T>
-struct contains_callable<Repeat<T>> : std::bool_constant<contains_callable_v<T>> {};
-
-template <concepts::NothrowCollectionElement T>
-struct contains_standard_range<Repeat<T>> : std::bool_constant<contains_standard_range_v<T>> {};
-
-} // namespace cljonic::concepts_detail
-// End cljonic-repeat.hpp
 // Begin cljonic-repeatedly.hpp
 #pragma once
 

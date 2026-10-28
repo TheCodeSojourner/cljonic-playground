@@ -3,6 +3,8 @@
 #include <cljonic-concepts.hpp>
 #include <cljonic-map.hpp>
 #include <cljonic-queue.hpp>
+#include <cljonic-range.hpp>
+#include <cljonic-repeat.hpp>
 #include <cljonic-set.hpp>
 #include <cljonic-string.hpp>
 #include <cljonic-vector.hpp>
@@ -19,9 +21,46 @@ concept NextSequenceableCollection =
     (concepts::CljonicVector<C> || concepts::CljonicMap<C> || concepts::CljonicSet<C> || concepts::CljonicQueue<C> ||
      concepts::CljonicString<C>);
 
+template <typename P>
+concept NextSequenceableProducer = concepts::SequenceableProducer<P> && concepts::NothrowConstInputRange<P> &&
+                                   (concepts::CljonicRange<P> || concepts::CljonicRepeat<P>);
+
 constexpr auto next_tail_capacity(const std::size_t capacity) noexcept -> std::size_t {
     return capacity == 0U ? 0U : capacity - 1U;
 }
+
+struct RepeatNextAccess {
+    template <concepts::CljonicRepeat P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
+        if (producer.is_finite_) {
+            const auto remaining_count = producer.count_ == 0U ? 0U : producer.count_ - 1U;
+            return P{remaining_count, producer.value_};
+        }
+        return P{producer.value_};
+    }
+};
+
+struct RangeNextAccess {
+    template <concepts::CljonicRange P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
+        if (producer.step_ == 0) {
+            return producer;
+        }
+
+        const auto extent = producer.nonzero_step_extent();
+        if (extent == 0U) {
+            return producer;
+        }
+        if (extent == 1U) {
+            return P{producer.end_, producer.end_, producer.step_};
+        }
+        return P{
+            static_cast<decltype(producer.start_)>(producer.start_ + producer.step_),
+            producer.end_,
+            producer.step_,
+        };
+    }
+};
 
 template <typename C>
 struct NextResult;
@@ -55,7 +94,8 @@ struct NextResult<String<N>> {
 
 /** \anchor Next
  * The \b next free function returns the logical tail of a \ref Vector "Vector", \ref Map "Map", \ref Set "Set", \ref
- * Queue "Queue", or \ref String "String" as a value of the same collection kind. The input remains unchanged.
+ * Queue "Queue", or \ref String "String" as a value of the same collection kind, or of a supported producer as an
+ * owning value of the same producer kind. The input remains unchanged.
  *
  * The result has a static capacity of one less than the source (zero when the source capacity is zero) and contains
  * every logical element after the first in the source's traversal order. An empty or singleton input returns an empty
@@ -63,6 +103,13 @@ struct NextResult<String<N>> {
  *
  * A map's elements remain value-semantic \ref MapEntryFactory "map_entry" values. Map and Set traversal order is not
  * semantically significant, while Queue retains FIFO order.
+ *
+ * For a finite counted \ref Repeat "Repeat", the result is finite with the same repeated value and one fewer count,
+ * saturating at zero. For an unbounded Repeat, the result remains unbounded with its observation policy unchanged. For
+ * a \ref Range "Range", the result preserves its endpoint and step. A zero-step Range remains unbounded, an empty
+ * finite Range is unchanged, and a singleton finite Range becomes empty at its endpoint without adding the step.
+ * Otherwise, the start advances by one step. Constructing a producer tail does not materialize results or invoke
+ * callbacks.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -98,6 +145,25 @@ struct NextResult<String<N>> {
    static_assert(count(next(vector<int, 3>())) == 0);
    static_assert(count(next(vector(10))) == 0);
 
+   constexpr auto repeated_tail = next(repeat(3, 7));
+   constexpr auto repeated_tail_values = into(Vector<int, 2>{}, repeated_tail);
+   static_assert(count(repeated_tail) == 2);
+   static_assert(repeated_tail_values(0) == 7 && repeated_tail_values(1) == 7);
+   constexpr auto unbounded_tail = next(repeat(7));
+   static_assert(!fits_into(Vector<int, 2>{}, unbounded_tail));
+   static_assert(count(unbounded_tail) == count(repeat(7)));
+   constexpr auto unbounded_tail_values = into(Vector<int, 2>{}, unbounded_tail);
+   static_assert(unbounded_tail_values(0) == 7 && unbounded_tail_values(1) == 7);
+
+   constexpr auto range_tail = next(Range{1, 8, 2});
+   constexpr auto range_tail_values = into(Vector<int, 3>{}, range_tail);
+   static_assert(count(range_tail) == 3);
+   static_assert(range_tail_values(0) == 3 && range_tail_values(1) == 5 &&
+                 range_tail_values(2) == 7);
+   constexpr auto unbounded_range_tail = next(Range{4, 9, 0});
+   static_assert(!fits_into(Vector<int, 2>{}, unbounded_range_tail));
+   static_assert(count(unbounded_range_tail) == count(Range{4, 9, 0}));
+
    // Runtime demonstration.
    const auto runtime_values = vector<int, 4>(40, 50);
    const auto runtime_tail = next(runtime_values);
@@ -109,6 +175,16 @@ struct NextResult<String<N>> {
    const auto runtime_set_tail = next(runtime_set);
    const auto runtime_text = string<4>("DE");
    const auto runtime_text_tail = next(runtime_text);
+   const auto runtime_repeat_tail = next(repeat(3, 7));
+   const auto runtime_repeat_tail_values =
+       into(Vector<int, 2>{}, runtime_repeat_tail);
+   const auto runtime_unbounded_repeat_tail = next(repeat(7));
+   const auto runtime_unbounded_repeat_tail_values =
+       into(Vector<int, 2>{}, runtime_unbounded_repeat_tail);
+   const auto runtime_range_tail = next(Range{5, -6, -2});
+   const auto runtime_range_tail_values =
+       into(Vector<int, 2>{}, runtime_range_tail);
+   const auto runtime_unbounded_range_tail = next(Range{4, 9, 0});
 
    return (count(runtime_tail) == 1 && runtime_tail(0) == 50 &&
            count(runtime_values) == 2 && runtime_values(0) == 40 &&
@@ -122,7 +198,18 @@ struct NextResult<String<N>> {
            count(runtime_set) == 2 && contains(runtime_set, 80) &&
            contains(runtime_set, 90) && runtime_text_tail(0) == 'E' &&
            count(runtime_text) == 2 && runtime_text(0) == 'D' &&
-           runtime_text(1) == 'E')
+           runtime_text(1) == 'E' && count(runtime_repeat_tail) == 2 &&
+           runtime_repeat_tail_values(0) == 7 &&
+           runtime_repeat_tail_values(1) == 7 &&
+           fits_into(Vector<int, 2>{}, runtime_repeat_tail) &&
+           count(runtime_unbounded_repeat_tail) == count(repeat(7)) &&
+           !fits_into(Vector<int, 2>{}, runtime_unbounded_repeat_tail) &&
+           runtime_unbounded_repeat_tail_values(0) == 7 &&
+           runtime_unbounded_repeat_tail_values(1) == 7 &&
+           count(runtime_range_tail) == 5 && runtime_range_tail_values(0) == 3 &&
+           runtime_range_tail_values(1) == 1 &&
+           count(runtime_unbounded_range_tail) == count(Range{4, 9, 0}) &&
+           !fits_into(Vector<int, 2>{}, runtime_unbounded_range_tail))
               ? 0
               : 1;
  }
@@ -143,11 +230,20 @@ template <concepts_detail::NextSequenceableCollection C>
     return result;
 }
 
+template <concepts_detail::NextSequenceableProducer P>
+[[nodiscard]] constexpr auto next(const P& producer) noexcept -> P {
+    if constexpr (concepts::CljonicRange<P>) {
+        return concepts_detail::RangeNextAccess::tail(producer);
+    } else {
+        return concepts_detail::RepeatNextAccess::tail(producer);
+    }
+}
+
 template <typename C>
-    requires(!concepts_detail::NextSequenceableCollection<C>)
+    requires(!concepts_detail::NextSequenceableCollection<C> && !concepts_detail::NextSequenceableProducer<C>)
 constexpr auto next([[maybe_unused]] const C& value) noexcept -> void {
     static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::next: expected a Vector, Map, Set, Queue, or String value.");
+                  "cljonic::next: expected a Vector, Map, Set, Queue, String, Range, or Repeat value.");
 }
 
 } // namespace cljonic

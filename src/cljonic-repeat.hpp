@@ -11,6 +11,8 @@ namespace cljonic {
 
 namespace concepts_detail {
 
+struct RepeatNextAccess;
+
 /** Internal tag (REQ-DIAG-012): selects the `Repeat` diagnostic specialization
  *  during an out-of-domain class template argument deduction. */
 struct RepeatElementDomainViolation {};
@@ -90,6 +92,8 @@ concept RepeatClassArgument =
  */
 template <concepts_detail::RepeatClassArgument T>
 class Repeat {
+    friend struct concepts_detail::RepeatNextAccess;
+
   public:
     using value_type = T;
 

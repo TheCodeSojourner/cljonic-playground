@@ -11,6 +11,8 @@ namespace cljonic {
 
 namespace concepts_detail {
 
+struct RangeNextAccess;
+
 /** Internal tag (REQ-DIAG-012): selects the `Range` diagnostic specialization
  *  during an out-of-domain class template argument deduction. It is never a
  *  supported element type and is never produced by an admitted call. */
@@ -91,6 +93,8 @@ concept RangeClassArgument =
  */
 template <concepts_detail::RangeClassArgument T>
 class Range {
+    friend struct concepts_detail::RangeNextAccess;
+
   public:
     using value_type = T;
 
