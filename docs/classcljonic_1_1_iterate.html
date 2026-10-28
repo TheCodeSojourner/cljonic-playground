@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classcljonic_1_1_iterate-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">cljonic::Iterate&lt; T, Step &gt; Class Template Reference</div></div>
 </div><!--header-->
@@ -130,12 +131,17 @@ requires (!concepts::SafeImplicitConversion&lt;T, Initial&gt; || !std::same_as&l
 <tr class="memitem:a306713adb4e2694981f7db570851af0b" id="r_a306713adb4e2694981f7db570851af0b"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a306713adb4e2694981f7db570851af0b">is_finite</a> () const noexcept -&gt; bool</td></tr>
 <tr class="memitem:ad5e353eba7bc8a743ed3dda70ce56dbc" id="r_ad5e353eba7bc8a743ed3dda70ce56dbc"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ad5e353eba7bc8a743ed3dda70ce56dbc">begin</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_iterate_1_1const__iterator.html">const_iterator</a></td></tr>
 <tr class="memitem:aac5b9dabea70770b1ca58807030d5de1" id="r_aac5b9dabea70770b1ca58807030d5de1"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aac5b9dabea70770b1ca58807030d5de1">end</a> () const noexcept -&gt; <a class="el" href="classcljonic_1_1_iterate_1_1const__iterator.html">const_iterator</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:acd656ff40e7b214bf2123262a4ce7f35" id="r_acd656ff40e7b214bf2123262a4ce7f35"><td class="memItemLeft">struct&#160;</td><td class="memItemRight"><a class="el" href="#acd656ff40e7b214bf2123262a4ce7f35">concepts_detail::IterateNextAccess</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename Step&gt;<br />
 requires concepts_detail::IterateClassArgument&lt;T, Step&gt;<br />
 class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"></a> An <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a> producer is unbounded and created with <span class="tt">iterate(step, initial)</span>. It stores the initial value and a copy of the step callable, emits the initial value first, and repeatedly applies the step to the previously emitted value. For an initial value x and step function f, the observed sequence is <span class="tt">x, (f x), (f (f x)), ...</span>.</p>
 <p>The initial and produced values may themselves be cljonic collections or producers, including nested cljonic composites. The step may be a lambda, a named function, or a function object.</p>
+<p>Calling <a class="el" href="namespacecljonic.html#Next" title="Next">next</a> invokes the step once and uses its result as the returned <a class="el" href="classcljonic_1_1_iterate.html">Iterate</a>'s initial value. The observation cap is preserved; a zero observation cap does not invoke the step.</p>
 <p>Observation is bounded by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b> and supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
@@ -177,9 +183,9 @@ class cljonic::Iterate&lt; T, Step &gt;</div><p><a class="anchor" id="Iterate"><
 <div class="line">  <span class="keywordflow">return</span> constexpr_sum == 16 &amp;&amp; runtime_sum == 30 ? 0 : 1;</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
-<div class="ttc" id="anamespacecljonic_html_a63314a7947b7251553be23329779260a"><div class="ttname"><a href="namespacecljonic.html#a63314a7947b7251553be23329779260a">cljonic::iterate</a></div><div class="ttdeci">constexpr auto iterate(Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; Iterate&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-iterate_8hpp_source.html#l00193">cljonic-iterate.hpp:193</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a63314a7947b7251553be23329779260a"><div class="ttname"><a href="namespacecljonic.html#a63314a7947b7251553be23329779260a">cljonic::iterate</a></div><div class="ttdeci">constexpr auto iterate(Step &amp;&amp;step, T &amp;&amp;initial) noexcept -&gt; Iterate&lt; std::remove_cvref_t&lt; T &gt;, std::decay_t&lt; Step &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-iterate_8hpp_source.html#l00199">cljonic-iterate.hpp:199</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00086">86</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00090">90</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="abf2d980482bbd50d75a8ec3b6e0bd82a" name="abf2d980482bbd50d75a8ec3b6e0bd82a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abf2d980482bbd50d75a8ec3b6e0bd82a">&#9670;&#160;</a></span>value_type</h2>
@@ -195,7 +201,7 @@ template&lt;typename T, typename Step&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00088">88</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00092">92</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -225,7 +231,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00134">134</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00138">138</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -258,7 +264,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00139">139</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00143">143</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -322,7 +328,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00154">154</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -351,7 +357,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00146">146</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00150">150</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -380,7 +386,7 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00158">158</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00162">162</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>
@@ -409,7 +415,34 @@ template&lt;typename T, typename Step&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00150">150</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00154">154</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
+
+</div>
+</div>
+<a name="doc-related-members" id="doc-related-members"></a><h2 id="header-doc-related-members" class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="acd656ff40e7b214bf2123262a4ce7f35" name="acd656ff40e7b214bf2123262a4ce7f35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd656ff40e7b214bf2123262a4ce7f35">&#9670;&#160;</a></span>concepts_detail::IterateNextAccess</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename Step&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend struct <a class="el" href="structcljonic_1_1concepts__detail_1_1_iterate_next_access.html">concepts_detail::IterateNextAccess</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-iterate_8hpp_source.html#l00167">167</a> of file <a class="el" href="cljonic-iterate_8hpp_source.html">cljonic-iterate.hpp</a>.</p>
 
 </div>
 </div>

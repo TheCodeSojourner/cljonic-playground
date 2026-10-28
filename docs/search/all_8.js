@@ -26,7 +26,8 @@ var searchData=
   ['iterate_3c_20concepts_5fdetail_3a_3aiteratedomainviolation_2c_20concepts_5fdetail_3a_3aiteratedomainviolation_20_3e_23',['Iterate&lt; concepts_detail::IterateDomainViolation, concepts_detail::IterateDomainViolation &gt;',['../classcljonic_1_1_iterate_3_01concepts__detail_1_1_iterate_domain_violation_00_01concepts__detail63ade7694776a8a852bbb4d19bce773a.html',1,'cljonic']]],
   ['iterateclassargument_24',['IterateClassArgument',['../conceptcljonic_1_1concepts__detail_1_1_iterate_class_argument.html',1,'cljonic::concepts_detail']]],
   ['iteratedomainviolation_25',['IterateDomainViolation',['../structcljonic_1_1concepts__detail_1_1_iterate_domain_violation.html',1,'cljonic::concepts_detail']]],
-  ['iteratestep_26',['IterateStep',['../conceptcljonic_1_1concepts_1_1_iterate_step.html',1,'cljonic::concepts']]],
-  ['iterator_5fcategory_27',['iterator_category',['../classcljonic_1_1_queue_1_1const__iterator.html#ad38ae7388be751510b105cb6619c5b0f',1,'cljonic::Queue::const_iterator']]],
-  ['iterator_5fconcept_28',['iterator_concept',['../classcljonic_1_1_queue_1_1const__iterator.html#a481607d9ff3032f1352461fea07be6b5',1,'cljonic::Queue::const_iterator']]]
+  ['iteratenextaccess_26',['IterateNextAccess',['../structcljonic_1_1concepts__detail_1_1_iterate_next_access.html',1,'cljonic::concepts_detail']]],
+  ['iteratestep_27',['IterateStep',['../conceptcljonic_1_1concepts_1_1_iterate_step.html',1,'cljonic::concepts']]],
+  ['iterator_5fcategory_28',['iterator_category',['../classcljonic_1_1_queue_1_1const__iterator.html#ad38ae7388be751510b105cb6619c5b0f',1,'cljonic::Queue::const_iterator']]],
+  ['iterator_5fconcept_29',['iterator_concept',['../classcljonic_1_1_queue_1_1const__iterator.html#a481607d9ff3032f1352461fea07be6b5',1,'cljonic::Queue::const_iterator']]]
 ];

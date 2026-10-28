@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classcljonic_1_1_repeatedly_3_01concepts__detail_1_1_repeatedly_domain_violation_00_01concepts__c7bc0e0a9fd94f1027e4675a6ad3de02.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">cljonic::Repeatedly&lt; concepts_detail::RepeatedlyDomainViolation, concepts_detail::RepeatedlyDomainViolation &gt; Class Reference</div></div>
 </div><!--header-->
@@ -122,11 +123,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adc54c7e71fb418acb493844c67432d8e" id="r_adc54c7e71fb418acb493844c67432d8e"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_repeatedly.html#adc54c7e71fb418acb493844c67432d8e">is_finite</a> () const noexcept -&gt; bool</td></tr>
 <tr class="memitem:aae1e288514d8f105533e69f002e3da35" id="r_aae1e288514d8f105533e69f002e3da35"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_repeatedly.html#aae1e288514d8f105533e69f002e3da35">begin</a> () const noexcept -&gt; const_iterator</td></tr>
 <tr class="memitem:a585be822585878fc0494f9ca5218aa6b" id="r_a585be822585878fc0494f9ca5218aa6b"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_repeatedly.html#a585be822585878fc0494f9ca5218aa6b">end</a> () const noexcept -&gt; const_iterator</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a61c8013391d25f1b5e871d482ee28164" id="r_a61c8013391d25f1b5e871d482ee28164"><td class="memItemLeft">struct&#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_repeatedly.html#a61c8013391d25f1b5e871d482ee28164">concepts_detail::RepeatedlyNextAccess</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Diagnostic specialization (REQ-DIAG-012): selected by the redirecting deduction guides below. A <span class="tt"><a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a></span>'s element type is produced by its step, so it is never deducible from a constructor argument; every deduced <span class="tt"><a class="el" href="classcljonic_1_1_repeatedly.html">Repeatedly</a></span> reaches this specialization instead of a failed-deduction candidate list. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00241">241</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00249">249</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="afa9d2a3219848879a20924de7440a825" name="afa9d2a3219848879a20924de7440a825"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afa9d2a3219848879a20924de7440a825">&#9670;&#160;</a></span>value_type</h2>
@@ -140,7 +145,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00119">119</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00125">125</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -170,7 +175,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00244">244</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00252">252</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -198,7 +203,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00220">220</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00226">226</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -225,7 +230,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00212">212</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00218">218</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -252,7 +257,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00225">225</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00231">231</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
@@ -279,7 +284,32 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00216">216</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00222">222</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
+
+</div>
+</div>
+<a name="doc-related-members" id="doc-related-members"></a><h2 id="header-doc-related-members" class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a61c8013391d25f1b5e871d482ee28164" name="a61c8013391d25f1b5e871d482ee28164"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61c8013391d25f1b5e871d482ee28164">&#9670;&#160;</a></span>concepts_detail::RepeatedlyNextAccess</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend struct <a class="el" href="structcljonic_1_1concepts__detail_1_1_repeatedly_next_access.html">concepts_detail::RepeatedlyNextAccess</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-repeatedly_8hpp_source.html#l00236">236</a> of file <a class="el" href="cljonic-repeatedly_8hpp_source.html">cljonic-repeatedly.hpp</a>.</p>
 
 </div>
 </div>
