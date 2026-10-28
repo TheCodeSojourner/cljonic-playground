@@ -831,18 +831,18 @@ producer building blocks used across all higher-order algorithms.
 - **Examples:** `not_empty(vector<int, 4>(1, 2))` returns an independent `Vector<int, 4>` containing `1, 2`; an empty input returns an empty `Vector<int, 4>`.
 
 ### Next
-- **Definition:** The free function that returns the logical tail of a `Vector`, `Map`, `Set`, `Queue`, or `String` as an owning `Vector` with the same static capacity as the source. It contains every element after the first in the source's logical traversal order; map elements remain value-semantic `MapEntry` values. Map and Set traversal order remains semantically unordered, and Queue results retain FIFO order. An empty input returns an empty Vector. The operation preserves its input and is `constexpr`, non-allocating, non-throwing, and part of the current public API.
+- **Definition:** The free function that returns the logical tail of a `Vector`, `Map`, `Set`, `Queue`, or `String` as an owning value of the same collection kind and element, key, and value types as the source, with a static capacity one smaller than the source (zero stays zero). It contains every element after the first in the source's logical traversal order; map elements remain value-semantic `MapEntry` values. Map and Set traversal order remains semantically unordered, and Queue results retain FIFO order. An empty or singleton input returns an empty value of the result type. The operation preserves its input and is `constexpr`, non-allocating, non-throwing, and part of the current public API.
 - **Deprecated Synonyms:** tail, sequence remainder
 - **Related:** First, Seq, Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, Vector, MapEntry, Queue
 - **Usage:** Requirements, architecture, specifications, tests, implementation, and documentation
-- **Examples:** `next(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 4>` containing `20, 30`; `next(Queue<int, 4>{10, 20})` returns a `Vector<int, 4>` containing `20`.
+- **Examples:** `next(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 3>` containing `20, 30`; `next(Queue<int, 4>{10, 20})` returns a `Queue<int, 3>` containing `20`; `next(Vector<int, 0>{})` returns an empty `Vector<int, 0>`.
 
 ### Rest
-- **Definition:** The free function that returns every logical element after the first from a `Vector`, `Map`, `Set`, `Queue`, or `String` as an owning `Vector` with the same static capacity as the source. It preserves the input and the `LogicalTraversalOrder` of retained elements; map elements remain value-semantic `MapEntry` values, map and set traversal order remains semantically unordered, and Queue results retain FIFO order. An empty input returns an empty Vector. The operation is `constexpr`, non-allocating, non-throwing, and part of the current public API. It follows `LogicalTraversalOrder`, rather than the removal behavior of `Pop` (which removes the last element from a Vector and the front element from a Queue).
+- **Definition:** The free function that returns every logical element after the first from a `Vector`, `Map`, `Set`, `Queue`, or `String` exactly as `Next` does: an owning value of the same collection kind as the source, with a static capacity one smaller (zero stays zero). It preserves the input and the `LogicalTraversalOrder` of retained elements; map elements remain value-semantic `MapEntry` values, map and set traversal order remains semantically unordered, and Queue results retain FIFO order. An empty input returns an empty value of the result type. The operation is `constexpr`, non-allocating, non-throwing, and part of the current public API. It follows `LogicalTraversalOrder`, rather than the removal behavior of `Pop` (which removes the last element from a Vector and the front element from a Queue).
 - **Deprecated Synonyms:** None
 - **Related:** Next, First, Sequence, SequenceableCollection, Traversal, LogicalTraversalOrder, Vector, MapEntry, Queue, Pop
 - **Usage:** Requirements, architecture, specification, tests, implementation, and documentation
-- **Examples:** `rest(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 4>` containing `20, 30`; `rest(Queue<int, 4>{10, 20})` returns a `Vector<int, 4>` containing `20`.
+- **Examples:** `rest(vector<int, 4>(10, 20, 30))` returns a `Vector<int, 3>` containing `20, 30`; `rest(Queue<int, 4>{10, 20})` returns a `Queue<int, 3>` containing `20`.
 
 
 ### Peek

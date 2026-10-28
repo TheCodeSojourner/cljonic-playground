@@ -379,10 +379,10 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-002B(x).
-  ∀ `rest`: return an owning `Vector` with the source collection's element type and static capacity ∧ preserve the source collection ∧ preserve the relative logical order of all retained elements
+  ∀ `rest`: return exactly the result of `next` for the same collection, namely the same collection kind with static capacity `C::capacity() == 0 ? 0 : C::capacity() - 1` ∧ preserve the source collection ∧ preserve the relative logical order of all retained elements
   ∧ ∀ maps: retained elements are value-semantic `MapEntry` values ∧ ∀ (sets ∧ maps): implementation traversal order MAY be repeatable but remains semantically unordered ∧ ∀ queues: retained elements remain in FIFO order
   ∧ `constexpr` ∧ `noexcept` ∧ non-allocating ∧ non-mutating ∧ ¬∃ RTTI
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-003(x).
   ∀ supported collection that can be traversed as a sequence: exposes `rest` directly as a generic free function
@@ -410,8 +410,8 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-009(x).
-  ∀ empty collection: `rest(collection)` returns an empty owning `Vector` with the collection's element type and capacity
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ empty collection: `rest(collection)` returns an empty value of the `next` result type for that collection
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-012(x).
   ∀ `rest` of a map: each retained element is an independent value-semantic `MapEntry` containing exactly one key and its associated value
@@ -467,15 +467,15 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-FN-002A2(x).
   ∀ `next(collection)`: require(`Vector` ∨ `Map` ∨ `Set` ∨ `Queue` ∨ `String`)
-  ∧ ∀ supported_collection `C`: return `Vector<C::value_type, C::capacity()>` containing every logical element after the first in `C`'s documented traversal order
-  ∧ ∀ result: capacity equals the source collection's declared capacity ∧ independently owning ∧ value-semantic
-  ∧ ∀ empty_collection: return an empty result with the same result type and capacity
+  ∧ ∀ supported_collection `C`: return the same collection kind as `C` with the same element, key, and value types and static capacity `C::capacity() == 0 ? 0 : C::capacity() - 1`, containing every logical element after the first in `C`'s documented traversal order
+  ∧ ∀ result: independently owning ∧ value-semantic ∧ preserves the relative logical order of retained elements
+  ∧ ∀ (empty_collection ∨ singleton_collection): return an empty value of the result type
   ∧ ∀ `Map` input: retain map elements as value-semantic `MapEntry` values
   ∧ ∀ (`Map` ∧ `Set`): do not make the unspecified traversal order semantically significant
   ∧ ∀ `Queue`: preserve FIFO order among retained elements
-  ∧ ∀ `next`: preserve the input ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating
+  ∧ ∀ `next`: preserve the input ∧ `constexpr` ∧ `noexcept` ∧ non-mutating ∧ non-allocating ∧ ¬∃ RTTI
   ∧ ∀ unsupported_input: fails compilation with one targeted diagnostic naming `next`
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-21}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 ### Sequence Tail Preflight (Binding)
 
