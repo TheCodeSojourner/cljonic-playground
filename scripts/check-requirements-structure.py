@@ -8,7 +8,7 @@ import re
 import sys
 from pathlib import Path
 
-CLAUSE_RE = re.compile(r"^λ\s+(REQ-[A-Z]+-\d+[A-Z]?)\(x\)\.$", re.MULTILINE)
+CLAUSE_RE = re.compile(r"^λ\s+(REQ-[A-Z]+-\d+[A-Z0-9]*)\(x\)\.$", re.MULTILINE)
 FOOTER_RE = re.compile(r"^\s*\{([^\n]+)\}\s*$", re.MULTILINE)
 RATIONALE_RE = re.compile(r"^\s*rationale:", re.MULTILINE)
 VALID_SOURCES = {"stakeholder_decided", "AI_researched_fact"}
@@ -82,6 +82,18 @@ def run_self_test() -> list[str]:
     problems = []
     if failures or locations != [("REQ-TEST-001", "sample.md")]:
         problems.append("valid sample requirement was not parsed")
+
+    designators = ["REQ-COLL-020AA", *(f"REQ-FN-002A{number}" for number in range(1, 8))]
+    suffixed_samples = "".join(sample.replace("REQ-TEST-001", designator) for designator in designators)
+    locations, failures = validate_module(suffixed_samples, "sample.md", {"COLL", "FN"})
+    if failures or locations != [(designator, "sample.md") for designator in designators]:
+        problems.append("approved opaque designator suffixes were not parsed independently")
+
+    for designator in designators:
+        missing_suffixed_footer = f"λ {designator}(x).\n  ∀ sample: true\n"
+        failures = validate_module(missing_suffixed_footer + sample, "sample.md", {"COLL", "FN", "TEST"})[1]
+        if not any(f"{designator}: missing attribution footer" in item for item in failures):
+            problems.append(f"{designator}: missing footer was not rejected")
 
     if not any("domain prefix" in item for item in validate_module(sample, "sample.md", {"OTHER"})[1]):
         problems.append("undeclared domain was not rejected")

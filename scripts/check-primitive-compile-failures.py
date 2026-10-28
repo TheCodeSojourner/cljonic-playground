@@ -299,19 +299,18 @@ PRIMITIVES = {
         "diagnostic_cases": {
             "unsupported-scalar": (
                 "(void)cljonic::next(42);",
-                "expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value",
-            ),
-            "unsupported-cycle-producer": (
-                "(void)cljonic::next(cljonic::cycle(cljonic::iterate([](int value) noexcept { return value + 1; }, 0)));",
-                "expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or supported Cycle "
+                "value",
             ),
             "unsupported-map-entry": (
                 "(void)cljonic::next(cljonic::MapEntry<int, int>{1, 100});",
-                "expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or supported Cycle "
+                "value",
             ),
             "unsupported-external-range": (
                 "int values[]{1, 2}; (void)cljonic::next(values);",
-                "expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Iterate, Repeatedly, or supported Cycle "
+                "value",
             ),
         },
         "pass_cases": {
@@ -322,9 +321,15 @@ PRIMITIVES = {
             "string": '(void)cljonic::next(cljonic::String<4>{"ab"});',
             "finite-repeat": "(void)cljonic::next(cljonic::Repeat{3U, 7});",
             "unbounded-repeat": "(void)cljonic::next(cljonic::Repeat{7});",
+            "iterate": "(void)cljonic::next(cljonic::iterate([](int value) noexcept { return value + 1; }, 0));",
+            "finite-repeatedly": "(void)cljonic::next(cljonic::repeatedly(3U, []() noexcept { return 7; }));",
+            "unbounded-repeatedly": "(void)cljonic::next(cljonic::repeatedly([]() noexcept { return 7; }));",
             "finite-range": "(void)cljonic::next(cljonic::Range<int>{0, 5});",
             "unbounded-range": "(void)cljonic::next(cljonic::Range<int>{0, 5, 0});",
             "finite-cycle": "(void)cljonic::next(cljonic::cycle(cljonic::Vector<int, 3>{1, 2, 3}));",
+            "iterate-cycle": (
+                "(void)cljonic::next(cljonic::cycle(cljonic::iterate([](int value) noexcept { return value + 1; }, 0)));"
+            ),
             "unbounded-cycle": (
                 "(void)cljonic::next(cljonic::cycle(cljonic::Range<int>{0, 0, 0}));"
             ),

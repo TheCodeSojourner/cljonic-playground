@@ -65,7 +65,8 @@ TEST_CASE("Cycle repeats a bounded source value sequence and materializes bounde
     TRACE_ID("invariant.Cycle.EmptyFiniteNextPreservesEmptyObservation");
     TRACE_ID("invariant.Cycle.UnboundedNextAdvancesOwnedSourceAndResetsStartingOffset");
     TRACE_ID("invariant.Cycle.NextSourceMustSupportNextOrBeCollection");
-    TRACE_ID("invariant.Cycle.NextDoesNotInvokeCallbacksOrMaterialize");
+    TRACE_ID("invariant.Cycle.NextDoesNotMaterializeResults");
+    TRACE_ID("invariant.Cycle.NextCallbackInvocationFollowsOwnedSourceNext");
 
     constexpr auto unbounded_cycle = cycle(Vector<int, 3>{1, 2, 3});
     STATIC_REQUIRE(unbounded_cycle.count() == cljonic::CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);

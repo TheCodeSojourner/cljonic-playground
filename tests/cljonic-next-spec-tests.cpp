@@ -235,7 +235,7 @@ TEST_CASE("Next returns the logical tail of Repeat producers", "[next]") {
     TRACE_ID("invariant.Next.UnboundedProducerTailRemainsUnbounded");
     TRACE_ID("invariant.Next.RepeatedNextNeverExhaustsUnboundedProducer");
     TRACE_ID("invariant.Next.ProducerTailResultIsSelfContainedAndOwning");
-    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeOrInvokeCallbacks");
+    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeProducerResults");
     TRACE_ID("invariant.Next.ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto");
 
     TRACE_ID("entity-fields.Repeat");
@@ -315,7 +315,7 @@ TEST_CASE("Next returns the logical tail of Range producers", "[next]") {
     TRACE_ID("invariant.Next.RepeatedNextNeverExhaustsUnboundedProducer");
     TRACE_ID("invariant.Next.ReturnsSameProducerKindAsSource");
     TRACE_ID("invariant.Next.ProducerTailResultIsSelfContainedAndOwning");
-    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeOrInvokeCallbacks");
+    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeProducerResults");
     TRACE_ID("invariant.Next.ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto");
     TRACE_ID("invariant.Next.RangeTailPreservesEndpointAndStep");
     TRACE_ID("invariant.Next.ZeroStepRangeTailRemainsUnboundedWithSameObservationCap");
@@ -377,6 +377,32 @@ TEST_CASE("Next returns the logical tail of Range producers", "[next]") {
     constexpr auto zero_step_values = into(Vector<int, 2>{}, zero_step_tail);
     STATIC_REQUIRE(zero_step_values(0) == 4);
     STATIC_REQUIRE(zero_step_values(1) == 4);
+
+    volatile int start_raw = 5;
+    const int start = start_raw;
+    const auto runtime_ascending = Range{start, start + 7, 2};
+    const auto runtime_ascending_tail = next(runtime_ascending);
+    REQUIRE(runtime_ascending_tail == Range{start + 2, start + 7, 2});
+    REQUIRE(count(runtime_ascending_tail) == 3U);
+    REQUIRE(runtime_ascending == Range{start, start + 7, 2});
+
+    const auto runtime_descending_tail = next(Range{start, start - 7, -2});
+    REQUIRE(runtime_descending_tail == Range{start - 2, start - 7, -2});
+    REQUIRE(count(runtime_descending_tail) == 3U);
+
+    const auto runtime_empty = Range{start, start - 1, 1};
+    REQUIRE(next(runtime_empty) == runtime_empty);
+    REQUIRE(next(Range{start, start, -1}) == Range{start, start, -1});
+
+    volatile int maximum_raw = std::numeric_limits<int>::max();
+    const int maximum = maximum_raw;
+    const auto runtime_singleton_tail = next(Range{maximum - 1, maximum, 2});
+    REQUIRE(runtime_singleton_tail == Range{maximum, maximum, 2});
+    REQUIRE(is_empty(runtime_singleton_tail));
+
+    const auto runtime_zero_step = Range{start, start + 5, 0};
+    REQUIRE(next(runtime_zero_step) == runtime_zero_step);
+    REQUIRE(count(next(runtime_zero_step)) == count(runtime_zero_step));
 }
 
 TEST_CASE("Next returns the logical tail of Cycle producers", "[next]") {
@@ -396,7 +422,7 @@ TEST_CASE("Next returns the logical tail of Cycle producers", "[next]") {
     TRACE_ID("invariant.Next.UnboundedProducerTailRemainsUnbounded");
     TRACE_ID("invariant.Next.RepeatedNextNeverExhaustsUnboundedProducer");
     TRACE_ID("invariant.Next.ProducerTailResultIsSelfContainedAndOwning");
-    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeOrInvokeCallbacks");
+    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeProducerResults");
     TRACE_ID("invariant.Next.ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto");
     TRACE_ID("invariant.Next.FiniteCycleTailAdvancesStartingOffsetModuloObservedSourceCount");
     TRACE_ID("invariant.Next.EmptyFiniteCycleTailPreservesEmptyObservation");
@@ -408,7 +434,8 @@ TEST_CASE("Next returns the logical tail of Cycle producers", "[next]") {
     TRACE_ID("invariant.Cycle.EmptyFiniteNextPreservesEmptyObservation");
     TRACE_ID("invariant.Cycle.UnboundedNextAdvancesOwnedSourceAndResetsStartingOffset");
     TRACE_ID("invariant.Cycle.NextSourceMustSupportNextOrBeCollection");
-    TRACE_ID("invariant.Cycle.NextDoesNotInvokeCallbacksOrMaterialize");
+    TRACE_ID("invariant.Cycle.NextDoesNotMaterializeResults");
+    TRACE_ID("invariant.Cycle.NextCallbackInvocationFollowsOwnedSourceNext");
     TRACE_ID("invariant.Next.NoHeapAllocation");
     TRACE_ID("invariant.Next.NoRtti");
     TRACE_ID("invariant.Next.NoExceptions");
@@ -464,6 +491,122 @@ TEST_CASE("Next returns the logical tail of Cycle producers", "[next]") {
     STATIC_REQUIRE(repeated_unbounded_values(0) == 6);
     STATIC_REQUIRE(repeated_unbounded_values(1) == 4);
 
-    constexpr auto unsupported_cycle = cycle(iterate([](int value) noexcept { return value + 1; }, 0));
-    STATIC_REQUIRE_FALSE(HasAdmittedNext<std::remove_cvref_t<decltype(unsupported_cycle)>>);
+    constexpr auto iterate_cycle = cycle(iterate([](int value) noexcept { return value + 1; }, 0));
+    STATIC_REQUIRE(HasAdmittedNext<std::remove_cvref_t<decltype(iterate_cycle)>>);
+    constexpr auto iterate_cycle_tail = next(iterate_cycle);
+    constexpr auto iterate_cycle_values = into(Vector<int, 3>{}, iterate_cycle_tail);
+    STATIC_REQUIRE(iterate_cycle_values(0) == 1);
+    STATIC_REQUIRE(iterate_cycle_values(1) == 2);
+    STATIC_REQUIRE(iterate_cycle_values(2) == 3);
+
+    volatile int first_raw = 10;
+    const int first = first_raw;
+    const auto runtime_cycle = cycle(Vector<int, 3>{first, first + 1, first + 2});
+    const auto runtime_tail = next(runtime_cycle);
+    const auto runtime_values = into(Vector<int, 4>{}, runtime_tail);
+    REQUIRE(runtime_values(0) == first + 1);
+    REQUIRE(runtime_values(1) == first + 2);
+    REQUIRE(runtime_values(2) == first);
+    REQUIRE(runtime_values(3) == first + 1);
+    REQUIRE(next(next(runtime_tail)) == runtime_cycle);
+    REQUIRE(into(Vector<int, 1>{}, runtime_cycle)(0) == first);
+
+    const auto runtime_range_cycle = cycle(Range{first, first + 3});
+    const auto runtime_range_tail = next(runtime_range_cycle);
+    const auto runtime_range_values = into(Vector<int, 4>{}, runtime_range_tail);
+    REQUIRE(runtime_range_values(0) == first + 1);
+    REQUIRE(runtime_range_values(1) == first + 2);
+    REQUIRE(runtime_range_values(2) == first);
+    REQUIRE(runtime_range_values(3) == first + 1);
+
+    const auto runtime_empty_cycle = cycle(Range{first, first});
+    const auto runtime_empty_tail = next(runtime_empty_cycle);
+    REQUIRE(runtime_empty_tail == runtime_empty_cycle);
+    REQUIRE(is_empty(into(Vector<int, 2>{}, runtime_empty_tail)));
+}
+
+TEST_CASE("Next eagerly advances callback-backed producers once", "[next]") {
+    using cljonic::count;
+    using cljonic::cycle;
+    using cljonic::into;
+    using cljonic::iterate;
+    using cljonic::next;
+    using cljonic::repeatedly;
+    using cljonic::Vector;
+
+    TRACE_ID("entity-fields.Next");
+    TRACE_ID("invariant.Next.ProducerTailDomainIncludesIterate");
+    TRACE_ID("invariant.Next.ProducerTailDomainIncludesRepeatedly");
+    TRACE_ID("invariant.Next.CallbackProducerTailInvokesOneCallbackWhenNonempty");
+    TRACE_ID("invariant.Next.IterateTailUsesAdvancedValueAsInitial");
+    TRACE_ID("invariant.Next.RepeatedlyTailDiscardsOneValueAndPreservesAdvancedStepState");
+    TRACE_ID("invariant.Next.FiniteRepeatedlyTailDecrementsCount");
+    TRACE_ID("invariant.Next.UnboundedCallbackProducerTailPreservesObservationCap");
+    TRACE_ID("invariant.Next.EmptyCallbackProducerTailDoesNotInvokeCallback");
+    TRACE_ID("invariant.Next.ProducerTailDoesNotMaterializeProducerResults");
+    TRACE_ID("invariant.Next.ProducerTailCoherentWithCountIsFiniteIsEmptyIntoAndFitsInto");
+
+    TRACE_ID("entity-fields.Iterate");
+    TRACE_ID("invariant.Iterate.NextInvokesStepOnceWhenObservationCapIsNonzero");
+    TRACE_ID("invariant.Iterate.NextTailUsesStepResultAsNewInitialValue");
+    TRACE_ID("invariant.Iterate.NextPreservesObservationCap");
+    TRACE_ID("invariant.Iterate.NextZeroObservationCapDoesNotInvokeStep");
+
+    constexpr auto iteration = iterate([](int value) noexcept { return value + 1; }, 10);
+    constexpr auto iteration_tail = next(iteration);
+    STATIC_REQUIRE(count(iteration_tail) == count(iteration));
+    constexpr auto iteration_values = into(Vector<int, 3>{}, iteration_tail);
+    STATIC_REQUIRE(iteration_values(0) == 11);
+    STATIC_REQUIRE(iteration_values(1) == 12);
+    STATIC_REQUIRE(iteration_values(2) == 13);
+    constexpr auto original_iteration_values = into(Vector<int, 3>{}, iteration);
+    STATIC_REQUIRE(original_iteration_values(0) == 10);
+    STATIC_REQUIRE(original_iteration_values(1) == 11);
+
+    TRACE_ID("entity-fields.Repeatedly");
+    TRACE_ID("invariant.Repeatedly.NextInvokesStepOnceWhenCountIsPositive");
+    TRACE_ID("invariant.Repeatedly.NextDiscardsOneGeneratedElement");
+    TRACE_ID("invariant.Repeatedly.NextTailStoresAdvancedStepCopy");
+    TRACE_ID("invariant.Repeatedly.NextFiniteTailDecrementsCount");
+    TRACE_ID("invariant.Repeatedly.NextUnboundedTailPreservesObservationCap");
+    TRACE_ID("invariant.Repeatedly.NextZeroCountDoesNotInvokeStep");
+    TRACE_ID("invariant.Repeatedly.NextAdvancesValueHeldStateOnlyInTail");
+    TRACE_ID("invariant.Repeatedly.NextPreservesSharedReferenceOrStaticEffects");
+
+    constexpr auto repeated = repeatedly(3, [value = 0]() mutable noexcept { return ++value; });
+    constexpr auto repeated_tail = next(repeated);
+    STATIC_REQUIRE(count(repeated_tail) == 2U);
+    constexpr auto repeated_tail_values = into(Vector<int, 3>{}, repeated_tail);
+    STATIC_REQUIRE(repeated_tail_values(0) == 2);
+    STATIC_REQUIRE(repeated_tail_values(1) == 3);
+    constexpr auto original_repeated_values = into(Vector<int, 3>{}, repeated);
+    STATIC_REQUIRE(original_repeated_values(0) == 1);
+    STATIC_REQUIRE(original_repeated_values(1) == 2);
+    STATIC_REQUIRE(original_repeated_values(2) == 3);
+
+    auto callback_calls = 0;
+    const auto effectful = repeatedly(3, [&callback_calls]() noexcept { return ++callback_calls; });
+    const auto effectful_tail = next(effectful);
+    REQUIRE(callback_calls == 1);
+    REQUIRE(count(effectful_tail) == 2U);
+
+    const auto empty_effectful = repeatedly(0, [&callback_calls]() noexcept { return ++callback_calls; });
+    const auto empty_effectful_tail = next(empty_effectful);
+    REQUIRE(callback_calls == 1);
+    REQUIRE(count(empty_effectful_tail) == 0U);
+
+    const auto unbounded_effectful = repeatedly([&callback_calls]() noexcept { return ++callback_calls; });
+    const auto unbounded_effectful_tail = next(unbounded_effectful);
+    REQUIRE(callback_calls == 2);
+    REQUIRE(count(unbounded_effectful_tail) == count(unbounded_effectful));
+    REQUIRE_FALSE(cljonic::fits_into(Vector<int, 2>{}, unbounded_effectful_tail));
+
+    TRACE_ID("entity-fields.Cycle");
+    TRACE_ID("invariant.Cycle.NextCallbackInvocationFollowsOwnedSourceNext");
+    auto cycle_callback_calls = 0;
+    const auto effectful_cycle =
+        cycle(repeatedly([&cycle_callback_calls]() noexcept { return ++cycle_callback_calls; }));
+    const auto effectful_cycle_tail = next(effectful_cycle);
+    REQUIRE(cycle_callback_calls == 1);
+    REQUIRE(count(effectful_cycle_tail) == count(effectful_cycle));
 }
