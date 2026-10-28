@@ -1,5 +1,41 @@
 ## Current Session State
 
+- last_session_id: dfed050a-8880-482f-b296-9a5bc60f9b3e
+- current_timestamp: 2026-10-28T07:58:47-06:00
+- session_complete: true
+
+Task:
+1. Continued the targeted `/cljonic-api-converge has_next` workflow and completed evidence reconciliation for the API.
+2. `has_next(collection)` is a public predicate for Vector, Map, Set, Queue, and String. It returns true exactly when the logical element count exceeds one, without constructing the `next` result; empty and singleton collections return false. Unsupported inputs receive a targeted compile-time diagnostic.
+3. The API is propagated through requirements, vocabulary, architecture, Allium specification, trace-linked tests, compile-fail cases, dedicated runtime no-heap probe, source header, umbrella/Core Cheatsheet, diagnostic registry, traceability snapshot, and generated `cljonic.hpp`.
+4. The finisher updated this state record. Product changes and the existing generated `docs/` outputs were left untouched; no `make git` or product commit was made.
+
+Questions:
+1. None.
+
+Decisions:
+1. `has_next` is a collection-tail preflight, not a cursor/iterator state check or a type-support predicate. It directly observes `count(collection) > 1`.
+2. The current owning-Vector behavior of `next` and `rest` remains unchanged; `has_next` makes tail non-emptiness explicit without changing `next`'s result type.
+3. Keep `seq` deferred and leave final `make git` and commits to the human.
+4. The Doxygen source example uses ordinary `const int` inputs; volatile-derived runtime inputs remain in the test/no-heap evidence where needed.
+
+Validation:
+1. Requirements structure passed (332 unique clauses); vocabulary structure passed (197 terms). `allium check specs` and `allium analyse specs` passed across 48 specs with no diagnostics or findings. The targeted `has-next` specification planned 14 obligations.
+2. Exact trace coverage passed (14/14); global `make traceability-spec-to-code` passed; `make test` passed (266/266 modular and single-header tests).
+3. `make primitive-compile-fail`, diagnostic coverage/message-label gates, and `make no-heap` passed, including execution of modular and single-header probes.
+4. `make docs-examples` passed (38 compiled; only deferred `seq` skipped). The extracted example at `build/docs-examples/cljonic-has-next-example-1.cpp` linked and ran successfully (exit 0).
+5. `make upsert-gate-fast` passed, including lint, complexity, diagnostics, traceability, and no-heap checks. Source Doxygen formatting was idempotent.
+6. Vocabulary audit found one unrelated warning: `Into` lists canonical `into` among its deprecated synonyms. It was left outside this API convergence scope.
+7. Existing generated docs HTML was not regenerated. Its current has_next rendering showed the plain-const example; final `make git` and any product commits remain human-owned.
+
+Open questions:
+1. None.
+
+Next:
+1. Await human review. Human owns final `make git` and any product commits.
+
+## Previous Session State
+
 - last_session_id: 12dee854-9b78-4c34-bdec-971763c328db
 - current_timestamp: 2026-10-27T15:46:40-06:00
 - session_complete: true
