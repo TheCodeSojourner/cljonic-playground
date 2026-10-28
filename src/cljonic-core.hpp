@@ -102,7 +102,7 @@
  * - emplace, \ref Empty "empty", \ref Equal "equal", every_pred
  * - ffirst, find, \ref First "first", \ref FitsInto "fits_into", fits_print, flatten, float, fnext, fnil, frequencies
  * - \ref Get "get", get_if, get_in, group_by
- * - has_some, \ref HashMapFactory "hash_map", \ref HashSetFactory "hash_set", holds
+ * - \ref HasNext "has_next", has_some, \ref HashMapFactory "hash_map", \ref HashSetFactory "hash_set", holds
  * - identity, inc, index, int, interleave, interpose, \ref Into "into", \ref IsEmpty "is_empty", is_even, is_every,
  *   is_negative, is_odd, is_positive, is_zero, \ref Iterate "iterate"
  * - juxt
@@ -181,6 +181,7 @@
 #include <cljonic-first.hpp>
 #include <cljonic-fits-into.hpp>
 #include <cljonic-get.hpp>
+#include <cljonic-has-next.hpp>
 #include <cljonic-into.hpp>
 #include <cljonic-is-empty.hpp>
 #include <cljonic-iterate.hpp>
