@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their current primitive member and free-function operations, and callable lookup forms. `first`, `next`, `rest`, and the `has_next` tail preflight are active traversal operations; sequence conversion remains approved future work. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
+This module defines the concrete, array-backed, bounded collection types (`Vector`, `Map`, `Set`, `Queue`, `String`), their current primitive member and free-function operations, and callable lookup forms. `first`, `next`, `rest`, and the `has_next` tail preflight are active traversal operations; `rest` delegates to `next` for every input admitted by `next`, including supported producers. Sequence conversion remains approved future work. Module 3 provides the stored collection building blocks used across all higher-order algorithms.
 
 ## Collection Family Requirements
 
@@ -283,7 +283,7 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 λ REQ-COLL-020S(x).
   ∀ context: the lifecycle classification is `requirements-backed` for `Indexed`, `Lookup`, `Associative`, and `Conjable`, and for `count`, `get`, `contains`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`, `first`, `next`, and `has_next` over their supported collection inputs
-  ∧ ∀ `rest`: lifecycle classification is `requirements-backed` over its supported collection inputs under `REQ-SEQ-001`–`009` and `REQ-SEQ-012`
+  ∧ ∀ `rest`: lifecycle classification is `requirements-backed` over every input admitted by `next` under `REQ-SEQ-001`–`009` and `REQ-SEQ-012`
   ∧ ∀ (`Seqable` ∧ `seq`): remain `deferred` until the sequence requirements are implemented for the applicable collection inputs
   {source: stakeholder_decided, decided_by: original_spec_author}
 
@@ -362,52 +362,55 @@ This module defines the concrete, array-backed, bounded collection types (`Vecto
 
 ## Active Rest Remainder Operation
 
-`first`, `next`, and `rest` are current collection APIs. The clauses in this section define the active `rest` contract. Sequence conversion (`seq`) remains deferred in the following section.
+`first`, `next`, and `rest` are current traversal APIs. The clauses in this section define the active `rest` contract. `rest` is an alias for `next` over the complete `next` input domain, including supported producers. Sequence conversion (`seq`) remains deferred in the following section.
 
 λ REQ-SEQ-001(x).
-  ∀ context: the library defines sequence as a traversal behavior over immutable values in the cljonic collection family, not as a separate owning collection type
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ context: the library defines sequence as a traversal behavior over immutable cljonic collection and supported producer values, not as a separate owning collection type
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-002(x).
   ∀ sequence: supports determining emptiness ∧ obtaining the remainder
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-002A(x).
-  ∀ `rest`: operate on the collection's documented logical traversal order
-  ∧ ∀ nonempty_sequence: `rest` produces an owning bounded result containing every logical element after the first ∧ ∀ empty_sequence: `rest` produces the documented empty owning result
+  ∀ `rest(value)` where `next(value)` is supported: operate on the same logical tail and generation order as `next(value)` and return its owning result
+  ∧ ∀ collection: `rest` follows the collection's documented logical traversal order
+  ∧ ∀ producer: `rest` follows the producer's documented generation order and observation policy
   ∧ ∀ `rest`: ¬∃ derivation of semantics from `pop()` because `pop()` MAY remove a different logical end for different collection kinds, including the last element of a vector and the first element of a queue
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-002B(x).
-  ∀ `rest`: return exactly the result of `next` for the same collection, namely the same collection kind with static capacity `C::capacity() == 0 ? 0 : C::capacity() - 1` ∧ preserve the source collection ∧ preserve the relative logical order of all retained elements
+  ∀ `rest(value)` where `next(value)` is supported: return exactly `next(value)`, including its result type, tail contents, producer observation policy, and callback timing and effects ∧ preserve the source value
+  ∧ ∀ supported collection: preserve the relative logical order of retained elements and return the same collection kind with static capacity `C::capacity() == 0 ? 0 : C::capacity() - 1`
   ∧ ∀ maps: retained elements are value-semantic `MapEntry` values ∧ ∀ (sets ∧ maps): implementation traversal order MAY be repeatable but remains semantically unordered ∧ ∀ queues: retained elements remain in FIFO order
+  ∧ ∀ supported producer: preserve its producer kind and all producer-tail behavior specified for `next` under `REQ-FN-002A4`–`002A7`
   ∧ `constexpr` ∧ `noexcept` ∧ non-allocating ∧ non-mutating ∧ ¬∃ RTTI
   {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-003(x).
-  ∀ supported collection that can be traversed as a sequence: exposes `rest` directly as a generic free function
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ input admitted by `next`: exposes `rest` directly as a generic free function
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-004(x).
-  ∀ supported collection: `rest(collection)` is available as a generic free function where the required traversal capability exists
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ input admitted by `next`: `rest(input)` is available as a generic free function and delegates to `next(input)`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-005(x).
-  ∀ `rest` traversal: ¬∃ mutation of the source collection
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ `rest` traversal: ¬∃ mutation of the source value
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-006(x).
   ∀ `rest` traversal: bounded ∧ ¬∃ dynamic allocation
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-SEQ-007(x).
-  ∀ `rest`: supports vector, map, set, queue, and string input from the cljonic collection family
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ `rest`: supports vector, map, set, queue, and string input from the cljonic collection family, and every producer input admitted by `next`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-008(x).
-  ∀ `rest`: ¬∃ requirement of support for arbitrary external arrays, ranges, iterables, or user-defined container types
-  ∧ ∀ supported_rest_input: belongs to the cljonic collection family
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∀ `rest`: ¬∃ requirement of support for arbitrary external C++ arrays, ranges, iterables, or user-defined container types unless `next` admits that input
+  ∧ ∀ supported_rest_input: is admitted by `next`
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-28}
 
 λ REQ-SEQ-009(x).
   ∀ empty collection: `rest(collection)` returns an empty value of the `next` result type for that collection

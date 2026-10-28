@@ -30,7 +30,7 @@ MUST ≡ ∀/¬ (required by constraint) | SHOULD ≡ ∧ preferred | MAY ≡ �
 
 3. **[requirements-module-3.md](requirements-module-3.md)** — *Core Collection Types & Primitive Free Functions*
    - **Purpose**: Implements concrete, array-backed, bounded collection types and their primitive member and free-function operations.
-   - **Scope**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String`, bounded array-backed storage, swap-and-remove mechanics, callable collection syntax (`v(idx)`, `m(key)`, `s(val)`), and current primitive free functions (`character_is_valid`, `count`, `get`, `is_empty`, `empty`, `first`, `next`, `has_next`, `rest`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`). Sequence conversion (`seq`) remains deferred future work; `rest` is active under `REQ-SEQ-001`–`009` and `REQ-SEQ-012` (`REQ-COLL-*`, `REQ-FN-001`–`008A`, `REQ-FN-002A4`–`002A7`, `REQ-FN-026`).
+   - **Scope**: `Vector`, `MapEntry`, `Map`, `Set`, `Queue`, `String`, bounded array-backed storage, swap-and-remove mechanics, callable collection syntax (`v(idx)`, `m(key)`, `s(val)`), and current primitive free functions (`character_is_valid`, `count`, `get`, `is_empty`, `empty`, `first`, `next`, `has_next`, `rest`, `conj`, `assoc`, `can_assoc`, `dissoc`, `disj`, `peek`, `pop`). Sequence conversion (`seq`) remains deferred future work; `rest` delegates to `next` for collections and supported producers under `REQ-SEQ-001`–`009` and `REQ-SEQ-012` (`REQ-COLL-*`, `REQ-FN-001`–`008A`, `REQ-FN-002A4`–`002A7`, `REQ-FN-026`).
 
 4. **[requirements-module-4.md](requirements-module-4.md)** — *Sequence Producers & Materialization Pipeline*
    - **Purpose**: Adds explicit materialization, non-collection generator values, and standard view interop.
