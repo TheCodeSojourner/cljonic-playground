@@ -862,13 +862,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ equivalent_to(nonempty(logical_tail(collection))) ∧ ¬construct(next_result(collection))
     ∧ preserve(input(collection) ∧ no_heap ∧ noexcept ∧ constexpr)
     ∧ unsupported_input(has_next) → reject_at_compile_time_with(targeted_diagnostic_naming(has_next ∧ supported_domains) ∧ REQ-DIAG-009)
-  | rest(collection) → require(SequenceableCollection(collection) ∧ ConstRangeTraversal(collection)
-    ∧ collection ∈ {Vector, Map, Set, Queue, String})
-    ∧ return(next(collection))
-    ∧ empty_or_singleton_input(collection) → return(empty_value_of_result_type(collection))
-    ∧ preserve(input(collection) ∧ logical_traversal_order(collection) ∧ no_heap ∧ noexcept ∧ constexpr)
-    ∧ map_entry_representation(Map) ∧ semantically_unordered(Map ∨ Set) ∧ preserve_FIFO_order(Queue)
+  | rest(value) → require(next(value) is supported)
+    ∧ return(exactly_next(value))
+    ∧ preserve(value ∧ next_result_type ∧ tail_contents ∧ producer_observation_policy ∧ callback_timing_and_effects)
+    ∧ no_heap ∧ noexcept ∧ constexpr ∧ non_mutating
     ∧ unsupported_input(rest) → reject_at_compile_time_with(targeted_diagnostic_naming(rest ∧ supported_domains) ∧ REQ-DIAG-009)
+    ∧ classify_as(RequirementsBacked) ∧ trace_to(REQ-SEQ-001 ∧ REQ-SEQ-002 ∧ REQ-SEQ-002A ∧ REQ-SEQ-002B ∧ REQ-SEQ-003 ∧ REQ-SEQ-004 ∧ REQ-SEQ-005 ∧ REQ-SEQ-006 ∧ REQ-SEQ-007 ∧ REQ-SEQ-008 ∧ REQ-SEQ-009 ∧ REQ-SEQ-012 ∧ REQ-FN-002A4 ∧ REQ-FN-002A5 ∧ REQ-FN-002A6 ∧ REQ-FN-002A7)
   | deferred_collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
     ∧ take_nth ∧ nth ∧ nthnext ∧ nthrest ∧ butlast ∧ map_indexed ∧ rseq ∧ second ∧ ffirst ∧ fnext
     ∧ nfirst ∧ nnext ∧ some ∧ is_every ∧ not_any ∧ not_every ∧ distinct ∧ dedupe ∧ frequencies
