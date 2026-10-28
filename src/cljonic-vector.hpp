@@ -83,8 +83,7 @@ namespace cljonic {
    static_assert(pixels_populated(-1).y == 0);
 
    // Pixel equality validates the runtime result for a user-defined value type.
-   volatile int runtime_first_raw = 7;
-   const int runtime_first = runtime_first_raw;
+   const int runtime_first = 7;
    auto runtime_pixels = vector(Pixel{1, 2}, Pixel{runtime_first - 4, 4});
    const auto pixel_value = runtime_pixels(1);
    const auto pixel_fallback = runtime_pixels(4, Pixel{99, 99});
