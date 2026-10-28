@@ -1,6 +1,34 @@
 ## Current Session State
 
 - last_session_id: 48de26f6-b107-48a1-97f3-d92ad7fccb6b
+- current_timestamp: 2026-10-28T12:36:00-06:00
+- session_complete: true
+
+Task:
+1. Advanced `next(Range)` through the approved requirements, vocabulary, architecture, and Allium specification layers. The exact semantics approved: zero-step Range remains unbounded and unchanged with its observation cap; empty nonzero-step Range remains unchanged; singleton nonzero-step Range becomes empty at its exclusive endpoint without computing `start + step`; multi-element nonzero-step Range advances start by one step, retaining endpoint and step.
+2. Added `REQ-FN-002A5` and `REQ-FN-013F`; extended the Next vocabulary, S2 architecture behavior, `specs/primitives/next.allium`, and `specs/producers/range.allium`.
+
+Questions:
+1. None about Range semantics. Tests, traceability, implementation, and documentation integration have not started; awaiting the human gate to proceed.
+
+Decisions:
+1. `rest` and `has_next` remain unchanged; their eventual alignment with producer-enabled `next` is separate future contract work.
+2. No tests or implementation changes yet; product changes remain unstaged and uncommitted.
+
+Validation:
+1. `make requirements-structure` passed (334 unique clauses); `make vocabulary-structure` passed (197 terms).
+2. `allium check` passed for `specs/primitives/next.allium` and `specs/producers/range.allium`; full `allium analyse specs` passed with no diagnostics or findings.
+3. Architecture sections S5 through S1 remain present and ordered; the next(producer) architecture contract traces to REQ-FN-002A4/5 and REQ-FN-013E/F. `git diff --check` passed.
+
+Open questions:
+1. Whether to proceed with trace-linked Range tests, no-heap/diagnostic coverage, and implementation.
+
+Next:
+1. Await human direction at the specification gate.
+
+## Current Session State
+
+- last_session_id: 48de26f6-b107-48a1-97f3-d92ad7fccb6b
 - current_timestamp: 2026-10-28T11:58:00-06:00
 - session_complete: true
 

@@ -11,6 +11,8 @@ namespace cljonic {
 
 namespace concepts_detail {
 
+struct CycleNextAccess;
+
 /** Internal tag (REQ-DIAG-012): selects the `Cycle` diagnostic specialization
  *  during an out-of-domain class template argument deduction. */
 struct CycleSourceDomainViolation {};
@@ -77,6 +79,8 @@ concept CycleClassArgument =
  */
 template <concepts_detail::CycleClassArgument Source>
 class Cycle {
+    friend struct concepts_detail::CycleNextAccess;
+
   public:
     using source_type = Source;
     using value_type = std::ranges::range_value_t<const Source>;
@@ -163,7 +167,8 @@ class Cycle {
         if (source_count == 0U || source_begin == source_end) {
             return const_iterator{&source_, source_begin, source_end, 0U, source_is_finite};
         }
-        return const_iterator{&source_, source_begin, source_end, count(), source_is_finite};
+        const auto current = source_is_finite ? source_begin_at_offset(source_begin) : source_begin;
+        return const_iterator{&source_, current, source_end, count(), source_is_finite};
     }
 
     [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
@@ -171,7 +176,7 @@ class Cycle {
     }
 
     /** Producer parameter equality (REQ-FN-014B): compares only the stored
-     *  owned source, count, and finite-form parameters, never the produced
+     *  owned source, count, finite-form, and starting-offset parameters, never the produced
      *  sequence.
      *
      *  It is the only producer parameter-equality surface; the `equal` free
@@ -183,10 +188,22 @@ class Cycle {
     [[nodiscard]] friend constexpr auto operator==(const Cycle& lhs, const Cycle& rhs) noexcept -> bool
         requires concepts::StableEqualityComparable<Source>
     {
-        return lhs.source_ == rhs.source_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_;
+        return lhs.source_ == rhs.source_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_ &&
+               lhs.starting_offset_ == rhs.starting_offset_;
     }
 
   private:
+    [[nodiscard]] constexpr auto source_begin_at_offset(source_iterator current) const noexcept -> source_iterator {
+        for (auto offset = std::size_t{0U}; offset < starting_offset_; ++offset) {
+            ++current;
+        }
+        return current;
+    }
+
+    constexpr Cycle(const Source& source, std::size_t starting_offset) noexcept
+        : source_(source), starting_offset_(starting_offset) {
+    }
+
     [[nodiscard]] constexpr auto source_finiteness() const noexcept -> bool {
         if constexpr (concepts::CljonicProducer<Source>) {
             return source_.is_finite();
@@ -197,6 +214,7 @@ class Cycle {
     Source source_{};
     std::size_t count_{CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE};
     bool is_finite_{false};
+    std::size_t starting_offset_{0U};
 };
 
 /** Diagnostic specialization (REQ-DIAG-012): reached only through the

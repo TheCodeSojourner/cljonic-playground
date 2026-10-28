@@ -2810,6 +2810,8 @@ namespace cljonic {
 
 namespace concepts_detail {
 
+struct CycleNextAccess;
+
 /** Internal tag (REQ-DIAG-012): selects the `Cycle` diagnostic specialization
  *  during an out-of-domain class template argument deduction. */
 struct CycleSourceDomainViolation {};
@@ -2876,6 +2878,8 @@ concept CycleClassArgument =
  */
 template <concepts_detail::CycleClassArgument Source>
 class Cycle {
+    friend struct concepts_detail::CycleNextAccess;
+
   public:
     using source_type = Source;
     using value_type = std::ranges::range_value_t<const Source>;
@@ -2962,7 +2966,8 @@ class Cycle {
         if (source_count == 0U || source_begin == source_end) {
             return const_iterator{&source_, source_begin, source_end, 0U, source_is_finite};
         }
-        return const_iterator{&source_, source_begin, source_end, count(), source_is_finite};
+        const auto current = source_is_finite ? source_begin_at_offset(source_begin) : source_begin;
+        return const_iterator{&source_, current, source_end, count(), source_is_finite};
     }
 
     [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
@@ -2970,7 +2975,7 @@ class Cycle {
     }
 
     /** Producer parameter equality (REQ-FN-014B): compares only the stored
-     *  owned source, count, and finite-form parameters, never the produced
+     *  owned source, count, finite-form, and starting-offset parameters, never the produced
      *  sequence.
      *
      *  It is the only producer parameter-equality surface; the `equal` free
@@ -2982,10 +2987,22 @@ class Cycle {
     [[nodiscard]] friend constexpr auto operator==(const Cycle& lhs, const Cycle& rhs) noexcept -> bool
         requires concepts::StableEqualityComparable<Source>
     {
-        return lhs.source_ == rhs.source_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_;
+        return lhs.source_ == rhs.source_ && lhs.count_ == rhs.count_ && lhs.is_finite_ == rhs.is_finite_ &&
+               lhs.starting_offset_ == rhs.starting_offset_;
     }
 
   private:
+    [[nodiscard]] constexpr auto source_begin_at_offset(source_iterator current) const noexcept -> source_iterator {
+        for (auto offset = std::size_t{0U}; offset < starting_offset_; ++offset) {
+            ++current;
+        }
+        return current;
+    }
+
+    constexpr Cycle(const Source& source, std::size_t starting_offset) noexcept
+        : source_(source), starting_offset_(starting_offset) {
+    }
+
     [[nodiscard]] constexpr auto source_finiteness() const noexcept -> bool {
         if constexpr (concepts::CljonicProducer<Source>) {
             return source_.is_finite();
@@ -2996,6 +3013,7 @@ class Cycle {
     Source source_{};
     std::size_t count_{CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE};
     bool is_finite_{false};
+    std::size_t starting_offset_{0U};
 };
 
 /** Diagnostic specialization (REQ-DIAG-012): reached only through the
@@ -6348,6 +6366,7 @@ struct contains_standard_range<Set<T, CapacityValue>> : std::bool_constant<conta
 // End cljonic-set.hpp
 
 #include <cstddef>
+#include <type_traits>
 
 namespace cljonic {
 
@@ -6360,8 +6379,21 @@ concept NextSequenceableCollection =
      concepts::CljonicString<C>);
 
 template <typename P>
-concept NextSequenceableProducer = concepts::SequenceableProducer<P> && concepts::NothrowConstInputRange<P> &&
-                                   (concepts::CljonicRange<P> || concepts::CljonicRepeat<P>);
+struct NextProducerDomain : std::false_type {};
+
+template <typename T>
+struct NextProducerDomain<Range<T>> : std::true_type {};
+
+template <typename T>
+struct NextProducerDomain<Repeat<T>> : std::true_type {};
+
+template <typename Source>
+struct NextProducerDomain<Cycle<Source>>
+    : std::bool_constant<NextSequenceableCollection<Source> || NextProducerDomain<Source>::value> {};
+
+template <typename P>
+concept NextSequenceableProducer =
+    concepts::SequenceableProducer<P> && concepts::NothrowConstInputRange<P> && NextProducerDomain<P>::value;
 
 constexpr auto next_tail_capacity(const std::size_t capacity) noexcept -> std::size_t {
     return capacity == 0U ? 0U : capacity - 1U;
@@ -6398,6 +6430,21 @@ struct RangeNextAccess {
             producer.step_,
         };
     }
+};
+
+struct CycleNextAccess {
+    template <concepts::CljonicCycle P>
+    [[nodiscard]] static constexpr auto finite_tail(const P& producer) noexcept -> P {
+        const auto source_count = producer.source_.count();
+        if (source_count == 0U) {
+            return producer;
+        }
+        const auto next_offset = producer.starting_offset_ == source_count - 1U ? 0U : producer.starting_offset_ + 1U;
+        return P{producer.source_, next_offset};
+    }
+
+    template <concepts::CljonicCycle P>
+    [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P;
 };
 
 template <typename C>
@@ -6443,11 +6490,16 @@ struct NextResult<String<N>> {
  * semantically significant, while Queue retains FIFO order.
  *
  * For a finite counted \ref Repeat "Repeat", the result is finite with the same repeated value and one fewer count,
- * saturating at zero. For an unbounded Repeat, the result remains unbounded with its observation policy unchanged. For
- * a \ref Range "Range", the result preserves its endpoint and step. A zero-step Range remains unbounded, an empty
+ * saturating at zero. For an unbounded Repeat, the result remains unbounded with its observation policy unchanged.
+ *
+ * For a \ref Range "Range", the result preserves its endpoint and step. A zero-step Range remains unbounded, an empty
  * finite Range is unchanged, and a singleton finite Range becomes empty at its endpoint without adding the step.
- * Otherwise, the start advances by one step. Constructing a producer tail does not materialize results or invoke
- * callbacks.
+ * Otherwise, the start advances by one step.
+ *
+ * For a \ref Cycle "Cycle" with a finite source, the starting position advances by one modulo the source's observed
+ * count; an empty finite source remains empty. For a Cycle with an unbounded source, `next` tails its owned source and
+ * resets the starting position, preserving the observation cap. Constructing a producer tail does not materialize
+ * results or invoke callbacks.
  *
  * \b Examples
  ~~~~~{.cpp}
@@ -6502,6 +6554,12 @@ struct NextResult<String<N>> {
    static_assert(!fits_into(Vector<int, 2>{}, unbounded_range_tail));
    static_assert(count(unbounded_range_tail) == count(Range{4, 9, 0}));
 
+   constexpr auto cycle_tail = next(cycle(vector(1, 2, 3)));
+   constexpr auto cycle_tail_values = into(Vector<int, 5>{}, cycle_tail);
+   static_assert(cycle_tail_values(0) == 2 && cycle_tail_values(1) == 3 &&
+                 cycle_tail_values(2) == 1 && cycle_tail_values(3) == 2 &&
+                 cycle_tail_values(4) == 3);
+
    // Runtime demonstration.
    const auto runtime_values = vector<int, 4>(40, 50);
    const auto runtime_tail = next(runtime_values);
@@ -6523,6 +6581,10 @@ struct NextResult<String<N>> {
    const auto runtime_range_tail_values =
        into(Vector<int, 2>{}, runtime_range_tail);
    const auto runtime_unbounded_range_tail = next(Range{4, 9, 0});
+   const auto runtime_cycle_tail = next(cycle(vector(1, 2, 3)));
+   const auto runtime_cycle_tail_values =
+       into(Vector<int, 5>{}, runtime_cycle_tail);
+   const auto runtime_unbounded_cycle_tail = next(cycle(Range{4, 9, 0}));
 
    return (count(runtime_tail) == 1 && runtime_tail(0) == 50 &&
            count(runtime_values) == 2 && runtime_values(0) == 40 &&
@@ -6547,7 +6609,15 @@ struct NextResult<String<N>> {
            count(runtime_range_tail) == 5 && runtime_range_tail_values(0) == 3 &&
            runtime_range_tail_values(1) == 1 &&
            count(runtime_unbounded_range_tail) == count(Range{4, 9, 0}) &&
-           !fits_into(Vector<int, 2>{}, runtime_unbounded_range_tail))
+           !fits_into(Vector<int, 2>{}, runtime_unbounded_range_tail) &&
+           runtime_cycle_tail_values(0) == 2 &&
+           runtime_cycle_tail_values(1) == 3 &&
+           runtime_cycle_tail_values(2) == 1 &&
+           runtime_cycle_tail_values(3) == 2 &&
+           runtime_cycle_tail_values(4) == 3 &&
+           !fits_into(Vector<int, 2>{}, runtime_cycle_tail) &&
+           count(runtime_unbounded_cycle_tail) == count(cycle(Range{4, 9, 0})) &&
+           !fits_into(Vector<int, 2>{}, runtime_unbounded_cycle_tail))
               ? 0
               : 1;
  }
@@ -6572,16 +6642,31 @@ template <concepts_detail::NextSequenceableProducer P>
 [[nodiscard]] constexpr auto next(const P& producer) noexcept -> P {
     if constexpr (concepts::CljonicRange<P>) {
         return concepts_detail::RangeNextAccess::tail(producer);
-    } else {
+    } else if constexpr (concepts::CljonicRepeat<P>) {
         return concepts_detail::RepeatNextAccess::tail(producer);
+    } else {
+        return concepts_detail::CycleNextAccess::tail(producer);
+    }
+}
+
+template <concepts::CljonicCycle P>
+[[nodiscard]] constexpr auto concepts_detail::CycleNextAccess::tail(const P& producer) noexcept -> P {
+    if constexpr (concepts::CljonicCollection<typename P::source_type>) {
+        return finite_tail(producer);
+    } else {
+        if (producer.source_finiteness()) {
+            return finite_tail(producer);
+        }
+        return P{next(producer.source_), 0U};
     }
 }
 
 template <typename C>
     requires(!concepts_detail::NextSequenceableCollection<C> && !concepts_detail::NextSequenceableProducer<C>)
 constexpr auto next([[maybe_unused]] const C& value) noexcept -> void {
-    static_assert(concepts_detail::dependent_false<C>,
-                  "cljonic::next: expected a Vector, Map, Set, Queue, String, Range, or Repeat value.");
+    static_assert(
+        concepts_detail::dependent_false<C>,
+        "cljonic::next: expected a Vector, Map, Set, Queue, String, Range, Repeat, or supported Cycle value.");
 }
 
 } // namespace cljonic
