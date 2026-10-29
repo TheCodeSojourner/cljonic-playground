@@ -2,6 +2,8 @@
 -- REQ-FN-013B: repeat(count, value), Repeat<T>{count, value}, and
 -- Repeat{count, value} use count-first ordering; repeat(value) is unchanged.
 -- Count admission remains governed by REQ-CONV-002E.
+-- The existing lowercase repeat factories remain the preferred creation surface;
+-- Repeat<T> and its constructors stay supported with unchanged behavior.
 -- REQ-FN-013E: next of a finite counted Repeat returns a finite Repeat of the
 -- same value with count max(count - 1, 0); next of an unbounded Repeat returns
 -- an unbounded Repeat of the same value with its observation policy unchanged.
@@ -18,6 +20,7 @@ entity Repeat {
     does_not_own_result_storage: Boolean
     does_not_borrow_source_or_callback: Boolean
     referential_transparency: Boolean
+    existing_factories_preserve_equivalent_constructor_result_type_and_behavior: Boolean
     uncounted_form_is_unbounded: Boolean
     counted_form_is_finite: Boolean
     counted_factory_uses_count_then_value: Boolean
@@ -85,6 +88,10 @@ entity Repeat {
 
     invariant UncountedFormIsUnbounded {
         this.uncounted_form_is_unbounded = true
+    }
+
+    invariant ExistingFactoriesPreserveEquivalentConstructorResultTypeAndBehavior {
+        this.existing_factories_preserve_equivalent_constructor_result_type_and_behavior = true
     }
 
     invariant CountedFormIsFinite {

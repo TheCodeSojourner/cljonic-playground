@@ -1,4 +1,11 @@
 -- allium: 3
+-- REQ-FN-013I: range is the lowercase creation surface. Deduced one-, two-,
+-- and three-argument calls require one shared unqualified signed integral type.
+-- Explicit range<T> accepts zero through three arguments under the existing
+-- Range constructor safe-conversion rules. range<T>() is the default empty
+-- range; untyped range() and unsupported arities are rejected.
+-- Factory results preserve every equivalent constructor's parameter semantics,
+-- finite cardinality saturation, zero-step precedence, and observation policy.
 
 entity Range {
     supports_header_only_distribution: Boolean
@@ -10,6 +17,15 @@ entity Range {
     does_not_own_result_storage: Boolean
     does_not_borrow_source_or_callback: Boolean
     referential_transparency: Boolean
+    deduced_factory_accepts_one_two_or_three_same_type_signed_integral_arguments: Boolean
+    explicit_factory_accepts_zero_through_three_safely_converted_arguments: Boolean
+    typed_empty_factory_has_zero_start_zero_end_and_unit_step: Boolean
+    factory_preserves_equivalent_constructor_result_type_and_behavior: Boolean
+    factory_is_constexpr_noexcept_and_preserves_input_arguments: Boolean
+    factory_constructs_owned_parameters_without_result_materialization: Boolean
+    factory_rejects_untyped_empty_call_and_unsupported_arities: Boolean
+    factory_rejects_invalid_types_conversions_and_common_type_promotion: Boolean
+    rejected_factory_calls_provide_targeted_operation_diagnostics: Boolean
     default_start_is_zero: Boolean
     default_step_is_one: Boolean
     start_is_inclusive: Boolean
@@ -85,6 +101,42 @@ entity Range {
 
     invariant DefaultStartIsZero {
         this.default_start_is_zero = true
+    }
+
+    invariant DeducedFactoryAcceptsOneTwoOrThreeSameTypeSignedIntegralArguments {
+        this.deduced_factory_accepts_one_two_or_three_same_type_signed_integral_arguments = true
+    }
+
+    invariant ExplicitFactoryAcceptsZeroThroughThreeSafelyConvertedArguments {
+        this.explicit_factory_accepts_zero_through_three_safely_converted_arguments = true
+    }
+
+    invariant TypedEmptyFactoryHasZeroStartZeroEndAndUnitStep {
+        this.typed_empty_factory_has_zero_start_zero_end_and_unit_step = true
+    }
+
+    invariant FactoryPreservesEquivalentConstructorResultTypeAndBehavior {
+        this.factory_preserves_equivalent_constructor_result_type_and_behavior = true
+    }
+
+    invariant FactoryIsConstexprNoexceptAndPreservesInputArguments {
+        this.factory_is_constexpr_noexcept_and_preserves_input_arguments = true
+    }
+
+    invariant FactoryConstructsOwnedParametersWithoutResultMaterialization {
+        this.factory_constructs_owned_parameters_without_result_materialization = true
+    }
+
+    invariant FactoryRejectsUntypedEmptyCallAndUnsupportedArities {
+        this.factory_rejects_untyped_empty_call_and_unsupported_arities = true
+    }
+
+    invariant FactoryRejectsInvalidTypesConversionsAndCommonTypePromotion {
+        this.factory_rejects_invalid_types_conversions_and_common_type_promotion = true
+    }
+
+    invariant RejectedFactoryCallsProvideTargetedOperationDiagnostics {
+        this.rejected_factory_calls_provide_targeted_operation_diagnostics = true
     }
 
     invariant DefaultStepIsOne {
