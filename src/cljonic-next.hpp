@@ -107,10 +107,11 @@ struct CycleNextAccess {
 struct IterateNextAccess {
     template <concepts::CljonicIterate P>
     [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
-        if (producer.count() == 0U) {
+        if constexpr (CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE == 0U) {
             return producer;
+        } else {
+            return P{std::invoke(producer.step_, producer.initial_), producer.step_};
         }
-        return P{std::invoke(producer.step_, producer.initial_), producer.step_};
     }
 };
 

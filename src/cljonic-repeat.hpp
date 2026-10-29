@@ -30,6 +30,8 @@ concept RepeatClassArgument =
  * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(count, value)` yields
  * exactly \p count values.
  *
+ * Use \ref RepeatFactory "repeat" to create a Repeat.
+ *
  * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
  * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
  * cljonic operations that accept a source.
@@ -52,16 +54,16 @@ concept RepeatClassArgument =
 
  int main() {
    // A finite Repeat yields the value exactly the requested number of times.
-   constexpr auto finite = Repeat{3, 7};
-   constexpr auto pixels = Repeat{2, Pixel{4, 9}};
+   constexpr auto finite = repeat(3, 7);
+   constexpr auto pixels = repeat(2, Pixel{4, 9});
 
    // An uncounted Repeat is an unbounded producer.
-   [[maybe_unused]] constexpr auto unbounded = Repeat{7};
+   [[maybe_unused]] constexpr auto unbounded = repeat(7);
 
    // -----------------------------------------------------------------------
    // C++ interoperability: Repeat supports const traversal.
    // -----------------------------------------------------------------------
-   auto runtime_finite = Repeat{2, -1};
+   auto runtime_finite = repeat(2, -1);
 
    constexpr auto finite_sum = [finite] {
      auto sum = 0;
@@ -218,6 +220,29 @@ template <typename T, typename Count>
     requires(!concepts::NothrowCollectionElement<T> || !concepts_detail::ProducerCount<Count>)
 Repeat(Count, const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
 
+/** \anchor RepeatFactory
+ * The \b repeat free function API creates an owning \ref Repeat "Repeat" without materializing its results.
+ *
+ * `repeat(value)` is unbounded; `repeat(count, value)` is finite and uses count-first ordering. The value is copied
+ * into the producer. Counts follow the \ref implicit-conversions "safe implicit conversion rules": Boolean and
+ * character counts are excluded, and zero or negative counts produce an empty finite result. Both factory forms are
+ * usable in constant evaluation and runtime code, without throwing or allocating.
+ *
+~~~~~{.cpp}
+#include "cljonic.hpp"
+using namespace cljonic;
+int main() {
+  constexpr auto finite = repeat(3, 7);
+  constexpr auto unbounded = repeat(7);
+  static_assert(equal(into(vector<int, 3>(), finite), vector(7, 7, 7)));
+  static_assert(is_empty(repeat(-2, 7)));
+  static_assert(!fits_into(vector<int, 3>(), unbounded));
+  auto value = 9;
+  const auto runtime_finite = repeat(2, value);
+  return equal(into(vector<int, 2>(), runtime_finite), vector(9, 9)) ? 0 : 1;
+}
+~~~~~
+ */
 template <typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
 [[nodiscard]] constexpr auto repeat(T&& value) noexcept -> Repeat<std::remove_cvref_t<T>> {

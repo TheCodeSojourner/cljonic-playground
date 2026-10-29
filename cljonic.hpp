@@ -125,7 +125,7 @@
  * - partial, partition, partition_all, partition_by, partitionv, partitionv_all, \ref Peek "peek", \ref Pop "pop",
  *   pr_str, print_to, prn_str
  * - \ref QueueFactory "queue", quot
- * - \ref Range "range", reduce_kv, reductions, rem, remove, \ref Repeat "repeat", \ref Repeatedly "repeatedly",
+ * - \ref RangeFactory "range", reduce_kv, reductions, rem, remove, \ref RepeatFactory "repeat", \ref Repeatedly "repeatedly",
  * replace, replicate, reset, reset_vals, \ref Rest "rest", rseq
  * - second, select_keys, seq, some, some_fn, sort, sort_by, split_at, split_with, str, \ref StringFactory "string",
  *   sub, subvec, swap, swap_vals
@@ -5471,6 +5471,7 @@ struct contains_standard_range<Queue<T, CapacityValue>> : std::bool_constant<con
 #include <concepts>
 #include <cstddef>
 #include <type_traits>
+#include <utility>
 
 
 namespace cljonic {
@@ -5498,6 +5499,8 @@ concept RangeClassArgument =
  * A Range is a producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by a fixed
  * \p step, defaulting to start `0` and step `1`.
  *
+ * Use \ref RangeFactory "range" to create a Range.
+ *
  * A zero step repeats \p start indefinitely, taking precedence over otherwise-empty-range cases, including equal start
  * and end. A nonzero step that moves away from \p end produces an empty range.
  *
@@ -5513,29 +5516,29 @@ concept RangeClassArgument =
  int main() {
    // Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero
    // arguments.
-   [[maybe_unused]] constexpr auto empty = Range<int>{};
+   [[maybe_unused]] constexpr auto empty = range<int>();
 
    // Single argument is the exclusive end; start defaults to 0, step to 1.
-   [[maybe_unused]] constexpr auto to_five = Range{5};
+   [[maybe_unused]] constexpr auto to_five = range(5);
 
    // Explicit start and end; step still defaults to 1.
-   [[maybe_unused]] constexpr auto two_to_five = Range{2, 5};
+   [[maybe_unused]] constexpr auto two_to_five = range(2, 5);
 
    // Explicit start, end, and step.
-   [[maybe_unused]] constexpr auto evens = Range{0, 10, 2};
+   [[maybe_unused]] constexpr auto evens = range(0, 10, 2);
 
    // A zero step repeats start indefinitely rather than being empty.
-   [[maybe_unused]] constexpr auto repeating = Range{0, 5, 0};
+   [[maybe_unused]] constexpr auto repeating = range(0, 5, 0);
 
    // A billion elements exceeds the system's allowed maximum, so only that
    // maximum number of elements is available.
-   [[maybe_unused]] constexpr auto huge = Range{1000000000};
+   [[maybe_unused]] constexpr auto huge = range(1000000000);
 
    // -----------------------------------------------------------------------
    // C++ interoperability: a Range supports const traversal.
    // -----------------------------------------------------------------------
-   constexpr auto odds = Range{1, 12, 2};
-   auto runtime_odds = Range{-1, -11, -2};
+   constexpr auto odds = range(1, 12, 2);
+   auto runtime_odds = range(-1, -11, -2);
 
    // Use C++ interoperability to sum the values in a constexpr range
    constexpr auto odds_sum = [odds] {
@@ -5755,6 +5758,85 @@ template <typename Start, typename End, typename Step>
                concepts::RangeElement<std::remove_cvref_t<Step>>))
 Range(Start, End, Step) -> Range<concepts_detail::RangeElementDomainViolation>;
 
+namespace concepts_detail {
+
+struct DeducedRangeElementType {};
+
+template <typename RequestedElementType, typename... Args>
+struct range_factory_element_type {
+    using type = RequestedElementType;
+};
+
+template <typename First, typename... Rest>
+struct range_factory_element_type<DeducedRangeElementType, First, Rest...> {
+    using type = std::remove_cvref_t<First>;
+};
+
+template <typename RequestedElementType, typename... Args>
+using range_factory_element_t = range_factory_element_type<RequestedElementType, Args...>::type;
+
+template <typename RequestedElementType, typename... Args>
+concept RangeFactoryHasElementType =
+    sizeof...(Args) > 0U || !std::same_as<RequestedElementType, DeducedRangeElementType>;
+
+template <typename RequestedElementType, typename... Args>
+concept RangeFactoryArguments =
+    RangeFactoryHasElementType<RequestedElementType, Args...> &&
+    concepts::RangeElement<range_factory_element_t<RequestedElementType, Args...>> && sizeof...(Args) <= 3U &&
+    ((!std::same_as<RequestedElementType, DeducedRangeElementType> &&
+      (concepts::SafeImplicitConversion<RequestedElementType, Args> && ...)) ||
+     (std::same_as<RequestedElementType, DeducedRangeElementType> &&
+      (std::same_as<range_factory_element_t<RequestedElementType, Args...>, std::remove_cvref_t<Args>> && ...)));
+
+} // namespace concepts_detail
+
+/** \anchor RangeFactory
+ * The \b range free function API creates an owning \ref Range "Range" without materializing its results.
+ *
+ * Use `range(end)`, `range(start, end)`, or `range(start, end, step)` with arguments of the same signed integral type.
+ * Use `range<T>(...)` to select a signed integral element type under the \ref implicit-conversions "safe implicit
+ * conversion rules"; `range<T>()` creates the default empty range. An untyped empty call cannot deduce an element
+ * type. All forms preserve the equivalent constructor's defaults, zero-step repetition, exclusive endpoint, and
+ * observation bound, including \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE. Construction is non-throwing and
+ * non-allocating.
+ *
+~~~~~{.cpp}
+#include "cljonic.hpp"
+using namespace cljonic;
+int main() {
+  constexpr auto empty = range<int>();
+  constexpr auto ascending = range(5);
+  constexpr auto descending = range(5, 0, -2);
+  constexpr auto widened = range<long>(0, 5, 2);
+  static_assert(is_empty(empty));
+  static_assert(
+      equal(into(vector<int, 5>(), ascending), vector(0, 1, 2, 3, 4)));
+  static_assert(equal(into(vector<int, 3>(), descending), vector(5, 3, 1)));
+  static_assert(equal(into(vector<long, 3>(), widened), vector(0L, 2L, 4L)));
+  auto end = 5;
+  const auto runtime_values = range(end);
+  return count(runtime_values) == 5U ? 0 : 1;
+}
+~~~~~
+ */
+template <typename RequestedElementType = concepts_detail::DeducedRangeElementType, typename... Args>
+    requires concepts_detail::RangeFactoryArguments<RequestedElementType, Args...>
+[[nodiscard]] constexpr auto range(Args&&... args) noexcept
+    -> Range<concepts_detail::range_factory_element_t<RequestedElementType, Args...>> {
+    using ElementType = concepts_detail::range_factory_element_t<RequestedElementType, Args...>;
+    return Range<ElementType>{std::forward<Args>(args)...};
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedRangeElementType, typename... Args>
+    requires(!concepts_detail::RangeFactoryArguments<RequestedElementType, Args...>)
+constexpr auto range([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                  "cljonic::range: use range(end), range(start, end), or range(start, end, step) with the same signed "
+                  "integral type for every argument. An empty call requires an explicit element type: range<T>(). "
+                  "With an explicit signed integral T, zero through three arguments must safely convert to T "
+                  "without loss of range or precision.");
+}
+
 } // namespace cljonic
 
 namespace cljonic::concepts_detail {
@@ -5807,6 +5889,8 @@ concept RepeatClassArgument =
  * producer, including nested cljonic composites. `repeat(value)` is unbounded, while `repeat(count, value)` yields
  * exactly \p count values.
  *
+ * Use \ref RepeatFactory "repeat" to create a Repeat.
+ *
  * Observation is bounded by \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE or by the requested count, and it
  * supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to
  * cljonic operations that accept a source.
@@ -5829,16 +5913,16 @@ concept RepeatClassArgument =
 
  int main() {
    // A finite Repeat yields the value exactly the requested number of times.
-   constexpr auto finite = Repeat{3, 7};
-   constexpr auto pixels = Repeat{2, Pixel{4, 9}};
+   constexpr auto finite = repeat(3, 7);
+   constexpr auto pixels = repeat(2, Pixel{4, 9});
 
    // An uncounted Repeat is an unbounded producer.
-   [[maybe_unused]] constexpr auto unbounded = Repeat{7};
+   [[maybe_unused]] constexpr auto unbounded = repeat(7);
 
    // -----------------------------------------------------------------------
    // C++ interoperability: Repeat supports const traversal.
    // -----------------------------------------------------------------------
-   auto runtime_finite = Repeat{2, -1};
+   auto runtime_finite = repeat(2, -1);
 
    constexpr auto finite_sum = [finite] {
      auto sum = 0;
@@ -5995,6 +6079,29 @@ template <typename T, typename Count>
     requires(!concepts::NothrowCollectionElement<T> || !concepts_detail::ProducerCount<Count>)
 Repeat(Count, const T&) -> Repeat<concepts_detail::RepeatElementDomainViolation>;
 
+/** \anchor RepeatFactory
+ * The \b repeat free function API creates an owning \ref Repeat "Repeat" without materializing its results.
+ *
+ * `repeat(value)` is unbounded; `repeat(count, value)` is finite and uses count-first ordering. The value is copied
+ * into the producer. Counts follow the \ref implicit-conversions "safe implicit conversion rules": Boolean and
+ * character counts are excluded, and zero or negative counts produce an empty finite result. Both factory forms are
+ * usable in constant evaluation and runtime code, without throwing or allocating.
+ *
+~~~~~{.cpp}
+#include "cljonic.hpp"
+using namespace cljonic;
+int main() {
+  constexpr auto finite = repeat(3, 7);
+  constexpr auto unbounded = repeat(7);
+  static_assert(equal(into(vector<int, 3>(), finite), vector(7, 7, 7)));
+  static_assert(is_empty(repeat(-2, 7)));
+  static_assert(!fits_into(vector<int, 3>(), unbounded));
+  auto value = 9;
+  const auto runtime_finite = repeat(2, value);
+  return equal(into(vector<int, 2>(), runtime_finite), vector(9, 9)) ? 0 : 1;
+}
+~~~~~
+ */
 template <typename T>
     requires concepts::NothrowCollectionElement<std::remove_cvref_t<T>>
 [[nodiscard]] constexpr auto repeat(T&& value) noexcept -> Repeat<std::remove_cvref_t<T>> {
@@ -7040,10 +7147,11 @@ struct CycleNextAccess {
 struct IterateNextAccess {
     template <concepts::CljonicIterate P>
     [[nodiscard]] static constexpr auto tail(const P& producer) noexcept -> P {
-        if (producer.count() == 0U) {
+        if constexpr (CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE == 0U) {
             return producer;
+        } else {
+            return P{std::invoke(producer.step_, producer.initial_), producer.step_};
         }
-        return P{std::invoke(producer.step_, producer.initial_), producer.step_};
     }
 };
 

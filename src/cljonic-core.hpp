@@ -114,7 +114,7 @@
  * - partial, partition, partition_all, partition_by, partitionv, partitionv_all, \ref Peek "peek", \ref Pop "pop",
  *   pr_str, print_to, prn_str
  * - \ref QueueFactory "queue", quot
- * - \ref Range "range", reduce_kv, reductions, rem, remove, \ref Repeat "repeat", \ref Repeatedly "repeatedly",
+ * - \ref RangeFactory "range", reduce_kv, reductions, rem, remove, \ref RepeatFactory "repeat", \ref Repeatedly "repeatedly",
  * replace, replicate, reset, reset_vals, \ref Rest "rest", rseq
  * - second, select_keys, seq, some, some_fn, sort, sort_by, split_at, split_with, str, \ref StringFactory "string",
  *   sub, subvec, swap, swap_vals

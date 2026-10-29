@@ -3,6 +3,7 @@
 #include <concepts>
 #include <cstddef>
 #include <type_traits>
+#include <utility>
 
 #include <cljonic-concepts.hpp>
 #include <cljonic-core-collection-maximum-element-count.hpp>
@@ -32,6 +33,8 @@ concept RangeClassArgument =
  * A Range is a producer describing an arithmetic sequence from an inclusive \p start to an exclusive \p end by a fixed
  * \p step, defaulting to start `0` and step `1`.
  *
+ * Use \ref RangeFactory "range" to create a Range.
+ *
  * A zero step repeats \p start indefinitely, taking precedence over otherwise-empty-range cases, including equal start
  * and end. A nonzero step that moves away from \p end produces an empty range.
  *
@@ -47,29 +50,29 @@ concept RangeClassArgument =
  int main() {
    // Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero
    // arguments.
-   [[maybe_unused]] constexpr auto empty = Range<int>{};
+   [[maybe_unused]] constexpr auto empty = range<int>();
 
    // Single argument is the exclusive end; start defaults to 0, step to 1.
-   [[maybe_unused]] constexpr auto to_five = Range{5};
+   [[maybe_unused]] constexpr auto to_five = range(5);
 
    // Explicit start and end; step still defaults to 1.
-   [[maybe_unused]] constexpr auto two_to_five = Range{2, 5};
+   [[maybe_unused]] constexpr auto two_to_five = range(2, 5);
 
    // Explicit start, end, and step.
-   [[maybe_unused]] constexpr auto evens = Range{0, 10, 2};
+   [[maybe_unused]] constexpr auto evens = range(0, 10, 2);
 
    // A zero step repeats start indefinitely rather than being empty.
-   [[maybe_unused]] constexpr auto repeating = Range{0, 5, 0};
+   [[maybe_unused]] constexpr auto repeating = range(0, 5, 0);
 
    // A billion elements exceeds the system's allowed maximum, so only that
    // maximum number of elements is available.
-   [[maybe_unused]] constexpr auto huge = Range{1000000000};
+   [[maybe_unused]] constexpr auto huge = range(1000000000);
 
    // -----------------------------------------------------------------------
    // C++ interoperability: a Range supports const traversal.
    // -----------------------------------------------------------------------
-   constexpr auto odds = Range{1, 12, 2};
-   auto runtime_odds = Range{-1, -11, -2};
+   constexpr auto odds = range(1, 12, 2);
+   auto runtime_odds = range(-1, -11, -2);
 
    // Use C++ interoperability to sum the values in a constexpr range
    constexpr auto odds_sum = [odds] {
@@ -288,6 +291,85 @@ template <typename Start, typename End, typename Step>
     requires(!(concepts::RangeElement<std::remove_cvref_t<Start>> && concepts::RangeElement<std::remove_cvref_t<End>> &&
                concepts::RangeElement<std::remove_cvref_t<Step>>))
 Range(Start, End, Step) -> Range<concepts_detail::RangeElementDomainViolation>;
+
+namespace concepts_detail {
+
+struct DeducedRangeElementType {};
+
+template <typename RequestedElementType, typename... Args>
+struct range_factory_element_type {
+    using type = RequestedElementType;
+};
+
+template <typename First, typename... Rest>
+struct range_factory_element_type<DeducedRangeElementType, First, Rest...> {
+    using type = std::remove_cvref_t<First>;
+};
+
+template <typename RequestedElementType, typename... Args>
+using range_factory_element_t = range_factory_element_type<RequestedElementType, Args...>::type;
+
+template <typename RequestedElementType, typename... Args>
+concept RangeFactoryHasElementType =
+    sizeof...(Args) > 0U || !std::same_as<RequestedElementType, DeducedRangeElementType>;
+
+template <typename RequestedElementType, typename... Args>
+concept RangeFactoryArguments =
+    RangeFactoryHasElementType<RequestedElementType, Args...> &&
+    concepts::RangeElement<range_factory_element_t<RequestedElementType, Args...>> && sizeof...(Args) <= 3U &&
+    ((!std::same_as<RequestedElementType, DeducedRangeElementType> &&
+      (concepts::SafeImplicitConversion<RequestedElementType, Args> && ...)) ||
+     (std::same_as<RequestedElementType, DeducedRangeElementType> &&
+      (std::same_as<range_factory_element_t<RequestedElementType, Args...>, std::remove_cvref_t<Args>> && ...)));
+
+} // namespace concepts_detail
+
+/** \anchor RangeFactory
+ * The \b range free function API creates an owning \ref Range "Range" without materializing its results.
+ *
+ * Use `range(end)`, `range(start, end)`, or `range(start, end, step)` with arguments of the same signed integral type.
+ * Use `range<T>(...)` to select a signed integral element type under the \ref implicit-conversions "safe implicit
+ * conversion rules"; `range<T>()` creates the default empty range. An untyped empty call cannot deduce an element
+ * type. All forms preserve the equivalent constructor's defaults, zero-step repetition, exclusive endpoint, and
+ * observation bound, including \b CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE. Construction is non-throwing and
+ * non-allocating.
+ *
+~~~~~{.cpp}
+#include "cljonic.hpp"
+using namespace cljonic;
+int main() {
+  constexpr auto empty = range<int>();
+  constexpr auto ascending = range(5);
+  constexpr auto descending = range(5, 0, -2);
+  constexpr auto widened = range<long>(0, 5, 2);
+  static_assert(is_empty(empty));
+  static_assert(
+      equal(into(vector<int, 5>(), ascending), vector(0, 1, 2, 3, 4)));
+  static_assert(equal(into(vector<int, 3>(), descending), vector(5, 3, 1)));
+  static_assert(equal(into(vector<long, 3>(), widened), vector(0L, 2L, 4L)));
+  auto end = 5;
+  const auto runtime_values = range(end);
+  return count(runtime_values) == 5U ? 0 : 1;
+}
+~~~~~
+ */
+template <typename RequestedElementType = concepts_detail::DeducedRangeElementType, typename... Args>
+    requires concepts_detail::RangeFactoryArguments<RequestedElementType, Args...>
+[[nodiscard]] constexpr auto range(Args&&... args) noexcept
+    -> Range<concepts_detail::range_factory_element_t<RequestedElementType, Args...>> {
+    using ElementType = concepts_detail::range_factory_element_t<RequestedElementType, Args...>;
+    return Range<ElementType>{std::forward<Args>(args)...};
+}
+
+template <typename RequestedElementType = concepts_detail::DeducedRangeElementType, typename... Args>
+    requires(!concepts_detail::RangeFactoryArguments<RequestedElementType, Args...>)
+constexpr auto range([[maybe_unused]] Args&&... args) noexcept -> void {
+    static_assert(concepts_detail::dependent_false<RequestedElementType, Args...>,
+                  "cljonic::range: use range(end), range(start, end), or range(start, end, step) with the same signed "
+                  "integral type for every argument. An empty call requires an explicit element type: range<T>(). "
+                  "With an explicit signed integral T, zero through three arguments must safely convert to T "
+                  "without loss of range or precision.");
+}
 
 } // namespace cljonic
 
