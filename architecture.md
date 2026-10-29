@@ -266,7 +266,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | static_extent_source_overflow(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | runtime_extent_source_overflow(x) → classify_as(BoundedPrefixResult) ∧ preserve(source_traversal_order)
   | complete_source_materialization(x) → require(fits_into(x) ∧ into(x))
-  | fits_into(destination ∧ finite_source) → compare(source_count ≤ remaining_destination_capacity) ∧ avoid(unsigned_addition_overflow)
+  | fits_into((Vector ∨ Queue)(destination) ∧ finite_source) → compare(source_count ≤ remaining_destination_capacity) ∧ avoid(unsigned_addition_overflow)
+  | fits_into((Set ∨ Map)(destination) ∧ finite_source) → measure(capacity_needed_by_ordered_insertion_fold) ∧ account_for(existing_and_source_duplicates ∨ matching_keys)
   | fits_into(destination ∧ unbounded_producer) → return(false)
   | compile_time_known_capacity_or_representability_failure(x) → reject_at_compile_time(x) ∧ diagnostic_not_result_status(x)
   | synthesis_cap(x) → classify_as(CollectionMaximumElementCount)
@@ -779,15 +780,43 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | predicate_true(x) ↔ corresponding_operation_can_produce_valid_or_complete_result(x)
   | predicate_false(x) → follow(documented_default_bounded_or_failure_policy(x))
   | complete_materialization_into(destination, producer) → use(fits_into)
-  | fits_into(destination, producer) → require(CljonicVector(destination)) ∧ measure(complete_result_cardinality_and_semantics)
+  | fits_into(destination, source) → require((CljonicVector ∨ CljonicSet ∨ CljonicMap ∨ CljonicQueue ∨ CljonicString)(destination) ∧ CljonicSource(source))
+    ∧ require(same_compatibility_domain_as(into)) ∧ measure(complete_result_cardinality_and_insertion_semantics)
+  | finite_source ∧ (Set ∨ Map)(destination) → allow(value_sensitive_source_traversal ∧ producer_callback_evaluation)
+    ∧ account_for(existing_destination_and_prior_source_values_or_keys) ∧ reject_at(first_capacity_failure)
+  | finite_source ∧ String(destination) → compare(source_count ≤ remaining_character_capacity) ∧ ¬evaluate(character_validity)
+  | fits_into(destination, finite_source) ∧ (Set ∨ Map)(destination) → preserve(input_values) ∧ ¬share(realization_cache_with(into))
+    ∧ allow(callback_effects_through_external_state) ∧ completeness_prediction_requires(same_values_on_subsequent_traversal)
+  | fits_into(destination, unbounded_source) → return(false)
 
-λ S2_into_function_contract(x). into(destination, source) → admit(CljonicVector(destination) ∧ CljonicSource(source) ∧ MaterializableSource(destination, source))
-  | destination_domain(x) ≡ CljonicVector ∧ permanent_contract ∧ ¬incremental_scope_restriction
+λ S2_into_function_contract(x). into(destination, source) → admit((CljonicVector ∨ CljonicSet ∨ CljonicMap ∨ CljonicQueue ∨ CljonicString)(destination) ∧ CljonicSource(source) ∧ MaterializableSource(destination, source))
+  | destination_domain(x) ≡ CljonicVector ∨ CljonicSet ∨ CljonicMap ∨ CljonicQueue ∨ CljonicString
+    ∧ ¬admit(CljonicProducer ∨ external_destination)
+  | MaterializableSource(destination, source) → require(actual_source_reference_compatible_with(destination_insertion))
+    ∧ preserve(existing_safe_implicit_conversion_and_nothrow_construction_rules)
+    ∧ Map(destination) → require(compatible_nominal_MapEntry_values) ∧ ¬admit(arbitrary_pairs ∨ alternating_keys_and_values)
+  | source_domain(x) → CljonicSource ∧ ¬admit(external_Cpp_ranges_or_views)
   | result(x) → updated_destination_typed_collection(x)
-    ∧ append(source_elements_after(destination_logical_contents(x)))
+    ∧ fold(source_values_in_traversal_order, destination_insertion_semantics)
     ∧ preserve(destination ∧ source)
+  | (Vector ∨ Queue)(destination) → append_after(existing_logical_contents) ∧ preserve(Queue_FIFO_order)
+  | Set(destination) → insert_distinct_values ∧ duplicates_consume_no_capacity
+  | Map(destination) → associate(entry_key, entry_value) ∧ matching_keys_replace_values_without_capacity_growth
+    ∧ later_matching_entry_wins
+  | String(destination) → append(characters_in_traversal_order) ∧ preserve(valid_non_NUL_ASCII)
+    ∧ runtime(invalid_character) → append('.') ∧ continue_traversal
+    ∧ constant_evaluation(invalid_character) → reject_with(String_compile_time_validation_diagnostic)
+    ∧ stop_at(capacity_exhaustion)
+  | Set(destination) → accept(duplicate_value_as_no_op, even_when_full)
+  | Map(destination) → accept(MapEntry_with_existing_key_as_value_replacement, even_when_full)
+  | fits_into(String(destination), finite_source) → compare(source_count ≤ remaining_character_capacity)
+    ∧ ¬evaluate(character_validity)
+  | source_traversal(x) → stop_before(first_value_requiring_unavailable_capacity)
+    ∧ ¬skip_rejected_value
   | finite_source(x) → materialize(complete_result_when_it_fits(x)) ∨ materialize(bounded_prefix_result(x))
-  | unbounded_source(x) → materialize(deterministic_bounded_prefix(x)) ∧ bound_by(remaining_destination_capacity(x))
+  | unbounded_source(x) → materialize(deterministic_bounded_prefix(x))
+    ∧ bound_source_traversal_by(CollectionMaximumElementCount)
+    ∧ bound(Set_new_distinct_values ∨ Map_new_keys, by: remaining_destination_capacity(x))
   | into_operation(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
   | rejected_destination_or_source(x) → provide(targeted_rejection_diagnostic(x))
   rationale: complete source materialization is explicit and owning; `fits_into` remains the completeness preflight, so an oversized source yields a documented bounded prefix rather than a failure
