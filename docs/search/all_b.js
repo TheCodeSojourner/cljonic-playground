@@ -16,5 +16,7 @@ var searchData=
   ['mapentryfactoryelementtypes_13',['MapEntryFactoryElementTypes',['../conceptcljonic_1_1concepts__detail_1_1_map_entry_factory_element_types.html',1,'cljonic::concepts_detail']]],
   ['mapped_5ftype_14',['mapped_type',['../structcljonic_1_1_map_entry.html#a1171413d130888c56d97b922516c0bf3',1,'cljonic::MapEntry::mapped_type'],['../classcljonic_1_1_map.html#a3d2118cb518b23a5daff9b08d6bafc77',1,'cljonic::Map::mapped_type']]],
   ['matching_5falternative_5fcount_5fv_15',['matching_alternative_count_v',['../namespacecljonic_1_1variant__detail.html#a9ccabbeeac6762046412faebbf635d67',1,'cljonic::variant_detail']]],
-  ['materializablesource_16',['MaterializableSource',['../conceptcljonic_1_1concepts__detail_1_1_materializable_source.html',1,'cljonic::concepts_detail']]]
+  ['materializablesource_16',['MaterializableSource',['../conceptcljonic_1_1concepts__detail_1_1_materializable_source.html',1,'cljonic::concepts_detail']]],
+  ['materialization_5fhas_5fcapacity_17',['materialization_has_capacity',['../namespacecljonic_1_1concepts__detail.html#a2ed8273b779726a9cf4a9092d57434ca',1,'cljonic::concepts_detail']]],
+  ['materialization_5fsource_5fis_5ffinite_18',['materialization_source_is_finite',['../namespacecljonic_1_1concepts__detail.html#a3a6d6bce426e95e6bb7791af65f35093',1,'cljonic::concepts_detail']]]
 ];

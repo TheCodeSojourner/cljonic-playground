@@ -265,6 +265,7 @@ Concepts</h2></td></tr>
 <tr class="memitem:ContainsIndexedCollection" id="r_ContainsIndexedCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_indexed_collection.html">ContainsIndexedCollection</a></td></tr>
 <tr class="memitem:ContainsLookupCollection" id="r_ContainsLookupCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_lookup_collection.html">ContainsLookupCollection</a></td></tr>
 <tr class="memitem:ContainsSupportedCollection" id="r_ContainsSupportedCollection"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_contains_supported_collection.html">ContainsSupportedCollection</a></td></tr>
+<tr class="memitem:CountPreflightDestination" id="r_CountPreflightDestination"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_count_preflight_destination.html">CountPreflightDestination</a></td></tr>
 <tr class="memitem:CycleClassArgument" id="r_CycleClassArgument"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_cycle_class_argument.html">CycleClassArgument</a></td></tr>
 <tr class="memitem:DisjAdmissible" id="r_DisjAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_disj_admissible.html">DisjAdmissible</a></td></tr>
 <tr class="memitem:DissocKeyAdmissible" id="r_DissocKeyAdmissible"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_dissoc_key_admissible.html">DissocKeyAdmissible</a></td></tr>
@@ -395,6 +396,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a4ca1374dc952d90d209ac69dbee803c6 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a4ca1374dc952d90d209ac69dbee803c6">try_normalize_index</a> (IndexType index) noexcept -&gt; std::optional&lt; std::size_t &gt;</td></tr>
 <tr class="memitem:a7170267924d77e1a2a3f23394976665d" id="r_a7170267924d77e1a2a3f23394976665d"><td class="memTemplParams" colspan="2">template&lt;ProducerCount Count&gt; </td></tr>
 <tr class="memitem:a7170267924d77e1a2a3f23394976665d template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a7170267924d77e1a2a3f23394976665d">normalize_producer_count</a> (Count count) noexcept -&gt; std::size_t</td></tr>
+<tr class="memitem:a2ed8273b779726a9cf4a9092d57434ca" id="r_a2ed8273b779726a9cf4a9092d57434ca"><td class="memTemplParams" colspan="2">template&lt;typename Dest, typename Value&gt; </td></tr>
+<tr class="memitem:a2ed8273b779726a9cf4a9092d57434ca template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a2ed8273b779726a9cf4a9092d57434ca">materialization_has_capacity</a> (const Dest &amp;destination, const Value &amp;value) noexcept -&gt; bool</td></tr>
 <tr class="memitem:afa5131551ae8ca8b54874c62dfaeee36" id="r_afa5131551ae8ca8b54874c62dfaeee36"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
 <tr class="memitem:afa5131551ae8ca8b54874c62dfaeee36 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="#afa5131551ae8ca8b54874c62dfaeee36">fold_conj_values_into</a> (C &amp;result) noexcept</td></tr>
 <tr class="memitem:a57cc2613eb4edaa719daef2956b187ec" id="r_a57cc2613eb4edaa719daef2956b187ec"><td class="memTemplParams" colspan="2">template&lt;typename C, typename T, typename... Rest&gt; </td></tr>
@@ -405,6 +408,13 @@ Functions</h2></td></tr>
 <tr class="memitem:a36db1cb962823291250b17046365c1a9 template"><td class="memItemLeft">constexpr void&#160;</td><td class="memItemRight"><a class="el" href="#a36db1cb962823291250b17046365c1a9">fold_dissoc_keys_into</a> (C &amp;result, const K &amp;key, const Rest &amp;... rest) noexcept</td></tr>
 <tr class="memitem:aa5211efa94af71b323cf0a5e407e0564" id="r_aa5211efa94af71b323cf0a5e407e0564"><td class="memTemplParams" colspan="2">template&lt;typename Lhs, typename Rhs&gt; </td></tr>
 <tr class="memitem:aa5211efa94af71b323cf0a5e407e0564 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aa5211efa94af71b323cf0a5e407e0564">equal_prefix_walk</a> (const Lhs &amp;lhs, const Rhs &amp;rhs) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a3a6d6bce426e95e6bb7791af65f35093" id="r_a3a6d6bce426e95e6bb7791af65f35093"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicSource Source&gt; </td></tr>
+<tr class="memitem:a3a6d6bce426e95e6bb7791af65f35093 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a3a6d6bce426e95e6bb7791af65f35093">materialization_source_is_finite</a> (const Source &amp;source) noexcept -&gt; bool</td></tr>
+<tr class="memitem:a273085ed8b4964d4b21d2b30e9f2d260" id="r_a273085ed8b4964d4b21d2b30e9f2d260"><td class="memTemplParams" colspan="2">template&lt;typename Dest, typename Source&gt; <br />
+requires MaterializableSource&lt;Dest, Source&gt;</td></tr>
+<tr class="memitem:a273085ed8b4964d4b21d2b30e9f2d260 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a273085ed8b4964d4b21d2b30e9f2d260">source_fits_by_insertion</a> (const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</td></tr>
+<tr class="memitem:ac5f6a46dfdfc033091786336585b3002" id="r_ac5f6a46dfdfc033091786336585b3002"><td class="memTemplParams" colspan="2">template&lt;typename Dest, typename Source&gt; </td></tr>
+<tr class="memitem:ac5f6a46dfdfc033091786336585b3002 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ac5f6a46dfdfc033091786336585b3002">source_fits_by_count</a> (const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</td></tr>
 <tr class="memitem:a432efa1e75d7135a0bb445ef74994d56" id="r_a432efa1e75d7135a0bb445ef74994d56"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K&gt; </td></tr>
 <tr class="memitem:a432efa1e75d7135a0bb445ef74994d56 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a432efa1e75d7135a0bb445ef74994d56">diagnose_get_key</a> () noexcept -&gt; void</td></tr>
 <tr class="memitem:a6b6a0aedeba9f6ec243d75cf3f2de072" id="r_a6b6a0aedeba9f6ec243d75cf3f2de072"><td class="memTemplParams" colspan="2">template&lt;typename C, typename K, typename R&gt; </td></tr>
@@ -1399,6 +1409,68 @@ template&lt;typename KeyType, typename <a class="el" href="#ab9fb80516a7a093c3ce
 
 </div>
 </div>
+<a id="a2ed8273b779726a9cf4a9092d57434ca" name="a2ed8273b779726a9cf4a9092d57434ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ed8273b779726a9cf4a9092d57434ca">&#9670;&#160;</a></span>materialization_has_capacity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Dest, typename Value&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::materialization_has_capacity </td>
+          <td>(</td>
+          <td class="paramtype">const Dest &amp;</td>          <td class="paramname"><span class="paramname"><em>destination</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Value &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-concepts_8hpp_source.html#l00602">602</a> of file <a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3a6d6bce426e95e6bb7791af65f35093" name="a3a6d6bce426e95e6bb7791af65f35093"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a6d6bce426e95e6bb7791af65f35093">&#9670;&#160;</a></span>materialization_source_is_finite()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::CljonicSource Source&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::materialization_source_is_finite </td>
+          <td>(</td>
+          <td class="paramtype">const Source &amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span></td><td>)</td>
+          <td> -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00010">10</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ae596b8dc192bb5cb3e15a1a3030db3be" name="ae596b8dc192bb5cb3e15a1a3030db3be"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae596b8dc192bb5cb3e15a1a3030db3be">&#9670;&#160;</a></span>next_producer_tail() <span class="overload">[1/5]</span></h2>
 
@@ -1626,6 +1698,73 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="cljonic-character-is-valid_8hpp_source.html#l00024">24</a> of file <a class="el" href="cljonic-character-is-valid_8hpp_source.html">cljonic-character-is-valid.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac5f6a46dfdfc033091786336585b3002" name="ac5f6a46dfdfc033091786336585b3002"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5f6a46dfdfc033091786336585b3002">&#9670;&#160;</a></span>source_fits_by_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Dest, typename Source&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::source_fits_by_count </td>
+          <td>(</td>
+          <td class="paramtype">const Dest &amp;</td>          <td class="paramname"><span class="paramname"><em>destination</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Source &amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00033">33</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a273085ed8b4964d4b21d2b30e9f2d260" name="a273085ed8b4964d4b21d2b30e9f2d260"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a273085ed8b4964d4b21d2b30e9f2d260">&#9670;&#160;</a></span>source_fits_by_insertion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Dest, typename Source&gt; <br />
+requires MaterializableSource&lt;Dest, Source&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::concepts_detail::source_fits_by_insertion </td>
+          <td>(</td>
+          <td class="paramtype">const Dest &amp;</td>          <td class="paramname"><span class="paramname"><em>destination</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Source &amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span>&#160;) -&gt; bool</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00020">20</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
 
 </div>
 </div>

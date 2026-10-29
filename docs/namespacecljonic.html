@@ -335,7 +335,7 @@ requires ((sizeof...(Rest) &gt;= 1) &amp;&amp; (!<a class="el" href="namespacecl
 <tr class="memitem:aea1402192879c7e0589a239d437f51ce" id="r_aea1402192879c7e0589a239d437f51ce"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
 requires (!concepts::SequenceableCollection&lt;C&gt; &amp;&amp; !<a class="el" href="namespacecljonic_1_1concepts__detail.html#a3889b714b08533483ca70718c5f1d55c">concepts_detail::is_cljonic_map_entry_v</a>&lt;C&gt;)</td></tr>
 <tr class="memitem:aea1402192879c7e0589a239d437f51ce template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aea1402192879c7e0589a239d437f51ce">first</a> (const C &amp;value) noexcept -&gt; void</td></tr>
-<tr class="memitem:af876852c739bf65f6e8cded65a3778e4" id="r_af876852c739bf65f6e8cded65a3778e4"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; <br />
+<tr class="memitem:af876852c739bf65f6e8cded65a3778e4" id="r_af876852c739bf65f6e8cded65a3778e4"><td class="memTemplParams" colspan="2">template&lt;typename Dest, typename Source&gt; <br />
 requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</td></tr>
 <tr class="memitem:af876852c739bf65f6e8cded65a3778e4 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a> (const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</td></tr>
 <tr class="memitem:ab03cdd5b91723dc5cd1ae26a03704959" id="r_ab03cdd5b91723dc5cd1ae26a03704959"><td class="memTemplParams" colspan="2">template&lt;typename Dest, typename Source&gt; <br />
@@ -355,7 +355,7 @@ requires (!concepts_detail::GetFallbackAdmissible&lt;C, K, R&gt;)</td></tr>
 <tr class="memitem:aafebdf3fcb325aa912255220f0f9488f" id="r_aafebdf3fcb325aa912255220f0f9488f"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
 requires (!concepts_detail::NextSequenceableCollection&lt;C&gt;)</td></tr>
 <tr class="memitem:aafebdf3fcb325aa912255220f0f9488f template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aafebdf3fcb325aa912255220f0f9488f">has_next</a> (const C &amp;value) noexcept -&gt; void</td></tr>
-<tr class="memitem:a6b0a13c640d125d2b026b26ca253f292" id="r_a6b0a13c640d125d2b026b26ca253f292"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; <br />
+<tr class="memitem:a6b0a13c640d125d2b026b26ca253f292" id="r_a6b0a13c640d125d2b026b26ca253f292"><td class="memTemplParams" colspan="2">template&lt;typename Dest, typename Source&gt; <br />
 requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</td></tr>
 <tr class="memitem:a6b0a13c640d125d2b026b26ca253f292 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a6b0a13c640d125d2b026b26ca253f292">into</a> (const Dest &amp;destination, const Source &amp;source) noexcept -&gt; Dest</td></tr>
 <tr class="memitem:a9bc47ef0e49ab57ca9d091f2b3645ba8" id="r_a9bc47ef0e49ab57ca9d091f2b3645ba8"><td class="memTemplParams" colspan="2">template&lt;typename Dest, typename Source&gt; <br />
@@ -3484,7 +3484,7 @@ requires (!concepts_detail::MaterializableSource&lt;Dest, Source&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00063">63</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00117">117</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
 
 </div>
 </div>
@@ -3494,7 +3494,7 @@ requires (!concepts_detail::MaterializableSource&lt;Dest, Source&gt;)</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; <br />
+template&lt;typename Dest, typename Source&gt; <br />
 requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
 <table class="mlabels">
   <tr>
@@ -3517,38 +3517,54 @@ requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="FitsInto"></a> The <b>fits_into</b> free function checks whether the complete contents of a cljonic collection or producer fit within the remaining capacity of a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>.</p>
-<p>It reports whether appending the complete <code class="param">source</code> to <code class="param">destination</code> fits within the destination's remaining capacity, using the same cardinality semantics as <span class="tt"><a class="el" href="#a6b0a13c640d125d2b026b26ca253f292">into</a></span>. It returns <span class="tt">false</span> for every unbounded producer, even though its normal const traversal is capped.</p>
-<p>The destination must be a <a class="el" href="classcljonic_1_1_vector.html">Vector</a>, and the source must be a cljonic collection or producer whose elements convert safely to the <a class="el" href="classcljonic_1_1_vector.html">Vector</a>'s element type. Source elements must follow the same <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a> as <a class="el" href="#Into" title="Into">into</a>.</p>
+<p><a class="anchor" id="FitsInto"></a> The <b>fits_into</b> free function checks whether every value from a cljonic collection or producer can be inserted into a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>, <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>, <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a>, or <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>.</p>
+<p>Uses the same insertion rules as <a class="el" href="#Into" title="Into">into</a>, leaving both input values unchanged. <a class="el" href="classcljonic_1_1_vector.html">Vector</a> and <a class="el" href="classcljonic_1_1_queue.html">Queue</a> compare the finite source count to remaining capacity. <a class="el" href="classcljonic_1_1_set.html">Set</a> and <a class="el" href="classcljonic_1_1_map.html">Map</a> inspect values, accounting for duplicates and matching-key updates in the destination and earlier source values. It returns <span class="tt">false</span> at the first insertion that needs unavailable capacity, or <span class="tt">true</span> after the complete finite source is accepted. Every unbounded producer returns <span class="tt">false</span>, even though its normal const traversal is capped. <a class="el" href="classcljonic_1_1_string.html">String</a> compares finite source count to remaining character capacity without evaluating character validity; invalid characters are normalized at runtime by <span class="tt"><a class="el" href="#a6b0a13c640d125d2b026b26ca253f292">into</a></span>.</p>
+<p>Finite Set/Map preflight may evaluate producer callbacks. Preflight and <span class="tt"><a class="el" href="#a6b0a13c640d125d2b026b26ca253f292">into</a></span> traverse independently, without shared caching; callback effects through references or static storage may remain observable. The prediction applies only when the subsequent traversal yields the same values.</p>
+<p>Source values follow the same <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a> as <span class="tt"><a class="el" href="#a6b0a13c640d125d2b026b26ca253f292">into</a></span>; <a class="el" href="classcljonic_1_1_map.html">Map</a> requires its declared <a class="el" href="structcljonic_1_1_map_entry.html#MapEntry" title="MapEntry">MapEntry</a> type. External C++ range or view sources are excluded.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> destination = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 8&gt;</a>();</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite_source = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, 5};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite_source = <a class="code hl_function" href="#a25349a99ffccb2525333ab32f8ce31f6">range</a>(0, 5);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(destination, finite_source));</div>
 <div class="line"> </div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded_source = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, 5, 0};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded_source = <a class="code hl_function" href="#a25349a99ffccb2525333ab32f8ce31f6">range</a>(0, 5, 0);</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(destination, unbounded_source));</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> small_destination = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 2&gt;</a>();</div>
 <div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(small_destination, finite_source));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 2&gt;</a>(1), <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2, 2, 1)));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map&lt;int, int, 1&gt;</a>(1, 10),</div>
+<div class="line">                          <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(<a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 11), <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 12))));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#a2693300957a43d0bb2d4c29634a838f7">queue&lt;int, 2&gt;</a>(9), <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2)));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;4&gt;</a>(<span class="stringliteral">&quot;x&quot;</span>), <span class="keywordtype">string</span>(<span class="stringliteral">&quot;ab&quot;</span>)));</div>
+<div class="line">  <span class="keyword">static_assert</span>(!<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;2&gt;</a>(<span class="stringliteral">&quot;x&quot;</span>), <span class="keywordtype">string</span>(<span class="stringliteral">&quot;ab&quot;</span>)));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_end = 5;</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_destination = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 8&gt;</a>(1, 2);</div>
-<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_source = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, runtime_end};</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_source = <a class="code hl_function" href="#a25349a99ffccb2525333ab32f8ce31f6">range</a>(0, runtime_end);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_small_destination = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 4&gt;</a>();</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_set_source = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2, 2);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_map_source = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(<a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 11), <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 12));</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_string_source = <a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string</a>(<span class="stringliteral">&quot;ab&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(runtime_destination, runtime_source) &amp;&amp;</div>
-<div class="line">          !<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(runtime_small_destination, runtime_source))</div>
+<div class="line">          !<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(runtime_small_destination, runtime_source) &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 2&gt;</a>(1), runtime_set_source) &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map&lt;int, int, 1&gt;</a>(1, 10), runtime_map_source) &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#a2693300957a43d0bb2d4c29634a838f7">queue&lt;int, 3&gt;</a>(9), <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2)) &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;4&gt;</a>(<span class="stringliteral">&quot;x&quot;</span>), runtime_string_source) &amp;&amp;</div>
+<div class="line">          !<a class="code hl_function" href="#af876852c739bf65f6e8cded65a3778e4">fits_into</a>(<a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;2&gt;</a>(<span class="stringliteral">&quot;x&quot;</span>), runtime_string_source))</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_af876852c739bf65f6e8cded65a3778e4"><div class="ttname"><a href="#af876852c739bf65f6e8cded65a3778e4">cljonic::fits_into</a></div><div class="ttdeci">constexpr auto fits_into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-fits-into_8hpp_source.html#l00050">cljonic-fits-into.hpp:50</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a25349a99ffccb2525333ab32f8ce31f6"><div class="ttname"><a href="#a25349a99ffccb2525333ab32f8ce31f6">cljonic::range</a></div><div class="ttdeci">constexpr auto range(Args &amp;&amp;... args) noexcept -&gt; Range&lt; concepts_detail::range_factory_element_t&lt; RequestedElementType, Args... &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00358">cljonic-range.hpp:358</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_af876852c739bf65f6e8cded65a3778e4"><div class="ttname"><a href="#af876852c739bf65f6e8cded65a3778e4">cljonic::fits_into</a></div><div class="ttdeci">constexpr auto fits_into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; bool</div><div class="ttdef"><b>Definition</b> <a href="cljonic-fits-into_8hpp_source.html#l00102">cljonic-fits-into.hpp:102</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00050">50</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-fits-into_8hpp_source.html#l00102">102</a> of file <a class="el" href="cljonic-fits-into_8hpp_source.html">cljonic-fits-into.hpp</a>.</p>
 
 </div>
 </div>
@@ -4490,7 +4506,7 @@ requires concepts_detail::HashSetFactoryCapacityArguments&lt;ElementType, Capaci
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;concepts::CljonicVector Dest, concepts::CljonicSource Source&gt; <br />
+template&lt;typename Dest, typename Source&gt; <br />
 requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
 <table class="mlabels">
   <tr>
@@ -4513,10 +4529,10 @@ requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="Into"></a> The <b>into</b> free function appends elements from a <a class="el" href="conceptcljonic_1_1concepts_1_1_cljonic_source.html" title="concepts::CljonicSource">source</a> to a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, up to its remaining capacity.</p>
-<p>Returns an updated destination-typed collection with source elements appended after the destination's existing logical contents, leaving both <code class="param">destination</code> and <code class="param">source</code> unchanged.</p>
-<p>An unbounded or oversized source produces a deterministic bounded prefix limited by the destination's remaining capacity; a finite source that fits materializes completely. Use <b>fits_into</b> beforehand to check whether the complete source fits.</p>
-<p>The destination must be a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>. Other collection types are supported only as sources. Source elements must follow the destination's <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>.</p>
+<p><a class="anchor" id="Into"></a> The <b>into</b> free function inserts values from a cljonic collection or producer into a copy of a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a>, <a class="el" href="classcljonic_1_1_set.html#Set" title="Set">Set</a>, <a class="el" href="classcljonic_1_1_map.html#Map" title="Map">Map</a>, <a class="el" href="classcljonic_1_1_queue.html#Queue" title="Queue">Queue</a>, or <a class="el" href="classcljonic_1_1_string.html#String" title="String">String</a>.</p>
+<p>Returns the destination's type, leaving both <code class="param">destination</code> and <code class="param">source</code> unchanged. <a class="el" href="classcljonic_1_1_vector.html">Vector</a> and <a class="el" href="classcljonic_1_1_queue.html">Queue</a> append at the end or rear. <a class="el" href="classcljonic_1_1_set.html">Set</a> ignores duplicate values. <a class="el" href="classcljonic_1_1_map.html">Map</a> accepts <a class="el" href="structcljonic_1_1_map_entry.html#MapEntry" title="MapEntry">MapEntry</a> values of its declared entry type and replaces matching keys; the last processed entry for a key wins. <a class="el" href="classcljonic_1_1_string.html">String</a> appends characters in traversal order. Invalid characters fail constant evaluation; at runtime they are replaced with <span class="tt">'.'</span> and traversal continues.</p>
+<p>Values are processed in source traversal order. When full, a <a class="el" href="classcljonic_1_1_set.html">Set</a> accepts an existing value as a no-op and a <a class="el" href="classcljonic_1_1_map.html">Map</a> accepts a <a class="el" href="structcljonic_1_1_map_entry.html#MapEntry" title="MapEntry">MapEntry</a> with an existing key as a value replacement. <a class="el" href="classcljonic_1_1_vector.html">Vector</a> and <a class="el" href="classcljonic_1_1_queue.html">Queue</a> cannot accept more values when full. <a class="el" href="classcljonic_1_1_string.html">String</a> also stops at capacity, independently of character validity. Processing stops before the first value that needs unavailable capacity, without skipping it to process later values. An unbounded source remains limited to its configured observable traversal cap, even if <a class="el" href="classcljonic_1_1_set.html">Set</a> or <a class="el" href="classcljonic_1_1_map.html">Map</a> insertion does not increase the result count for duplicates or matching keys. Use <a class="el" href="#FitsInto" title="FitsInto">fits_into</a> beforehand when complete materialization matters.</p>
+<p>Source values must follow the destination's <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>. External C++ range or view sources are not supported.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
 <div class="line"> </div>
@@ -4531,6 +4547,16 @@ requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> prefix = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 4&gt;</a>(100, 200), source);</div>
 <div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(prefix, <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(100, 200, 0, 1)));</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> distinct = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set&lt;int, 2&gt;</a>(1), <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2, 2, 1));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(distinct, <a class="code hl_function" href="#ab920b6f72a40bc9c9d4b1c69662e149e">hash_set</a>(1, 2)));</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> entries =</div>
+<div class="line">      <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(<a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 11), <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(2, 20), <a class="code hl_function" href="#a0276d2cc4a963af9ddbc2ad7aa6ac4f0">map_entry</a>(1, 12));</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> mapped = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_function" href="#a2aa4197e029c665443f7f5d0ebcf61d8">hash_map&lt;int, int, 2&gt;</a>(1, 10), entries);</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a1303d4cdb00acfa70d9ffcc65d7670c5">get</a>(mapped, 1) == 12 &amp;&amp; <a class="code hl_function" href="#a1303d4cdb00acfa70d9ffcc65d7670c5">get</a>(mapped, 2) == 20);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> queued = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_function" href="#a2693300957a43d0bb2d4c29634a838f7">queue&lt;int, 3&gt;</a>(9), <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2, 3));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(queued, <a class="code hl_function" href="#a2693300957a43d0bb2d4c29634a838f7">queue</a>(9, 1, 2)));</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> text = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;4&gt;</a>(<span class="stringliteral">&quot;x&quot;</span>), <span class="keywordtype">string</span>(<span class="stringliteral">&quot;ab&quot;</span>));</div>
+<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(text, <span class="keywordtype">string</span>(<span class="stringliteral">&quot;xab&quot;</span>)));</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Runtime demonstration.</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_end = 5;</div>
@@ -4538,17 +4564,21 @@ requires concepts_detail::MaterializableSource&lt;Dest, Source&gt;</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_source = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{0, runtime_end};</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_result = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(runtime_destination, runtime_source);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_prefix = <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector&lt;int, 4&gt;</a>(100, 200), runtime_source);</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> invalid_byte = <span class="stringliteral">&#39;\x80&#39;</span>;</div>
+<div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_text =</div>
+<div class="line">      <a class="code hl_function" href="#a6b0a13c640d125d2b026b26ca253f292">into</a>(<a class="code hl_function" href="#aac92eb77175a67beb451582c5786027e">string&lt;4&gt;</a>(<span class="stringliteral">&quot;x&quot;</span>), <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(<span class="charliteral">&#39;a&#39;</span>, invalid_byte, <span class="charliteral">&#39;b&#39;</span>));</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(runtime_result, <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(100, 200, 0, 1, 2, 3, 4)) &amp;&amp;</div>
 <div class="line">          <a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(runtime_prefix, <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(100, 200, 0, 1)) &amp;&amp;</div>
+<div class="line">          <a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(runtime_text, <span class="keywordtype">string</span>(<span class="stringliteral">&quot;xa.b&quot;</span>)) &amp;&amp;</div>
 <div class="line">          <a class="code hl_function" href="#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a>(runtime_destination, <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(100, 200)) &amp;&amp;</div>
 <div class="line">          <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(runtime_source) == 5)</div>
 <div class="line">             ? 0</div>
 <div class="line">             : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a6b0a13c640d125d2b026b26ca253f292"><div class="ttname"><a href="#a6b0a13c640d125d2b026b26ca253f292">cljonic::into</a></div><div class="ttdeci">constexpr auto into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; Dest</div><div class="ttdef"><b>Definition</b> <a href="cljonic-into_8hpp_source.html#l00055">cljonic-into.hpp:55</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a6b0a13c640d125d2b026b26ca253f292"><div class="ttname"><a href="#a6b0a13c640d125d2b026b26ca253f292">cljonic::into</a></div><div class="ttdeci">constexpr auto into(const Dest &amp;destination, const Source &amp;source) noexcept -&gt; Dest</div><div class="ttdef"><b>Definition</b> <a href="cljonic-into_8hpp_source.html#l00075">cljonic-into.hpp:75</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-into_8hpp_source.html#l00055">55</a> of file <a class="el" href="cljonic-into_8hpp_source.html">cljonic-into.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-into_8hpp_source.html#l00075">75</a> of file <a class="el" href="cljonic-into_8hpp_source.html">cljonic-into.hpp</a>.</p>
 
 </div>
 </div>
@@ -4582,7 +4612,7 @@ requires (!concepts_detail::MaterializableSource&lt;Dest, Source&gt;)</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-into_8hpp_source.html#l00071">71</a> of file <a class="el" href="cljonic-into_8hpp_source.html">cljonic-into.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-into_8hpp_source.html#l00091">91</a> of file <a class="el" href="cljonic-into_8hpp_source.html">cljonic-into.hpp</a>.</p>
 
 </div>
 </div>
@@ -6072,7 +6102,6 @@ requires concepts_detail::RangeFactoryArguments&lt;RequestedElementType, Args...
 <div class="line">  <span class="keyword">const</span> <span class="keyword">auto</span> runtime_values = <a class="code hl_function" href="#a25349a99ffccb2525333ab32f8ce31f6">range</a>(end);</div>
 <div class="line">  <span class="keywordflow">return</span> <a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(runtime_values) == 5U ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_a25349a99ffccb2525333ab32f8ce31f6"><div class="ttname"><a href="#a25349a99ffccb2525333ab32f8ce31f6">cljonic::range</a></div><div class="ttdeci">constexpr auto range(Args &amp;&amp;... args) noexcept -&gt; Range&lt; concepts_detail::range_factory_element_t&lt; RequestedElementType, Args... &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00358">cljonic-range.hpp:358</a></div></div>
 </div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00358">358</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
