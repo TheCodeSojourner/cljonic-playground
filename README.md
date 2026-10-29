@@ -115,6 +115,51 @@ is no longer a C++ aggregate: its constructor enforces these conversion rules.
 Standard transform views remain supported when their base traversal and callback
 are non-throwing; declare such callbacks `noexcept`.
 
+### Materializing cljonic sources
+
+`into(destination, source)` returns a new collection of the destination's type,
+leaving both input values unchanged. The destination can be a Vector, Set, Map,
+Queue, or String; the source must be a compatible cljonic collection or producer.
+
+- Vector and Queue append at the end or rear.
+- Set ignores duplicate values.
+- Map consumes its declared `MapEntry<K, V>` type and replaces matching keys;
+  the last processed entry for a key wins.
+- String appends characters in traversal order. Invalid characters fail during
+  constant evaluation; at runtime they become `'.'` and traversal continues.
+
+Values follow the same safe conversion rules as ordinary insertion. External
+C++ ranges/views are not supported by this pair of functions; external sources
+use direct source construction instead.
+
+```cpp
+constexpr auto values = cljonic::vector(1, 2, 2, 1);
+constexpr auto destination = cljonic::hash_set<int, 2>(1);
+static_assert(cljonic::fits_into(destination, values));
+constexpr auto result = cljonic::into(destination, values);
+static_assert(cljonic::equal(result, cljonic::hash_set(1, 2)));
+```
+
+Processing follows source traversal order and stops before the first value that
+needs unavailable capacity; it does not skip that value to process later ones.
+At full capacity, **Set** accepts an already-present value as a no-op, and
+**Map** accepts an entry whose key already exists as a value replacement.
+Vector and Queue cannot accept additional values when full. Unbounded sources
+retain their configured traversal cap even when Set/Map insertions need no new
+storage.
+
+For String destinations, `fits_into` compares finite source count to remaining
+character capacity; it does not inspect character validity because runtime
+`into` normalizes invalid characters and continues.
+
+Use `fits_into` before `into` when completeness matters. It returns false for
+every unbounded producer. For finite Set/Map sources it accounts for duplicates
+and key replacements, rather than treating source count as storage growth.
+This preflight may evaluate producer callbacks. Preflight and materialization
+traverse independently without shared caching; the prediction applies only if
+the later traversal produces the same values. Callback effects through references
+or static storage can remain observable between calls.
+
 ### concepts
 
 **cljonic** uses **concepts** to specify template requirements, improving code readability and providing better compiler diagnostics.
