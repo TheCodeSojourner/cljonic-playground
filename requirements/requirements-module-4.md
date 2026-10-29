@@ -17,9 +17,19 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 
 λ REQ-VAL-015(x).
   ∀ destination supplied to `into`: encodes the result capacity and result collection type
-  ∧ ∀ `into(destination, source)`: returns a new destination-typed collection formed by appending source elements after the destination's existing logical elements ∧ leaves both input values unchanged
-  ∧ ∀ `fits_into(destination, source)`: reports whether the complete source can be appended within the destination's remaining capacity
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∧ ∀ `into(destination, source)`: returns a new destination-typed collection formed by folding source values in traversal order through the destination's insertion semantics ∧ leaves both input values unchanged
+  ∧ ∀ `Vector` ∨ `Queue` destination: appends values after its existing logical contents ∧ preserves FIFO order for `Queue`
+  ∧ ∀ `Set` destination: inserts distinct values ∧ duplicate insertion consumes no capacity
+  ∧ ∀ `Map` destination: associates compatible `MapEntry` values ∧ a matching key replaces its value without consuming capacity ∧ later entries for the same key replace earlier entries
+  ∧ ∀ `String` destination: appends source characters in order ∧ valid non-NUL ASCII characters are preserved
+  ∧ ∀ invalid `String` source character: constant evaluation is rejected by the String compile-time validation diagnostic ∧ runtime insertion replaces that character with `'.'` and continues traversal
+  ∧ ∀ `String` destination: runtime materialization processes characters until capacity is full ∧ invalid characters before capacity exhaustion are normalized and do not stop traversal
+  ∧ ∀ `Set` destination: a duplicate value is accepted as a no-op even when full
+  ∧ ∀ `Map` destination: a `MapEntry` with an existing key is accepted as a value replacement even when full
+  ∧ ∀ destination: stops before the first source value that requires unavailable capacity ∧ never skips a rejected value to process later values
+  ∧ ∀ unbounded_source: traversal remains bounded by `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` even when Set duplicates or Map key replacements consume no capacity
+  ∧ ∀ `fits_into(destination, source)`: reports whether all source values can be inserted under these same semantics ∧ ¬∃ requirement that source count equals result count growth
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-29}
 
 λ REQ-VAL-016(x).
   ∀ public free function `count(value)`: admits values satisfying `SequenceableCollection` or `SequenceableProducer` ∧ returns the non-throwing, non-allocating count observation defined for that value
@@ -36,8 +46,13 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 λ REQ-VAL-017A(x).
   ∀ Module 4 producer: exposes a non-throwing, non-allocating `is_finite` predicate
   ∧ ∀ `is_finite`: returns `false` exactly when the producer has no finite complete result, despite having a bounded observable traversal count
-  ∧ ∀ source where `is_finite` is `false`: `fits_into` returns `false` ∧ ∀ finite_source: `fits_into` compares the source count to `destination.capacity() - destination.count()` without an overflow-prone addition
-  {source: stakeholder_decided, decided_by: original_spec_author}
+  ∧ ∀ source where `is_finite` is `false`: `fits_into` returns `false` regardless of duplicate values or matching keys
+  ∧ ∀ finite_source ∧ (`Vector` ∨ `Queue`) destination: `fits_into` compares the source count to `destination.capacity() - destination.count()` without an overflow-prone addition
+  ∧ ∀ finite_source ∧ (`Set` ∨ `Map`) destination: `fits_into` accounts for existing destination values or keys and earlier source values or keys ∧ MAY traverse the source and evaluate producer callbacks ∧ returns `false` at the first insertion requiring unavailable capacity ∧ otherwise returns `true` after the complete traversal
+  ∧ ∀ finite_source ∧ `String` destination: `fits_into` compares source count to remaining character capacity without evaluating or rejecting character validity, because runtime materialization normalizes invalid characters
+  ∧ ∀ preflight: preserves both input values ∧ shares no realization cache with `into` ∧ callback effects through references or static storage MAY remain observable across the independent preflight and materialization traversals
+  ∧ ∀ value-sensitive preflight followed by `into`: a completeness prediction applies when the subsequent traversal yields the same values; ¬∃ guarantee for callbacks whose external state changes those values between traversals
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-29}
 
 λ REQ-VAL-017B(x).
   ∀ context: `ConstInputRange` requires a usable input-range traversal from a const source expression ∧ is the structural traversal capability ∧ ¬∃ by-itself admission of a type to the cljonic source domain
@@ -104,7 +119,7 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∀ (`cycle` ∧ `iterate` ∧ `range` ∧ `repeat` ∧ `repeatedly`): standalone producer values or producer operations that ¬∃ (owned materialized result storage ∨ required result-capacity template parameter)
   ∧ ∀ producer_value: provides ordinary const `begin`/`end` traversal bounded by `count()` ∧ when it satisfies `CljonicSource`, consumable directly by source-taking free functions
   ∧ ∀ complete conversion into an explicit bounded destination: uses `into`
-  ∧ ∀ unbounded_form: terminates traversal after `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` elements ∧ produces at most the destination's remaining capacity ∧ MAY return a deterministic prefix
+  ∧ ∀ unbounded_form: traverses at most `CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT` elements ∧ adds at most the destination's remaining capacity in new elements or keys ∧ duplicate insertion and matching-key replacement MAY consume further source values within that traversal cap ∧ MAY return a deterministic prefix under `REQ-VAL-015`
   ∧ ∀ finite_form where the result fits the destination: produces its complete result
   {source: stakeholder_decided, decided_by: original_spec_author}
 
@@ -164,7 +179,7 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∧ ∀ counted `Repeat` construction: uses `Repeat<T>{count, value}` ∨ deduced `Repeat{count, value}` ∧ when deduced, repeated element type is determined by `value` ∧ finite count admission follows `REQ-CONV-002E`
   ∧ ∀ counted factory ∨ constructor: first argument is always the count ∧ second argument is always the repeated value ∧ ¬∃ alternate value-first overload ∨ argument-order inference
   ∧ ∀ `Repeat<T>`: exposes `count()` and `is_finite()` as specified by `REQ-VAL-016` and `REQ-VAL-017A` ∧ ¬∃ (exposure of `contains` ∨ positional retrieval ∨ key-based lookup ∨ `get` ∨ callable lookup)
-  ∧ ∀ counted_form: uses the normalized count as its exact runtime result count for `into` and `fits_into` ∧ ∀ uncounted_form: materializes at most the explicit destination's remaining capacity ∧ reports `false` from `fits_into`
+  ∧ ∀ counted_form: uses the normalized count as its exact source count for `into` and `fits_into`, not as destination count growth for deduplicating or key-replacing insertion ∧ ∀ uncounted_form: materializes under `REQ-VAL-015` within the existing traversal cap ∧ reports `false` from `fits_into`
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-013C(x).
@@ -174,7 +189,7 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∧ ∀ producer: owns a copy of `initial` ∧ a copy of the decayed `step` callback ∧ its validity does not depend on the lifetime of either construction argument
   ∧ ∀ bounded_traversal: produces `initial` first, then applies `step` to the previously produced value to produce each subsequent value
   ∧ ∀ `Iterate`: exposes `count()` and `is_finite()` as specified by `REQ-VAL-016` and `REQ-VAL-017A` ∧ ¬∃ evaluation of `step` during construction ∧ ¬∃ (exposure of `contains` ∨ positional retrieval ∨ key-based lookup ∨ `get` ∨ callable lookup)
-  ∧ ∀ `Iterate` where `T`, `Step`, and the supplied arguments support constant evaluation: usable in constant evaluation ∧ remains callable at runtime ∧ materializes at most the explicit destination's remaining capacity ∧ reports `false` from `fits_into`
+  ∧ ∀ `Iterate` where `T`, `Step`, and the supplied arguments support constant evaluation: usable in constant evaluation ∧ remains callable at runtime ∧ materializes under `REQ-VAL-015` within the existing traversal cap ∧ reports `false` from `fits_into`
   rationale: move-only steps are not required because the resulting producer must remain a copyable value
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
@@ -189,7 +204,7 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∧ ∀ `repeatedly` step: MAY maintain state or produce side effects ∧ state reached through references or static storage remains shared across traversals ∧ remains non-allocating ∧ ¬∃ throw when invoked
   ∧ ∀ producer: owns a copy of the decayed `step` callback ∧ its validity does not depend on the lifetime of the construction argument
   ∧ ∀ callback: ¬∃ evaluation during construction ∧ ∀ zero_count: ¬∃ callback evaluation during traversal
-  ∧ ∀ `Repeatedly`: exposes `count()` and `is_finite()` as specified by `REQ-VAL-016` and `REQ-VAL-017A` ∧ ¬∃ (exposure of `contains` ∨ positional retrieval ∨ key-based lookup ∨ `get` ∨ callable lookup) ∧ usable in constant evaluation when `Step` and the supplied arguments support constant evaluation ∧ remains usable at runtime ∧ materializes at most the explicit destination's remaining capacity in uncounted form ∧ reports `false` from `fits_into` in uncounted form
+  ∧ ∀ `Repeatedly`: exposes `count()` and `is_finite()` as specified by `REQ-VAL-016` and `REQ-VAL-017A` ∧ ¬∃ (exposure of `contains` ∨ positional retrieval ∨ key-based lookup ∨ `get` ∨ callable lookup) ∧ usable in constant evaluation when `Step` and the supplied arguments support constant evaluation ∧ remains usable at runtime ∧ materializes under `REQ-VAL-015` within the existing traversal cap in uncounted form ∧ reports `false` from `fits_into` in uncounted form
   rationale: mirrors Clojure's `(repeatedly n f)` argument order for the counted form
   {source: stakeholder_decided, decided_by: original_spec_author, rationale_source: origin_artifact}
 
@@ -258,15 +273,19 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
 
 λ REQ-FN-027(x).
   ∀ `into` ∧ `fits_into`: materialization and its completeness preflight operate over cljonic sources only
-  ∧ ∀ `into(destination, source)` ∧ `fits_into(destination, source)` call: the destination is exactly a `CljonicVector` ∧ the source is exactly a `CljonicCollection` or `CljonicProducer` satisfying `CljonicSource`
+  ∧ ∀ `into(destination, source)` ∧ `fits_into(destination, source)` call: the destination satisfies exactly one of `CljonicVector`, `CljonicSet`, `CljonicMap`, `CljonicQueue`, or `CljonicString` ∧ the source is exactly a `CljonicCollection` or `CljonicProducer` satisfying `CljonicSource`
+  ∧ ∀ admitted source: its actual traversal reference provides values admitted by the destination's insertion operation under the existing safe implicit conversion and non-throwing construction rules (`REQ-CONV-001`–`003`) ∧ `Map` destinations require compatible nominal `MapEntry` values, not arbitrary pairs or alternating keys and values ∧ `String` destinations require values safely convertible to `char`
+  ∧ ∀ admitted `into` ∧ `fits_into`: share the same destination/source compatibility domain
   ∧ ∀ source outside that domain — including any non-cljonic C++ range or view such as `std::span<const T>` or `std::string_view` — ¬∃ admitted as an `into` or `fits_into` source
-  ∧ ∀ destination outside `CljonicVector` — including `String<N>`, `Map`, `Set`, and `Queue` — ¬∃ admitted as an `into` or `fits_into` destination
-  ∧ Vector-only destination admission is the permanent API contract, not an incremental implementation restriction
+  ∧ ∀ destination outside those five collection families — including every producer — ¬∃ admitted as an `into` or `fits_into` destination
+  ∧ ∀ `String` destination: `into` appends valid characters, rejects invalid characters during constant evaluation using the String compile-time validation diagnostic, and normalizes invalid characters to `'.'` at runtime while continuing until capacity is exhausted
+  ∧ ∀ `String` destination: `fits_into` measures only finite source count against remaining capacity and does not evaluate character validity
   ∧ external C++ interoperability sources are materialized only through direct source construction (`REQ-FN-027A`) ∧ ¬∃ (retention of the external view ∨ allocation ∨ throw) by `into` or `fits_into`
-  ∧ ∀ admitted `fits_into`: non-throwing ∧ non-allocating ∧ returns whether the complete source fits the destination's remaining capacity ∧ returns `false` for every unbounded producer
+  ∧ ∀ admitted `into` ∧ `fits_into`: usable in constant evaluation when the arguments support it ∧ non-throwing ∧ non-allocating ∧ non-mutating with respect to the input values
+  ∧ ∀ admitted `fits_into`: returns whether the complete source can be inserted under `REQ-VAL-015` and `REQ-VAL-017A` ∧ returns `false` for every unbounded producer
   ∧ ∀ rejected `fits_into` call: fails at compile time with the targeted rejection diagnostic governed by `REQ-DIAG-009`
   ∧ ∀ rejected `into` call: fails at compile time with the targeted rejection diagnostic governed by `REQ-DIAG-009`
-  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-19, rationale_source: origin_artifact}
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-29, rationale_source: origin_artifact}
 
 λ REQ-FN-027A(x).
   ∃ permitted_path: a supported collection provides direct construction from a compatible bounded C++ source when its destination type and capacity are encoded by the constructed collection type
