@@ -153,6 +153,7 @@ Friends</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts_detail::RangeClassArgument T&gt;<br />
 class cljonic::Range&lt; T &gt;</div><p><a class="anchor" id="Range"></a> A <a class="el" href="classcljonic_1_1_range.html">Range</a> is a producer describing an arithmetic sequence from an inclusive <code class="param">start</code> to an exclusive <code class="param">end</code> by a fixed <code class="param">step</code>, defaulting to start <span class="tt">0</span> and step <span class="tt">1</span>.</p>
+<p>Use <a class="el" href="namespacecljonic.html#RangeFactory" title="RangeFactory">range</a> to create a <a class="el" href="classcljonic_1_1_range.html">Range</a>.</p>
 <p>A zero step repeats <code class="param">start</code> indefinitely, taking precedence over otherwise-empty-range cases, including equal start and end. A nonzero step that moves away from <code class="param">end</code> produces an empty range.</p>
 <p>Observation is bounded by its finite span or by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b> for a zero-step range, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source.</p>
 <p>Explicitly typed parameters follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>.</p>
@@ -161,29 +162,29 @@ class cljonic::Range&lt; T &gt;</div><p><a class="anchor" id="Range"></a> A <a c
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// Default: start 0, end 0, step 1 (empty). CTAD cannot deduce from zero</span></div>
 <div class="line">  <span class="comment">// arguments.</span></div>
-<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a96b19d0a5b0898ddc04d1470d18cdb68">empty</a> = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range&lt;int&gt;</a>{};</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacecljonic.html#a96b19d0a5b0898ddc04d1470d18cdb68">empty</a> = <a class="code hl_function" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">range&lt;int&gt;</a>();</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Single argument is the exclusive end; start defaults to 0, step to 1.</span></div>
-<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> to_five = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{5};</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> to_five = <a class="code hl_function" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">range</a>(5);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Explicit start and end; step still defaults to 1.</span></div>
-<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> two_to_five = <a class="code hl_class" href="classcljonic_1_1_range.html">Range</a>{2, 5};</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> two_to_five = <a class="code hl_function" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">range</a>(2, 5);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Explicit start, end, and step.</span></div>
-<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> evens = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{0, 10, 2};</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> evens = <a class="code hl_function" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">range</a>(0, 10, 2);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// A zero step repeats start indefinitely rather than being empty.</span></div>
-<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> repeating = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{0, 5, 0};</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> repeating = <a class="code hl_function" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">range</a>(0, 5, 0);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// A billion elements exceeds the system&#39;s allowed maximum, so only that</span></div>
 <div class="line">  <span class="comment">// maximum number of elements is available.</span></div>
-<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> huge = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{1000000000};</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> huge = <a class="code hl_function" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">range</a>(1000000000);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
 <div class="line">  <span class="comment">// C++ interoperability: a Range supports const traversal.</span></div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> odds = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{1, 12, 2};</div>
-<div class="line">  <span class="keyword">auto</span> runtime_odds = <a class="code hl_function" href="#a99d9aab5afee99d7193f76882974e7c1">Range</a>{-1, -11, -2};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> odds = <a class="code hl_function" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">range</a>(1, 12, 2);</div>
+<div class="line">  <span class="keyword">auto</span> runtime_odds = <a class="code hl_function" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">range</a>(-1, -11, -2);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Use C++ interoperability to sum the values in a constexpr range</span></div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> odds_sum = [odds] {</div>
@@ -203,12 +204,11 @@ class cljonic::Range&lt; T &gt;</div><p><a class="anchor" id="Range"></a> A <a c
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> runtime_odds_sum == -25 ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_range_html"><div class="ttname"><a href="classcljonic_1_1_range.html">cljonic::Range</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00095">cljonic-range.hpp:95</a></div></div>
-<div class="ttc" id="aclasscljonic_1_1_range_html_a99d9aab5afee99d7193f76882974e7c1"><div class="ttname"><a href="#a99d9aab5afee99d7193f76882974e7c1">cljonic::Range::Range</a></div><div class="ttdeci">constexpr Range() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00143">cljonic-range.hpp:143</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_a25349a99ffccb2525333ab32f8ce31f6"><div class="ttname"><a href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">cljonic::range</a></div><div class="ttdeci">constexpr auto range(Args &amp;&amp;... args) noexcept -&gt; Range&lt; concepts_detail::range_factory_element_t&lt; RequestedElementType, Args... &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-range_8hpp_source.html#l00358">cljonic-range.hpp:358</a></div></div>
 <div class="ttc" id="anamespacecljonic_html_a96b19d0a5b0898ddc04d1470d18cdb68"><div class="ttname"><a href="namespacecljonic.html#a96b19d0a5b0898ddc04d1470d18cdb68">cljonic::empty</a></div><div class="ttdeci">constexpr auto empty(const C &amp;collection) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-empty_8hpp_source.html#l00036">cljonic-empty.hpp:36</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00095">95</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00098">98</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a852046c9ce7f1f2dcdf3e8a92960e165" name="a852046c9ce7f1f2dcdf3e8a92960e165"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a852046c9ce7f1f2dcdf3e8a92960e165">&#9670;&#160;</a></span>value_type</h2>
@@ -224,7 +224,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00099">99</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00102">102</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -254,7 +254,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00143">143</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00146">146</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -283,7 +283,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00146">146</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00149">149</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -316,7 +316,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00149">149</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00152">152</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -354,7 +354,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00152">152</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00155">155</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -489,7 +489,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </div><div class="memdoc">
 <p>Bounded generating iteration up to the effective size returned by <a class="el" href="#aac43089efa0f4e7ef0150886153cf043">count()</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00189">189</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00192">192</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -549,7 +549,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </div><div class="memdoc">
 <p>Index-in-range predicate over the available bounded prefix; O(1), no traversal. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00180">180</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00183">183</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -579,7 +579,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </div><div class="memdoc">
 <p>Conservative observation count: the synthesis cap for a zero step, otherwise the exact finite cardinality saturated at the synthesis cap. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00170">170</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00173">173</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -608,7 +608,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00193">193</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00196">196</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -638,7 +638,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </div><div class="memdoc">
 <p>Reports whether this <a class="el" href="classcljonic_1_1_range.html">Range</a> has a finite complete result. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00175">175</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00178">178</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -665,7 +665,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00096">96</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00099">99</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>
@@ -700,7 +700,7 @@ template&lt;concepts_detail::RangeClassArgument T&gt; </div>
 <p>Producer parameter equality (REQ-FN-014B): compares only the stored start/end/step parameters, never the produced sequence.</p>
 <p>It is the only producer parameter-equality surface; the <span class="tt"><a class="el" href="namespacecljonic.html#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a></span> free function instead compares bounded logical observations of the produced sequences. Two <a class="el" href="classcljonic_1_1_range.html">Range</a> values with different parameters compare unequal even when their produced or observed sequences coincide (for example two zero-step ranges with different endpoints both produce an infinite repetition of their respective start values). O(1), no traversal, no allocation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00206">206</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-range_8hpp_source.html#l00209">209</a> of file <a class="el" href="cljonic-range_8hpp_source.html">cljonic-range.hpp</a>.</p>
 
 </div>
 </div>

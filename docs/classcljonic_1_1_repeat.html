@@ -145,6 +145,7 @@ Friends</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;concepts_detail::RepeatClassArgument T&gt;<br />
 class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a> is a producer that owns one value and yields copies of it. The value may itself be a cljonic collection or producer, including nested cljonic composites. <span class="tt">repeat(value)</span> is unbounded, while <span class="tt">repeat(count, value)</span> yields exactly <code class="param">count</code> values.</p>
+<p>Use <a class="el" href="namespacecljonic.html#RepeatFactory" title="RepeatFactory">repeat</a> to create a <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>.</p>
 <p>Observation is bounded by <b>CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE</b> or by the requested count, and it supports const C++ range traversal in both constant evaluation and runtime code. Values can be passed directly to cljonic operations that accept a source.</p>
 <p>Values and finite counts follow the <a class="el" href="implicit-conversions.html" title="Safe implicit conversions">safe implicit conversion rules</a>. Counts accept signed or unsigned integer types whose nonnegative ranges fit <code>std::size_t</code>, excluding Boolean and character types. Zero or negative counts produce an empty finite <a class="el" href="classcljonic_1_1_repeat.html">Repeat</a>.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
@@ -160,16 +161,16 @@ class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="comment">// A finite Repeat yields the value exactly the requested number of times.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{3, 7};</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> pixels = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{2, Pixel{4, 9}};</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite = <a class="code hl_function" href="namespacecljonic.html#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">repeat</a>(3, 7);</div>
+<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> pixels = <a class="code hl_function" href="namespacecljonic.html#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">repeat</a>(2, Pixel{4, 9});</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// An uncounted Repeat is an unbounded producer.</span></div>
-<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{7};</div>
+<div class="line">  [[maybe_unused]] <span class="keyword">constexpr</span> <span class="keyword">auto</span> unbounded = <a class="code hl_function" href="namespacecljonic.html#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">repeat</a>(7);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
 <div class="line">  <span class="comment">// C++ interoperability: Repeat supports const traversal.</span></div>
 <div class="line">  <span class="comment">// -----------------------------------------------------------------------</span></div>
-<div class="line">  <span class="keyword">auto</span> runtime_finite = <a class="code hl_function" href="#aad9a9a113fd2a846fdc26c9eb582bdce">Repeat</a>{2, -1};</div>
+<div class="line">  <span class="keyword">auto</span> runtime_finite = <a class="code hl_function" href="namespacecljonic.html#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">repeat</a>(2, -1);</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> finite_sum = [finite] {</div>
 <div class="line">    <span class="keyword">auto</span> sum = 0;</div>
@@ -196,10 +197,10 @@ class cljonic::Repeat&lt; T &gt;</div><p><a class="anchor" id="Repeat"></a> A <a
 <div class="line"> </div>
 <div class="line">  <span class="keywordflow">return</span> runtime_sum == -2 ? 0 : 1;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasscljonic_1_1_repeat_html_aad9a9a113fd2a846fdc26c9eb582bdce"><div class="ttname"><a href="#aad9a9a113fd2a846fdc26c9eb582bdce">cljonic::Repeat::Repeat</a></div><div class="ttdeci">constexpr Repeat() noexcept</div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00136">cljonic-repeat.hpp:136</a></div></div>
 <div class="ttc" id="anamespacecljonic_html"><div class="ttname"><a href="namespacecljonic.html">cljonic</a></div><div class="ttdef"><b>Definition</b> <a href="cljonic-assoc_8hpp_source.html#l00006">cljonic-assoc.hpp:6</a></div></div>
+<div class="ttc" id="anamespacecljonic_html_af31c4c3eb2e82ffcc9d64da7ea5ca8bc"><div class="ttname"><a href="namespacecljonic.html#af31c4c3eb2e82ffcc9d64da7ea5ca8bc">cljonic::repeat</a></div><div class="ttdeci">constexpr auto repeat(T &amp;&amp;value) noexcept -&gt; Repeat&lt; std::remove_cvref_t&lt; T &gt; &gt;</div><div class="ttdef"><b>Definition</b> <a href="cljonic-repeat_8hpp_source.html#l00248">cljonic-repeat.hpp:248</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00094">94</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00096">96</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a5924fb8240dfd237fffe94d87b516f73" name="a5924fb8240dfd237fffe94d87b516f73"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5924fb8240dfd237fffe94d87b516f73">&#9670;&#160;</a></span>value_type</h2>
@@ -215,7 +216,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00098">98</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00100">100</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -245,7 +246,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00136">136</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00138">138</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -274,7 +275,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00139">139</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00141">141</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -309,7 +310,7 @@ template&lt;concepts_detail::ProducerCount Count&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00143">143</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00145">145</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -403,7 +404,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00163">163</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00165">165</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -432,7 +433,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00155">155</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00157">157</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -461,7 +462,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00167">167</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00169">169</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -490,7 +491,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00159">159</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00161">161</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -517,7 +518,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00095">95</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00097">97</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>
@@ -552,7 +553,7 @@ template&lt;concepts_detail::RepeatClassArgument T&gt; </div>
 <p>Producer parameter equality (REQ-FN-014B): compares only the stored value, count, and finite-form parameters, never the produced sequence.</p>
 <p>It is the only producer parameter-equality surface; the <span class="tt"><a class="el" href="namespacecljonic.html#a3379aa2a8b5ffa4566662c4b4a1455c2">equal</a></span> free function instead compares bounded logical observations of the produced sequences. The unbounded <span class="tt">repeat(value)</span> form is distinct from the finite <span class="tt">repeat(count, value)</span> forms even when their produced prefixes coincide, and a counted form with count zero is distinct from the unbounded form. O(1), no traversal, no allocation. </p>
 
-<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00180">180</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cljonic-repeat_8hpp_source.html#l00182">182</a> of file <a class="el" href="cljonic-repeat_8hpp_source.html">cljonic-repeat.hpp</a>.</p>
 
 </div>
 </div>

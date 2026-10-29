@@ -6,5 +6,6 @@ var searchData=
   ['deducedmapentrykeytype_3',['DeducedMapEntryKeyType',['../structcljonic_1_1concepts__detail_1_1_deduced_map_entry_key_type.html',1,'cljonic::concepts_detail']]],
   ['deducedmapentryvaluetype_4',['DeducedMapEntryValueType',['../structcljonic_1_1concepts__detail_1_1_deduced_map_entry_value_type.html',1,'cljonic::concepts_detail']]],
   ['deducedqueueelementtype_5',['DeducedQueueElementType',['../structcljonic_1_1concepts__detail_1_1_deduced_queue_element_type.html',1,'cljonic::concepts_detail']]],
-  ['deducedvectorelementtype_6',['DeducedVectorElementType',['../structcljonic_1_1concepts__detail_1_1_deduced_vector_element_type.html',1,'cljonic::concepts_detail']]]
+  ['deducedrangeelementtype_6',['DeducedRangeElementType',['../structcljonic_1_1concepts__detail_1_1_deduced_range_element_type.html',1,'cljonic::concepts_detail']]],
+  ['deducedvectorelementtype_7',['DeducedVectorElementType',['../structcljonic_1_1concepts__detail_1_1_deduced_vector_element_type.html',1,'cljonic::concepts_detail']]]
 ];

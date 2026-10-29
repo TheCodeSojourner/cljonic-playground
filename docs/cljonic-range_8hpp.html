@@ -104,13 +104,16 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#concepts">Concepts</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">cljonic-range.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
+<code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-concepts_8hpp_source.html">cljonic-concepts.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="cljonic-core-collection-maximum-element-count_8hpp_source.html">cljonic-core-collection-maximum-element-count.hpp</a>&gt;</code><br />
 </div>
@@ -122,6 +125,9 @@ Classes</h2></td></tr>
 <tr class="memitem:cljonic_3A_3ARange_3C_20T_20_3E" id="r_cljonic_3A_3ARange_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_range.html">cljonic::Range&lt; T &gt;</a></td></tr>
 <tr class="memitem:cljonic_3A_3ARange_3C_20T_20_3E_3A_3Aconst_5Fiterator" id="r_cljonic_3A_3ARange_3C_20T_20_3E_3A_3Aconst_5Fiterator"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_range_1_1const__iterator.html">cljonic::Range&lt; T &gt;::const_iterator</a></td></tr>
 <tr class="memitem:cljonic_3A_3ARange_3C_20concepts_5Fdetail_3A_3ARangeElementDomainViolation_20_3E" id="r_cljonic_3A_3ARange_3C_20concepts_5Fdetail_3A_3ARangeElementDomainViolation_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classcljonic_1_1_range_3_01concepts__detail_1_1_range_element_domain_violation_01_4.html">cljonic::Range&lt; concepts_detail::RangeElementDomainViolation &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ADeducedRangeElementType" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ADeducedRangeElementType"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1_deduced_range_element_type.html">cljonic::concepts_detail::DeducedRangeElementType</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Arange_5Ffactory_5Felement_5Ftype_3C_20RequestedElementType_2C_20Args_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Arange_5Ffactory_5Felement_5Ftype_3C_20RequestedElementType_2C_20Args_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1range__factory__element__type.html">cljonic::concepts_detail::range_factory_element_type&lt; RequestedElementType, Args &gt;</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Arange_5Ffactory_5Felement_5Ftype_3C_20DeducedRangeElementType_2C_20First_2C_20Rest_2E_2E_2E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Arange_5Ffactory_5Felement_5Ftype_3C_20DeducedRangeElementType_2C_20First_2C_20Rest_2E_2E_2E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1range__factory__element__type_3_01_deduced_range_element_ty48b2c0b44c38366b79e2698bd30783de.html">cljonic::concepts_detail::range_factory_element_type&lt; DeducedRangeElementType, First, Rest... &gt;</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Aproducer_5Ftraits_3C_20Range_3C_20T_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Aproducer_5Ftraits_3C_20Range_3C_20T_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1producer__traits_3_01_range_3_01_t_01_4_01_4.html">cljonic::concepts_detail::producer_traits&lt; Range&lt; T &gt; &gt;</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Ffloating_5Fpoint_3C_20Range_3C_20T_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Ffloating_5Fpoint_3C_20Range_3C_20T_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1contains__floating__point_3_01_range_3_01_t_01_4_01_4.html">cljonic::concepts_detail::contains_floating_point&lt; Range&lt; T &gt; &gt;</a></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Fcallable_3C_20Range_3C_20T_20_3E_20_3E" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3Acontains_5Fcallable_3C_20Range_3C_20T_20_3E_20_3E"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structcljonic_1_1concepts__detail_1_1contains__callable_3_01_range_3_01_t_01_4_01_4.html">cljonic::concepts_detail::contains_callable&lt; Range&lt; T &gt; &gt;</a></td></tr>
@@ -135,6 +141,13 @@ Namespaces</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
 Concepts</h2></td></tr>
 <tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ARangeClassArgument" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ARangeClassArgument"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_range_class_argument.html">cljonic::concepts_detail::RangeClassArgument</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ARangeFactoryHasElementType" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ARangeFactoryHasElementType"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_range_factory_has_element_type.html">cljonic::concepts_detail::RangeFactoryHasElementType</a></td></tr>
+<tr class="memitem:cljonic_3A_3Aconcepts_5Fdetail_3A_3ARangeFactoryArguments" id="r_cljonic_3A_3Aconcepts_5Fdetail_3A_3ARangeFactoryArguments"><td class="memItemLeft">concept &#160;</td><td class="memItemRight"><a class="el" href="conceptcljonic_1_1concepts__detail_1_1_range_factory_arguments.html">cljonic::concepts_detail::RangeFactoryArguments</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a7374f5d60031561f5b3ca2daa0134359" id="r_a7374f5d60031561f5b3ca2daa0134359"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType, typename... Args&gt; </td></tr>
+<tr class="memitem:a7374f5d60031561f5b3ca2daa0134359 template"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a7374f5d60031561f5b3ca2daa0134359">cljonic::concepts_detail::range_factory_element_t</a> = <a class="el" href="structcljonic_1_1concepts__detail_1_1range__factory__element__type.html">range_factory_element_type</a>&lt;RequestedElementType, Args...&gt;<a class="el" href="structcljonic_1_1concepts__detail_1_1equal__value__type__of.html">::type</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -148,6 +161,16 @@ requires (!(concepts::RangeElement&lt;std::remove_cvref_t&lt;Start&gt;&gt; &amp;
 requires (!(concepts::RangeElement&lt;std::remove_cvref_t&lt;Start&gt;&gt; &amp;&amp; concepts::RangeElement&lt;std::remove_cvref_t&lt;End&gt;&gt; &amp;&amp;<br class="typebreak" />
  concepts::RangeElement&lt;std::remove_cvref_t&lt;Step&gt;&gt;))</td></tr>
 <tr class="memitem:a718be13d2bf534ee449e569c76d8583b template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a718be13d2bf534ee449e569c76d8583b">cljonic::Range</a> (Start, End, Step) -&gt; Range&lt; <a class="el" href="structcljonic_1_1concepts__detail_1_1_range_element_domain_violation.html">concepts_detail::RangeElementDomainViolation</a> &gt;</td></tr>
+<tr class="memitem:a25349a99ffccb2525333ab32f8ce31f6" id="r_a25349a99ffccb2525333ab32f8ce31f6"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedRangeElementType, typename... Args&gt; <br />
+requires concepts_detail::RangeFactoryArguments&lt;RequestedElementType, Args...&gt;</td></tr>
+<tr class="memitem:a25349a99ffccb2525333ab32f8ce31f6 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#a25349a99ffccb2525333ab32f8ce31f6">cljonic::range</a> (Args &amp;&amp;... args) noexcept -&gt; <a class="el" href="classcljonic_1_1_range.html">Range</a>&lt; <a class="el" href="namespacecljonic_1_1concepts__detail.html#a7374f5d60031561f5b3ca2daa0134359">concepts_detail::range_factory_element_t</a>&lt; RequestedElementType, Args... &gt; &gt;</td></tr>
+<tr class="memitem:af0a7309afff86104ade6eba0a71908cb" id="r_af0a7309afff86104ade6eba0a71908cb"><td class="memTemplParams" colspan="2">template&lt;typename RequestedElementType = concepts_detail::DeducedRangeElementType, typename... Args&gt; <br />
+requires (!concepts_detail::RangeFactoryArguments&lt;RequestedElementType, Args...&gt;)</td></tr>
+<tr class="memitem:af0a7309afff86104ade6eba0a71908cb template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic.html#af0a7309afff86104ade6eba0a71908cb">cljonic::range</a> (Args &amp;&amp;... args) noexcept -&gt; void</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a9dfe9f54ebdeddfadf9b703d7d283308" id="r_a9dfe9f54ebdeddfadf9b703d7d283308"><td class="memItemLeft">concept&#160;</td><td class="memItemRight"><a class="el" href="namespacecljonic_1_1concepts__detail.html#a9dfe9f54ebdeddfadf9b703d7d283308">cljonic::concepts_detail::DeducedRangeElementType</a></td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
