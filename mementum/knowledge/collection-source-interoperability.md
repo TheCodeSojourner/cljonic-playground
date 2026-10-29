@@ -59,7 +59,15 @@ exactly one of three mechanisms:
   NothrowConstInputRange` — cljonic collections/producers only, never an
   external C++ range or view.
 - `fits_into` is the non-throwing, non-allocating **completeness preflight
-  predicate** (returns `bool`); it never materializes.
+  predicate** (returns `bool`, not a materialized collection).
+- Both operations admit Vector, Set, Map, Queue, and String destinations.
+  Producer destinations are excluded. String `into` preserves valid characters,
+  rejects invalid characters during constant evaluation, and normalizes them to
+  `'.'` while continuing at runtime. This supersedes the 2026-10-19
+  Vector-only destination decision.
+- Vector/Queue append; Set deduplicates; Map consumes its declared nominal
+  `MapEntry<K, V>` type, replacing matching keys with the last processed value;
+  String appends characters in traversal order.
 - Complete materialization ≡ preflight `fits_into`, then apply `into`.
 - Both operations use the same `MaterializableSource` admission, including safe,
   non-throwing construction from the actual source reference. A completeness
@@ -77,17 +85,30 @@ element-pack creation.
   time (a diagnostic, not a result status).
 - A runtime/unknown extent that exceeds capacity materializes the deterministic
   bounded prefix (`BoundedPrefixResult`), preserving source traversal order.
-- `fits_into` compares source count ≤ remaining capacity with overflow-safe
-  arithmetic, and is `false` for an unbounded producer regardless of its capped
-  observable count.
+- For Vector/Queue/String, `fits_into` compares finite source count ≤ remaining
+  capacity with overflow-safe arithmetic. For Set/Map it evaluates ordered
+  insertion, accounting for existing destination and earlier source values or
+  keys. For a full Set, an existing value is accepted as a no-op; for a full
+  Map, an entry with an existing key is accepted as a value replacement.
+  Vector, Queue, and String have no corresponding duplicate/update exception.
+  String preflight does not evaluate character validity because runtime insertion
+  normalizes invalid characters. Processing stops at the first value requiring
+  unavailable capacity, without skipping it.
+- `fits_into` is `false` for every unbounded producer regardless of its capped
+  observable count. Unbounded `into` traversal retains that cap even when
+  duplicates/replacements never grow the result.
+- Finite Set/Map preflight may traverse sources and evaluate producer callbacks.
+  It preserves input values but may expose callback effects through references
+  or static storage. No realization cache is shared with `into`; completeness
+  predictions require equivalent values on the subsequent traversal.
 - `Map`, `Set`, and `Queue` first fold their pack arguments through their
   primitive (`Map`: `assoc`; `Set`/`Queue`: `conj`) in order; a `Map` pack
   element must be nominally `MapEntry<K,V>`.
 - `String<N>` span import applies the invalid-byte replacement policy (every
   byte outside `0x01`–`0x7F`, including `0x00`, becomes `'.'`) *before* the
-  bounded prefix is selected; `fits_into` is false if any byte is invalid or the
-  converted content does not fit; a constant-evaluation invalid or overlong
-  source is a compile-time diagnostic.
+  bounded prefix is selected; a constant-evaluation invalid or overlong source
+  is a compile-time diagnostic. This constructor policy is separate from
+  `into`/`fits_into`, which admit String destinations but exclude external sources.
 
 ## Rejection diagnostic (REQ-DIAG-010)
 
