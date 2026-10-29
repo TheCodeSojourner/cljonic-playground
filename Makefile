@@ -1,5 +1,10 @@
 CMAKE ?= cmake
 CTEST ?= ctest
+ifndef VALIDATION_JOBS
+VALIDATION_JOBS := $(shell python3 scripts/validation_jobs.py)
+endif
+export VALIDATION_JOBS
+BUILD_JOBS ?=
 BUILD_DIR ?= build
 COVERAGE_BUILD_DIR ?= build-coverage
 SANITIZER_BUILD_DIR ?= build-sanitizers
@@ -21,13 +26,42 @@ TRACEABILITY_SNAPSHOT ?= $(TRACEABILITY_DIR)/spec-to-code-obligation-ids.snapsho
 TRACEABILITY_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-obligation-ids.current.tmp
 TRACEABILITY_TEST_IDS_CURRENT ?= $(BUILD_DIR)/.traceability-ids-in-tests.tmp
 
+COMPILE_FAIL_TARGETS = \
+	implicit-conversion-compile-fail \
+	range-compile-fail \
+	variant-compile-fail \
+	equal-compile-fail \
+	not-equal-compile-fail \
+	assoc-compile-fail \
+	can-assoc-compile-fail \
+	primitive-compile-fail \
+	can-conj-compile-fail \
+	conj-compile-fail \
+	character-is-valid-compile-fail \
+	source-construction-compile-fail \
+	producer-compile-fail \
+	vector-factory-compile-fail \
+	hash-map-factory-compile-fail \
+	map-entry-factory-compile-fail \
+	hash-set-factory-compile-fail \
+	queue-factory-compile-fail \
+	string-factory-compile-fail \
+	ctad-compile-fail
+
+GIT_INDEPENDENT_CHECKS = lint-check complexity-cli header-guards diagnostic-coverage \
+	diagnostic-message-labels traceability-spec-to-code docs docs-examples
+
 .DEFAULT_GOAL := help
 
+.PHONY: compile-fail compile-fail-registry
+.PHONY: distclean
+.PHONY: _git-preflight _git-prepare _git-checks _git-sanitizer _git-coverage _git-no-heap _git-probe
 .PHONY: help all test clean configure coverage coverage-cli sanitizer sanitizer-cli complexity complexity-cli format format-doc-samples core-cheatsheet-format docs-examples lint no-heap-src no-heap-symbols no-heap range-compile-fail variant-compile-fail equal-compile-fail not-equal-compile-fail assoc-compile-fail can-assoc-compile-fail can-conj-compile-fail conj-compile-fail character-is-valid-compile-fail primitive-compile-fail source-construction-compile-fail producer-compile-fail ctad-compile-fail vector-factory-compile-fail hash-map-factory-compile-fail map-entry-factory-compile-fail hash-set-factory-compile-fail queue-factory-compile-fail string-factory-compile-fail header-guards diagnostic-coverage diagnostic-message-labels requirements-structure vocabulary-structure audit-scripts trace-id-check _traceability-obligation-ids-current _traceability-test-ids-current traceability-spec-to-code traceability-spec-to-code-update-snapshot traceability-category-report upsert-fast upsert-gate-fast upsert-gate upsert-gate-strict docs git validate cljonic cljonic-test
 
 help:
-	@printf '%-12s %s\n' 'all' 'Clean, configure, parallel rebuild, and parallel test run'
-	@printf '%-12s %s\n' 'clean' 'Remove generated local build output'
+	@printf '%-12s %s\n' 'all' 'Incremental parallel build and test run'
+	@printf '%-12s %s\n' 'clean' 'Clean compiled outputs while preserving configuration and downloaded dependencies'
+	@printf '%-12s %s\n' 'distclean' 'Remove build directories, including configuration and dependency caches'
 	@printf '%-12s %s\n' 'cljonic' 'Generate the single public header at $(CLJONIC_HEADER)'
 	@printf '%-12s %s\n' 'cljonic-test' 'Compile and run the standalone single-header probe'
 	@printf '%-12s %s\n' 'complexity' 'Run lizard on COMPLEXITY_PATH (default src); set CYCLOMATIC_COMPLEXITY_THRESHOLD and FUNCTION_LENGTH_THRESHOLD'
@@ -43,15 +77,18 @@ help:
 	@printf '%-12s %s\n' 'diagnostic-message-labels' 'Verify every src/ diagnostic message opens with a cljonic::<entity>: label (REQ-DIAG-011)'
 	@printf '%-12s %s\n' 'requirements-structure' 'Audit requirement IDs, declared domains, attribution, and rationale provenance'
 	@printf '%-12s %s\n' 'vocabulary-structure' 'Audit term metadata and Related links in vocabulary.md'
-	@printf '%-12s %s\n' 'audit-scripts' 'Run self-tests for reusable structural and trace-ID audit scripts'
+	@printf '%-12s %s\n' 'audit-scripts' 'Run validation-tool regressions and structural/trace-ID audit self-tests'
+	@printf '%-12s %s\n' 'compile-fail' 'Run registered checks with VALIDATION_JOBS workers (auto: $(VALIDATION_JOBS)); audit completeness first'
+	@printf '%-12s %s\n' 'compile-fail-registry' 'Reject missing, duplicate, or stale compile-fail registrations'
 	@printf '%-12s %s\n' 'trace-id-check' 'Focused Allium obligation check; set SPEC=... TESTS="..." (optional EXACT=1 for dedicated tests)'
-	@printf '%-12s %s\n' 'docs-examples' 'Compile Doxygen C++ sample blocks against generated $(CLJONIC_HEADER)'
+	@printf '%-12s %s\n' 'docs-examples' 'Compile Doxygen samples with VALIDATION_JOBS workers (auto: $(VALIDATION_JOBS))'
 	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
 	@printf '%-12s %s\n' 'format-doc-samples' 'Format Doxygen C++ sample blocks in src/* headers with clang-format'
-	@printf '%-12s %s\n' 'git' 'Pre-commit gate: format, lint, complexity, sanitizers, coverage, traceability, no-heap, and docs'
+	@printf '%-12s %s\n' 'git' 'Bounded pre-commit gate (VALIDATION_JOBS=$(VALIDATION_JOBS)); serialized formatting and build profiles'
 	@printf '%-12s %s\n' 'header-guards' 'Verify every src/ and tests/ header uses #pragma once (no include guards)'
 	@printf '%-12s %s\n' 'help' 'Show available targets'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
+	@printf '%-12s %s\n' 'lint-check' 'Check formatting and clang-tidy without rewriting source files'
 	@printf '%-12s %s\n' 'no-heap' 'Strict no-heap gate for modular/generated headers: source check, harness build, and symbol scan'
 	@printf '%-12s %s\n' 'no-heap-src' 'Fail if src contains common heap-allocation APIs or heap-backed STL containers'
 	@printf '%-12s %s\n' 'no-heap-symbols' 'Fail if compiled artifact contains forbidden allocator symbols'
@@ -78,7 +115,7 @@ help:
 	@printf '%-12s %s\n' 'upsert-gate-strict' 'Pre-final gate: upsert-gate plus strict spec-to-code traceability and no-heap verification'
 	@printf '%-12s %s\n' 'validate' 'Non-mutating green-state validation: format, lint, complexity, sanitizers, coverage, traceability, and no-heap without doc regeneration'
 
-all: clean test
+all: test
 
 .PHONY: implicit-conversion-compile-fail
 implicit-conversion-compile-fail: cljonic
@@ -96,8 +133,8 @@ cljonic-test: cljonic tests/cljonic-single-header-probe.cpp
 	@echo "cljonic-test:ok"
 
 test: configure
-	$(CMAKE) --build $(BUILD_DIR) --parallel
-	$(CTEST) --test-dir $(BUILD_DIR) --output-on-failure --parallel
+	$(CMAKE) --build $(BUILD_DIR) --parallel $(BUILD_JOBS)
+	$(CTEST) --test-dir $(BUILD_DIR) --output-on-failure --parallel $(BUILD_JOBS)
 
 configure: $(BUILD_DIR)/CMakeCache.txt
 
@@ -105,9 +142,8 @@ $(BUILD_DIR)/CMakeCache.txt: CMakeLists.txt
 	@$(CMAKE) -S . -B $(BUILD_DIR) > /dev/null
 
 coverage:
-	rm -rf $(COVERAGE_BUILD_DIR)
 	$(CMAKE) -S . -B $(COVERAGE_BUILD_DIR) -DCLJONIC_COVERAGE=ON
-	$(CMAKE) --build $(COVERAGE_BUILD_DIR) --parallel
+	$(CMAKE) --build $(COVERAGE_BUILD_DIR) --parallel $(BUILD_JOBS)
 	lcov --zerocounters --directory $(COVERAGE_BUILD_DIR)
 	$(CTEST) --test-dir $(COVERAGE_BUILD_DIR) --output-on-failure
 	lcov --capture --directory $(COVERAGE_BUILD_DIR) \
@@ -121,9 +157,8 @@ coverage:
 	     --fail-under-lines $(COVERAGE_THRESHOLD)
 
 coverage-cli:
-	@rm -rf $(COVERAGE_BUILD_DIR)
 	@$(CMAKE) -S . -B $(COVERAGE_BUILD_DIR) -DCLJONIC_COVERAGE=ON > /dev/null
-	@$(CMAKE) --build $(COVERAGE_BUILD_DIR) --parallel > /dev/null
+	@$(CMAKE) --build $(COVERAGE_BUILD_DIR) --parallel $(BUILD_JOBS) > /dev/null
 	@lcov --zerocounters --directory $(COVERAGE_BUILD_DIR) > /dev/null 2>&1
 	@$(CTEST) --test-dir $(COVERAGE_BUILD_DIR) --output-on-failure \
 	     > $(COVERAGE_BUILD_DIR)/.ctest-out.tmp 2>&1 || \
@@ -139,12 +174,12 @@ coverage-cli:
 
 sanitizer:
 	$(CMAKE) -S . -B $(SANITIZER_BUILD_DIR) -DCLJONIC_SANITIZERS=asan-ubsan
-	$(CMAKE) --build $(SANITIZER_BUILD_DIR) --parallel
-	$(CTEST) --test-dir $(SANITIZER_BUILD_DIR) --output-on-failure --parallel
+	$(CMAKE) --build $(SANITIZER_BUILD_DIR) --parallel $(BUILD_JOBS)
+	$(CTEST) --test-dir $(SANITIZER_BUILD_DIR) --output-on-failure --parallel $(BUILD_JOBS)
 
 sanitizer-cli:
 	@$(CMAKE) -S . -B $(SANITIZER_BUILD_DIR) -DCLJONIC_SANITIZERS=asan-ubsan > /dev/null
-	@$(CMAKE) --build $(SANITIZER_BUILD_DIR) --parallel > /dev/null
+	@$(CMAKE) --build $(SANITIZER_BUILD_DIR) --parallel $(BUILD_JOBS) > /dev/null
 	@$(CTEST) --test-dir $(SANITIZER_BUILD_DIR) --output-on-failure \
 	     > $(SANITIZER_BUILD_DIR)/.ctest-out.tmp 2>&1 || \
 	     (cat $(SANITIZER_BUILD_DIR)/.ctest-out.tmp; exit 1)
@@ -187,7 +222,7 @@ character-is-valid-compile-fail: cljonic scripts/check-character-is-valid-compil
 	@python3 scripts/check-character-is-valid-compile-failures.py
 
 primitive-compile-fail: cljonic scripts/check-primitive-compile-failures.py
-	@python3 scripts/check-primitive-compile-failures.py
+	@python3 scripts/check-primitive-compile-failures.py $(if $(PRIMITIVE),--primitive "$(PRIMITIVE)",)
 
 source-construction-compile-fail: cljonic scripts/check-source-construction-compile-failures.py
 	@python3 scripts/check-source-construction-compile-failures.py
@@ -232,9 +267,16 @@ vocabulary-structure:
 	@python3 scripts/check-vocabulary-structure.py
 
 audit-scripts:
+	@python3 scripts/test-validation-tools.py
 	@python3 scripts/check-requirements-structure.py --self-test
 	@python3 scripts/check-vocabulary-structure.py --self-test
 	@python3 scripts/check-spec-test-trace-ids.py --self-test
+
+compile-fail-registry:
+	@python3 scripts/check_compile_fail_registry.py --makefile Makefile --targets $(COMPILE_FAIL_TARGETS)
+
+compile-fail: compile-fail-registry
+	+@python3 scripts/run-compile-fail.py --jobs "$(VALIDATION_JOBS)" --make "$(MAKE)" --targets $(COMPILE_FAIL_TARGETS)
 
 trace-id-check:
 	@test -n "$(SPEC)" || (echo "usage: make trace-id-check SPEC=specs/primitives/foo.allium TESTS=\"tests/foo.cpp tests/shared.cpp\"" >&2; exit 2)
@@ -259,11 +301,14 @@ core-cheatsheet-format:
 	@python3 scripts/check-core-cheatsheet-format.py --self-test
 
 docs-examples: cljonic
-	@python3 scripts/compile-doc-samples.py --source-dir src --build-dir $(BUILD_DIR)/docs-examples --header $(CLJONIC_HEADER)
+	@python3 scripts/compile-doc-samples.py --source-dir src --build-dir $(BUILD_DIR)/docs-examples --header $(CLJONIC_HEADER) --jobs "$(VALIDATION_JOBS)"
 	@echo "docs-examples:ok"
 
-lint: configure
-	@$(MAKE) format > /dev/null
+lint: format
+	@$(MAKE) --no-print-directory lint-check
+
+.PHONY: lint-check
+lint-check: configure
 	@command -v clang-format > /dev/null 2>&1 || (echo "missing required tool: clang-format" >&2; exit 1)
 	@command -v clang-tidy > /dev/null 2>&1 || (echo "missing required tool: clang-tidy" >&2; exit 1)
 	@$(CMAKE) -S . -B $(BUILD_DIR) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON > /dev/null
@@ -324,7 +369,7 @@ no-heap-symbols:
 no-heap:
 	@$(MAKE) --no-print-directory -s no-heap-src
 	@$(CMAKE) -S . -B $(BUILD_DIR) > /dev/null
-	@$(CMAKE) --build $(BUILD_DIR) --target cljonic_no_heap_probe cljonic_single_header_no_heap_probe --parallel > /dev/null
+	@$(CMAKE) --build $(BUILD_DIR) --target cljonic_no_heap_probe cljonic_single_header_no_heap_probe --parallel $(BUILD_JOBS) > /dev/null
 	@$(MAKE) --no-print-directory -s no-heap-symbols
 	@$(BUILD_DIR)/cljonic_no_heap_probe
 	@$(BUILD_DIR)/cljonic_single_header_no_heap_probe
@@ -496,41 +541,30 @@ validate:
 	@$(MAKE) --no-print-directory -s no-heap
 	@echo "validate:ok"
 
-git:
-	@$(MAKE) --no-print-directory -s requirements-structure
-	@$(MAKE) --no-print-directory -s vocabulary-structure
-	@$(MAKE) --no-print-directory -s audit-scripts
-	@$(MAKE) --no-print-directory -s format
-	@$(MAKE) --no-print-directory -s lint
-	@$(MAKE) --no-print-directory -s complexity-cli
-	@$(MAKE) --no-print-directory -s range-compile-fail
-	@$(MAKE) --no-print-directory -s variant-compile-fail
-	@$(MAKE) --no-print-directory -s equal-compile-fail
-	@$(MAKE) --no-print-directory -s not-equal-compile-fail
-	@$(MAKE) --no-print-directory -s assoc-compile-fail
-	@$(MAKE) --no-print-directory -s can-assoc-compile-fail
-	@$(MAKE) --no-print-directory -s primitive-compile-fail
-	@$(MAKE) --no-print-directory -s can-conj-compile-fail
-	@$(MAKE) --no-print-directory -s conj-compile-fail
-	@$(MAKE) --no-print-directory -s character-is-valid-compile-fail
-	@$(MAKE) --no-print-directory -s source-construction-compile-fail
-	@$(MAKE) --no-print-directory -s producer-compile-fail
-	@$(MAKE) --no-print-directory -s vector-factory-compile-fail
-	@$(MAKE) --no-print-directory -s hash-map-factory-compile-fail
-	@$(MAKE) --no-print-directory -s hash-set-factory-compile-fail
-	@$(MAKE) --no-print-directory -s queue-factory-compile-fail
-	@$(MAKE) --no-print-directory -s string-factory-compile-fail
-	@$(MAKE) --no-print-directory -s ctad-compile-fail
-	@$(MAKE) --no-print-directory -s header-guards
-	@$(MAKE) --no-print-directory -s diagnostic-coverage
-	@$(MAKE) --no-print-directory -s diagnostic-message-labels
-	@$(MAKE) --no-print-directory -s sanitizer-cli
-	@$(MAKE) --no-print-directory -s coverage-cli
-	@$(MAKE) --no-print-directory -s traceability-spec-to-code
-	@$(MAKE) --no-print-directory -s no-heap
-	@$(MAKE) --no-print-directory -s docs
-	@$(MAKE) --no-print-directory -s docs-examples
-	@$(MAKE) --no-print-directory -s cljonic-test
+_git-preflight:
+	@PYTHONPATH=scripts python3 -c 'import sys; from validation_commands import positive_jobs; positive_jobs(sys.argv[1])' "$(VALIDATION_JOBS)"
+	@$(MAKE) --no-print-directory -s -j1 requirements-structure vocabulary-structure audit-scripts compile-fail-registry
+
+_git-prepare: _git-preflight
+	@$(MAKE) --no-print-directory -s -j1 format
+	@$(MAKE) --no-print-directory -s -j1 cljonic
+
+_git-checks: _git-prepare
+	+@python3 scripts/run-compile-fail.py --jobs "$(VALIDATION_JOBS)" --make "$(MAKE)" --targets $(COMPILE_FAIL_TARGETS) --checks $(GIT_INDEPENDENT_CHECKS)
+
+_git-sanitizer: _git-checks
+	@$(MAKE) --no-print-directory -s -j1 sanitizer-cli BUILD_JOBS="$(VALIDATION_JOBS)"
+
+_git-coverage: _git-sanitizer
+	@$(MAKE) --no-print-directory -s -j1 coverage-cli BUILD_JOBS="$(VALIDATION_JOBS)"
+
+_git-no-heap: _git-coverage
+	@$(MAKE) --no-print-directory -s -j1 no-heap BUILD_JOBS="$(VALIDATION_JOBS)"
+
+_git-probe: _git-no-heap
+	@$(MAKE) --no-print-directory -s -j1 cljonic-test
+
+git: _git-probe
 	@echo "git:ok"
 
 docs:
@@ -540,4 +574,12 @@ docs:
 	@echo "docs:ok"
 
 clean:
-	rm -rf $(BUILD_DIR) $(COVERAGE_BUILD_DIR) $(SANITIZER_BUILD_DIR) build-missing-vector
+	@for directory in "$(BUILD_DIR)" "$(COVERAGE_BUILD_DIR)" "$(SANITIZER_BUILD_DIR)" build-missing-vector; do \
+		if [ -f "$$directory/CMakeCache.txt" ]; then \
+			$(CMAKE) --build "$$directory" --target clean || exit $$?; \
+		fi; \
+	done
+	@$(MAKE) --no-print-directory cljonic
+
+distclean:
+	rm -rf "$(BUILD_DIR)" "$(COVERAGE_BUILD_DIR)" "$(SANITIZER_BUILD_DIR)" build-missing-vector

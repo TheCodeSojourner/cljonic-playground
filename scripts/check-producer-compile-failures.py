@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the producer factory functions (repeat, cycle, iterate, repeatedly)
+"""Verify the producer factory functions (range, repeat, cycle, iterate, repeatedly)
 reject out-of-domain arguments with the targeted RejectionDiagnostic message
 (REQ-DIAG-009) instead of a raw list of rejected concept candidates, for both
 modular and single-header builds.
@@ -13,10 +13,24 @@ from __future__ import annotations
 
 import os
 import re
-import subprocess
+from compile_probe import compile_probe
 
 # Out-of-domain calls must fail to compile.
 FAILURE_CASES = {
+    "Range-empty": "(void)cljonic::range();",
+    "Range-extra-arguments": "(void)cljonic::range(0, 5, 1, 2);",
+    "Range-typed-extra-arguments": "(void)cljonic::range<int>(0, 5, 1, 2);",
+    "Range-unsigned": "(void)cljonic::range(5U);",
+    "Range-boolean": "(void)cljonic::range(true);",
+    "Range-floating": "(void)cljonic::range(5.0);",
+    "Range-mixed-types": "(void)cljonic::range(0, 5L);",
+    "Range-mixed-step": "(void)cljonic::range(0, 5, 1L);",
+    "Range-typed-unsigned": "(void)cljonic::range<unsigned int>(5U);",
+    "Range-typed-void": "(void)cljonic::range<void>();",
+    "Range-narrowing": "(void)cljonic::range<int>(5LL);",
+    "Range-floating-conversion": "(void)cljonic::range<int>(5.0);",
+    "Range-start-conversion": "(void)cljonic::range<int>(0LL, 5);",
+    "Range-step-conversion": "(void)cljonic::range<int>(0, 5, 1LL);",
     "Cycle-non-source": "auto x = cljonic::cycle(42); (void)x;",
     "Repeatedly-non-callable": "auto x = cljonic::repeatedly(42); (void)x;",
     "Repeatedly-counted-non-callable": "auto x = cljonic::repeatedly(3, 42); (void)x;",
@@ -30,6 +44,13 @@ FAILURE_CASES = {
 
 # In-domain calls must still compile.
 PASS_CASES = {
+    "Range-deduced": "static_assert(cljonic::range(5) == cljonic::Range{5});",
+    "Range-bounds": "static_assert(cljonic::range(0, 5) == cljonic::Range{0, 5});",
+    "Range-step": "static_assert(cljonic::range(5, 0, -2) == cljonic::Range{5, 0, -2});",
+    "Range-typed-empty": "static_assert(cljonic::range<int>() == cljonic::Range<int>{});",
+    "Range-typed-end": "static_assert(cljonic::range<long>(5) == cljonic::Range<long>{5});",
+    "Range-typed-bounds": "static_assert(cljonic::range<long>(0, 5) == cljonic::Range<long>{0, 5});",
+    "Range-typed-step": "static_assert(cljonic::range<long>(5, 0, -2) == cljonic::Range<long>{5, 0, -2});",
     "Repeat-value": "auto x = cljonic::repeat(7); (void)x;",
     "Repeat-counted": "auto x = cljonic::repeat(3U, 7); (void)x;",
     "Repeat-counted-constructor": "auto x = cljonic::Repeat<int>{3U, 7}; (void)x;",
@@ -45,6 +66,17 @@ PASS_CASES = {
     "Repeatedly-counted": "constexpr auto five = []() noexcept { return 5; }; auto x = cljonic::repeatedly(3U, five); (void)x;",
 }
 
+ZERO_CAP_PASS_CASES = {
+    "Iterate-next-does-not-invoke-step": """\
+static_assert([] {
+    auto calls = 0;
+    const auto source = cljonic::iterate([&calls](int value) noexcept { ++calls; return value + 1; }, 7);
+    const auto tail = cljonic::next(source);
+    return calls == 0 && source.count() == 0 && tail.count() == 0;
+}());
+""",
+}
+
 PREAMBLE = """\
 namespace {
 struct NonStorable {
@@ -56,6 +88,11 @@ struct NonStorable {
 
 # name -> (probe body, required operation identity, required rule substring)
 DIAGNOSTIC_CASES = {
+    "Range-empty-diagnostic": ("(void)cljonic::range();", "cljonic::range:", "explicit element type"),
+    "Range-type-diagnostic": ("(void)cljonic::range(5U);", "cljonic::range:", "signed integral"),
+    "Range-arity-diagnostic": ("(void)cljonic::range(0, 5, 1, 2);", "cljonic::range:", "zero through three"),
+    "Range-mixed-diagnostic": ("(void)cljonic::range(0, 5L);", "cljonic::range:", "same signed integral type"),
+    "Range-conversion-diagnostic": ("(void)cljonic::range<int>(5LL);", "cljonic::range:", "safely convert"),
     "Cycle-diagnostic": ("(void)cljonic::cycle(42);", "cljonic::cycle:", "cannot be used to build a Cycle"),
     "Repeatedly-diagnostic": (
         "(void)cljonic::repeatedly(42);",
@@ -67,7 +104,9 @@ DIAGNOSTIC_CASES = {
 }
 
 
-def compile_case(compiler: list[str], include_dir: str, header: str, body: str, preamble: str = "") -> bool:
+def compile_case(
+    compiler: list[str], include_dir: str, header: str, body: str, preamble: str = "", *, expect_success: bool = False
+) -> bool:
     source = "\n".join(
         (
             f'#include "{header}"',
@@ -78,13 +117,9 @@ def compile_case(compiler: list[str], include_dir: str, header: str, body: str, 
             "}",
         )
     )
-    result = subprocess.run(
-        [*compiler, "-std=c++23", "-fsyntax-only", "-I", include_dir, "-x", "c++", "-"],
-        input=source,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    result = compile_probe(tuple(compiler), include_dir, source)
+    if expect_success and result.returncode != 0:
+        print(f"producer-compile-fail: compiler output for {header}:\n{result.stdout}{result.stderr}")
     return result.returncode == 0
 
 
@@ -105,13 +140,7 @@ def diagnostic_message_reported(
             "}",
         )
     )
-    result = subprocess.run(
-        [*compiler, "-std=c++23", "-fsyntax-only", "-I", include_dir, "-x", "c++", "-"],
-        input=source,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    result = compile_probe(tuple(compiler), include_dir, source)
     if result.returncode == 0:
         return False
     output = _normalized(result.stdout + result.stderr)
@@ -133,12 +162,20 @@ def main() -> int:
                 failures.append(f"{configuration}/{name}: expected compile failure, but compiled")
 
         for name, body in PASS_CASES.items():
-            if not compile_case(compiler, include_dir, header, body, preamble=PREAMBLE):
+            if not compile_case(compiler, include_dir, header, body, preamble=PREAMBLE, expect_success=True):
                 failures.append(f"{configuration}/{name}: expected to compile, but failed")
 
         for name, (body, operation, required) in DIAGNOSTIC_CASES.items():
             if not diagnostic_message_reported(compiler, include_dir, header, body, operation, required):
                 failures.append(f"{configuration}/{name}: targeted rejection diagnostic content not reported")
+
+    # The complete core header requires String<1>; isolate the zero-cap producer contract.
+    for name, body in ZERO_CAP_PASS_CASES.items():
+        zero_cap_compiler = [*compiler, "-DCLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT=0"]
+        if not compile_case(
+            zero_cap_compiler, os.path.join(root, "src"), "cljonic-next.hpp", body, expect_success=True
+        ):
+            failures.append(f"modular/{name}: zero-cap behavior failed to compile")
 
     if failures:
         print("producer-compile-fail:failures:")

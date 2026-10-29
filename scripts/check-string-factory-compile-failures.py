@@ -7,6 +7,8 @@ import os
 import re
 import subprocess
 
+from compile_probe import compile_probe
+
 FAILURE_CASES = {
     "untyped-empty": '  (void)cljonic::string();',
     "variadic-characters": "  (void)cljonic::string('h', 'i');",
@@ -107,13 +109,7 @@ def compile_case(compiler: list[str], include_dir: str, header: str, body: str) 
             "}",
         )
     )
-    return subprocess.run(
-        [*compiler, "-std=c++23", "-fsyntax-only", "-I", include_dir, "-x", "c++", "-"],
-        input=source,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    return compile_probe(tuple(compiler), include_dir, source)
 
 
 def normalized(text: str) -> str:

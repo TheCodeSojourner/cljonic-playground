@@ -6,6 +6,64 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+TEST_CASE("Range factories preserve constructor behavior", "[range][factory]") {
+    using namespace cljonic;
+    TRACE_ID("invariant.Range.DeducedFactoryAcceptsOneTwoOrThreeSameTypeSignedIntegralArguments");
+    TRACE_ID("invariant.Range.ExplicitFactoryAcceptsZeroThroughThreeSafelyConvertedArguments");
+    TRACE_ID("invariant.Range.TypedEmptyFactoryHasZeroStartZeroEndAndUnitStep");
+    TRACE_ID("invariant.Range.FactoryPreservesEquivalentConstructorResultTypeAndBehavior");
+    TRACE_ID("invariant.Range.FactoryIsConstexprNoexceptAndPreservesInputArguments");
+    TRACE_ID("invariant.Range.FactoryConstructsOwnedParametersWithoutResultMaterialization");
+    TRACE_ID("invariant.Range.FactoryRejectsUntypedEmptyCallAndUnsupportedArities");
+    TRACE_ID("invariant.Range.FactoryRejectsInvalidTypesConversionsAndCommonTypePromotion");
+    TRACE_ID("invariant.Range.RejectedFactoryCallsProvideTargetedOperationDiagnostics");
+
+    STATIC_REQUIRE(std::same_as<decltype(range(5)), Range<int>>);
+    STATIC_REQUIRE(std::same_as<decltype(range(1L, 5L)), Range<long>>);
+    STATIC_REQUIRE(std::same_as<decltype(range(5LL, 0LL, -2LL)), Range<long long>>);
+    STATIC_REQUIRE(std::same_as<decltype(range<long>(0, 5)), Range<long>>);
+    STATIC_REQUIRE(noexcept(range(5)));
+    STATIC_REQUIRE(noexcept(range(0, 5)));
+    STATIC_REQUIRE(noexcept(range(0, 5, 2)));
+    STATIC_REQUIRE(noexcept(range<int>()));
+    STATIC_REQUIRE(range<int>() == Range<int>{});
+    STATIC_REQUIRE(range<long>(5) == Range<long>{5});
+    STATIC_REQUIRE(range<long>(0, 5) == Range<long>{0, 5});
+    STATIC_REQUIRE(range<long>(0, 5, 2) == Range<long>{0, 5, 2});
+    STATIC_REQUIRE(is_empty(range<int>()));
+    STATIC_REQUIRE(range(5) == Range{5});
+    STATIC_REQUIRE(range(2, 5) == Range{2, 5});
+    STATIC_REQUIRE(range(5, 0, -2) == Range{5, 0, -2});
+    STATIC_REQUIRE(is_empty(range(5, 0)));
+    STATIC_REQUIRE(is_empty(range(0, 5, -1)));
+    STATIC_REQUIRE(is_empty(range(2, 2)));
+    STATIC_REQUIRE(count(range(0, 0, 0)) == CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
+    STATIC_REQUIRE_FALSE(fits_into(vector<int, 3>(), range(0, 0, 0)));
+    STATIC_REQUIRE(equal(into(vector<int, 3>(), range(5, 0, -2)), vector(5, 3, 1)));
+    STATIC_REQUIRE(equal(into(vector<int, 3>(), range(7, 7, 0)), vector(7, 7, 7)));
+    STATIC_REQUIRE(count(range(std::numeric_limits<long long>::lowest(), std::numeric_limits<long long>::max())) ==
+                   CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE);
+    STATIC_REQUIRE_FALSE((concepts_detail::RangeFactoryArguments<concepts_detail::DeducedRangeElementType>));
+    STATIC_REQUIRE_FALSE((concepts_detail::RangeFactoryArguments<int, int, int, int, int>));
+    STATIC_REQUIRE_FALSE((concepts_detail::RangeFactoryArguments<concepts_detail::DeducedRangeElementType, int, long>));
+    STATIC_REQUIRE_FALSE((concepts_detail::RangeFactoryArguments<unsigned int, unsigned int>));
+    STATIC_REQUIRE_FALSE((concepts_detail::RangeFactoryArguments<int, long long>));
+    STATIC_REQUIRE_FALSE((concepts_detail::RangeFactoryArguments<int, double>));
+
+    auto start = 1;
+    const auto finish = 6;
+    const auto step = 2;
+    const auto owned = range(start, finish, step);
+    REQUIRE(start == 1);
+    REQUIRE(owned == Range{1, 6, 2});
+    start = 99;
+    REQUIRE(equal(into(vector<int, 3>(), owned), vector(1, 3, 5)));
+    REQUIRE(range<long>(finish) == Range<long>{6});
+    REQUIRE(range<long>(1, finish) == Range<long>{1, 6});
+    REQUIRE(range<long>(1, finish, step) == Range<long>{1, 6, 2});
+    REQUIRE(is_empty(range<long>()));
+}
+
 TEST_CASE("Range construction and bounded arithmetic behavior", "[range]") {
     using cljonic::Map;
     using cljonic::MapEntry;

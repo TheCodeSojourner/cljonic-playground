@@ -4,9 +4,11 @@ import argparse
 import pathlib
 import re
 import shutil
-import subprocess
 import sys
 import textwrap
+
+from validation_commands import positive_jobs, report_results, run_commands
+from validation_jobs import default_jobs
 
 
 BLOCK_OPEN_RE = re.compile(r"^[ \t]*~~~~~\{\.cpp\}[ \t]*$", re.MULTILINE)
@@ -87,8 +89,8 @@ def rewrite_public_header_include(snippet: str, header: str) -> str:
     return snippet
 
 
-def compile_snippet(cxx: str, source_file: pathlib.Path, object_file: pathlib.Path, include_root: pathlib.Path) -> None:
-    cmd = [
+def compile_command(cxx: str, source_file: pathlib.Path, object_file: pathlib.Path, include_root: pathlib.Path) -> list[str]:
+    return [
         cxx,
         "-std=c++23",
         "-Wall",
@@ -101,7 +103,6 @@ def compile_snippet(cxx: str, source_file: pathlib.Path, object_file: pathlib.Pa
         "-o",
         str(object_file),
     ]
-    subprocess.run(cmd, check=True)
 
 
 def main() -> int:
@@ -109,7 +110,10 @@ def main() -> int:
     parser.add_argument("--source-dir", default="src", help="Directory containing documented headers")
     parser.add_argument("--build-dir", default="build/docs-examples", help="Directory for generated sample translation units")
     parser.add_argument("--header", default="cljonic.hpp", help="Generated single-header artifact")
+    parser.add_argument("--jobs", type=positive_jobs)
     args = parser.parse_args()
+    if args.jobs is None:
+        args.jobs = default_jobs()
 
     source_dir = pathlib.Path(args.source_dir)
     build_dir = pathlib.Path(args.build_dir)
@@ -148,6 +152,7 @@ def main() -> int:
         return 1
 
     example_count = 0
+    commands = []
     deferred_skipped: list[str] = []
     for header_file, blocks in extracted:
         if header_file.name in DEFERRED_NON_PUBLIC_HEADERS:
@@ -159,11 +164,14 @@ def main() -> int:
             sample_cpp = build_dir / f"{sample_base}.cpp"
             sample_obj = build_dir / f"{sample_base}.o"
             sample_cpp.write_text(snippet, encoding="utf-8")
-            compile_snippet(cxx, sample_cpp, sample_obj, repo_root)
+            commands.append((sample_base, compile_command(cxx, sample_cpp, sample_obj, repo_root)))
             example_count += 1
 
     if example_count == 0:
         print("docs-examples: no C++ sample blocks found", file=sys.stderr)
+        return 1
+
+    if not report_results(run_commands(commands, args.jobs)):
         return 1
 
     if deferred_skipped:

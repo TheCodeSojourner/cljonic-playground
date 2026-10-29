@@ -5,6 +5,27 @@
 
 #define TRACE_ID(id_literal) INFO("trace-id: " id_literal)
 
+TEST_CASE("Existing Repeat factories match their constructors", "[repeat][factory]") {
+    using namespace cljonic;
+    TRACE_ID("invariant.Repeat.ExistingFactoriesPreserveEquivalentConstructorResultTypeAndBehavior");
+    STATIC_REQUIRE(std::same_as<decltype(repeat(7)), Repeat<int>>);
+    STATIC_REQUIRE(std::same_as<decltype(repeat(3, 7L)), Repeat<long>>);
+    STATIC_REQUIRE(noexcept(repeat(7)));
+    STATIC_REQUIRE(noexcept(repeat(3, 7)));
+    STATIC_REQUIRE(repeat(7) == Repeat{7});
+    STATIC_REQUIRE(repeat(3, 7) == Repeat{3, 7});
+    STATIC_REQUIRE(repeat(0, 7) == Repeat{0, 7});
+    STATIC_REQUIRE(repeat(-2, 7) == Repeat{-2, 7});
+    auto value = 7;
+    const auto unbounded = repeat(value);
+    const auto finite = repeat(3, value);
+    value = 9;
+    REQUIRE(unbounded == Repeat{7});
+    REQUIRE(finite == Repeat{3, 7});
+    REQUIRE(equal(into(vector<int, 3>(), finite), vector(7, 7, 7)));
+    REQUIRE(value == 9);
+}
+
 template <typename T>
 concept HasContains = requires(const T& value) { value.contains(0U); };
 

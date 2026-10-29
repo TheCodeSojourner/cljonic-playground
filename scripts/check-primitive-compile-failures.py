@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import argparse
 import re
 import subprocess
 
@@ -506,6 +507,13 @@ def normalized(text: str) -> str:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--primitive", choices=PRIMITIVES)
+    parser.add_argument("--list-primitives", action="store_true")
+    args = parser.parse_args()
+    if args.list_primitives:
+        print("\n".join(PRIMITIVES))
+        return 0
     compiler = os.environ.get("CXX", "c++").split()
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     configurations = (
@@ -516,6 +524,8 @@ def main() -> int:
 
     for configuration, include_dir, header in configurations:
         for primitive, cases in PRIMITIVES.items():
+            if args.primitive and primitive != args.primitive:
+                continue
             anchor = cases["diagnostic_anchor"]
             for name, (body, message) in cases["diagnostic_cases"].items():
                 result = compile_source(compiler, include_dir, build_source(header, body))
