@@ -594,9 +594,25 @@ template <ProducerCount Count>
     return count <= 0 ? std::size_t{0} : static_cast<std::size_t>(count);
 }
 
+template <typename Dest>
+concept CountPreflightDestination =
+    concepts::CljonicVector<Dest> || concepts::CljonicQueue<Dest> || concepts::CljonicString<Dest>;
+
+template <typename Dest, typename Value>
+[[nodiscard]] constexpr auto materialization_has_capacity(const Dest& destination, const Value& value) noexcept
+    -> bool {
+    if constexpr (concepts::CljonicString<Dest>) {
+        return destination.count() < Dest::capacity();
+    } else {
+        return destination.can_conj(value);
+    }
+}
+
 template <typename Dest, typename Source>
 concept MaterializableSource =
-    concepts::CljonicVector<Dest> && concepts::CljonicSource<Source> &&
+    (concepts::CljonicVector<Dest> || concepts::CljonicSet<Dest> || concepts::CljonicMap<Dest> ||
+     concepts::CljonicQueue<Dest> || concepts::CljonicString<Dest>) &&
+    concepts::CljonicSource<Source> &&
     concepts::NothrowElementConstruction<typename Dest::value_type, std::ranges::range_reference_t<const Source>>;
 
 // Guarded admission helpers for the REQ-DIAG-009 producer-factory diagnostics.
