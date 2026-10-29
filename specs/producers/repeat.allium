@@ -134,6 +134,7 @@ entity Repeat {
         this.counted_form_uses_runtime_count_for_materialization = true
     }
 
+    -- Exact source count is not destination count growth when Set deduplicates or Map replaces keys.
     invariant CountedFormCountIsExact {
         this.counted_form_count_is_exact = true
     }
@@ -146,6 +147,7 @@ entity Repeat {
         this.const_traversal_terminates_at_count = true
     }
 
+    -- Bounds new elements/keys, not consumed source values; duplicates/updates remain capped by traversal count.
     invariant UncountedFormMaterializesAtMostDestinationCapacity {
         this.uncounted_form_materializes_at_most_destination_capacity = true
     }

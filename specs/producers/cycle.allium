@@ -177,6 +177,7 @@ entity Cycle {
         this.next_callback_invocation_follows_owned_source_next = true
     }
 
+    -- Bounds new elements/keys, not consumed source values; duplicates/updates remain capped by traversal count.
     invariant MaterializesAtMostDestinationCapacity {
         this.materializes_at_most_destination_capacity = true
     }

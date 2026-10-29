@@ -2,16 +2,16 @@
 
 entity ProducerMaterialization {
     into_requires_explicit_bounded_destination: Boolean
-    into_requires_cljonic_vector_destination: Boolean
+    into_requires_supported_collection_destination: Boolean
     into_returns_new_destination_typed_collection: Boolean
-    into_appends_after_destination_contents: Boolean
+    into_vector_and_queue_append_after_destination_contents: Boolean
     into_leaves_destination_unchanged: Boolean
     into_leaves_source_unchanged: Boolean
     fits_into_is_non_throwing_non_allocating: Boolean
     fits_into_predicts_into_completeness: Boolean
     fits_into_uses_remaining_destination_capacity: Boolean
     fits_into_avoids_unsigned_addition_overflow: Boolean
-    fits_into_requires_cljonic_vector_destination: Boolean
+    fits_into_requires_supported_collection_destination: Boolean
     unbounded_source_does_not_fit_into_destination: Boolean
     unbounded_source_materializes_bounded_prefix: Boolean
     finite_source_materializes_complete_result_when_it_fits: Boolean
@@ -25,21 +25,46 @@ entity ProducerMaterialization {
     into_is_explicit_owning_materialization_path: Boolean
     into_rejects_unsupported_domain_with_targeted_diagnostic: Boolean
     into_does_not_allocate_or_throw: Boolean
+    materialization_rejects_producer_destinations: Boolean
+    materialization_rejects_external_cpp_sources: Boolean
+    into_and_fits_into_share_compatible_source_domain: Boolean
+    source_reference_obeys_safe_nothrow_insertion_rules: Boolean
+    map_source_requires_compatible_nominal_map_entries: Boolean
+    into_set_inserts_distinct_values: Boolean
+    into_map_replaces_matching_keys_with_last_value: Boolean
+    into_folds_values_in_source_traversal_order: Boolean
+    into_set_accepts_duplicate_values_as_noops_when_full: Boolean
+    into_map_accepts_existing_key_entries_as_replacements_when_full: Boolean
+    into_stops_before_first_capacity_failure_without_skipping: Boolean
+    unbounded_materialization_never_exceeds_source_traversal_cap: Boolean
+    finite_vector_and_queue_preflight_uses_source_count: Boolean
+    finite_set_and_map_preflight_accounts_for_existing_and_prior_source_values: Boolean
+    finite_set_and_map_preflight_may_evaluate_callbacks: Boolean
+    into_string_normalizes_invalid_runtime_characters_and_continues: Boolean
+    into_string_rejects_invalid_characters_during_constant_evaluation: Boolean
+    finite_string_preflight_uses_remaining_capacity: Boolean
+    fits_into_preserves_input_values: Boolean
+    fits_into_and_into_do_not_share_realization_cache: Boolean
+    fits_into_prediction_requires_equivalent_source_values: Boolean
+    materialization_and_preflight_are_constexpr_when_supported: Boolean
+    fits_into_rejects_unsupported_domain_with_targeted_diagnostic: Boolean
 
     invariant IntoRequiresExplicitBoundedDestination {
         this.into_requires_explicit_bounded_destination = true
     }
 
-    invariant IntoRequiresCljonicVectorDestination {
-        this.into_requires_cljonic_vector_destination = true
+    -- Both operations admit Vector, Set, Map, Queue, and String destinations.
+    invariant IntoRequiresSupportedCollectionDestination {
+        this.into_requires_supported_collection_destination = true
     }
 
     invariant IntoReturnsNewDestinationTypedCollection {
         this.into_returns_new_destination_typed_collection = true
     }
 
-    invariant IntoAppendsAfterDestinationContents {
-        this.into_appends_after_destination_contents = true
+    -- Queue appends at the rear, preserving the existing FIFO order.
+    invariant IntoVectorAndQueueAppendAfterDestinationContents {
+        this.into_vector_and_queue_append_after_destination_contents = true
     }
 
     invariant IntoLeavesDestinationUnchanged {
@@ -54,10 +79,12 @@ entity ProducerMaterialization {
         this.fits_into_is_non_throwing_non_allocating = true
     }
 
+    -- Value-sensitive preflight predicts a subsequent traversal only when it yields equivalent values.
     invariant FitsIntoPredictsIntoCompleteness {
         this.fits_into_predicts_into_completeness = true
     }
 
+    -- Capacity measures new elements or keys, not duplicates or matching-key replacements.
     invariant FitsIntoUsesRemainingDestinationCapacity {
         this.fits_into_uses_remaining_destination_capacity = true
     }
@@ -66,8 +93,8 @@ entity ProducerMaterialization {
         this.fits_into_avoids_unsigned_addition_overflow = true
     }
 
-    invariant FitsIntoRequiresCljonicVectorDestination {
-        this.fits_into_requires_cljonic_vector_destination = true
+    invariant FitsIntoRequiresSupportedCollectionDestination {
+        this.fits_into_requires_supported_collection_destination = true
     }
 
     invariant UnboundedSourceDoesNotFitIntoDestination {
@@ -82,6 +109,7 @@ entity ProducerMaterialization {
         this.finite_source_materializes_complete_result_when_it_fits = true
     }
 
+    -- The processed source prefix follows traversal order; Map and Set results remain semantically unordered.
     invariant BoundedPrefixPreservesSourceTraversalOrder {
         this.bounded_prefix_preserves_source_traversal_order = true
     }
@@ -120,6 +148,107 @@ entity ProducerMaterialization {
 
     invariant IntoDoesNotAllocateOrThrow {
         this.into_does_not_allocate_or_throw = true
+    }
+
+    invariant MaterializationRejectsProducerDestinations {
+        this.materialization_rejects_producer_destinations = true
+    }
+
+    invariant MaterializationRejectsExternalCppSources {
+        this.materialization_rejects_external_cpp_sources = true
+    }
+
+    invariant IntoAndFitsIntoShareCompatibleSourceDomain {
+        this.into_and_fits_into_share_compatible_source_domain = true
+    }
+
+    -- Admission uses the actual traversal reference and the destination's existing insertion conversion rules.
+    invariant SourceReferenceObeysSafeNothrowInsertionRules {
+        this.source_reference_obeys_safe_nothrow_insertion_rules = true
+    }
+
+    -- Arbitrary pairs and alternating keys/values are not MapEntry sources.
+    invariant MapSourceRequiresCompatibleNominalMapEntries {
+        this.map_source_requires_compatible_nominal_map_entries = true
+    }
+
+    invariant IntoSetInsertsDistinctValues {
+        this.into_set_inserts_distinct_values = true
+    }
+
+    invariant IntoMapReplacesMatchingKeysWithLastValue {
+        this.into_map_replaces_matching_keys_with_last_value = true
+    }
+
+    invariant IntoFoldsValuesInSourceTraversalOrder {
+        this.into_folds_values_in_source_traversal_order = true
+    }
+
+    invariant IntoSetAcceptsDuplicateValuesAsNoOpsWhenFull {
+        this.into_set_accepts_duplicate_values_as_noops_when_full = true
+    }
+
+    invariant IntoMapAcceptsExistingKeyEntriesAsReplacementsWhenFull {
+        this.into_map_accepts_existing_key_entries_as_replacements_when_full = true
+    }
+
+    -- Stop before the rejected insertion; never skip it to process a later duplicate or replacement.
+    invariant IntoStopsBeforeFirstCapacityFailureWithoutSkipping {
+        this.into_stops_before_first_capacity_failure_without_skipping = true
+    }
+
+    -- Duplicates and replacements can consume the whole observable cap without growing the destination.
+    invariant UnboundedMaterializationNeverExceedsSourceTraversalCap {
+        this.unbounded_materialization_never_exceeds_source_traversal_cap = true
+    }
+
+    invariant FiniteVectorAndQueuePreflightUsesSourceCount {
+        this.finite_vector_and_queue_preflight_uses_source_count = true
+    }
+
+    -- String preflight counts characters only; runtime insertion normalizes invalid bytes and continues.
+    invariant FiniteStringPreflightUsesRemainingCapacity {
+        this.finite_string_preflight_uses_remaining_capacity = true
+    }
+
+    -- Constant evaluation preserves String's existing invalid-character rejection policy.
+    invariant IntoStringRejectsInvalidCharactersDuringConstantEvaluation {
+        this.into_string_rejects_invalid_characters_during_constant_evaluation = true
+    }
+
+    invariant IntoStringNormalizesInvalidRuntimeCharactersAndContinues {
+        this.into_string_normalizes_invalid_runtime_characters_and_continues = true
+    }
+
+    -- Fold against existing destination values/keys and earlier source values/keys.
+    -- Return false at the first capacity failure, or true after accepting the complete finite source.
+    invariant FiniteSetAndMapPreflightAccountsForExistingAndPriorSourceValues {
+        this.finite_set_and_map_preflight_accounts_for_existing_and_prior_source_values = true
+    }
+
+    invariant FiniteSetAndMapPreflightMayEvaluateCallbacks {
+        this.finite_set_and_map_preflight_may_evaluate_callbacks = true
+    }
+
+    -- Callback effects through references or static storage may remain observable; input values are preserved.
+    invariant FitsIntoPreservesInputValues {
+        this.fits_into_preserves_input_values = true
+    }
+
+    invariant FitsIntoAndIntoDoNotShareRealizationCache {
+        this.fits_into_and_into_do_not_share_realization_cache = true
+    }
+
+    invariant FitsIntoPredictionRequiresEquivalentSourceValues {
+        this.fits_into_prediction_requires_equivalent_source_values = true
+    }
+
+    invariant MaterializationAndPreflightAreConstexprWhenSupported {
+        this.materialization_and_preflight_are_constexpr_when_supported = true
+    }
+
+    invariant FitsIntoRejectsUnsupportedDomainWithTargetedDiagnostic {
+        this.fits_into_rejects_unsupported_domain_with_targeted_diagnostic = true
     }
 
 }
