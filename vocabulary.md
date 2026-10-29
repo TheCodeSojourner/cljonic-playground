@@ -400,11 +400,19 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Range
-- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. Finite Range forms return their exact count and `true` from `is_finite()`; zero-step forms return the configured traversal cap and `false`. `Range` exposes no canonical `start`/`end`/`step` observation and is not `Indexed`: `r.contains(i)` tests in O(1) whether position `i` is available for bounded observation, but does not retrieve its value. `Range` is not invocable (`IFn`), exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
+- **Definition:** A producer describing an arithmetic sequence from an inclusive start to an exclusive end by a fixed step, defaulting to start `0` and step `1`. Use the lowercase RangeFactory as the idiomatic creation surface at runtime or compile time; the public `Range<T>` type and existing constructors remain supported. A zero step produces an infinite repetition of `start`, taking precedence over otherwise-empty-range cases including equal start and end; a nonzero step that moves away from the end produces an empty finite range. Finite Range forms return their exact count and `true` from `is_finite()`; zero-step forms return the configured traversal cap and `false`. `Range` exposes no canonical `start`/`end`/`step` observation and is not `Indexed`: `r.contains(i)` tests in O(1) whether position `i` is available for bounded observation, but does not retrieve its value. `Range` is not invocable (`IFn`), exposes no callable operator, and positional value retrieval remains deferred future work. `Range` is never `Associative`/`Lookup`; `get`/key-based lookup are excluded.
 - **Deprecated Synonyms:** range producer, arithmetic range
-- **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount, Contains, CljonicRange
+- **Related:** Producer, UnboundedProducer, CollectionMaximumElementCount, Contains, CljonicRange, RangeFactory
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `range(0, 5)` produces `0, 1, 2, 3, 4`; `range(0, 0, 0)` produces an infinite repetition of `0` rather than an empty range; when a range is larger than the system maximum, only the available bounded prefix is exposed.
+
+
+### RangeFactory
+- **Definition:** The lowercase `range` free-function family that creates an owning `Range<T>` at runtime or compile time without materializing its results. Deduced `range(end)`, `range(start, end)`, and `range(start, end, step)` require every argument to have the same unqualified signed integral type, matching successful Range constructor deduction without common-type promotion. Explicit `range<T>(...)` forms accept zero through three arguments under the existing Range safe-conversion rules; `range<T>()` is the default empty range with start `0`, end `0`, and step `1`. Untyped `range()` is rejected because no type can be deduced. Every admitted call behaves identically to its equivalent constructor, is non-throwing and non-allocating, preserves its inputs, and retains Range's finite or unbounded observation policy.
+- **Deprecated Synonyms:** range factory, arithmetic range factory
+- **Related:** Range, SafeImplicitConversion, OwningValue, CollectionMaximumElementCount, RejectionDiagnostic
+- **Usage:** Requirements, architecture, specification, tests, implementation, and documentation
+- **Examples:** `range(5)` produces `0, 1, 2, 3, 4`; `range(5, 0, -2)` produces `5, 3, 1`; `range<long>(0, 5)` safely widens its parameters; `range<int>()` is empty.
 
 
 ### Repeat
@@ -414,13 +422,15 @@ producer building blocks used across all higher-order algorithms.
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
 - **Examples:** `repeat(3, 7)` and `Repeat{3, 7}` produce `7, 7, 7`; `repeat(0, 7)` and `repeat(-2, 7)` produce no values; `repeat(7)` supports capped const traversal, while `into(destination, repeat(7))` materializes copies up to the destination's remaining capacity.
 
+The existing lowercase `repeat(value)` and `repeat(count, value)` factories are the idiomatic creation surface at runtime and compile time. The public `Repeat<T>` type and its existing constructors remain supported; preferring the factories does not change their admission, count normalization, or ownership semantics.
+
 
 ### Cycle
 - **Definition:** An unbounded Producer created only by `cycle(source)` that owns the source value or an independent copy of its source parameters. For a finite source, Cycle repeats the source sequence in logical traversal order from its beginning after each complete pass. For an unbounded source, Cycle preserves the source's observable traversal without requiring the source to reach an end, so bounded observation of `cycle(source)` produces the same prefix as bounded observation of `source`. Cycle returns the configured observable traversal cap and `false` from `is_finite()`; its complete result never fits a destination, while `into` may materialize a bounded prefix. An empty finite source is valid and produces empty observation.
 - **Deprecated Synonyms:** cycle producer, repeating sequence producer
 - **Related:** Producer, UnboundedProducer, ProducerMaterialization, PreflightPredicate, OwningValue, SequenceableProducer, CljonicCycle
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `cycle(vector<int, 3>(1, 2, 3))` produces the repeating sequence `1, 2, 3, 1, 2, 3, ...`; `cycle(range())` has the same bounded observable prefix as `range()`; materializing the finite-source case into `Vector<int, 5>` yields `1, 2, 3, 1, 2`.
+- **Examples:** `cycle(vector<int, 3>(1, 2, 3))` produces the repeating sequence `1, 2, 3, 1, 2, 3, ...`; `cycle(range(0, 0, 0))` has the same bounded observable prefix as `range(0, 0, 0)`; materializing the finite-source case into `Vector<int, 5>` yields `1, 2, 3, 1, 2`.
 
 
 ### MapEntry
