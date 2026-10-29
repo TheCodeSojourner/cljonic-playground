@@ -140,6 +140,16 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   ∀ `range` with both equal start and end and a zero step: zero-step infinite repetition takes precedence over empty-range behavior
   {source: stakeholder_decided, decided_by: original_spec_author}
 
+λ REQ-FN-013I(x).
+  ∀ user-facing Range creation guidance: prefers the lowercase `range` factory at runtime and compile time ∧ the public `Range<T>` type and its existing constructors remain supported
+  ∧ ∀ deduced `range(end)`, `range(start, end)`, or `range(start, end, step)`: returns `Range<T>` where every supplied argument has the same unqualified signed integral type `T`, matching successful constructor deduction without common-type promotion
+  ∧ ∀ explicitly typed `range<T>()`, `range<T>(end)`, `range<T>(start, end)`, or `range<T>(start, end, step)`: returns `Range<T>` ∧ `T` satisfies `RangeElement` ∧ every supplied argument follows the existing Range constructor safe implicit conversion rules under `REQ-CONV-001`
+  ∧ ∀ zero-argument `range<T>()`: returns the default empty Range with start `0`, end `0`, and step `1` ∧ untyped `range()` is rejected because the element type cannot be deduced
+  ∧ ∀ `range`: behaves identically to the equivalent Range constructor, including default parameters, exclusive endpoint, zero-step precedence, empty ranges, finite cardinality saturation, and bounded observation under `REQ-FN-012`, `REQ-FN-013`, `REQ-VAL-016`, `REQ-VAL-017A`, and `REQ-VAL-017D`
+  ∧ ∀ `range`: `constexpr` ∧ `noexcept` ∧ non-allocating ∧ owns its parameters ∧ preserves input arguments ∧ ¬∃ materialization of result storage during construction
+  ∧ ∀ rejected factory call: compile-time rejection ∧ targeted operation diagnostic under `REQ-DIAG-009` ∧ ¬∃ fallback result ∨ silent narrowing ∨ implicit common-type promotion
+  {source: stakeholder_decided, decided_by: human, timestamp: 2026-10-29}
+
 λ REQ-FN-013A(x).
   ∀ `Range`: provides a non-throwing, non-allocating, constant-time `Range::contains` member predicate over available bounded-observation positions; this predicate does not make `Range` `Indexed`
   ∧ ∀ `range.contains(index)`: reports whether the position is available for bounded observation, not whether the index is present as a produced value
@@ -148,7 +158,8 @@ This module specifies sequence producer types (`Range`, `Repeat`, `Cycle`, `Iter
   {source: stakeholder_decided, decided_by: original_spec_author}
 
 λ REQ-FN-013B(x).
-  ∀ `repeat(value)`: constructs an unbounded `Repeat<T>` producer that owns a copy of `value` ∧ produces the same value indefinitely
+  ∀ user-facing Repeat creation guidance: prefers the existing lowercase `repeat` factory at runtime and compile time ∧ the public `Repeat<T>` type and its existing constructors remain supported
+  ∧ ∀ `repeat(value)`: constructs an unbounded `Repeat<T>` producer that owns a copy of `value` ∧ produces the same value indefinitely
   ∧ ∀ `repeat(count, value)`: constructs a finite `Repeat<T>` producer that owns a copy of `value` ∧ produces exactly the normalized count of copies under `REQ-CONV-002E`, including an empty result when `count` ≤ 0
   ∧ ∀ counted `Repeat` construction: uses `Repeat<T>{count, value}` ∨ deduced `Repeat{count, value}` ∧ when deduced, repeated element type is determined by `value` ∧ finite count admission follows `REQ-CONV-002E`
   ∧ ∀ counted factory ∨ constructor: first argument is always the count ∧ second argument is always the repeated value ∧ ¬∃ alternate value-first overload ∨ argument-order inference
@@ -331,4 +342,4 @@ The following range and interoperability requirements are binding contracts: eve
 ## Traceability and Related Requirements
 
 - **Downstream Artifact**: `Range`, `Repeat`, `Cycle`, `Iterate`, `Repeatedly` producer templates, `into`, `fits_into`, and internal collection traversal support.
-- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-VAL-017A`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`, `REQ-FN-009A`–`009B`, `REQ-FN-010`–`013`, `REQ-FN-013A`–`013H`, `REQ-FN-014`, `REQ-FN-014A`–`014C`, `REQ-FN-027`, `REQ-FN-027A`, `REQ-PLAT-017`, `REQ-PLAT-017A`, `REQ-PLAT-018`–`022`, `REQ-PLAT-022A`, `REQ-PLAT-023`.
+- **Governed REQs**: `REQ-VAL-014`–`017`, `REQ-VAL-017A`–`017D`, `REQ-SEQ-015`–`021`, `REQ-FN-009`, `REQ-FN-009A`–`009B`, `REQ-FN-010`–`013`, `REQ-FN-013A`–`013I`, `REQ-FN-014`, `REQ-FN-014A`–`014C`, `REQ-FN-027`, `REQ-FN-027A`, `REQ-PLAT-017`, `REQ-PLAT-017A`, `REQ-PLAT-018`–`022`, `REQ-PLAT-022A`, `REQ-PLAT-023`.
