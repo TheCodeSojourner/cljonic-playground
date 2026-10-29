@@ -199,9 +199,10 @@ changes. Assuming all tests pass, executing `make cljonic` will generate the **c
 | Target                                           | Description                                                                                                                  |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | `make`                                           | Show available targets                                                                                                       |
-| `make all`                                       | Clean, configure, parallel rebuild, and parallel test run                                                                    |
+| `make all`                                       | Incremental parallel build and test run                                                                                     |
 | `make test`                                      | Incremental parallel rebuild and parallel tests against modular and generated headers                                        |
-| `make clean`                                     | Remove generated local build output                                                                                          |
+| `make clean`                                     | Clean compiled outputs, preserving configuration and downloaded dependencies                                                 |
+| `make distclean`                                 | Remove build directories, including configuration and dependency caches                                                      |
 | `make coverage`                                  | Build with instrumentation, run tests, enforce 100% line coverage                                                            |
 | `make coverage-cli`                              | Same as coverage but print lines % to stdout; set `COVERAGE_FILE=foo.hpp` to narrow scope                                    |
 | `make cljonic`                                   | Generate the single public header at `cljonic.hpp`                                                                           |
@@ -225,6 +226,55 @@ changes. Assuming all tests pass, executing `make cljonic` will generate the **c
 | `make trace-id-check`                            | Focused Allium obligation-to-test check; set `SPEC`, `TESTS`, and optionally `EXACT=1`                                         |
 | `make upsert-gate`                               | Fail-fast loop gate: lint, complexity-cli, asan-ubsan, coverage-cli for `UPSERT_COVERAGE_FILE`                               |
 | `make upsert-gate-strict`                        | upsert-gate plus strict spec-to-code traceability and no-heap verification                                                   |
+
+Coverage targets reuse their build directory and downloaded dependencies, while resetting coverage counters before each test run. The first configuration still needs network access to fetch Catch2 unless `FETCHCONTENT_SOURCE_DIR_CATCH2` is configured with an existing checkout.
+
+`make all` does not clean first. For a full rebuild without downloading dependencies again, run `make clean` followed by `make all`. Use `make distclean` only when intentionally discarding build configuration and dependency caches; subsequent configuration may need network access to fetch the pinned Catch2 version.
+
+`make clean` regenerates the shared single header after CMake cleanup. Header generation replaces the output atomically so concurrent readers never see a partially written header.
+
+Unchanged generated headers retain their timestamps to avoid unnecessary recompilation. The final `make git` gate formats once, then uses the non-mutating `lint-check` target; standalone `make lint` still formats before checking. Factory diagnostic checks reuse identical compiler results only within the current script process, with compiler flags, include directory, and complete source text included in the key. Both compilation status and diagnostic-content assertions remain checked; no cached results survive between runs.
+
+All final-gate compile-fail checks are registered in `COMPILE_FAIL_TARGETS` in the Makefile. When adding an API-specific compile-fail target, declare a literal target ending in `-compile-fail` and add it to that list. Both `make compile-fail` and `make git` audit the registry and run every registered check using the shared dispatcher. `make compile-fail-registry` fails on missing, duplicate, or stale registrations, so newly declared checks cannot silently be omitted.
+
+`VALIDATION_JOBS` controls bounded parallel execution for `make git`, `make compile-fail`, and `make docs-examples`; use `1` for serial execution. By default, `scripts/validation_jobs.py` selects the smallest of 80% of CPUs available according to `nproc` (rounded down), a measured 12-worker cap, and one worker per GiB of available memory, with a minimum of one worker. This Linux resource detection reads `/proc/meminfo` and further limits memory by remaining cgroup-v2 allowances, including enclosing groups. Use current GNU `nproc` for affinity and CPU-quota-aware detection. The memory rule reserves conservative headroom, not a hard memory guarantee; cgroup-v1 memory limits are not detected. Detection errors fail explicitly rather than silently selecting a budget.
+
+The budget is computed once per top-level Make invocation and exported to children. Explicit `make git VALIDATION_JOBS=N` or an environment setting overrides automatic selection, including its safety caps. `make help` displays the current selected value. Direct diagnostic/example script invocations also select automatically unless given `--jobs N`.
+
+Diagnostic suites run in a single pool; the large primitive suite is split by operation, with each operation retaining all its cases and both header configurations. Individual suites remain serial internally, so nested pools do not multiply compiler concurrency. Documentation examples use the same scheduler with separate output files. Output is reported in registration order. A failure stops new work from being scheduled, waits for already-running checks, and fails the gate; it never reports success for skipped checks.
+
+`make git` uses an explicit staged dependency graph, even when invoked with `make -j`:
+
+1. Validate the worker budget, run structural/tooling audits, and audit the diagnostic registry.
+2. Format once, then generate the single header before any source-reading validation starts.
+3. Use one `VALIDATION_JOBS` pool for all diagnostic groups and `GIT_INDEPENDENT_CHECKS`: lint, complexity, header/diagnostic audits, traceability, Doxygen generation, and documentation examples. Child Make invocations and example compilation are serial within each slot. Only lint configures the main build directory during this stage; other outputs use distinct paths.
+4. Run sanitizer, coverage, no-heap, and standalone single-header probes in sequence, after the pool drains. CMake builds in this stage are bounded by `VALIDATION_JOBS`; configuration and builds never overlap within a build directory.
+5. Print `git:ok` only after every stage succeeds. Failures prevent dependent stages from starting.
+
+For standalone build targets, optional `BUILD_JOBS=N` bounds CMake build and parallel test execution; leaving it unset preserves their existing default parallelism. The final gate sets its build budget explicitly from `VALIDATION_JOBS`. Newly registered API diagnostic targets join the shared pool automatically; they must remain internally serial rather than launch nested compiler pools. These scheduling guarantees apply within one gate invocation, not to independent Make processes launched concurrently.
+
+Final-gate measurements on the development host (GCC 16.2.1, CMake 4.4.4, 22 logical CPUs; optimized runs use `VALIDATION_JOBS=4`):
+
+| Run | Wall time |
+| --- | --------- |
+| Original sequential gate baseline | 622.145s (10m22s) |
+| Optimized gate after `make clean` | 298.634s (4m59s) |
+| Optimized gate immediately repeated unchanged | 192.224s (3m12s) |
+
+Both optimized runs passed every baseline check, all 20 diagnostic suites, 40 documentation examples, and 100% source line coverage (812/812). The normal, sanitizer, and coverage configurations each passed all 280 tests. Tooling regressions also exercise complete gate membership, worker limits, ordered output, and failures blocking dependent stages and final success.
+
+Here, "cold" means compiled outputs were cleaned, not dependency caches, filesystem caches, or fresh downloads. The original baseline also retained dependency caches, but was measured earlier rather than as a controlled same-state A/B run. These single-run observations are approximately 52% and 69% below that baseline, not guaranteed speedups. To reproduce the optimized comparison, run `make clean`, time `make git`, then immediately time `make git` again without edits or other concurrent validation.
+
+A subsequent concurrency sweep ran `make clean` before each gate on the same host, retaining configurations and dependency sources:
+
+| Workers | Gate wall time | Peak sampled process-tree RSS |
+| ------- | -------------- | ----------------------------- |
+| 4 | 298.561s | 1.18 GiB |
+| 8 | 228.885s | 2.06 GiB |
+| 12 | 198.840s | 2.65 GiB |
+| 17 (80% of 22 available CPUs) | 198.711s | 4.01 GiB |
+
+All four gates passed. Twelve workers matched seventeen within timing noise while using substantially less memory, motivating the automatic cap; separate diagnostic/build budgets were not warranted by these results. RSS was sampled every 250ms across the gate's process tree, may double-count shared pages, and can miss brief peaks. Host-wide swap-out was observed during the eight-worker run but cannot be attributed to this gate on a shared machine; the other runs recorded no swap-out. These are single-run observations, not universal hardware limits. To reproduce the earlier four-worker table, explicitly set `VALIDATION_JOBS=4`.
 
 #### Under The Hood
 
