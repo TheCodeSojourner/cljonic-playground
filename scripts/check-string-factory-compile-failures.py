@@ -22,6 +22,10 @@ FAILURE_CASES = {
     "explicit-capacity-over-maximum": "  (void)cljonic::string<3>();",
     "oversized-literal": '  (void)cljonic::string("abc");',
     "literal-too-long-for-capacity": '  (void)cljonic::string<1>("abc");',
+    "into-invalid-character-during-constant-evaluation": (
+        "  constexpr auto result = cljonic::into(cljonic::String<1>{}, "
+        "cljonic::Vector<char, 1>{static_cast<char>(0x80)});"
+    ),
 }
 
 PASS_CASES = {

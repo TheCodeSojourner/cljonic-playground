@@ -16,6 +16,7 @@ namespace cljonic::no_heap::probes {
     const auto queue_result = into(Vector<int, 4>{99}, queue_source);
     const auto string_source = String<4>{"ab"};
     const auto string_result = into(Vector<char, 4>{'x'}, string_source);
+    const auto string_destination_result = into(String<4>{"x"}, string_source);
 
     const auto set_source = Set<int, 4>{3, 1, 2}.disj(1);
     const auto set_result = into(Vector<int, 4>{99}, set_source);
@@ -41,18 +42,30 @@ namespace cljonic::no_heap::probes {
     const auto empty_result = into(Vector<int, 4>{}, Vector<int, 4>{});
     const auto unchanged_result = into(full, Vector<int, 4>{});
     const auto unbounded_result = into(Vector<int, 3>{9}, Range<int>{0, 5, 0});
+    const auto set_destination_result = into(Set<int, 2>{1}, Vector<int, 4>{1, 2, 2, 1});
+    const auto map_destination = Map<int, int, 2>{Entry{1, 10}, Entry{2, 20}};
+    const auto map_destination_result =
+        into(map_destination, Vector<Entry, 3>{Entry{1, 11}, Entry{3, 30}, Entry{2, 99}});
+    const auto queue_destination_result = into(Queue<int, 3>{9, 8}.pop(), source);
+    const auto duplicate_result = into(Set<int, 1>{7}, repeat(7));
+    const auto update_result = into(Map<int, int, 1>{Entry{1, 0}}, repeat(Entry{1, 50}));
     return result.count() == 5U && result(0U) == 0 && result(4U) == 4 && vector_result.count() == 4U &&
            vector_result(0U) == 99LL && vector_result(1U) == 98LL && vector_result(2U) == 1LL &&
            vector_result(3U) == 2LL && populated.count() == 2U && vector_source.count() == 3U &&
            queue_result.count() == 3U && queue_result(0U) == 99 && queue_result(1U) == 20 && queue_result(2U) == 30 &&
            queue_source.count() == 2U && queue_source.peek() == 20 && string_result.count() == 3U &&
            string_result(0U) == 'x' && string_result(1U) == 'a' && string_result(2U) == 'b' &&
-           string_source.count() == 2U && set_result.count() == 3U && set_result(0U) == 99 &&
-           set_source.count() == 2U && map_result.count() == 3U && map_result(0U) == Entry{9, 90} &&
-           map_source.count() == 2U && full_result.count() == 2U && full_result(0U) == 7 && full_result(1U) == 8 &&
-           empty_result.count() == 0U && unchanged_result.count() == 2U && unchanged_result(0U) == 7 &&
-           unchanged_result(1U) == 8 && unbounded_result.count() == 3U && unbounded_result(0U) == 9 &&
-           unbounded_result(1U) == 0 && unbounded_result(2U) == 0;
+           string_destination_result.view() == "xab" && string_source.count() == 2U && set_result.count() == 3U &&
+           set_result(0U) == 99 && set_source.count() == 2U && map_result.count() == 3U &&
+           map_result(0U) == Entry{9, 90} && map_source.count() == 2U && full_result.count() == 2U &&
+           full_result(0U) == 7 && full_result(1U) == 8 && empty_result.count() == 0U &&
+           unchanged_result.count() == 2U && unchanged_result(0U) == 7 && unchanged_result(1U) == 8 &&
+           unbounded_result.count() == 3U && unbounded_result(0U) == 9 && unbounded_result(1U) == 0 &&
+           unbounded_result(2U) == 0 && set_destination_result.count() == 2U && set_destination_result.contains(1) &&
+           set_destination_result.contains(2) && map_destination_result(1) == 11 && map_destination_result(2) == 20 &&
+           map_destination(1) == 10 && queue_destination_result.count() == 3U && queue_destination_result.peek() == 8 &&
+           queue_destination_result.pop().peek() == 0 && queue_destination_result.pop().pop().peek() == 1 &&
+           duplicate_result.count() == 1U && update_result(1) == 50;
 }
 
 } // namespace cljonic::no_heap::probes

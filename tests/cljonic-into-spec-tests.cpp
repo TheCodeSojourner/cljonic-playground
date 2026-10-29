@@ -1,6 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <span>
+#include <string_view>
 #include <type_traits>
+#include <utility>
 
 #include "cljonic-test-api.hpp"
 
@@ -14,21 +17,21 @@ TEST_CASE("into and fits_into materialize a producer into a bounded destination"
 
     TRACE_ID("entity-fields.ProducerMaterialization");
     TRACE_ID("invariant.ProducerMaterialization.IntoRequiresExplicitBoundedDestination");
-    TRACE_ID("invariant.ProducerMaterialization.IntoRequiresCljonicVectorDestination");
-    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::MaterializableSource<cljonic::String<4>, cljonic::String<4>>);
-    STATIC_REQUIRE_FALSE(
+    TRACE_ID("invariant.ProducerMaterialization.IntoRequiresSupportedCollectionDestination");
+    STATIC_REQUIRE(cljonic::concepts_detail::MaterializableSource<cljonic::String<4>, cljonic::String<4>>);
+    STATIC_REQUIRE(
         cljonic::concepts_detail::MaterializableSource<cljonic::Map<int, int, 4>, cljonic::Map<int, int, 4>>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::MaterializableSource<cljonic::Set<int, 4>, Range<int>>);
-    STATIC_REQUIRE_FALSE(cljonic::concepts_detail::MaterializableSource<cljonic::Queue<int, 4>, Range<int>>);
+    STATIC_REQUIRE(cljonic::concepts_detail::MaterializableSource<cljonic::Set<int, 4>, Range<int>>);
+    STATIC_REQUIRE(cljonic::concepts_detail::MaterializableSource<cljonic::Queue<int, 4>, Range<int>>);
     TRACE_ID("invariant.ProducerMaterialization.IntoReturnsNewDestinationTypedCollection");
-    TRACE_ID("invariant.ProducerMaterialization.IntoAppendsAfterDestinationContents");
+    TRACE_ID("invariant.ProducerMaterialization.IntoVectorAndQueueAppendAfterDestinationContents");
     TRACE_ID("invariant.ProducerMaterialization.IntoLeavesDestinationUnchanged");
     TRACE_ID("invariant.ProducerMaterialization.IntoLeavesSourceUnchanged");
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoIsNonThrowingNonAllocating");
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoPredictsIntoCompleteness");
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoUsesRemainingDestinationCapacity");
     TRACE_ID("invariant.ProducerMaterialization.FitsIntoAvoidsUnsignedAdditionOverflow");
-    TRACE_ID("invariant.ProducerMaterialization.FitsIntoRequiresCljonicVectorDestination");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoRequiresSupportedCollectionDestination");
     TRACE_ID("invariant.ProducerMaterialization.UnboundedSourceDoesNotFitIntoDestination");
     TRACE_ID("invariant.ProducerMaterialization.UnboundedSourceMaterializesBoundedPrefix");
     TRACE_ID("invariant.ProducerMaterialization.FiniteSourceMaterializesCompleteResultWhenItFits");
@@ -116,7 +119,7 @@ TEST_CASE("into materializes each collection source without changing its inputs"
 
     TRACE_ID("invariant.ProducerMaterialization.MaterializationSourceDomainIsCljonicSource");
     TRACE_ID("invariant.ProducerMaterialization.IntoReturnsNewDestinationTypedCollection");
-    TRACE_ID("invariant.ProducerMaterialization.IntoAppendsAfterDestinationContents");
+    TRACE_ID("invariant.ProducerMaterialization.IntoVectorAndQueueAppendAfterDestinationContents");
     TRACE_ID("invariant.ProducerMaterialization.IntoLeavesDestinationUnchanged");
     TRACE_ID("invariant.ProducerMaterialization.IntoLeavesSourceUnchanged");
     TRACE_ID("invariant.ProducerMaterialization.BoundedPrefixPreservesSourceTraversalOrder");
@@ -187,7 +190,7 @@ TEST_CASE("into materializes each collection source without changing its inputs"
 TEST_CASE("into handles empty sources and remaining destination capacity", "[into]") {
     using namespace cljonic;
 
-    TRACE_ID("invariant.ProducerMaterialization.IntoAppendsAfterDestinationContents");
+    TRACE_ID("invariant.ProducerMaterialization.IntoVectorAndQueueAppendAfterDestinationContents");
     TRACE_ID("invariant.ProducerMaterialization.FiniteSourceMaterializesCompleteResultWhenItFits");
     TRACE_ID("invariant.ProducerMaterialization.BoundedPrefixPreservesSourceTraversalOrder");
     TRACE_ID("invariant.ProducerMaterialization.IntoLeavesDestinationUnchanged");
@@ -203,4 +206,251 @@ TEST_CASE("into handles empty sources and remaining destination capacity", "[int
     CHECK(equal(into(Vector<int, 3>{}, source), Vector<int, 3>{1, 2, 3}));
     CHECK(equal(full, Vector<int, 2>{7, 8}));
     CHECK(equal(source, Vector<int, 4>{1, 2, 3}));
+}
+
+TEST_CASE("materialization admits only compatible collection destinations and cljonic sources", "[into][fits-into]") {
+    using namespace cljonic;
+    using Entry = MapEntry<int, int>;
+
+    TRACE_ID("invariant.ProducerMaterialization.MaterializationRejectsProducerDestinations");
+    TRACE_ID("invariant.ProducerMaterialization.MaterializationRejectsExternalCppSources");
+    TRACE_ID("invariant.ProducerMaterialization.IntoAndFitsIntoShareCompatibleSourceDomain");
+    TRACE_ID("invariant.ProducerMaterialization.SourceReferenceObeysSafeNothrowInsertionRules");
+    TRACE_ID("invariant.ProducerMaterialization.MapSourceRequiresCompatibleNominalMapEntries");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoRejectsUnsupportedDomainWithTargetedDiagnostic");
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<int, Range<int>>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Range<int>, Range<int>>);
+    STATIC_REQUIRE(concepts_detail::MaterializableSource<String<4>, Vector<char, 4>>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Vector<int, 4>, std::span<const int>>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Queue<char, 4>, std::string_view>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Vector<short, 4>, Range<int>>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Set<short, 4>, Range<int>>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Queue<short, 4>, Range<int>>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Map<int, int, 4>, Vector<int, 4>>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Map<int, int, 4>, Vector<std::pair<int, int>, 4>>);
+    STATIC_REQUIRE_FALSE(concepts_detail::MaterializableSource<Map<long, int, 4>, Vector<Entry, 4>>);
+    STATIC_REQUIRE(concepts_detail::MaterializableSource<Map<int, int, 4>, Vector<Entry, 4>>);
+    STATIC_REQUIRE(concepts_detail::MaterializableSource<Set<long long, 4>, Vector<short, 4>>);
+    STATIC_REQUIRE(concepts_detail::MaterializableSource<Queue<long long, 4>, Range<int>>);
+    STATIC_REQUIRE(concepts_detail::MaterializableSource<Set<char, 4>, String<4>>);
+}
+
+TEST_CASE("String materialization normalizes invalid runtime characters and continues", "[into][fits-into]") {
+    using namespace cljonic;
+
+    TRACE_ID("invariant.ProducerMaterialization.IntoStringNormalizesInvalidRuntimeCharactersAndContinues");
+    TRACE_ID("invariant.ProducerMaterialization.IntoStringRejectsInvalidCharactersDuringConstantEvaluation");
+    TRACE_ID("invariant.ProducerMaterialization.FiniteStringPreflightUsesRemainingCapacity");
+
+    constexpr auto constexpr_result = into(String<4>{"x"}, String<4>{"ab"});
+    constexpr auto constexpr_invalid = Vector<char, 1>{static_cast<char>(0x80)};
+    STATIC_REQUIRE(constexpr_result.view() == std::string_view{"xab"});
+    STATIC_REQUIRE(fits_into(String<4>{"x"}, String<4>{"ab"}));
+    STATIC_REQUIRE(fits_into(String<1>{}, constexpr_invalid));
+    STATIC_REQUIRE_FALSE(fits_into(String<2>{"x"}, String<4>{"ab"}));
+    STATIC_REQUIRE(noexcept(into(String<4>{}, String<4>{})));
+    STATIC_REQUIRE(noexcept(fits_into(String<4>{}, String<4>{})));
+
+    volatile unsigned char invalid_byte = 0x80U;
+    const auto source = Vector<char, 5>{'a', static_cast<char>(invalid_byte), 'b', '\0', 'c'};
+    const auto normalized = into(String<5>{}, source);
+    CHECK(normalized.view() == std::string_view{"a.b.c"});
+    CHECK(fits_into(String<5>{}, source));
+
+    const auto partial = into(String<4>{"x"}, source);
+    CHECK(partial.view() == std::string_view{"xa.b"});
+    CHECK_FALSE(fits_into(String<4>{"x"}, source));
+    CHECK(equal(source, Vector<char, 5>{'a', static_cast<char>(invalid_byte), 'b', '\0', 'c'}));
+}
+
+TEST_CASE("into and fits_into preserve queue FIFO order and remaining capacity", "[into][fits-into]") {
+    using namespace cljonic;
+
+    TRACE_ID("invariant.ProducerMaterialization.IntoVectorAndQueueAppendAfterDestinationContents");
+    TRACE_ID("invariant.ProducerMaterialization.FiniteVectorAndQueuePreflightUsesSourceCount");
+    TRACE_ID("invariant.ProducerMaterialization.MaterializationAndPreflightAreConstexprWhenSupported");
+    constexpr auto destination = Queue<long long, 4>{9LL, 8LL, 7LL}.pop().pop();
+    constexpr auto source = Vector<short, 4>{short{1}, short{2}};
+    constexpr auto result = into(destination, source);
+    STATIC_REQUIRE(std::is_same_v<std::remove_cv_t<decltype(result)>, Queue<long long, 4>>);
+    STATIC_REQUIRE(equal(result, Queue<long long, 4>{7LL, 1LL, 2LL}));
+    STATIC_REQUIRE(equal(destination, Queue<long long, 4>{7LL}));
+    STATIC_REQUIRE(fits_into(destination, source));
+    STATIC_REQUIRE(noexcept(into(destination, source)));
+    STATIC_REQUIRE(noexcept(fits_into(destination, source)));
+    STATIC_REQUIRE(equal(into(Queue<int, 0>{}, Range{0, 2}), Queue<int, 0>{}));
+    STATIC_REQUIRE(fits_into(Queue<int, 0>{}, Vector<int, 0>{}));
+    STATIC_REQUIRE_FALSE(fits_into(Queue<int, 0>{}, Range{0, 1}));
+
+    volatile int runtime_end = 3;
+    const auto runtime_source = Range{0, runtime_end};
+    CHECK(equal(into(destination, runtime_source), Queue<long long, 4>{7LL, 0LL, 1LL, 2LL}));
+    CHECK(fits_into(destination, runtime_source));
+    const auto full = Queue<int, 2>{9, 8};
+    CHECK(equal(into(full, runtime_source), full));
+    CHECK_FALSE(fits_into(full, runtime_source));
+    CHECK(fits_into(full, Vector<int, 0>{}));
+    CHECK_FALSE(fits_into(destination, repeat(1)));
+    CHECK(equal(into(Queue<int, 3>{9}, repeat(1)), Queue<int, 3>{9, 1, 1}));
+}
+
+TEST_CASE("Set materialization deduplicates before measuring capacity", "[into][fits-into]") {
+    using namespace cljonic;
+
+    TRACE_ID("invariant.ProducerMaterialization.IntoSetInsertsDistinctValues");
+    TRACE_ID("invariant.ProducerMaterialization.IntoSetAcceptsDuplicateValuesAsNoOpsWhenFull");
+    TRACE_ID("invariant.ProducerMaterialization.IntoStopsBeforeFirstCapacityFailureWithoutSkipping");
+    TRACE_ID("invariant.ProducerMaterialization.FiniteSetAndMapPreflightAccountsForExistingAndPriorSourceValues");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoPreservesInputValues");
+    constexpr auto destination = Set<long long, 2>{1LL};
+    constexpr auto source = Vector<short, 5>{short{1}, short{2}, short{2}, short{1}, short{2}};
+    constexpr auto result = into(destination, source);
+    STATIC_REQUIRE(equal(result, Set<long long, 2>{1LL, 2LL}));
+    STATIC_REQUIRE(fits_into(destination, source));
+    STATIC_REQUIRE(equal(destination, Set<long long, 2>{1LL}));
+    STATIC_REQUIRE(source.count() == 5U);
+    STATIC_REQUIRE(noexcept(into(destination, source)));
+    STATIC_REQUIRE(noexcept(fits_into(destination, source)));
+    STATIC_REQUIRE(fits_into(Set<int, 0>{}, Vector<int, 0>{}));
+    STATIC_REQUIRE_FALSE(fits_into(Set<int, 0>{}, Vector<int, 1>{1}));
+    STATIC_REQUIRE(into(Set<int, 0>{}, Vector<int, 1>{1}).count() == 0U);
+    STATIC_REQUIRE(equal(into(Set<char, 2>{'a'}, String<4>{"abba"}), Set<char, 2>{'a', 'b'}));
+
+    volatile short runtime_value = 2;
+    const auto runtime_source = Vector<short, 5>{short{1}, runtime_value, runtime_value, short{1}, runtime_value};
+    CHECK(equal(into(destination, runtime_source), result));
+    CHECK(fits_into(destination, runtime_source));
+    CHECK(equal(destination, Set<long long, 2>{1LL}));
+    CHECK(equal(runtime_source, source));
+    const auto full = Set<int, 2>{1, 2};
+    CHECK(fits_into(full, Vector<int, 3>{2, 1, 2}));
+    CHECK(equal(into(full, Vector<int, 3>{2, 1, 2}), full));
+    CHECK_FALSE(fits_into(full, Vector<int, 3>{2, 3, 1}));
+    CHECK(equal(into(full, Vector<int, 3>{2, 3, 1}), full));
+    CHECK(fits_into(full, Vector<int, 0>{}));
+    CHECK_FALSE(fits_into(Set<int, 0>{}, Vector<int, 1>{1}));
+}
+
+TEST_CASE("Map materialization replaces keys in source order without skipping capacity failures", "[into][fits-into]") {
+    using namespace cljonic;
+    using Entry = MapEntry<int, int>;
+
+    TRACE_ID("invariant.ProducerMaterialization.IntoMapReplacesMatchingKeysWithLastValue");
+    TRACE_ID("invariant.ProducerMaterialization.IntoFoldsValuesInSourceTraversalOrder");
+    TRACE_ID("invariant.ProducerMaterialization.IntoMapAcceptsExistingKeyEntriesAsReplacementsWhenFull");
+    TRACE_ID("invariant.ProducerMaterialization.IntoStopsBeforeFirstCapacityFailureWithoutSkipping");
+    TRACE_ID("invariant.ProducerMaterialization.FiniteSetAndMapPreflightAccountsForExistingAndPriorSourceValues");
+    constexpr auto destination = Map<int, int, 2>{Entry{1, 10}};
+    constexpr auto source = Vector<Entry, 4>{Entry{1, 11}, Entry{2, 20}, Entry{2, 22}, Entry{1, 12}};
+    constexpr auto result = into(destination, source);
+    STATIC_REQUIRE(result.count() == 2U);
+    STATIC_REQUIRE(result(1) == 12);
+    STATIC_REQUIRE(result(2) == 22);
+    STATIC_REQUIRE(fits_into(destination, source));
+    STATIC_REQUIRE(destination(1) == 10);
+    STATIC_REQUIRE(destination.count() == 1U);
+    STATIC_REQUIRE(noexcept(into(destination, source)));
+    STATIC_REQUIRE(noexcept(fits_into(destination, source)));
+    STATIC_REQUIRE(fits_into(Map<int, int, 0>{}, Vector<Entry, 0>{}));
+    STATIC_REQUIRE_FALSE(fits_into(Map<int, int, 0>{}, Vector<Entry, 1>{Entry{1, 10}}));
+    STATIC_REQUIRE(into(Map<int, int, 0>{}, source).count() == 0U);
+
+    volatile int runtime_value = 11;
+    const auto updates_then_failure = Vector<Entry, 3>{Entry{1, runtime_value}, Entry{3, 30}, Entry{2, 99}};
+    const auto full = Map<int, int, 2>{Entry{1, 10}, Entry{2, 20}};
+    const auto prefix = into(full, updates_then_failure);
+    CHECK(prefix(1) == 11);
+    CHECK(prefix(2) == 20);
+    CHECK(prefix.count() == 2U);
+    CHECK_FALSE(fits_into(full, updates_then_failure));
+    CHECK(full(1) == 10);
+    CHECK(full(2) == 20);
+    CHECK(updates_then_failure(2U).value == 99);
+    CHECK(equal(into(destination, source), result));
+    CHECK(fits_into(destination, source));
+    CHECK(fits_into(full, Vector<Entry, 0>{}));
+    CHECK_FALSE(fits_into(Map<int, int, 0>{}, source));
+    const auto map_source = Map<int, int, 2>{Entry{1, runtime_value}, Entry{2, 20}};
+    CHECK(equal(into(destination, map_source), map_source));
+    CHECK(fits_into(destination, map_source));
+    CHECK(fits_into(full, repeat(3, Entry{1, 50})));
+    CHECK(into(full, repeat(3, Entry{1, 50}))(1) == 50);
+}
+
+TEST_CASE("value-sensitive preflight and materialization independently evaluate finite producers",
+          "[into][fits-into]") {
+    using namespace cljonic;
+    using Entry = MapEntry<int, int>;
+
+    TRACE_ID("invariant.ProducerMaterialization.FiniteSetAndMapPreflightMayEvaluateCallbacks");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoAndIntoDoNotShareRealizationCache");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoPredictionRequiresEquivalentSourceValues");
+    TRACE_ID("invariant.ProducerMaterialization.FitsIntoPreservesInputValues");
+    int calls = 0;
+    const auto source = repeatedly(4, [&calls, value = 0] mutable noexcept {
+        ++calls;
+        return ++value % 2;
+    });
+    const auto destination = Set<int, 2>{};
+    CHECK(fits_into(destination, source));
+    CHECK(calls == 4);
+    CHECK(equal(into(destination, source), Set<int, 2>{0, 1}));
+    CHECK(calls == 8);
+    CHECK(destination.count() == 0U);
+    CHECK(source.count() == 4U);
+
+    calls = 0;
+    const auto failing_source = repeatedly(4, [&calls] noexcept { return ++calls; });
+    CHECK_FALSE(fits_into(Set<int, 1>{}, failing_source));
+    CHECK(calls == 2);
+
+    calls = 0;
+    const auto changing_source = repeatedly(1, [&calls] noexcept { return ++calls; });
+    const auto full = Set<int, 1>{1};
+    CHECK(fits_into(full, changing_source));
+    CHECK(equal(into(full, changing_source), full));
+    CHECK(calls == 2);
+    CHECK_FALSE(fits_into(full, changing_source));
+    CHECK(calls == 3);
+
+    calls = 0;
+    const auto entries = repeatedly(3, [&calls] noexcept { return Entry{1, ++calls}; });
+    CHECK(fits_into(Map<int, int, 1>{}, entries));
+    CHECK(calls == 3);
+    CHECK(into(Map<int, int, 1>{}, entries)(1) == 6);
+    CHECK(calls == 6);
+    CHECK_FALSE(fits_into(Map<int, int, 0>{}, entries));
+    CHECK(calls == 7);
+    CHECK(fits_into(Set<int, 0>{}, repeatedly(0, [&calls] noexcept { return ++calls; })));
+    CHECK(calls == 7);
+}
+
+TEST_CASE("unbounded duplicate and replacement materialization stays traversal bounded", "[into][fits-into]") {
+    using namespace cljonic;
+    using Entry = MapEntry<int, int>;
+
+    TRACE_ID("invariant.ProducerMaterialization.UnboundedMaterializationNeverExceedsSourceTraversalCap");
+    TRACE_ID("invariant.ProducerMaterialization.UnboundedSourceDoesNotFitIntoDestination");
+    int calls = 0;
+    const auto duplicates = repeatedly([&calls] noexcept {
+        ++calls;
+        return 7;
+    });
+    const auto full_set = Set<int, 1>{7};
+    CHECK_FALSE(fits_into(full_set, duplicates));
+    CHECK(calls == 0);
+    CHECK(equal(into(full_set, duplicates), full_set));
+    CHECK(static_cast<std::size_t>(calls) == duplicates.count());
+
+    calls = 0;
+    const auto updates = repeatedly([&calls] noexcept { return Entry{1, ++calls}; });
+    const auto full_map = Map<int, int, 1>{Entry{1, 0}};
+    CHECK_FALSE(fits_into(full_map, updates));
+    CHECK(calls == 0);
+    const auto result = into(full_map, updates);
+    CHECK(static_cast<std::size_t>(calls) == updates.count());
+    CHECK(result(1) == calls);
+    CHECK(full_map(1) == 0);
+    CHECK_FALSE(fits_into(Set<int, 0>{}, duplicates));
+    CHECK_FALSE(fits_into(Map<int, int, 0>{}, updates));
 }

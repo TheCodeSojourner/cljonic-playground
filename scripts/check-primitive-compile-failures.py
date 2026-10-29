@@ -38,6 +38,8 @@ PRIMITIVES = {
             ),
         },
         "pass_cases": {
+            "string-source": '(void)cljonic::into(cljonic::String<4>{}, cljonic::String<4>{"ab"});',
+            "vector-char-source": "(void)cljonic::into(cljonic::String<4>{}, cljonic::Vector<char, 2>{'a', 'b'});",
             "vector-index": "(void)cljonic::get(cljonic::Vector<int, 4>{1, 2}, 0U);",
             "map-key": "(void)cljonic::get(cljonic::Map<int, long, 4>{}, short{1}, int{2});",
             "set-value": "(void)cljonic::get(cljonic::Set<int, 4>{1}, short{1});",
@@ -344,15 +346,15 @@ PRIMITIVES = {
         "diagnostic_cases": {
             "unsupported-scalar-source": (
                 "(void)cljonic::fits_into(cljonic::Vector<int, 4>{}, 42);",
-                "expected a Vector destination and a cljonic collection or producer source",
+                "expected a Vector, Set, Map, Queue, or String destination and a compatible cljonic collection or producer source",
             ),
             "unsupported-destination": (
-                "(void)cljonic::fits_into(cljonic::Set<int, 4>{}, cljonic::Range<int>{0, 5});",
-                "expected a Vector destination and a cljonic collection or producer source",
+                "(void)cljonic::fits_into(42, cljonic::Range<int>{0, 5});",
+                "expected a Vector, Set, Map, Queue, or String destination and a compatible cljonic collection or producer source",
             ),
             "lossy-source-element": (
                 "(void)cljonic::fits_into(cljonic::Vector<short, 4>{}, cljonic::Range<int>{0, 5});",
-                "expected a Vector destination and a cljonic collection or producer source",
+                "expected a Vector, Set, Map, Queue, or String destination and a compatible cljonic collection or producer source",
             ),
         },
         "pass_cases": {
@@ -367,27 +369,15 @@ PRIMITIVES = {
         "diagnostic_cases": {
             "unsupported-scalar-source": (
                 "(void)cljonic::into(cljonic::Vector<int, 4>{}, 42);",
-                "expected a Vector destination and a cljonic collection or producer source",
+                "expected a Vector, Set, Map, Queue, or String destination and a compatible cljonic collection or producer source",
             ),
             "unsupported-destination": (
-                "(void)cljonic::into(cljonic::Set<int, 4>{}, cljonic::Range<int>{0, 5});",
-                "expected a Vector destination and a cljonic collection or producer source",
-            ),
-            "string-destination": (
-                '(void)cljonic::into(cljonic::String<4>{}, cljonic::String<4>{"ab"});',
-                "expected a Vector destination and a cljonic collection or producer source",
-            ),
-            "map-destination": (
-                "(void)cljonic::into(cljonic::Map<int, int, 4>{}, cljonic::Map<int, int, 4>{});",
-                "expected a Vector destination and a cljonic collection or producer source",
-            ),
-            "queue-destination": (
-                "(void)cljonic::into(cljonic::Queue<int, 4>{}, cljonic::Range<int>{0, 5});",
-                "expected a Vector destination and a cljonic collection or producer source",
+                "(void)cljonic::into(42, cljonic::Range<int>{0, 5});",
+                "expected a Vector, Set, Map, Queue, or String destination and a compatible cljonic collection or producer source",
             ),
             "lossy-source-element": (
                 "(void)cljonic::into(cljonic::Vector<short, 4>{}, cljonic::Range<int>{0, 5});",
-                "expected a Vector destination and a cljonic collection or producer source",
+                "expected a Vector, Set, Map, Queue, or String destination and a compatible cljonic collection or producer source",
             ),
         },
         "pass_cases": {
@@ -486,6 +476,53 @@ PRIMITIVES = {
         },
     },
 }
+
+for operation in ("into", "fits_into"):
+    materialization = PRIMITIVES[operation]
+    for label, statement in {
+        "producer-destination": f"(void)cljonic::{operation}(cljonic::Range<int>{{0, 2}}, cljonic::Range<int>{{0, 2}});",
+        "external-source": f"int values[]{{1, 2}}; (void)cljonic::{operation}(cljonic::Vector<int, 4>{{}}, values);",
+        "lossy-set-source": f"(void)cljonic::{operation}(cljonic::Set<short, 4>{{}}, cljonic::Range<int>{{0, 2}});",
+        "lossy-queue-source": f"(void)cljonic::{operation}(cljonic::Queue<short, 4>{{}}, cljonic::Range<int>{{0, 2}});",
+        "map-non-entry-source": (
+            f"(void)cljonic::{operation}(cljonic::Map<int, int, 4>{{}}, cljonic::Vector<int, 4>{{1, 2}});"
+        ),
+        "map-mismatched-entry-source": (
+            f"(void)cljonic::{operation}(cljonic::Map<long, int, 4>{{}}, "
+            "cljonic::Vector<cljonic::MapEntry<int, int>, 1>{cljonic::MapEntry{1, 2}});"
+        ),
+    }.items():
+        materialization["diagnostic_cases"][label] = (
+            statement,
+            "expected a Vector, Set, Map, Queue, or String destination and a compatible cljonic collection or producer source",
+        )
+    for label, statement in {
+        "set-destination": f"(void)cljonic::{operation}(cljonic::Set<int, 4>{{}}, cljonic::Range<int>{{0, 2}});",
+        "queue-destination": f"(void)cljonic::{operation}(cljonic::Queue<int, 4>{{}}, cljonic::Range<int>{{0, 2}});",
+        "map-destination": (
+            f"(void)cljonic::{operation}(cljonic::Map<int, int, 4>{{}}, "
+            "cljonic::Map<int, int, 4>{cljonic::MapEntry{1, 2}});"
+        ),
+        "map-entry-producer": (
+            f"(void)cljonic::{operation}(cljonic::Map<int, int, 4>{{}}, cljonic::repeat(3, cljonic::MapEntry{{1, 2}}));"
+        ),
+        "string-destination": (
+            f'(void)cljonic::{operation}(cljonic::String<4>{{}}, cljonic::String<4>{{"ab"}});'
+        ),
+        "string-vector-char-source": (
+            f"(void)cljonic::{operation}(cljonic::String<4>{{}}, cljonic::Vector<char, 2>{{'a', 'b'}});"
+        ),
+        "set-widening-source": (
+            f"(void)cljonic::{operation}(cljonic::Set<long long, 4>{{}}, cljonic::Vector<short, 2>{{short{{1}}}});"
+        ),
+        "queue-widening-source": (
+            f"(void)cljonic::{operation}(cljonic::Queue<long long, 4>{{}}, cljonic::Range<int>{{0, 2}});"
+        ),
+        "zero-capacity-map": (
+            f"(void)cljonic::{operation}(cljonic::Map<int, int, 0>{{}}, cljonic::repeat(0, cljonic::MapEntry{{1, 2}}));"
+        ),
+    }.items():
+        materialization["pass_cases"][label] = statement
 
 
 def build_source(header: str, body: str) -> str:
