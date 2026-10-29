@@ -6,6 +6,7 @@
   ∧ direct_construction(x) ∧ member_observation(x)
   ∧ vector_factory(x) ∧ hash_map_factory(x) ∧ map_entry_factory(x) ∧ set_factory(x)
   ∧ queue_factory(x) ∧ string_factory(x) ∧ variant_factory(x)
+  ∧ producer_factories(range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly)(x)
   ∧ primitive_free_functions(x) ∧ producer_materialization(into ∧ preflight(fits_into))(x)
   | collection_callable_lookup(x) → Vector ∨ Map ∨ Set ∨ String
   | module3(x) → concrete_array_backed_bounded_types(x)
@@ -85,6 +86,12 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | runtime_creation(x) ∧ constant_evaluation_creation(x) → same_factory_surface(x)
   | preserve(public_Variant_type ∧ existing_Variant_constructors)
   | trace_to(REQ-CAP-012A)
+
+λ S5_range_and_repeat_creation_policy(x). user_facing_Range_or_Repeat_creation(x) → prefer(lowercase_range_or_repeat_factory(x))
+  | runtime_creation(x) ∧ constant_evaluation_creation(x) → same_factory_surface(x)
+  | preserve(public_Range_and_Repeat_types ∧ existing_constructors)
+  | Repeat_factory(x) → preserve(existing_admission ∧ count_first_ordering ∧ count_normalization ∧ ownership)
+  | trace_to(REQ-FN-013I ∧ REQ-FN-013B)
 
 λ S5_change_policy(x). public_change(x) → preserve(S5_identity(x))
 
@@ -303,7 +310,7 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | collection_primitives(x) ≡ count ∧ get ∧ contains ∧ conj ∧ can_conj ∧ assoc ∧ can_assoc
     ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ empty ∧ is_empty ∧ first ∧ into ∧ fits_into
   | collection_primitives(x) → ¬narrow(universal_obligation(x))
-  | producer_factory_functions(x) ≡ repeat ∧ cycle ∧ iterate ∧ repeatedly
+  | producer_factory_functions(x) ≡ range ∧ repeat ∧ cycle ∧ iterate ∧ repeatedly
   | source_constructor_rejection(x) → name(collection ∧ violated_source_construction_rule) ∧ optionally_identify(enclosure_form when applicable) ∧ ¬recommend(materialization ∨ into ∨ fits_into)
   | producer_factory_rejection(x) → name(operation ∧ violated_producer_admission_rule(x)) ∧ state_correct_usage(x)
   | class_template_type_argument_rejection(x) → governed_by(S3_class_template_deduction_diagnostic(x)) ∧ not_exempted_here(x)
@@ -529,6 +536,27 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   | capacity_parameter(x) ∨ spare_capacity_form(x) → ¬admit(x)
   | constexpr ∧ noexcept ∧ non_allocating ∧ value_semantic_result
   | trace_to(REQ-FN-029E) ∧ realize(S5_map_entry_creation_policy)
+
+λ S2_range_factory_contract(x). RangeFactory(x) → construct(independently_owning_Range_parameters(x))
+  | range(end) ∨ range(start, end) ∨ range(start, end, step)
+    → require(all_arguments_same_unqualified_signed_integral_type(T)) ∧ return(Range<T>)
+  | range<T>(args...) → require(RangeElement(T) ∧ zero_to_three_arguments
+      ∧ ∀ argument: safe_conversion_under_existing_Range_constructor_rules(argument, T)) ∧ return(Range<T>)
+  | range<T>() → construct(empty_Range(start=0 ∧ end=0 ∧ step=1))
+  | equivalent_constructor(x) → preserve(defaults ∧ exclusive_endpoint ∧ zero_step_precedence
+      ∧ empty_range_behavior ∧ finite_cardinality_saturation ∧ observation_cap)
+  | untyped_empty_call(x) ∨ unsupported_arity(x) ∨ invalid_type_or_conversion(x)
+    → compile_time_rejection(x) ∧ targeted_operation_diagnostic(x)
+  | implicit_common_type_promotion(x) ∨ silent_narrowing(x) → ¬admit(x)
+  | constexpr ∧ noexcept ∧ non_allocating ∧ preserve_inputs ∧ ¬materialize_result_storage
+  | trace_to(REQ-FN-013I ∧ REQ-FN-012 ∧ REQ-FN-013 ∧ REQ-DIAG-009)
+    ∧ realize(S5_range_and_repeat_creation_policy)
+
+λ S2_repeat_factory_contract(x). repeat(value) → construct(unbounded_Repeat_owning_value_copy(x))
+  | repeat(count, value) → construct(finite_Repeat_owning_value_copy_with_normalized_count(x))
+  | preserve(existing_factory_domain ∧ count_first_ordering ∧ nonpositive_count_normalization)
+  | equivalent_Repeat_constructor(x) → same_result_type_and_behavior(x)
+  | trace_to(REQ-FN-013B ∧ REQ-CONV-002E) ∧ realize(S5_range_and_repeat_creation_policy)
 
 λ S2_associative_contract(x). Associative(collection) → require(assoc(collection, key, value) ∧ can_assoc(collection, key, value))
   | assoc(x) ∧ can_assoc(x) → constexpr ∧ noexcept ∧ non_mutating ∧ non_allocating
