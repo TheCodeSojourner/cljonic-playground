@@ -1,5 +1,37 @@
 ## Current Session State
 
+### Current Session State
+
+- last_session_id: 1b274643-e426-4f20-bd67-145c302eedcd
+- current_timestamp: 2026-10-29T16:10:24-06:00
+- session_complete: true
+- recover: 1
+
+Task:
+1. Implemented the human-approved String destination for `into` and `fits_into` alongside Vector, Set, Map, and Queue. String `into` appends in traversal order, rejects invalid characters in constant evaluation through String's compile-time diagnostic hook, and replaces invalid characters with `'.'` at runtime while continuing until capacity is exhausted. String `fits_into` compares finite source count to remaining capacity without evaluating character validity; unbounded sources still return false.
+2. Refined public Doxygen examples to use canonical cljonic factories (`string`, `vector`, `range`, `hash_set`, `hash_map`, `queue`) and the `equal` free function. `fits_into` examples now cover all five destination types in compile-time and runtime sections. `into`'s runtime String example demonstrates invalid-byte normalization using a character vector source.
+3. Fixed `make git`'s complexity failure by extracting String-aware capacity and count-preflight helpers without changing behavior. The user-requested final `make git` rerun succeeded.
+
+Questions:
+1. None blocking. Two historical Mementum memories still describe the earlier Vector-only destination decision and should be reconciled with the approved five-destination domain.
+
+Decisions:
+1. Both materialization operations admit Vector, Set, Map, Queue, and String destinations; they reject producer destinations and external C++ range/view sources.
+2. String preflight counts source characters against remaining capacity and does not check validity. Runtime `into` replaces invalid characters with `'.'` and continues; compile-time invalid characters fail using the existing undefined-function constant-evaluation trap, not a literal value-dependent `static_assert`.
+3. User-facing Doxygen examples should prefer cljonic factory/free-function forms over direct collection constructors or member comparisons. Runtime examples should demonstrate all supported destination types where the operation's example claims the destination domain.
+4. Do not use `volatile` merely to make an invalid character runtime-only; a normal `char` value such as `'\x80'` suffices when used in a runtime example.
+
+Validation:
+1. The final `make git` passed with `git:ok`, including compile-fail checks, lint, complexity, sanitizer, coverage (100.0% lines), traceability, no-heap, documentation generation/examples, and the standalone header probe. Coverage emitted stale `.gcda` checksum warnings but completed successfully.
+2. `make docs-examples` passed all 40 examples after the idiomatic example refinements; `make cljonic-test`, targeted materialization diagnostics, String factory compile-fail tests, Allium checks/analysis, strict traceability, structure audits, and `git diff --check` passed.
+3. Earlier direct Catch2 discovery/compilation attempts were unavailable, but the subsequent full `make git` gate completed successfully; treat the full gate as the final test evidence.
+
+Next:
+1. Reconcile `mementum/memories/fits-into-domain-is-cljonic-vector-and-cljonic-source.md` and `mementum/memories/materializer-vs-preflight-terminology.md` so they no longer contradict the current destination domain.
+2. Product changes remain uncommitted for human review; this session's `/gybis-fini` commit is limited to Mementum state.
+
+### Previous session handoff
+
 - last_session_id: 1b1ea613-df5b-4064-87fc-35a43d186598
 - current_timestamp: 2026-10-29T12:31:17-06:00
 - session_complete: true
