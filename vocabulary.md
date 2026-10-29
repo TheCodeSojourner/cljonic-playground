@@ -287,7 +287,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### FitsInto
-- **Definition:** The canonical materialization-completeness preflight predicate; its C++ free-function spelling is `fits_into`. It returns a non-throwing, non-allocating boolean indicating whether the complete cljonic collection or producer source fits within a `CljonicVector` destination under the same cardinality, matching, filtering, transformation, capacity, representability, and overflow semantics as `into`. It never accepts an external C++ range or view; those are imported through direct source construction.
+- **Definition:** The canonical materialization-completeness preflight predicate; its C++ free-function spelling is `fits_into`. It returns a non-throwing, non-allocating boolean indicating whether every value from a compatible `CljonicSource` can be inserted into a Vector, Set, Map, Queue, or String destination under the same insertion and capacity rules as `into`. Vector, Queue, and String compare finite source count to remaining capacity; Set and Map account for existing and earlier source values or keys, since duplicates and matching-key replacements consume no capacity. String preflight does not evaluate character validity because runtime `into` normalizes invalid characters. Finite Set/Map preflight may traverse the source and evaluate producer callbacks; it shares no realization cache with `into`, so its prediction requires the subsequent traversal to yield the same values. Every unbounded producer returns false. External C++ range or view sources are excluded.
 - **Deprecated Synonyms:** `fits_into`, materialization-fit check, capacity-fit predicate
 - **Related:** FreeFunction, ProducerMaterialization, CompleteResult, BoundedPrefixResult, PreflightPredicate, CapabilityPredicate
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -295,12 +295,12 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Into
-- **Destination Domain:** Only `CljonicVector` destinations are admitted. This is the permanent contract; other collection types may be sources but are not future destination extensions.
-- **Definition:** The canonical owning-materialization free function modeled on Clojure's `into`; its C++ spelling is `into`. It returns an updated destination-typed collection with the source elements appended after the destination's existing logical contents, leaving both arguments unchanged. The destination must be a `CljonicVector`, and the source must be a `CljonicSource` whose elements are nothrow-constructible in the destination's element type. A finite source that fits materializes completely; an unbounded or oversized source produces the deterministic bounded prefix permitted by the destination's remaining capacity. Use `fits_into` beforehand when complete materialization matters. External C++ ranges and views are imported only through direct source construction.
+- **Destination Domain:** `CljonicVector`, `CljonicSet`, `CljonicMap`, `CljonicQueue`, and `CljonicString` destinations are admitted. Producer destinations are excluded.
+- **Definition:** The canonical owning-materialization free function modeled on Clojure's `into`; its C++ spelling is `into`. It folds a compatible `CljonicSource` in traversal order into a copy of the destination, returning the destination type and leaving both input values unchanged. Vector and Queue append; Set inserts distinct values; Map associates compatible nominal MapEntry values, with later matching keys replacing earlier values; String appends characters. Actual source references must satisfy the destination's existing safe implicit conversion and non-throwing insertion rules. At full capacity, Set accepts an already-present value as a no-op, and Map accepts a MapEntry with an already-present key as a value replacement; Vector, Queue, and String cannot accept further values. Invalid String characters are rejected during constant evaluation; at runtime they are replaced with `'.'` and traversal continues. Processing stops before the first value requiring unavailable capacity, without skipping it. Unbounded source traversal remains capped by CollectionMaximumElementCount even when Set or Map insertion consumes no capacity. Use `fits_into` beforehand when complete materialization matters. External C++ ranges and views are imported only through direct source construction.
 - **Deprecated Synonyms:** `into`, materialization function, owning materialization
 - **Related:** FreeFunction, ProducerMaterialization, FitsInto, CljonicSource, BoundedPrefixResult, CompleteResult
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `into(destination, source)` appends a finite source completely, while an unbounded source fills the destination's remaining capacity
+- **Examples:** `into(vector_destination, source)` appends values; `into(set_destination, source)` deduplicates them; `into(map_destination, entry_source)` replaces matching keys; `into(queue_destination, source)` appends at the rear in FIFO order; `into(string_destination, character_source)` appends characters.
 
 
 ### BoundedResult
@@ -985,7 +985,7 @@ The existing lowercase `repeat(value)` and `repeat(count, value)` factories are 
 
 
 ### PreflightPredicate
-- **Definition:** A non-throwing, non-allocating predicate that measures the same completion and failure conditions as its paired operation. `fits_into(destination, source)` tests whether the complete source can be appended to the destination's remaining capacity; it is false for an UnboundedProducer regardless of its capped observable count.
+- **Definition:** A non-throwing, non-allocating predicate that measures the same completion and failure conditions as its paired operation. `fits_into(destination, source)` tests whether the complete source can be inserted under the destination's insertion semantics, accounting for Set duplicates and Map key replacements rather than treating every source value as capacity growth. It is false for an UnboundedProducer regardless of its capped observable count. Value-sensitive preflight may evaluate producer callbacks; without shared realization caching, its prediction depends on the later operation observing the same values.
 - **Deprecated Synonyms:** preflight check, capability precheck
 - **Related:** CompleteResult, BoundedPrefixResult, ProbeFirstAccess
 - **Usage:** Requirements, specification, implementation, tests, and documentation
@@ -1049,7 +1049,7 @@ The existing lowercase `repeat(value)` and `repeat(count, value)` factories are 
 
 
 ### ProducerMaterialization
-- **Definition:** The explicit process of appending a producer's elements to a copy of a selected bounded destination under complete-result preflight rules. `fits_into` determines whether the complete append fits the destination's remaining capacity; `into` returns the deterministic prefix when it does not.
+- **Definition:** The explicit process of folding a producer's values into a copy of a selected bounded Vector, Set, Map, Queue, or String under its insertion semantics. `fits_into` determines whether the complete source can be inserted; `into` processes the source prefix ending before the first insertion requiring unavailable capacity. Duplicates and matching-key replacements consume no capacity, so source count need not equal result count growth. Invalid String characters normalize at runtime and are rejected during constant evaluation. Unbounded producers retain their observable traversal cap and never satisfy complete-result preflight.
 - **Deprecated Synonyms:** producer realization, producer into-materialization
 - **Related:** UnboundedProducer, PreflightPredicate, ProducerIteration
 - **Usage:** Requirements, specification, implementation, tests, and documentation
@@ -1057,7 +1057,7 @@ The existing lowercase `repeat(value)` and `repeat(count, value)` factories are 
 
 
 ### ProducerIteration
-- **Definition:** The ordinary const traversal of a producer's elements from `begin()` to `end()`, bounded by `count()`. For an UnboundedProducer, the configured count is the observable traversal cap rather than a complete result cardinality. ProducerIteration is distinct from ProducerMaterialization, which appends those elements into an owning bounded result.
+- **Definition:** The ordinary const traversal of a producer's elements from `begin()` to `end()`, bounded by `count()`. For an UnboundedProducer, the configured count is the observable traversal cap rather than a complete result cardinality. ProducerIteration is distinct from ProducerMaterialization, which folds those values into an owning bounded result under the destination's insertion semantics.
 - **Deprecated Synonyms:** producer iteration, producer traversal
 - **Related:** ProducerMaterialization, UnboundedProducer
 - **Usage:** Architecture, specification, and documentation
