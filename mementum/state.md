@@ -28,7 +28,7 @@ Validation:
 
 Next:
 1. Reconcile `mementum/memories/fits-into-domain-is-cljonic-vector-and-cljonic-source.md` and `mementum/memories/materializer-vs-preflight-terminology.md` so they no longer contradict the current destination domain.
-2. Product changes remain uncommitted for human review; this session's `/gybis-fini` commit is limited to Mementum state.
+2. The worktree was clean after this session's Mementum-only commit, so product changes were already committed in the preceding layer commits; `/gybis-fini` added only the state handoff.
 
 ### Previous session handoff
 
