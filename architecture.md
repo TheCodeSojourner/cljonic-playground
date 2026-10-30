@@ -15,7 +15,7 @@
   | cpp_interoperability(x) → require(ConstRangeTraversal(x) ∧ ReadOnlyInteropAccessor(x))
     | Queue(x) → require(LogicalTraversalOrder(x)) ∧ ¬require(ContiguousConstView(x))
   | module4_active_slice(x) → Range(x) ∧ Repeat(x) ∧ Cycle(x) ∧ Iterate(x) ∧ Repeatedly(x) ∧ into(x) ∧ fits_into(x)
-  | deferred_sequence_conversion(x) → remain_outside(current_collection_api(x))
+  | sequence_conversion(x) → seq(x) ∈ current_collection_api(x) under REQ-SEQ-010
   | stored_collection_building_blocks(x) → govern(higher_order_algorithms(x))
   | future_expansion(transformations ∨ numeric_algorithms ∨ callable_adapters ∨ set_algebra
       ∨ relational_models ∨ regexes ∨ formatting ∨ KeywordEnumNameMapping ∨ Atom)
@@ -408,7 +408,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ default_or_fallback_on_absence(x) ∧ non_throwing_non_allocating_membership_predicate(x)
   | Seqable(x) → documented_logical_traversal_representation(x)
     ∧ non_mutating_sequence_conversion(x) ∧ bounded_independently_valid_result(x)
-    ∧ deferred_until_sequence_requirements_are_implementation_backed(x)
+    ∧ sequence_requirements_are_implementation_backed_through(seq ∧ REQ-SEQ-010)
+    ∧ capability_concept(x) → remain_deferred_until_separately_implemented
   | Associative(x) → non_mutating_key_value_association(x) ∧ return(new_collection_value(x))
     ∧ preserve_source(x) ∧ define(key_value_and_capacity_policy(x))
     ∧ non_throwing_non_allocating_preflight(can_assoc(x))
@@ -427,8 +428,8 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
   String: Indexed ∧ Lookup ∧ Associative ∧ Conjable,
   Queue: none_of(Indexed ∧ Lookup ∧ Associative) ∧ Conjable
   }
-  | Seqable(x) → lifecycle_deferred_for(each_supported_collection(x))
-    ∧ activate_only_when(sequence_requirements_are_implementation_backed(x))
+  | Seqable(x) → lifecycle_deferred_as_capability_concept(each_supported_collection(x))
+    ∧ sequence_requirements_are_implementation_backed_through(seq ∧ REQ-SEQ-010)
   | capability_matrix(x) → govern(public_concepts ∧ free_function_constraints ∧ documentation_names)
 
 λ S2_vector_factory_contract(x). vector(args...) → construct(owning_Vector_from_individual_arguments_in_order(x))
@@ -866,15 +867,13 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
 λ S2_operation_vocabulary(x). canonical_collection_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ has_next ∧ rest
   ∧ full ∧ contains ∧ fits_into ∧ into ∧ count
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
-  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ has_next ∧ rest ∧ contains ∧ count ∧ fits_into ∧ into
+  | requirements_backed_operations(x) ≡ is_empty ∧ empty ∧ not_empty ∧ first ∧ next ∧ has_next ∧ rest ∧ seq ∧ contains ∧ count ∧ fits_into ∧ into
     ∧ get ∧ conj ∧ assoc ∧ dissoc ∧ disj ∧ peek ∧ pop ∧ can_conj ∧ can_assoc
   | bounded_insertion_capacity_inspection(x) ≡ full ∨ equivalent_capacity_inspection
   | requirements_backed_operations(x) → classify_as(RequirementsBacked)
   | bounded_insertion_capacity_inspection(x) → classify_as(RequirementsBacked)
   | is_empty(value) → admit(SequenceableCollection ∨ SequenceableProducer) ∧ return(count(value) == 0)
     ∧ non_throwing ∧ non_allocating ∧ provide(targeted_rejection_diagnostic(¬(SequenceableCollection ∨ SequenceableProducer)))
-  | deferred_sequence_operations(x) ≡ seq
-    ∧ deferred_for(Vector ∨ Map ∨ Set ∨ Queue ∨ String)(x)
   | next(collection) → require(SequenceableCollection(collection) ∧ ConstRangeTraversal(collection)
     ∧ collection ∈ {Vector, Map, Set, Queue, String})
     ∧ return(owning_value_of_collection_kind(collection) with_capacity(capacity(collection) == 0 ? 0 : capacity(collection) - 1) of logical_tail(collection))
@@ -925,6 +924,20 @@ The embedded-first policy keeps resource bounds, deterministic outcomes, and val
     ∧ no_heap ∧ noexcept ∧ constexpr ∧ non_mutating
     ∧ unsupported_input(rest) → reject_at_compile_time_with(targeted_diagnostic_naming(rest ∧ supported_domains) ∧ REQ-DIAG-009)
     ∧ classify_as(RequirementsBacked) ∧ trace_to(REQ-SEQ-001 ∧ REQ-SEQ-002 ∧ REQ-SEQ-002A ∧ REQ-SEQ-002B ∧ REQ-SEQ-003 ∧ REQ-SEQ-004 ∧ REQ-SEQ-005 ∧ REQ-SEQ-006 ∧ REQ-SEQ-007 ∧ REQ-SEQ-008 ∧ REQ-SEQ-009 ∧ REQ-SEQ-012 ∧ REQ-FN-002A4 ∧ REQ-FN-002A5 ∧ REQ-FN-002A6 ∧ REQ-FN-002A7)
+  | seq(value) → require(value ∈ {Vector, Map, Set, Queue, String} ∨ producer ∈ {Repeat, Range, Cycle, Iterate, Repeatedly})
+    ∧ return(owning_bounded_Vector(value) of logical_traversal_elements(value) in_traversal_order)
+    ∧ Vector_input(x) → return(by_value_copy(x) with_same_element_type ∧ capacity)
+    ∧ Map_input(x) → return(Vector<MapEntry<K,V>, N> of value_semantic_entries)
+    ∧ Set_input(x) → return(Vector<T, N> of stored_elements)
+    ∧ Queue_input(x) → return(Vector<T, N> preserving_fifo_order)
+    ∧ String_input(x) → return(Vector<char, N> of content_characters)
+    ∧ producer_input(x) → return(Vector<value_type, CLJONIC_COLLECTION_MAXIMUM_ELEMENT_COUNT_VALUE>
+      of observable_traversal) ∧ bounded_producer(x) → contribute(count(x)) ∧ unbounded_producer(x) → contribute(observation_cap)
+    ∧ result(x) → independently_valid ∧ bounded_automatic_or_static_storage ∧ ¬∃(dynamic_allocation ∨ retained_source_dependency)
+    ∧ map_entry_input(x) → reject_at_compile_time_with(targeted_diagnostic_naming(seq ∧ supported_domains) ∧ REQ-DIAG-009)
+    ∧ unsupported_input(seq) → reject_at_compile_time_with(targeted_diagnostic_naming(seq ∧ supported_domains) ∧ REQ-DIAG-009)
+    ∧ preserve(input ∧ no_heap ∧ noexcept ∧ constexpr ∧ non_mutating ∧ ¬RTTI)
+    ∧ classify_as(RequirementsBacked) ∧ trace_to(REQ-SEQ-010 ∧ REQ-SEQ-011 ∧ REQ-SEQ-013 ∧ REQ-SEQ-014 ∧ REQ-COLL-020F ∧ REQ-COLL-020S)
   | deferred_collection_shaping_traversal_family(x) ≡ take ∧ drop ∧ take_while ∧ drop_while ∧ take_last ∧ drop_last
     ∧ take_nth ∧ nth ∧ nthnext ∧ nthrest ∧ butlast ∧ map_indexed ∧ rseq ∧ second ∧ ffirst ∧ fnext
     ∧ nfirst ∧ nnext ∧ some ∧ is_every ∧ not_any ∧ not_every ∧ distinct ∧ dedupe ∧ frequencies
@@ -1298,10 +1311,10 @@ concept SequenceableProducer =
     ∧ owns(key_field(x) ∧ value_field(x)) ∧ supports(named_field_observation(x))
     ∧ semantic_free_function_access(key ∨ val ∨ last)(x) → remain(deferred_future_work)
     ∧ semantic_free_function_access(first)(x) → return(entry_key(x))
-    ∧ fixed_two_element_sequence_behavior(x) → remain(deferred_future_work)
+    ∧ fixed_two_element_sequence_behavior(x) → first_is_key ∧ value_is_value ∧ count_two ∧ seq_rejects_map_entry_input
   | search_algorithm(x) ≡ LinearScan
   | unsorted_removal(Map ∨ Set) ≡ SwapAndRemove
-  | future_sequence_representation(seq) ≡ OwningValue(Vector)
+  | sequence_representation(seq) ≡ OwningValue(Vector)
   | string_storage(String) ≡ ContiguousStorage(ASCII_bytes) ∧ uncounted_null_terminator
 
 λ S1_value_and_view_model(x). value_returns(x) → prefer(OwningValue)
