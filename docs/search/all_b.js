@@ -18,5 +18,6 @@ var searchData=
   ['matching_5falternative_5fcount_5fv_15',['matching_alternative_count_v',['../namespacecljonic_1_1variant__detail.html#a9ccabbeeac6762046412faebbf635d67',1,'cljonic::variant_detail']]],
   ['materializablesource_16',['MaterializableSource',['../conceptcljonic_1_1concepts__detail_1_1_materializable_source.html',1,'cljonic::concepts_detail']]],
   ['materialization_5fhas_5fcapacity_17',['materialization_has_capacity',['../namespacecljonic_1_1concepts__detail.html#a2ed8273b779726a9cf4a9092d57434ca',1,'cljonic::concepts_detail']]],
-  ['materialization_5fsource_5fis_5ffinite_18',['materialization_source_is_finite',['../namespacecljonic_1_1concepts__detail.html#a3a6d6bce426e95e6bb7791af65f35093',1,'cljonic::concepts_detail']]]
+  ['materialization_5fsource_5fis_5ffinite_18',['materialization_source_is_finite',['../namespacecljonic_1_1concepts__detail.html#a3a6d6bce426e95e6bb7791af65f35093',1,'cljonic::concepts_detail']]],
+  ['materialize_5ftraversal_19',['materialize_traversal',['../namespacecljonic_1_1concepts__detail.html#a35cd627752d7c58231fd17957b3bd260',1,'cljonic::concepts_detail']]]
 ];

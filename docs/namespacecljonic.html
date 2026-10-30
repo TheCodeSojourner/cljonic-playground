@@ -575,8 +575,16 @@ requires (!concepts_detail::ValidRepeatedlyStep&lt;Step&gt; || !concepts_detail:
 <tr class="memitem:a612e6f96a040d30c630324e930f9bfa1" id="r_a612e6f96a040d30c630324e930f9bfa1"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
 requires (!concepts_detail::NextSequenceable&lt;C&gt;)</td></tr>
 <tr class="memitem:a612e6f96a040d30c630324e930f9bfa1 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a612e6f96a040d30c630324e930f9bfa1">rest</a> (const C &amp;value) noexcept -&gt; void</td></tr>
-<tr class="memitem:af23ad4b89cbea89172bb757a5fbd5b26" id="r_af23ad4b89cbea89172bb757a5fbd5b26"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; </td></tr>
-<tr class="memitem:af23ad4b89cbea89172bb757a5fbd5b26 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#af23ad4b89cbea89172bb757a5fbd5b26">seq</a> (const C &amp;collection) noexcept -&gt; C</td></tr>
+<tr class="memitem:aab04c75f932397ee1b904c9e39413c00" id="r_aab04c75f932397ee1b904c9e39413c00"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicVector C&gt; </td></tr>
+<tr class="memitem:aab04c75f932397ee1b904c9e39413c00 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#aab04c75f932397ee1b904c9e39413c00">seq</a> (const C &amp;value) noexcept -&gt; C</td></tr>
+<tr class="memitem:a836e3556b6948a17d095b39cf396dfc3" id="r_a836e3556b6948a17d095b39cf396dfc3"><td class="memTemplParams" colspan="2">template&lt;concepts::CljonicCollection C&gt; <br />
+requires (!concepts::CljonicVector&lt;C&gt;)</td></tr>
+<tr class="memitem:a836e3556b6948a17d095b39cf396dfc3 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a836e3556b6948a17d095b39cf396dfc3">seq</a> (const C &amp;value) noexcept</td></tr>
+<tr class="memitem:a54ba624ca769a389d88bdf91525d13ee" id="r_a54ba624ca769a389d88bdf91525d13ee"><td class="memTemplParams" colspan="2">template&lt;concepts::SequenceableProducer C&gt; </td></tr>
+<tr class="memitem:a54ba624ca769a389d88bdf91525d13ee template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#a54ba624ca769a389d88bdf91525d13ee">seq</a> (const C &amp;value) noexcept</td></tr>
+<tr class="memitem:ab1a109779655ecb43f5c481ba02c4fd4" id="r_ab1a109779655ecb43f5c481ba02c4fd4"><td class="memTemplParams" colspan="2">template&lt;typename C&gt; <br />
+requires (!concepts::CljonicSource&lt;C&gt;)</td></tr>
+<tr class="memitem:ab1a109779655ecb43f5c481ba02c4fd4 template"><td class="memItemLeft">constexpr auto&#160;</td><td class="memItemRight"><a class="el" href="#ab1a109779655ecb43f5c481ba02c4fd4">seq</a> (const C &amp;value) noexcept -&gt; void</td></tr>
 <tr class="memitem:af20d169ef36288b54ca608a14eb6b557" id="r_af20d169ef36288b54ca608a14eb6b557"><td class="memTemplParams" colspan="2">template&lt;typename First, typename... Rest&gt; </td></tr>
 <tr class="memitem:af20d169ef36288b54ca608a14eb6b557 template"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#af20d169ef36288b54ca608a14eb6b557">Set</a> (First, Rest...) -&gt; Set&lt; First, 1+sizeof...(Rest)&gt;</td></tr>
 <tr class="memitem:abbb07566e3178f70711623dbe385038f" id="r_abbb07566e3178f70711623dbe385038f"><td class="memTemplParams" colspan="2">template&lt;typename ElementType, std::size_t CapacityValue&gt; </td></tr>
@@ -6605,13 +6613,13 @@ requires (!concepts_detail::NextSequenceable&lt;C&gt;)</div>
 
 </div>
 </div>
-<a id="af23ad4b89cbea89172bb757a5fbd5b26" name="af23ad4b89cbea89172bb757a5fbd5b26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af23ad4b89cbea89172bb757a5fbd5b26">&#9670;&#160;</a></span>seq()</h2>
+<a id="a54ba624ca769a389d88bdf91525d13ee" name="a54ba624ca769a389d88bdf91525d13ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54ba624ca769a389d88bdf91525d13ee">&#9670;&#160;</a></span>seq() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename C&gt; </div>
+template&lt;concepts::SequenceableProducer C&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -6619,7 +6627,66 @@ template&lt;typename C&gt; </div>
         <tr>
           <td class="memname">auto cljonic::seq </td>
           <td>(</td>
-          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>collection</em></span></td><td>)</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-seq_8hpp_source.html#l00106">106</a> of file <a class="el" href="cljonic-seq_8hpp_source.html">cljonic-seq.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a836e3556b6948a17d095b39cf396dfc3" name="a836e3556b6948a17d095b39cf396dfc3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a836e3556b6948a17d095b39cf396dfc3">&#9670;&#160;</a></span>seq() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::CljonicCollection C&gt; <br />
+requires (!concepts::CljonicVector&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::seq </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-seq_8hpp_source.html#l00101">101</a> of file <a class="el" href="cljonic-seq_8hpp_source.html">cljonic-seq.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aab04c75f932397ee1b904c9e39413c00" name="aab04c75f932397ee1b904c9e39413c00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab04c75f932397ee1b904c9e39413c00">&#9670;&#160;</a></span>seq() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;concepts::CljonicVector C&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::seq </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
           <td> -&gt; C</td>
         </tr>
       </table>
@@ -6629,27 +6696,38 @@ template&lt;typename C&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="Seq"></a> The <b>seq</b> free function returns the elements of a <a class="el" href="conceptcljonic_1_1concepts_1_1_sequenceable_collection.html" title="concepts::SequenceableCollection">collection</a> as a sequence.</p>
-<p>For a <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> this returns the owning vector itself; for other sequenceable collections it produces an owning <a class="el" href="classcljonic_1_1_vector.html#Vector" title="Vector">Vector</a> of their traversal elements.</p>
-<dl class="section note"><dt>Note</dt><dd>Not yet part of the public API; the sequence-shaping operations are deferred.</dd></dl>
-<p><b>Examples</b> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;cljonic.hpp&quot;</span></div>
-<div class="line"><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacecljonic.html">cljonic</a>;</div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">  <span class="comment">// Compile-time demonstration.</span></div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> v_const = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(1, 2, 3);</div>
-<div class="line">  <span class="keyword">constexpr</span> <span class="keyword">auto</span> s_const = <a class="code hl_function" href="#af23ad4b89cbea89172bb757a5fbd5b26">seq</a>(v_const);</div>
-<div class="line">  <span class="keyword">static_assert</span>(<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(s_const) == 3);</div>
-<div class="line"> </div>
-<div class="line">  <span class="comment">// Runtime demonstration.</span></div>
-<div class="line">  <span class="keyword">auto</span> v_runtime = <a class="code hl_function" href="#a11e270768e9485445f2885cdecb1c4eb">vector</a>(10, 20);</div>
-<div class="line">  <span class="keyword">auto</span> s_runtime = <a class="code hl_function" href="#af23ad4b89cbea89172bb757a5fbd5b26">seq</a>(v_runtime);</div>
-<div class="line"> </div>
-<div class="line">  <span class="keywordflow">return</span> (<a class="code hl_function" href="#af5da07418b370bc5072eacf31957e0ee">count</a>(s_runtime) == 2) ? 0 : 1;</div>
-<div class="line">}</div>
-<div class="ttc" id="anamespacecljonic_html_af23ad4b89cbea89172bb757a5fbd5b26"><div class="ttname"><a href="#af23ad4b89cbea89172bb757a5fbd5b26">cljonic::seq</a></div><div class="ttdeci">constexpr auto seq(const C &amp;collection) noexcept -&gt; C</div><div class="ttdef"><b>Definition</b> <a href="cljonic-seq_8hpp_source.html#l00035">cljonic-seq.hpp:35</a></div></div>
-</div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="cljonic-seq_8hpp_source.html#l00035">35</a> of file <a class="el" href="cljonic-seq_8hpp_source.html">cljonic-seq.hpp</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="cljonic-seq_8hpp_source.html#l00095">95</a> of file <a class="el" href="cljonic-seq_8hpp_source.html">cljonic-seq.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab1a109779655ecb43f5c481ba02c4fd4" name="ab1a109779655ecb43f5c481ba02c4fd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1a109779655ecb43f5c481ba02c4fd4">&#9670;&#160;</a></span>seq() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename C&gt; <br />
+requires (!concepts::CljonicSource&lt;C&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cljonic::seq </td>
+          <td>(</td>
+          <td class="paramtype">const C &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td> -&gt; void</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cljonic-seq_8hpp_source.html#l00115">115</a> of file <a class="el" href="cljonic-seq_8hpp_source.html">cljonic-seq.hpp</a>.</p>
 
 </div>
 </div>

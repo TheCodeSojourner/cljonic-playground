@@ -5,7 +5,7 @@ var searchData=
   ['safeimplicitconversion_2',['SafeImplicitConversion',['../conceptcljonic_1_1concepts_1_1_safe_implicit_conversion.html',1,'cljonic::concepts']]],
   ['same_5findex_5fequal_3',['same_index_equal',['../namespacecljonic_1_1variant__detail.html#a7b9f8f87b509fcd0bde4002e6b7f0878',1,'cljonic::variant_detail']]],
   ['same_5findex_5fless_4',['same_index_less',['../namespacecljonic_1_1variant__detail.html#a963286a4d7b3580117fc63e839dcc0fd',1,'cljonic::variant_detail']]],
-  ['seq_5',['seq',['../namespacecljonic.html#af23ad4b89cbea89172bb757a5fbd5b26',1,'cljonic']]],
+  ['seq_5',['seq',['../namespacecljonic.html#aab04c75f932397ee1b904c9e39413c00',1,'cljonic::seq(const C &amp;value) noexcept -&gt; C'],['../namespacecljonic.html#a836e3556b6948a17d095b39cf396dfc3',1,'cljonic::seq(const C &amp;value) noexcept'],['../namespacecljonic.html#a54ba624ca769a389d88bdf91525d13ee',1,'cljonic::seq(const C &amp;value) noexcept'],['../namespacecljonic.html#ab1a109779655ecb43f5c481ba02c4fd4',1,'cljonic::seq(const C &amp;value) noexcept -&gt; void']]],
   ['sequenceablecollection_6',['SequenceableCollection',['../conceptcljonic_1_1concepts_1_1_sequenceable_collection.html',1,'cljonic::concepts']]],
   ['sequenceableproducer_7',['SequenceableProducer',['../conceptcljonic_1_1concepts_1_1_sequenceable_producer.html',1,'cljonic::concepts']]],
   ['sequential_8',['sequential',['../namespacecljonic_1_1concepts__detail.html#ac021cea1f07aaa9ffdaf2830762bea39a6ec7489017b25b5fff20d353b6d2162e',1,'cljonic::concepts_detail']]],
