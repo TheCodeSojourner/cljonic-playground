@@ -53,10 +53,14 @@ def run_commands(commands: list[tuple[str, list[str]]], jobs: int) -> list[Comma
     return [results[index] for index in sorted(results)]
 
 
-def report_results(results: list[CommandResult]) -> bool:
+def report_results(results: list[CommandResult], quiet: bool = False) -> bool:
+    all_ok = all(result.returncode == 0 for result in results)
     for result in results:
+        failed = result.returncode != 0
+        if quiet and not failed:
+            continue
         if result.output:
             print(result.output, end="" if result.output.endswith("\n") else "\n")
-        status = "ok" if result.returncode == 0 else f"failed exit={result.returncode}"
+        status = "failed exit=" + str(result.returncode) if failed else "ok"
         print(f"validation:{result.label}:{status}:seconds={result.seconds:.3f}", flush=True)
-    return all(result.returncode == 0 for result in results)
+    return all_ok

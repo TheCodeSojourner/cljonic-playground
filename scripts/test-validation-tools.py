@@ -310,6 +310,20 @@ class ParallelCommandTests(unittest.TestCase):
         self.assertIn("jobs must be a positive integer", result.stderr)
         self.assertNotIn("validation:", result.stdout)
 
+    def test_quiet_dispatcher_suppresses_success_output_and_reports_failures(self):
+        result = self.run_dispatcher("--quiet", "--jobs", "1", "--targets", "failure", "must-not-run")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("compile-fail:running groups=2", result.stdout)
+        self.assertIn("failed exit=7", result.stdout)
+        self.assertNotIn("compile-fail:ok", result.stdout)
+        self.assertIn("compile-fail:failed", result.stdout)
+
+        quiet_ok = self.run_dispatcher("--quiet", "--jobs", "2", "--targets", "success", "success2")
+        self.assertEqual(quiet_ok.returncode, 0, quiet_ok.stderr)
+        self.assertNotIn("validation:", quiet_ok.stdout)
+        self.assertNotIn("success", quiet_ok.stdout.split("compile-fail:running")[1].splitlines()[0])
+        self.assertIn("compile-fail:ok groups=2", quiet_ok.stdout)
+
 
 class CompileFailRegistryTests(unittest.TestCase):
     MAKEFILE = (

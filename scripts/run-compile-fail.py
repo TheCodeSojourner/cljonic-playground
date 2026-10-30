@@ -5,6 +5,7 @@ import argparse
 import shlex
 import subprocess
 import sys
+import time
 
 from validation_commands import positive_jobs, report_results, run_commands
 from validation_jobs import default_jobs
@@ -16,6 +17,7 @@ def main() -> int:
     parser.add_argument("--make", default="make")
     parser.add_argument("--targets", nargs="+", required=True)
     parser.add_argument("--checks", nargs="*", default=[])
+    parser.add_argument("--quiet", action="store_true", help="report only failures and a final summary line")
     args = parser.parse_args()
     if args.jobs is None:
         args.jobs = default_jobs()
@@ -40,9 +42,17 @@ def main() -> int:
             "VALIDATION_JOBS=1", "BUILD_JOBS=1",
         ]))
     print(f"compile-fail:running groups={len(commands)} jobs={args.jobs}", flush=True)
-    if not report_results(run_commands(commands, args.jobs)):
+    start = time.monotonic()
+    results = run_commands(commands, args.jobs)
+    ok = report_results(results, quiet=args.quiet)
+    seconds = time.monotonic() - start
+    if not ok:
+        print(f"compile-fail:failed groups={len(commands)} seconds={seconds:.3f}")
         return 1
-    print("compile-fail:ok")
+    if args.quiet:
+        print(f"compile-fail:ok groups={len(commands)} seconds={seconds:.3f}")
+    else:
+        print("compile-fail:ok")
     return 0
 
 

@@ -16,10 +16,19 @@ template <typename T>
 concept HasFirstAccess = requires(const T& value) { first(value); };
 
 template <typename T>
-concept HasSequenceConversion = requires(const T& value) { seq(value); };
+concept HasSequenceConversion =
+    requires(const T& value) { requires !std::same_as<decltype(cljonic::seq(value)), void>; };
+
+template <typename T>
+concept RequiresTwoElementValueDomain = requires(const T& value) {
+    value.key;
+    value.value;
+    { first(value) } -> std::same_as<typename T::key_type>;
+};
 } // namespace
 
 TEST_CASE("MapEntry holds value-semantic key/value pair", "[map-entry]") {
+    using cljonic::count;
     using cljonic::MapEntry;
 
     TRACE_ID("entity-fields.MapEntry");
@@ -42,7 +51,11 @@ TEST_CASE("MapEntry holds value-semantic key/value pair", "[map-entry]") {
     TRACE_ID("invariant.MapEntry.SupportsNamedValueFieldObservation");
     TRACE_ID("invariant.MapEntry.SupportsFirstFreeFunction");
     TRACE_ID("invariant.MapEntry.SemanticKeyValLastFreeFunctionsAreDeferred");
-    TRACE_ID("invariant.MapEntry.FixedTwoElementSequenceBehaviorIsDeferred");
+    TRACE_ID("invariant.MapEntry.FixedTwoElementSequenceBehaviorIsDeclared");
+    TRACE_ID("invariant.MapEntry.FirstReturnsKey");
+    TRACE_ID("invariant.MapEntry.ValueAccessReturnsValue");
+    TRACE_ID("invariant.MapEntry.CountIsTwo");
+    TRACE_ID("invariant.MapEntry.SeqRejectsMapEntryInput");
 
     constexpr MapEntry<int, int> entry{1, 100};
     STATIC_REQUIRE(entry.key == 1);
@@ -51,6 +64,8 @@ TEST_CASE("MapEntry holds value-semantic key/value pair", "[map-entry]") {
     STATIC_REQUIRE(first(entry) == 1);
     STATIC_REQUIRE_FALSE(HasDeferredEntryAccess<decltype(entry)>);
     STATIC_REQUIRE_FALSE(HasSequenceConversion<decltype(entry)>);
+    STATIC_REQUIRE(sizeof(MapEntry<int, int>) > 0);
+    STATIC_REQUIRE(RequiresTwoElementValueDomain<MapEntry<int, int>>);
 
     const auto runtime_entry = MapEntry<int, int>{2, 200};
     CHECK(runtime_entry.key == 2);

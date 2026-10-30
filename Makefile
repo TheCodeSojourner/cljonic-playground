@@ -84,7 +84,7 @@ help:
 	@printf '%-12s %s\n' 'docs-examples' 'Compile Doxygen samples with VALIDATION_JOBS workers (auto: $(VALIDATION_JOBS))'
 	@printf '%-12s %s\n' 'format' 'Format source/test C/C++ files and Doxygen C++ sample blocks'
 	@printf '%-12s %s\n' 'format-doc-samples' 'Format Doxygen C++ sample blocks in src/* headers with clang-format'
-	@printf '%-12s %s\n' 'git' 'Bounded pre-commit gate (VALIDATION_JOBS=$(VALIDATION_JOBS)); serialized formatting and build profiles'
+	@printf '%-12s %s\n' 'git' 'Bounded pre-commit gate (VALIDATION_JOBS=$(VALIDATION_JOBS)); quiet by default, GIT_QUIET=0 for verbose'
 	@printf '%-12s %s\n' 'header-guards' 'Verify every src/ and tests/ header uses #pragma once (no include guards)'
 	@printf '%-12s %s\n' 'help' 'Show available targets'
 	@printf '%-12s %s\n' 'lint' 'Run clang-format and clang-tidy checks; set LINT_FILE=src/foo.hpp or tests/bar.cpp to narrow scope'
@@ -159,6 +159,7 @@ coverage:
 coverage-cli:
 	@$(CMAKE) -S . -B $(COVERAGE_BUILD_DIR) -DCLJONIC_COVERAGE=ON > /dev/null
 	@$(CMAKE) --build $(COVERAGE_BUILD_DIR) --parallel $(BUILD_JOBS) > /dev/null
+	@find $(COVERAGE_BUILD_DIR) -name '*.gcda' -delete
 	@lcov --zerocounters --directory $(COVERAGE_BUILD_DIR) > /dev/null 2>&1
 	@$(CTEST) --test-dir $(COVERAGE_BUILD_DIR) --output-on-failure \
 	     > $(COVERAGE_BUILD_DIR)/.ctest-out.tmp 2>&1 || \
@@ -267,7 +268,7 @@ vocabulary-structure:
 	@python3 scripts/check-vocabulary-structure.py
 
 audit-scripts:
-	@python3 scripts/test-validation-tools.py
+	@out=$$(python3 scripts/test-validation-tools.py 2>&1) || { printf '%s\n' "$$out"; exit 1; }
 	@python3 scripts/check-requirements-structure.py --self-test
 	@python3 scripts/check-vocabulary-structure.py --self-test
 	@python3 scripts/check-spec-test-trace-ids.py --self-test
@@ -549,8 +550,10 @@ _git-prepare: _git-preflight
 	@$(MAKE) --no-print-directory -s -j1 format
 	@$(MAKE) --no-print-directory -s -j1 cljonic
 
+GIT_QUIET ?= 1
+
 _git-checks: _git-prepare
-	+@python3 scripts/run-compile-fail.py --jobs "$(VALIDATION_JOBS)" --make "$(MAKE)" --targets $(COMPILE_FAIL_TARGETS) --checks $(GIT_INDEPENDENT_CHECKS)
+	+@python3 scripts/run-compile-fail.py $(if $(filter 1,$(GIT_QUIET)),--quiet,) --jobs "$(VALIDATION_JOBS)" --make "$(MAKE)" --targets $(COMPILE_FAIL_TARGETS) --checks $(GIT_INDEPENDENT_CHECKS)
 
 _git-sanitizer: _git-checks
 	@$(MAKE) --no-print-directory -s -j1 sanitizer-cli BUILD_JOBS="$(VALIDATION_JOBS)"

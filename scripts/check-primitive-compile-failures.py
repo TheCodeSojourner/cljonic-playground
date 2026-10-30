@@ -138,6 +138,37 @@ PRIMITIVES = {
             "repeatedly": "(void)cljonic::rest(cljonic::repeatedly(3, []() noexcept { return 7; }));",
         },
     },
+    "seq": {
+        "diagnostic_anchor": "cljonic::seq:",
+        "diagnostic_cases": {
+            "unsupported-scalar": (
+                "(void)cljonic::seq(42);",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Cycle, Iterate, or Repeatedly value",
+            ),
+            "unsupported-map-entry": (
+                "(void)cljonic::seq(cljonic::MapEntry<int, int>{1, 2});",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Cycle, Iterate, or Repeatedly value",
+            ),
+            "unsupported-external-range": (
+                "int values[]{1, 2}; (void)cljonic::seq(values);",
+                "expected a Vector, Map, Set, Queue, String, Range, Repeat, Cycle, Iterate, or Repeatedly value",
+            ),
+        },
+        "pass_cases": {
+            "vector": "(void)cljonic::seq(cljonic::Vector<int, 4>{1, 2});",
+            "map": "(void)cljonic::seq(cljonic::Map<int, int, 4>{cljonic::MapEntry{1, 2}});",
+            "set": "(void)cljonic::seq(cljonic::Set<int, 4>{1, 2});",
+            "queue": "(void)cljonic::seq(cljonic::Queue<int, 4>{1, 2});",
+            "string": "(void)cljonic::seq(cljonic::String<4>{\"AB\"});",
+            "empty-vector": "(void)cljonic::seq(cljonic::Vector<int, 4>{});",
+            "zero-capacity-vector": "(void)cljonic::seq(cljonic::Vector<int, 0>{});",
+            "range": "(void)cljonic::seq(cljonic::Range<int>{0, 5});",
+            "repeat": "(void)cljonic::seq(cljonic::repeat(3, 7));",
+            "cycle": "(void)cljonic::seq(cljonic::cycle(cljonic::Vector<int, 3>{1, 2, 3}));",
+            "iterate": "(void)cljonic::seq(cljonic::iterate([](int value) noexcept { return value + 1; }, 0));",
+            "repeatedly": "(void)cljonic::seq(cljonic::repeatedly(3, []() noexcept { return 7; }));",
+        },
+    },
     "has_next": {
         "diagnostic_anchor": "cljonic::has_next:",
         "diagnostic_cases": {

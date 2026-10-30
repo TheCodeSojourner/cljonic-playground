@@ -22,18 +22,8 @@ USING_TOP_LEVEL_RE = re.compile(r"(?m)^using namespace cljonic;[ \t]*$")
 USING_INDENTED_RE = re.compile(r"(?m)^[ \t]+using namespace cljonic;")
 
 # Doc examples are compiled against the public single-header API (cljonic.hpp),
-# which is generated from the cljonic-core.hpp umbrella. The remaining
-# sequence-conversion free function is intentionally NOT part of that
-# umbrella: `seq` remains deferred.
-# Their doc examples therefore cannot be compiled against a public API they do
-# not yet belong to. This exclusion is explicit (and reported) rather than
-# silent; drop a header from this set only when it is promoted into
-# cljonic-core.hpp.
-DEFERRED_NON_PUBLIC_HEADERS = frozenset(
-    {
-        "cljonic-seq.hpp",
-    }
-)
+# which is generated from the cljonic-core.hpp umbrella. Every documented
+# free function must belong to that umbrella.
 
 
 def extract_cpp_blocks(content: str) -> list[str]:
@@ -153,11 +143,7 @@ def main() -> int:
 
     example_count = 0
     commands = []
-    deferred_skipped: list[str] = []
     for header_file, blocks in extracted:
-        if header_file.name in DEFERRED_NON_PUBLIC_HEADERS:
-            deferred_skipped.append(header_file.name)
-            continue
         for idx, block in enumerate(blocks, start=1):
             snippet = rewrite_public_header_include(block, str(header_path))
             sample_base = f"{header_file.stem}-example-{idx}"
@@ -174,11 +160,6 @@ def main() -> int:
     if not report_results(run_commands(commands, args.jobs)):
         return 1
 
-    if deferred_skipped:
-        print(
-            "docs-examples:deferred-skipped="
-            f"{len(deferred_skipped)} ({', '.join(deferred_skipped)})"
-        )
     print(f"docs-examples:compiled={example_count}")
     return 0
 
