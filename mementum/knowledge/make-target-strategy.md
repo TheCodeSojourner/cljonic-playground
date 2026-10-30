@@ -34,6 +34,8 @@ depends-on: []
 **Comprehensive Gate (with docs):**
 - `make git` — format, lint, complexity-cli, sanitizer-cli, coverage-cli, traceability-spec-to-code, no-heap, **docs**
 
+**Quiet output (2026-10-30):** `make git` is quiet by default (`GIT_QUIET ?= 1` in the Makefile). The compile-fail/independent-check dispatcher (`scripts/run-compile-fail.py --quiet`) suppresses successful groups entirely — no child `cljonic:ok` echoes and no per-group `validation:<label>:ok:seconds` lines — and ends with one `compile-fail:ok groups=N seconds=S` line. Failures always print their full captured output plus a `validation:<label>:failed exit=N` line, so nothing is lost on failure. `audit-scripts` captures unittest progress dots and prints them only on failure; `coverage-cli` deletes stale `.gcda` files after the rebuild so libgcov checksum warnings no longer appear. Use `GIT_QUIET=0 make git` for the previous verbose output. When reading gate logs, remember a quiet run reports successes by absence: verify the final `git:ok` (or the explicit `compile-fail:ok groups=N`) rather than counting per-check lines.
+
 **Workflow:**
 1. During development/iteration → use focused targets above
 2. After a coherent implementation or policy slice → run `make upsert-gate-fast`
