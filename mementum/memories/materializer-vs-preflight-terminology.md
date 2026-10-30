@@ -21,9 +21,11 @@ it as a single element. To materialize a cljonic collection or producer into a
 destination Vector, use into." The `fits_into` preflight is stated on `into`'s
 own page, not repeated in each collection overview.
 
-REQ-DIAG-010 fallback guidance still names Vector: `into` and `fits_into`
-accept only `CljonicVector` destinations. Never suggest materializing into Map,
-Queue, Set, or String.
+REQ-DIAG-010 fallback guidance no longer names Vector: `into` and `fits_into`
+accept `CljonicVector`, `CljonicSet`, `CljonicMap`, `CljonicQueue`, and
+`CljonicString` destinations (superseding the 2026-10-19 Vector-only text);
+producer destinations remain rejected. Per the revised `REQ-DIAG-010`, the
+diagnostic must not recommend materialization or mention `into`/`fits_into`.
 
 2026-10-17, human-approved: "source" alone spanned two domains; constructor
 prose now says "constructor parameter" / "constructor source", while the
