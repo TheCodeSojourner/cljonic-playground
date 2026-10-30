@@ -24,7 +24,11 @@ entity MapEntry {
     supports_named_value_field_observation: Boolean
     supports_first_free_function: Boolean
     semantic_key_val_last_free_functions_are_deferred: Boolean
-    fixed_two_element_sequence_behavior_is_deferred: Boolean
+    fixed_two_element_sequence_behavior_is_declared: Boolean
+    first_returns_key: Boolean
+    value_access_returns_value: Boolean
+    count_is_two: Boolean
+    seq_rejects_map_entry_input: Boolean
 
     invariant KeyValueCountIsTwo {
         this.key_value_count = 2
@@ -102,8 +106,24 @@ entity MapEntry {
         this.semantic_key_val_last_free_functions_are_deferred = true
     }
 
-    invariant FixedTwoElementSequenceBehaviorIsDeferred {
-        this.fixed_two_element_sequence_behavior_is_deferred = true
+    invariant FixedTwoElementSequenceBehaviorIsDeclared {
+        this.fixed_two_element_sequence_behavior_is_declared = true
+    }
+
+    invariant FirstReturnsKey {
+        this.first_returns_key = true
+    }
+
+    invariant ValueAccessReturnsValue {
+        this.value_access_returns_value = true
+    }
+
+    invariant CountIsTwo {
+        this.count_is_two = true
+    }
+
+    invariant SeqRejectsMapEntryInput {
+        this.seq_rejects_map_entry_input = true
     }
 }
 

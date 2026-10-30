@@ -1,0 +1,144 @@
+-- allium: 3
+-- REQ-SEQ-010: seq converts a supported collection or supported producer into an
+-- owning, value-semantic, independently valid bounded Vector of its logical
+-- traversal elements in traversal order.
+-- REQ-SEQ-011: the result uses bounded automatic or static storage with no
+-- dynamic allocation and no retained dependency on the source value.
+-- REQ-SEQ-014: seq of a Map yields value-semantic MapEntry elements.
+-- REQ-SEQ-013: MapEntry sequenceability stays a fixed two-element behavioral
+-- contract; seq rejects MapEntry input with a targeted diagnostic.
+
+entity Seq {
+    supports_seq_free_function: Boolean
+    supports_sequenceable_collection_domain: Boolean
+    supports_sequenceable_producer_domain: Boolean
+    returns_owning_bounded_vector_of_traversal_elements: Boolean
+    vector_input_returns_by_value_copy: Boolean
+    set_input_returns_one_element_per_stored_element: Boolean
+    queue_input_preserves_fifo_order: Boolean
+    string_input_returns_vector_of_characters: Boolean
+    map_input_returns_value_semantic_map_entries: Boolean
+    map_set_traversal_order_is_not_semantically_significant: Boolean
+    producer_input_materializes_observable_traversal: Boolean
+    producer_result_capacity_is_observation_cap: Boolean
+    bounded_producer_contributes_its_count: Boolean
+    unbounded_producer_contributes_observation_cap: Boolean
+    result_is_independently_valid: Boolean
+    result_uses_bounded_automatic_or_static_storage: Boolean
+    rejects_map_entry_input_with_targeted_diagnostic: Boolean
+    rejects_external_cpp_ranges_with_targeted_diagnostic: Boolean
+    diagnostic_names_supported_domains: Boolean
+    preserves_input: Boolean
+    no_heap_allocation: Boolean
+    no_rtti: Boolean
+    no_exceptions: Boolean
+    constexpr_capable: Boolean
+    single_threaded_execution_model: Boolean
+    referential_transparency: Boolean
+
+    invariant SeqFreeFunctionSupported {
+        this.supports_seq_free_function = true
+    }
+
+    invariant SupportsSequenceableCollectionDomain {
+        this.supports_sequenceable_collection_domain = true
+    }
+
+    invariant SupportsSequenceableProducerDomain {
+        this.supports_sequenceable_producer_domain = true
+    }
+
+    invariant ReturnsOwningBoundedVectorOfTraversalElements {
+        this.returns_owning_bounded_vector_of_traversal_elements = true
+    }
+
+    invariant VectorInputReturnsByValueCopy {
+        this.vector_input_returns_by_value_copy = true
+    }
+
+    invariant SetInputReturnsOneElementPerStoredElement {
+        this.set_input_returns_one_element_per_stored_element = true
+    }
+
+    invariant QueueInputPreservesFifoOrder {
+        this.queue_input_preserves_fifo_order = true
+    }
+
+    invariant StringInputReturnsVectorOfCharacters {
+        this.string_input_returns_vector_of_characters = true
+    }
+
+    invariant MapInputReturnsValueSemanticMapEntries {
+        this.map_input_returns_value_semantic_map_entries = true
+    }
+
+    invariant MapSetTraversalOrderIsNotSemanticallySignificant {
+        this.map_set_traversal_order_is_not_semantically_significant = true
+    }
+
+    invariant ProducerInputMaterializesObservableTraversal {
+        this.producer_input_materializes_observable_traversal = true
+    }
+
+    invariant ProducerResultCapacityIsObservationCap {
+        this.producer_result_capacity_is_observation_cap = true
+    }
+
+    invariant BoundedProducerContributesItsCount {
+        this.bounded_producer_contributes_its_count = true
+    }
+
+    invariant UnboundedProducerContributesObservationCap {
+        this.unbounded_producer_contributes_observation_cap = true
+    }
+
+    invariant ResultIsIndependentlyValid {
+        this.result_is_independently_valid = true
+    }
+
+    invariant ResultUsesBoundedAutomaticOrStaticStorage {
+        this.result_uses_bounded_automatic_or_static_storage = true
+    }
+
+    invariant RejectsMapEntryInputWithTargetedDiagnostic {
+        this.rejects_map_entry_input_with_targeted_diagnostic = true
+    }
+
+    invariant RejectsExternalCppRangesWithTargetedDiagnostic {
+        this.rejects_external_cpp_ranges_with_targeted_diagnostic = true
+    }
+
+    invariant DiagnosticNamesSupportedDomains {
+        this.diagnostic_names_supported_domains = true
+    }
+
+    invariant PreservesInput {
+        this.preserves_input = true
+    }
+
+    invariant NoHeapAllocation {
+        this.no_heap_allocation = true
+    }
+
+    invariant NoRtti {
+        this.no_rtti = true
+    }
+
+    invariant NoExceptions {
+        this.no_exceptions = true
+    }
+
+    invariant ConstexprCapable {
+        this.constexpr_capable = true
+    }
+
+    invariant SingleThreadedExecutionModel {
+        this.single_threaded_execution_model = true
+    }
+
+    invariant ReferentialTransparency {
+        this.referential_transparency = true
+    }
+}
+
+actor SeqOperator { identified_by: Seq }
