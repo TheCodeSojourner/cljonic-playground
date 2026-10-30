@@ -16,7 +16,8 @@ the active unbounded `cycle(source)` producer, their direct construction,
 member-observation, callable collection forms, current primitive free-function
 operations, including `first`, `next`, `has_next`, and `rest`, and explicit producer
 materialization through `into`, preflighted by `fits_into`. Sequence conversion
-(`seq`) remains deferred future work for every collection;
+(`seq`) converts collections and supported producers to bounded `Vector` values
+under `REQ-SEQ-010`;
 const range traversal and read-only C++ interoperability are active
 infrastructure. Module 3 establishes the concrete, array-backed, bounded
 collection types, their contiguous storage strategies, linear scan lookup
@@ -67,7 +68,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** ordered sequence, sequential value
 - **Related:** Collection, Sequenceable, Traversal, LogicalTraversalOrder, Producer
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `first`, `next`, and `rest` are part of the current traversal API; `seq` remains future semantic traversal work. Current collections expose const range traversal in addition to these free functions.
+- **Examples:** `first`, `next`, `rest`, and `seq` are part of the current traversal API. Current collections expose const range traversal in addition to these free functions.
 
 
 ### Sequenceable
@@ -75,7 +76,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence capability
 - **Related:** Sequence, Seqable, Traversal, ConstRangeTraversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `next(collection)` and `rest(collection)` return bounded `Vector` values of the remaining traversal elements; `rest(producer)` returns the same producer-tail value as `next(producer)`; `has_next(collection)` checks whether that tail is nonempty without constructing it; `seq` conversion remains deferred. Current collections also provide `count()` and `is_empty(collection)`.
+- **Examples:** `next(collection)` and `rest(collection)` return bounded `Vector` values of the remaining traversal elements; `rest(producer)` returns the same producer-tail value as `next(producer)`; `has_next(collection)` checks whether that tail is nonempty without constructing it; `seq` converts the value to a bounded `Vector` of its traversal elements. Current collections also provide `count()` and `is_empty(collection)`.
 
 
 ### Indexed
@@ -95,7 +96,7 @@ producer building blocks used across all higher-order algorithms.
 
 
 ### Seqable
-- **Definition:** The canonical semantic capability for producing a collection's documented logical traversal representation. A `Seqable` collection provides sequence conversion without mutating the source, dynamic allocation, or exceptions; the result is an independently valid bounded value whose elements and order follow the collection's traversal semantics. `Seqable` remains independent of `Indexed`, `Lookup`, and `Associative` and is deferred until the sequence requirements are implementation-backed.
+- **Definition:** The canonical semantic capability for producing a collection's documented logical traversal representation. A `Seqable` collection provides sequence conversion without mutating the source, dynamic allocation, or exceptions; the result is an independently valid bounded value whose elements and order follow the collection's traversal semantics. `Seqable` remains independent of `Indexed`, `Lookup`, and `Associative`; the sequence requirements are implementation-backed through `seq` (`REQ-SEQ-010`), while the `Seqable` capability concept itself remains deferred.
 - **Deprecated Synonyms:** sequenceable capability, sequence capability
 - **Related:** Sequenceable, Sequence, Seq, Traversal, ConstRangeTraversal, CapabilityConcept
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -123,7 +124,7 @@ producer building blocks used across all higher-order algorithms.
 - **Deprecated Synonyms:** sequence traversal, iteration
 - **Related:** Sequence, ProducerIteration, BoundedInspection, LogicalTraversalOrder
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** `first`, `next`, and `rest` are active traversal operations; `seq` conversion remains deferred.
+- **Examples:** `first`, `next`, `rest`, and `seq` are active traversal operations.
 
 
 ### ConstRangeTraversal
@@ -434,7 +435,7 @@ The existing lowercase `repeat(value)` and `repeat(count, value)` factories are 
 
 
 ### MapEntry
-- **Definition:** The bounded owning key-value pair representation used when a map association is explicitly constructed or exposed as an entry value, such as during map traversal. Its key and value are named fields; `first` returns the key, and typed `key` and `val` free functions remain planned user-facing accessors. A Map lookup returns its mapped value `V`, not a `MapEntry<K, V>`. Any future fixed two-element sequence behavior remains deferred until an indexed result representation is approved.
+- **Definition:** The bounded owning key-value pair representation used when a map association is explicitly constructed or exposed as an entry value, such as during map traversal. Its key and value are named fields; `first` returns the key, and typed `key` and `val` free functions remain planned user-facing accessors. A Map lookup returns its mapped value `V`, not a `MapEntry<K, V>`. Sequenceable behavior is the fixed two-element sequence contract of `REQ-SEQ-013` (`first` is the key, the value accessor is the value, count is two); `seq` rejects `MapEntry` input at compile time.
 - **Deprecated Synonyms:** map entry, key-value entry
 - **Related:** Map, Lookup, Seqable, ConstRangeTraversal, LogicalTraversalOrder, Traversal, OwningValue, First, MapEntryFactory
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
@@ -872,11 +873,11 @@ The existing lowercase `repeat(value)` and `repeat(count, value)` factories are 
 
 
 ### Seq
-- **Definition:** The deferred primitive traversal free function whose future collection contract converts a `Seqable` collection, or an explicitly approved sequenceable value such as `MapEntry`, into an owning, value-semantic bounded `Vector` of its logical traversal elements under the applicable element representation and capacity policy. This records future behavior, not current API support. Producer status and active const traversal alone do not approve a producer `seq` API. Seq does not imply support for arbitrary external ranges, iterables, arrays, or containers.
+- **Definition:** The active primitive traversal free function (`seq`) converting a supported collection or supported producer into an owning, value-semantic, independently valid bounded `Vector` of its logical traversal elements in traversal order. A `Vector` input returns a by-value copy of itself; a `Map` input yields `Vector<MapEntry<K, V>, N>`; a `Set` or `Queue` input yields a vector of its stored elements; a `String` input yields `Vector<char, N>` of its characters. A supported producer (`Repeat`, `Range`, `Cycle`, `Iterate`, `Repeatedly`) materializes its observable traversal into a vector of observation-cap capacity. `seq` preserves its input, does not support `MapEntry` input, and does not support arbitrary external ranges, iterables, arrays, or containers.
 - **Deprecated Synonyms:** sequence conversion, to-seq, seq conversion
 - **Related:** Seqable, ConstRangeTraversal, ProducerIteration, BoundedResult, Vector, MapEntry, Traversal
 - **Usage:** Requirements, architecture, specification, implementation, tests, and documentation
-- **Examples:** Under the deferred collection traversal contract, future `seq(m)` returns an owning `Vector<MapEntry<K, V>, N>` of map entries.
+- **Examples:** `seq(m)` returns an owning `Vector<MapEntry<K, V>, N>` of the map's entries; `seq("AB")`-style conversion over a `String` yields `Vector<char, N>` of its characters; `seq(Range{0, 5})` yields the five observed values.
 
 
 ### CanConj
