@@ -1,5 +1,41 @@
 ## Current Session State
 
+- last_session_id: 40e6de98-b462-43cb-a792-52be2c3e5039
+- current_timestamp: 2026-10-30T18:19:07-06:00
+- session_complete: true
+- recover: 1. Start the thru-family durable-artifact cycle from `clojure-thread-family-for-cpp.md`: settle the scope decision (does the family belong in cljonic?) first, then elicit `cond_thru` predicate/endomorphism, `as_thru` alias-or-distinct, `some_thru` first-slice inclusion, and the minimum C++ standard. `cljonic::Maybe` must be specified before `some_thru`.
+
+Task:
+1. This session produced no repository artifact changes. It authored a single deliverable: `clojure-thread-family-for-cpp.md` (repo root, untracked), a complete prompt for a future session to run the requirements/vocabulary/architecture/specification cycle for a Clojure-threading family in C++ (`thru`, `as_thru`, `cond_thru`, `some_thru`, `doto_thru`, terminal `thru_value`). The prompt supersedes `clojure-thread-first-and-last-for-cpp.md` semantically; that file is retained untracked as provenance and must not be treated as the source of truth.
+2. Design elicitation across the session converged the family from a single `thru` design brief to five facilities plus a terminal, then narrowed it with the human's value-oriented framing. All decisions are recorded in the prompt's Section 3 and its decision ledger.
+3. Two audit passes were run on the prompt. The second found and fixed two defects: a stale cross-reference in Section 3.2 to a callables decision that had moved, and Section 6.2 asserting an approval ("approved design constraint") that the ledger correctly listed as open. A first pass earlier in the session had found placeholder table cells and a typo.
+4. No `requirements/`, `vocabulary.md`, `architecture.md`, or `specs/` files were created or modified. No implementation, tests, examples, or generated artifacts were produced. No repository gates were run, because no artifact under gate coverage changed.
+
+Questions:
+1. None blocking. The prompt is a sufficient handoff; its Section 3.4 and ledger enumerate the decisions the next session must elicit.
+2. Open design items carried forward for the next session: whether the family belongs in cljonic at all; the `cond_thru` predicate contract and whether conditional stages must be endomorphic; whether `as_thru` is an alias of the base stage or a distinct stage type; whether `some_thru` is in the first approved slice; the `cljonic::Maybe` value-type design; and the minimum supported C++ standard.
+
+Decisions:
+1. Naming (settled, naming only): `thru`, `as_thru`, `cond_thru`, `some_thru`, `doto_thru` are stage factories; `thru_value` is the terminal. The suffix asymmetry is deliberate and must be preserved in documentation and diagnostics.
+2. Approved structure: uniform policy-tagged stages — one pipeline engine and one public pipeline surface, stages carrying their facility in their compile-time type, interleaving allowed, one constrained operator surface dispatching on stage kind. This dissolved the earlier three-option cross-facility composition question, because one pipeline type needs no promotion or downgrade lattice.
+3. Approved domain: stages invoke cljonic free-function APIs; threaded values are cljonic collections, cljonic producers, and C++ simple scalar-like entities including simple aggregate structs. Consequences recorded: move-only support, member-function pointers, `std::invoke` dispatch, and consumed-rvalue adapter machinery are out of scope; move-forwarding between stages is required so bounded collections are not copied per stage; `constexpr`/`noexcept`/non-allocation become unconditional when every stage provides them.
+4. Approved: `doto_thru` narrowed to `Atom<T>` and `>` only, because bare `doto` has no purpose against immutable cljonic values. The atom is borrowed, not copied, because copying an Atom applies effects to a discarded copy. No new purity exception is required, because `REQ-VAL-009` already sanctions atom mutation. `Atom<T>` is the only reference-like cljonic entity.
+5. Approved: stages are cljonic free functions, lambdas, and function objects. A stage may return a reference only for an intermediate position as a copy-avoidance optimization; `thru_value` always yields a value. This reversed an earlier recommendation that the terminal use `decltype(auto)` to preserve references, because reference preservation at the boundary is exactly the escape the rule prevents. Supporting constraints recorded: a reference result pins its owner against move-forwarding; the intra-pipeline lifetime obligation is an explicit caller responsibility because C++ cannot detect a dangling reference to a temporary inside a lambda; `some_thru` stages must yield values because a `Maybe` cannot hold a reference.
+6. Approved in principle: `cljonic::Maybe<T>` replaces `std::optional` as the absence model for `some_thru`, mirroring the `cljonic::Variant`-replaces-`std::variant` precedent. The design remains open and requires its own requirements/vocabulary/architecture/specification cycle; `Maybe` must precede `some_thru`.
+7. The prompt is a phase-gated artifact: it authorizes durable-artifact work only and explicitly forbids implementation and tests. It records that decisions were taken with the human on 2026-10-30 so requirement provenance can cite that date.
+
+Validation:
+1. `clojure-thread-family-for-cpp.md` is 384 lines / ~40 KB, with no trailing whitespace, no tabs, and no stale cross-references (`callable decision` occurrences: 0). `thru_value` is used consistently; the only `.value()` occurrences are the deliberate contrast example in Section 5.5 that explains why a member terminal would be fragile.
+2. Internal consistency was verified by reading the file, not by assumption: every `Section 3.x` reference resolves, and every body-level "Open" item appears in the appendix ledger.
+3. No repository gates were run. `git status` shows only the two untracked prompt files; `mementum/state.md` was the only tracked file changed this session.
+
+Next:
+1. Human decides whether to commit or discard the two untracked prompt files (`clojure-thread-family-for-cpp.md`, `clojure-thread-first-and-last-for-cpp.md`). The new file is self-contained and does not depend on the older one remaining present.
+2. Next working session: follow the prompt's Section 10 work plan. Step 1 is the scope-and-architecture-fit decision; do not begin writing requirements while that is unresolved.
+3. Carry-forward from the previous session is unchanged: user-defined aggregates with float members remain unanalyzable for REQ-NUM-007 recursion; constexpr Set duplicate insertion aborts; the Seqable capability concept remains deferred.
+
+## Current Session State
+
 ### Current Session State
 
 - last_session_id: 0463c359-9c49-4a7a-a61e-134d04d0a756
